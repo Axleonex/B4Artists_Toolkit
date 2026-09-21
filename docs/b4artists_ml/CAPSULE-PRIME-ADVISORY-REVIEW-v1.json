@@ -1,0 +1,48 @@
+{
+  "schema": "b4ml-capsule-prime-advisory-review-v1",
+  "review_transport": "direct Prime MCP over authorized desktop-prime-ssh route",
+  "prime_server": "prime-agent v1.30.0",
+  "job_id": "ecb1e28990ff4d06be45090176ec70d0",
+  "status": "completed",
+  "verdict": "insufficient_evidence",
+  "authority": false,
+  "scope": "Advisory review of the supplied capsule evidence packet; no source checkout, code execution, or project mutation was performed.",
+  "input": {
+    "archive": "releases/b4artists_ml_v0.37.2-dev.zip",
+    "archive_sha256": "2fad2e635300c337023f0a593f20bc7c8ff367e5c1ac323c74fa33b29f93253d",
+    "archive_bytes": 415847,
+    "archive_members": 54,
+    "binding_passed": 2,
+    "affected_passed": 148,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "findings": [
+    "The supplied SHA-256 is a valid 64-hex digest and the archive size/member count and test counts are internally coherent.",
+    "The foreground controls, generation, Undo/Redo, Restore Input, Keep, save/reload, and Restore Source claims are internally consistent but were supplied as assertions without attached logs, harness output, or executor trace.",
+    "The governance and verification chain remains incomplete because the desktop preflight requires the NUCBOX remote executor and no completion-authority reviewer was invoked.",
+    "The known ucrtbase shutdown fault is disclosed, but this advisory packet does not independently characterize its impact.",
+    "Learned temporal quality, independent animator usability, Cascadeur parity/superiority, and full completion remain unsupported."
+  ],
+  "missing_proof": [
+    "Attached test logs, pass/fail details, and executor traces for binding, regression, and foreground controls.",
+    "A completed governance/reviewer verdict with authority.",
+    "Independent animator and learned-temporal evidence.",
+    "Matched Cascadeur comparison data.",
+    "Independent characterization of the host shutdown fault's impact."
+  ],
+  "prior_attempt": {
+    "job_id": "b595c7a3fb5640babca4dcbef9f6d34b",
+    "status": "failed",
+    "reason": "iteration limit",
+    "counted_as_authority": false
+  },
+  "claim_boundary": {
+    "learned_temporal_quality": false,
+    "independent_animator_usability": false,
+    "cascadeur_parity": false,
+    "surpasses_cascadeur": false,
+    "full_goal_complete": false
+  }
+}

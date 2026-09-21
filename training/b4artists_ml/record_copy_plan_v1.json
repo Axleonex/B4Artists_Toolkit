@@ -1,0 +1,22 @@
+{
+  "scope": "Actual-preview record reconstruction measurement, no runtime changes",
+  "rigs": [
+    "boneforge",
+    "rigify_default",
+    "rigify_basic",
+    "metarig_basic",
+    "metarig_default"
+  ],
+  "methods": [
+    "json_decode",
+    "deepcopy_validated_tree",
+    "pickle_local_copy",
+    "marshal_local_copy"
+  ],
+  "timing": "Five alternating rounds,40calls per method per round, perf_counter; record every sample and cold encoding cost. Same already-generated payload for each method.",
+  "checks": "Exact equality to schema-validated JSON record, fresh dict/list identity and isolated nested mutation on repeated reconstructions, unchanged serialized payload and original source/action/keys/modes.",
+  "binary_boundary": "Binary blobs are created in this harness from the locally JSON-decoded primitive tree and immediately copied in memory. Never load a binary supplied by an external file, network or user.",
+  "limits": "Microbenchmark only; no cache, complete-solve latency, UI performance or runtime promotion claim.",
+  "goal": "Same original endpoint,50evaluations and fixed15-hour deadline21:17:57UTC.",
+  "recorded_at": 1788901684.8491747
+}

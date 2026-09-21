@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "purpose": "Record the second permitted governed evaluator attempt for the exact v0.37.2-dev capsule evidence.",
+  "recorded_at": "2026-09-14T03:27:09Z",
+  "execution_id": "d496d076cf2141b1be3feb560534b6ec",
+  "route": {
+    "pipeline": "prime-code-execute",
+    "actual_lane": "T3_PRIME_OMP",
+    "executor": "NUCBOX_M6ULTRA",
+    "governance_route_id": "desktop-prime-ssh",
+    "remote_runtime": "Ubuntu-restored / jonvilario",
+    "project": "B4Artists_Anim_Tools_github",
+    "workspace": "/home/jonvilario/.hermes/xdisk/Scripting Attempts/B4Artists_Tools/B4Artists_Anim_Tools_github"
+  },
+  "request": {
+    "task_tier": "high_risk",
+    "declared_paths": [
+      "docs/b4artists_ml/CAPSULE-BFORARTISTS-REGRESSION-v1.json",
+      "docs/b4artists_ml/capsule-exact-revalidation-v2.json",
+      "docs/b4artists_ml/capsule-ui-action-fingerprint-v10.json"
+    ],
+    "source_mutation_requested": false,
+    "model_or_provider_change_requested": false
+  },
+  "outcome": {
+    "status": "BLOCKED_BEFORE_EVALUATION",
+    "reviewer_invoked": false,
+    "review_completed": false,
+    "model_calls": 0,
+    "host_result": null,
+    "review_passed": false,
+    "authority": false,
+    "reason": "PRIME_UNAVAILABLE:LedgerError",
+    "underlying_error": "workspace is outside an allowed project root",
+    "policy_interpretation": "The governed ledger allows /mnt/g/LapArt, while the canonical source is on the documented XDisk path. No mount, symlink, mirror, evaluator-policy change, or authorization widening was performed."
+  },
+  "impact": {
+    "source_changed": false,
+    "evidence_changed_by_evaluator": false,
+    "credentials_changed": false,
+    "production_services_changed": false,
+    "capsule_deterministic_evidence_affected": false,
+    "claim_boundary": "Deterministic capsule binding, affected regression, foreground lifecycle, and recovery evidence remain valid; completion-authority review remains open."
+  }
+}

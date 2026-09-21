@@ -1,0 +1,47 @@
+{
+  "schema": "cmu-sequence-store-v2",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "source_manifest": "results/cmu-corpus-inventory-v1/train-download-manifest.json",
+  "source_manifest_sha256": "42bb98cb5de7fe5b23503110eebb21ace5ea9c429f32eab354c1748972455f76",
+  "clips": 1840,
+  "subjects": 85,
+  "source_bytes": 2343633676,
+  "target_fps": 30,
+  "representation": {
+    "dynamic_positions": "float32 world positions for 17 semantic joints",
+    "dynamic_rotations": "float32 normalized quaternions for 17 semantic joints",
+    "rest": "per-clip artificial calibration pose positions and quaternions stored separately",
+    "metadata": "clip/subject/style/source identity, offsets, exact sample timing and descriptions",
+    "normalization": "Deferred until each sampled training window so the observation-derived origin, basis, scale and rest alignment remain identical to actual rig inference"
+  },
+  "storage": {
+    "location": "training/b4artists_ml/cache-expanded-v1/sequence-store-v2",
+    "git_ignored": true,
+    "format": "Four NumPy .npy arrays plus a checked JSON layout",
+    "memory_mappable": true,
+    "single_copy_per_frame": true,
+    "window_materialization": "Only the current training batch",
+    "maximum_frames": 1500000,
+    "maximum_store_bytes": 800000000
+  },
+  "quality": {
+    "source_sha256_reverified_during_decode": true,
+    "finite_transforms_required": true,
+    "semantic_joint_set_required": true,
+    "no_pickle": true,
+    "development_read": false,
+    "confirmation_read": false
+  },
+  "sources": {
+    "build_cmu_sequence_store_v1.py": "6da4cc773da86976b7a0761598c5ef8648353e950790d7a6a3c683cfe8230d63",
+    "bvh_data.py": "0ecbb4a420555022f45eccbabca8c0f524b9a80a416409d32634efa036f95f86",
+    "context_data.py": "3da05704dcc815c4b55b24d04568c6908bebf86e1200652f580fa9c28985fc3f",
+    "temporal_data.py": "702472088603fca2b3c01fcdd589c1e972e2206e095666a6b0b5654a5be61858"
+  },
+  "script_sha256": "6da4cc773da86976b7a0761598c5ef8648353e950790d7a6a3c683cfe8230d63",
+  "supersedes_plan_sha256": "18450cf7cb6a5486e3cadcf9c330bbfea992b96d0849fa4873edde4caef5f85c",
+  "amendment": "Correct maximum_frames and maximum_store_bytes lookups to the storage object and use fresh v2 paths. The v1 attempt stopped before decoding any clip; inputs, representation, split guards and caps are unchanged.",
+  "downloads": false,
+  "runtime_promoted": false,
+  "full_goal_complete": false
+}

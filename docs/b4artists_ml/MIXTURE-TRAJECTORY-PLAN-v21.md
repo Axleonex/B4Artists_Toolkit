@@ -1,0 +1,11 @@
+# Learned position mixture experiment v21
+
+The v20 development failure attribution identified weak fixed references in 24 of 25 failed cohorts and harmful residual amplification in the two worst cases. This is diagnosis on exposed development data, not new generalization evidence.
+
+Test one fixed learned mixture of linear, Hermite, shape-preserving and frozen v20 positions. Keep v20 rotations. A 548-input, 32-unit tanh network emits four positive softmax weights, shared across all joints and times in an interval. Train with the existing trajectory, velocity and acceleration objective and cohort balancing. Initial weights are 0.025, 0.025, 0.05 and 0.9. This allows the supervised model to reduce harmful residuals and change reference influence using observed context. It does not add a new motion generator or satisfy the full learned-motion scope by itself.
+
+Generate each training row's v20 expert using its existing group-excluded fold model. Verify exact clip memberships and artifact hashes. The gate sees all training labels; training diagnostics must not be presented as independent gate validation. Fit one configuration for 40 epochs, then freeze weights before loading either development partition. No grid or tuning after those results. Preserve all original thresholds and matched physical projection; require old, new and combined development gates independently. Keep six fresh confirmation clips sealed.
+
+Before corpus fitting, verify analytic gradients against finite differences, explicit trajectory loss equivalence, real feature learning, convex bounds, exact priorities, stationary and masked-context behavior, label separation, invalid-input rejection, and serialization. Repeat the entire gate fit and evaluation for reproducibility. Exercise the candidate on existing actual-rig editable/recovery fixtures if the experiment completes within the unchanged 15-hour deadline. Failed quality gates forbid bundling. Core runtime and the v0.17.4 package remain unchanged.
+
+No paid services, asset acquisitions, external writes, commits or installs are part of this experiment. Canonical routing failed before host apply with empty exit1; continue under the shared DEGRADED_NATIVE_CONTINUE rule, recording native verification. Keep goal ID, endpoint, protected floors, history, 50-evaluation cap and original resumed deadline.

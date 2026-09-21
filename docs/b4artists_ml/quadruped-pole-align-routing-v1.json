@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "task": "Quadruped Align Pole Target to Current Bend v1",
+  "harness": "codex",
+  "profile": "ChatGPT subscription",
+  "activation": {
+    "state": "production",
+    "authorization_expires_at": "2026-10-11T09:25:49.455367Z",
+    "declared_execution_start": 2,
+    "declared_adaptive_ceiling": 8,
+    "reviewer_ceilings": {
+      "S0": 0,
+      "S1": 1,
+      "S2": 2,
+      "S3": 4,
+      "S4": 4
+    }
+  },
+  "router": {
+    "entrypoint": "G:/LapArt/hermes-agent-self-evolution/scripts/prime-code-execute.py",
+    "attempted": true,
+    "actual_lane_emitted": false,
+    "failure": "uv trampoline failed to spawn Python child process; entity not found",
+    "failed_binding": "G:/LapArt/.hermes/hermes-agent/venv/pyvenv.cfg home points to missing C:/Users/AtonLotus/AppData/Roaming/uv/python/cpython-3.11-windows-x86_64-none"
+  },
+  "outcome": "fallback",
+  "classification": "DEGRADED_NATIVE_CONTINUE",
+  "actual_lane": "DEGRADED_NATIVE_CONTINUE",
+  "actual_lane_reason": "The required router emitted no T0-T4 lane because its canonical evidence interpreter is a broken uv trampoline. The existing static-native infrastructure fallback was used without changing shared runtime state.",
+  "work_packets": [
+    {
+      "owner": "parent_integrator",
+      "files": [
+        "b4artists_ml/quadruped_pose.py",
+        "b4artists_ml/ui.py",
+        "tests/test_b4artists_ml_quadruped_pole_align_v1.py",
+        "training/b4artists_ml/check_quadruped_pole_align_ui_v1.py",
+        "training/b4artists_ml/run_quadruped_pole_align_affected_v1.py"
+      ],
+      "writer": true,
+      "completion": "Focused, affected, foreground UI, source binding, and final evidence pass"
+    },
+    {
+      "owner": "target_reset_review",
+      "files": [],
+      "writer": false,
+      "completion": "Read-only serial review with no remaining actionable finding"
+    }
+  ],
+  "conflicts": "One writer owned all shared runtime and evidence files. The reviewer was read-only. No parallel writer was admitted after router failure.",
+  "adaptive_workers_admitted": 0,
+  "writer_count": 1,
+  "reviewer": {
+    "requested_level": "S0-S4 adaptive scheduler",
+    "authority_validated": false,
+    "fallback": "serial_read_only_advisory",
+    "verdict": "PASS",
+    "actionable_findings": 0
+  },
+  "reviewer_verdict": "PASS",
+  "production_changes": {
+    "activation_changed": false,
+    "providers_changed": false,
+    "defaults_changed": false,
+    "services_restarted": false,
+    "committed": false,
+    "merged": false,
+    "pushed": false
+  }
+}

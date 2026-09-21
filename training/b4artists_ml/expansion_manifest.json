@@ -1,0 +1,147 @@
+{
+  "schema": 1,
+  "files": [
+    {
+      "clip": "15_06",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/015/15_06.bvh",
+      "bytes": 2718191,
+      "sha256": "171b1c9dabe0d044f1da669f1e00c7aeac17493b4a3eda1f89ebc1bf8b4f07cc"
+    },
+    {
+      "clip": "15_08",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/015/15_08.bvh",
+      "bytes": 2898192,
+      "sha256": "2278ff8fd818f78db124e6fee8e62d1ef8ea9d2d3181ab8cdb3c93a96dd36bc4"
+    },
+    {
+      "clip": "17_01",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/017/17_01.bvh",
+      "bytes": 4767431,
+      "sha256": "2eaef168dbe50d87fcc8eb5bbc8da4bac73af116a92b799524cc9869b3f7bab6"
+    },
+    {
+      "clip": "17_10",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/017/17_10.bvh",
+      "bytes": 2106429,
+      "sha256": "e37994992995df7dd6f1fd05a13be0439c885706b8c8ca0ea730388cf9e57899"
+    },
+    {
+      "clip": "18_08",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/018/18_08.bvh",
+      "bytes": 1567012,
+      "sha256": "b57e6ba15cf2bde4e6e4233da53425dde6d91952fb2bff17a89c5fce18a1a0ce"
+    },
+    {
+      "clip": "18_04",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/018/18_04.bvh",
+      "bytes": 312380,
+      "sha256": "cd677a3640061bb0c7d921d4ff0a1a6dad3dc4932ca9cfb09f7a461d72810d9d"
+    },
+    {
+      "clip": "26_02",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/026/26_02.bvh",
+      "bytes": 4519827,
+      "sha256": "c635f2a1824cf7f24ef6e91595aeeacb499da7c75f5dc0f96549316dffb54d37"
+    },
+    {
+      "clip": "26_10",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/026/26_10.bvh",
+      "bytes": 531317,
+      "sha256": "1a5d4600e442b3fa481cbdf39e1421f80773e02de20dbadcac58dbaaa1c7f3b8"
+    },
+    {
+      "clip": "36_01",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/036/36_01.bvh",
+      "bytes": 419805,
+      "sha256": "e0dc3ff82cc4fc428c80b30c0f57f819d0df9f8100d65c42bd4d38aeea7ed4ce"
+    },
+    {
+      "clip": "38_03",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/038/38_03.bvh",
+      "bytes": 581399,
+      "sha256": "9671d00892a1818b04a755feab093bbafd69987b6551048294940b7aa31a8098"
+    },
+    {
+      "clip": "49_02",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/049/49_02.bvh",
+      "bytes": 1584939,
+      "sha256": "cf201c93b7cf1337c8a41d74c96d2062a51b621a9b1e272961e1fe4dd6590924"
+    },
+    {
+      "clip": "49_04",
+      "split": "train",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/049/49_04.bvh",
+      "bytes": 195061,
+      "sha256": "471a7a929f669ed68fad4e592369f4122e09f0ce7639ea7529dc4388795cfc5f"
+    },
+    {
+      "clip": "28_01",
+      "split": "validation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/028/28_01.bvh",
+      "bytes": 2390925,
+      "sha256": "02daf552d61e1e8d5bbe476b9435b5421490da899798ef27c38a4d7f9a35cae9"
+    },
+    {
+      "clip": "28_02",
+      "split": "validation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/028/28_02.bvh",
+      "bytes": 1634089,
+      "sha256": "04abd0e8de96f4e9b38b176784164383a95186ef21633b34216cc39d27da17de"
+    },
+    {
+      "clip": "29_01",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/029/29_01.bvh",
+      "bytes": 988747,
+      "sha256": "3af47293ea5c9e1d57843032d68fc68a304f80d5f8e2673a8254c79fdfe6cbeb"
+    },
+    {
+      "clip": "29_03",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/029/29_03.bvh",
+      "bytes": 1696986,
+      "sha256": "871fc9619b366d6879cebfef89676abac7074c9c0b992486760a7c62b70a4ef3"
+    }
+  ],
+  "additional_raw_bytes": 28912730,
+  "combined_raw_bytes": 58902659,
+  "additional_budget_bytes": 30000000,
+  "confirmation_frozen_sha256": "4439853b708d2aca99659e5e7a28f2eb0469660f3cef03fd78441ebab8fa1b45",
+  "planned_splits": {
+    "train": [
+      "15_06",
+      "15_08",
+      "17_01",
+      "17_10",
+      "18_08",
+      "18_04",
+      "26_02",
+      "26_10",
+      "36_01",
+      "38_03",
+      "49_02",
+      "49_04"
+    ],
+    "validation": [
+      "28_01",
+      "28_02"
+    ],
+    "confirmation": [
+      "29_01",
+      "29_03"
+    ]
+  },
+  "publisher_terms": "https://mocap.cs.cmu.edu/",
+  "conversion_terms": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/READMEFIRST.txt"
+}

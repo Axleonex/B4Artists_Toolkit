@@ -1,0 +1,55 @@
+{
+  "schema": "b4ml-temporal-boundary-revalidation-v2",
+  "observed_at": "2026-09-14T14:04:19.876858+00:00",
+  "status": "PASS_FAIL_CLOSED",
+  "scope": "Current-worktree host-independent boundary regression. No data is acquired, no human evidence is inferred, and no model is trained or promoted.",
+  "suite": {
+    "tests": 12,
+    "passed": 12,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "successful": true
+  },
+  "current_intake": {
+    "status": "BLOCKED_INTAKE_MISSING_EVIDENCE",
+    "manifest_sha256": "467ebc675ff29a32e34ce0798e7caaab80e6680ad9a64b33d640d43213b8b190",
+    "rows": 20,
+    "missing_required_fields": [
+      "action_id",
+      "skeleton_id",
+      "source_rig_id"
+    ],
+    "reviewed_contact_intent_present": false,
+    "identity_authorization_present": false,
+    "receipt": "training/b4artists_ml/results/temporal-corpus-intake-v1.json",
+    "receipt_sha256": "8f9ee0ab7a5086803bb33030e18825791917bb6cbea4b1c1815c4da6f6dbbc15"
+  },
+  "parent_boundary": {
+    "status": "BLOCKED_DATA_BOUNDARY_UNQUALIFIED",
+    "model_training_permitted": false,
+    "model_promotion_permitted": false,
+    "receipt": "training/b4artists_ml/results/temporal-training-boundary-v1.json",
+    "receipt_sha256": "112964b4666ef82a755a70340b174475b2aef36d5ca3ae56989b15f3deed7c05"
+  },
+  "sources": {
+    "training/b4artists_ml/validate_temporal_corpus_intake_v1.py": "3fb388fd14f2b53b38f6da98340674f2f6789759d3d10976b43b663a87fb0dc7",
+    "training/b4artists_ml/check_temporal_training_boundary_v1.py": "33aa296e90aca4ceae7a2b8595c8f512d51faaf8ab9a2ee239264649d66d88a0",
+    "tests/test_b4artists_ml_temporal_corpus_intake_v1.py": "d278d32f66fbcdc4fd92afd79070cdff0497391a7996c84707260c25cd1d0caa",
+    "tests/test_b4artists_ml_temporal_training_boundary_v1.py": "10c3a24445db1421a4fa71bf98ca92f44c19590eb11f0d89bdff6f6a82a21c96",
+    "training/b4artists_ml/run_temporal_boundary_revalidation_v2.py": "51f77d49fd801543944da31ca4f99dcb958d9f790bf1428818f31dfe7c2fdec0",
+    "training/b4artists_ml/check_temporal_boundary_revalidation_v2.py": "7a5f9ca97107c46fc4a4a7957b643ffdeac9d8914611487e47bac4760f85b065",
+    "training/b4artists_ml/data_manifest.json": "467ebc675ff29a32e34ce0798e7caaab80e6680ad9a64b33d640d43213b8b190",
+    "training/b4artists_ml/results/action-rig-disjoint-audit-v1.json": "91de56e94404cd7db845f1a6157007515a783195cdc50fb121c03fbc406ca1fc",
+    "training/b4artists_ml/results/action-disjoint-protocol-v1.json": "98f5a1c2a993dd7800a38a226fb71379539dd41d22c8fa994cbab771a4fcc541",
+    "training/b4artists_ml/results/cached-skeleton-provenance-v1.json": "2553389192477e4a6b5016e83da22b29f7566409a772857789d879a6315e0513",
+    "training/b4artists_ml/results/joint-action-skeleton-protocol-v1.json": "3fb44eee59b4e938e50d490b3cf9796fcbaf7e29b0bad85a716f7ead697259b6"
+  },
+  "claim_boundary": {
+    "learned_temporal_quality_verified": false,
+    "independent_animator_usability_verified": false,
+    "cascadeur_parity_verified": false,
+    "runtime_promoted": false,
+    "full_goal_complete": false
+  }
+}

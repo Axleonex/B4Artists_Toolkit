@@ -1,0 +1,13 @@
+{
+  "schema": 24,
+  "scope": "Two controlled rotation substitutions with frozen v23 positions across all exposed development windows",
+  "position_model_sha256": "dd6ff0959f058e48b5a5bdc834d5513d1f7921bee7889ea5b15852474f9f39a8",
+  "methods": [
+    "linear_rotation",
+    "hermite_rotation"
+  ],
+  "changes": "Only proposed rotations change before the exact same rig projection. No fitting or row selection.",
+  "gates": "Preserve every old/new/combined gate; diagnostic results are not a model promotion. Keep six fresh confirmation clips sealed.",
+  "next": "Use diagnosis before choosing one learned rotation-selection experiment; any training fits and scales remain training-only.",
+  "recorded_at": 1788897539.3310888
+}

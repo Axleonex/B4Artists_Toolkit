@@ -1,0 +1,13 @@
+# Per-joint position and rotation mixture experiment
+
+The existing v23 candidate fails seven of 96 exposed development cohorts. Replacing its proposed rotations globally with linear or Hermite rotations, while retaining v23 positions and the identical physical projection, also fails the original quality gates. Those controlled substitutions motivate a bounded learned experiment; they do not prove that rotations alone cause the remaining failures.
+
+One fixed configuration uses the existing 596 observed inputs and 32 shared tanh hidden units, with separate four-expert position and three-expert rotation weights for each of 17 joints. Position experts are linear, Hermite, shape and frozen v20. Rotation experts are linear, Hermite and frozen v20. Unit quaternions are sign-aligned to the linear proposal, mixed, and normalized; a fixed 1e-6 linear-reference contribution prevents zero norm. Priority transforms remain exact. Hemisphere ambiguity does not have a C1 continuity guarantee.
+
+The supervised objective combines position and actual normalized-quaternion rotation6 trajectory losses, including the unchanged derivative weights and equal-cohort weighting. The full objective is normalized by 153 channels. The previous position-only objective used 51 channels, so absolute objective values across these two experiments are not comparable. The fixed 40-epoch schedule is retained; no grid, epoch selection or post-development tuning is permitted.
+
+All training expert predictions and parent-dependent input descriptors use the identical catalog-group-excluded v20 parent for that row. The new gate sees training labels; this does not constitute independent gate validation. The final model freezes before old, new and combined development gates are evaluated. All three must pass independently. The six new confirmation clips remain absent unless they pass.
+
+Pre-fit tests cover explicit loss, every gradient, variable-length padding, quaternion conventions and nondegeneracy, learning, parent preservation, positional bounds, proper rotations, exact priorities, query density, observation-only inference, stationary and masked context, serialization and invalid inputs. Then run an independent complete reproduction and actual-rig editable preview/Discard checks. No runtime or package promotion is authorized by research checks alone.
+
+The original goal, 50-total-evaluation ceiling and resumed 15-hour deadline of 2026-09-08 21:17:57 UTC remain unchanged. Ghost Tool and Anim Assist remain untouched. No new datasets, paid services, publication or browser-policy workaround is part of this experiment.

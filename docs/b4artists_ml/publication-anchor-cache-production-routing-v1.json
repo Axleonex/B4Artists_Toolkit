@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-09-09",
+  "task": "Reuse one freshly validated anchor snapshot within the synchronous temporal publication transaction.",
+  "declared_paths": [
+    "b4artists_ml/workflow.py",
+    "b4artists_ml/curve_smoothing.py",
+    "b4artists_ml/temporal_preview.py",
+    "tests/test_b4artists_ml_smoothed_preview_v2.py",
+    "training/b4artists_ml",
+    "docs/b4artists_ml"
+  ],
+  "router": {
+    "recommended_lane": "T3 Prime+OMP",
+    "attempted_lane": "T3 Prime+OMP",
+    "result": "BLOCKED",
+    "reason": "DECLARED_PATH_INVALID: the authoritative desktop-local X: workspace is not mounted on the governed NUCBOX executor."
+  },
+  "outcome": "fallback",
+  "actual_lane": "DEGRADED_NATIVE_CONTINUE",
+  "fallback_eligibility": {
+    "explicit_user_authorization": true,
+    "project_local": true,
+    "reversible": true,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "billing": false,
+    "history_changes": false
+  },
+  "scope_guards": [
+    "Keep public workflow and smoothing calls validation-preserving by default.",
+    "Reuse the snapshot only inside one synchronous publication transaction with no timer or user yield.",
+    "Preserve source action, pose, rig modes, anchors, rollback behavior, models, data, thresholds and sealed confirmation clips.",
+    "Require a native regression, full applicable suites and an integrated before/after latency measurement before release promotion.",
+    "Do not install, commit, merge or push."
+  ]
+}

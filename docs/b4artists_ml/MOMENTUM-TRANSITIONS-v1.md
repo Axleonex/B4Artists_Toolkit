@@ -1,0 +1,11 @@
+# Native takeoff and landing transitions (development)
+
+Native Motion Layer now provides Takeoff Transition Frames and Landing Transition Frames. Set either to at least one frame to match the incoming or outgoing COM velocity. Zero disables that transition. The free-motion span must fit between authored priorities inside the candidate; contacts and overlapping intervals are rejected.
+
+The spans preserve the takeoff, landing and outer boundary poses. Existing poses and the airborne arc remain fixed. Correction is stored as editable native custom-property curves and drivers. Restore Before Flight, Keep/Discard and archived motion results retain their meanings. Restore the previous flight before adjusting settings and generating again.
+
+Gravity Influence blends the airborne arc. Transition frames independently request velocity matching, including smoothing an existing source corner when Gravity Influence is zero. This can move the character between preserved poses; inspect the preview before keeping.
+
+This is procedural matching of linear center-of-mass velocity. It does not infer ground forces, conserve full-body angular momentum, enforce acceleration continuity, solve planted feet during the transition, or add learned motion. Nonzero transition settings require Native Motion Layer; Root Curves reports that requirement.
+
+The bounded native transition workflow passes automated acceptance. Five transformed-rig cases cover BoneForge/default Rigify, fractional priority frames and partial/zero gravity influence; boundary jump reductions are at least 99.57 percent. Native tests cover editable archive/save/reload, source recovery and cancellation. Source actual-window cancellation, Undo/Redo, Keep/archive/reopen/Discard checks pass. The local 0.17.1 package passes 317 regression cases (71 refreshed and 246 audited unchanged-workflow cases), 124 offline cases and actual-window lifecycle checks. The 16-flight/32-transition capacity and editable archive check also passes. The narrow panel truncates transition labels; tooltips explain the units. A broader readable panel layout remains a usability gap. No overall physics, learned-motion, human usability or Cascadeur parity claim follows.

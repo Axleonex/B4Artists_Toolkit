@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "created_utc": "2026-09-06T10:16:07.558348+00:00",
+  "seed": 20260906,
+  "manifests": [
+    {
+      "path": "results/training_manifest_v4.json",
+      "sha256": "9973a7f2b8935c33cb8d9b819d46658485bab931fdaabb59b6434ff0e3d78fe8"
+    },
+    {
+      "path": "context_confirmation_manifest.json",
+      "sha256": "eb7f86927c538d0510d7432bbe8fba0b6fa8581748e69134332edfed8883c841"
+    }
+  ],
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "target_fps": 30,
+  "training_windows_per_gap": 16,
+  "evaluation_windows_per_gap": 8,
+  "contexts": [
+    false,
+    true
+  ],
+  "hidden_units": 128,
+  "max_epochs": 80,
+  "patience_epochs": 20,
+  "batch_size": 256,
+  "learning_rate": 0.001,
+  "ridge_trials": [
+    0.001,
+    0.01,
+    0.1
+  ],
+  "rotation_loss_weight": 0.1,
+  "representation": "17 world positions and 6D joint orientations in one known start-anchor frame; static rest/scale and optional outside-gap observations",
+  "input_features": 668,
+  "output_features": 153,
+  "endpoint_envelope": "(4*t*(1-t))**2",
+  "selection": "Clip/gap/context-balanced validation position error + 0.1 * rotation geodesic radians; confirmation unavailable to selection",
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06
+  },
+  "notes": [
+    "Existing confirmation clips were previously inspected for pose studies; not a newly blind corpus.",
+    "No raw motion redistribution, new downloads, paid services, runtime package changes or automatic weight promotion.",
+    "Validation and confirmation gate comparisons use the strongest of linear/SLERP, Hermite/SLERP and fitted ridge for each metric.",
+    "Raw prediction quality is distinct from real-rig projection, contacts, animator quality and Cascadeur parity."
+  ]
+}

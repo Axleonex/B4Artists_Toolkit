@@ -1,0 +1,41 @@
+{
+  "schema": "b4ml-temporal-holdout-v1",
+  "created_utc": "2026-09-13T00:00:00Z",
+  "purpose": "Subject-disjoint evaluation of the frozen v4 gravity-conditioned temporal learner before any runtime promotion",
+  "source_manifest": "data_manifest.json",
+  "training_manifest": "results/training_manifest_v4.json",
+  "source_split": "test",
+  "holdout_subjects": [
+    "16",
+    "35"
+  ],
+  "excluded_test_subjects": [
+    "13"
+  ],
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "seed": 20260906,
+  "target_fps": 30,
+  "source_environment": "assumed_Y_up_direction_only",
+  "evaluation_windows_per_gap": 8,
+  "model": "results/gravity_motion_v4/selected.npz",
+  "control_model": "results/kernel_motion_v3/selected.npz",
+  "secondary_candidate_model": "results/kernel_motion_v3/motion_relative_kernel.npz",
+  "selection_receipt": "results/gravity_motion_v4/selection.json",
+  "selection_split_required": "validation",
+  "observed_development_loaded_required": false,
+  "claim_boundary": {
+    "learned_model_accepted": false,
+    "runtime_promoted": false,
+    "animator_usability_verified": false,
+    "cascadeur_parity_verified": false,
+    "full_goal_complete": false
+  }
+}

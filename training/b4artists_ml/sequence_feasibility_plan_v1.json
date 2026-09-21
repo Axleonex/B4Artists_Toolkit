@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "recorded_at": 1788939914.880388,
+  "scope": "Prospective sequence-model feasibility comparison; no runtime promotion or parity claim",
+  "source_manifest": {
+    "path": "temporal_training_manifest_v19.json",
+    "sha256": "2aafaa5d69061f0b977584a2ed0b2ae1792466aabb23801173b02384ec469711"
+  },
+  "protected_gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "control_baselines": [
+    "projected_linear",
+    "projected_hermite",
+    "projected_shape"
+  ],
+  "confirmation": "Six sealed confirmation clips remain absent; old and new development results retain exposure history. No holdout is used for this training-only feasibility stage.",
+  "representation": {
+    "joint_roles": 17,
+    "position": 3,
+    "rotation": "6D first two world-rotation matrix columns in normalized observed pelvis frame",
+    "observation_masks": "Separate position/orientation masks per joint/frame; hidden values erased before conditioning",
+    "sequence_frames_max": 128,
+    "time": "Explicit timestamps, interval duration and normalized time",
+    "rest": "51 normalized rest-position values",
+    "known_values": "Exact clamp before loss/output and each denoising step; physical rig validation still required",
+    "contacts_and_style": "Existing explicit contact projection retained; learned contact/style conditioning remains a separate unmet requirement, not inferred from unlabelled data"
+  },
+  "models": {
+    "shared_backbone": {
+      "type": "Noncausal residual temporal convolution, full sequence output",
+      "width": 128,
+      "dilations": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32
+      ],
+      "kernel": 3,
+      "activation": "SiLU",
+      "normalization": "per-frame LayerNorm",
+      "dropout": 0,
+      "parameter_cap": 1200000
+    },
+    "direct": {
+      "objective": "Full-sequence residual regression against observed-only linear baseline",
+      "forward_passes": 1
+    },
+    "diffusion": {
+      "objective": "Conditional clean-residual denoising with observed entries clamped",
+      "noise_schedule": "cosine 256 steps, offset0.008",
+      "sampling": "deterministic DDIM,20 steps, fixed seed",
+      "replication_claim": "Original project implementation of a general conditional diffusion design, not a reproduction of CondMDI"
+    }
+  },
+  "stage_a": {
+    "purpose": "Implementation, information-boundary and learning-capacity checks before corpus training",
+    "train_clip": "07_01",
+    "max_optimizer_steps_each": 80,
+    "hidden_label_access": "Training labels only, separate from request features",
+    "data_downloads": false,
+    "quality_evaluation": false,
+    "determinism": "CPU eval parity of exported NumPy weights; seeded CUDA forward/backward; exact known channels",
+    "stop_on": [
+      "nonfinite loss/gradients",
+      "hidden-data leakage",
+      "known-value drift",
+      "memory or time cap"
+    ]
+  },
+  "stage_b": {
+    "purpose": "Fit and compare on existing train partition, then run unchanged development gates and broader authored constraints",
+    "status": "NOT AUTHORIZED TO START BY THIS PLAN until stage-A implementation and frozen dataset/window/augmentation manifest are verified",
+    "seeds": [
+      20260909,
+      20260910
+    ],
+    "maximum_training_seconds_per_model": 1800,
+    "max_epochs": 60,
+    "batch_size": 16,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "selection": "Fixed final epochs, or training-only stop for nonfinite/budget. No repeated validation tuning. If both fail, report model/data gap."
+  },
+  "runtime_and_resource_budgets": {
+    "training_python": "X:/ComfyUI/ComfyUI_windows_portable/python_embeded/python.exe",
+    "environment_changes": false,
+    "downloads": false,
+    "gpu_memory_fraction": 0.25,
+    "system_memory_cap_gib": 4,
+    "stage_a_wall_seconds": 300,
+    "deadline_unix": 1789053845.0,
+    "research_cpu_threads": 4,
+    "deployment_candidate": "Export inert NPZ arrays to matching NumPy inference; no PyTorch dependency in addon",
+    "cpu_target_seconds_120frames": {
+      "direct": 2.0,
+      "diffusion": 15.0
+    },
+    "targets_are_unverified": true
+  },
+  "data_policy": {
+    "existing_CMU": "Pinned Hahne conversion and prior publisher-use evidence retained; no raw motion in addon",
+    "LAFAN1": "Not selected: publisher labels dataset CC BY-NC-ND4.0",
+    "CondMDI": "Code MIT but weights and dataset terms separate; no pretrained weights or dependent assets imported",
+    "paid_services": false
+  },
+  "full_goal_complete": false
+}

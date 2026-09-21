@@ -1,0 +1,61 @@
+{
+  "schema": "b4ml-portable-comparison-character-spec-v1",
+  "status": "source-specification",
+  "license": "GPL-2.0-or-later",
+  "authorship": "Project-owned procedural geometry; no third-party character mesh, texture, or motion data.",
+  "exchange_format": "FBX",
+  "unit_system": "METRIC",
+  "length_unit": "METERS",
+  "scale_length": 1.0,
+  "axis_forward": "-Y",
+  "axis_up": "Z",
+  "rest_pose": "neutral T pose",
+  "skeleton_convention": "Unity Humanoid",
+  "profiles": [
+    {
+      "id": "standard",
+      "label": "Standard Humanoid",
+      "variation": "standard humanoid proportions",
+      "dimensions_m": {
+        "leg": 0.91,
+        "torso": 0.61,
+        "head": 0.23,
+        "shoulder_half_width": 0.23,
+        "hip_half_width": 0.11,
+        "arm": 0.62,
+        "foot": 0.25,
+        "body_depth": 0.18
+      }
+    },
+    {
+      "id": "tall_long_limbed",
+      "label": "Tall Long-Limbed Humanoid",
+      "variation": "tall long-limbed humanoid",
+      "dimensions_m": {
+        "leg": 1.13,
+        "torso": 0.66,
+        "head": 0.24,
+        "shoulder_half_width": 0.25,
+        "hip_half_width": 0.12,
+        "arm": 0.76,
+        "foot": 0.28,
+        "body_depth": 0.17
+      }
+    },
+    {
+      "id": "short_broad",
+      "label": "Short Broad Humanoid",
+      "variation": "short broad humanoid",
+      "dimensions_m": {
+        "leg": 0.72,
+        "torso": 0.55,
+        "head": 0.22,
+        "shoulder_half_width": 0.29,
+        "hip_half_width": 0.16,
+        "arm": 0.52,
+        "foot": 0.22,
+        "body_depth": 0.23
+      }
+    }
+  ]
+}

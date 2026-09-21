@@ -1,0 +1,65 @@
+{
+  "schema": "motion-label-proposals-plan-v1",
+  "created_utc": "2026-09-09T00:00:00Z",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "purpose": "Generate compact weak contact, static, takeoff, and landing proposals from the frozen training subjects, then select a deterministic unreviewed queue for human assessment.",
+  "evidence_boundary": "Motion geometry alone can propose foot support and low-motion events. It cannot establish forces, scene geometry, hand contact, naturalness, intent, or reviewed ground truth.",
+  "sources": {
+    "builder": "7ef6c8caa1487a59277c97ddb16cc28456a85fb137840ba1cecdabdf32e6b6ac",
+    "module": "5f519a8bbf7f8512c7bc0a1dbcdf161c7c9b288b70cae312cb58232eb7709348",
+    "contract": "16283ac868644eec658fa1d1c209888ec69b71f231e961cfc8bd9d15d27f87de",
+    "split": "8e999b3ffdb3d276fa4096e6a5cb30b100cbf20bdd253bf9833af40056201115",
+    "layout": "1cd373412cb8f482f9925712a1c4c45d0159736b71ea2c4e23632496f30501aa",
+    "store_report": "9e36af7457211678c610f13f5e00dab6c4d3f13e384ed76774a1a65bf605c2fc"
+  },
+  "thresholds": {
+    "contact": {
+      "floor_percentile": 2.0,
+      "height_on_body_heights": 0.04,
+      "height_off_body_heights": 0.07,
+      "speed_on_body_heights_per_second": 0.15,
+      "speed_off_body_heights_per_second": 0.25,
+      "probability_on": 0.65,
+      "probability_off": 0.35,
+      "minimum_contact_frames": 3
+    },
+    "events": {
+      "minimum_flight_frames": 4,
+      "takeoff_upward_root_speed": 0.05,
+      "landing_downward_root_speed": 0.05
+    },
+    "static": {
+      "window_frames": 32,
+      "stride_frames": 8,
+      "maximum_root_speed_body_heights_per_second": 0.05,
+      "maximum_angular_speed_radians_per_second": 0.5,
+      "maximum_root_displacement_body_heights": 0.05
+    }
+  },
+  "review_queue": {
+    "seed": 20260909,
+    "selection": "Round-robin over duration-band and weak metadata tag strata, SHA-256 ordered within each stratum, with a per-subject-per-kind cap.",
+    "duration_band_frames": [6, 20],
+    "maximum_per_subject_per_kind": 2,
+    "quotas": {
+      "contact_left_foot": 30,
+      "contact_right_foot": 30,
+      "takeoff": 20,
+      "landing": 20,
+      "static": 30
+    },
+    "review_status": "unreviewed",
+    "reviewed_labels_allowed": false
+  },
+  "heuristic_confidence_ceiling": 0.35,
+  "training_subjects_only": true,
+  "development_pose_arrays_may_be_read": false,
+  "validation_read": false,
+  "confirmation_read": false,
+  "downloads_allowed": false,
+  "training_allowed": false,
+  "runtime_promotion_allowed": false,
+  "threshold_change_policy": "Run synthetic contracts first. After corpus execution, record insufficiency or failure explicitly; do not silently tune this plan against development poses or model outcomes.",
+  "full_goal_complete": false,
+  "deadline_epoch": 1789053845
+}

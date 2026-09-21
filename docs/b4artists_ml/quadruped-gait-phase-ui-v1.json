@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "passed": true,
+  "host": "5.2.0 Alpha",
+  "events": [
+    "Analyze Gait Phases produced four read-only support phases",
+    "Next Phase moved to the fractional interior sample with matching contact weights"
+  ],
+  "displayed_phase": "FLIGHT",
+  "displayed_frame": 5.625,
+  "source_animation_unchanged": true,
+  "accepted_contacts_unchanged": true,
+  "screenshot": "training\\b4artists_ml\\cache\\quadruped-gait-phase-ui-v1.png",
+  "screenshot_sha256": "8495fa99f7abe0ecf87bfd0236bd22866ec3fc14afbcb79112846ead06705ea3",
+  "scope": "Automated foreground panel and operator journey. Independent animator visual assessment remains unverified."
+}

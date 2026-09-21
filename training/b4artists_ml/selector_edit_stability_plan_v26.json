@@ -1,0 +1,24 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "scope": "Prospective raw-proposal sensitivity to small rigid edits of the second authored pose. Preserve frozen v26 fit and all existing quality criteria.",
+  "edit_sizes_body_reference": [
+    1e-05,
+    0.0001,
+    0.001
+  ],
+  "axes": 3,
+  "signs": [
+    -1,
+    1
+  ],
+  "windows": "First existing manifest-ordered window of each of 96 exposed development cohorts",
+  "query_times": "Nine evenly spaced points; compare seven interior outputs",
+  "cases": 1728,
+  "max_seconds": 900,
+  "deadline_unix": 1788981845.0,
+  "source_sha256": "a9539062ecc869b3b8e378a0a5c71f43ec23cec2cdd5681b5838313c84b01d7b",
+  "training_allowed": false,
+  "confirmation_allowed": false,
+  "new_quality_threshold": null,
+  "recorded_at": 1788914879.9385593
+}

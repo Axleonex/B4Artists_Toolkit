@@ -1,0 +1,146 @@
+{
+  "runtime_sha256": {
+    "b4artists_ml/__init__.py": "7bf57cfc122e4aba26d1b765d58c62362377e8c247524ad51a9a2a8e243456d8",
+    "b4artists_ml/balance.py": "e528005414d18bab6bfbbf1bd594a78d8fb5a00407e71ac2f6d3c32e10a564ab",
+    "b4artists_ml/balance_math.py": "83c142132393365272926c563c6096931ad1481be0e14db3bb6c7c65ee8ce91c",
+    "b4artists_ml/body_live.py": "24e8fd8348c88cd24e15255c749ca13a9d7dc0bf5d6dfa2c0ef07438fa75e2fb",
+    "b4artists_ml/body_model.py": "9d77456d65ed12eab15cab70d73d05e5d401006c2a4f4f4dd0a9ce6f1af06f5b",
+    "b4artists_ml/body_preview.py": "ff1b93f037e1f3bd328d4ef6e33b62cdc1d2e57507ac528c357360fec53599cf",
+    "b4artists_ml/body_proxy.py": "e50abfa08da7ef9f97868b63b3dd036d87230eb45d4b7bf44ab8705cc7bb43cb",
+    "b4artists_ml/body_solver.py": "f2a07c201883b2e1e83b5cff2e4da440cfe30b30d0c7d600315058369da6ccb1",
+    "b4artists_ml/contact_detection.py": "c5de9dcc4d6135d5f547307c20f51c9080700fbc57d759b46585ac763a90b134",
+    "b4artists_ml/contact_math.py": "3aca17ab18e2dde3a2ca509b26093b8f6bde989f6cc120442be50020ed619086",
+    "b4artists_ml/contacts.py": "9d27aa341d1bd08093a4483713899bf37976bf75eebfeefa0de86a7b37d0127a",
+    "b4artists_ml/curve_smoothing.py": "8cddb19c0ecf42fe38aad8dc1bbacedeb53e74a9007ef3b23a382e104f8be357",
+    "b4artists_ml/flight.py": "301fff30460b13c5b91a1ac01ba97c601020f137f10919cc0165bcd11ca2bb1b",
+    "b4artists_ml/flight_math.py": "5687ba61d974833dbf6b9d25107ae1a839df37534564f5933d2a30a623aab07b",
+    "b4artists_ml/joint_frames.py": "565056e3b9d502e1ef5c0e1a14f2062c6d838f0d709f91dc7f08738fa444f55a",
+    "b4artists_ml/joint_limits.py": "b2003608bbfda59626c7062c42d31d37a582c6392b52181360035ff3612802a2",
+    "b4artists_ml/learned.py": "3ecc597e78ca4f39a670d29e32cc3cc08bed5370ba94d25408c44ebd1d81e927",
+    "b4artists_ml/math_core.py": "232b09ecdc0bff3b008a4b1a796cd61ed68d632ce9d13deaf432e577deaa7339",
+    "b4artists_ml/motion_layer.py": "e9f24ce17bf33b7a5e9efd71ddd314d3ca17128b9f67bef771d1afd09e4391a9",
+    "b4artists_ml/native_flight.py": "69c9df6abc33f7ad124647b2ca350aa4af4a216be01eb6fa4951000809a23464",
+    "b4artists_ml/posing.py": "a9f88794937f60fa66ba5e662346f8f04982b1d422bbfba7d49e6f33c9cfc83e",
+    "b4artists_ml/record_cache.py": "596c76162a9b43a487a1570194ca5005c7d55170c8d9a1f5605c4f841258b887",
+    "b4artists_ml/rig_state.py": "8f0a6c3d47eb3c32ff4009987c9efaa98c1ad3e4e15c204b36b555d03a074263",
+    "b4artists_ml/rigs.py": "89fdefcc5b4a4bdfbd14d3d9bb3b70c5fee5c392ef70e22a689f8552ace73fdc",
+    "b4artists_ml/support.py": "0d9bbaf977caeec867d1af6f6ec9d69fec746b1e54ec4aa907578d9c11988312",
+    "b4artists_ml/support_math.py": "0947f49074013acd1396311f48f2500d134639fb45cd77cf716062a64f52eace",
+    "b4artists_ml/temporal_generation.py": "bec32f8af4db7de88b9496cfca3b29bd894f515dcd2f964eaa0cebc218d1027e",
+    "b4artists_ml/temporal_math.py": "45086965f840756a15c7ce60beb6c82b980897b39d78de1e227e64922764770b",
+    "b4artists_ml/temporal_observations.py": "13b28198647dcdf69393c6bd12522d4989f94129506a856e8c5dc179c674d5e7",
+    "b4artists_ml/temporal_preview.py": "e18232da626a8de4768c50d95a4d472eacbe4de4824dbb00d7c0fb538eb8d179",
+    "b4artists_ml/temporal_private.py": "277b51c35186e2762b1bb5d8184f04d447ec1a661fc105ba6a27abcbd564ae9f",
+    "b4artists_ml/ui.py": "bec57a0c62a38422fdfbfa0bdba743dd2e5599995590001bba0bc1a14aaa9ea5",
+    "b4artists_ml/workflow.py": "06d884909fbde725fdfc5e6e9ec4ab45dbf7c82c61ea4ae6b6c14cbbf7da4b2d"
+  },
+  "passed": true,
+  "match_acceleration": true,
+  "events": [
+    "Escape cancelled native generation and restored its input",
+    "Native modal flight and both COM transitions completed with visible character selection",
+    "Undo and Redo restored collection ownership and native drivers",
+    "Keep and Restore Source archived the complete editable result",
+    "Saved result operator reopened an independent preview; Discard restored the source"
+  ],
+  "metrics": {
+    "backend": "native_instance_com_v1",
+    "intervals": [
+      {
+        "start": 4.0,
+        "end": 8.0,
+        "strength": 1.0,
+        "duration_seconds": 0.16666666666666666,
+        "ballistic_entry_velocity": [
+          0.003363751173018237,
+          -0.21523782134056102,
+          -0.5144706960519153
+        ],
+        "ballistic_exit_velocity": [
+          0.003363751173018237,
+          -0.21523782134056102,
+          -2.1494707659880317
+        ],
+        "acceleration_error_p95": 0.01987149395250193
+      }
+    ],
+    "transitions": [
+      {
+        "start": 1.0,
+        "end": 4.0,
+        "landing": false,
+        "match_acceleration": true,
+        "before_jump": 0.5577346900317274,
+        "after_jump": 0.00021890214365273387,
+        "normalized_jump": 0.00019706913345529902,
+        "before_acceleration_jump": 9.650519064544525,
+        "after_acceleration_jump": 0.014251126895996393,
+        "normalized_acceleration_jump": 0.012829738353822829,
+        "max_com_error": 6.858131200716199e-08,
+        "outer_speed_correction": 0.0001918386182764219,
+        "outer_acceleration_correction": 0.020131285453325383,
+        "velocity_correction": [
+          0.00345483183837203,
+          -0.2151779973505299,
+          -0.5145429797966065
+        ],
+        "acceleration_correction": [
+          -0.037095337021128216,
+          -0.010043563889041707,
+          -9.6504425431134
+        ],
+        "velocity_sample_step_frames": 0.03125,
+        "acceleration_sample_step_frames": 0.125
+      },
+      {
+        "start": 8.0,
+        "end": 11.0,
+        "landing": true,
+        "match_acceleration": true,
+        "before_jump": 2.160633515317758,
+        "after_jump": 0.0016554486383332572,
+        "normalized_jump": 0.001490336381326777,
+        "before_acceleration_jump": 9.906390409918778,
+        "after_acceleration_jump": 0.020239893658432987,
+        "normalized_acceleration_jump": 0.018221193442593205,
+        "max_com_error": 7.406682266040757e-08,
+        "outer_speed_correction": 0.0007643154139555066,
+        "outer_acceleration_correction": 0.026802326871847453,
+        "velocity_correction": [
+          0.0045136249072292856,
+          -0.21506337761885064,
+          -2.1498987321061755
+        ],
+        "acceleration_correction": [
+          0.07537307746133592,
+          0.04379631039500964,
+          -9.906006851205007
+        ],
+        "velocity_sample_step_frames": 0.03125,
+        "acceleration_sample_step_frames": 0.125
+      }
+    ],
+    "max_before": 0.045185570394513104,
+    "max_after": 1.0093026175133349e-06,
+    "relative_basis_error": 0.0,
+    "rigid_translation_error": 1.1561596197566137e-06,
+    "elapsed_ms": 1975.6154999922728,
+    "gravity": [
+      0.0,
+      0.0,
+      -9.8100004196167
+    ],
+    "fps": 24,
+    "fps_base": 1.0,
+    "priority_poses": 4,
+    "fit_interval_frames": 0.5,
+    "units": "position errors normalized by trunk length; acceleration in world units/s^2"
+  },
+  "screenshot": "training\\b4artists_ml\\cache\\native-ui-momentum-c2-package-v1.png",
+  "step_count": 47,
+  "step_p95_ms": 54.42302000301424,
+  "step_max_ms": 70.57179999537766,
+  "elapsed_seconds": 3.2413136000104714,
+  "active_after_source_restore": "RIG-Rigify fixture",
+  "scope": "Automated real-window operators and events; independent animator usability and visual motion assessment remain unverified."
+}

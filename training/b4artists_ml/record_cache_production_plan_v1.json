@@ -1,0 +1,43 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "scope": [
+    "b4artists_ml",
+    "tests",
+    "training/b4artists_ml",
+    "docs/b4artists_ml",
+    "releases"
+  ],
+  "cache": {
+    "max_entries": 4,
+    "max_payload_characters": 524288,
+    "max_blob_bytes": 1048576,
+    "max_retained_key_blob_bytes": 4194304,
+    "source": "Locally encoded primitive JSON only; no external binary"
+  },
+  "invariants": [
+    "Exact serialized input key; fresh mutable tree on every read",
+    "All session/helper/rest/ownership validation remains per-read",
+    "Decode/schema errors never cached; over-limit inputs bypass cache",
+    "Bound cache memory; clear on successful preview finish, reset, save and addon unregister",
+    "Original animation/pose/keys/modes and previous verified preview remain recoverable"
+  ],
+  "performance_gates": {
+    "default_rigify_idle_p95_ratio_max": 0.85,
+    "default_rigify_total_work_ratio_max": 1.05,
+    "default_rigify_max_tick_ratio_max": 1.1,
+    "all_five_profiles_exact_pose_signature_metrics": true
+  },
+  "validation": [
+    "Pure malformed input,mutation,eviction,oversize and measured allocation checks",
+    "Native lifecycle guards and all prior331cases plus newcache cases",
+    "Fixed five-profile counterbalanced comparison against exact0.17.4ZIP; no concurrent hosts during timing",
+    "New exact local package and four offline package cases only after all gates pass"
+  ],
+  "limits": {
+    "max_goalposts": 50,
+    "remaining_evaluations": 8,
+    "deadline_unix": 1788981845.0
+  },
+  "publication": false,
+  "recorded_at": 1788909993.6719851
+}

@@ -1,0 +1,39 @@
+{
+  "schema": "b4ml-capsule-exact-archive-binding-v1",
+  "observed_at": "2026-09-14T16:07:03Z",
+  "archive": {
+    "label": "b4artists_ml_v0.37.2-dev.zip",
+    "path": "X:\\Scripting Attempts\\B4Artists_Tools\\B4Artists_Anim_Tools_github\\releases\\b4artists_ml_v0.37.2-dev.zip",
+    "sha256": "2fad2e635300c337023f0a593f20bc7c8ff367e5c1ac323c74fa33b29f93253d",
+    "members": 54,
+    "integrity": "PASS"
+  },
+  "runtime": {
+    "application": "Bforartists",
+    "version": "5.2.0 Alpha",
+    "blender_core": "5.2.0 Alpha",
+    "build_hash": "dd23ab17120d"
+  },
+  "import_provenance": {
+    "package_selector": "X:\\Scripting Attempts\\B4Artists_Tools\\B4Artists_Anim_Tools_github\\releases\\b4artists_ml_v0.37.2-dev.zip",
+    "secondary_motion_file": "X:\\Scripting Attempts\\B4Artists_Tools\\B4Artists_Anim_Tools_github\\releases\\b4artists_ml_v0.37.2-dev.zip\\b4artists_ml\\secondary_motion.py",
+    "capsule_signature": [
+      "state",
+      "scene",
+      "rig",
+      "start",
+      "end",
+      "radius"
+    ]
+  },
+  "result": {
+    "tests": 2,
+    "passed": 2,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "was_successful": true
+  },
+  "elapsed_seconds": 4.823752899999818,
+  "claim_boundary": "Frozen static capsule binding only; current-worktree APIs, learned temporal quality, independent animator usability, and Cascadeur comparison are not covered."
+}

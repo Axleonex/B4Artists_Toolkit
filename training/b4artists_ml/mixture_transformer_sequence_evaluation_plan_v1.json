@@ -1,0 +1,53 @@
+{
+  "schema": "mixture-transformer-sequence-evaluation-v1",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "decision": "Apply every unchanged development gate to both frozen mixture-Transformer seeds. Compare with protected procedural controls, the paired pure Transformer and the strongest prior tail-risk selector. If either seed fails, trigger the prospectively declared family stop and keep confirmation sealed.",
+  "training_plan": "mixture_transformer_sequence_fit_plan_v1.json",
+  "training_plan_sha256": "62b4ea76a048d35d93126362722863d422ea96def02056c1466ca41a02dbc4a4",
+  "models": [
+    {
+      "seed": 20260909,
+      "report_sha256": "45feee7f8d987f683c326580f3be8dfce3ad181265b71dea6534c630c9a60668",
+      "weights_sha256": "b0912dd88b71c243a9ceb03c6bdd0d5f2af232b027517feadcc20a3104f1f2c3"
+    },
+    {
+      "seed": 20260910,
+      "report_sha256": "941a4b6976aea2da57e0cb3e8759a4c322c34ab50fa74eef54eeaa692240e6cb",
+      "weights_sha256": "cec10c2797507562d75093ad5e63263e624b9d20b934a750d6c47f034729401d"
+    }
+  ],
+  "reference_protocol": "expanded_trajectory_protocol_v19.json",
+  "reference_protocol_sha256": "400e572c710af4f7150f9c15115d244546def0f8699cdfb96f7bf47a2e900990",
+  "reference_report": "results/expanded_trajectory_v19/report.json",
+  "reference_report_sha256": "97de5d7f4e13ac70dbe17119b1eb49a8e30a3640e5a3eebff9fe63e3d05688f5",
+  "prior_transformer_report": "results/transformer-sequence-development-v1/report.json",
+  "prior_transformer_report_sha256": "487070937c35456d7fab5d37fb92b39d25eb442af2927ad3a34ed60072137e5f",
+  "prior_selector_report": "results/tail_risk_selector_v28/report.json",
+  "prior_selector_report_sha256": "30e21afc33fd1baca024eaba7cdb1adb556cfac1932a236322553f7bd8235884",
+  "partitions": {
+    "old_validation": 480,
+    "new_validation": 288,
+    "combined": 768
+  },
+  "controls": ["projected_linear", "projected_hermite", "projected_shape"],
+  "chunk_size": 16,
+  "gates": "Unchanged from expanded_trajectory_protocol_v19.json; both seeds and all old/new/combined partitions must pass.",
+  "confirmation": "Sealed unless both seeds pass every development gate.",
+  "hard_stop_on_failure": true,
+  "sources": {
+    "evaluate_mixture_transformer_sequence_v1.py": "fc484be4c804fbdf92d8baeaffa9f46b3bbca61d1c91b6871d2d4053e4ff5e47",
+    "sequence_mixture_transformer_provider_v1.py": "56db8fa29e7501018908f88579b2f6aa20fe67d75131c875814b37f15e709666",
+    "sequence_reference_bank_v1.py": "89f976688e1d53d09f23fb56a4ed9dbc8495e2999566a2ef7fe6472180963103",
+    "sequence_mixture_transformer_numpy_v1.py": "80da3bb2b27e0ffbd7a02d76e029bd716a61e5dc96def749faf28bfbc219dabc",
+    "kinematic_trajectory_v20.py": "b6c02153229e44e88a9591380ca97360fb7234745690395ce712d5cde580af26",
+    "motion_coverage.py": "f08389e0fd876772ceb3829475f8d5065aa1f61ec9c4b6a3cfa64d8f73419b1b",
+    "semantic_projection.py": "ecbcd9633e5794e9284186c2ac81198669a04d473a9eca0126cb4997a2061d92",
+    "sequence_model.py": "291b98be4291d38332833e7314e74128a8b9801605094133b41baa770c7e2690",
+    "temporal_training_manifest_v19.json": "2aafaa5d69061f0b977584a2ed0b2ae1792466aabb23801173b02384ec469711"
+  },
+  "deadline_unix": 1789053845.0,
+  "validation_read_before_freeze": false,
+  "confirmation_read": false,
+  "runtime_promoted": false,
+  "full_goal_complete": false
+}

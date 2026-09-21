@@ -1,0 +1,102 @@
+{
+  "seed": 20260906,
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "target_fps": 30,
+  "training_windows_per_gap": 16,
+  "evaluation_windows_per_gap": 8,
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "schema": 14,
+  "observation_schema": "b4ml-semantic-observations-v1",
+  "input_features": 667,
+  "target_features": 153,
+  "scope": "Learned nonlinear temporal features with verified trajectory-space supervision",
+  "calibration": "Artificial frame zero in the existing corpus only; excluded from motion observations and targets",
+  "source_manifests": {
+    "results/training_manifest_v4.json": "9973a7f2b8935c33cb8d9b819d46658485bab931fdaabb59b6434ff0e3d78fe8",
+    "temporal_expansion_manifest_v8.json": "03a3055989effc67259e41e0e749480d2e94fd182656a44c8ebafa1d8e6ffef8"
+  },
+  "partitions": [
+    "train",
+    "validation"
+  ],
+  "holdouts": "Only train/validation used in initial selection and reproduction; earlier confirmation is already observed and must never be labeled fresh",
+  "label_policy": "Only four known poses (or two without context) enter observations; full targets are separate trainer labels",
+  "physics_policy": "Collapsed semantic edges are not asserted to have constant length; raw baselines do not qualify actual rig physics",
+  "next": "Evaluate selected compatible predictions on actual-rig editable actions; failed gates forbid promotion",
+  "baselines": [
+    "projected_linear",
+    "projected_hermite"
+  ],
+  "projection": {
+    "steps": 48,
+    "learning_rate": 0.02,
+    "rotation_weight": 0.5,
+    "regularization": 1e-05
+  },
+  "experiments": [
+    {
+      "hidden": 64,
+      "epochs": 40,
+      "batch_size": 64,
+      "learning_rate": 0.001,
+      "regularization": 1e-05,
+      "velocity_weight": 0.01,
+      "acceleration_weight": 0.0001
+    },
+    {
+      "hidden": 64,
+      "epochs": 40,
+      "batch_size": 64,
+      "learning_rate": 0.001,
+      "regularization": 0.0001,
+      "velocity_weight": 0.01,
+      "acceleration_weight": 0.0001
+    },
+    {
+      "hidden": 128,
+      "epochs": 40,
+      "batch_size": 64,
+      "learning_rate": 0.001,
+      "regularization": 1e-05,
+      "velocity_weight": 0.01,
+      "acceleration_weight": 0.0001
+    },
+    {
+      "hidden": 128,
+      "epochs": 40,
+      "batch_size": 64,
+      "learning_rate": 0.001,
+      "regularization": 0.0001,
+      "velocity_weight": 0.01,
+      "acceleration_weight": 0.0001
+    }
+  ],
+  "selection": "Four training-only catalog-prefix folds, excluding complete groups. Minimum pooled out-of-fold raw position + 0.1*rotation selects one learned specification; fit once on all training windows and freeze model hash before loading validation. Compare this single candidate with identical projected baselines; no validation-driven retuning.",
+  "reproduction": "Repeat all sixteen internal neural fits, final fit and fixed validation comparison; exact serialized model bytes and metrics.",
+  "runtime": "Local NumPy float64 training and inference; no new assets, subscriptions, APIs or downloads",
+  "projection_method": "Fixed 48-step projected Adam with eight bounded quarter-step backtracking attempts; exact root, terminal orientations and known priorities",
+  "folds": 4,
+  "fold_group": "CMU catalog prefix before underscore, not asserted to be independent actor identity",
+  "objective": "Half weighted mean trajectory/rotation6 and finite-difference errors divided by 153 coordinates, plus half network weight L2 penalty. Known-only baseline and priority-zero coefficient envelope unchanged.",
+  "v12_protocol_sha256": "892f327ff9946a0d5806f0ecc9441d5f3d3e1fbca58c4278515910907057c397",
+  "training_only_diagnostics": "Retain epoch objectives and learned hidden-feature changes. Finite-difference gradients and zero-regularization feature-learning test precede corpus fitting. No architecture, epoch or regularization retuning after validation.",
+  "architecture": "514 motion features standardized from each training fold and clipped to [-8,8]; learned tanh hidden layer 64 or 128 units; 612 coefficient outputs with zero initial readout. Existing local context_network initializer/forward/Adam; float64 CPU, fixed 40 epochs, minibatches normalized by their cohort weights, unit gradient clipping."
+}

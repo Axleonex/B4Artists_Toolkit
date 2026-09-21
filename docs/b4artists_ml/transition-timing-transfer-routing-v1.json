@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "task": "Transition Timing Transfer v1",
+  "harness": "codex",
+  "profile": "workspace / ChatGPT subscription",
+  "activation": {
+    "state": "production",
+    "basis": "owner_authorized_not_soak_qualified",
+    "authorization_expires_at": "2026-10-11T09:25:49.455367Z",
+    "declared_execution_start": 2,
+    "declared_adaptive_ceiling": 8,
+    "reviewer_ceilings": {"S0": 0, "S1": 1, "S2": 2, "S3": 4, "S4": 4},
+    "career_enabled": true,
+    "temperament_enabled": true,
+    "shadow_countercheck_enabled": true,
+    "live_authority_validated": false
+  },
+  "router": {
+    "entrypoint": "G:/LapArt/hermes-agent-self-evolution/scripts/prime-code-execute.py",
+    "attempted_for_assignment": true,
+    "actual_lane_emitted": false,
+    "failure": "uv trampoline failed to spawn Python child process; entity not found",
+    "failed_binding": "The canonical evidence venv pyvenv.cfg points to an absent former-user uv Python home"
+  },
+  "outcome": "fallback",
+  "classification": "DEGRADED_NATIVE_CONTINUE",
+  "actual_lane": "DEGRADED_NATIVE_CONTINUE",
+  "actual_lane_reason": "The required router emitted no T0-T4 lane. Admission was inconclusive, so the static-native infrastructure fallback continued with one parent writer, deterministic verification, and serial advisory review.",
+  "work_packets": [
+    {
+      "owner": "parent_integrator",
+      "writer": true,
+      "files": [
+        "b4artists_ml/workflow.py",
+        "b4artists_ml/ui.py",
+        "tests/test_b4artists_ml_transition_timing_transfer_v1.py",
+        "training/b4artists_ml/check_transition_timing_transfer_ui_v1.py",
+        "training/b4artists_ml/run_transition_timing_transfer_affected_v1.py",
+        "training/b4artists_ml/finalize_transition_timing_transfer_v1.py",
+        "docs/b4artists_ml/TRANSITION-TIMING-TRANSFER-v1.md"
+      ],
+      "completion": "Rig-local timing clipboard, exact global/override snapshot, destination-only paste, native Undo/Redo, source preservation, frozen regression, and documentation"
+    },
+    {
+      "owner": "target_reset_review",
+      "writer": false,
+      "files": [],
+      "completion": "Serial read-only review found one missing Whole-body paste guard; it was fixed and final review returned PASS"
+    }
+  ],
+  "dependency_decision": "Clipboard schema, timing validation, anchor mutation, panel controls, Undo/Redo, and evidence hashes are coupled. They remained under one parent writer; no adaptive writer was admitted.",
+  "adaptive_workers_admitted": 0,
+  "writer_count": 1,
+  "reviewer": {
+    "requested_level": "S0-S4 adaptive scheduler",
+    "authority_validated": false,
+    "fallback": "serial_read_only_advisory",
+    "verdict": "PASS",
+    "initial_actionable_findings": 1,
+    "remaining_actionable_findings": 0
+  },
+  "reviewer_verdict": "PASS",
+  "production_changes": {
+    "activation_changed": false,
+    "providers_changed": false,
+    "defaults_changed": false,
+    "services_restarted": false,
+    "packaged": false,
+    "committed": false,
+    "merged": false,
+    "pushed": false
+  }
+}

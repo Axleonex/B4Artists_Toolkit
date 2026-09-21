@@ -1,0 +1,152 @@
+{
+  "schema": "b4ml-cascadeur-matched-comparison-protocol-v1",
+  "frozen_date": "2026-09-10",
+  "status": "prospective-not-run",
+  "b4ml": {
+    "version": "0.20.2",
+    "vertical_slice": "training/b4artists_ml/results/procedural-vertical-slice-v12/aggregate.json",
+    "vertical_slice_sha256": "25e4284d5490263014975d6e4885fc627a5cb9d426e640143228645b954edb95",
+    "protocol_sha256": "18a1d76a3836aa852d00a6c0bf904ea1a837b763a9ecae6bb6c847913aa311e4"
+  },
+  "cascadeur": {
+    "version_must_be_recorded": true,
+    "edition_must_be_recorded": true,
+    "entitlement_must_be_recorded": true,
+    "settings_must_be_exported": true,
+    "standard_rig_required": true,
+    "official_sources_retrieved": "2026-09-10",
+    "official_sources": [
+      "https://cascadeur.com/help/tools/animation_tools/autoposing",
+      "https://cascadeur.com/help/category/278",
+      "https://cascadeur.com/help/tools/physics_tools/autophysics",
+      "https://cascadeur.com/help/tools/physics_tools/fulcrum_points",
+      "https://cascadeur.com/help/animation_pipeline"
+    ]
+  },
+  "portable_characters": {
+    "minimum": 3,
+    "required_variation": [
+      "standard humanoid proportions",
+      "tall long-limbed humanoid",
+      "short broad humanoid"
+    ],
+    "same_mesh_and_skeleton_per_matched_pair": true,
+    "asset_hashes_required_before_run": true,
+    "neutral_exchange_format": "FBX",
+    "unit_scale_and_rest_pose_must_match": true,
+    "current_status": "assets not frozen"
+  },
+  "tasks": [
+    "reach",
+    "crouch",
+    "walk",
+    "run",
+    "jump",
+    "land",
+    "turn",
+    "difficult_transition"
+  ],
+  "common_scene": {
+    "fps": 30,
+    "frame_start": 1,
+    "frame_end": 25,
+    "same_authored_priority_poses": true,
+    "same_priority_times": true,
+    "same_world_task_basis": true,
+    "same_ground_and_contact_targets": true,
+    "input_pose_matrix_tolerance": 0.00001,
+    "conversion_time_recorded_separately": true
+  },
+  "workflows": {
+    "sparse_pose": {
+      "b4ml": "Start Whole-Body Pose; move equivalent pelvis, head, hand and foot targets; preserve explicit pins; solve and keep anchor",
+      "cascadeur": "Enable AutoPosing on the standard rig; activate and move equivalent controllers; preserve intended active/fixed controls; key the pose"
+    },
+    "inbetween": {
+      "b4ml": "Generate Whole-body Motion from the same priority poses and timing; accepted learned provider required for learned comparison",
+      "cascadeur": "Apply AI interpolation/Inbetweening to the same interval, priority poses, timing, track scope and recorded style setting"
+    },
+    "contacts": {
+      "b4ml": "Review or author equivalent contact intervals, then apply geometric contact correction",
+      "cascadeur": "Record Inbetweening foot-cleaning and any Fulcrum Motion Cleaning settings; use matching intended fulcrum intervals"
+    },
+    "physics": {
+      "b4ml": "Apply native COM flight/contact refinement with recorded priorities and settings",
+      "cascadeur": "Enable AutoPhysics, use the same priority frames and control preservation intent, then Snap to Physics"
+    },
+    "publication": {
+      "b4ml": "Keep an editable candidate and verify Restore Source Animation after save/reload",
+      "cascadeur": "Save the generated result and export a review FBX; record any unbaking or fixed-interpolation step used"
+    }
+  },
+  "automated_metrics": [
+    "priority_pose_matrix_error",
+    "pinned_control_position_error_body_fraction",
+    "contact_drift_limb_fraction",
+    "penetration_body_fraction",
+    "limb_stretch_fraction",
+    "rotation_velocity_jump_rad_s",
+    "center_of_mass_flight_error_body_fraction",
+    "cold_elapsed_seconds",
+    "warm_elapsed_seconds",
+    "longest_interactive_pause_ms",
+    "peak_working_set_bytes"
+  ],
+  "human_metrics": [
+    "naturalness_1_to_5",
+    "contact_stability_1_to_5",
+    "transition_continuity_1_to_5",
+    "intent_preservation_1_to_5",
+    "production_acceptable",
+    "actual_corrective_edits",
+    "actual_interactions",
+    "active_work_seconds",
+    "blind_overall_preference",
+    "visible_failure_tags"
+  ],
+  "human_protocol": {
+    "independent_animators_minimum": 3,
+    "animators_with_five_or_more_years_minimum": 1,
+    "matched_cases_per_animator": 24,
+    "method_labels_hidden": true,
+    "pair_order_balanced": true,
+    "same_camera_mesh_timing_and_playback": true,
+    "ratings_locked_before_identity_reveal": true,
+    "hands_on_sessions_counterbalanced": true
+  },
+  "runs": {
+    "cold_runs_per_case": 1,
+    "warm_runs_per_case": 3,
+    "failed_runs_retained": true,
+    "raw_event_log_required": true,
+    "system_hardware_and_background_load_recorded": true
+  },
+  "claim_gates": {
+    "parity": {
+      "all_24_matched_cases_complete": true,
+      "all_source_and_output_hashes_present": true,
+      "no_median_human_dimension_deficit_greater_than": 0.25,
+      "no_automated_safety_threshold_weakened": true,
+      "no_unreported_failed_or_excluded_case": true
+    },
+    "surpasses": {
+      "parity_gate_required": true,
+      "minimum_named_human_quality_dimensions_with_median_gain_of_0_25": 2,
+      "minimum_efficiency_metrics_with_median_reduction_percent": 2,
+      "required_efficiency_reduction_percent": 20,
+      "minimum_task_families_supporting_each_claim": 6,
+      "remaining_regressions_and_gaps_reported": true
+    }
+  },
+  "blocked_comparisons": [
+    "B4ML has no accepted learned temporal runtime, so learned Inbetweening parity cannot be run",
+    "three portable proportion-varied character assets are not frozen",
+    "no independent animator panel has completed matched tasks",
+    "Cascadeur version, edition, entitlement and exact settings are not recorded",
+    "quadruped comparison is outside this humanoid protocol"
+  ],
+  "results": null,
+  "parity_verified": false,
+  "surpasses_verified": false,
+  "full_goal_complete": false
+}

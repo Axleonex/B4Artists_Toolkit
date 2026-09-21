@@ -1,0 +1,173 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "native_goal_status": "active_verified_2026-09-09",
+  "state_path": "docs/b4artists_ml/goalposts/01a073fe-c240-70c0-b5cd-fe9653aac60e-visible-state-package-v1.json",
+  "contract_hash": "fcb0b2db69e441b412f750cc1f7f2bf70197fa5f241be48efedb884c2551f145",
+  "input_fingerprint": "56a9bf2705d3ec27006d3c43e229b3d2cf4d2beb009aed9499d9cd9255fbfdd9",
+  "round": 66,
+  "max_goalposts": 100,
+  "remaining_evaluations": 34,
+  "deadline_unix": 1789053845.0,
+  "decision": "iterate",
+  "stagnant_rounds": 37,
+  "full_goal_complete": false,
+  "active_jobs": [],
+  "current_turn_classification": "Progress: completed414native regression checks, integrated serial benchmark and exact0.19.2offline archive qualification.",
+  "blocked_audit": {
+    "consecutive_goal_turns": 0,
+    "condition": null
+  },
+  "next_controller_monotonic_start": 384157.1364809,
+  "evidence": "docs/b4artists_ml/goalposts/visible-state-package-evidence-v1.json",
+  "artifact": {
+    "path": "releases/b4artists_ml_v0.19.2.zip",
+    "sha256": "4ab4f9da9f209bd1ae0275c47443212f5ed44a6a0be41114dca9729005bcef85",
+    "files": 42,
+    "bytes": 271524,
+    "matches_current_source": true,
+    "experimental": true,
+    "ready_for_local_testing": true,
+    "note": "414native cases before metadata-only version bump;13exact-archive offline workflows; full goal incomplete."
+  },
+  "next_safe_actions": [
+    "Source-comparison milestone complete. Do not rerun qualified checks without a relevant change. Archive is local only.",
+    "Return priority to full humanoid motion quality and animator workflows. Nearby model fitting remains paused; use a new bounded hypothesis grounded in frozen failures before any new fit.",
+    "Read PUBLISHED-MODEL-SCREEN-v1.md: inspected pretrained routes are not verified freely distributable replacements. Do not claim exhaustive rejection or automatically start another nearby fit. Explicit contact/intent, full physics/refinement and human/Cascadeur comparison remain open.",
+    "Preserve same goal,100evaluation limit,deadline1789053845,unopened confirmation clips and publication identity/approval rules."
+  ],
+  "work_accounting": "Parent interval recorded once; no child runtimes added.",
+  "publication": {
+    "head": "3153a8946fd8ef1415d9901c30a56bcc6783c49d axlbot <axleonex@gmail.com> axlbot <axleonex@gmail.com>",
+    "tracked_diff_empty": true,
+    "index_empty": true,
+    "committed": false,
+    "pushed": false,
+    "installed": false
+  },
+  "pending_human_input": "Previously requested independent animator assessment remains unanswered; do not repeat or fabricate.",
+  "resumed_run_start_unix": 1788848277.2365775,
+  "resumed_run_time_cap_hours": 15,
+  "resume_authorized": true,
+  "recorded_at": 1788953730.960253,
+  "extension_start_unix": 1788909845.0,
+  "extension_hours": 20,
+  "prior_deadline_unix": 1788981845.0,
+  "previous_turn_classification": "Progress: prepared gated archive builder and offline validation; confirmed same regression process continued through interruption.",
+  "prepared_validation": {
+    "moving_cases": 16,
+    "stationary_cases": 16,
+    "journey_tests": 15,
+    "stability_cases": 1728,
+    "stability_synthetic_checks": 22,
+    "trained_checks_executed": false,
+    "preflight_receipt": "training/b4artists_ml/results/projected-selector-validation-preflight-v26/receipt.json",
+    "partial_reproduction": "training/b4artists_ml/results/projected-selector-validation-preflight-v26/partial-reproduction.json",
+    "review": "docs/b4artists_ml/goalposts/projected-selector-validation-review-v26.json"
+  },
+  "pending_document_revisions": {},
+  "latest_live_observation": {
+    "all_jobs_terminal": true,
+    "regression_cases": 414,
+    "offline_cases": 13,
+    "native_exit_code": 3221225477
+  },
+  "cooperative_research": {
+    "evidence": "training/b4artists_ml/results/projected-selector-host-verification-v26.json",
+    "native_cases": 72,
+    "trained_provider_tested": true,
+    "ui_integrated": false,
+    "full_responsiveness": false
+  },
+  "pending_source_revisions": {},
+  "pending_evaluation": false,
+  "attempted_round": 46,
+  "evaluation_infrastructure_issue": "training/b4artists_ml/results/temporal-observer-goalpost-attempt-v1/receipt.json",
+  "assessment_receipts_unavailable": true,
+  "post_goalpost_updates": {
+    "full_reproduction_verified": true,
+    "proof": "training/b4artists_ml/results/projected-selector-reproduction-v26.json",
+    "sha256": "0e0d36dbfeb0ed79004fae881e5f8f2d079a1905dea7511cda2aa53b4af130f3",
+    "all_sessions_terminal": [
+      23370,
+      87876,
+      45704,
+      79437,
+      52994
+    ],
+    "quality_qualified": false,
+    "recorded_at": 1788922806.275251
+  },
+  "reason": "Explicit evaluation extension and focused humanoid milestone",
+  "shared_state_status": "active",
+  "final_delivery_audit": {
+    "path": "training/b4artists_ml/results/goal-limit-delivery-audit-v1.json",
+    "sha256": "898295a7d69a39d9555c93fd9e1647c8cde5af54a267d204773e49c6ef7c65a5",
+    "handoff": "docs/b4artists_ml/EVALUATION-LIMIT-HANDOFF.md",
+    "handoff_sha256": "8b91f547cdd98ed14e60c7d78c31c67d2947aa51525a96f552dec2e16bac05b2",
+    "artifact_count": 2761,
+    "all_tracked_jobs_terminal": true
+  },
+  "work_sequence": {
+    "name": "Usable humanoid authored-pose/context/contact workflow",
+    "rigs": [
+      "BoneForge humanoid",
+      "Rigify basic human",
+      "Rigify default human"
+    ],
+    "journey": [
+      "Author multiple priority poses",
+      "Generate contextual inbetweens",
+      "Set explicit foot contacts",
+      "Inspect editable preview",
+      "Keep or Discard",
+      "Undo/redo and save/reload preserve original animation"
+    ],
+    "acceptance": [
+      "Behavioral rig and source-preservation checks pass without reducing existing tolerances",
+      "Representative native review scenes expose pose/contact/timing artifacts for animator assessment",
+      "Workflow latency and correction effort measured; no blanket responsiveness claim while original limits fail",
+      "Learned motion remains honestly unqualified until original model gates and actual workflow acceptance pass"
+    ],
+    "deferred": [
+      "Quadrupeds",
+      "Optional Cascadeur connector",
+      "Advanced angular momentum",
+      "Secondary motion",
+      "Broad rig compatibility beyond the three initial humanoid families"
+    ],
+    "paused": [
+      "Repeated selector-fitting variants"
+    ],
+    "full_goal_endpoint_unchanged": true
+  },
+  "authored_context": {
+    "evidence": "docs/b4artists_ml/goalposts/authored-context-evidence-v1.json",
+    "controlled_scenes_passed": 3,
+    "numerical_tests": 8,
+    "lifecycle_tests": 8,
+    "reload_scenes": 3,
+    "ui_integrated": false,
+    "learned": false
+  },
+  "last_evaluated_state": "docs/b4artists_ml/goalposts/01a073fe-c240-70c0-b5cd-fe9653aac60e-visible-state-package-v1.json",
+  "limit_extensions": [
+    {
+      "reason": "Explicit user extension:100total evaluations and20additional hours beyond the existing deadline. Same goal, endpoint, history, floors, evidence, cadence and stagnation policy; no evaluation consumed.",
+      "authorization": "Set evaluation limit to 100, add 20 more hours.",
+      "prior_state": "docs/b4artists_ml/goalposts/01a073fe-c240-70c0-b5cd-fe9653aac60e-broader-shape-v1.json",
+      "prior_sha256": "9ac98ac9567d25e52a04950b1e0df13da834334426c9d1181301dcb4393c91bc",
+      "prior_contract_hash": "e597919f2b95483fb5914a05ae328f93d3cc16a8e328750a2912458bf94fd664",
+      "new_contract_hash": "488928f6f3fabac509bed73718fc1b7037c4deeebd9239cd056f304b73ffc265",
+      "before_max_goalposts": 75,
+      "after_max_goalposts": 100,
+      "before_deadline_unix": 1788981845.0,
+      "after_deadline_unix": 1789053845.0,
+      "added_hours": 20,
+      "before_max_wall_seconds": 157313,
+      "after_max_wall_seconds": 229313,
+      "recorded_at": 1788938696.4777265
+    }
+  ],
+  "latest_extension_hours": 20,
+  "deadline_utc": "2026-09-10T15:24:05+00:00"
+}

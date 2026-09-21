@@ -1,0 +1,1084 @@
+{
+  "schema": "procedural-vertical-slice-v21",
+  "version": "21",
+  "frozen_before_results": true,
+  "purpose": "Run a bounded procedural continuity repair directed by Axlbot's qualified v5 native-display review: begin jump absorption before and at contact, give non-preserved landings visible upper-body follow-through, and replace run pose steps with smooth counterbalanced motion while keeping procedural and learned-motion claims separate.",
+  "source_human_review_schema": "b4ml-human-review-summary-v5",
+  "source_feedback_qualification": {
+    "global_motion": true,
+    "jump_height": true,
+    "relative_pose": true,
+    "production_acceptance": true
+  },
+  "training_authorized": false,
+  "model_promotion_authorized": false,
+  "cascadeur_connector_authorized": false,
+  "learned_bend_prior": {
+    "enabled": true,
+    "strength": 1,
+    "scope": "Local elbow/knee bend-direction suggestion only; deterministic reach projection, contacts, flight and interpolation remain unchanged.",
+    "temporal_motion_model": false,
+    "promotion_authorized": false
+  },
+  "rigs": [
+    "boneforge",
+    "rigify_basic",
+    "rigify_default",
+    "imported_unity"
+  ],
+  "case_matrix": [
+    [
+      "boneforge",
+      "reach"
+    ],
+    [
+      "boneforge",
+      "land"
+    ],
+    [
+      "boneforge",
+      "jump"
+    ],
+    [
+      "boneforge",
+      "walk"
+    ],
+    [
+      "boneforge",
+      "run"
+    ],
+    [
+      "rigify_basic",
+      "reach"
+    ],
+    [
+      "rigify_basic",
+      "land"
+    ],
+    [
+      "rigify_basic",
+      "jump"
+    ],
+    [
+      "rigify_basic",
+      "walk"
+    ],
+    [
+      "rigify_basic",
+      "run"
+    ],
+    [
+      "rigify_default",
+      "reach"
+    ],
+    [
+      "rigify_default",
+      "land"
+    ],
+    [
+      "rigify_default",
+      "jump"
+    ],
+    [
+      "imported_unity",
+      "reach"
+    ],
+    [
+      "imported_unity",
+      "land"
+    ],
+    [
+      "imported_unity",
+      "jump"
+    ]
+  ],
+  "profile_overrides": {
+    "boneforge": {
+      "landing_contact_blend_frames": 0,
+      "pole_hints": {
+        "arm-L": [
+          0,
+          -1,
+          -0.2
+        ]
+      }
+    },
+    "imported_unity": {
+      "upright_root": true,
+      "pole_hints": {
+        "arm-L": [
+          0,
+          1,
+          -0.15
+        ],
+        "arm-R": [
+          0,
+          1,
+          -0.15
+        ],
+        "leg-L": [
+          0,
+          -1,
+          0
+        ],
+        "leg-R": [
+          0,
+          -1,
+          0
+        ]
+      }
+    }
+  },
+  "tasks": {
+    "reach": {
+      "poses": [
+        {
+          "frame": 1,
+          "label": "neutral",
+          "pelvis": [
+            0,
+            0,
+            0
+          ],
+          "limbs": {},
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 10,
+          "label": "reach",
+          "pelvis": [
+            0,
+            -0.01,
+            -0.02
+          ],
+          "limbs": {
+            "arm-L": [
+              -0.1,
+              -0.14,
+              0.03
+            ]
+          },
+          "yaw_degrees": -3
+        },
+        {
+          "frame": 16,
+          "label": "hold",
+          "pelvis": [
+            0,
+            -0.01,
+            -0.02
+          ],
+          "limbs": {
+            "arm-L": [
+              -0.1,
+              -0.14,
+              0.03
+            ]
+          },
+          "yaw_degrees": -3
+        },
+        {
+          "frame": 25,
+          "label": "recover",
+          "pelvis": [
+            0,
+            0,
+            0
+          ],
+          "limbs": {},
+          "yaw_degrees": 0
+        }
+      ],
+      "contacts": [
+        [
+          "leg-L",
+          1,
+          25
+        ],
+        [
+          "leg-R",
+          1,
+          25
+        ]
+      ],
+      "flights": []
+    },
+    "crouch": {
+      "poses": [
+        {
+          "frame": 1,
+          "label": "neutral",
+          "pelvis": [
+            0,
+            0,
+            0
+          ],
+          "limbs": {},
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 10,
+          "label": "lower",
+          "pelvis": [
+            0,
+            0,
+            -0.08
+          ],
+          "limbs": {
+            "leg-L": [
+              0,
+              0,
+              0
+            ],
+            "leg-R": [
+              0,
+              0,
+              0
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 16,
+          "label": "hold",
+          "pelvis": [
+            0,
+            0,
+            -0.08
+          ],
+          "limbs": {
+            "leg-L": [
+              0,
+              0,
+              0
+            ],
+            "leg-R": [
+              0,
+              0,
+              0
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 25,
+          "label": "recover",
+          "pelvis": [
+            0,
+            0,
+            0
+          ],
+          "limbs": {},
+          "yaw_degrees": 0
+        }
+      ],
+      "contacts": [
+        [
+          "leg-L",
+          1,
+          25
+        ],
+        [
+          "leg-R",
+          1,
+          25
+        ]
+      ],
+      "flights": []
+    },
+    "walk": {
+      "poses": [
+        {
+          "frame": 1,
+          "label": "left support",
+          "pelvis": [
+            0,
+            0,
+            -0.05
+          ],
+          "limbs": {
+            "leg-R": [
+              0,
+              0,
+              0.04
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 8,
+          "label": "right swing",
+          "pelvis": [
+            0,
+            -0.06,
+            -0.05
+          ],
+          "limbs": {
+            "leg-R": [
+              0,
+              -0.1,
+              0.03
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 14,
+          "label": "right plant",
+          "pelvis": [
+            0,
+            -0.14,
+            -0.05
+          ],
+          "limbs": {
+            "leg-R": [
+              0,
+              -0.18,
+              0
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 21,
+          "label": "left swing",
+          "pelvis": [
+            0,
+            -0.21,
+            -0.05
+          ],
+          "limbs": {
+            "leg-L": [
+              0,
+              -0.26,
+              0.03
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 27,
+          "label": "left plant",
+          "pelvis": [
+            0,
+            -0.28,
+            -0.05
+          ],
+          "limbs": {
+            "leg-L": [
+              0,
+              -0.34,
+              0
+            ]
+          },
+          "yaw_degrees": 0
+        }
+      ],
+      "contacts": [
+        [
+          "leg-L",
+          1,
+          14
+        ],
+        [
+          "leg-R",
+          14,
+          27
+        ]
+      ],
+      "flights": []
+    },
+    "run": {
+      "poses": [
+        {
+          "frame": 1,
+          "label": "left support",
+          "pelvis": [
+            0,
+            0,
+            -0.035
+          ],
+          "limbs": {
+            "leg-R": [
+              0,
+              -0.12,
+              0.05
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 6,
+          "label": "left takeoff",
+          "pelvis": [
+            0,
+            -0.104,
+            -0.025
+          ],
+          "limbs": {
+            "leg-R": [
+              0,
+              -0.17,
+              0.05
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 11,
+          "label": "right landing",
+          "pelvis": [
+            0,
+            -0.208,
+            -0.035
+          ],
+          "limbs": {
+            "leg-L": [
+              0,
+              -0.3,
+              0.06
+            ],
+            "leg-R": [
+              0,
+              -0.28,
+              0
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 16,
+          "label": "right takeoff",
+          "pelvis": [
+            0,
+            -0.312,
+            -0.025
+          ],
+          "limbs": {
+            "leg-L": [
+              0,
+              -0.34,
+              0.06
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 21,
+          "label": "left landing",
+          "pelvis": [
+            0,
+            -0.416,
+            -0.035
+          ],
+          "limbs": {
+            "leg-L": [
+              0,
+              -0.48,
+              0
+            ],
+            "leg-R": [
+              0,
+              -0.4,
+              0.05
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 26,
+          "label": "left recovery",
+          "pelvis": [
+            0,
+            -0.52,
+            -0.025
+          ],
+          "limbs": {
+            "leg-R": [
+              0,
+              -0.42,
+              0.06
+            ]
+          },
+          "yaw_degrees": 0
+        }
+      ],
+      "contacts": [
+        [
+          "leg-L",
+          1,
+          6
+        ],
+        [
+          "leg-R",
+          11,
+          16
+        ],
+        [
+          "leg-L",
+          21,
+          26
+        ]
+      ],
+      "flights": [
+        [
+          6,
+          11
+        ],
+        [
+          16,
+          21
+        ]
+      ]
+    },
+    "jump": {
+      "poses": [
+        {
+          "frame": 1,
+          "label": "neutral",
+          "pelvis": [0, 0, -0.03],
+          "limbs": {},
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 9,
+          "label": "compression",
+          "pelvis": [0, 0, -0.1],
+          "limbs": {
+            "leg-L": [0, 0, 0],
+            "leg-R": [0, 0, 0]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 16,
+          "label": "takeoff",
+          "pelvis": [0, -0.02, -0.035],
+          "limbs": {},
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 37,
+          "label": "flight-end",
+          "pelvis": [0, -0.055, 0.015],
+          "limbs": {},
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 39,
+          "label": "pre-impact",
+          "pelvis": [0, -0.06, -0.015],
+          "limbs": {
+            "leg-L": [0, -0.035, 0],
+            "leg-R": [0, -0.035, 0]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 43,
+          "label": "impact",
+          "pelvis": [0, -0.06, -0.045],
+          "limbs": {
+            "leg-L": [0, -0.05, 0],
+            "leg-R": [0, -0.05, 0]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 49,
+          "label": "absorb crouch",
+          "pelvis": [0, -0.06, -0.11],
+          "limbs": {},
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 61,
+          "label": "follow-through",
+          "pelvis": [0, -0.06, -0.055],
+          "limbs": {},
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 73,
+          "label": "recover",
+          "pelvis": [0, -0.06, -0.03],
+          "limbs": {},
+          "yaw_degrees": 0
+        }
+      ],
+      "contacts": [
+        [
+          "leg-L",
+          1,
+          16
+        ],
+        [
+          "leg-R",
+          1,
+          16
+        ],
+        [
+          "leg-L",
+          43,
+          73
+        ],
+        [
+          "leg-R",
+          43,
+          73
+        ]
+      ],
+      "flights": [
+        [
+          16,
+          37
+        ]
+      ],
+      "landing_contact_blend_frames": 2
+    },
+    "land": {
+      "poses": [
+        {
+          "frame": 1,
+          "label": "airborne",
+          "pelvis": [
+            0,
+            0,
+            0.18
+          ],
+          "limbs": {},
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 7,
+          "label": "pre-impact",
+          "pelvis": [
+            0,
+            -0.055,
+            0.025
+          ],
+          "limbs": {},
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 8,
+          "label": "impact",
+          "pelvis": [
+            0,
+            -0.06,
+            -0.02
+          ],
+          "limbs": {
+            "leg-L": [
+              0,
+              -0.05,
+              0
+            ],
+            "leg-R": [
+              0,
+              -0.05,
+              0
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 14,
+          "label": "absorb crouch",
+          "pelvis": [
+            0,
+            -0.06,
+            -0.1
+          ],
+          "limbs": {},
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 20,
+          "label": "recover",
+          "pelvis": [
+            0,
+            -0.06,
+            -0.03
+          ],
+          "limbs": {},
+          "yaw_degrees": 0
+        }
+      ],
+      "contacts": [
+        [
+          "leg-L",
+          8,
+          20
+        ],
+        [
+          "leg-R",
+          8,
+          20
+        ]
+      ],
+      "flights": [
+        [
+          1,
+          7
+        ]
+      ]
+    },
+    "turn": {
+      "poses": [
+        {
+          "frame": 1,
+          "label": "facing forward",
+          "pelvis": [
+            0,
+            0,
+            -0.03
+          ],
+          "limbs": {
+            "leg-L": [
+              0,
+              0,
+              0.04
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 10,
+          "label": "step and rotate",
+          "pelvis": [
+            0.02,
+            -0.03,
+            -0.05
+          ],
+          "limbs": {
+            "leg-L": [
+              0.04,
+              -0.06,
+              0.03
+            ]
+          },
+          "yaw_degrees": 35
+        },
+        {
+          "frame": 16,
+          "label": "transfer",
+          "pelvis": [
+            0.04,
+            -0.05,
+            -0.05
+          ],
+          "limbs": {
+            "leg-L": [
+              0.06,
+              -0.08,
+              0
+            ],
+            "leg-R": [
+              -0.02,
+              -0.03,
+              0.03
+            ]
+          },
+          "yaw_degrees": 65
+        },
+        {
+          "frame": 25,
+          "label": "facing side",
+          "pelvis": [
+            0.05,
+            -0.06,
+            -0.08
+          ],
+          "limbs": {
+            "leg-R": [
+              -0.03,
+              -0.05,
+              0
+            ]
+          },
+          "yaw_degrees": 90
+        }
+      ],
+      "contacts": [
+        [
+          "leg-R",
+          1,
+          10
+        ],
+        [
+          "leg-L",
+          16,
+          25
+        ]
+      ],
+      "flights": []
+    },
+    "difficult_transition": {
+      "poses": [
+        {
+          "frame": 1,
+          "label": "neutral",
+          "pelvis": [
+            0,
+            0,
+            -0.02
+          ],
+          "limbs": {
+            "leg-R": [
+              0,
+              0,
+              0.04
+            ]
+          },
+          "yaw_degrees": 0
+        },
+        {
+          "frame": 9,
+          "label": "asymmetric compression",
+          "pelvis": [
+            -0.03,
+            -0.02,
+            -0.08
+          ],
+          "limbs": {
+            "leg-R": [
+              -0.02,
+              0.02,
+              0
+            ],
+            "arm-L": [
+              -0.04,
+              -0.04,
+              0.05
+            ],
+            "arm-R": [
+              0.04,
+              0.02,
+              -0.02
+            ]
+          },
+          "yaw_degrees": -15
+        },
+        {
+          "frame": 17,
+          "label": "cross-body reach",
+          "pelvis": [
+            0.03,
+            -0.05,
+            -0.04
+          ],
+          "limbs": {
+            "leg-L": [
+              0.02,
+              -0.06,
+              0.04
+            ],
+            "leg-R": [
+              -0.03,
+              -0.03,
+              0
+            ],
+            "arm-L": [
+              -0.08,
+              -0.05,
+              0.04
+            ],
+            "arm-R": [
+              0.05,
+              -0.04,
+              0.05
+            ]
+          },
+          "yaw_degrees": 20
+        },
+        {
+          "frame": 25,
+          "label": "recover",
+          "pelvis": [
+            0,
+            -0.06,
+            -0.03
+          ],
+          "limbs": {
+            "leg-L": [
+              0,
+              -0.06,
+              0.04
+            ]
+          },
+          "yaw_degrees": 0
+        }
+      ],
+      "contacts": [
+        [
+          "leg-L",
+          1,
+          9
+        ],
+        [
+          "leg-R",
+          17,
+          25
+        ]
+      ],
+      "flights": []
+    }
+  },
+  "full_body_shaping": {
+    "solver": "Staged body_preview coupled pelvis/Spine/Chest product API after assisted limb posing",
+    "solve_iterations": 50,
+    "preserve_exact_cases": [
+      "boneforge/land",
+      "rigify_basic/land"
+    ],
+    "tasks": {
+      "jump": {
+        "compression": {
+          "torso": {"spine_pitch_degrees": -1, "chest_pitch_degrees": -2},
+          "limbs": {"arm-L": [-0.02, 0.01, -0.105], "arm-R": [0.02, 0.01, -0.105]}
+        },
+        "takeoff": {
+          "torso": {"spine_pitch_degrees": 0.5, "chest_pitch_degrees": 1},
+          "limbs": {"arm-L": [-0.02, -0.03, -0.02], "arm-R": [0.02, -0.03, -0.02]}
+        },
+        "flight-end": {
+          "limbs": {"arm-L": [-0.02, -0.0625, 0.0275], "arm-R": [0.02, -0.0625, 0.0275]}
+        },
+        "pre-impact": {
+          "torso": {"spine_pitch_degrees": 1, "chest_pitch_degrees": 2},
+          "limbs": {"arm-L": [-0.02, -0.0575, 0.005], "arm-R": [0.02, -0.0575, 0.005]}
+        },
+        "impact": {
+          "torso": {"spine_pitch_degrees": -2, "chest_pitch_degrees": -4},
+          "limbs": {"arm-L": [-0.02, -0.0575, -0.025], "arm-R": [0.02, -0.0575, -0.025]}
+        },
+        "absorb crouch": {
+          "torso": {"spine_pitch_degrees": -4, "chest_pitch_degrees": -8},
+          "limbs": {"arm-L": [-0.02, -0.06, -0.11], "arm-R": [0.02, -0.06, -0.11]}
+        },
+        "follow-through": {
+          "torso": {"spine_pitch_degrees": 0.5, "chest_pitch_degrees": 1},
+          "limbs": {"arm-L": [-0.02, -0.055, -0.055], "arm-R": [0.02, -0.055, -0.055]}
+        },
+        "recover": {
+          "limbs": {"arm-L": [-0.02, -0.06, -0.03], "arm-R": [0.02, -0.06, -0.03]}
+        }
+      },
+      "run": {
+        "left support": {
+          "torso": {"spine_pitch_degrees": 1.5, "chest_pitch_degrees": 3},
+          "limbs": {"leg-R": [0, -0.16, 0.06], "arm-L": [-0.03, -0.01, 0.005], "arm-R": [0.03, 0.01, -0.005]}
+        },
+        "left takeoff": {
+          "torso": {"spine_pitch_degrees": 1, "chest_pitch_degrees": 2},
+          "limbs": {"leg-R": [0, -0.23, 0.07], "arm-L": [-0.03, -0.104, 0], "arm-R": [0.03, -0.104, 0]}
+        },
+        "right landing": {
+          "torso": {"spine_pitch_degrees": 1.5, "chest_pitch_degrees": 3},
+          "limbs": {"leg-L": [0, -0.34, 0.07], "arm-L": [-0.03, -0.198, -0.005], "arm-R": [0.03, -0.218, 0.005]}
+        },
+        "right takeoff": {
+          "torso": {"spine_pitch_degrees": 1, "chest_pitch_degrees": 2},
+          "limbs": {"leg-L": [0, -0.4, 0.075], "arm-L": [-0.03, -0.312, 0], "arm-R": [0.03, -0.312, 0]}
+        },
+        "left landing": {
+          "torso": {"spine_pitch_degrees": 1.5, "chest_pitch_degrees": 3},
+          "limbs": {"leg-R": [0, -0.39, 0.07], "arm-L": [-0.03, -0.426, 0.005], "arm-R": [0.03, -0.406, -0.005]}
+        },
+        "left recovery": {
+          "torso": {"spine_pitch_degrees": 1, "chest_pitch_degrees": 2},
+          "limbs": {"arm-L": [-0.03, -0.52, 0], "arm-R": [0.03, -0.52, 0]}
+        }
+      },
+      "land": {
+        "pre-impact": {
+          "torso": {"spine_pitch_degrees": 0.5, "chest_pitch_degrees": 1},
+          "limbs": {}
+        },
+        "impact": {
+          "torso": {"spine_pitch_degrees": 0.5, "chest_pitch_degrees": 1},
+          "limbs": {}
+        },
+        "absorb crouch": {
+          "torso": {"spine_pitch_degrees": -2, "chest_pitch_degrees": -4},
+          "limbs": {"arm-L": [-0.04, -0.08, -0.04], "arm-R": [0.04, -0.08, -0.04]}
+        },
+        "recover": {
+          "torso": {"spine_pitch_degrees": 1, "chest_pitch_degrees": 2},
+          "limbs": {"arm-L": [-0.02, -0.06, -0.02], "arm-R": [0.02, -0.06, -0.02]}
+        }
+      }
+    }
+  },
+  "automated_gates": {
+    "priority_matrix_error": 0.0002,
+    "pin_residual": 0.0002,
+    "limb_stretch_fraction": 0.002,
+    "contact_position_error_limb_fraction": 0.0002,
+    "contact_rotation_error_radians": 0.001,
+    "penetration_body_fraction": 0.01,
+    "finite_rotation_velocity_jump": true,
+    "source_action_exactly_restored": true,
+    "save_reload_candidate": true,
+    "preflight_target_adjustment_body_fraction": 0.03,
+    "contact_plane_spread_body_fraction": 0.0002,
+    "requested_pin_error_body_fraction": 0.0002,
+    "memory_counters_available": true
+  },
+  "interpretation": {
+    "interaction_counts": "Scripted product-level operations and property edits; not measured human effort.",
+    "correction_counts": "Manual contact captures, proposal edits and failed automated passes; not an animator quality rating.",
+    "visual_quality": "Unrated until an independent animator reviews the saved packet.",
+    "learned_motion": "The bundled local bend-direction prior is enabled for this experiment. It is not a temporal motion model and does not satisfy learned inbetweening.",
+    "cascadeur_comparison": "Unverified until matched tasks are run independently."
+  },
+  "supersedes": "procedural_vertical_slice_protocol_v20.json",
+  "revision_reason": "Candidate v21: Axlbot's qualified v5 native-display review found impact-first jump landings, stiff non-preserved landing torsos, and residual run jitter or forward imbalance. Begin knee absorption before contact, add coupled chest/arm follow-through, and replace stepped run arm offsets with zero-crossing counterbalance targets.",
+  "target_preflight": {
+    "policy": "Fit each raw normalized target to the rig two-bone reach and bend constraint before it becomes the authored request; preserve a fixed world target at every priority inside a contact interval.",
+    "maximum_adjustment_body_fraction": 0.03,
+    "count_adjustment_as_scripted_correction": true,
+    "existing_contact_may_move": false
+  },
+  "rig_floor_normalization": {
+    "policy": "Use the higher initial foot-joint origin as the authored horizontal floor and raise each newly authored leg target by its fixed rest offset. Record and count every nonzero application; fixed contacts never move.",
+    "count_as_scripted_correction": true
+  },
+  "stretch_measurement": "For each mapped skeletal upper/lower segment at quarter frames, absolute evaluated pose-bone head-tail length divided by its own armature rest-bone length minus one.",
+  "yaw_control_policy": "Use the animator master root control when present; otherwise use the certified posing translation root. Apply world-up rotation in pose space before assisted limb solving.",
+  "task_coordinate_system": "Grounded canonical body coordinates: X is anatomical left projected onto the horizontal support plane, Z is world/support-plane up, and Y is the proper orthogonal forward axis cross(up,left). Negative Y is the authored forward direction.",
+  "review_directed_gates": {
+    "jump_apex_rise_body_fraction": 0.2,
+    "jump_upper_body_angular_p95_rad_s": 2.6,
+    "land_upper_body_angular_p95_rad_s": 5.5,
+    "land_upper_body_angular_acceleration_p95_rad_s2": 40.0,
+    "run_upper_body_angular_p95_rad_s": 3.0,
+    "run_upper_body_angular_acceleration_p95_rad_s2": 18.0,
+    "run_pelvis_jerk_p95_body_s3": 1200.0,
+    "run_pelvis_forward_step_peak_ratio": 2.0,
+    "imported_bend_alignment_minimum": 0.2,
+    "imported_lateral_torso_tilt_degrees": 2,
+    "reach_elbow_flexion_degrees": 12,
+    "land_preimpact_flexion_margin_degrees": 2,
+    "land_postimpact_absorption_degrees": 4,
+    "jump_preimpact_knee_flexion_degrees": 12,
+    "jump_impact_knee_flexion_degrees": 20,
+    "jump_postimpact_absorption_degrees": 20,
+    "land_chest_pitch_range_degrees": 6,
+    "rigify_basic_walk_rotation_velocity_jump_rad_s": 1.3485281790566126,
+    "rigify_basic_jump_rotation_velocity_jump_rad_s": 0.47095803524852087
+  },
+  "development_revision": 3,
+  "smoke_calibration_evidence": [
+    "procedural-vertical-slice-v21-smoke-rigify-default-jump-a1",
+    "procedural-vertical-slice-v21-smoke-imported-unity-land-a4",
+    "procedural-vertical-slice-v21-smoke-rigify-basic-run-a9",
+    "procedural-vertical-slice-v21-smoke-boneforge-run-a9",
+    "procedural-vertical-slice-v21-smoke-rigify-basic-run-a8 (rejected: symmetric-contact behavior caused penetration)",
+    "procedural-vertical-slice-v21-smoke-boneforge-run-a8 (rejected: symmetric-contact behavior caused penetration)"
+  ],
+  "repair_scope": "The v21 change is limited to review-directed jump contact preparation, non-preserved landing torso/arm follow-through, and run counterbalance continuity plus deterministic acceleration and jerk gates. BoneForge and Rigify Basic landings remain exact-preserve cases. Training, model promotion, and Cascadeur integration remain unauthorized.",
+  "freeze_scope": "Frozen before bounded v21 smoke and any successor matrix. v18-v20 scenes, all prior protocols/results, and every human-review artifact remain immutable."
+}
+

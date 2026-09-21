@@ -1,0 +1,24 @@
+{
+  "hypothesis": "Split synchronous proxy preparation so a single live tick does less work, without skipping any source validation or changing fitting mathematics.",
+  "baseline": "releases/b4artists_ml_v0.17.2.zip",
+  "baseline_sha256": "2ed9b3681b21db5a0d1cc9df89b30131d9e4ef613ab04a9298cf97eb3d704cb6",
+  "changes": [
+    "Bounded preparation generator with idempotent close, retaining synchronous constructor compatibility",
+    "Yield only outside mode/context overrides, validate original session on every resume",
+    "No inference or Jacobian changes"
+  ],
+  "validation": [
+    "Actual-rig transform and solve equivalence across five profiles",
+    "Cancellation at every preparation stage and cleanup under failure, save and state change",
+    "Counterbalanced baseline/current/current/baseline on BoneForge/default Rigify; one baseline/current on other three profiles; no cProfile"
+  ],
+  "measurement_gates": {
+    "default_rigify_first_active_tick_reduction_at_least": 0.25,
+    "default_rigify_max_tick_reduction_at_least": 0.15,
+    "total_active_cpu_ratio_at_most": 1.15,
+    "all_pose_signature_metrics_exact": true
+  },
+  "limits": "Measures headless tick work on this host, not interactive usability or the full responsiveness gate.",
+  "no_temporal_model_promotion": true,
+  "recorded_at": 1788886773.4279327
+}

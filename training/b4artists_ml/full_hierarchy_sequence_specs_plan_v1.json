@@ -1,0 +1,32 @@
+{
+  "schema": "full-hierarchy-sequence-specs-plan-v1",
+  "created_utc": "2026-09-09T00:00:00Z",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "purpose": "Freeze metadata-only training and development window identities for streaming full-hierarchy model comparisons without materializing dense examples.",
+  "sources": {
+    "builder": "10eb53548d3329ee5cb833f8f7a00e9dfa15c154a6f34ba1102166b109a9270c",
+    "module": "0b61d1b92a8ecab6da3a8f8930d466557d749cd26ec89f89a896b8a434ede44c",
+    "layout": "1cd373412cb8f482f9925712a1c4c45d0159736b71ea2c4e23632496f30501aa",
+    "split": "8e999b3ffdb3d276fa4096e6a5cb30b100cbf20bdd253bf9833af40056201115",
+    "model_plan": "b75ec1f7fc59508332c1fb574463060dd8c2c88fed034a66a933f3151dd79d39"
+  },
+  "selection": {
+    "seed": 20260909,
+    "gaps": [8, 16, 32, 64, 96],
+    "candidate_starts_per_clip_gap": 1,
+    "maximum_windows_per_gap": 1400,
+    "task_selection": "Use the first canonical action tag, otherwise other; round-robin tasks after SHA-256 ordering.",
+    "mask_assignment": "Cycle endpoints, upper_mid, foot_contacts and extremity_mid within each task/gap after deterministic selection.",
+    "context_frames": 1
+  },
+  "development": "Reuse all 1,125 previously frozen subject-disjoint task windows exactly; do not redesign them from model outcomes.",
+  "streaming": true,
+  "dense_examples_materialized": false,
+  "motion_arrays_may_be_read_during_spec_build": false,
+  "model_outcomes_may_be_read": false,
+  "confirmation_read": false,
+  "training_allowed": false,
+  "runtime_promotion_allowed": false,
+  "full_goal_complete": false,
+  "deadline_epoch": 1789053845
+}

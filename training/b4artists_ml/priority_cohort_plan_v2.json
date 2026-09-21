@@ -1,0 +1,25 @@
+{
+  "schema": "priority-cohort-plan-v2",
+  "created_utc": "2026-09-10T04:00:00Z",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "purpose": "Freeze a repaired-model development cohort after the v1 priority-mask defect exposed the original development subjects.",
+  "sources": {
+    "builder": "6b8b3cf0b5e4281d997692342d965399af708e43073debcedaa0e4752793b697",
+    "old_split": "8e999b3ffdb3d276fa4096e6a5cb30b100cbf20bdd253bf9833af40056201115",
+    "old_specs": "4d18d1aec4e3147f7d1f18822ba61488c1838cfd26f3474b9fabbe34a4dea126"
+  },
+  "seed": 20260911,
+  "training_subjects": 54,
+  "development_subjects": 14,
+  "excluded_exposed_v1_development_subjects": 17,
+  "coverage_subjects_per_task": 3,
+  "selection": "From the former 68-subject training pool only, greedily cover up to three subjects per available task using inverse task availability; break ties by SHA-256(seed, subject), then fill by the same deterministic order. Read metadata identities only, preserve existing windows/masks, and exclude all 17 exposed v1 development subjects.",
+  "interpretation": "A future development cohort for the versioned complete-priority repair. These subjects participated in v1 training, but no v2 weights or per-subject outcomes exist when this split is frozen.",
+  "motion_arrays_may_be_read": false,
+  "model_outcomes_may_be_read": false,
+  "confirmation_read": false,
+  "training_allowed": false,
+  "runtime_promotion_allowed": false,
+  "full_goal_complete": false,
+  "deadline_epoch": 1789053845
+}

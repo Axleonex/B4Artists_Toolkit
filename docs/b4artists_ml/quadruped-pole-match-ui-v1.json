@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "fixture": "generated Rigify cat",
+  "events": [
+    "Matched and enabled four poles through the visible operator",
+    "Native Undo restored all four pole modes",
+    "Native Redo restored the matched pole state"
+  ],
+  "action_unchanged": true,
+  "auto_key_preserved": true,
+  "screenshot": "training\\b4artists_ml\\cache\\quadruped-pole-match-ui-v1.png",
+  "screenshot_sha256": "7014eebd303c4c11f00214e6c745fcaf74b15d629860356220d2b548b81b69cf",
+  "elapsed_seconds": 2.208940900018206
+}

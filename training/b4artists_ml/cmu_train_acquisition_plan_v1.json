@@ -1,0 +1,38 @@
+{
+  "schema": "cmu-train-acquisition-v1",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "repository": "https://github.com/una-dinosauria/cmu-mocap.git",
+  "commit": "09a07f54f3bbb58797325f009282d0b2048a2871",
+  "method": "Git partial clone plus cone-mode sparse checkout of prospective training subjects only",
+  "destination": "training/b4artists_ml/cache-expanded-v1/cmu-mocap",
+  "destination_ignored_by_git": true,
+  "files": 1840,
+  "bytes": 2343633676,
+  "subjects": 85,
+  "maximum_worktree_bytes": 2600000000,
+  "selection_sha256": "8c15a3c217c8db1497e1f4884ecde3f01a9c937a51e4bf7bf73eba49fe40f4c0",
+  "script_sha256": "44e69a2d6ba2d5c6d24b3a50e4126679bc58878ee65b38ee0de9508e311d3710",
+  "excluded_subjects": [1, 2, 6, 8, 9, 13, 22, 23, 28, 30, 32, 36, 37, 84, 85, 87, 91, 104, 114, 115, 118, 122, 125, 127, 128, 138, 141, 142],
+  "identity": "Verify pinned commit, every expected path, byte length, Git blob SHA-1 and record SHA-256",
+  "split_guards": {
+    "subject_disjoint": true,
+    "legacy_development_motion_downloaded": false,
+    "legacy_confirmation_motion_downloaded": false,
+    "new_validation_motion_downloaded": false,
+    "new_confirmation_motion_downloaded": false
+  },
+  "rights": {
+    "cmu": "The current official source permits research/commercial use, copying, modification and redistribution, while prohibiting direct resale of the data.",
+    "bvh_conversion": "The pinned Bruce Hahne notice places no additional restrictions on the conversion.",
+    "raw_motion_bundled_with_addon": false,
+    "acknowledgment_retained": true
+  },
+  "purpose": "Build a larger train-only source for a future streamed style-conditioned temporal model. This acquisition does not qualify or promote a model.",
+  "downloads": true,
+  "paid_services": false,
+  "validation_read": false,
+  "confirmation_read": false,
+  "amendment": "After the metadata-only clone, use command-local safe.directory for the exact X: cache because that filesystem does not record ownership. No global Git configuration, split, byte cap, source, or motion selection changed.",
+  "runtime_promoted": false,
+  "full_goal_complete": false
+}

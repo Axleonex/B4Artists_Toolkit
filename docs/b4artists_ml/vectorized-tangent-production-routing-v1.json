@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-09-09",
+  "task": "Vectorize harmonic interior-tangent evaluation after bit-exact detached qualification, then verify integrated publication against exact archive 0.19.4.",
+  "declared_paths": [
+    "b4artists_ml/temporal_math.py",
+    "b4artists_ml/curve_smoothing.py",
+    "tests/test_b4artists_ml_curve_smoothing_math_v1.py",
+    "training/b4artists_ml",
+    "docs/b4artists_ml"
+  ],
+  "router": {
+    "recommended_lane": "T3 Prime+OMP",
+    "attempted_lane": "T3 Prime+OMP",
+    "result": "BLOCKED",
+    "reason": "DECLARED_PATH_INVALID: the authoritative desktop-local X: workspace is not mounted on the governed NUCBOX executor."
+  },
+  "outcome": "fallback",
+  "actual_lane": "DEGRADED_NATIVE_CONTINUE",
+  "fallback_eligibility": {
+    "explicit_user_authorization": true,
+    "project_local": true,
+    "reversible": true,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "billing": false,
+    "history_changes": false
+  },
+  "scope_guards": [
+    "Preserve the weighted harmonic formula, endpoint tangents, monotonicity, exact key coordinates and invalid-input contract.",
+    "Require bit-for-bit scalar-reference regression and exact native dense curve evaluation before promotion.",
+    "Preserve all public validation, source action, pose, modes, anchors, rollback behavior, weights, data, thresholds and sealed clips.",
+    "Do not install, commit, merge or push."
+  ]
+}

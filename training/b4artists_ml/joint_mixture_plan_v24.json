@@ -1,0 +1,23 @@
+{
+  "schema": 24,
+  "scope": "One fixed learned per-joint mixture for positions and valid rotations",
+  "diagnostic_sha256": "211485e76bf379db3276ad3e80521fc44947e54e0fc0803c486dac42995867ba",
+  "architecture": "Same596 observed curve inputs and32 shared tanh hidden units. Each of17 joints has four position and three rotation softmax weights (119outputs). Frozen v20 learned expert plus existing procedural experts; original v23 and all other candidates stay unchanged.",
+  "rotation": "Convert linear/Hermite/v20 rotations to unit quaternions, align signs to the linear reference, use a normalized convex quaternion blend with fixed1e-6linear-reference mass to prevent zero norm. Differentiate through normalization and the rotation6 polynomial. Priority transforms are overwritten exactly. No claimed C1 continuity at hemisphere ambiguity.",
+  "training": "Same group-excluded v20 parent for each row features and experts; targets separate. Joint position Gram loss plus actual normalized-quaternion rotation6 trajectory loss, with original velocity/acceleration weights and equal-cohort weighting.40epochs,batch64,lr.001,L2.0001; one fixed configuration, no grid or retuning.",
+  "initial_position_probabilities": [
+    0.025,
+    0.025,
+    0.05,
+    0.9
+  ],
+  "initial_rotation_probabilities": [
+    0.025,
+    0.075,
+    0.9
+  ],
+  "epsilon": 1e-06,
+  "validation": "Pre-fit finite-difference/explicit-loss, proper-rotation/nondegeneracy, exact priorities, stationary/masked/hidden-label/padding invariants and serialization. Freeze before all old/new/combined gates, repeat exactly, actual-rig recovery. Six fresh confirmation clips stay sealed unless gates pass.",
+  "goal_policy": "Original full endpoint and50total evaluations/15-hour resumed deadline unchanged; no runtime, package, downloads or publication.",
+  "recorded_at": 1788897969.4623506
+}

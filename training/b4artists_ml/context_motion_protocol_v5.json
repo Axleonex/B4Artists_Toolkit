@@ -1,0 +1,84 @@
+{
+  "schema": 5,
+  "created_utc": "2026-09-08T06:31:07.902309+00:00",
+  "seed": 20260906,
+  "manifests": [
+    {
+      "path": "results/training_manifest_v4.json",
+      "sha256": "9973a7f2b8935c33cb8d9b819d46658485bab931fdaabb59b6434ff0e3d78fe8"
+    },
+    {
+      "path": "context_confirmation_manifest.json",
+      "sha256": "eb7f86927c538d0510d7432bbe8fba0b6fa8581748e69134332edfed8883c841"
+    }
+  ],
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "target_fps": 30,
+  "training_windows_per_gap": 16,
+  "evaluation_windows_per_gap": 8,
+  "architecture": "Observed quaternion Hermite baseline; 637-feature RBF kernel learns four by 141 articulated residual coefficients",
+  "terms": 4,
+  "ridge_trials": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "basis": "duration_seconds**2 * 4*t*(1-t) * Legendre_0_to_3(2*t-1)",
+  "baseline": "linear root and local quaternion SLERP through complete ancestor hierarchy",
+  "selection": "Validation position + 0.1 rotation, include unlearned context baseline and frozen V3 incumbent; learned output must beat all baselines and original gates",
+  "baselines": [
+    "linear",
+    "hermite",
+    "fk_linear",
+    "fk_hermite",
+    "ridge",
+    "context_fk",
+    "v3_control"
+  ],
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "notes": [
+    "No new data or costs. All prior validation and development clips are observed, not fresh blind confirmation.",
+    "Surrounding rotations/root trajectories enter the baseline only via serialized observations.",
+    "Contextual quaternion Hermite is procedural and does not itself satisfy learned animation.",
+    "Model selection and promotion retain full original gates; no user-facing learned model promotion on failed results."
+  ],
+  "feature_variants": [
+    "raw_pose"
+  ],
+  "kernel_widths": [
+    0.125,
+    0.25,
+    0.5
+  ],
+  "kernel_regularization": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "linear_regularization": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "audit_sha256": "dc2c0f8da52c26f3282a81ab4920893889d74f1d18b0ea70127f1abfddb3963b",
+  "training_objective": "Cohort-weighted regularized regression of complete curve coefficients fitted from training labels; temporal errors are acceptance metrics, not direct regression loss terms.",
+  "experiment": "contextual quaternion Hermite baseline plus supervised full-hierarchy residual"
+}

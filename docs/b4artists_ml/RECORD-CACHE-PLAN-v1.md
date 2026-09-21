@@ -1,0 +1,9 @@
+# Bounded research record-cache prototype
+
+An actual-preview microbenchmark measured fresh record reconstruction on five rig profiles. JSON decoding is compared with deepcopy and locally generated pickle/marshal copies; all methods return independent mutable records and preserve nested mutation isolation. No binary input is accepted from files, networks or users.
+
+The fixed follow-up prototype uses four exact-payload entries, a512Ki-character payload limit and a1MiB encoded-blob limit. It retains only immutable blobs created from the original JSON decoder. Cache hits deserialize a fresh tree; misses return the independently decoded tree after encoding. Invalid decoding is never cached. Oversized payloads/blobs bypass the cache. Exact payload comparison preserves invalidation, while original live structure, target, ownership and recovery checks remain active.
+
+The prototype is injected only in dedicated research host processes. Production source, persistent formats, the0.17.4ZIP and model files are unchanged. Seven existing record-read checks and eight live-preview checks must pass, plus cache bounds and independent-mutation checks. Counterbalanced five-profile comparison uses the same two solves,100idle ticks and logical clock as earlier tests, with no concurrent host jobs or profiler. Default Rigify gates: idle p95ratio<=0.85, total-work ratio<=1.05 and worst-tick ratio<=1.10; every profile must retain exact pose/signature/metric parity and source recovery.
+
+Passing these component gates does not establish full latency, memory, lifecycle, UI or human-usability acceptance. Production integration still needs explicit cache cleanup/lifetime handling, broader malformed-input validation, full regression, resource measurement and package testing. Original full endpoint,50total evaluations and fixed15-hour resumed deadline21:17:57UTC remain unchanged.

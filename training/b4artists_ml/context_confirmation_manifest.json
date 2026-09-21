@@ -1,0 +1,27 @@
+{
+  "files": [
+    {
+      "clip": "75_02",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/075/75_02.bvh",
+      "bytes": 184786,
+      "sha256": "ae161ff0eb6ed68f4aa4b06beb1072669574690d40e9288313cdb47e2db87ff5"
+    },
+    {
+      "clip": "75_03",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/075/75_03.bvh",
+      "bytes": 160742,
+      "sha256": "f195c285ebdd5371f86734f38d8a2e160ab227c27b98c0da32f19a5459e499d5"
+    },
+    {
+      "clip": "75_11",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/075/75_11.bvh",
+      "bytes": 137121,
+      "sha256": "4905bf11e3cd16d8745f7b70c278fa9ad7e113b795985c85515bb11229c2efea"
+    }
+  ],
+  "combined_raw_bytes": 59385308,
+  "frozen_model_sha256": "919de9c772a521d6531f692b8903d0392fb981bf79896f40a8ff893d746a6f96"
+}

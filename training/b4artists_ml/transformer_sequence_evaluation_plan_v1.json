@@ -1,0 +1,53 @@
+{
+  "schema": "transformer-sequence-evaluation-v1",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "recorded_after_all_fits": true,
+  "training_plan_sha256": "e1f1bf51575542b057edff4e7debfba8f5f120b0acc947329c7578349dee6838",
+  "models": [
+    {
+      "seed": 20260909,
+      "weights_sha256": "47facb80027234d312d9429c040965afaf613a498f88f1c0c6c804dfb408085d",
+      "report_sha256": "f5c4e364a021c226fa5116621dab74d3b88634ad7e99c0f180a8690e63b892bf"
+    },
+    {
+      "seed": 20260910,
+      "weights_sha256": "6e59da2f2595f8e811229ab18e40b4b2e9daa40296519ead369b6420b339aab2",
+      "report_sha256": "861d88a44c01ebd565a8a68fae1e4ece158094263cfea6b4a62061787f42140a"
+    }
+  ],
+  "reference_protocol": "expanded_trajectory_protocol_v19.json",
+  "reference_protocol_sha256": "400e572c710af4f7150f9c15115d244546def0f8699cdfb96f7bf47a2e900990",
+  "reference_report": "results/expanded_trajectory_v19/report.json",
+  "reference_report_sha256": "97de5d7f4e13ac70dbe17119b1eb49a8e30a3640e5a3eebff9fe63e3d05688f5",
+  "tcn_reference_report": "results/expanded-constrained-sequence-development-v1/report.json",
+  "tcn_reference_report_sha256": "6f6823651083689c89a441a4a16a3e030dde2a5cf9e2d6448fc16e2d90ce7e6b",
+  "partitions": ["old_validation", "new_validation", "combined"],
+  "controls": ["projected_linear", "projected_hermite", "projected_shape"],
+  "baseline_policy": "Recompute all established controls and require exact equality with the frozen reference report.",
+  "attribution_policy": "Compare each Transformer directly with projected_shape and its paired expanded-data convolutional seed on every partition.",
+  "acceptance_policy": "Both fixed Transformer seeds must pass every unchanged original gate on all partitions and improve aggregate position over projected_shape on all partitions. No favorable-seed selection.",
+  "confirmation": "Keep all six protected confirmation clips sealed regardless of this development result. A new prospective confirmation plan is required only if both seeds pass.",
+  "chunk_size": 16,
+  "deadline_unix": 1789053845.0,
+  "sources": {
+    "evaluate_transformer_sequence_v1.py": "32e43a208ea13281a4dc15019f2415384e66d45cda658576e66075aba94d8bb3",
+    "sequence_transformer_provider_v1.py": "5a14dc10da022b01201dba0f5e57e61d49dfdbe257d89c1c4e713805d6e2c0b2",
+    "sequence_velocity_conditioning_v1.py": "c35191e33ba829437b1b701875453f741583610f629749db1665ab7ae77e9708",
+    "sequence_transformer_model_v1.py": "31ac6e1601a36fa2e8b9eb75f94bde59025cb52c1567e962da7cab546eb5cd08",
+    "sequence_transformer_numpy_v1.py": "a3e4b51358c8a0399fb0f921c7b6f5e9389ba905aea54cefe4ebe9fbca949c97",
+    "sequence_constrained_reference_v1.py": "574953c8848e036d3014f70c453de6531ac23e64fbbfdbf302c3e54fcb373655",
+    "sequence_shape_residual_provider_v1.py": "f8f6bfe27ea626a0a7fb8b8dac89c787e42adced444ae41b9ad051cd252c2514",
+    "sequence_shape_conditioning_v1.py": "391487233f75de48a4d1a4569cc8320dec41757de2bbdb0da72fd1f1f9ba78fd",
+    "sequence_conditioning_v1.py": "17ca85057f4515275b9a4c95c1cd2a8001bfbc0983acb84c288234335fe3ac28",
+    "semantic_projection.py": "ecbcd9633e5794e9284186c2ac81198669a04d473a9eca0126cb4997a2061d92",
+    "motion_coverage.py": "f08389e0fd876772ceb3829475f8d5065aa1f61ec9c4b6a3cfa64d8f73419b1b",
+    "sequence_model.py": "291b98be4291d38332833e7314e74128a8b9801605094133b41baa770c7e2690",
+    "kinematic_trajectory_v20.py": "b6c02153229e44e88a9591380ca97360fb7234745690395ce712d5cde580af26",
+    "semantic_motion_data.py": "5c4fd0501045b78dde5b64d4d830370eacbb0ce1090efe34fbee923424c96ced",
+    "rig_observations.py": "a3e07856e6baa771ca7abaaa82bf92cb6f4edd4ac0909db9ecec219c581044b9",
+    "temporal_data.py": "702472088603fca2b3c01fcdd589c1e972e2206e095666a6b0b5654a5be61858",
+    "shape_reference.py": "064b4545ac0f276fb214d73a4afcbe82076499d93a496565909d3065e48ab9d0"
+  },
+  "runtime_promoted": false,
+  "full_goal_complete": false
+}

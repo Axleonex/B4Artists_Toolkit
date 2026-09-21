@@ -1,0 +1,11 @@
+# Observation-conditioned temporal residuals v15
+
+Prospective correction to the stationary-pose defect found in v12/v13/v14 research models. Full goal, package 0.16.1, original data identities, fixed projection and comparative gates remain unchanged.
+
+Scale each learned joint-position residual by visible endpoint displacement plus optional half-duration times incoming/outgoing context speed. Scale its rotation6 residual by analogous matrix chordal movement. Missing context contributes nothing; there is no positive floor. Use the four-term unit-duration basis, so the neural prediction learns relative curve shape rather than absolute duration-squared displacement. Include this scaling inside training and its gradient; never divide targets by tiny motion amplitudes or clip a rejected model after validation. Identical observations have exactly zero residual, and small changes produce continuously small corrections. Equal endpoints with moving context can still create motion.
+
+Retain the four v14 neural configurations (64/128 hidden units,1e-5/1e-4 regularization,forty epochs) and all training-only catalog-group selection. Freeze the winning full-training artifact before loading validation. Repeat all fits independently, reproduce original projected controls exactly, and retain every quality failure. Do not promote new weights unless full original model/workflow acceptance passes.
+
+Pre-fit nine tests include explicit/compressed loss and all network gradients, actual hidden-feature learning, priority/serialization/isolation, exact stationary behavior, convergence near zero, masked context, stationary joints and equal endpoints with moving context. Then compare the same186 controlled stationary cases used previously, run ordinary eight-rig learned candidate checks, and verify all generated stationary world positions/orientation matrices on eight real rig profiles with and without stored stationary context (existing2e-5 host numerical tolerance), plus editable candidate/Discard/source restoration.
+
+No hidden-loop intent is invented from fully static observations. Explicit loops/style and the full multi-priority/partial-body/contact/physics workflow remain wider requirements. No new assets, APIs, publication, installation or runtime/package mutation are included.

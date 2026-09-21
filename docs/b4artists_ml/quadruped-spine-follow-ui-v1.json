@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "fixture": "generated Rigify wolf",
+  "events": [
+    "Spine Follow and Neck Share solved through the visible operator"
+  ],
+  "spine_follow": 0.6399999856948853,
+  "neck_share": 0.7200000286102295,
+  "spine_orientation_errors": {
+    "chest": 0.0,
+    "neck": 0.0
+  },
+  "orientation_tolerance": 2e-05,
+  "head_orientation_error": 0.0,
+  "max_paw_error": 2.1073424255447017e-07,
+  "paw_tolerance": 0.000231059751672783,
+  "screenshot": "training\\b4artists_ml\\cache\\quadruped-spine-follow-ui-v1.png",
+  "screenshot_sha256": "8842552f73dff5c78d5af100c278d40236cd2061f41e6dab2a302b387300b71e",
+  "elapsed_seconds": 2.8908239000011235,
+  "source_restored_after_cancel": true
+}

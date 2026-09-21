@@ -1,0 +1,20 @@
+{
+  "version": "0.17.0",
+  "files": 35,
+  "bytes": 250879,
+  "sha256": "d33016d79a0f77ca48efb9fa87f96679860825956ad388613688da87758a10d7",
+  "package_matches_source": false,
+  "experimental": true,
+  "full_goal_complete": false,
+  "unique_regression_cases": 311,
+  "regression_sha256": "3c2b718456a78c876a8478ddd5c3ef0d214dddcbe1ee889b79bb5244c70dd625",
+  "offline_qualification": "passed",
+  "packaged_ui_qualification": "passed",
+  "host_shutdown_qualified": false,
+  "scope": "Optional native takeoff and landing COM velocity transitions with preserved authored boundaries, editable native curves and recovery. No temporal model promoted.",
+  "release_ready": false,
+  "known_workflow_failure": "Contact correction after native flight raises missing b4ml_flight metadata KeyError; source candidate remains preserved.",
+  "failure_evidence": "training/b4artists_ml/results/native-contact-composition-prefit-v1.json",
+  "offline_cases": 118,
+  "qualification_note": "Original 0.17.0 tests passed but omitted native-flight/contact composition; the separately reproduced KeyError prevents release. Superseding repair is under verification."
+}

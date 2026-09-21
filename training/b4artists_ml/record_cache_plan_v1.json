@@ -1,0 +1,17 @@
+{
+  "scope": "Research-host-only exact-payload primitive record cache; production files unchanged",
+  "entries": 4,
+  "payload_character_limit": 524288,
+  "blob_byte_limit": 1048576,
+  "binary_source": "Locally marshal-encoded output of original JSON decoder only; no external binary accepted or persisted",
+  "identity": "Return independent mutable trees on every call, including cache hits; exact serialized payload key; failed decoding never cached; oversized payload/blob bypass bounded cache.",
+  "validation": "Pure cache bound/mutation/error tests, original preview-read and live-preview suites under prototype, fixed five-profile comparison versus0.17.4. No full regression, package or production promotion claimed.",
+  "performance_gates": {
+    "default_rigify_idle_p95_ratio_max": 0.85,
+    "default_rigify_total_work_ratio_max": 1.05,
+    "default_rigify_max_tick_ratio_max": 1.1,
+    "all_five_profiles_exact_pose_signature_metrics": true
+  },
+  "goal": "Original full endpoint,50total evaluations and fixed15-hour deadline21:17:57UTC remain unchanged.",
+  "recorded_at": 1788901875.5385888
+}

@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "passed": true,
+  "host": "5.2.0 Alpha",
+  "events": [
+    "Mirror L to R copied the edited paw request",
+    "Native Undo restored the destination paw",
+    "Native Redo reapplied target mirroring"
+  ],
+  "direction": "LEFT_TO_RIGHT",
+  "source_unchanged": true,
+  "destination_mirrored": true,
+  "source_pose_unchanged": true,
+  "source_action_unchanged": true,
+  "enabled_and_orientation_preserved": true,
+  "native_undo_redo_verified": true,
+  "screenshot": "training\\b4artists_ml\\cache\\quadruped-target-mirror-ui-v1.png",
+  "screenshot_sha256": "18d9f87d7e82546116c6507b1dcf908fb1651fa3a64a2a59a5d7caa4cd41f2f6",
+  "scope": "Automated foreground panel and operator journey. Independent animator visual assessment remains unverified."
+}

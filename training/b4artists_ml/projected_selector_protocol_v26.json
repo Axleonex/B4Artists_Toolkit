@@ -1,0 +1,129 @@
+{
+  "seed": 20260906,
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "target_fps": 30,
+  "training_windows_per_gap": 16,
+  "evaluation_windows_per_gap": 8,
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "schema": 26,
+  "observation_schema": "b4ml-semantic-observations-v1",
+  "input_features": 667,
+  "target_features": 153,
+  "scope": "One fixed observed selector trained on actual fitted risk, using frozen v20 and procedural proposals",
+  "calibration": "Artificial frame zero in the existing corpus only; excluded from motion observations and targets",
+  "source_manifests": {
+    "temporal_training_manifest_v19.json": "2aafaa5d69061f0b977584a2ed0b2ae1792466aabb23801173b02384ec469711",
+    "temporal_expansion_plan_v19.json": "8af5a83abffd86b50c1e1f5426f330ad524970dd30475e313b7d02d6cc1d669a",
+    "temporal_expansion_manifest_v19.json": "41516f5039079c7e32e834127b877fb7906a14b3a62c158ae73ec9826e7005c9"
+  },
+  "partitions": [
+    "train",
+    "validation"
+  ],
+  "holdouts": "Both development partitions remain exposed. Freeze model before loading either. Six fresh confirmation clips stay absent unless all original old/new/combined gates pass.",
+  "label_policy": "Only four known poses (or two without context) enter observations; full targets are separate trainer labels",
+  "physics_policy": "Collapsed semantic edges are not asserted to have constant length; raw baselines do not qualify actual rig physics",
+  "next": "Evaluate selected compatible predictions on actual-rig editable actions; failed gates forbid promotion",
+  "baselines": [
+    "projected_linear",
+    "projected_hermite",
+    "projected_shape"
+  ],
+  "projection": {
+    "steps": 48,
+    "learning_rate": 0.02,
+    "rotation_weight": 0.5,
+    "regularization": 1e-05
+  },
+  "selection": "Single prospective596-input,32-hidden,12-choice model; no grid or post-development tuning",
+  "reproduction": "Regenerate the complete projected training-label cache, features, model fit and old/new/combined development evaluation in a second unique output. Compare all deterministic artifacts and report fields exactly.",
+  "runtime": "Local NumPy float64, frozen locally cached corpus; no downloads, external APIs, runtime edits, installation or publication",
+  "projection_method": "Fixed 48-step projected Adam with eight bounded quarter-step backtracking attempts; exact root, terminal orientations and known priorities",
+  "folds": 4,
+  "fold_group": "CMU catalog prefix before underscore, not asserted to be independent actor identity",
+  "objective": "Cohort-balanced expected projected position+0.1rotation cost, normalized by the best complete procedural control per TRAINING cohort. Exact deployment uses argmax probabilities; expectation/argmax difference is reported.",
+  "architecture": "One whole-interval choice from4position proposals by3rotation proposals. No per-frame switching or blending of projected poses. Selected v20components include learned residuals; selected procedural components are explicitly procedural.",
+  "stationary_acceptance": "Zero observed motion selects the existing exact shape/Hermite stationary reference; original stationary and near-stationary tests remain unchanged.",
+  "control_policy": "Retain original projected linear/Hermite and add projected shape reference. Every ratio and worst-cohort check compares against the best of all three; thresholds remain identical. This prevents procedural improvements from being presented as learned-motion gains.",
+  "prior_protocol_sha256": "9cc5c8be201a3d1a7e31f78981ab816aba7dd46eb105a11311aedd543d57f123",
+  "prior_model_sha256": "9e4d2a6f4f5a08bd6b9f814df064eaee276866afaddc5b1ceaa0faefe9c996a3",
+  "plan_sha256": "8af5a83abffd86b50c1e1f5426f330ad524970dd30475e313b7d02d6cc1d669a",
+  "expected_training_windows": 7358,
+  "old_validation_clips": [
+    "08_04",
+    "13_08",
+    "13_12",
+    "13_19",
+    "28_01",
+    "28_02",
+    "118_01",
+    "118_12",
+    "122_01",
+    "122_17"
+  ],
+  "new_validation_clips": [
+    "138_01",
+    "138_11",
+    "138_20",
+    "141_03",
+    "141_04",
+    "141_09"
+  ],
+  "model_features": 596,
+  "fold_policy": "Same original four parent folds with exact membership and all parent/source hashes. The new selector sees all training labels; no independent selector generalization claim from these folds.",
+  "guard_policy": "Convex positional blending bounds each predicted coordinate by expert values. This does not guarantee quality versus the best expert. Six fresh confirmation clips stay absent until unchanged development gates pass.",
+  "parent_files": {
+    "results/kinematic_trajectory_v20/best_learned.npz": "9e4d2a6f4f5a08bd6b9f814df064eaee276866afaddc5b1ceaa0faefe9c996a3",
+    "results/kinematic_trajectory_v20/fold_0.npz": "b7a9425faa6a395ce84cecd2a6119a70b58a28476cb81fedc09202e026d58d20",
+    "results/kinematic_trajectory_v20/fold_1.npz": "edefff2d8049e3a1f8946aa11f2bc7226e0c618bee4f7e628a406d2db1e3c7b3",
+    "results/kinematic_trajectory_v20/fold_2.npz": "cf34f10220d7c6ef0f14b74ffe805b4d5e0672efcb7e5116413734cb963df243",
+    "results/kinematic_trajectory_v20/fold_3.npz": "3cb02e9a993d342543009190a1dc549c9601d6e7678feb78b6126e277835a15f",
+    "results/kinematic_trajectory_v20/selected.npz": "9e4d2a6f4f5a08bd6b9f814df064eaee276866afaddc5b1ceaa0faefe9c996a3"
+  },
+  "parent_report_sha256": "8b018cc94afe059bba324c3f6853375bde0355247099154fb88fb8137c18a207",
+  "parent_folds_sha256": "3a446c48cf2a75cd1423e832c807eba7ac2b1151d1980eafa2e69c3f34378827",
+  "prefit_checks_sha256": "c0ce040416759860d587f4fc3928eb5eaf75ccabeea35eaff4f4096f329802ab",
+  "prefit_correction_sha256": "5d0032f233410314e6fbf57c4e6820cd19ded8152e673eaa7611dd25e1a2427d",
+  "curve_features": "At nine fixed normalized query times, summarize each expert versus linear using mean/max positional excursion, speed, acceleration, incoming/outgoing tangent mismatch and semantic-edge length deviation. Normalize by observed per-joint position amplitude or rest semantic-edge length, map zero denominators to zero, apply log1p. Descriptors are not physical guarantees or calibrated uncertainty probabilities.",
+  "feature_ownership": "Calculate any parent-dependent descriptors with the exact group-excluded parent used for that row. No target or hidden-frame data enters descriptors. No new parent fits or input observations.",
+  "selector_training": {
+    "hidden": 32,
+    "epochs": 60,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "regularization": 0.0001
+  },
+  "rotation_policy": "Select complete linear, Hermite or v20rotations; shape rotations are verified equal to Hermite. No quaternion averaging.",
+  "projection_label_policy": "Each of7358training rows obtains12actual projected costs using exactly the frozen parent excluding its catalog-prefix group. Labels and group/clip IDs never enter inference features.",
+  "hypothesis": "Prior learners fit raw proposal losses, whereas release metrics evaluate physical projection. Train selection against actual projected outcomes to remove that mismatch; training-only pool and joint-risk oracles pass the original diagnostic gates.",
+  "diagnostic_files": {
+    "results/projected-pool-diagnostic-v26.json": "6ba93250f4ab12c1d2de20d98e0fc43013eb4b053478485875bfcca600c6f1d8",
+    "results/projected-pool-joint-risk-v26.json": "9c98a5fa5db9bfa42a49bbec54ea9bd86c473097ee70858ea71f2ddff780c0de",
+    "results/projected-pool-checks-v26.json": "87f7ad7f80fbc59d01ecee0ab9301afd536078853ce2a1f39da85955b65e6d24",
+    "results/projected-selector-checks-v26.json": "c0ce040416759860d587f4fc3928eb5eaf75ccabeea35eaff4f4096f329802ab"
+  },
+  "budgets": {
+    "max_seconds_per_complete_run": 10800,
+    "max_output_bytes": 134217728,
+    "blas_threads": 4
+  },
+  "runtime_package": "0.17.5 unchanged"
+}

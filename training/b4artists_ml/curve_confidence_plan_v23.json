@@ -1,0 +1,15 @@
+{
+  "schema": 23,
+  "scope": "One fixed observed-curve feature experiment; no runtime or release change",
+  "architecture": "Append48 descriptors (12per expert) to existing548 observed inputs; same32 tanh hidden units/four softmax position weights, frozen v20 rotations and parent expert. Use v21 original equal-cohort loss and40epochs, not the failed v22 relative loss.",
+  "features": "At nine fixed normalized query times, summarize each expert versus linear using mean/max positional excursion, speed, acceleration, incoming/outgoing tangent mismatch and semantic-edge length deviation. Normalize by observed per-joint position amplitude or rest semantic-edge length, map zero denominators to zero, apply log1p. Descriptors are not physical guarantees or calibrated uncertainty probabilities.",
+  "training": "Calculate any parent-dependent descriptors with the exact group-excluded parent used for that row. No target or hidden-frame data enters descriptors. No new parent fits or input observations.",
+  "verification": "Before fitting: feature shape/finite/scaling/masked/zero-motion/label-independence checks, explicit loss and finite differences, actual supervised fitting, priority and serialization checks. Freeze before development, repeat exactly, actual-rig editable/recovery tests.",
+  "gates": "Unchanged old/new/combined gates; every original control retained; six fresh confirmation clips sealed unless all gates pass.",
+  "no_grid": true,
+  "recorded_at": 1788895977.9403374,
+  "prior_reports": {
+    "mixture_trajectory_v21": "f6694f3971f21d0b2a2b4019e861cbd9dc80b9a26a40959939fc893d9f25cab8",
+    "relative_mixture_v22": "cbc53edeee62e5315e52a0e6ce34b89b608efebc05d8987e352f6ecb42f943a8"
+  }
+}

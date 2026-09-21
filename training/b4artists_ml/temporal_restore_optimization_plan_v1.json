@@ -1,0 +1,33 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "scope": "Test-local selective VisibleState restoration; frozen cooperative baseline, addon0.17.5and model training unchanged.",
+  "baseline_sha256": "488767fd15a5fff15e6493a4c47f4deb6508f947d0ef17bdb0526859b72ace59",
+  "candidate_sha256": "d3c3e4f5b666ac64f9f59e36d177715f4943d4393b547188a9de9d632d1e10df",
+  "profiles": [
+    "boneforge",
+    "rigify_basic",
+    "rigify_default"
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "runs_per_fixture": 4,
+  "orders": [
+    "baseline,candidate,candidate,baseline",
+    "candidate,baseline,baseline,candidate"
+  ],
+  "required": [
+    "Exact generated samples and deterministic solver metrics per fixture",
+    "Exact source pose/action/keys and resource cleanup after each run",
+    "Identical yielded phases/frame sequence",
+    "Default Rigify average maximum-tick ratio<=0.9 and total active work ratio<=1",
+    "Every fixture maximum-tick mean and active-work ratio<=1.05",
+    "Original50msresponsiveness threshold is separate and unchanged",
+    "Final25native cooperative/source/lifecycle/action checks before any acceptance"
+  ],
+  "host_timeout_seconds": 900,
+  "deadline_unix": 1788981845.0,
+  "full_goal_complete": false,
+  "recorded_at": 1788918280.6845455
+}

@@ -1,0 +1,13 @@
+{
+  "schema": 22,
+  "stage": "diagnosis_before_candidate_specification",
+  "scope": "Separate positional and rotational contributions; measure training loss concentration before selecting one fixed next loss experiment",
+  "parent_report_sha256": "f6694f3971f21d0b2a2b4019e861cbd9dc80b9a26a40959939fc893d9f25cab8",
+  "diagnostics": [
+    "All training cohorts: raw position and trajectory loss using group-excluded v20 expert and current fitted gate; identify relative objective contribution. Gate diagnostics are in-sample.",
+    "All exposed old/new validation: projected linear/Hermite/shape positions each paired with frozen v20 rotations. No model fit, sample selection, gate alteration or confirmation access."
+  ],
+  "gates_policy": "Original frozen development gates unchanged; ablations are diagnostic learned/procedural combinations, not new independent validation or pure procedural controls.",
+  "next": "Specify one candidate only after diagnostics, using training-only normalization estimates; no validation-based grid or threshold edits.",
+  "recorded_at": 1788894441.6910517
+}

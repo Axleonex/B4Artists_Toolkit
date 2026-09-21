@@ -1,0 +1,42 @@
+{
+  "schema": "b4ml_quadruped_pose_protocol_v1",
+  "release": "0.28.0",
+  "scope": "First deterministic whole-body posing workflow for generated Rigify quadrupeds",
+  "fixtures": [
+    "Rigify generated cat",
+    "Rigify generated horse",
+    "Rigify generated wolf",
+    "Rigify cat metarig rejection"
+  ],
+  "acceptance": {
+    "routing": "Current gated T0-T4 policy and independent S0-S4 evaluation remain active; recoverable canonical-entrypoint failure records DEGRADED_NATIVE_CONTINUE",
+    "schema_separation": "Quadruped posing remains independent of the humanoid 17-joint solver and learned model",
+    "controls": "Generated torso and four native Rigify IK controls are writable, unlocked and undriven; all four limbs must already be in IK",
+    "posing": "Body and four paw targets solve on transformed generated cat, horse and wolf fixtures within the recorded scale-relative tolerance",
+    "source_safety": "Keep and cancel restore the exact source pose, action curves and IK modes; keep creates one editable pose anchor",
+    "recovery": "A solved preview survives save/reload and can be kept; changed targets, non-IK limbs, locked controls and metarigs fail closed",
+    "regression": "All 50 v0.27.0 source suites plus the new quadruped-pose suite pass with one runtime hash set"
+  },
+  "claim_boundaries": {
+    "qualified": [
+      "Rigify cat, horse and wolf recognition",
+      "Generic pose capture and pose-blending interpolation on generated fixtures",
+      "Deterministic body translation and four-paw IK posing on generated Rigify fixtures",
+      "Source restoration, anchor capture and save/reload recovery",
+      "Explicit UI and runtime boundaries between quadruped and humanoid solvers"
+    ],
+    "not_qualified": [
+      "Quadruped learned posing or learned motion",
+      "Quadruped gait, balance, contact or flight physics",
+      "Head orientation, paw orientation, pole direction or detailed spine shaping",
+      "Direct metarig, imported or custom quadruped posing",
+      "Natural-motion quality",
+      "Human usability acceptance",
+      "Cascadeur parity or superiority",
+      "Clean host shutdown"
+    ]
+  },
+  "network": "No downloads, provider calls or outbound runtime calls are permitted",
+  "human_reviews_required_for_quality_claim": true,
+  "cascadeur_comparison_required_for_parity_claim": true
+}

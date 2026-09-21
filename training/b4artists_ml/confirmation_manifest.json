@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "files": [
+    {
+      "clip": "02_01",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/002/02_01.bvh",
+      "bytes": 260091,
+      "sha256": "cf56db43157acc3d200b3d4215523f54d354a8926bea67e1f6c8031bd335ba7e"
+    },
+    {
+      "clip": "02_03",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/002/02_03.bvh",
+      "bytes": 135012,
+      "sha256": "6f4d38b92b041221030de2e1058903e0f7a8fa08f9c6c9efabf7df9a128011ac"
+    },
+    {
+      "clip": "02_04",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/002/02_04.bvh",
+      "bytes": 366467,
+      "sha256": "1b9f80f045608eaf50e2912c2f9180e97cffc708ce717c227f52ce1bc6fe091b"
+    },
+    {
+      "clip": "02_06",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/002/02_06.bvh",
+      "bytes": 1690955,
+      "sha256": "8aa5a8a583aeb20f0e66d4985f04b93becfb9af7eac534b20e62934911bf68bc"
+    },
+    {
+      "clip": "14_07",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/014/14_07.bvh",
+      "bytes": 1686657,
+      "sha256": "031d088d502663eb82dec1fde19599837b43675b078b64bd90cf7e9d2d2dafe5"
+    },
+    {
+      "clip": "14_37",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/014/14_37.bvh",
+      "bytes": 386703,
+      "sha256": "77ab7b6cb7df11c016da55281fde7e472a2a78a1acdbaa81410cd6efdea8453f"
+    },
+    {
+      "clip": "45_01",
+      "split": "confirmation",
+      "url": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/09a07f54f3bbb58797325f009282d0b2048a2871/data/045/45_01.bvh",
+      "bytes": 349723,
+      "sha256": "b0de21cac27182011931148761e304c73213d32d173c795b82f8ce255df9d00b"
+    }
+  ],
+  "total_combined_bytes": 29777861,
+  "original_manifest_sha256": "467ebc675ff29a32e34ce0798e7caaab80e6680ad9a64b33d640d43213b8b190",
+  "frozen_model_sha256": "59704e21ce7185697d48a62df60455aefaee8b7580f65496877d6bb39c8f073d"
+}

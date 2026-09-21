@@ -1,0 +1,662 @@
+--- v0.13.0/flight.py
++++ v0.13.1/flight.py
+@@ -1,304 +1,355 @@
+-"""Reversible cubic root correction for explicitly authored COM flight intervals.
+-SPDX-License-Identifier: GPL-2.0-or-later
+-"""
+-import json,math,time
+-import numpy as np
+-import bpy
+-from mathutils import Vector
+-from . import workflow as w,posing as p,rig_state as rs,contacts,support,flight_math as fm
+-from .support_math import center_of_mass
+-_JOBS={}
+-
+-class _RefineFlight(ValueError):pass
+-
+-
+-def rows(obj):return [dict(start=i.start,end=i.end,strength=i.strength) for i in obj.b4ml.flights if i.enabled]
+-
+-
+-def request(obj,scene):
+-    return dict(flights=rows(obj),masses=[dict(name=i.name,weight=i.weight,fraction=i.fraction) for i in obj.b4ml.mass_segments],
+-        contacts=contacts.rows(obj),gravity=list(scene.gravity) if scene.use_gravity else [0.,0.,0.],
+-        fps=scene.render.fps,fps_base=scene.render.fps_base,anchors=[(i.frame,i.payload) for i in obj.b4ml.anchors])
+-
+-
+-def add(obj,scene):
+-    if obj.b4ml.flight_running or obj.b4ml.contact_running:raise ValueError('Finish the active correction first')
+-    anchors=w.read_anchors(obj)
+-    if len(obj.b4ml.flights)>=16:raise ValueError('Limit a candidate to sixteen flight intervals')
+-    current=p._frame(scene);pairs=list(zip(anchors,anchors[1:]));a,b=next(((a,b) for a,b in pairs if a[0]<=current<b[0]),pairs[0])
+-    item=obj.b4ml.flights.add();item.name='Airborne interval '+str(len(obj.b4ml.flights));item.start=a[0];item.end=b[0]
+-    obj.b4ml.flight_index=len(obj.b4ml.flights)-1
+-    return item
+-
+-
+-def restore(obj,scene):
+-    state=obj.b4ml
+-    if state.flight_running or state.contact_running:raise ValueError('Finish the active correction first')
+-    if not state.flight_input or state.flight_output!=state.candidate_action or not obj.animation_data or obj.animation_data.action!=state.flight_output:
+-        raise ValueError('Select the flight candidate; restore any later contact correction first')
+-    w.assign_action(obj,state.flight_input,w._slot(obj.animation_data));state.candidate_action=state.flight_input
+-    state.flight_input=None;state.flight_output=None;state.flight_metrics='';contacts._frame(scene,p._frame(scene))
+-    state.status='Candidate restored before flight correction'
+-
+-
+-def _modifier_signature(value):
+-    result={}
+-    for prop in value.bl_rna.properties:
+-        key=prop.identifier
+-        if key=='rna_type':continue
+-        item=getattr(value,key)
+-        if prop.type=='COLLECTION':result[key]=[_modifier_signature(v) for v in item]
+-        elif not prop.is_readonly and prop.type!='POINTER':
+-            result[key]=list(item) if getattr(prop,'is_array',False) else sorted(item) if isinstance(item,set) else item
+-    return result
+-
+-
+-def _curve_signature(obj):
+-    return [(fc.data_path,fc.array_index,fc.extrapolation,fc.auto_smoothing,fc.lock,fc.mute,[_modifier_signature(m) for m in fc.modifiers],
+-        [(list(k.co),list(k.handle_left),list(k.handle_right),k.handle_left_type,k.handle_right_type,k.interpolation) for k in fc.keyframe_points])
+-        for fc in w.action_curves(obj.animation_data.action,getattr(obj.animation_data,'action_slot',None))]
+-
+-
+-def _correction_steps(obj,scene,divisions,started):
+-    w.require_rig(obj);w._reject_nla(obj);state=obj.b4ml
+-    if state.body_payload or state.posing_payload or state.contact_running:raise ValueError('Finish the active pose or contact correction first')
+-    if bpy.context.screen and bpy.context.screen.is_animation_playing:raise ValueError('Stop playback before flight correction')
+-    previous=state.candidate_action
+-    if not previous or not obj.animation_data or obj.animation_data.action!=previous:raise ValueError('Generate and select an interpolation candidate first')
+-    if state.contact_output:raise ValueError('Restore Before Contacts before editing flight; apply contacts after flight')
+-    if state.flight_output and state.flight_output!=previous:raise ValueError('Select the last flight candidate or restore the later correction first')
+-    if state.flight_output==previous and not state.flight_input:raise ValueError('Retained flight input is missing')
+-    original=state.flight_input if state.flight_output==previous else previous
+-    anchors=w.read_anchors(obj);priorities=[f for f,_ in anchors];raw=request(obj,scene)
+-    intervals=fm.validate(raw['flights'],priorities,raw['contacts'])
+-    if [m['name'] for m in raw['masses']]!=[v[0] for v in support.SEGMENTS]:raise ValueError('Initialize the humanoid mass model first')
+-    weights=[m['weight'] for m in raw['masses']];fractions=[m['fraction'] for m in raw['masses']]
+-    fps=float(raw['fps']);base=float(raw['fps_base'])
+-    if not np.isfinite([fps,base]).all() or min(fps,base)<=0:raise ValueError('A positive frame rate is required')
+-    dt=base/fps;gravity=np.asarray(raw['gravity'],float)
+-    if not np.isfinite(gravity).all():raise ValueError('Scene gravity must be finite')
+-    binding=support.body_solver.mapping(obj,writable=False)
+-    root='root' if 'root' in binding['controls'] and 'root' in obj.pose.bones else binding['root']
+-    if root not in anchors[0][1]['pose']:raise ValueError('Capture the master root in every priority pose')
+-    root_path=obj.pose.bones[root].path_from_id('location')
+-    original_frame=p._frame(scene);original_pose=w.raw_pose(obj);modes=rs.mode_values(obj);slot=w._slot(obj.animation_data);rest=w._rest_signature(obj);world=obj.matrix_world.copy()
+-    candidate=None;committed=False;samples={};key_times=set();segments=[];checks=set(priorities);expected={}
+-    signature=None;max_before=0.;max_after=0.;rigid_error=0.;basis_error=0.;outside_freezes=0;interval_metrics=[]
+-    names=sorted(set(binding['names'])|{b.name for b in obj.data.bones if b.use_deform})
+-    def basis_difference(after,before):
+-        # Relative column error is independent of object scale; tiny facial bones amplify host float rounding.
+-        lengths=np.linalg.norm(before[:,:3,:3],axis=1)
+-        if np.any(lengths<1e-8):raise ValueError('Degenerate evaluated bone transform')
+-        return float(np.max(np.linalg.norm(after[:,:3,:3]-before[:,:3,:3],axis=1)/lengths))
+-    def select_action(action):
+-        if obj.animation_data.action!=action or w._slot(obj.animation_data)!=slot:w.assign_action(obj,action,slot)
+-    def restore_previous():
+-        select_action(previous);contacts._frame(scene,original_frame)
+-        # Frame evaluation already restored keyed channels. Avoid dirtying hundreds of
+-        # unchanged Rigify facial/mechanism bones on every cooperative yield.
+-        changed=False
+-        for name,values in original_pose.items():
+-            bone=obj.pose.bones.get(name)
+-            if bone is None:continue
+-            prop='rotation_quaternion' if values['mode']=='QUATERNION' else 'rotation_axis_angle' if values['mode']=='AXIS_ANGLE' else 'rotation_euler'
+-            for key,value in (('location',values['location']),('scale',values['scale']),(prop,values['raw_rotation'])):
+-                if tuple(getattr(bone,key))!=tuple(value):setattr(bone,key,value);changed=True
+-        for name,props in modes.items():
+-            for key,value in props.items():
+-                if obj.pose.bones[name][key]!=value:obj.pose.bones[name][key]=value;changed=True
+-        if changed:p._update(obj)
+-    def guard():
+-        if state.candidate_action!=previous or obj.animation_data.action not in (previous,candidate):raise ValueError('Candidate changed during flight correction')
+-        if request(obj,scene)!=raw or w._rest_signature(obj)!=rest:raise ValueError('Flight settings, gravity, masses or rig changed during correction')
+-        if obj.matrix_world!=world:raise ValueError('Object transform changed during flight correction')
+-        if abs(p._frame(scene)-original_frame)>1e-5:raise ValueError('Playhead changed during flight correction')
+-    def evaluate(action,frame):
+-        select_action(action);contacts._frame(scene,frame);bpy.context.view_layer.update();p._check_space(obj)
+-        if (list(scene.gravity) if scene.use_gravity else [0.,0.,0.])!=raw['gravity']:raise ValueError('Animated gravity requires a different flight model')
+-        if any(row['start']<=frame<=row['end'] for row in intervals) and any(r['mode']!='FK' for r in p.bindings(obj)[2]):raise ValueError('Flight correction requires a normalized FK candidate')
+-        p._check_controls(obj,[root],'location')
+-        _,evaluated,a,b=support.sample(obj,bpy.context.evaluated_depsgraph_get());com=center_of_mass(a,b,weights,fractions)[0]
+-        matrices=np.array([obj.matrix_world@obj.pose.bones[n].matrix for n in names])
+-        if not np.isfinite(matrices).all():raise ValueError('Nonfinite evaluated rig')
+-        return com,matrices,np.array(obj.pose.bones[root].location)
+-    try:
+-        w.assign_action(obj,original,slot);signature=_curve_signature(obj)
+-        curves=w.action_curves(original,getattr(obj.animation_data,'action_slot',None))
+-        originals={i:curves.find(root_path,index=i) for i in range(3)}
+-        if any(fc is None or fc.lock or fc.mute or len(fc.modifiers) for fc in originals.values()):raise ValueError('Master root needs three editable location curves without modifiers')
+-        original_keys={i:[dict(frame=float(k.co.x),value=float(k.co.y),left=list(k.handle_left),right=list(k.handle_right),lt=k.handle_left_type,rt=k.handle_right_type,interpolation=k.interpolation) for k in fc.keyframe_points] for i,fc in originals.items()}
+-        knot_times={float(k.co.x) for fc in curves for k in fc.keyframe_points}
+-        # Original outside samples also catch unintended boundary/extrapolation changes.
+-        outside=set(priorities)
+-        for row in intervals:
+-            outside.update((row['start']-.25,row['end']+.25))
+-        for row in intervals:
+-            a,b=row['start'],row['end'];start,_,_=evaluate(original,a);end,_,_=evaluate(original,b)
+-            evaluate(original,a)
+-            duration=(b-a)*dt;entry,exit=fm.endpoint_velocities(start,end,duration,gravity)
+-            row.update(start_com=start,end_com=end,duration=duration)
+-            # Body size reference is evaluated at takeoff, independently of a moving pelvis.
+-            _,_,starts,ends=support.sample(obj,bpy.context.evaluated_depsgraph_get())
+-            row['scale']=max(float(np.linalg.norm(ends[0]-starts[0])+np.linalg.norm(ends[1]-starts[1])+np.linalg.norm(ends[2]-starts[2])),1e-8)
+-            frames=sorted({a,b}|{i/divisions for i in range(math.ceil(a*divisions),math.floor(b*divisions)+1)}|{f for f in knot_times if a<f<b})
+-            key_times.update(frames)
+-            for left,right in zip(frames,frames[1:]):
+-                if right-left<1e-5:raise ValueError('Flight keys are too close for stable frame precision')
+-                segments.append((row,left,right));checks.update((left,left+(right-left)*.25,left+(right-left)*.5,left+(right-left)*.75,right))
+-                for f in (left,left+(right-left)/3,left+2*(right-left)/3,right):samples.setdefault(f,None)
+-            interval_metrics.append(dict(start=a,end=b,strength=row['strength'],duration_seconds=duration,ballistic_entry_velocity=entry.tolist(),ballistic_exit_velocity=exit.tolist()))
+-        if len(key_times)*3>w.MAX_KEYS:raise ValueError('Flight correction exceeds the key budget')
+-        def target_at(frame,source):
+-            row=next((r for r in intervals if r['start']<=frame<=r['end']),None)
+-            if row is None:return source,None
+-            u=(frame-row['start'])/(row['end']-row['start'])
+-            ballistic=fm.trajectory(row['start_com'],row['end_com'],[u],row['duration'],gravity)[0]
+-            return source+(ballistic-source)*row['strength'],row
+-        for frame in sorted(samples):
+-            source,before,location=evaluate(original,frame);target,row=target_at(frame,source);delta=target-source
+-            error=float(np.linalg.norm(delta))/row['scale'];max_before=max(max_before,error)
+-            if frame in priorities and error>2e-4:raise ValueError(f'Gravity arc conflicts with priority pose at frame {frame:g}')
+-            if frame not in priorities:
+-                p._translate(obj,root,obj.matrix_world.inverted().to_3x3()@Vector(delta))
+-                _,_,a,b=support.sample(obj,bpy.context.evaluated_depsgraph_get());actual=center_of_mass(a,b,weights,fractions)[0]
+-                after=np.array([obj.matrix_world@obj.pose.bones[n].matrix for n in names]);wanted=before.copy();wanted[:,:3,3]+=delta
+-                displacement=float(np.max(np.linalg.norm(after[:,:3,3]-wanted[:,:3,3],axis=1)))/row['scale']
+-                shape=basis_difference(after,wanted);rigid_error=max(rigid_error,displacement);basis_error=max(basis_error,shape)
+-                if np.linalg.norm(actual-target)/row['scale']>2e-4 or displacement>2e-4 or shape>2e-4:raise ValueError(f'Master-root translation failed at {frame:g}: COM={np.linalg.norm(actual-target)/row["scale"]:.6g}, position={displacement:.6g} ({names[int(np.argmax(np.linalg.norm(after[:,:3,3]-wanted[:,:3,3],axis=1)))]}), rotation={shape:.6g} ({names[int(np.argmax(np.max(np.abs(after[:,:3,:3]-wanted[:,:3,:3]),axis=(1,2))))]})')
+-            samples[frame]=np.array(obj.pose.bones[root].location)
+-            restore_previous();yield dict(phase='Fitting COM flight',frame=frame,total=len(samples));guard()
+-        w.assign_action(obj,original,slot)
+-        if _curve_signature(obj)!=signature:raise ValueError('Input animation changed during flight correction')
+-        candidate=original.copy();candidate.name=original.name+' Flight';candidate.use_fake_user=False;w.assign_action(obj,candidate,slot)
+-        curves=w.action_curves(candidate,getattr(obj.animation_data,'action_slot',None),ensure=True,obj=obj)
+-        retained=sum(sum(not(fc.data_path==root_path and any(r['start']<k.co.x<r['end'] for r in intervals)) for k in fc.keyframe_points) for fc in curves)
+-        if retained+len(key_times)*3>w.MAX_KEYS:raise ValueError('Flight candidate exceeds the total key budget')
+-        for axis in range(3):
+-            fc=curves.find(root_path,index=axis)
+-            for i in range(len(fc.keyframe_points)-1,-1,-1):
+-                if any(r['start']<fc.keyframe_points[i].co.x<r['end'] for r in intervals):fc.keyframe_points.remove(fc.keyframe_points[i],fast=True)
+-            for f in sorted(key_times):fc.keyframe_points.insert(f,float(samples[f][axis]),options={'FAST'})
+-            fc.update();keys={float(k.co.x):k for k in fc.keyframe_points}
+-            def key_at(f):
+-                key=min(keys.values(),key=lambda k:abs(float(k.co.x)-f))
+-                if abs(float(key.co.x)-f)>max(1e-5,abs(f)*1e-7):raise ValueError('Host frame precision merged flight keys')
+-                return key
+-            for row,left,right in segments:
+-                h1,h2=fm.cubic_controls([samples[left],samples[left+(right-left)/3],samples[left+2*(right-left)/3],samples[right]])
+-                ka=key_at(left);kb=key_at(right)
+-                ka.handle_right_type='FREE';kb.handle_left_type='FREE';ka.interpolation='BEZIER'
+-                ka.handle_right=(left+(right-left)/3,float(h1[axis]));kb.handle_left=(left+2*(right-left)/3,float(h2[axis]))
+-            # Boundary outer handles retain the original neighboring curve geometry.
+-            for old in original_keys[axis]:
+-                if not any(old['frame'] in (r['start'],r['end']) for r in intervals):continue
+-                k=key_at(old['frame'])
+-                if any(old['frame']==row['start'] for row in intervals) and not any(old['frame']==row['end'] for row in intervals):k.handle_left_type='FREE';k.handle_left=old['left']
+-                if any(old['frame']==row['end'] for row in intervals) and not any(old['frame']==row['start'] for row in intervals):
+-                    k.handle_right_type='FREE';k.handle_right=old['right'];k.interpolation=old['interpolation']
+-            fc.update()
+-            for old in original_keys[axis]:
+-                if any(row['start']<=old['frame']<=row['end'] for row in intervals):continue
+-                k=key_at(old['frame'])
+-                if max(abs(a-b) for a,b in zip([*k.handle_left,*k.handle_right],old['left']+old['right']))>1e-7:
+-                    k.handle_left_type=k.handle_right_type='FREE';k.handle_left=old['left'];k.handle_right=old['right'];outside_freezes+=1
+-            fc.update()
+-        checks.update(outside)
+-        for frame in sorted(checks):
+-            source,before,_=evaluate(original,frame);target,row=target_at(frame,source)
+-            actual,after,_=evaluate(candidate,frame);scale=row['scale'] if row else max(r['scale'] for r in intervals)
+-            error=float(np.linalg.norm(actual-target))/scale;max_after=max(max_after,error)
+-            wanted=before.copy();wanted[:,:3,3]+=target-source
+-            basis_error=max(basis_error,basis_difference(after,wanted))
+-            if error>2e-4 or np.max(np.linalg.norm(after[:,:3,3]-wanted[:,:3,3],axis=1))/scale>2e-4 or basis_difference(after,wanted)>2e-4:
+-                raise _RefineFlight(f'Evaluated flight/pose preservation failed at frame {frame:g}: COM={error:.6g}')
+-            if frame in priorities and np.max(np.abs(after-before))>2e-4:raise ValueError(f'Flight changed a priority pose at frame {frame:g}')
+-            expected[frame]=actual.tolist();restore_previous();yield dict(phase='Checking COM flight',frame=frame,total=len(checks));guard()
+-        for row,metrics in zip(intervals,interval_metrics):
+-            h=min(.0625,(row['end']-row['start'])/16);seconds=h*dt
+-            for label,frame in (('takeoff',row['start']),('landing',row['end'])):
+-                values={}
+-                for action_name,action in (('input',original),('corrected',candidate)):
+-                    points=np.array([evaluate(action,frame+i*h)[0] for i in (-2,-1,0,1,2)])
+-                    left=(3*points[2]-4*points[1]+points[0])/(2*seconds)
+-                    right=(-3*points[2]+4*points[3]-points[4])/(2*seconds)
+-                    values[action_name]=dict(before=left.tolist(),after=right.tolist(),jump=float(np.linalg.norm(right-left)))
+-                metrics[label+'_velocity']=values
+-            metrics['velocity_sample_frames']=h
+-            restore_previous();yield dict(phase='Measuring boundary velocity',frame=row['end'],total=len(intervals));guard()
+-        w.assign_action(obj,original,slot)
+-        if _curve_signature(obj)!=signature:raise ValueError('Input animation changed during flight correction')
+-        w.assign_action(obj,candidate,slot);contacts._frame(scene,original_frame)
+-        report=dict(backend='constant_gravity_com_cubic_v1',sample_divisions=divisions,root=root,intervals=interval_metrics,keys=len(key_times),validation_frames=len(checks),
+-            max_before=max_before,max_after=max_after,rigid_translation_error=rigid_error,relative_basis_error=basis_error,outside_root_handle_freezes=outside_freezes,
+-            elapsed_ms=(time.perf_counter()-started)*1000,gravity=raw['gravity'],fps=fps,fps_base=base,priority_poses=len(priorities),
+-            units='errors normalized by evaluated trunk length; velocities in internal world units per second',
+-            trajectory_samples=expected)
+-        state.flight_input=original;state.flight_output=candidate;state.candidate_action=candidate;state.flight_metrics=json.dumps(report,allow_nan=False)
+-        candidate['b4ml_flight']=json.dumps(raw,allow_nan=False);candidate['b4ml_flight_metrics']=state.flight_metrics
+-        original.use_fake_user=True;state.status=f'COM flight preview ready; error {max_after:.3g} body units';committed=True
+-        return report
+-    finally:
+-        if not committed:
+-            restore_previous()
+-            if candidate and candidate.users==0:bpy.data.actions.remove(candidate)
+-
+-
+-def correction_steps(obj,scene):
+-    started=time.perf_counter();initial_request=request(obj,scene);initial_candidate=obj.b4ml.candidate_action
+-    for divisions in (2,4,8,16):
+-        if request(obj,scene)!=initial_request or obj.b4ml.candidate_action!=initial_candidate:raise ValueError('Flight settings or candidate changed during refinement')
+-        try:
+-            return (yield from _correction_steps(obj,scene,divisions,started))
+-        except _RefineFlight:
+-            if divisions==16:raise
+-            # The failed pass restored the input and removed its temporary action.
+-            yield dict(phase='Refining COM curve',frame=p._frame(scene),total=divisions*2)
+-
+-
+-def start(obj,scene):
+-    if obj.as_pointer() in _JOBS or obj.b4ml.contact_running:raise ValueError('A correction is already running')
+-    _JOBS[obj.as_pointer()]=dict(obj=obj,iterator=correction_steps(obj,scene));obj.b4ml.flight_running=True;obj.b4ml.flight_progress='Preparing COM flight'
+-
+-
+-def step(obj):
+-    job=_JOBS.get(obj.as_pointer())
+-    if job is None:raise InterruptedError('Flight correction stopped')
+-    try:
+-        info=next(job['iterator']);obj.b4ml.flight_progress=f"{info['phase']}: frame {info['frame']:g}";return False
+-    except StopIteration:
+-        _JOBS.pop(obj.as_pointer(),None);obj.b4ml.flight_running=False;obj.b4ml.flight_progress='';return True
+-    except BaseException:abort(obj);raise
+-
+-
+-def abort(obj):
+-    job=_JOBS.pop(obj.as_pointer(),None)
+-    try:
+-        if job:job['iterator'].close()
+-    finally:obj.b4ml.flight_running=False;obj.b4ml.flight_progress=''
+-
+-
+-def solve(obj,scene):
+-    start(obj,scene)
+-    while not step(obj):pass
+-    return json.loads(obj.b4ml.flight_metrics)
+-
+-
+-@bpy.app.handlers.persistent
+-def reset(*args):
+-    for job in list(_JOBS.values()):
+-        try:abort(job['obj'])
+-        except (ReferenceError,RuntimeError):pass
+-    _JOBS.clear()
+-
+-
+-def register():
+-    for name in ('load_pre','undo_pre','redo_pre','save_pre'):
+-        handlers=getattr(bpy.app.handlers,name)
+-        if reset not in handlers:handlers.append(reset)
+-
+-
+-def unregister():
+-    reset()
+-    for name in ('load_pre','undo_pre','redo_pre','save_pre'):
+-        handlers=getattr(bpy.app.handlers,name)
+-        if reset in handlers:handlers.remove(reset)
++"""Reversible cubic root correction for explicitly authored COM flight intervals.
++SPDX-License-Identifier: GPL-2.0-or-later
++"""
++import json,math,time,hashlib
++from bisect import bisect_left
++import numpy as np
++import bpy
++from mathutils import Vector
++from . import workflow as w,posing as p,rig_state as rs,contacts,support,flight_math as fm
++from .support_math import center_of_mass
++_JOBS={}
++
++class _RefineFlight(ValueError):pass
++
++
++def rows(obj):return [dict(start=i.start,end=i.end,strength=i.strength) for i in obj.b4ml.flights if i.enabled]
++
++
++def request(obj,scene):
++    return dict(flights=rows(obj),masses=[dict(name=i.name,weight=i.weight,fraction=i.fraction) for i in obj.b4ml.mass_segments],
++        contacts=contacts.rows(obj),gravity=list(scene.gravity) if scene.use_gravity else [0.,0.,0.],
++        fps=scene.render.fps,fps_base=scene.render.fps_base,anchors=[(i.frame,i.payload) for i in obj.b4ml.anchors])
++
++
++def add(obj,scene):
++    if obj.b4ml.flight_running or obj.b4ml.contact_running:raise ValueError('Finish the active correction first')
++    anchors=w.read_anchors(obj)
++    if len(obj.b4ml.flights)>=16:raise ValueError('Limit a candidate to sixteen flight intervals')
++    current=p._frame(scene);pairs=list(zip(anchors,anchors[1:]));a,b=next(((a,b) for a,b in pairs if a[0]<=current<b[0]),pairs[0])
++    item=obj.b4ml.flights.add();item.name='Airborne interval '+str(len(obj.b4ml.flights));item.start=a[0];item.end=b[0]
++    obj.b4ml.flight_index=len(obj.b4ml.flights)-1
++    return item
++
++
++def restore(obj,scene):
++    state=obj.b4ml
++    if state.flight_running or state.contact_running:raise ValueError('Finish the active correction first')
++    if not state.flight_input or state.flight_output!=state.candidate_action or not obj.animation_data or obj.animation_data.action!=state.flight_output:
++        raise ValueError('Select the flight candidate; restore any later contact correction first')
++    w.assign_action(obj,state.flight_input,w._slot(obj.animation_data));state.candidate_action=state.flight_input
++    state.flight_input=None;state.flight_output=None;state.flight_metrics='';contacts._frame(scene,p._frame(scene))
++    state.status='Candidate restored before flight correction'
++
++
++def _modifier_signature(value):
++    result={}
++    for prop in value.bl_rna.properties:
++        key=prop.identifier
++        if key=='rna_type':continue
++        item=getattr(value,key)
++        if prop.type=='COLLECTION':result[key]=[_modifier_signature(v) for v in item]
++        elif not prop.is_readonly and prop.type!='POINTER':
++            result[key]=list(item) if getattr(prop,'is_array',False) else sorted(item) if isinstance(item,set) else item
++    return result
++
++
++def _curve_signature(obj):
++    return [(fc.data_path,fc.array_index,fc.extrapolation,fc.auto_smoothing,fc.lock,fc.mute,[_modifier_signature(m) for m in fc.modifiers],
++        [(list(k.co),list(k.handle_left),list(k.handle_right),k.handle_left_type,k.handle_right_type,k.interpolation) for k in fc.keyframe_points])
++        for fc in w.action_curves(obj.animation_data.action,getattr(obj.animation_data,'action_slot',None))]
++
++
++
++def _key_at(keys,times,frame):
++    key=keys.get(frame)
++    if key is None:
++        index=bisect_left(times,frame)
++        nearby=times[max(0,index-1):index+1]
++        if not nearby:raise ValueError('Host frame precision merged flight keys')
++        key=keys[min(nearby,key=lambda value:abs(value-frame))]
++    if abs(float(key.co.x)-frame)>max(1e-5,abs(frame)*1e-7):raise ValueError('Host frame precision merged flight keys')
++    return key
++
++
++def _curve_token(obj,action=None):
++    """Bulk numeric reads avoid millions of temporary Python coordinate lists.
++
++    Includes interpolation/easing, modifiers and sampled curves so invalidation
++    and generated-result ownership do not depend only on key coordinates.
++    """
++    action=action if action is not None else obj.animation_data.action
++    digest=hashlib.sha256()
++    def metadata(value):digest.update(json.dumps(value,separators=(',',':'),sort_keys=True).encode('utf-8')+b'\0')
++    for fc in w.action_curves(action,getattr(obj.animation_data,'action_slot',None)):
++        metadata((fc.data_path,fc.array_index,fc.extrapolation,fc.auto_smoothing,fc.lock,fc.mute,
++                  fc.group.name if fc.group else None,[_modifier_signature(m) for m in fc.modifiers]))
++        points=fc.keyframe_points;metadata(len(points))
++        coords=np.empty(len(points)*2,dtype=np.float32)
++        for prop in ('co','handle_left','handle_right'):
++            points.foreach_get(prop,coords);digest.update(coords.tobytes())
++        scalar=np.empty(len(points),dtype=np.float32)
++        for prop in ('amplitude','back','period'):
++            points.foreach_get(prop,scalar);digest.update(scalar.tobytes())
++        enums=np.empty(len(points),dtype=np.int32)
++        for prop in ('handle_left_type','handle_right_type','interpolation','easing','type'):
++            points.foreach_get(prop,enums);digest.update(enums.tobytes())
++        points=fc.sampled_points;metadata(len(points));coords=np.empty(len(points)*2,dtype=np.float32)
++        points.foreach_get('co',coords);digest.update(coords.tobytes())
++    return digest.hexdigest()
++
++
++def _unchanged_generated(obj,action):
++    return bool(action.get('b4ml_flight_token') and action.get('b4ml_flight_name')==action.name
++                and not action.asset_data and action.get('b4ml_flight_token')==_curve_token(obj,action))
++
++
++def _correction_steps(obj,scene,divisions,started):
++    w.require_rig(obj);w._reject_nla(obj);state=obj.b4ml
++    if state.body_payload or state.posing_payload or state.contact_running:raise ValueError('Finish the active pose or contact correction first')
++    if bpy.context.screen and bpy.context.screen.is_animation_playing:raise ValueError('Stop playback before flight correction')
++    previous=state.candidate_action
++    if not previous or not obj.animation_data or obj.animation_data.action!=previous:raise ValueError('Generate and select an interpolation candidate first')
++    if state.contact_output:raise ValueError('Restore Before Contacts before editing flight; apply contacts after flight')
++    if state.flight_output and state.flight_output!=previous:raise ValueError('Select the last flight candidate or restore the later correction first')
++    if state.flight_output==previous and not state.flight_input:raise ValueError('Retained flight input is missing')
++    original=state.flight_input if state.flight_output==previous else previous
++    anchors=w.read_anchors(obj);priorities=[f for f,_ in anchors];raw=request(obj,scene)
++    intervals=fm.validate(raw['flights'],priorities,raw['contacts'])
++    if [m['name'] for m in raw['masses']]!=[v[0] for v in support.SEGMENTS]:raise ValueError('Initialize the humanoid mass model first')
++    weights=[m['weight'] for m in raw['masses']];fractions=[m['fraction'] for m in raw['masses']]
++    fps=float(raw['fps']);base=float(raw['fps_base'])
++    if not np.isfinite([fps,base]).all() or min(fps,base)<=0:raise ValueError('A positive frame rate is required')
++    dt=base/fps;gravity=np.asarray(raw['gravity'],float)
++    if not np.isfinite(gravity).all():raise ValueError('Scene gravity must be finite')
++    binding=support.body_solver.mapping(obj,writable=False)
++    root='root' if 'root' in binding['controls'] and 'root' in obj.pose.bones else binding['root']
++    if root not in anchors[0][1]['pose']:raise ValueError('Capture the master root in every priority pose')
++    root_path=obj.pose.bones[root].path_from_id('location')
++    original_frame=p._frame(scene);original_pose=w.raw_pose(obj);modes=rs.mode_values(obj);slot=w._slot(obj.animation_data);rest=w._rest_signature(obj);world=obj.matrix_world.copy()
++    candidate=None;committed=False;samples={};key_times=set();segments=[];checks=set(priorities);expected={}
++    signature=None;max_before=0.;max_after=0.;rigid_error=0.;basis_error=0.;outside_freezes=0;interval_metrics=[]
++    names=sorted(set(binding['names'])|{b.name for b in obj.data.bones if b.use_deform})
++    def basis_difference(after,before):
++        # Relative column error is independent of object scale; tiny facial bones amplify host float rounding.
++        lengths=np.linalg.norm(before[:,:3,:3],axis=1)
++        if np.any(lengths<1e-8):raise ValueError('Degenerate evaluated bone transform')
++        return float(np.max(np.linalg.norm(after[:,:3,:3]-before[:,:3,:3],axis=1)/lengths))
++    def select_action(action):
++        if obj.animation_data.action!=action or w._slot(obj.animation_data)!=slot:w.assign_action(obj,action,slot)
++    def restore_previous():
++        select_action(previous);contacts._frame(scene,original_frame)
++        # Frame evaluation already restored keyed channels. Avoid dirtying hundreds of
++        # unchanged Rigify facial/mechanism bones on every cooperative yield.
++        changed=False
++        for name,values in original_pose.items():
++            bone=obj.pose.bones.get(name)
++            if bone is None:continue
++            prop='rotation_quaternion' if values['mode']=='QUATERNION' else 'rotation_axis_angle' if values['mode']=='AXIS_ANGLE' else 'rotation_euler'
++            for key,value in (('location',values['location']),('scale',values['scale']),(prop,values['raw_rotation'])):
++                if tuple(getattr(bone,key))!=tuple(value):setattr(bone,key,value);changed=True
++        for name,props in modes.items():
++            for key,value in props.items():
++                if obj.pose.bones[name][key]!=value:obj.pose.bones[name][key]=value;changed=True
++        if changed:p._update(obj)
++    def guard():
++        if state.candidate_action!=previous or obj.animation_data.action not in (previous,candidate):raise ValueError('Candidate changed during flight correction')
++        if request(obj,scene)!=raw or w._rest_signature(obj)!=rest:raise ValueError('Flight settings, gravity, masses or rig changed during correction')
++        if obj.matrix_world!=world:raise ValueError('Object transform changed during flight correction')
++        if abs(p._frame(scene)-original_frame)>1e-5:raise ValueError('Playhead changed during flight correction')
++    def evaluate(action,frame):
++        select_action(action);contacts._frame(scene,frame);bpy.context.view_layer.update();p._check_space(obj)
++        if (list(scene.gravity) if scene.use_gravity else [0.,0.,0.])!=raw['gravity']:raise ValueError('Animated gravity requires a different flight model')
++        if any(row['start']<=frame<=row['end'] for row in intervals) and any(r['mode']!='FK' for r in p.bindings(obj)[2]):raise ValueError('Flight correction requires a normalized FK candidate')
++        p._check_controls(obj,[root],'location')
++        _,evaluated,a,b=support.sample(obj,bpy.context.evaluated_depsgraph_get());com=center_of_mass(a,b,weights,fractions)[0]
++        matrices=np.array([obj.matrix_world@obj.pose.bones[n].matrix for n in names])
++        if not np.isfinite(matrices).all():raise ValueError('Nonfinite evaluated rig')
++        return com,matrices,np.array(obj.pose.bones[root].location)
++    try:
++        w.assign_action(obj,original,slot);signature=_curve_token(obj)
++        curves=w.action_curves(original,getattr(obj.animation_data,'action_slot',None))
++        originals={i:curves.find(root_path,index=i) for i in range(3)}
++        if any(fc is None or fc.lock or fc.mute or len(fc.modifiers) for fc in originals.values()):raise ValueError('Master root needs three editable location curves without modifiers')
++        original_keys={i:[dict(frame=float(k.co.x),value=float(k.co.y),left=list(k.handle_left),right=list(k.handle_right),lt=k.handle_left_type,rt=k.handle_right_type,interpolation=k.interpolation) for k in fc.keyframe_points] for i,fc in originals.items()}
++        knot_times={float(k.co.x) for fc in curves for k in fc.keyframe_points}
++        # Original outside samples also catch unintended boundary/extrapolation changes.
++        outside=set(priorities)
++        for row in intervals:
++            outside.update((row['start']-.25,row['end']+.25))
++        for row in intervals:
++            a,b=row['start'],row['end'];start,_,_=evaluate(original,a);end,_,_=evaluate(original,b)
++            evaluate(original,a)
++            duration=(b-a)*dt;entry,exit=fm.endpoint_velocities(start,end,duration,gravity)
++            row.update(start_com=start,end_com=end,duration=duration)
++            # Body size reference is evaluated at takeoff, independently of a moving pelvis.
++            _,_,starts,ends=support.sample(obj,bpy.context.evaluated_depsgraph_get())
++            row['scale']=max(float(np.linalg.norm(ends[0]-starts[0])+np.linalg.norm(ends[1]-starts[1])+np.linalg.norm(ends[2]-starts[2])),1e-8)
++            frames=sorted({a,b}|{i/divisions for i in range(math.ceil(a*divisions),math.floor(b*divisions)+1)}|{f for f in knot_times if a<f<b})
++            key_times.update(frames)
++            for left,right in zip(frames,frames[1:]):
++                if right-left<1e-5:raise ValueError('Flight keys are too close for stable frame precision')
++                segments.append((row,left,right));checks.update((left,left+(right-left)*.25,left+(right-left)*.5,left+(right-left)*.75,right))
++                for f in (left,left+(right-left)/3,left+2*(right-left)/3,right):samples.setdefault(f,None)
++            interval_metrics.append(dict(start=a,end=b,strength=row['strength'],duration_seconds=duration,ballistic_entry_velocity=entry.tolist(),ballistic_exit_velocity=exit.tolist()))
++        if len(key_times)*3>w.MAX_KEYS:raise ValueError('Flight correction exceeds the key budget')
++        def target_at(frame,source):
++            row=next((r for r in intervals if r['start']<=frame<=r['end']),None)
++            if row is None:return source,None
++            u=(frame-row['start'])/(row['end']-row['start'])
++            ballistic=fm.trajectory(row['start_com'],row['end_com'],[u],row['duration'],gravity)[0]
++            return source+(ballistic-source)*row['strength'],row
++        for frame in sorted(samples):
++            source,before,location=evaluate(original,frame);target,row=target_at(frame,source);delta=target-source
++            error=float(np.linalg.norm(delta))/row['scale'];max_before=max(max_before,error)
++            if frame in priorities and error>2e-4:raise ValueError(f'Gravity arc conflicts with priority pose at frame {frame:g}')
++            if frame not in priorities:
++                p._translate(obj,root,obj.matrix_world.inverted().to_3x3()@Vector(delta))
++                _,_,a,b=support.sample(obj,bpy.context.evaluated_depsgraph_get());actual=center_of_mass(a,b,weights,fractions)[0]
++                after=np.array([obj.matrix_world@obj.pose.bones[n].matrix for n in names]);wanted=before.copy();wanted[:,:3,3]+=delta
++                displacement=float(np.max(np.linalg.norm(after[:,:3,3]-wanted[:,:3,3],axis=1)))/row['scale']
++                shape=basis_difference(after,wanted);rigid_error=max(rigid_error,displacement);basis_error=max(basis_error,shape)
++                if np.linalg.norm(actual-target)/row['scale']>2e-4 or displacement>2e-4 or shape>2e-4:raise ValueError(f'Master-root translation failed at {frame:g}: COM={np.linalg.norm(actual-target)/row["scale"]:.6g}, position={displacement:.6g} ({names[int(np.argmax(np.linalg.norm(after[:,:3,3]-wanted[:,:3,3],axis=1)))]}), rotation={shape:.6g} ({names[int(np.argmax(np.max(np.abs(after[:,:3,:3]-wanted[:,:3,:3]),axis=(1,2))))]})')
++            samples[frame]=np.array(obj.pose.bones[root].location)
++            restore_previous();yield dict(phase='Fitting COM flight',frame=frame,total=len(samples));guard()
++        w.assign_action(obj,original,slot)
++        if _curve_token(obj)!=signature:raise ValueError('Input animation changed during flight correction')
++        candidate=original.copy();candidate.name=original.name+' Flight';candidate.use_fake_user=False;w.assign_action(obj,candidate,slot)
++        curves=w.action_curves(candidate,getattr(obj.animation_data,'action_slot',None),ensure=True,obj=obj)
++        retained=sum(sum(not(fc.data_path==root_path and any(r['start']<k.co.x<r['end'] for r in intervals)) for k in fc.keyframe_points) for fc in curves)
++        if retained+len(key_times)*3>w.MAX_KEYS:raise ValueError('Flight candidate exceeds the total key budget')
++        for axis in range(3):
++            fc=curves.find(root_path,index=axis)
++            for i in range(len(fc.keyframe_points)-1,-1,-1):
++                if any(r['start']<fc.keyframe_points[i].co.x<r['end'] for r in intervals):fc.keyframe_points.remove(fc.keyframe_points[i],fast=True)
++            for f in sorted(key_times):fc.keyframe_points.insert(f,float(samples[f][axis]),options={'FAST'})
++            fc.update();keys={float(k.co.x):k for k in fc.keyframe_points};times=sorted(keys)
++            def key_at(frame):return _key_at(keys,times,frame)
++            for row,left,right in segments:
++                h1,h2=fm.cubic_controls([samples[left],samples[left+(right-left)/3],samples[left+2*(right-left)/3],samples[right]])
++                ka=key_at(left);kb=key_at(right)
++                ka.handle_right_type='FREE';kb.handle_left_type='FREE';ka.interpolation='BEZIER'
++                ka.handle_right=(left+(right-left)/3,float(h1[axis]));kb.handle_left=(left+2*(right-left)/3,float(h2[axis]))
++            # Boundary outer handles retain the original neighboring curve geometry.
++            for old in original_keys[axis]:
++                if not any(old['frame'] in (r['start'],r['end']) for r in intervals):continue
++                k=key_at(old['frame'])
++                if any(old['frame']==row['start'] for row in intervals) and not any(old['frame']==row['end'] for row in intervals):k.handle_left_type='FREE';k.handle_left=old['left']
++                if any(old['frame']==row['end'] for row in intervals) and not any(old['frame']==row['start'] for row in intervals):
++                    k.handle_right_type='FREE';k.handle_right=old['right'];k.interpolation=old['interpolation']
++            fc.update()
++            for old in original_keys[axis]:
++                if any(row['start']<=old['frame']<=row['end'] for row in intervals):continue
++                k=key_at(old['frame'])
++                if max(abs(a-b) for a,b in zip([*k.handle_left,*k.handle_right],old['left']+old['right']))>1e-7:
++                    k.handle_left_type=k.handle_right_type='FREE';k.handle_left=old['left'];k.handle_right=old['right'];outside_freezes+=1
++            fc.update()
++        checks.update(outside)
++        for frame in sorted(checks):
++            source,before,_=evaluate(original,frame);target,row=target_at(frame,source)
++            actual,after,_=evaluate(candidate,frame);scale=row['scale'] if row else max(r['scale'] for r in intervals)
++            error=float(np.linalg.norm(actual-target))/scale;max_after=max(max_after,error)
++            wanted=before.copy();wanted[:,:3,3]+=target-source
++            basis_error=max(basis_error,basis_difference(after,wanted))
++            if error>2e-4 or np.max(np.linalg.norm(after[:,:3,3]-wanted[:,:3,3],axis=1))/scale>2e-4 or basis_difference(after,wanted)>2e-4:
++                raise _RefineFlight(f'Evaluated flight/pose preservation failed at frame {frame:g}: COM={error:.6g}')
++            if frame in priorities and np.max(np.abs(after-before))>2e-4:raise ValueError(f'Flight changed a priority pose at frame {frame:g}')
++            expected[frame]=actual.tolist();restore_previous();yield dict(phase='Checking COM flight',frame=frame,total=len(checks));guard()
++        for row,metrics in zip(intervals,interval_metrics):
++            h=min(.0625,(row['end']-row['start'])/16);seconds=h*dt
++            for label,frame in (('takeoff',row['start']),('landing',row['end'])):
++                values={}
++                for action_name,action in (('input',original),('corrected',candidate)):
++                    points=np.array([evaluate(action,frame+i*h)[0] for i in (-2,-1,0,1,2)])
++                    left=(3*points[2]-4*points[1]+points[0])/(2*seconds)
++                    right=(-3*points[2]+4*points[3]-points[4])/(2*seconds)
++                    values[action_name]=dict(before=left.tolist(),after=right.tolist(),jump=float(np.linalg.norm(right-left)))
++                metrics[label+'_velocity']=values
++            metrics['velocity_sample_frames']=h
++            restore_previous();yield dict(phase='Measuring boundary velocity',frame=row['end'],total=len(intervals));guard()
++        w.assign_action(obj,original,slot)
++        if _curve_token(obj)!=signature:raise ValueError('Input animation changed during flight correction')
++        w.assign_action(obj,candidate,slot);contacts._frame(scene,original_frame)
++        report=dict(backend='constant_gravity_com_cubic_v1',sample_divisions=divisions,root=root,intervals=interval_metrics,keys=len(key_times),validation_frames=len(checks),
++            max_before=max_before,max_after=max_after,rigid_translation_error=rigid_error,relative_basis_error=basis_error,outside_root_handle_freezes=outside_freezes,
++            elapsed_ms=(time.perf_counter()-started)*1000,gravity=raw['gravity'],fps=fps,fps_base=base,priority_poses=len(priorities),
++            units='errors normalized by evaluated trunk length; velocities in internal world units per second',
++            trajectory_samples=expected)
++        discard_previous=previous!=original and _unchanged_generated(obj,previous)
++        candidate['b4ml_flight_token']=_curve_token(obj,candidate);candidate['b4ml_flight_name']=candidate.name
++        state.flight_input=original;state.flight_output=candidate;state.candidate_action=candidate;state.flight_metrics=json.dumps(report,allow_nan=False)
++        candidate['b4ml_flight']=json.dumps(raw,allow_nan=False);candidate['b4ml_flight_metrics']=state.flight_metrics
++        original.use_fake_user=True;state.status=f'COM flight preview ready; error {max_after:.3g} body units';committed=True
++        # Only replace the unreferenced, unchanged result from this object's prior
++        # flight preview. Preserve authored edits and legacy outputs across saves.
++        if previous!=original and previous.users==0:
++            if discard_previous:bpy.data.actions.remove(previous)
++            else:previous.use_fake_user=True
++        return report
++    finally:
++        if not committed:
++            restore_previous()
++            if candidate and candidate.users==0:bpy.data.actions.remove(candidate)
++
++
++def correction_steps(obj,scene):
++    started=time.perf_counter();initial_request=request(obj,scene);initial_candidate=obj.b4ml.candidate_action
++    initial_frame=p._frame(scene);initial_world=obj.matrix_world.copy()
++    for divisions in (2,4,8,16):
++        if request(obj,scene)!=initial_request or obj.b4ml.candidate_action!=initial_candidate:raise ValueError('Flight settings or candidate changed during refinement')
++        if p._frame(scene)!=initial_frame or obj.matrix_world!=initial_world:raise ValueError('Playhead or object transform changed during refinement')
++        try:
++            return (yield from _correction_steps(obj,scene,divisions,started))
++        except _RefineFlight:
++            if divisions==16:raise
++            # The failed pass restored the input and removed its temporary action.
++            yield dict(phase='Refining COM curve',frame=p._frame(scene),total=divisions*2)
++
++
++def start(obj,scene):
++    if obj.as_pointer() in _JOBS or obj.b4ml.contact_running:raise ValueError('A correction is already running')
++    _JOBS[obj.as_pointer()]=dict(obj=obj,iterator=correction_steps(obj,scene));obj.b4ml.flight_running=True;obj.b4ml.flight_progress='Preparing COM flight'
++
++
++def step(obj):
++    job=_JOBS.get(obj.as_pointer())
++    if job is None:raise InterruptedError('Flight correction stopped')
++    try:
++        info=next(job['iterator']);obj.b4ml.flight_progress=f"{info['phase']}: frame {info['frame']:g}";return False
++    except StopIteration:
++        _JOBS.pop(obj.as_pointer(),None);obj.b4ml.flight_running=False;obj.b4ml.flight_progress='';return True
++    except BaseException:abort(obj);raise
++
++
++def abort(obj):
++    job=_JOBS.pop(obj.as_pointer(),None)
++    try:
++        if job:job['iterator'].close()
++    finally:obj.b4ml.flight_running=False;obj.b4ml.flight_progress=''
++
++
++def solve(obj,scene):
++    start(obj,scene)
++    while not step(obj):pass
++    return json.loads(obj.b4ml.flight_metrics)
++
++
++@bpy.app.handlers.persistent
++def reset(*args):
++    for job in list(_JOBS.values()):
++        try:abort(job['obj'])
++        except (ReferenceError,RuntimeError):pass
++    _JOBS.clear()
++
++
++def register():
++    for name in ('load_pre','undo_pre','redo_pre','save_pre'):
++        handlers=getattr(bpy.app.handlers,name)
++        if reset not in handlers:handlers.append(reset)
++
++
++def unregister():
++    reset()
++    for name in ('load_pre','undo_pre','redo_pre','save_pre'):
++        handlers=getattr(bpy.app.handlers,name)
++        if reset in handlers:handlers.remove(reset)

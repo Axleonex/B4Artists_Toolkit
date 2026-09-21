@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "passed": true,
+  "host": "5.2.0 Alpha",
+  "events": [
+    "Body Reset returned the helper to its preview-start transform",
+    "Native Undo restored the moved helper",
+    "Native Redo reapplied the per-target reset"
+  ],
+  "reset_buttons_expected": 6,
+  "source_pose_unchanged": true,
+  "source_action_unchanged": true,
+  "enabled_and_orientation_preserved": true,
+  "native_undo_redo_verified": true,
+  "screenshot": "training\\b4artists_ml\\cache\\quadruped-target-reset-ui-v1.png",
+  "screenshot_sha256": "55c9f53bc205e09c9d7c5b752390fa8c293a126272df84a57337f41d85080f6f",
+  "scope": "Automated foreground panel and operator journey. Independent animator visual assessment remains unverified."
+}

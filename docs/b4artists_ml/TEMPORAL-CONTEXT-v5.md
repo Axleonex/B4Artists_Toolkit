@@ -1,0 +1,13 @@
+# Context-preserving temporal residual experiment v5
+
+Research only. No new temporal model selected or bundled; the full goal remains incomplete.
+
+Worst V3 cohorts favored contextual world-position Hermite over the learned linear-root/local-SLERP baseline. V5 therefore constructs a complete 23-joint baseline from observed root Hermite and tangent-projected quaternion Hermite rotations. It preserves endpoints, static edge lengths and source observation isolation. This baseline is procedural. Nine trained RBF-kernel variants learn articulated residual coefficients relative to it, using the existing frozen 23 training / 6 validation / 3 observed-development clips. No new assets or paid compute are used.
+
+The context-only baseline improves validation rotation error (0.126316 versus V3 0.129574) but worsens position (0.111129 versus V3 0.097331). None of the nine residual fits beats V3 on the frozen position-plus-rotation selector. The existing V3 kernel remains the incumbent. Both validation and observed-development acceptance fail, including cohort performance. The stronger contextual baseline is included in comparisons; no threshold is relaxed. This is further evidence that blindly extrapolating context can harm motion, not a usable learned-motion release.
+
+Eight new tests pass in standalone Python and Bforartists: exact priorities/no-context behavior, hidden-motion isolation, context influence, missing-context suppression, time-unit invariance/query independence, endpoint root velocities, proper rotations and physical edge lengths, and invalid inputs. The standalone discovery command also ran thirteen existing sequence cases; these are not additional new tests. The host still crashes at shutdown after passing assertions.
+
+A fresh training repeat reproduces byte-identical selected weights, all nine trial aggregates, complete validation/development reports and gates. The original report's `learned=false` meant no newly trained candidate was selected but ambiguously described the learned V3 incumbent. The repeated report corrects this to `learned=true`, `new_learner_selected=false`; original evidence is retained. No model quality changed with that metadata correction.
+
+Evidence: training/b4artists_ml/results/context_motion_v5/ and context_motion_v5_repeat/. Protocol: training/b4artists_ml/context_motion_protocol_v5.json. No untouched blind confirmation, real-rig temporal application or animator/Cascadeur comparison is established. Next research should condition the choice of motion context on observed dynamics, rather than always applying it, while retaining full articulated motion, endpoints and strict comparisons.

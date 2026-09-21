@@ -3,8 +3,10 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .eggs/
+*.log
 build/
 dist/
+training/b4artists_ml/cache-expanded-v1/
 
 # Blender / Bforartists
 *.blend1
@@ -34,3 +36,11 @@ copilot-instructions.md
 # Internal diagnostic reports - keep LOCAL only, never publish
 DIAGNOSTICS_REPORT_*.md
 *DIAGNOSTICS_REPORT*
+
+# B4Artists ML local evidence and beta-build products. Curate source, tests,
+# public documentation, and selected redacted evidence explicitly; do not bulk
+# stage machine receipts, human-review exports, or generated archives.
+/.goalposts/
+/.planning/
+/training/b4artists_ml/results/
+/releases/b4artists_ml_*.zip

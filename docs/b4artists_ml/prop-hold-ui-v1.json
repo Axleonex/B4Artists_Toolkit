@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "fixture": "boneforge",
+  "events": [
+    "Clear and Bind operators preserved explicit target ownership"
+  ],
+  "bound": true,
+  "target": "Animator Prop",
+  "screenshot": "training\\b4artists_ml\\cache\\prop-hold-ui-v1.png",
+  "elapsed_seconds": 2.07546240001102
+}

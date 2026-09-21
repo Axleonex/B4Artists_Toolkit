@@ -1,0 +1,9 @@
+# Native flight/contact composition repair
+
+An additional real-rig workflow check exposed a KeyError after native flight: contact correction tried to read root-curve metadata from the retained pose action. The existing 311-case regression and 118 offline checks had omitted this composition. The 0.17.0 ZIP is retained as failed workflow evidence and is not release-ready.
+
+The repair stores generated flight timing on the native motion layer. Contact correction reads that snapshot, including transition spans, instead of mutable settings for a future flight. Legacy native archives recover timing from their saved interval and transition metrics without modifying the archive. Root-curve metadata remains on the action. Corrupt metadata raises a readable error and preserves the input. An edit to generated metadata during fitting cancels correction.
+
+Initial new checks cover BoneForge and default Rigify composition, save/reload and editable archive recovery, changed panel settings, transition/contact conflicts, legacy metadata, corrupt metadata and cancellation. A malformed null metadata case initially escaped validation; the unchanged test caught it and the implementation now rejects it. The actual-window combined workflow passes modal correction, Undo/Redo, Keep, archive/reopen and Discard. A nontrivial correction test initially exposed tiny bend-plane drift outside the contact span. Already-satisfied contacts now preserve their exact controls; the unchanged outside-motion tolerance passes on both real rigs.
+
+Patch 0.17.1 passes the refreshed affected suites, exact-package offline checks and actual-window combined workflow. No original goal criteria or learned-motion quality gates are relaxed. Native host shutdown, independent animator usability and overall Cascadeur comparison remain unqualified.

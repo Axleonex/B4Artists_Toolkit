@@ -1,0 +1,111 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "native_goal_status": "active",
+  "state_path": "docs/b4artists_ml/goalposts/01a073fe-c240-70c0-b5cd-fe9653aac60e-tail-risk-selector-v28.json",
+  "contract_hash": "81619f36405c4412e8a587fe4ded40ae564a43411cf5d04ea5a1e7917bdad682",
+  "input_fingerprint": "8320d1004fc9eb608e3c63b38bdf93e83973b2143200bdbe71c38b6c388fcee2",
+  "round": 49,
+  "max_goalposts": 50,
+  "remaining_evaluations": 1,
+  "deadline_unix": 1788981845.0,
+  "decision": "iterate",
+  "stagnant_rounds": 20,
+  "full_goal_complete": false,
+  "active_jobs": [],
+  "current_turn_classification": "Progress: v28 fully reproduced,72native cases and1728edit probes completed;stronger training objective fails3developmentcohorts. No promotion.",
+  "blocked_audit": {
+    "consecutive_goal_turns": 0,
+    "condition": null
+  },
+  "next_controller_monotonic_start": 356017.8897298,
+  "evidence": "docs/b4artists_ml/goalposts/tail-risk-selector-evidence-v28.json",
+  "artifact": {
+    "path": "releases/b4artists_ml_v0.17.5.zip",
+    "sha256": "ae2b5a1aa4bbb0f6cd5f58a8095c4c29cf079d62792a0bb539181b7ace936ff2",
+    "files": 36,
+    "bytes": 253465,
+    "matches_current_source": true,
+    "experimental": true
+  },
+  "next_safe_actions": [
+    "Complete one final requirements, package, evidence and scope audit; checkpoint at50evaluations without silently extending limits.",
+    "Preserve all rejected research variants, original50evaluationceiling and2026-09-09T19:24:05Zdeadline. One evaluation remains.",
+    "Use evaluate_milestone_goal_v2; never forge assessment signatures or clear floors.",
+    "No production promotion,confirmation acquisition,Git publication or parity claim while full-scope requirements remain unmet."
+  ],
+  "work_accounting": "Recorded controller-projected-selector-preparation-v26 once from341924.5443303to343821.257561; diagnostic46524terminal and corpus run23370still live at checkpoint.",
+  "publication": {
+    "head": "3153a8946fd8ef1415d9901c30a56bcc6783c49d axlbot <axleonex@gmail.com> axlbot <axleonex@gmail.com>",
+    "tracked_diff_empty": true,
+    "index_empty": true,
+    "committed": false,
+    "pushed": false,
+    "installed": false
+  },
+  "pending_human_input": "Previously requested independent animator assessment remains unanswered; do not repeat or fabricate.",
+  "resumed_run_start_unix": 1788848277.2365775,
+  "resumed_run_time_cap_hours": 15,
+  "resume_authorized": true,
+  "recorded_at": 1788925591.9495332,
+  "extension_start_unix": 1788909845.0,
+  "extension_hours": 20,
+  "prior_deadline_unix": 1788902277.2365775,
+  "previous_turn_classification": "Progress and verified wait: both corpus runs remain live; partial completed chunks match exactly. Prepared1728observed-edit sensitivity cases, passed22synthetic diagnostic checks and strengthened pending completion/hash guards. No model completion, new evaluation, runtime change or quality claim.",
+  "prepared_validation": {
+    "moving_cases": 16,
+    "stationary_cases": 16,
+    "journey_tests": 15,
+    "stability_cases": 1728,
+    "stability_synthetic_checks": 22,
+    "trained_checks_executed": false,
+    "preflight_receipt": "training/b4artists_ml/results/projected-selector-validation-preflight-v26/receipt.json",
+    "partial_reproduction": "training/b4artists_ml/results/projected-selector-validation-preflight-v26/partial-reproduction.json",
+    "review": "docs/b4artists_ml/goalposts/projected-selector-validation-review-v26.json"
+  },
+  "pending_document_revisions": {},
+  "latest_live_observation": {
+    "primary": {
+      "session_id": 23370,
+      "terminal": true,
+      "exit_code": 0
+    },
+    "reproduction": {
+      "session_id": 87876,
+      "terminal": true,
+      "exit_code": 0,
+      "full_reproduction_verified": true
+    },
+    "native_validation_chain": {
+      "session_id": 45704,
+      "terminal": true,
+      "exit_code": 0
+    },
+    "recorded_at": 1788922667.194709
+  },
+  "cooperative_research": {
+    "evidence": "training/b4artists_ml/results/projected-selector-host-verification-v26.json",
+    "native_cases": 72,
+    "trained_provider_tested": true,
+    "ui_integrated": false,
+    "full_responsiveness": false
+  },
+  "pending_source_revisions": {},
+  "pending_evaluation": false,
+  "attempted_round": 46,
+  "evaluation_infrastructure_issue": "training/b4artists_ml/results/temporal-observer-goalpost-attempt-v1/receipt.json",
+  "assessment_receipts_unavailable": true,
+  "post_goalpost_updates": {
+    "full_reproduction_verified": true,
+    "proof": "training/b4artists_ml/results/projected-selector-reproduction-v26.json",
+    "sha256": "0e0d36dbfeb0ed79004fae881e5f8f2d079a1905dea7511cda2aa53b4af130f3",
+    "all_sessions_terminal": [
+      23370,
+      87876,
+      45704,
+      79437,
+      52994
+    ],
+    "quality_qualified": false,
+    "recorded_at": 1788922806.275251
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "seed": 20260906,
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "target_fps": 30,
+  "training_windows_per_gap": 16,
+  "evaluation_windows_per_gap": 8,
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "schema": 12,
+  "observation_schema": "b4ml-semantic-observations-v1",
+  "input_features": 667,
+  "target_features": 153,
+  "scope": "Frozen matched shared-observation model and identical real-ancestry projection experiment; research only",
+  "calibration": "Artificial frame zero in the existing corpus only; excluded from motion observations and targets",
+  "source_manifests": {
+    "results/training_manifest_v4.json": "9973a7f2b8935c33cb8d9b819d46658485bab931fdaabb59b6434ff0e3d78fe8",
+    "temporal_expansion_manifest_v8.json": "03a3055989effc67259e41e0e749480d2e94fd182656a44c8ebafa1d8e6ffef8"
+  },
+  "partitions": [
+    "train",
+    "validation"
+  ],
+  "holdouts": "Only train/validation used in initial selection and reproduction; earlier confirmation is already observed and must never be labeled fresh",
+  "label_policy": "Only four known poses (or two without context) enter observations; full targets are separate trainer labels",
+  "physics_policy": "Collapsed semantic edges are not asserted to have constant length; raw baselines do not qualify actual rig physics",
+  "next": "Evaluate selected compatible predictions on actual-rig editable actions; failed gates forbid promotion",
+  "baselines": [
+    "projected_linear",
+    "projected_hermite"
+  ],
+  "projection": {
+    "steps": 48,
+    "learning_rate": 0.02,
+    "rotation_weight": 0.5,
+    "regularization": 1e-05
+  },
+  "experiments": [
+    {
+      "kind": "ridge",
+      "variant": "raw",
+      "regularization": 0.01
+    },
+    {
+      "kind": "ridge",
+      "variant": "raw",
+      "regularization": 0.1
+    },
+    {
+      "kind": "ridge",
+      "variant": "motion",
+      "regularization": 0.01
+    },
+    {
+      "kind": "ridge",
+      "variant": "motion",
+      "regularization": 0.1
+    },
+    {
+      "kind": "rbf",
+      "variant": "motion",
+      "centers": 128,
+      "width": 0.75,
+      "regularization": 0.001
+    },
+    {
+      "kind": "rbf",
+      "variant": "motion",
+      "centers": 128,
+      "width": 0.75,
+      "regularization": 0.01
+    },
+    {
+      "kind": "rbf",
+      "variant": "motion",
+      "centers": 128,
+      "width": 1.5,
+      "regularization": 0.001
+    },
+    {
+      "kind": "rbf",
+      "variant": "motion",
+      "centers": 128,
+      "width": 1.5,
+      "regularization": 0.01
+    }
+  ],
+  "selection": "Minimum validation position + 0.1*rotation, including procedural controls; evaluate original aggregate and worst-cohort gates against both identically projected baselines",
+  "reproduction": "Repeat complete fit and validation in a separate process; exact saved weights and metrics",
+  "runtime": "Local NumPy float64 training and inference; no new assets, subscriptions, APIs or downloads",
+  "projection_method": "Fixed 48-step projected Adam with eight bounded quarter-step backtracking attempts; exact root, terminal orientations and known priorities",
+  "pre_fit_correction": {
+    "reason": "Training-fixture test exposed overshoot/no-op for a small proposal; add descent-only backtracking before any model fit or validation evaluation",
+    "prior_protocol_sha256": "4c96d8fa90314d2b3682e4c6ad6b7495d351d0602543dca9834d98fe5155262c",
+    "prior_protocol_path": "results/semantic-motion-protocol-v12-pre-fit-initial.json",
+    "quality_gates_unchanged": true,
+    "model_trials_unchanged": true
+  }
+}

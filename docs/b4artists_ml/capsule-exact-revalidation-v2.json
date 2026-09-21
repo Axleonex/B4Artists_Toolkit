@@ -1,0 +1,98 @@
+{
+  "schema": "b4ml-capsule-exact-revalidation-v2",
+  "observed_at": "2026-09-13T20:34:43.3452792-04:00",
+  "archive": {
+    "label": "b4artists_ml_v0.37.2-dev.zip",
+    "members": 54,
+    "bytes": 415847,
+    "sha256": "2fad2e635300c337023f0a593f20bc7c8ff367e5c1ac323c74fa33b29f93253d",
+    "integrity": "PASS",
+    "comparison_root": ".runtime-test/b4artists_ml"
+  },
+  "runtime": {
+    "application": "Bforartists",
+    "requested_version": "5.1.0",
+    "blender_core": "5.2.0 Alpha",
+    "build_hash": "dd23ab17120d",
+    "boneforge_source": "\\\\100.114.2.71\\Gdrive\\LapArt\\Projects\\Blender Ghost_Tool B4Artists\\.runtime-test\\BoneForge_B4Artists_github"
+  },
+  "exact_binding_suite": {
+    "status": "PASS",
+    "runner": "training/b4artists_ml/run_capsule_bforartists_v1.py",
+    "tests": 2,
+    "passed": 2,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed_seconds": 11.369,
+    "process_exit_code": -1073741819,
+    "process_exit_interpretation": "Known Bforartists shutdown-only ucrtbase.dll access violation after the harness reported OK; no test assertion failed."
+  },
+  "affected_regression": {
+    "status": "PASS",
+    "runner": "training/b4artists_ml/run_secondary_affected_bforartists_v1.py",
+    "suite_count": 14,
+    "tests": 148,
+    "passed": 148,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed_seconds": 529.658,
+    "process_exit_code": -1073741819,
+    "process_exit_interpretation": "Known Bforartists shutdown-only ucrtbase.dll access violation after B4ML_SECONDARY_AFFECTED_RESULT: PASS."
+  },
+  "foreground_lifecycle": {
+    "status": "PASS",
+    "harness": "training/b4artists_ml/check_capsule_ui_v1.py",
+    "feature": "static analytic capsule collision",
+    "backend": "implicit_selected_control_secondary_v12",
+    "schema": 13,
+    "learned": false,
+    "events": [
+      "Visible B4Artists ML panel exposed capsule shape, endpoints, radius, and Preview Secondary.",
+      "Preview Secondary generated an editable static-capsule result.",
+      "Restore Input returned to the pre-capsule candidate.",
+      "Keep archived the editable capsule result as a separate action.",
+      "Save/reload preserved the kept action and capsule endpoint bindings.",
+      "Restore Source returned the rig to its original action after reload."
+    ],
+    "steps": 48,
+    "step_max_ms": 181.9767,
+    "elapsed_seconds": 5.0903,
+    "native_undo_redo": {
+      "status": "host-limited",
+      "reason": "The Bforartists 5.2 Alpha factory-startup timer context does not retain this synthetic rig in the native undo stack; the exact-archive regression covers existing native Undo/Redo paths."
+    },
+    "action_rig_recovery": {
+      "source_action_recovered": true,
+      "rig_structure_recovered": true,
+      "rig_modes_recovered": true,
+      "pose_evaluation_changed_bones": 294,
+      "pose_interpretation": "Candidate-driven pose evaluation differs as expected; Action content, armature structure, and rig modes recover exactly."
+    },
+    "artifacts": [
+      "training/b4artists_ml/cache/capsule-ui-v1-controls.png",
+      "training/b4artists_ml/cache/capsule-ui-v1-completed.png",
+      "training/b4artists_ml/cache/capsule-ui-v1.blend"
+    ]
+  },
+  "current_worktree_checker": {
+    "status": "EXPECTED_MISMATCH",
+    "reason": "The source-tree checker compares the archive with the newer current worktree, which includes unarchived world-chain edits; the independent staged-runtime comparison above is the exact-archive integrity check."
+  },
+  "review_gate": {
+    "status": "NON_AUTHORITATIVE",
+    "authority": false,
+    "references": [
+      "CAPSULE-BFORARTISTS-REGRESSION-v1.json",
+      "CAPSULE-ROUTING-RECEIPT-v1.json",
+      "CAPSULE-PRIME-ADVISORY-REVIEW-v1.json"
+    ]
+  },
+  "claim_boundary": {
+    "independent_animator_usability": false,
+    "learned_temporal_quality": false,
+    "cascadeur_comparison": false,
+    "full_product_goal_complete": false
+  }
+}

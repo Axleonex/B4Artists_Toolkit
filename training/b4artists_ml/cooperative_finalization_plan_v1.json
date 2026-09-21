@@ -1,0 +1,23 @@
+{
+  "hypothesis": "Share the existing per-tick read-only decode scope with final validation while retaining an independent mutable completion record, and yield between bounded final orientation updates.",
+  "baseline": "releases/b4artists_ml_v0.17.3.zip",
+  "baseline_sha256": "f9ae572c42f4f89d52f7d96b4190dbfa7928a50fd8010d728fa20ba2146e7aa4",
+  "changes": [
+    "Pass existing read scope through live step only for read-only _get/_request; never cache or borrow the completion write record",
+    "Expose cancellable checkpoints after every two final effector updates, outside host context overrides; revalidate on resume",
+    "Check invalidation and recovery at completion boundaries; preserve fitting math and final tolerances"
+  ],
+  "validation": [
+    "Actual-rig final-stage cancellation and source recovery on generated Rigify",
+    "Borrowed record immutability and final-step payload invalidation",
+    "Counterbalanced archive/current/current/archive on BoneForge/default Rigify and archive/current on three other profiles, without cProfile"
+  ],
+  "measurement_gates": {
+    "default_rigify_final_tick_reduction_at_least": 0.25,
+    "default_rigify_max_tick_reduction_at_least": 0.2,
+    "total_active_cpu_ratio_at_most": 1.1,
+    "all_pose_signature_accuracy_evaluation_metrics_exact": true
+  },
+  "limits": "Full responsiveness and human usability remain separate requirements. No temporal model promoted.",
+  "recorded_at": 1788888816.9484603
+}

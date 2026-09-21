@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "fixture": "boneforge",
+  "events": [
+    "Clear and Bind operators preserved the explicit platform target"
+  ],
+  "bound": true,
+  "target": "Animator Platform",
+  "screenshot": "training\\b4artists_ml\\cache\\moving-platform-ui-v1.png",
+  "elapsed_seconds": 2.07889060000889
+}

@@ -1,0 +1,187 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "native_goal_status": "active_verified_2026-09-09",
+  "state_path": "docs/b4artists_ml/goalposts/01a073fe-c240-70c0-b5cd-fe9653aac60e-coupled-ground-v2.json",
+  "contract_hash": "2b97b6d56f29c1e191b14435456dc1df1aa6b126f4f31b978d0e580166f6770b",
+  "input_fingerprint": "352d296bee616fc701204009fb8d2283b4908d813eeeb8333062520516730fc8",
+  "round": 67,
+  "max_goalposts": 100,
+  "remaining_evaluations": 33,
+  "deadline_unix": 1789053845.0,
+  "decision": "iterate",
+  "stagnant_rounds": 38,
+  "full_goal_complete": false,
+  "active_jobs": [],
+  "current_turn_classification": "Progress: compared actual-rig leg-only/full-body velocity constraints and nonlinear increments; whole-body directions improve conditioning but full-frame increments fail trajectory requirements.",
+  "blocked_audit": {
+    "consecutive_goal_turns": 0,
+    "condition": null
+  },
+  "next_controller_monotonic_start": 385859.4766528,
+  "evidence": "docs/b4artists_ml/goalposts/coupled-ground-evidence-v2.json",
+  "artifact": {
+    "path": "releases/b4artists_ml_v0.19.2.zip",
+    "sha256": "4ab4f9da9f209bd1ae0275c47443212f5ed44a6a0be41114dca9729005bcef85",
+    "files": 42,
+    "bytes": 271524,
+    "matches_current_source": true,
+    "experimental": true,
+    "ready_for_local_testing": true,
+    "note": "414native cases before metadata-only version bump;13exact-archive offline workflows; full goal incomplete."
+  },
+  "next_safe_actions": [
+    "Use whole-body constrained endpoint velocities as a diagnostic/possible trajectory initialization, never as direct animation increments. A nonlinear trajectory solve must preserve contacts, authored poses and COM while measuring angular velocity and acceleration.",
+    "Retain the frozen contact/timing request and failure evidence. A continuous candidate must be validated over full frames and between authored poses, with angular-speed/acceleration checks and meaningful physical/animator limits.",
+    "Preserve original goal, checkpoint67,100evaluation ceiling,deadline1789053845,release0.19.2and sealed confirmation. No new nearby model fit."
+  ],
+  "work_accounting": "Parent interval recorded once from checkpoint66; no child runtimes added.",
+  "publication": {
+    "head": "3153a8946fd8ef1415d9901c30a56bcc6783c49d axlbot <axleonex@gmail.com> axlbot <axleonex@gmail.com>",
+    "tracked_diff_empty": true,
+    "index_empty": true,
+    "committed": false,
+    "pushed": false,
+    "installed": false
+  },
+  "pending_human_input": "Previously requested independent animator assessment remains unanswered; do not repeat or fabricate.",
+  "resumed_run_start_unix": 1788848277.2365775,
+  "resumed_run_time_cap_hours": 15,
+  "resume_authorized": true,
+  "recorded_at": 1788956111.9658806,
+  "extension_start_unix": 1788909845.0,
+  "extension_hours": 20,
+  "prior_deadline_unix": 1788981845.0,
+  "previous_turn_classification": "Progress: coupled ground spatial feasibility and dense angular-rate diagnosis completed.",
+  "prepared_validation": {
+    "moving_cases": 16,
+    "stationary_cases": 16,
+    "journey_tests": 15,
+    "stability_cases": 1728,
+    "stability_synthetic_checks": 22,
+    "trained_checks_executed": false,
+    "preflight_receipt": "training/b4artists_ml/results/projected-selector-validation-preflight-v26/receipt.json",
+    "partial_reproduction": "training/b4artists_ml/results/projected-selector-validation-preflight-v26/partial-reproduction.json",
+    "review": "docs/b4artists_ml/goalposts/projected-selector-validation-review-v26.json"
+  },
+  "pending_document_revisions": {},
+  "latest_live_observation": {
+    "all_jobs_terminal": true,
+    "regression_cases": 414,
+    "offline_cases": 13,
+    "native_exit_code": 3221225477
+  },
+  "cooperative_research": {
+    "evidence": "training/b4artists_ml/results/projected-selector-host-verification-v26.json",
+    "native_cases": 72,
+    "trained_provider_tested": true,
+    "ui_integrated": false,
+    "full_responsiveness": false
+  },
+  "pending_source_revisions": {},
+  "pending_evaluation": false,
+  "attempted_round": 46,
+  "evaluation_infrastructure_issue": "training/b4artists_ml/results/temporal-observer-goalpost-attempt-v1/receipt.json",
+  "assessment_receipts_unavailable": true,
+  "post_goalpost_updates": {
+    "full_reproduction_verified": true,
+    "proof": "training/b4artists_ml/results/projected-selector-reproduction-v26.json",
+    "sha256": "0e0d36dbfeb0ed79004fae881e5f8f2d079a1905dea7511cda2aa53b4af130f3",
+    "all_sessions_terminal": [
+      23370,
+      87876,
+      45704,
+      79437,
+      52994
+    ],
+    "quality_qualified": false,
+    "recorded_at": 1788922806.275251
+  },
+  "reason": "Explicit evaluation extension and focused humanoid milestone",
+  "shared_state_status": "active",
+  "final_delivery_audit": {
+    "path": "training/b4artists_ml/results/goal-limit-delivery-audit-v1.json",
+    "sha256": "898295a7d69a39d9555c93fd9e1647c8cde5af54a267d204773e49c6ef7c65a5",
+    "handoff": "docs/b4artists_ml/EVALUATION-LIMIT-HANDOFF.md",
+    "handoff_sha256": "8b91f547cdd98ed14e60c7d78c31c67d2947aa51525a96f552dec2e16bac05b2",
+    "artifact_count": 2761,
+    "all_tracked_jobs_terminal": true
+  },
+  "work_sequence": {
+    "name": "Usable humanoid authored-pose/context/contact workflow",
+    "rigs": [
+      "BoneForge humanoid",
+      "Rigify basic human",
+      "Rigify default human"
+    ],
+    "journey": [
+      "Author multiple priority poses",
+      "Generate contextual inbetweens",
+      "Set explicit foot contacts",
+      "Inspect editable preview",
+      "Keep or Discard",
+      "Undo/redo and save/reload preserve original animation"
+    ],
+    "acceptance": [
+      "Behavioral rig and source-preservation checks pass without reducing existing tolerances",
+      "Representative native review scenes expose pose/contact/timing artifacts for animator assessment",
+      "Workflow latency and correction effort measured; no blanket responsiveness claim while original limits fail",
+      "Learned motion remains honestly unqualified until original model gates and actual workflow acceptance pass"
+    ],
+    "deferred": [
+      "Quadrupeds",
+      "Optional Cascadeur connector",
+      "Advanced angular momentum",
+      "Secondary motion",
+      "Broad rig compatibility beyond the three initial humanoid families"
+    ],
+    "paused": [
+      "Repeated selector-fitting variants"
+    ],
+    "full_goal_endpoint_unchanged": true
+  },
+  "authored_context": {
+    "evidence": "docs/b4artists_ml/goalposts/authored-context-evidence-v1.json",
+    "controlled_scenes_passed": 3,
+    "numerical_tests": 8,
+    "lifecycle_tests": 8,
+    "reload_scenes": 3,
+    "ui_integrated": false,
+    "learned": false
+  },
+  "last_evaluated_state": "docs/b4artists_ml/goalposts/01a073fe-c240-70c0-b5cd-fe9653aac60e-coupled-ground-v2.json",
+  "limit_extensions": [
+    {
+      "reason": "Explicit user extension:100total evaluations and20additional hours beyond the existing deadline. Same goal, endpoint, history, floors, evidence, cadence and stagnation policy; no evaluation consumed.",
+      "authorization": "Set evaluation limit to 100, add 20 more hours.",
+      "prior_state": "docs/b4artists_ml/goalposts/01a073fe-c240-70c0-b5cd-fe9653aac60e-broader-shape-v1.json",
+      "prior_sha256": "9ac98ac9567d25e52a04950b1e0df13da834334426c9d1181301dcb4393c91bc",
+      "prior_contract_hash": "e597919f2b95483fb5914a05ae328f93d3cc16a8e328750a2912458bf94fd664",
+      "new_contract_hash": "488928f6f3fabac509bed73718fc1b7037c4deeebd9239cd056f304b73ffc265",
+      "before_max_goalposts": 75,
+      "after_max_goalposts": 100,
+      "before_deadline_unix": 1788981845.0,
+      "after_deadline_unix": 1789053845.0,
+      "added_hours": 20,
+      "before_max_wall_seconds": 157313,
+      "after_max_wall_seconds": 229313,
+      "recorded_at": 1788938696.4777265
+    }
+  ],
+  "latest_extension_hours": 20,
+  "deadline_utc": "2026-09-10T15:24:05+00:00",
+  "diagnostic_summary": "training/b4artists_ml/results/ground-velocity-feasibility-v1/summary.json",
+  "diagnostic_artifacts": {
+    "training/b4artists_ml/results/ground-velocity-feasibility-v1/boneforge.log": "90c4df6d8f784585154d549dad8d882b0f9e288b959d4617898ce458b7188ff9",
+    "training/b4artists_ml/results/ground-velocity-feasibility-v1/processes.json": "4c65982c58c69f0042b13323b6dbbe30e40e6924765161f3472bf75606306933",
+    "training/b4artists_ml/results/ground-velocity-feasibility-v1/rigify_basic.log": "b2c543f8fcd44fb7c4de267cfed2eb558770fce32253af19679b838d2e794e20",
+    "training/b4artists_ml/results/ground-velocity-feasibility-v1/rigify_default.log": "9587671b1cec17f519ab39c6c928c45a8ef97d136adebce319a09ec3588474d4",
+    "training/b4artists_ml/results/ground-velocity-feasibility-v1/summary.json": "2adfc9c1a252271a3838a900f71c3f06754af074b7b754b44b4257754b44928b",
+    "training/b4artists_ml/results/ground-velocity-feasibility-v1/boneforge/report.json": "e77eb9ea7273dfc83dcd498a9b61a8b6a414768f6269afe0b221fd2a729b1675",
+    "training/b4artists_ml/results/ground-velocity-feasibility-v1/rigify_basic/report.json": "56e76899550ce482367f941828b41698dc70b32ecb5d63f7e835d059cb631bea",
+    "training/b4artists_ml/results/ground-velocity-feasibility-v1/rigify_default/report.json": "1535eaaf8cc2e9d1ba5e7c4c98e29bc2642df3c478fe6e7f099b51e4daf2cfdc",
+    "training/b4artists_ml/probe_ground_velocity_v1.py": "f758a03312703ec9b4efd4cd3b95c63e2ebd8cc30fd42150dfa66b34baddd31c",
+    "training/b4artists_ml/finalize_ground_velocity_v1.py": "816236b45394a3e267ebaa13af465bb67051184cfef2cf4e314fb7bb59bddea3",
+    "docs/b4artists_ml/GROUND-VELOCITY-FEASIBILITY-v1.md": "27112428283edeb0fbe1e7724897062c56beee27a6f96c589d70ff702de10485"
+  },
+  "accounting_note": "Research progress checkpoint. Formal goalpost remains67 and parent timer continues from385859.4766528; no work-duration or evaluation reset and no child runtimes added."
+}

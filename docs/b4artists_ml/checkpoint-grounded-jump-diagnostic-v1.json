@@ -1,0 +1,193 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "native_goal_status": "active_verified_2026-09-09",
+  "state_path": "docs/b4artists_ml/goalposts/01a073fe-c240-70c0-b5cd-fe9653aac60e-visible-state-package-v1.json",
+  "contract_hash": "fcb0b2db69e441b412f750cc1f7f2bf70197fa5f241be48efedb884c2551f145",
+  "input_fingerprint": "56a9bf2705d3ec27006d3c43e229b3d2cf4d2beb009aed9499d9cd9255fbfdd9",
+  "round": 66,
+  "max_goalposts": 100,
+  "remaining_evaluations": 34,
+  "deadline_unix": 1789053845.0,
+  "decision": "iterate",
+  "stagnant_rounds": 37,
+  "full_goal_complete": false,
+  "active_jobs": [],
+  "current_turn_classification": "Progress: measured grounded jump incompatibility and ungrounded foot drift on three actual rigs; verified source recovery and preserved all prior evidence.",
+  "blocked_audit": {
+    "consecutive_goal_turns": 0,
+    "condition": null
+  },
+  "next_controller_monotonic_start": 384157.1364809,
+  "evidence": "docs/b4artists_ml/goalposts/visible-state-package-evidence-v1.json",
+  "artifact": {
+    "path": "releases/b4artists_ml_v0.19.2.zip",
+    "sha256": "4ab4f9da9f209bd1ae0275c47443212f5ed44a6a0be41114dca9729005bcef85",
+    "files": 42,
+    "bytes": 271524,
+    "matches_current_source": true,
+    "experimental": true,
+    "ready_for_local_testing": true,
+    "note": "414native cases before metadata-only version bump;13exact-archive offline workflows; full goal incomplete."
+  },
+  "next_safe_actions": [
+    "Investigate coupled contact and center-of-mass correction on frozen ground-transition samples, including feasibility near straight-leg takeoff. Do not remove the production overlap rejection or accept unconstrained root motion as grounded quality.",
+    "Preserve full original goal, checkpoint66,100evaluation cap,deadline1789053845 and sealed confirmation. No nearby model fits."
+  ],
+  "work_accounting": "Parent interval recorded once; no child runtimes added.",
+  "publication": {
+    "head": "3153a8946fd8ef1415d9901c30a56bcc6783c49d axlbot <axleonex@gmail.com> axlbot <axleonex@gmail.com>",
+    "tracked_diff_empty": true,
+    "index_empty": true,
+    "committed": false,
+    "pushed": false,
+    "installed": false
+  },
+  "pending_human_input": "Previously requested independent animator assessment remains unanswered; do not repeat or fabricate.",
+  "resumed_run_start_unix": 1788848277.2365775,
+  "resumed_run_time_cap_hours": 15,
+  "resume_authorized": true,
+  "recorded_at": 1788954837.363507,
+  "extension_start_unix": 1788909845.0,
+  "extension_hours": 20,
+  "prior_deadline_unix": 1788981845.0,
+  "previous_turn_classification": "No progress: architecture assessment mostly restated existing failures.",
+  "prepared_validation": {
+    "moving_cases": 16,
+    "stationary_cases": 16,
+    "journey_tests": 15,
+    "stability_cases": 1728,
+    "stability_synthetic_checks": 22,
+    "trained_checks_executed": false,
+    "preflight_receipt": "training/b4artists_ml/results/projected-selector-validation-preflight-v26/receipt.json",
+    "partial_reproduction": "training/b4artists_ml/results/projected-selector-validation-preflight-v26/partial-reproduction.json",
+    "review": "docs/b4artists_ml/goalposts/projected-selector-validation-review-v26.json"
+  },
+  "pending_document_revisions": {},
+  "latest_live_observation": {
+    "all_jobs_terminal": true,
+    "regression_cases": 414,
+    "offline_cases": 13,
+    "native_exit_code": 3221225477
+  },
+  "cooperative_research": {
+    "evidence": "training/b4artists_ml/results/projected-selector-host-verification-v26.json",
+    "native_cases": 72,
+    "trained_provider_tested": true,
+    "ui_integrated": false,
+    "full_responsiveness": false
+  },
+  "pending_source_revisions": {},
+  "pending_evaluation": false,
+  "attempted_round": 46,
+  "evaluation_infrastructure_issue": "training/b4artists_ml/results/temporal-observer-goalpost-attempt-v1/receipt.json",
+  "assessment_receipts_unavailable": true,
+  "post_goalpost_updates": {
+    "full_reproduction_verified": true,
+    "proof": "training/b4artists_ml/results/projected-selector-reproduction-v26.json",
+    "sha256": "0e0d36dbfeb0ed79004fae881e5f8f2d079a1905dea7511cda2aa53b4af130f3",
+    "all_sessions_terminal": [
+      23370,
+      87876,
+      45704,
+      79437,
+      52994
+    ],
+    "quality_qualified": false,
+    "recorded_at": 1788922806.275251
+  },
+  "reason": "Explicit evaluation extension and focused humanoid milestone",
+  "shared_state_status": "active",
+  "final_delivery_audit": {
+    "path": "training/b4artists_ml/results/goal-limit-delivery-audit-v1.json",
+    "sha256": "898295a7d69a39d9555c93fd9e1647c8cde5af54a267d204773e49c6ef7c65a5",
+    "handoff": "docs/b4artists_ml/EVALUATION-LIMIT-HANDOFF.md",
+    "handoff_sha256": "8b91f547cdd98ed14e60c7d78c31c67d2947aa51525a96f552dec2e16bac05b2",
+    "artifact_count": 2761,
+    "all_tracked_jobs_terminal": true
+  },
+  "work_sequence": {
+    "name": "Usable humanoid authored-pose/context/contact workflow",
+    "rigs": [
+      "BoneForge humanoid",
+      "Rigify basic human",
+      "Rigify default human"
+    ],
+    "journey": [
+      "Author multiple priority poses",
+      "Generate contextual inbetweens",
+      "Set explicit foot contacts",
+      "Inspect editable preview",
+      "Keep or Discard",
+      "Undo/redo and save/reload preserve original animation"
+    ],
+    "acceptance": [
+      "Behavioral rig and source-preservation checks pass without reducing existing tolerances",
+      "Representative native review scenes expose pose/contact/timing artifacts for animator assessment",
+      "Workflow latency and correction effort measured; no blanket responsiveness claim while original limits fail",
+      "Learned motion remains honestly unqualified until original model gates and actual workflow acceptance pass"
+    ],
+    "deferred": [
+      "Quadrupeds",
+      "Optional Cascadeur connector",
+      "Advanced angular momentum",
+      "Secondary motion",
+      "Broad rig compatibility beyond the three initial humanoid families"
+    ],
+    "paused": [
+      "Repeated selector-fitting variants"
+    ],
+    "full_goal_endpoint_unchanged": true
+  },
+  "authored_context": {
+    "evidence": "docs/b4artists_ml/goalposts/authored-context-evidence-v1.json",
+    "controlled_scenes_passed": 3,
+    "numerical_tests": 8,
+    "lifecycle_tests": 8,
+    "reload_scenes": 3,
+    "ui_integrated": false,
+    "learned": false
+  },
+  "last_evaluated_state": "docs/b4artists_ml/goalposts/01a073fe-c240-70c0-b5cd-fe9653aac60e-visible-state-package-v1.json",
+  "limit_extensions": [
+    {
+      "reason": "Explicit user extension:100total evaluations and20additional hours beyond the existing deadline. Same goal, endpoint, history, floors, evidence, cadence and stagnation policy; no evaluation consumed.",
+      "authorization": "Set evaluation limit to 100, add 20 more hours.",
+      "prior_state": "docs/b4artists_ml/goalposts/01a073fe-c240-70c0-b5cd-fe9653aac60e-broader-shape-v1.json",
+      "prior_sha256": "9ac98ac9567d25e52a04950b1e0df13da834334426c9d1181301dcb4393c91bc",
+      "prior_contract_hash": "e597919f2b95483fb5914a05ae328f93d3cc16a8e328750a2912458bf94fd664",
+      "new_contract_hash": "488928f6f3fabac509bed73718fc1b7037c4deeebd9239cd056f304b73ffc265",
+      "before_max_goalposts": 75,
+      "after_max_goalposts": 100,
+      "before_deadline_unix": 1788981845.0,
+      "after_deadline_unix": 1789053845.0,
+      "added_hours": 20,
+      "before_max_wall_seconds": 157313,
+      "after_max_wall_seconds": 229313,
+      "recorded_at": 1788938696.4777265
+    }
+  ],
+  "latest_extension_hours": 20,
+  "deadline_utc": "2026-09-10T15:24:05+00:00",
+  "diagnostic_summary": "training/b4artists_ml/results/grounded-jump-diagnostic-v1/summary.json",
+  "diagnostic_artifacts": {
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/boneforge.log": "879bf248140b2b90ab92e07f10763304fba53b79904bd266c4f77ecd7a964fb1",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/processes.json": "c6cd723ca7e8caa7b716d410f9cbbb348861413fd65875bea878160d64479d30",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/rigify_basic.log": "ad4ee1326c4f910036ddb7191f378190e44a86cdb87c8bb8d19339261f399ad1",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/rigify_default.log": "51d889ba1063fbed982418777c58c90551cfeda62739068e62bb38c655005fe0",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/contact-displacement.png": "33ca81d9ddf9c49369ea677ec0ff992c6bd0bb1787b66d6d4c1cf73d8b7cf073",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/summary.json": "1139d51daadce72c7cb42472f589c783b74fc493a3a62a7ffbb65fe5e639a15a",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/boneforge/progress.json": "4ee9462c8bf035bb8047fc2f34c7a85363c90787bc6e58805dfe62e5a7e397f1",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/boneforge/boneforge-ungrounded-jump.blend": "732f1abd9fd051f73c8c5298a87dcf9ac3f3504807782e0aa6bb47ca810a8c81",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/boneforge/report.json": "b071d90e0b16370909458bb1118a21ac2519f64aead1707174d286d5c327fa1a",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/rigify_basic/progress.json": "bdf8581083a747b117f89be59e6b7eb1d879f9a83026f9b35093c53197131412",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/rigify_basic/rigify_basic-ungrounded-jump.blend": "7d5c492e90455534c98b6e87756df2a80ed3caba3823cfd0b9b27dd9e3b93239",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/rigify_basic/report.json": "264bb3b06d796cb4336c6e3e63002dfa316a842b46d5a0faef5c334ec5089596",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/rigify_default/progress.json": "52d9684a64f4c616a5bf98b5a0e2cd399aecb6f909d0bd8ded2cb14e53690bca",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/rigify_default/rigify_default-ungrounded-jump.blend": "e139c086458c53fec3270a4d60e30798ca94a20e8e42b12c7a892245b9e1edb4",
+    "training/b4artists_ml/results/grounded-jump-diagnostic-v1/rigify_default/report.json": "0720e0d288a95eada0449abc158422b657b295dbf40cf0597dd35342f42d05b9",
+    "training/b4artists_ml/diagnose_grounded_jump_v1.py": "3e27362edd320691171d5e60c4200ee5dc00f1f9f7150315711fb463840eebfc",
+    "training/b4artists_ml/finalize_grounded_jump_v1.py": "a708f9572eff6756f061aa28827c4488c347d937ca9f92010927e978cfa55207",
+    "docs/b4artists_ml/GROUNDED-JUMP-DIAGNOSTIC-v1.md": "e0ec496a19ff4e746cdaf9163c333d4d02d60d4dad2c8d221a5a987867677503"
+  },
+  "accounting_note": "Diagnostic progress checkpoint; formal goalpost remains66. Parent timer continues from prior checkpoint; no child runtime added and no evaluation or limit reset."
+}

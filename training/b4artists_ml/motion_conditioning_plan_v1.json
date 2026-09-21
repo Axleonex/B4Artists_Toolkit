@@ -1,0 +1,62 @@
+{
+  "schema": "motion-conditioning-v1",
+  "created_utc": "2026-09-09T00:00:00Z",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "hierarchy_joints": 23,
+  "semantic_animator_controls": 17,
+  "packed_features": 483,
+  "effectors": ["left_foot", "right_foot", "left_hand", "right_hand"],
+  "scene_probes": ["root", "left_foot", "right_foot", "left_hand", "right_hand"],
+  "actions": [
+    "walk", "run", "jump", "landing", "turn", "crouch", "reach_or_object",
+    "recovery", "interaction", "aerial", "combat", "dance", "gesture", "other"
+  ],
+  "styles": [
+    "locomotion", "jump", "dance", "combat", "sport", "acrobatics",
+    "interaction", "gesture", "other"
+  ],
+  "provenance": ["unknown", "authored", "reviewed", "measured", "metadata", "heuristic", "model"],
+  "trust_policy": {
+    "unknown_values_zero": true,
+    "unknown_provenance_one_hot_zero": true,
+    "heuristic_confidence_max": 0.35,
+    "metadata_confidence_max": 0.5,
+    "measured_geometry_distinct_from_reviewed_labels": true,
+    "authored_controls_remain_hard_constraints": true,
+    "helper_joints_can_be_authored": false
+  },
+  "label_policy": {
+    "contact_ground_truth_available": false,
+    "height_speed_contact_is": "weak_proposal_only",
+    "review_required_before_high_confidence_contact_training": true,
+    "scene_geometry_source": "measured Bforartists support/collision queries or reviewed scene fixtures",
+    "intent_source_order": ["authored", "reviewed", "metadata", "unknown"],
+    "model_predictions_are_never_relabelled_as_reviewed": true
+  },
+  "next_gate": {
+    "freeze_subject_holdout_before_training": true,
+    "required_tasks": [
+      "static", "walk", "run", "jump", "landing", "turn", "crouch",
+      "reach", "aerial", "recovery", "difficult_sparse_transition"
+    ],
+    "required_contact_cases": [
+      "single_support", "double_support", "takeoff", "landing", "foot_plant",
+      "hand_contact", "moving_support", "uneven_ground", "penetration_risk"
+    ],
+    "required_sparse_masks": ["endpoints", "upper_mid", "foot_contacts", "extremity_mid"],
+    "confirmation_remains_sealed": true,
+    "training_allowed": false
+  },
+  "runtime_boundary": {
+    "learned_output": "root/local motion proposal, contact probability, and confidence",
+    "deterministic_output": "exact pins, priority poses, joint limits, contact locks, collision, balance, gravity, momentum, and final original-rig validation",
+    "fallback": "qualified procedural interpolation when learned confidence/gates fail"
+  },
+  "validation_read": false,
+  "confirmation_read": false,
+  "downloads": false,
+  "training_run": false,
+  "runtime_promoted": false,
+  "full_goal_complete": false,
+  "deadline_epoch": 1789053845
+}

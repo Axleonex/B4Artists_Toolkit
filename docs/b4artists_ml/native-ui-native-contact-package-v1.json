@@ -1,0 +1,135 @@
+{
+  "contact_metrics": {
+    "backend": "geometric_contact_projection_v1",
+    "frames": 81,
+    "validation_frames": 161,
+    "contacts": 1,
+    "checks": 17,
+    "max_before": 0.0,
+    "max_after": 0.0,
+    "elapsed_ms": 19931.07880000025,
+    "priority_poses": 4,
+    "contact_drift_before": 0.0,
+    "contact_drift_after": 0.0,
+    "orientation_error_radians": 0.0,
+    "sample_interval_frames": 0.125,
+    "validation_max_interval_frames": 0.0625,
+    "position_units": "fraction of evaluated two-segment limb length",
+    "adaptive_refinements": [],
+    "bend_policy": "input limb plane normal with transported straight-limb fallback"
+  },
+  "runtime_sha256": {
+    "b4artists_ml/__init__.py": "b924440f4380c800909a03ae3677ca68b720ee78f78b6e59e7849231f515477c",
+    "b4artists_ml/balance.py": "e528005414d18bab6bfbbf1bd594a78d8fb5a00407e71ac2f6d3c32e10a564ab",
+    "b4artists_ml/balance_math.py": "83c142132393365272926c563c6096931ad1481be0e14db3bb6c7c65ee8ce91c",
+    "b4artists_ml/body_live.py": "6f6459c70de84547d619993d5c5f1ab540ae8c462751eacf83c28b3b23f718a8",
+    "b4artists_ml/body_model.py": "9d77456d65ed12eab15cab70d73d05e5d401006c2a4f4f4dd0a9ce6f1af06f5b",
+    "b4artists_ml/body_preview.py": "da645bbcd016758ca410ea9ed76bf9c1d509b414f2a822d08777bd7d37eb1421",
+    "b4artists_ml/body_proxy.py": "d2d99027b6a84779e10aff3ba47b9006d32be47bc077b569ca0c26bcbd8f80cd",
+    "b4artists_ml/body_solver.py": "c752c1f16081d672973d3ed2acf6df25b7e902165f7a3359b6db2c43dc161213",
+    "b4artists_ml/contact_math.py": "a66f74e0f5eb9cc659c20d5872e7ad5f4cc4b66a1828ce682829b51d5b4f88a9",
+    "b4artists_ml/contacts.py": "b02b5ce4409ac96dc31628692d8ff075cf5c9947ac24e6eac06b1dc895a4bd28",
+    "b4artists_ml/flight.py": "24a70df499547bd5dc402a29fd60ac6df690db5ef5bbc6bf22f92a6a020dd883",
+    "b4artists_ml/flight_math.py": "7e2be3f6dbf1716cbe8615785f0232d9be82ca1aaae7319a977a4865b8090f4e",
+    "b4artists_ml/joint_frames.py": "565056e3b9d502e1ef5c0e1a14f2062c6d838f0d709f91dc7f08738fa444f55a",
+    "b4artists_ml/joint_limits.py": "b2003608bbfda59626c7062c42d31d37a582c6392b52181360035ff3612802a2",
+    "b4artists_ml/learned.py": "3ecc597e78ca4f39a670d29e32cc3cc08bed5370ba94d25408c44ebd1d81e927",
+    "b4artists_ml/math_core.py": "232b09ecdc0bff3b008a4b1a796cd61ed68d632ce9d13deaf432e577deaa7339",
+    "b4artists_ml/motion_layer.py": "e9f24ce17bf33b7a5e9efd71ddd314d3ca17128b9f67bef771d1afd09e4391a9",
+    "b4artists_ml/native_flight.py": "d91f0dd09f512719523f9fb97e78e6c43d5fc9c8c705c18892cdef283ce6b24f",
+    "b4artists_ml/posing.py": "a9f88794937f60fa66ba5e662346f8f04982b1d422bbfba7d49e6f33c9cfc83e",
+    "b4artists_ml/rig_state.py": "8f0a6c3d47eb3c32ff4009987c9efaa98c1ad3e4e15c204b36b555d03a074263",
+    "b4artists_ml/rigs.py": "89fdefcc5b4a4bdfbd14d3d9bb3b70c5fee5c392ef70e22a689f8552ace73fdc",
+    "b4artists_ml/support.py": "0d9bbaf977caeec867d1af6f6ec9d69fec746b1e54ec4aa907578d9c11988312",
+    "b4artists_ml/support_math.py": "0947f49074013acd1396311f48f2500d134639fb45cd77cf716062a64f52eace",
+    "b4artists_ml/ui.py": "58bf6135aa6519ff5128b7630e4f8c87529c911e1e3caeeb09e206b654412a8e",
+    "b4artists_ml/workflow.py": "ce230cb65c9ff5a56edacd000c5292d8ac5b857c2cb85513db3b87cf47f76c1d"
+  },
+  "passed": true,
+  "events": [
+    "Escape cancelled native generation and restored its input",
+    "Native modal flight and both velocity transitions completed with visible character selection",
+    "Undo and Redo restored collection ownership and native drivers",
+    "Contacts applied after native transitions; Undo/Redo preserved the native layer and contact candidate",
+    "Keep and Restore Source archived the complete editable result",
+    "Saved result operator reopened an independent preview; Discard restored the source"
+  ],
+  "metrics": {
+    "backend": "native_instance_com_v1",
+    "intervals": [
+      {
+        "start": 4.0,
+        "end": 8.0,
+        "strength": 1.0,
+        "duration_seconds": 0.16666666666666666,
+        "ballistic_entry_velocity": [
+          0.003363751173018237,
+          -0.21523782134056102,
+          -0.5144706960519153
+        ],
+        "ballistic_exit_velocity": [
+          0.003363751173018237,
+          -0.21523782134056102,
+          -2.1494707659880317
+        ],
+        "acceleration_error_p95": 0.01987149395250193
+      }
+    ],
+    "transitions": [
+      {
+        "start": 2.0,
+        "end": 4.0,
+        "landing": false,
+        "before_jump": 0.5576905339463055,
+        "after_jump": 0.0046652415723568395,
+        "normalized_jump": 0.004199936550107498,
+        "max_com_error": 4.117802478982881e-08,
+        "outer_speed_correction": 0.004353881016238481,
+        "velocity_correction": [
+          0.0033637511731114955,
+          -0.2152378213404731,
+          -0.5144706960517453
+        ],
+        "sample_step_frames": 0.125
+      },
+      {
+        "start": 8.0,
+        "end": 10.0,
+        "landing": true,
+        "before_jump": 2.160222953399618,
+        "after_jump": 0.01707499398801073,
+        "normalized_jump": 0.01537195667809391,
+        "max_com_error": 2.8240331503040585e-08,
+        "outer_speed_correction": 0.01688303436434643,
+        "velocity_correction": [
+          0.0033637511730262304,
+          -0.2152378213404731,
+          -2.149470765988042
+        ],
+        "sample_step_frames": 0.125
+      }
+    ],
+    "max_before": 0.045185570394513104,
+    "max_after": 1.0093026175133349e-06,
+    "relative_basis_error": 0.0,
+    "rigid_translation_error": 1.1561596197566137e-06,
+    "elapsed_ms": 2430.108600005042,
+    "gravity": [
+      0.0,
+      0.0,
+      -9.8100004196167
+    ],
+    "fps": 24,
+    "fps_base": 1.0,
+    "priority_poses": 4,
+    "fit_interval_frames": 0.5,
+    "units": "position errors normalized by trunk length; acceleration in world units/s^2"
+  },
+  "screenshot": "training\\b4artists_ml\\cache\\native-ui-native-contact-package-v1.png",
+  "step_count": 47,
+  "step_p95_ms": 68.50181998452172,
+  "step_max_ms": 87.7428000094369,
+  "elapsed_seconds": 23.883575699990615,
+  "active_after_source_restore": "RIG-Rigify fixture",
+  "scope": "Automated real-window operators and events; independent animator usability and visual motion assessment remain unverified."
+}

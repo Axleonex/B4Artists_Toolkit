@@ -1,0 +1,97 @@
+{
+  "schema": 8,
+  "created_utc": "2026-09-08T07:00:07.070920+00:00",
+  "seed": 20260906,
+  "manifests": [
+    {
+      "path": "results/training_manifest_v4.json",
+      "sha256": "9973a7f2b8935c33cb8d9b819d46658485bab931fdaabb59b6434ff0e3d78fe8"
+    },
+    {
+      "path": "context_confirmation_manifest.json",
+      "sha256": "eb7f86927c538d0510d7432bbe8fba0b6fa8581748e69134332edfed8883c841"
+    }
+  ],
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "target_fps": 30,
+  "training_windows_per_gap": 16,
+  "evaluation_windows_per_gap": 8,
+  "architecture": "Observed-only two-output kernel controller blends root and articulated rotation context against the frozen V3 learned trajectory; full FK preserves lengths",
+  "terms": 4,
+  "ridge_trials": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "basis": "duration_seconds**2 * 4*t*(1-t) * Legendre_0_to_3(2*t-1)",
+  "baseline": "linear root and local quaternion SLERP through complete ancestor hierarchy",
+  "selection": "Choose expanded learner only if equal-clip combined validation position+0.1rotation improves over frozen V6 and old-validation position/rotation stay within 2%; otherwise retain V6. Freeze complete pair before untouched confirmation.",
+  "baselines": [
+    "linear",
+    "hermite",
+    "fk_linear",
+    "fk_hermite",
+    "ridge",
+    "context_fk",
+    "v3_control"
+  ],
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "notes": [
+    "Old train/validation/development/confirmation splits remain unchanged.",
+    "Eight new training and four validation clips selected from catalog before content download.",
+    "Three new confirmation clips are downloaded and read only after selection with both model hashes is frozen.",
+    "All original quality gates retained; no deployment on failed gates; no human/Cascadeur comparison implied.",
+    "Raw downloads capped at 20MB total, 8MB per file."
+  ],
+  "feature_variants": [
+    "compact",
+    "raw_pose"
+  ],
+  "kernel_widths": [
+    0.5,
+    1.0,
+    2.0
+  ],
+  "kernel_regularization": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "linear_regularization": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "audit_sha256": "dc2c0f8da52c26f3282a81ab4920893889d74f1d18b0ea70127f1abfddb3963b",
+  "training_objective": "Cohort-weighted regularized regression of complete curve coefficients fitted from training labels; temporal errors are acceptance metrics, not direct regression loss terms.",
+  "experiment": "Bounded new-motion coverage with frozen base/controller settings",
+  "expanded_base": {
+    "variant": "raw_pose",
+    "width": 0.25,
+    "regularization": 10.0
+  },
+  "expanded_gate": {
+    "variant": "compact",
+    "width": 2.0,
+    "regularization": 0.1
+  },
+  "expansion_plan_sha256": "ffadc8d9e229bdcb35b5c9d4b02b2d05dda650969f3cb2bb80be3e81d5ed0ff2"
+}

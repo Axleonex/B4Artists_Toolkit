@@ -1,0 +1,85 @@
+{
+  "schema": 6,
+  "created_utc": "2026-09-08T06:44:28.406913+00:00",
+  "seed": 20260906,
+  "manifests": [
+    {
+      "path": "results/training_manifest_v4.json",
+      "sha256": "9973a7f2b8935c33cb8d9b819d46658485bab931fdaabb59b6434ff0e3d78fe8"
+    },
+    {
+      "path": "context_confirmation_manifest.json",
+      "sha256": "eb7f86927c538d0510d7432bbe8fba0b6fa8581748e69134332edfed8883c841"
+    }
+  ],
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "target_fps": 30,
+  "training_windows_per_gap": 16,
+  "evaluation_windows_per_gap": 8,
+  "architecture": "Observed-only two-output kernel controller blends root and articulated rotation context against the frozen V3 learned trajectory; full FK preserves lengths",
+  "terms": 4,
+  "ridge_trials": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "basis": "duration_seconds**2 * 4*t*(1-t) * Legendre_0_to_3(2*t-1)",
+  "baseline": "linear root and local quaternion SLERP through complete ancestor hierarchy",
+  "selection": "Validation position + 0.1 rotation; incumbent V3 included, compare all previous baselines and full original gates",
+  "baselines": [
+    "linear",
+    "hermite",
+    "fk_linear",
+    "fk_hermite",
+    "ridge",
+    "context_fk",
+    "v3_control"
+  ],
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "notes": [
+    "Both base and controller trained only on existing training clips; validation selects variants, observed-development loaded after saved selection.",
+    "No new assets or costs; no fresh blind confirmation.",
+    "Gate targets are bounded optimal training-label projection coefficients; these targets must never enter inference.",
+    "No-context windows keep V3 predictions. Context strength is predicted from serialized known poses and timing, never hidden motion."
+  ],
+  "feature_variants": [
+    "compact",
+    "raw_pose"
+  ],
+  "kernel_widths": [
+    0.5,
+    1.0,
+    2.0
+  ],
+  "kernel_regularization": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "linear_regularization": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "audit_sha256": "dc2c0f8da52c26f3282a81ab4920893889d74f1d18b0ea70127f1abfddb3963b",
+  "training_objective": "Cohort-weighted regularized regression of complete curve coefficients fitted from training labels; temporal errors are acceptance metrics, not direct regression loss terms.",
+  "experiment": "Learned root/rotation context controller on top of frozen V3 articulated predictor"
+}

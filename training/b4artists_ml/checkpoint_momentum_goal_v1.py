@@ -1,0 +1,52 @@
+"""Record same-goal checkpoint only after repaired package qualification."""
+from pathlib import Path
+import json,hashlib,sys,time,copy,subprocess
+ROOT=Path(__file__).resolve().parents[2]
+sys.path[:0]=[r'\\100.114.2.71\Gdrive\LapArt\hermes-agent-self-evolution',str(Path(__file__).resolve().parent)]
+from prime_bridge import goalposts as g
+from evaluate_milestone_goal import evaluate
+def read(p):return json.loads((ROOT/p).read_text(encoding='utf-8'))
+def sha(p):return hashlib.sha256((ROOT/p).read_bytes()).hexdigest()
+def write(p,d):(ROOT/p).write_text(json.dumps(d,indent=2)+'\n',encoding='utf-8')
+def main():
+    base='docs/b4artists_ml/';gp=base+'goalposts/';tr='training/b4artists_ml/';res=tr+'results/'
+    prior=gp+'01a073fe-c240-70c0-b5cd-fe9653aac60e-boundary-trajectory-v16.json';old=read(prior);s=copy.deepcopy(old);cp=read(base+'checkpoint-native-contact-in-progress-v1.json')
+    dest=prior.replace('boundary-trajectory-v16','momentum-transitions-v1');assert not (ROOT/dest).exists()
+    meta=read(base+'package-test-v0.17.1.json');assert meta['ready_for_local_testing'] and meta['offline_qualification']==meta['packaged_ui_qualification']=='passed'
+    reg=read(res+'native-contact-regression-v1.json');assert reg['passed'] and reg['unique_cases']==317 and reg['refreshed_cases']==71 and reg['reused_cases']==246
+    current={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'b4artists_ml').glob('*.py')};assert current==reg['runtime_sha256']
+    off=read(res+'offline-native-contact-v0.17.1.json');assert off['passed'] and off['complete'] and sum(r['tests'] for r in off['groups'])==124
+    ui=read(base+'native-ui-native-contact-package-v1.json');assert ui['passed'] and ui['runtime_sha256']==current
+    assert sha('releases/b4artists_ml_v0.17.1.zip')==meta['sha256']==off['package_sha256']
+    prev_ev=gp+'boundary-trajectory-evidence-v16.json';e=read(prev_ev)
+    changed=[p for p,h in e['artifacts'].items() if sha(p)!=h]
+    allowed={base+n+'.md' for n in ['PROJECT','ROADMAP','REQUIREMENTS','USER_GUIDE']}|{'b4artists_ml/'+n+'.py' for n in ['__init__','flight','flight_math','native_flight','ui','contacts']}
+    assert set(changed)<=allowed,changed
+    new_inputs=[tr+n for n in ['build_momentum_package.py','check_momentum_ui_v1.py','check_standalone_momentum.py','finalize_momentum_package.py','probe_native_contact_composition_v1.py','build_native_contact_package.py','check_native_contact_ui_v1.py','check_standalone_native_contacts.py','finalize_native_contact_package.py','checkpoint_momentum_goal_v1.py']]+['tests/test_b4artists_ml_momentum.py','tests/test_b4artists_ml_native_contacts.py']+[base+n+'.md' for n in ['MOMENTUM-TRANSITIONS-PLAN-v1','MOMENTUM-TRANSITIONS-v1','NATIVE-CONTACT-COMPOSITION-v1','DISTRIBUTION-RECHECK-0.17']]
+    added=[p for p in new_inputs if p not in s['contract']['inputs']];s['contract']['inputs']+=added;s['contract_hash']=g.digest(s['contract'])
+    s['explicit_revisions'].append(dict(reason='Declare native transition and mixed-contact implementation/test/docs inputs; all original endpoint criteria, floors, history and authorized limits unchanged.',prior_state=prior,prior_sha256=sha(prior),prior_contract_hash=old['contract_hash'],new_contract_hash=s['contract_hash'],added_inputs=added,recorded_at=time.time()))
+    fp=g.fingerprint(ROOT,s['contract']['inputs'])
+    for path in [gp+'momentum-transition-routing-v1.json',gp+'native-contact-routing-v1.json']:
+        rr=read(path);rr['validation_results']=dict(package=base+'package-test-v0.17.1.json',regression_coverage=317,refreshed_patch_cases=71,reused_unchanged_workflow_cases=246,offline_cases=124,actual_window_combined_workflow=True,host_shutdown_passed=False,full_goal_complete=False);write(path,rr)
+    paths=set(e['artifacts'])|set(new_inputs)|{prev_ev,prior,'releases/b4artists_ml_v0.17.0.zip','releases/b4artists_ml_v0.17.1.zip'}
+    for folder,patterns in [(res,['momentum*.json','native-contact*.json','native-ui-process-momentum*.json','native-ui-process-native-contact*.json','offline-momentum-v0.17.0*.json','offline-native-contact-v0.17.1*.json']),(base,['package-test-v0.17.*.json','native-ui-momentum*.json','native-ui-native-contact*.json','momentum-transition-summary-v1.json','native-contact-source-audit-v1.json']),(gp,['momentum-transition-routing-v1.json','native-contact-routing-v1.json'])]:
+        for pattern in patterns:paths.update(p.relative_to(ROOT).as_posix() for p in (ROOT/folder).glob(pattern) if p.is_file())
+    e['artifacts']={p:sha(p) for p in sorted(paths)};e.update(contract_hash=s['contract_hash'],input_fingerprint=fp,package=dict(path='releases/b4artists_ml_v0.17.1.zip',sha256=meta['sha256'],files=meta['files'],bytes=meta['bytes'],matches_current_source=True,experimental=True),previous_evidence_recheck=dict(path=prev_ev,sha256=sha(prev_ev),changed_documents=[p for p in changed if p.startswith('docs/')],changed_runtime=[p for p in changed if p.startswith('b4artists_ml/')],all_other_prior_artifacts_unchanged=True),regression=dict(passed=True,unique_cases=317,suites=reg['suites'],refreshed_cases=71,reused_cases=246,all_current_source_runs=False,current_coverage_verified=True,source_audit=base+'native-contact-source-audit-v1.json'),offline=dict(passed=True,cases=124,groups=len(off['groups'])),packaged_ui=meta['packaged_ui'],focused_native=dict(cases=71,suites=6,assertions_passed=True,host_shutdown_passed=False),momentum_summary=read(base+'momentum-transition-summary-v1.json'),contact_composition=read(res+'native-contact-final-v1-composition.json'),preserved_milestones=old['passed_progress_milestones'],new_passing_milestones=['momentum_refinement'])
+    e['learned_host']['historical_evidence_retained']=True;e['stationary_host']['historical_evidence_retained']=True
+    e['qualification'].update(momentum_refinement=True,full_physics_acceptance=False,full_goal_complete=False,temporal_model_qualification=False,temporal_animator_integration=False,host_shutdown=False,independent_usability='unknown')
+    e['limitations']=['Procedural matching of linear COM velocity; full angular momentum, acceleration continuity, dynamic contact forces, collision and secondary motion remain unfinished.','No temporal model promoted. v16 learned quality gates and prior rejected experiments remain unchanged.','0.17.0 passed its original checks but missed the native-flight/contact handoff. Retained as failed workflow evidence;0.17.1 adds composition, corrupt/legacy metadata and nontrivial correction coverage.','317 regression cases comprise71 refreshed affected cases plus246 explicitly retained unchanged-workflow cases audited against the preceding package.124 exact-package offline cases and actual-window combined workflow ran on0.17.1.','Bforartists shutdown access violation persists after successful assertions. Narrow panel clips some labels; independent usability and equivalent Cascadeur comparisons remain unverified.','All original humanoid/quadruped, learned temporal, physics/refinement, model rights, standalone, optional connector and comparative requirements remain mandatory.']
+    args=['git','-c','safe.directory=X:/Scripting Attempts/B4Artists_Tools/B4Artists_Anim_Tools_github'];head=subprocess.check_output(args+['log','-1','--format=%H %an <%ae> %cn <%ce>'],cwd=ROOT,text=True).strip();assert head==cp['publication']['head']
+    assert not subprocess.check_output(args+['diff','--name-only'],cwd=ROOT,text=True).strip();assert not subprocess.check_output(args+['diff','--cached','--name-only'],cwd=ROOT,text=True).strip()
+    ep=gp+'momentum-transitions-evidence-v1.json';write(ep,e);obs=read(gp+'boundary-trajectory-observations-v16.json')
+    for group in obs.values():
+        for proof in group.values():proof.update(artifact=ep,sha256=sha(ep),input_fingerprint=fp)
+    obs['milestones']['momentum_refinement']=dict(artifact=ep,sha256=sha(ep),input_fingerprint=fp,method='deterministic',passed=True)
+    write(gp+'momentum-transitions-observations-v1.json',obs)
+    end=time.perf_counter();event='controller-momentum-transitions-v1';assert event not in s['work_events'];g.record_work(s,event,end-cp['next_controller_monotonic_start']);out=evaluate(s,obs,ROOT)
+    assert out['round']==29 and out['decision']=='iterate';assert out['implementation_progress']['new']==['momentum_refinement'] and not out['implementation_progress']['lost'];assert all(not c['regression'] for c in out['categories'].values());assert s['history'][:-1]==old['history'] and s['stagnant_rounds']==0
+    write(dest,s);(ROOT/dest).with_suffix('.md').write_text(g.markdown(out),encoding='utf-8')
+    for k in ['pending_work','current_work_event_pending']:cp.pop(k,None)
+    cp.update(state_path=dest,contract_hash=s['contract_hash'],input_fingerprint=fp,round=29,remaining_evaluations=21,decision='iterate',stagnant_rounds=0,evidence=ep,artifact=e['package'],active_jobs=[],next_controller_monotonic_start=end,current_turn_classification='Progress: native velocity transitions and meaningful native-flight/contact composition are implemented, packaged and verified with preserved source, saved recovery and actual-window Undo/Redo. Full goal remains incomplete.',work_accounting='Recorded controller-momentum-transitions-v1 once from parent monotonic304063.9217602 across implementation, discovered handoff/drift repairs, final tests and exact-package checks. All known processes terminal.',next_safe_actions=['Read the original objective and this same state; preserve50 total evaluations and the existing15-hour resumed deadline.','Address clipped transition controls and the weak human-usable workflow without declaring independent usability passed.','Return to learned temporal qualification: audit training coverage and source-coordinate/model errors before a prospectively frozen next experiment or bounded data expansion. Preserve every old holdout, failed gate and model; no unqualified weights promoted.','Full physics/refinement, wider humanoid/production and quadruped rigs, distribution verification, optional connector and equivalent Cascadeur/independent animator comparisons remain mandatory.'],recorded_at=time.time())
+    write(base+'checkpoint-momentum-transitions-v1.json',cp)
+    print(json.dumps(dict(round=29,remaining=21,decision='iterate',new_milestone='momentum_refinement',work_seconds=end-304063.9217602,scores={k:v['score'] for k,v in out['categories'].items()},full_goal_complete=False)))
+if __name__=='__main__':main()

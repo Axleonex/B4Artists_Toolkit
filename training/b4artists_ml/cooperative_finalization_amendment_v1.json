@@ -1,0 +1,5 @@
+{
+  "reason": "Hot-tick profiling shows remaining structural-validation work around the atomic prune stage. A local bulk-read prototype is serialized-identical on five real profiles and about twice as fast. Add uncached bulk rest-matrix reads; preserve all validation fields, original gates and old package formats.",
+  "evidence": "training/b4artists_ml/results/bulk-rest-read-v1.json",
+  "recorded_at": 1788890620.8670654
+}

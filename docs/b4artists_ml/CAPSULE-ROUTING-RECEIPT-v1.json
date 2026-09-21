@@ -1,0 +1,53 @@
+{
+  "task": "B4Artists ML static analytic capsule collision milestone",
+  "declared_paths": [
+    "b4artists_ml/secondary_math.py",
+    "b4artists_ml/secondary_motion.py",
+    "b4artists_ml/ui.py",
+    "tests/test_b4artists_ml_secondary_capsule_math_v1.py",
+    "tests/test_b4artists_ml_secondary_capsule_collision_v1.py",
+    "docs/b4artists_ml/SECONDARY-CAPSULE-COLLISION-v1.md",
+    "docs/b4artists_ml/DELIVERY-ORDER-v1.md",
+    "README.md"
+  ],
+  "authorization_risk_tier": "workflow_scaffolding",
+  "recommended_lane": "T3_PRIME_OMP",
+  "actual_lane": "T3_PRIME_OMP",
+  "actual_lane_reason": "PRIME_REASONING_OR_REVIEW_REQUIRED",
+  "policy_fingerprint": "29fa965cada3128ffe57b5d85d3b9f8e5d749d780954ea14ba5f45dcca1ad8b8",
+  "parallel_safe": false,
+  "escalation_count": 0,
+  "execution": "serial_native_fallback",
+  "fallback_reason": "The permitted Prime evaluator probe failed before evaluation: uv trampoline failed to spawn Python child process (entity not found, os error 2).",
+  "validation": [
+    {"command": "python -m py_compile <touched Python files>", "result": "PASS"},
+    {"command": "pytest -q tests/test_b4artists_ml_secondary_math.py tests/test_b4artists_ml_secondary_capsule_math_v1.py", "result": "PASS: 16 passed, 6 subtests passed"},
+    {"command": "Bforartists --background --factory-startup --python (exact v0.37.2-dev.zip import + test_b4artists_ml_secondary_capsule_collision_v1.py)", "result": "PASS: 2 passed, 0 failures, 0 errors, 0 skips; 4.549s; host shutdown fault after assertions"},
+    {"command": "Bforartists --background --factory-startup --python (exact v0.37.2-dev.zip import + capsule-compatible 14-suite profile)", "result": "PASS: 148 passed, 0 failures, 0 errors, 0 skips; 165.179s; host shutdown fault after assertions"},
+    {"command": "Bforartists foreground modal lifecycle (exact v0.37.2-dev.zip)", "result": "PASS: visible controls, Escape cancellation, generation, native Undo/Redo, Restore Input, Keep, save/reload, Restore Source; solver 1402.065ms; zero penetration"},
+    {"command": "python -m py_compile capsule/affected runners + python -m unittest -q capsule math", "result": "PASS: runner compilation; 16 tests"}
+  ],
+  "evaluator_gate": {"status": "BLOCKED_BEFORE_EVALUATION", "authority": false, "fallback_deterministic_validation": "PASS"},
+  "latest_preflight": {
+    "command": "G:/LapArt/.hermes/hermes-agent/venv/Scripts/python.exe G:/LapArt/hermes-agent-self-evolution/scripts/prime-code-execute.py --workspace X:/Scripting Attempts/B4Artists_Tools/B4Artists_Anim_Tools_github --project Blender Ghost_Tool B4Artists --harness codex --profile workspace --task-tier complex --preflight-only --fail-closed",
+    "status": "REMOTE_EXECUTOR_REQUIRED",
+    "outcome": "blocked",
+    "executor": "NUCBOX_M6ULTRA",
+    "governance_route_id": "desktop-prime-ssh",
+    "remote_host": "100.114.2.71",
+    "remote_runtime": {
+      "distribution": "Ubuntu-restored",
+      "user": "jonvilario"
+    },
+    "local_wsl_allowed": false,
+    "desktop_venv_repair": {
+      "status": "PASS",
+      "old_home": "C:/Users/AtonLotus/AppData/Roaming/uv/python/cpython-3.11-windows-x86_64-none",
+      "new_home": "C:/Users/Jonvilario/AppData/Roaming/uv/python/cpython-3.11.15-windows-x86_64-none",
+      "site_packages_directories_preserved": 228,
+      "backup": "G:/LapArt/.hermes/hermes-agent/venv/pyvenv.cfg.bak-codex-20260913"
+    }
+  },
+  "advisory_review": "docs/b4artists_ml/CAPSULE-PRIME-ADVISORY-REVIEW-v1.json",
+  "publication": "not committed, merged, or pushed"
+}

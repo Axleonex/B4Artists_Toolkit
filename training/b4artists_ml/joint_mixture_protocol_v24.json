@@ -1,0 +1,145 @@
+{
+  "seed": 20260906,
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "target_fps": 30,
+  "training_windows_per_gap": 16,
+  "evaluation_windows_per_gap": 8,
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "schema": 24,
+  "observation_schema": "b4ml-semantic-observations-v1",
+  "input_features": 667,
+  "target_features": 153,
+  "scope": "One fixed learned per-joint mixture for positions and valid rotations",
+  "calibration": "Artificial frame zero in the existing corpus only; excluded from motion observations and targets",
+  "source_manifests": {
+    "temporal_training_manifest_v19.json": "2aafaa5d69061f0b977584a2ed0b2ae1792466aabb23801173b02384ec469711",
+    "temporal_expansion_plan_v19.json": "8af5a83abffd86b50c1e1f5426f330ad524970dd30475e313b7d02d6cc1d669a",
+    "temporal_expansion_manifest_v19.json": "41516f5039079c7e32e834127b877fb7906a14b3a62c158ae73ec9826e7005c9"
+  },
+  "partitions": [
+    "train",
+    "validation"
+  ],
+  "holdouts": "Old and v19-added validation are both exposed development data. Freeze weights before loading either in this experiment. All gates pass independently on old/new/combined before any of the six sealed confirmation clips may open.",
+  "label_policy": "Only four known poses (or two without context) enter observations; full targets are separate trainer labels",
+  "physics_policy": "Collapsed semantic edges are not asserted to have constant length; raw baselines do not qualify actual rig physics",
+  "next": "Evaluate selected compatible predictions on actual-rig editable actions; failed gates forbid promotion",
+  "baselines": [
+    "projected_linear",
+    "projected_hermite",
+    "projected_shape"
+  ],
+  "projection": {
+    "steps": 48,
+    "learning_rate": 0.02,
+    "rotation_weight": 0.5,
+    "regularization": 1e-05
+  },
+  "selection": "One prospectively fixed596-input,32-hidden,119-output joint mixture;40epochs and no grid or development retuning.",
+  "reproduction": "Repeat complete gate fit and development evaluation. Model, parent membership, fixed feature audit, expert strengths and every non-runtime report must match exactly.",
+  "runtime": "Local NumPy float64; previously bounded public data acquisition complete; no runtime downloads or external services",
+  "projection_method": "Fixed 48-step projected Adam with eight bounded quarter-step backtracking attempts; exact root, terminal orientations and known priorities",
+  "folds": 4,
+  "fold_group": "CMU catalog prefix before underscore, not asserted to be independent actor identity",
+  "objective": "Equal-cohort full153-channel trajectory squared error with original velocity/acceleration weights; differentiate actual normalized-quaternion mixture.",
+  "architecture": "Same596 observed curve inputs and32 shared tanh hidden units. Each of17 joints has four position and three rotation softmax weights (119outputs). Frozen v20 learned expert plus existing procedural experts; original v23 and all other candidates stay unchanged.",
+  "stationary_acceptance": "Raw stationary pose retained within double-precision quaternion conversion roundoff; original actual-rig2e-5 tolerance unchanged.",
+  "control_policy": "Retain original projected linear/Hermite and add projected shape reference. Every ratio and worst-cohort check compares against the best of all three; thresholds remain identical. This prevents procedural improvements from being presented as learned-motion gains.",
+  "prior_protocol_sha256": "9cc5c8be201a3d1a7e31f78981ab816aba7dd46eb105a11311aedd543d57f123",
+  "prior_model_sha256": "9e4d2a6f4f5a08bd6b9f814df064eaee276866afaddc5b1ceaa0faefe9c996a3",
+  "plan_sha256": "8af5a83abffd86b50c1e1f5426f330ad524970dd30475e313b7d02d6cc1d669a",
+  "expected_training_windows": 7358,
+  "old_validation_clips": [
+    "08_04",
+    "13_08",
+    "13_12",
+    "13_19",
+    "28_01",
+    "28_02",
+    "118_01",
+    "118_12",
+    "122_01",
+    "122_17"
+  ],
+  "new_validation_clips": [
+    "138_01",
+    "138_11",
+    "138_20",
+    "141_03",
+    "141_04",
+    "141_09"
+  ],
+  "model_features": 596,
+  "gate_training": {
+    "hidden": 32,
+    "epochs": 40,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "regularization": 0.0001,
+    "velocity_weight": 0.01,
+    "acceleration_weight": 0.0001,
+    "initial_position_probabilities": [
+      0.025,
+      0.025,
+      0.05,
+      0.9
+    ],
+    "initial_rotation_probabilities": [
+      0.025,
+      0.075,
+      0.9
+    ]
+  },
+  "expert_order": [
+    "linear",
+    "hermite",
+    "shape",
+    "v20"
+  ],
+  "rotation_policy": "Convert linear/Hermite/v20 rotations to unit quaternions, align signs to the linear reference, use a normalized convex quaternion blend with fixed1e-6linear-reference mass to prevent zero norm. Differentiate through normalization and the rotation6 polynomial. Priority transforms are overwritten exactly. No claimed C1 continuity at hemisphere ambiguity.",
+  "fold_policy": "Reconstruct the exact four v20 catalog-prefix folds. Each gate-training row uses the parent model excluding its whole catalog group. The gate itself sees all training labels; no nested cross-validation or independent gate-generalization claim.",
+  "guard_policy": "Joint position weights are convex; proper rotations use hemisphere-aligned normalized quaternions. Neither property guarantees motion quality. Six confirmation clips remain sealed.",
+  "parent_files": {
+    "results/kinematic_trajectory_v20/best_learned.npz": "9e4d2a6f4f5a08bd6b9f814df064eaee276866afaddc5b1ceaa0faefe9c996a3",
+    "results/kinematic_trajectory_v20/fold_0.npz": "b7a9425faa6a395ce84cecd2a6119a70b58a28476cb81fedc09202e026d58d20",
+    "results/kinematic_trajectory_v20/fold_1.npz": "edefff2d8049e3a1f8946aa11f2bc7226e0c618bee4f7e628a406d2db1e3c7b3",
+    "results/kinematic_trajectory_v20/fold_2.npz": "cf34f10220d7c6ef0f14b74ffe805b4d5e0672efcb7e5116413734cb963df243",
+    "results/kinematic_trajectory_v20/fold_3.npz": "3cb02e9a993d342543009190a1dc549c9601d6e7678feb78b6126e277835a15f",
+    "results/kinematic_trajectory_v20/selected.npz": "9e4d2a6f4f5a08bd6b9f814df064eaee276866afaddc5b1ceaa0faefe9c996a3"
+  },
+  "parent_report_sha256": "8b018cc94afe059bba324c3f6853375bde0355247099154fb88fb8137c18a207",
+  "parent_folds_sha256": "3a446c48cf2a75cd1423e832c807eba7ac2b1151d1980eafa2e69c3f34378827",
+  "prefit_checks_sha256": "128bf50d172f6857a638ccbcac9d499092de763a6b0d8fb89dd65360d59c3eb8",
+  "curve_features": "At nine fixed normalized query times, summarize each expert versus linear using mean/max positional excursion, speed, acceleration, incoming/outgoing tangent mismatch and semantic-edge length deviation. Normalize by observed per-joint position amplitude or rest semantic-edge length, map zero denominators to zero, apply log1p. Descriptors are not physical guarantees or calibrated uncertainty probabilities.",
+  "feature_ownership": "Calculate any parent-dependent descriptors with the exact group-excluded parent used for that row. No target or hidden-frame data enters descriptors. No new parent fits or input observations.",
+  "curve_plan_sha256": "8b9bd33e91800a2fb28aed0f816832d27c7727258f2f1d90e4792c0d68529e34",
+  "diagnostic_prior_reports": {
+    "mixture_trajectory_v21": "f6694f3971f21d0b2a2b4019e861cbd9dc80b9a26a40959939fc893d9f25cab8",
+    "relative_mixture_v22": "cbc53edeee62e5315e52a0e6ce34b89b608efebc05d8987e352f6ecb42f943a8",
+    "curve_mixture_v23": "0714b68fecc6837d04ba3b8c81378910d051ecb600a91cf6519c81f5f432aca8"
+  },
+  "joint_plan_sha256": "afc764feea80691afcad60c45addbc9ba9a59a4a1f4232ca248b65c275289501",
+  "rotation_expert_order": [
+    "linear",
+    "hermite",
+    "v20"
+  ]
+}

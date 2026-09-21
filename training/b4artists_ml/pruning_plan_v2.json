@@ -1,0 +1,21 @@
+{
+  "scope": "One native bulk deletion of exactly unused private-copy bones",
+  "baseline_version": "0.17.4",
+  "baseline_sha256": "3a07d44ae2ef4f703f8366befb8e1057b317264e3f909dc689f50279ba59ad66",
+  "batch_size": null,
+  "changed_definition": "EvaluationProxy.prepare_steps",
+  "acceptance": {
+    "default_rigify_prune_tick_ratio_max": 0.7,
+    "default_rigify_worst_tick_ratio_max": 0.95,
+    "default_rigify_total_work_ratio_max": 1.1,
+    "all_five_profiles_exact_pose_signature_metrics": true,
+    "source_recovery": true
+  },
+  "benchmark": "Base/current/current/base on BoneForge and default Rigify; base/current on remainingthreeprofiles, two solves and100idle ticks per run, same deterministic logical clock, no concurrent host checks or profiler.",
+  "correctness": "Original cooperative preparation cancellation/invalidation, exact retained dependencies, source bone/collection visibility and selection preserved, original context restored, full regression and exact-package offline checks before promotion.",
+  "goal": "Original full endpoint,50total evaluations and fixed15-hour resumed deadline unchanged; reject/restore exact0.17.4 if gates fail.",
+  "recorded_at": 1788900799.586654,
+  "algorithm": "Expose only private-copy bone collections and bone selection, mark every bone exactly by dependency membership, delete selected unused bones once, verify exact remaining dependency set, restore Object mode and caller context before original prune yield.",
+  "prior_failure": "results/pruning-rejection-v1.json",
+  "api_source": "https://docs.blender.org/api/5.2/bpy.ops.armature.html#bpy.ops.armature.delete"
+}

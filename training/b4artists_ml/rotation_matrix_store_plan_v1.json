@@ -1,0 +1,24 @@
+{
+  "schema": "rotation-matrix-store-v1",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "purpose": "Trade bounded research-cache space for streamed training throughput by deriving memory-mapped rotation matrices once instead of reconstructing every sampled clip repeatedly.",
+  "source_report": "results/cmu-sequence-store-v2/report.json",
+  "source_report_sha256": "44a13fecde26ee449db136a60d8d92addaad505d4b3767af79dcbed96689b6d4",
+  "source_layout_sha256": "c9c201267a415ed6cbb71a18228ec1ec6c4062d054a2ffd64a8ba1a68304d29b",
+  "script_sha256": "3cc42d19e8cf309a500fd74aaf0b8959306f2c15c230891378efd6104a734b81",
+  "frames": 773836,
+  "clips": 1840,
+  "chunk_frames": 4096,
+  "maximum_bytes": 500000000,
+  "quality": {
+    "finite_all_frames": true,
+    "sampled_rotation_checks": 4096,
+    "maximum_orthogonality_error": 0.000002,
+    "maximum_determinant_error": 0.000002
+  },
+  "downloads": false,
+  "validation_read": false,
+  "confirmation_read": false,
+  "runtime_bundled": false,
+  "full_goal_complete": false
+}

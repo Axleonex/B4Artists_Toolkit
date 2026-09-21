@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-09-09",
+  "task": "Research bulk FCurve key publication against the current per-key insertion kernel without changing production.",
+  "declared_paths": [
+    "training/b4artists_ml",
+    "docs/b4artists_ml"
+  ],
+  "router": {
+    "recommended_lane": "T3 Prime+OMP",
+    "attempted_lane": "T3 Prime+OMP",
+    "result": "BLOCKED",
+    "reason": "DECLARED_PATH_INVALID: the authoritative desktop-local X: workspace is not mounted on the governed NUCBOX executor."
+  },
+  "outcome": "fallback",
+  "actual_lane": "DEGRADED_NATIVE_CONTINUE",
+  "fallback_eligibility": {
+    "explicit_user_authorization": true,
+    "project_local": true,
+    "reversible": true,
+    "research_only": true,
+    "credentials": false,
+    "external_side_effects": false,
+    "destructive_actions": false,
+    "billing": false,
+    "history_changes": false
+  },
+  "scope_guards": [
+    "Do not change production runtime, models, data, thresholds, sealed confirmation clips, release, or installation.",
+    "Benchmark current insert, bulk add/direct assignment, and bulk add/foreach_set on detached action copies.",
+    "Require exact key coordinates and dense evaluated motion; report every metadata difference.",
+    "Preserve the source action, pose, rig modes, anchors, and data inventory."
+  ]
+}

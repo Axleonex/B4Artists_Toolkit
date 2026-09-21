@@ -1,0 +1,21 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "source_baseline": {
+    "temporal_generation.py": "d716d22b2a8fd1197236267b17258f2fc76de21b1c0d8617a726eac8e976f852",
+    "temporal_preview.py": "446219998e6639d0cb4353346555b9bdfe2c72969e48534881d15352a39c4599"
+  },
+  "implementation": "Explicit transaction dependency and private job owner; preview chooses private copy only when dependency-safe, otherwise existing guarded generation.",
+  "checks": [
+    "Exact final channels against original guarded generator on initial three rig families",
+    "Source/action/anchor/frame edits reject without overwriting edits",
+    "Cancellation, save/load/undo/redo callbacks and actual save/reload remove all scratch objects",
+    "Failure rollback and existing preview regressions",
+    "Run native regression suites and isolated preview latency before packaging"
+  ],
+  "runtime_model_change": false,
+  "recorded_at": 1788943591.187103,
+  "performance_acceptance": {
+    "median_private_to_guarded_ratio_max": 0.9,
+    "comparison": "Serial ABBA on identical default-Rigify reach/hold reference, same smoothing; all candidate keys and handles exact. This local optimization gate does not replace original viewport requirements."
+  }
+}

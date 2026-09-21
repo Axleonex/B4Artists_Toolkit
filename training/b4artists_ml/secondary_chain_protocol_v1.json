@@ -1,0 +1,36 @@
+{
+  "schema": "b4ml-secondary-chain-protocol-v1",
+  "frozen_before_results": true,
+  "target_release": "0.26.0",
+  "purpose": "Add an end-to-end hierarchy-coupled rotational secondary-motion stage without weakening source safety or representing deterministic physics as learned animation.",
+  "supported_scope": {
+    "simulation_space": "LOCAL",
+    "topology": "one unbranched chain of at least two selected pose controls whose selected members have direct parent-child relationships",
+    "channels": "complete editable rotation curve groups on every selected control",
+    "location": "ordinary independent selected-control location follow remains available, but chain coupling affects rotation only",
+    "propagation_range": [0.0, 1.0],
+    "priority_policy": "the chain correction envelope is exactly zero at every captured priority pose",
+    "publication": "copied candidate action with ordinary editable linear keys"
+  },
+  "acceptance_gates": {
+    "zero_propagation_matches_independent_rotation_follow": true,
+    "finite_at_hostile_sample_steps": true,
+    "priority_rotation_component_error_max": 1e-7,
+    "linked_bone_length_change_max": 1e-6,
+    "source_action_unchanged": true,
+    "cancel_restore_keep_discard_reload": true,
+    "stale_selection_and_settings_rejected": true,
+    "branching_or_disconnected_selection_rejected": true,
+    "exact_package_offline_guard": true,
+    "real_window_callback_p95_ms_max": 50.0,
+    "real_window_callback_max_ms": 50.0
+  },
+  "nonclaims": [
+    "No learned weights or learned secondary motion.",
+    "No automatic hair, cloth, tail, flesh or prop detection.",
+    "No world-space chain gravity or chain collision in this bounded stage.",
+    "No deformation-volume, self-collision or arbitrary-mesh solve.",
+    "No human quality conclusion or Cascadeur parity claim."
+  ],
+  "full_goal_complete": false
+}

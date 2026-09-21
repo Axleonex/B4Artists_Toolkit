@@ -1,0 +1,49 @@
+{
+  "schema": "expanded-constrained-sequence-evaluation-v1",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "recorded_after_all_fits": true,
+  "training_plan_sha256": "2207c6e925493899f7bc1f4dac48ee950a4e57f790f04f43b70b90cbc79c4cd1",
+  "models": [
+    {
+      "seed": 20260909,
+      "weights_sha256": "a1d9ef652aa8faf3f9bc818c52027f14c97e651270f0e7f3db03e56807d76eda",
+      "report_sha256": "42a570c5e299e95b96f2b38db0737cedc34b4f79b5305423d4e71652f6c22119"
+    },
+    {
+      "seed": 20260910,
+      "weights_sha256": "9be7ed67fbaad2a2ad1f4bfb469d2b2b9a6bde8d1f2c072bfce364c9c98e632e",
+      "report_sha256": "003bc519b679a33539d619a218216ebbd49fc5d108c82316c07a461e4e4aefe2"
+    }
+  ],
+  "reference_protocol": "expanded_trajectory_protocol_v19.json",
+  "reference_protocol_sha256": "400e572c710af4f7150f9c15115d244546def0f8699cdfb96f7bf47a2e900990",
+  "reference_report": "results/expanded_trajectory_v19/report.json",
+  "reference_report_sha256": "97de5d7f4e13ac70dbe17119b1eb49a8e30a3640e5a3eebff9fe63e3d05688f5",
+  "partitions": ["old_validation", "new_validation", "combined"],
+  "controls": ["projected_linear", "projected_hermite", "projected_shape"],
+  "baseline_policy": "Recompute all established controls and require exact equality with the frozen reference report.",
+  "attribution_policy": "Compare each learned candidate directly with projected_shape on every partition in addition to the original strongest-control acceptance gates.",
+  "acceptance_policy": "Both fixed seeds must pass every unchanged original gate on all partitions and improve aggregate position over projected_shape on all partitions. No favorable-seed selection.",
+  "confirmation": "Keep all six protected confirmation clips sealed regardless of this development result. A new prospective confirmation plan is required only if both seeds pass.",
+  "chunk_size": 16,
+  "deadline_unix": 1789053845.0,
+  "sources": {
+    "evaluate_expanded_constrained_sequence_v1.py": "0d422146ec92be3ca473bfdf0731650185b002633c8b5edd33a2abf8d2ca682f",
+    "sequence_constrained_residual_provider_v1.py": "2808c190a4039d0e81e8d46e1dd4ba23737a23976712edfb548c9b9ceb677e8b",
+    "sequence_constrained_reference_v1.py": "574953c8848e036d3014f70c453de6531ac23e64fbbfdbf302c3e54fcb373655",
+    "sequence_shape_residual_provider_v1.py": "f8f6bfe27ea626a0a7fb8b8dac89c787e42adced444ae41b9ad051cd252c2514",
+    "sequence_shape_conditioning_v1.py": "391487233f75de48a4d1a4569cc8320dec41757de2bbdb0da72fd1f1f9ba78fd",
+    "sequence_numpy_v1.py": "3c4ccd61c0e4f2f758bf6adbdfa13efdee3d87207f48ffc29c83ae00d8288b93",
+    "sequence_conditioning_v1.py": "17ca85057f4515275b9a4c95c1cd2a8001bfbc0983acb84c288234335fe3ac28",
+    "semantic_projection.py": "ecbcd9633e5794e9284186c2ac81198669a04d473a9eca0126cb4997a2061d92",
+    "motion_coverage.py": "f08389e0fd876772ceb3829475f8d5065aa1f61ec9c4b6a3cfa64d8f73419b1b",
+    "sequence_model.py": "291b98be4291d38332833e7314e74128a8b9801605094133b41baa770c7e2690",
+    "kinematic_trajectory_v20.py": "b6c02153229e44e88a9591380ca97360fb7234745690395ce712d5cde580af26",
+    "semantic_motion_data.py": "5c4fd0501045b78dde5b64d4d830370eacbb0ce1090efe34fbee923424c96ced",
+    "rig_observations.py": "a3e07856e6baa771ca7abaaa82bf92cb6f4edd4ac0909db9ecec219c581044b9",
+    "temporal_data.py": "702472088603fca2b3c01fcdd589c1e972e2206e095666a6b0b5654a5be61858",
+    "shape_reference.py": "064b4545ac0f276fb214d73a4afcbe82076499d93a496565909d3065e48ab9d0"
+  },
+  "runtime_promoted": false,
+  "full_goal_complete": false
+}

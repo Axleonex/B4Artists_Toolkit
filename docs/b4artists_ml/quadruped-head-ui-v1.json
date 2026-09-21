@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "fixture": "generated Rigify cat",
+  "events": [
+    "Head target rotated and solved through the visible operator"
+  ],
+  "target": "Head",
+  "location_locked": true,
+  "head_orientation_error": 0.0,
+  "orientation_tolerance": 2e-05,
+  "max_paw_error": 2.666641796853137e-07,
+  "paw_tolerance": 7.840182917979457e-05,
+  "screenshot": "training\\b4artists_ml\\cache\\quadruped-head-ui-v1.png",
+  "screenshot_sha256": "a209563e58f8809a6c0b0c699ee0a3cd34906956e9a0b6f98c3a85e3be8f55bd",
+  "elapsed_seconds": 2.806658600020455,
+  "source_restored_after_cancel": true
+}

@@ -1,0 +1,81 @@
+{
+  "schema": "expanded-constrained-sequence-fit-v1",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "hypothesis": "Subject-disjoint training on 7.16 hours of unique motion plus an analytic C2 residual envelope will improve transfer and derivative continuity beyond the strongest procedural shape control, unlike the 17.1-minute unconstrained fits.",
+  "controlled_changes": [
+    "Replace the frozen 78-clip/17.1-minute training set with the 1,840-clip/7.16-hour subject-disjoint train split.",
+    "For boundary-only contextual windows, predict residuals over the exact strongest projected shape reference.",
+    "Multiply every learned residual channel by a normalized cubic-on-each-side envelope with zero value, slope and curvature at authored observations."
+  ],
+  "held_constant": [
+    "The original 394 observed-only condition schema and 153-channel semantic pose representation.",
+    "The 128-wide six-block temporal convolution and pure NumPy export path.",
+    "AdamW settings, direct loss terms, two fixed seeds, gap set, partial-priority patterns and protected quality gates.",
+    "No style conditioning in this experiment; style tags remain recorded for a later separately controlled comparison."
+  ],
+  "data": {
+    "clips": 1840,
+    "subjects": 85,
+    "frames": 773836,
+    "source_hours": 7.15874219825,
+    "source_bytes": 2343633676,
+    "store_bytes": 369222288,
+    "matrix_view_bytes": 474713968,
+    "sampling": "Subject uniform, then clip uniform within subject, then start uniform within clip. Gap/context balanced by deterministic step cycle; patterns 0,1,2 balanced within each batch.",
+    "window_materialization": "Current batch only from memory-mapped positions and rotations.",
+    "legacy_corpus_used": false,
+    "validation_read": false,
+    "confirmation_read": false,
+    "downloads_during_fit": false
+  },
+  "training": {
+    "seeds": [20260909, 20260910],
+    "steps": 3000,
+    "batch_size": 16,
+    "examples_each": 48000,
+    "gaps": [8, 16, 32, 64, 96],
+    "contexts": [false, true],
+    "patterns": [0, 1, 2],
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "loss": "unknown position MSE + 0.1 rotation6 MSE + 0.01 velocity MSE + 0.0001 acceleration MSE using actual seconds",
+    "selection": "Fixed final step only; no development checkpoint selection",
+    "maximum_seconds_each": 1800,
+    "process_timeout_seconds": 2100,
+    "gpu_memory_fraction": 0.25,
+    "fit_count": 2
+  },
+  "evaluation": {
+    "freeze_both_before_development": true,
+    "partitions": ["old_validation", "new_validation", "combined"],
+    "controls": ["projected_linear", "projected_hermite", "projected_shape"],
+    "all_original_gates_retained": true,
+    "require_both_seeds": true,
+    "confirmation": "All protected confirmation clips remain sealed unless both seeds pass every development gate.",
+    "runtime_promotion": false,
+    "parity_claim": false
+  },
+  "contracts": [
+    {"path": "results/sequence-store-contract-v3/report.json", "sha256": "e2eebb29ea46e211f4fe465bf417d20b146c0144c3873c1fb8c3f5a7ac6c7258"},
+    {"path": "results/sequence-constrained-reference-v1/report.json", "sha256": "dd02d4819a615b9d06aaf6471f73da80a3bb003950a58a219a1874c9affa8843"},
+    {"path": "results/cmu-sequence-store-v2/report.json", "sha256": "44a13fecde26ee449db136a60d8d92addaad505d4b3767af79dcbed96689b6d4"},
+    {"path": "results/rotation-matrix-store-v1/report.json", "sha256": "6de4957d6c3bd0083ecb86feedfe1ef707cb1e6e16f1ae9fe9adb3d28c815eda"}
+  ],
+  "sources": {
+    "train_expanded_constrained_sequence_v1.py": "49600a5915c8277ffb4645286a13c15fd4f0e073975bd87795473ce35ec4b6f0",
+    "sequence_store_v1.py": "313e503123d3aa6acda322b3d855292a245cc71fe09d1ed587ae323460d50790",
+    "sequence_constrained_reference_v1.py": "574953c8848e036d3014f70c453de6531ac23e64fbbfdbf302c3e54fcb373655",
+    "sequence_model_v1.py": "ac59e2f8fd2e730061b0f915b1a5e78f1cfd74513dddca2cc9a64c1f79aa345f",
+    "sequence_numpy_v1.py": "3c4ccd61c0e4f2f758bf6adbdfa13efdee3d87207f48ffc29c83ae00d8288b93",
+    "sequence_conditioning_v1.py": "17ca85057f4515275b9a4c95c1cd2a8001bfbc0983acb84c288234335fe3ac28",
+    "sequence_packet_v2.py": "c49db8f24d9a9fe3f5fd0fd791ba202bbdf1e18966310703f220277ea81683a7",
+    "semantic_motion_data.py": "5c4fd0501045b78dde5b64d4d830370eacbb0ce1090efe34fbee923424c96ced",
+    "shape_reference.py": "064b4545ac0f276fb214d73a4afcbe82076499d93a496565909d3065e48ab9d0",
+    "rig_observations.py": "a3e07856e6baa771ca7abaaa82bf92cb6f4edd4ac0909db9ecec219c581044b9"
+  },
+  "deadline_unix": 1789053845.0,
+  "runtime_promoted": false,
+  "full_goal_complete": false
+}

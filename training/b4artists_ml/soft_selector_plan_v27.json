@@ -1,0 +1,51 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "experiment": "soft_selector_v27",
+  "scope": "Single fixed readout change; no new training, temperature search, clip-specific rules, validation refit, new data or promotion.",
+  "model_sha256": "310fa08151708ab8e1d076dc370b8b40fb0c6a7680e078c7389d6c8fee895bb3",
+  "model_path": "results/projected_selector_v26/best_learned.npz",
+  "source_sha256": "92816af3f2ab473994fd4c0346dc4825e367f386d3a292bb99d0aa730b576b20",
+  "temperature": 1.0,
+  "position": "Marginal probability-weighted position proposals",
+  "rotation": "Marginal quaternion mixture aligned to procedural Hermite reference, normalize, reject near-zero norms; hemisphere boundary limitation explicit",
+  "stationary": "Exact existing procedural reference",
+  "endpoints": "Exact linear priority samples for the soft readout; exact existing reference preserved for stationary observations",
+  "training_diagnostic": "First sampled window of each466training cohorts, original group-excluded v20parents, selector weights see alltraininglabels. Compare hard/soft fitted outputs; in-sample diagnostic, not independence.",
+  "development": "After finite/geometry and preflight tests, evaluate old480/new288/combined768windows once with fixed readout and original3matched projected controls. Repeat independently. No configuration choice based on results.",
+  "projection": {
+    "steps": 48,
+    "learning_rate": 0.02,
+    "rotation_weight": 0.5,
+    "regularization": 1e-05
+  },
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "manifest_sha256": "2aafaa5d69061f0b977584a2ed0b2ae1792466aabb23801173b02384ec469711",
+  "parent_protocol_sha256": "953064f183db424f75068d2db3e28a35b87ab18497ac8e385d5b0295495bf06f",
+  "source_frozen": {
+    "temporal_training_manifest_v19.json": "2aafaa5d69061f0b977584a2ed0b2ae1792466aabb23801173b02384ec469711",
+    "temporal_expansion_plan_v19.json": "8af5a83abffd86b50c1e1f5426f330ad524970dd30475e313b7d02d6cc1d669a",
+    "temporal_expansion_manifest_v19.json": "41516f5039079c7e32e834127b877fb7906a14b3a62c158ae73ec9826e7005c9"
+  },
+  "budgets": {
+    "training_diagnostic_seconds": 600,
+    "development_seconds": 1200,
+    "max_output_bytes": 16777216
+  },
+  "deadline_unix": 1788981845.0,
+  "max_goalposts": 50,
+  "goalposts_already_used": 47,
+  "confirmation_read": false,
+  "full_goal_complete": false,
+  "recorded_at": 1788923003.0785942,
+  "prefit_revision": "Query-shape validation precedes len; one-hot soft readout pins priorities; stationary inference explicitly delegates to the unchanged exact reference before any data evaluation."
+}

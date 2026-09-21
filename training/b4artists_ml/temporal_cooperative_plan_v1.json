@@ -1,0 +1,19 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "scope": "Research cooperative temporal generation. Current runtime/package and frozen v26training remain unchanged.",
+  "reference_source_sha256": "3b8d7f0ae1122f20ccbd4155b4a888d007a6a111757f6a84438d622fb930af7e",
+  "new_module": "temporal_cooperative_v1.py",
+  "requirements": [
+    "Visible original pose/playhead at every yielded solver phase",
+    "Same validated samples and priorities as synchronous reference on eight supported rig fixtures",
+    "Source keys/modes/pose/action/inventories preserved after completion,cancellation,and failure",
+    "Intervening user edits cause rejection and survive iterator close",
+    "Native preview creation remains after complete generation; no partial action is published",
+    "Measure maximum tick duration separately; no claimed50msbudget or full UI integration"
+  ],
+  "host_timeout_seconds": 900,
+  "deadline_unix": 1788981845.0,
+  "runtime_edits": false,
+  "model_promotion": false,
+  "recorded_at": 1788916364.5270793
+}

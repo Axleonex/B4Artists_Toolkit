@@ -1,0 +1,23 @@
+{
+  "schema": 17,
+  "scope": "Fit final layer to exact existing trajectory objective; supervised v16 hidden features frozen. Distinguish optimization underfit from data/generalization failure.",
+  "source_audit_sha256": "6490f1743441a41babeca3588d7fbbea067987565e0ec7e29a5b913ccae95b5c",
+  "parent_protocol_sha256": "0b0d930cee268bfb703f3523a579aa2b0be626409fd6a6235cc9e865d787f3e6",
+  "parent_trial": "trial_2",
+  "regularizations": [
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "selection": "Three fixed regularizations evaluated on identical four training-only catalog-prefix folds with matching frozen fold hidden features. Minimum pooled raw position plus0.1 rotation selects regularization before loading validation. Fit final layer once with full-training hidden features. Validation compared with unchanged projected controls and gates.",
+  "validation_policy": "Only one frozen candidate evaluated; previously exposed validation is not blind confirmation. No confirmation motion read. No failed gate softened, no model promoted.",
+  "training_policy": "No new hidden training, source data download or split change. Analytic readout weights are actually trained on motion labels; unchanged input schema and observed-motion scaling. This is a research diagnostic, not evidence of product completion.",
+  "reproduction": "Repeat exact readout fits; compare serialized bytes, deterministic scores and projection results.",
+  "prior_models": {
+    "results/boundary_trajectory_v16/best_learned.npz": "9b27322e12c3ef0fdac00ca338c2c37b228b16922e92dd9631867bf807fc7814",
+    "results/boundary_trajectory_v16/trial_2_fold_0.npz": "fc9b62e70d3fb19cbedd7fe640a497b4f3ad5e5ef330afd4d746fafef11a2cc9",
+    "results/boundary_trajectory_v16/trial_2_fold_1.npz": "671e5a9bb7e52e158824fbb6c38fdc7eeb5baee0e93fd0293d4a752d0ea37946",
+    "results/boundary_trajectory_v16/trial_2_fold_2.npz": "739767cd187207c82161017ab292ff589f142641a6e4484a46c977568c031782",
+    "results/boundary_trajectory_v16/trial_2_fold_3.npz": "ba7a0551753ba68ffa1607850a6b167094c72c7e4fdc13653f3102e8c08d791e"
+  }
+}

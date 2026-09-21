@@ -1,0 +1,104 @@
+{
+  "seed": 20260906,
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "target_fps": 30,
+  "training_windows_per_gap": 16,
+  "evaluation_windows_per_gap": 8,
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "schema": 15,
+  "observation_schema": "b4ml-semantic-observations-v1",
+  "input_features": 667,
+  "target_features": 153,
+  "scope": "Observed-motion-conditioned residual learning with stationary authored-pose preservation",
+  "calibration": "Artificial frame zero in the existing corpus only; excluded from motion observations and targets",
+  "source_manifests": {
+    "results/training_manifest_v4.json": "9973a7f2b8935c33cb8d9b819d46658485bab931fdaabb59b6434ff0e3d78fe8",
+    "temporal_expansion_manifest_v8.json": "03a3055989effc67259e41e0e749480d2e94fd182656a44c8ebafa1d8e6ffef8"
+  },
+  "partitions": [
+    "train",
+    "validation"
+  ],
+  "holdouts": "Only train/validation used in initial selection and reproduction; earlier confirmation is already observed and must never be labeled fresh",
+  "label_policy": "Only four known poses (or two without context) enter observations; full targets are separate trainer labels",
+  "physics_policy": "Collapsed semantic edges are not asserted to have constant length; raw baselines do not qualify actual rig physics",
+  "next": "Evaluate selected compatible predictions on actual-rig editable actions; failed gates forbid promotion",
+  "baselines": [
+    "projected_linear",
+    "projected_hermite"
+  ],
+  "projection": {
+    "steps": 48,
+    "learning_rate": 0.02,
+    "rotation_weight": 0.5,
+    "regularization": 1e-05
+  },
+  "experiments": [
+    {
+      "hidden": 64,
+      "epochs": 40,
+      "batch_size": 64,
+      "learning_rate": 0.001,
+      "regularization": 1e-05,
+      "velocity_weight": 0.01,
+      "acceleration_weight": 0.0001
+    },
+    {
+      "hidden": 64,
+      "epochs": 40,
+      "batch_size": 64,
+      "learning_rate": 0.001,
+      "regularization": 0.0001,
+      "velocity_weight": 0.01,
+      "acceleration_weight": 0.0001
+    },
+    {
+      "hidden": 128,
+      "epochs": 40,
+      "batch_size": 64,
+      "learning_rate": 0.001,
+      "regularization": 1e-05,
+      "velocity_weight": 0.01,
+      "acceleration_weight": 0.0001
+    },
+    {
+      "hidden": 128,
+      "epochs": 40,
+      "batch_size": 64,
+      "learning_rate": 0.001,
+      "regularization": 0.0001,
+      "velocity_weight": 0.01,
+      "acceleration_weight": 0.0001
+    }
+  ],
+  "selection": "Four training-only catalog-prefix folds, excluding complete groups. Minimum pooled out-of-fold raw position + 0.1*rotation selects one learned specification; fit once on all training windows and freeze model hash before loading validation. Compare this single candidate with identical projected baselines; no validation-driven retuning.",
+  "reproduction": "Repeat all sixteen internal neural fits, final fit and fixed validation comparison; exact serialized model bytes and metrics.",
+  "runtime": "Local NumPy float64 training and inference; no new assets, subscriptions, APIs or downloads",
+  "projection_method": "Fixed 48-step projected Adam with eight bounded quarter-step backtracking attempts; exact root, terminal orientations and known priorities",
+  "folds": 4,
+  "fold_group": "CMU catalog prefix before underscore, not asserted to be independent actor identity",
+  "objective": "Same v14 trajectory/derivative neural objective, differentiated through per-observation channel amplitudes. No division by tiny amplitudes; zero-amplitude channels have zero correction gradients.",
+  "v12_protocol_sha256": "892f327ff9946a0d5806f0ecc9441d5f3d3e1fbca58c4278515910907057c397",
+  "training_only_diagnostics": "Retain epoch objectives and learned hidden-feature changes. Finite-difference gradients and zero-regularization feature-learning test precede corpus fitting. No architecture, epoch or regularization retuning after validation.",
+  "architecture": "Same bounded v14 learned tanh configurations and training-only grouped selection; corrected observation-scaled output representation, new versioned weights.",
+  "residual_scale": "Per semantic joint: endpoint positional distance or rotation-matrix Frobenius distance/sqrt(2), plus half duration times incoming/outgoing speed when context is present. Repeat position amplitude for three position channels and rotation amplitude for six rotation channels. No hidden labels, threshold floor or post-validation clipping. Use unit-duration four-term temporal basis; multiply learned coefficients by observed amplitudes in both training and prediction.",
+  "stationary_acceptance": "Identical observed endpoints/context yield exactly zero raw residual. Near-stationary residual approaches zero continuously. Actual stationary rig positions/orientation matrices remain within existing 2e-5 host numerical tolerance across generated frames, including source recovery."
+}

@@ -1,0 +1,58 @@
+{
+  "schema": 26,
+  "scope": "Training-only projected proposal coverage diagnostic before any learned selector fit",
+  "candidate_positions": [
+    "linear",
+    "hermite",
+    "shape",
+    "v20"
+  ],
+  "candidate_rotations": [
+    "linear",
+    "hermite",
+    "v20"
+  ],
+  "candidate_count": 12,
+  "selection": "First window in each existing (clip,gap,context) training cohort, preserving manifest sampling/order. Never load validation or confirmation.",
+  "parent_policy": "Exact frozen v20fold model excluding the entire catalog prefix of every diagnostic window.",
+  "projection": {
+    "steps": 48,
+    "learning_rate": 0.02,
+    "rotation_weight": 0.5,
+    "regularization": 1e-05
+  },
+  "gates_unchanged": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "diagnostic": "Hidden training labels may choose the minimum fitted position error as an explicitly unattainable inference oracle. Also score its rotation,velocity,acceleration and length; this is coverage evidence, not a learned model or qualification.",
+  "feasibility": "Report pool positional oracle improvement versus the best projected procedural control and whether errors originate before or after fitting. Do not fit a selector until this diagnostic and runtime estimate are inspected.",
+  "budgets": {
+    "max_diagnostic_windows": 500,
+    "projection_chunk_windows": 16,
+    "max_wall_seconds": 3600,
+    "max_saved_bytes": 16777216
+  },
+  "runtime_package_unchanged": "0.17.5",
+  "source_manifests": {
+    "temporal_training_manifest_v19.json": "2aafaa5d69061f0b977584a2ed0b2ae1792466aabb23801173b02384ec469711",
+    "temporal_expansion_plan_v19.json": "8af5a83abffd86b50c1e1f5426f330ad524970dd30475e313b7d02d6cc1d669a",
+    "temporal_expansion_manifest_v19.json": "41516f5039079c7e32e834127b877fb7906a14b3a62c158ae73ec9826e7005c9"
+  },
+  "parent_files": {
+    "results/kinematic_trajectory_v20/best_learned.npz": "9e4d2a6f4f5a08bd6b9f814df064eaee276866afaddc5b1ceaa0faefe9c996a3",
+    "results/kinematic_trajectory_v20/fold_0.npz": "b7a9425faa6a395ce84cecd2a6119a70b58a28476cb81fedc09202e026d58d20",
+    "results/kinematic_trajectory_v20/fold_1.npz": "edefff2d8049e3a1f8946aa11f2bc7226e0c618bee4f7e628a406d2db1e3c7b3",
+    "results/kinematic_trajectory_v20/fold_2.npz": "cf34f10220d7c6ef0f14b74ffe805b4d5e0672efcb7e5116413734cb963df243",
+    "results/kinematic_trajectory_v20/fold_3.npz": "3cb02e9a993d342543009190a1dc549c9601d6e7678feb78b6126e277835a15f",
+    "results/kinematic_trajectory_v20/selected.npz": "9e4d2a6f4f5a08bd6b9f814df064eaee276866afaddc5b1ceaa0faefe9c996a3"
+  },
+  "recorded_at": 1788911787.2913773
+}

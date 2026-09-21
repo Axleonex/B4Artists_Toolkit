@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "fixture": "generated Rigify wolf",
+  "events": [
+    "Four pole targets solved through the visible operator"
+  ],
+  "pole_targets": [
+    "Fore Pole L",
+    "Fore Pole R",
+    "Hind Pole L",
+    "Hind Pole R"
+  ],
+  "max_pole_error": 1.1920928955078125e-07,
+  "max_paw_error": 4.2173182064547854e-07,
+  "tolerance": 0.00023105971926629955,
+  "screenshot": "training\\b4artists_ml\\cache\\quadruped-poles-ui-v1.png",
+  "screenshot_sha256": "771b765086babc96a3f6ef0bd14cea48e80b6ed72c36ea9cf856873656fc1252",
+  "elapsed_seconds": 2.551712899992708,
+  "source_restored_after_cancel": true
+}

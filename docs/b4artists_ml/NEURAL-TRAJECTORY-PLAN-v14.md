@@ -1,0 +1,11 @@
+# Learned nonlinear temporal features v14
+
+Prospective bounded experiment following v13 conditioning evidence. Preserve the 667 observation schema (514 engineered motion features), corpus identities, physical projection, priority envelope, all quality gates, prior failures and 0.16.1 runtime/package.
+
+Use the existing local context_network tanh/Adam infrastructure with a learned hidden layer (64 or 128 units), zero-initialized 612-output coefficient readout, float64 CPU training, per-training-fold normalization and clipping at eight standardized units. Optimize the independently verified compressed trajectory objective with velocity 0.01 and acceleration 0.0001, divided by 153 output coordinates, and network L2 regularization 1e-5 or 1e-4. Fixed forty epochs, batch64, Adam0.001 and unit gradient clipping; no early stopping or post-validation tuning. There are four predefined candidates, not an unbounded search.
+
+Select using the same four complete catalog-prefix-excluded folds inside training only. Normalization and learned features never use their excluded fold during training. Freeze the winning full-training artifact before loading validation. Compare one candidate with identically projected linear/Hermite controls and require exact v12 control equality. Repeat the whole experiment independently and check every model byte/quality metric.
+
+Pre-fit tests cover explicit versus compressed trajectory loss, finite-difference gradients for all network parameter families, actual feature learning with zero regularization, priority/hidden-label invariants, deterministic training and invalid model inputs. Then run actual-host tests and the exact selected learned candidate on eight rig/action/source-recovery fixtures. Rejected quality remains rejected regardless of engineering passes.
+
+This is supervised local neural learning, not Cascadeur proprietary technology. Rotation6 loss remains a surrogate; physics-aware learning, contacts/style/partial-body/multiple-priority integration, production rigs, performance, rights and independent comparison remain original full-goal obligations. No downloads, APIs, installs, publication or runtime model promotion occur in this research experiment.

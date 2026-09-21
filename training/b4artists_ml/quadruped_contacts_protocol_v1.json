@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "release": "0.30.0",
+  "feature": "Animator-authored four-paw contact intervals for generated Rigify quadrupeds",
+  "host": "Bforartists 5.2.0 Alpha",
+  "fixtures": ["Rigify cat", "Rigify horse", "Rigify wolf"],
+  "acceptance": {
+    "position": "Every enabled paw remains within 0.0002 of its body-to-paw reference distance at validation samples",
+    "orientation": "Enabled paw orientation locks remain within 0.001 radians at validation samples",
+    "sampling": "Editable linear fit keys use at most 0.25-frame spacing and validation uses at most 0.125-frame spacing",
+    "workflow": "Correction copies the Pose Blending candidate; Restore Before Contacts, Discard and Restore Source preserve the retained inputs",
+    "priority": "Captured priority poses are unchanged; conflicting contacts fail before committing output",
+    "recovery": "A kept corrected candidate survives save/reload and restores its source action",
+    "guards": "Cancellation, rotation locks, active constraints, drivers, changed requests and unsupported rigs fail without mutating the input",
+    "offline": "The exact package runs with outbound Python calls denied"
+  },
+  "claim_boundaries": {
+    "qualified": [
+      "Generated Rigify cat, horse and wolf four-paw contact correction",
+      "Animator-authored contact points, intervals, blend, strength and optional orientation locks",
+      "Quarter-frame editable fitting with eighth-frame validation",
+      "Priority-pose preservation and conflicting-request rejection",
+      "Cancellation, copied-candidate recovery and source restoration",
+      "Save/reload recovery for a kept corrected candidate",
+      "Fail-closed locks, constraints and drivers"
+    ],
+    "not_qualified": [
+      "Automatic quadruped contact or gait inference",
+      "Quadruped balance, flight, arbitrary surfaces or collision physics",
+      "Quadruped learned posing or learned motion",
+      "Direct metarig, imported or custom quadruped correction",
+      "Natural-motion quality",
+      "Human usability acceptance",
+      "Cascadeur parity or superiority",
+      "Clean host shutdown"
+    ]
+  }
+}

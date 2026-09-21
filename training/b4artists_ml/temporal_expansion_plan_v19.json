@@ -1,0 +1,642 @@
+{
+  "schema": 19,
+  "frozen_at": 1788881074.3435285,
+  "commit": "09a07f54f3bbb58797325f009282d0b2048a2871",
+  "max_additional_bytes": 100000000,
+  "max_file_bytes": 8000000,
+  "planned_splits": {
+    "train": [
+      "81_04",
+      "81_05",
+      "81_10",
+      "81_12",
+      "82_02",
+      "82_06",
+      "82_14",
+      "82_15",
+      "83_01",
+      "83_06",
+      "83_14",
+      "83_27",
+      "86_01",
+      "86_03",
+      "86_08",
+      "86_11",
+      "115_01",
+      "115_04",
+      "115_06",
+      "115_09",
+      "120_01",
+      "120_02",
+      "120_08",
+      "120_15",
+      "123_01",
+      "123_03",
+      "123_07",
+      "123_10",
+      "124_01",
+      "124_05",
+      "124_09",
+      "124_11",
+      "127_03",
+      "127_04",
+      "127_05",
+      "127_15",
+      "128_02",
+      "128_04",
+      "128_05",
+      "128_10",
+      "139_02",
+      "139_09",
+      "139_11",
+      "139_14",
+      "140_01",
+      "140_03",
+      "140_06",
+      "140_08"
+    ],
+    "validation": [
+      "138_01",
+      "138_11",
+      "138_20",
+      "141_03",
+      "141_04",
+      "141_09"
+    ],
+    "confirmation": [
+      "85_01",
+      "85_05",
+      "85_14",
+      "142_02",
+      "142_11",
+      "142_13"
+    ]
+  },
+  "files": [
+    {
+      "clip": "81_04",
+      "split": "train",
+      "path": "data/081/81_04.bvh",
+      "bytes": 727405,
+      "git_blob_sha1": "1c1c4688f68310e7c7a9b814a9c5ccc2dc522359",
+      "description": "walk at a brisk pace",
+      "catalog_group_description": "Subject #81 (pushing a box; jumping off a ledge; walks)"
+    },
+    {
+      "clip": "81_05",
+      "split": "train",
+      "path": "data/081/81_05.bvh",
+      "bytes": 1042853,
+      "git_blob_sha1": "1c86aba05934c248d663a30d47730567bb11ee40",
+      "description": "push heavy object",
+      "catalog_group_description": "Subject #81 (pushing a box; jumping off a ledge; walks)"
+    },
+    {
+      "clip": "81_10",
+      "split": "train",
+      "path": "data/081/81_10.bvh",
+      "bytes": 1354114,
+      "git_blob_sha1": "7f8e78224bb555e564cefd3712f64e9141dce4a2",
+      "description": "push object that is high in air",
+      "catalog_group_description": "Subject #81 (pushing a box; jumping off a ledge; walks)"
+    },
+    {
+      "clip": "81_12",
+      "split": "train",
+      "path": "data/081/81_12.bvh",
+      "bytes": 385286,
+      "git_blob_sha1": "676dd11dbf45421a345445686117a85d40cf9d32",
+      "description": "jump backwards off ledge",
+      "catalog_group_description": "Subject #81 (pushing a box; jumping off a ledge; walks)"
+    },
+    {
+      "clip": "82_02",
+      "split": "train",
+      "path": "data/082/82_02.bvh",
+      "bytes": 1361945,
+      "git_blob_sha1": "f89f897d6f744084ea3df646c085cf462e65a26f",
+      "description": "Jump off ledge",
+      "catalog_group_description": "Subject #82 (jumping; pushing; emotional walks)"
+    },
+    {
+      "clip": "82_06",
+      "split": "train",
+      "path": "data/082/82_06.bvh",
+      "bytes": 833380,
+      "git_blob_sha1": "b716541564fcc61b9dfe963daf86ac024d0c6f0d",
+      "description": "Pushing on heavy object",
+      "catalog_group_description": "Subject #82 (jumping; pushing; emotional walks)"
+    },
+    {
+      "clip": "82_14",
+      "split": "train",
+      "path": "data/082/82_14.bvh",
+      "bytes": 689289,
+      "git_blob_sha1": "9c73a2f61bc7a40b323bfd5b2ca936247082c54e",
+      "description": "walk forward and slow down",
+      "catalog_group_description": "Subject #82 (jumping; pushing; emotional walks)"
+    },
+    {
+      "clip": "82_15",
+      "split": "train",
+      "path": "data/082/82_15.bvh",
+      "bytes": 543773,
+      "git_blob_sha1": "41ce6c58231b4232696f719e936d85779bdad3fd",
+      "description": "walk forward and turn sideways",
+      "catalog_group_description": "Subject #82 (jumping; pushing; emotional walks)"
+    },
+    {
+      "clip": "83_01",
+      "split": "train",
+      "path": "data/083/83_01.bvh",
+      "bytes": 486012,
+      "git_blob_sha1": "cd428f854e17b2dc59f233581a88834d2ea24ca4",
+      "description": "large sidestep to right",
+      "catalog_group_description": "Subject #83 (steps)"
+    },
+    {
+      "clip": "83_06",
+      "split": "train",
+      "path": "data/083/83_06.bvh",
+      "bytes": 310073,
+      "git_blob_sha1": "2184e666f9a6792a694cbf58770307e89bb4650e",
+      "description": "very large sidestep to right and down",
+      "catalog_group_description": "Subject #83 (steps)"
+    },
+    {
+      "clip": "83_14",
+      "split": "train",
+      "path": "data/083/83_14.bvh",
+      "bytes": 329825,
+      "git_blob_sha1": "db9115ab5ce8730a5042659620da0469dfb2438c",
+      "description": "short sidestep to left and down",
+      "catalog_group_description": "Subject #83 (steps)"
+    },
+    {
+      "clip": "83_27",
+      "split": "train",
+      "path": "data/083/83_27.bvh",
+      "bytes": 751993,
+      "git_blob_sha1": "c216a3604bda0f26374a9e9f8f82500211459195",
+      "description": "walk forward stepping up stairs",
+      "catalog_group_description": "Subject #83 (steps)"
+    },
+    {
+      "clip": "86_01",
+      "split": "train",
+      "path": "data/086/86_01.bvh",
+      "bytes": 3483160,
+      "git_blob_sha1": "1e02880a2f0c09a644f58a9055b9e5197b4c946a",
+      "description": "jumps kicks and punches",
+      "catalog_group_description": "Subject #86 (sports and various activities)"
+    },
+    {
+      "clip": "86_03",
+      "split": "train",
+      "path": "data/086/86_03.bvh",
+      "bytes": 6358518,
+      "git_blob_sha1": "ebe5168ccd7e93efdedfee5863ea95c294570e16",
+      "description": "walking, running, jumping, kicking, and stretching",
+      "catalog_group_description": "Subject #86 (sports and various activities)"
+    },
+    {
+      "clip": "86_08",
+      "split": "train",
+      "path": "data/086/86_08.bvh",
+      "bytes": 7004284,
+      "git_blob_sha1": "690242fca4f3545caf671f968f37cc6e03bb1762",
+      "description": "walking, squats, stretching, kicking, and punching",
+      "catalog_group_description": "Subject #86 (sports and various activities)"
+    },
+    {
+      "clip": "86_11",
+      "split": "train",
+      "path": "data/086/86_11.bvh",
+      "bytes": 4293104,
+      "git_blob_sha1": "d2d01e6728b95b0fc2ada8c808bc13163e568a32",
+      "description": "walking, stretching, walking and turning",
+      "catalog_group_description": "Subject #86 (sports and various activities)"
+    },
+    {
+      "clip": "115_01",
+      "split": "train",
+      "path": "data/115/115_01.bvh",
+      "bytes": 358161,
+      "git_blob_sha1": "0107394fd070815d4ffa76564b0572c5f9fc973c",
+      "description": "Pick up box, bend from waist",
+      "catalog_group_description": "Subject #115 (Bending over)"
+    },
+    {
+      "clip": "115_04",
+      "split": "train",
+      "path": "data/115/115_04.bvh",
+      "bytes": 291357,
+      "git_blob_sha1": "2ce077dc3d4f2526de9874918f2674534f1051ef",
+      "description": "Pick box up, bend from waist",
+      "catalog_group_description": "Subject #115 (Bending over)"
+    },
+    {
+      "clip": "115_06",
+      "split": "train",
+      "path": "data/115/115_06.bvh",
+      "bytes": 274283,
+      "git_blob_sha1": "fcb2ca3235ae0b65f168862edd69760c04d9c10d",
+      "description": "Picking box up, bending knees",
+      "catalog_group_description": "Subject #115 (Bending over)"
+    },
+    {
+      "clip": "115_09",
+      "split": "train",
+      "path": "data/115/115_09.bvh",
+      "bytes": 305558,
+      "git_blob_sha1": "582771ff842ac0a72d002975e8680775edd92e0e",
+      "description": "Picking box up, bending knees",
+      "catalog_group_description": "Subject #115 (Bending over)"
+    },
+    {
+      "clip": "120_01",
+      "split": "train",
+      "path": "data/120/120_01.bvh",
+      "bytes": 929599,
+      "git_blob_sha1": "c9b0d50f6df2b12cda787aeaf036925e1b00b21e",
+      "description": "Alien Turn",
+      "catalog_group_description": "Subject #120 (Various Style Walks)"
+    },
+    {
+      "clip": "120_02",
+      "split": "train",
+      "path": "data/120/120_02.bvh",
+      "bytes": 1089247,
+      "git_blob_sha1": "37e8679a89ce5e738e49b9526c832568003c16d1",
+      "description": "Gorilla",
+      "catalog_group_description": "Subject #120 (Various Style Walks)"
+    },
+    {
+      "clip": "120_08",
+      "split": "train",
+      "path": "data/120/120_08.bvh",
+      "bytes": 911992,
+      "git_blob_sha1": "b9f4e4f028ef256112be1504a5c0470c7f1b2706",
+      "description": "Mickey sneaky walk",
+      "catalog_group_description": "Subject #120 (Various Style Walks)"
+    },
+    {
+      "clip": "120_15",
+      "split": "train",
+      "path": "data/120/120_15.bvh",
+      "bytes": 1113581,
+      "git_blob_sha1": "bfe69261478756368ab1cd0543378db526cdccd4",
+      "description": "Mickey Surprised",
+      "catalog_group_description": "Subject #120 (Various Style Walks)"
+    },
+    {
+      "clip": "123_01",
+      "split": "train",
+      "path": "data/123/123_01.bvh",
+      "bytes": 537091,
+      "git_blob_sha1": "372dccee4196b64bcc7b96b3f057844e350c5857",
+      "description": "15.5 lbs",
+      "catalog_group_description": "Subject #123 (Carry Suitcase with Varying Weights)"
+    },
+    {
+      "clip": "123_03",
+      "split": "train",
+      "path": "data/123/123_03.bvh",
+      "bytes": 1392724,
+      "git_blob_sha1": "4fd6ade15d2240e7624e9c3a33ebee878dbfe441",
+      "description": "19.5lb",
+      "catalog_group_description": "Subject #123 (Carry Suitcase with Varying Weights)"
+    },
+    {
+      "clip": "123_07",
+      "split": "train",
+      "path": "data/123/123_07.bvh",
+      "bytes": 1169766,
+      "git_blob_sha1": "84df90136051e7aa79c2406e319906631be56f41",
+      "description": "12.5lb",
+      "catalog_group_description": "Subject #123 (Carry Suitcase with Varying Weights)"
+    },
+    {
+      "clip": "123_10",
+      "split": "train",
+      "path": "data/123/123_10.bvh",
+      "bytes": 601604,
+      "git_blob_sha1": "770073a1d2d3249693e00a683c7a69d77e6c75bb",
+      "description": "12.5lb",
+      "catalog_group_description": "Subject #123 (Carry Suitcase with Varying Weights)"
+    },
+    {
+      "clip": "124_01",
+      "split": "train",
+      "path": "data/124/124_01.bvh",
+      "bytes": 491121,
+      "git_blob_sha1": "5cdb0a5b53cb7bd37c22fe1e7ca453145be6eef8",
+      "description": "Baseball Pitch",
+      "catalog_group_description": "Subject #124 (Sports Related Motions)"
+    },
+    {
+      "clip": "124_05",
+      "split": "train",
+      "path": "data/124/124_05.bvh",
+      "bytes": 600324,
+      "git_blob_sha1": "b69cc3a82a34284ea0d5d605bb28fda4c8723ec4",
+      "description": "Basketball Jump Shot",
+      "catalog_group_description": "Subject #124 (Sports Related Motions)"
+    },
+    {
+      "clip": "124_09",
+      "split": "train",
+      "path": "data/124/124_09.bvh",
+      "bytes": 1860910,
+      "git_blob_sha1": "338026319481ab3baee60d7dbc8e06a23b5d6d95",
+      "description": "Frisbee",
+      "catalog_group_description": "Subject #124 (Sports Related Motions)"
+    },
+    {
+      "clip": "124_11",
+      "split": "train",
+      "path": "data/124/124_11.bvh",
+      "bytes": 750624,
+      "git_blob_sha1": "00f3a248bfb7f4836fa1917b1d4361f4e538fb26",
+      "description": "2 Foot Jump",
+      "catalog_group_description": "Subject #124 (Sports Related Motions)"
+    },
+    {
+      "clip": "127_03",
+      "split": "train",
+      "path": "data/127/127_03.bvh",
+      "bytes": 255483,
+      "git_blob_sha1": "a66074945eae775bd9109fb768933ddd32f763c3",
+      "description": "Run",
+      "catalog_group_description": "Subject #127 (Action Adventure Obstacles, running, jumping, ducking, rolling)"
+    },
+    {
+      "clip": "127_04",
+      "split": "train",
+      "path": "data/127/127_04.bvh",
+      "bytes": 341180,
+      "git_blob_sha1": "a9de3016307c1303c7b5a92b3e2eafd4f068f28f",
+      "description": "Walk to Run",
+      "catalog_group_description": "Subject #127 (Action Adventure Obstacles, running, jumping, ducking, rolling)"
+    },
+    {
+      "clip": "127_05",
+      "split": "train",
+      "path": "data/127/127_05.bvh",
+      "bytes": 296071,
+      "git_blob_sha1": "a840db01c7cb300556fdd9ea3e654b504ea3f63e",
+      "description": "Run to Quick Stop",
+      "catalog_group_description": "Subject #127 (Action Adventure Obstacles, running, jumping, ducking, rolling)"
+    },
+    {
+      "clip": "127_15",
+      "split": "train",
+      "path": "data/127/127_15.bvh",
+      "bytes": 129103,
+      "git_blob_sha1": "1b0f5c2763363cad73084ae8d9d1976e4a1c6cb4",
+      "description": "Run Turn Left",
+      "catalog_group_description": "Subject #127 (Action Adventure Obstacles, running, jumping, ducking, rolling)"
+    },
+    {
+      "clip": "128_02",
+      "split": "train",
+      "path": "data/128/128_02.bvh",
+      "bytes": 131032,
+      "git_blob_sha1": "29d1d33517378e5123aeb2e8e094acfd61bd4ed0",
+      "description": "Run Left",
+      "catalog_group_description": "Subject #128 (Action Adventure Motions running, ducking, rolling, stopping)"
+    },
+    {
+      "clip": "128_04",
+      "split": "train",
+      "path": "data/128/128_04.bvh",
+      "bytes": 107406,
+      "git_blob_sha1": "71d2e3914569780176c56197891e42eaf25b0351",
+      "description": "Run Duck Underneath",
+      "catalog_group_description": "Subject #128 (Action Adventure Motions running, ducking, rolling, stopping)"
+    },
+    {
+      "clip": "128_05",
+      "split": "train",
+      "path": "data/128/128_05.bvh",
+      "bytes": 161719,
+      "git_blob_sha1": "26060b01628a1ffa85562ecf2008be53ab095146",
+      "description": "Run Stop Run",
+      "catalog_group_description": "Subject #128 (Action Adventure Motions running, ducking, rolling, stopping)"
+    },
+    {
+      "clip": "128_10",
+      "split": "train",
+      "path": "data/128/128_10.bvh",
+      "bytes": 329818,
+      "git_blob_sha1": "133ed9d246458ae15d8c361f3204186771bda951",
+      "description": "Run Dive Over Roll Run",
+      "catalog_group_description": "Subject #128 (Action Adventure Motions running, ducking, rolling, stopping)"
+    },
+    {
+      "clip": "139_02",
+      "split": "train",
+      "path": "data/139/139_02.bvh",
+      "bytes": 705155,
+      "git_blob_sha1": "7d148a5545ffea3db752fd19aada6cef4f0bb458",
+      "description": "Shifting Weight",
+      "catalog_group_description": "Subject #139 (Action Walks, sneaking, wounded, looking around)"
+    },
+    {
+      "clip": "139_09",
+      "split": "train",
+      "path": "data/139/139_09.bvh",
+      "bytes": 762500,
+      "git_blob_sha1": "d6d5d30890bcc0d8b0530137940a4705735ee736",
+      "description": "Ducking",
+      "catalog_group_description": "Subject #139 (Action Walks, sneaking, wounded, looking around)"
+    },
+    {
+      "clip": "139_11",
+      "split": "train",
+      "path": "data/139/139_11.bvh",
+      "bytes": 246765,
+      "git_blob_sha1": "65b418d3121471dfed305c2c95f74925f1ba42b1",
+      "description": "Run To Sneak",
+      "catalog_group_description": "Subject #139 (Action Walks, sneaking, wounded, looking around)"
+    },
+    {
+      "clip": "139_14",
+      "split": "train",
+      "path": "data/139/139_14.bvh",
+      "bytes": 761466,
+      "git_blob_sha1": "d9c17b696e5af6abd39034bb482814b4ee474ff6",
+      "description": "Sneak Sideways",
+      "catalog_group_description": "Subject #139 (Action Walks, sneaking, wounded, looking around)"
+    },
+    {
+      "clip": "140_01",
+      "split": "train",
+      "path": "data/140/140_01.bvh",
+      "bytes": 635166,
+      "git_blob_sha1": "d5582f8a5c6a37a774aead8fc50e45168c0c9afe",
+      "description": "Get Up Face Down",
+      "catalog_group_description": "Subject #140 (Getting Up From Ground)"
+    },
+    {
+      "clip": "140_03",
+      "split": "train",
+      "path": "data/140/140_03.bvh",
+      "bytes": 778530,
+      "git_blob_sha1": "bf6f8bf61d661f3231542062b365f7199fce4646",
+      "description": "Get Up Laying on Side",
+      "catalog_group_description": "Subject #140 (Getting Up From Ground)"
+    },
+    {
+      "clip": "140_06",
+      "split": "train",
+      "path": "data/140/140_06.bvh",
+      "bytes": 2692800,
+      "git_blob_sha1": "f909e64c077a85d7a1dfb1da2ef0bd2603878673",
+      "description": "Idle",
+      "catalog_group_description": "Subject #140 (Getting Up From Ground)"
+    },
+    {
+      "clip": "140_08",
+      "split": "train",
+      "path": "data/140/140_08.bvh",
+      "bytes": 679448,
+      "git_blob_sha1": "ddf7a1c4bc96eb22bdc2f8e0f2cf321f345c510d",
+      "description": "Get Up From Ground Laying on Back",
+      "catalog_group_description": "Subject #140 (Getting Up From Ground)"
+    },
+    {
+      "clip": "138_01",
+      "split": "validation",
+      "path": "data/138/138_01.bvh",
+      "bytes": 613381,
+      "git_blob_sha1": "91289eb493d661b5a833de65a59da91588f63c97",
+      "description": "Marching",
+      "catalog_group_description": "Subject #138 (Marching, Walking and Talking)"
+    },
+    {
+      "clip": "138_11",
+      "split": "validation",
+      "path": "data/138/138_11.bvh",
+      "bytes": 337945,
+      "git_blob_sha1": "554e2871c601f959b944de934d0f609f83a91d7f",
+      "description": "Story",
+      "catalog_group_description": "Subject #138 (Marching, Walking and Talking)"
+    },
+    {
+      "clip": "138_20",
+      "split": "validation",
+      "path": "data/138/138_20.bvh",
+      "bytes": 343985,
+      "git_blob_sha1": "367604d00afe4ee690d1d1ca43b52305cdf8bcfe",
+      "description": "Story",
+      "catalog_group_description": "Subject #138 (Marching, Walking and Talking)"
+    },
+    {
+      "clip": "141_03",
+      "split": "validation",
+      "path": "data/141/141_03.bvh",
+      "bytes": 179780,
+      "git_blob_sha1": "c64468cb578a651bc584d3b8355f27dc9a922a9e",
+      "description": "Run",
+      "catalog_group_description": "Subject #141 (General Subject Capture)"
+    },
+    {
+      "clip": "141_04",
+      "split": "validation",
+      "path": "data/141/141_04.bvh",
+      "bytes": 418211,
+      "git_blob_sha1": "cda75fcfa57366588553ad37bca02c1f0971cb3f",
+      "description": "Jump Distances",
+      "catalog_group_description": "Subject #141 (General Subject Capture)"
+    },
+    {
+      "clip": "141_09",
+      "split": "validation",
+      "path": "data/141/141_09.bvh",
+      "bytes": 182245,
+      "git_blob_sha1": "f2c037e57a815aadbaf3e40f646c86350aa260f7",
+      "description": "Step Over",
+      "catalog_group_description": "Subject #141 (General Subject Capture)"
+    },
+    {
+      "clip": "85_01",
+      "split": "confirmation",
+      "path": "data/085/85_01.bvh",
+      "bytes": 764213,
+      "git_blob_sha1": "b099467769cbdb37158b680bdc147afb00ba8d62",
+      "description": "JumpTwist",
+      "catalog_group_description": "Subject #85 (jumps; flips; breakdance)"
+    },
+    {
+      "clip": "85_05",
+      "split": "confirmation",
+      "path": "data/085/85_05.bvh",
+      "bytes": 1252620,
+      "git_blob_sha1": "fc08f3e7c7b3ec07931826f7c3d70a2e848bc54f",
+      "description": "HandStandKicks",
+      "catalog_group_description": "Subject #85 (jumps; flips; breakdance)"
+    },
+    {
+      "clip": "85_14",
+      "split": "confirmation",
+      "path": "data/085/85_14.bvh",
+      "bytes": 2281918,
+      "git_blob_sha1": "b5f0e847d16259cd982ed66557a862170c7da4f1",
+      "description": "BreakSequencewithFlips",
+      "catalog_group_description": "Subject #85 (jumps; flips; breakdance)"
+    },
+    {
+      "clip": "142_02",
+      "split": "confirmation",
+      "path": "data/142/142_02.bvh",
+      "bytes": 1424626,
+      "git_blob_sha1": "09ba5331059cd96c14b27962601af0208a01744c",
+      "description": "Clumsy",
+      "catalog_group_description": "Subject #142 (Stylized Walks)"
+    },
+    {
+      "clip": "142_11",
+      "split": "confirmation",
+      "path": "data/142/142_11.bvh",
+      "bytes": 2485502,
+      "git_blob_sha1": "bd91ed2f1d842231bcfe1409c123246727d8a795",
+      "description": "Marching",
+      "catalog_group_description": "Subject #142 (Stylized Walks)"
+    },
+    {
+      "clip": "142_13",
+      "split": "confirmation",
+      "path": "data/142/142_13.bvh",
+      "bytes": 3873342,
+      "git_blob_sha1": "109baf5db4584ebf3e23e3d24f8cfe43f6e192ad",
+      "description": "Relaxed",
+      "catalog_group_description": "Subject #142 (Stylized Walks)"
+    }
+  ],
+  "expected_bytes_by_split": {
+    "train": 51646598,
+    "validation": 2075547,
+    "confirmation": 12082221
+  },
+  "prior_manifests": {
+    "confirmation_manifest.json": "90f17a2bbe26854c69cd639b8d812708d58bd495c4dace41ac10f36873dcecba",
+    "context_confirmation_manifest.json": "eb7f86927c538d0510d7432bbe8fba0b6fa8581748e69134332edfed8883c841",
+    "data_manifest.json": "467ebc675ff29a32e34ce0798e7caaab80e6680ad9a64b33d640d43213b8b190",
+    "expansion_manifest.json": "e57d6ef3097dbaf84193569157023297e7cd900b03912fed655f54fe00634e0b",
+    "proportion_confirmation_manifest.json": "60f8751575e6b0b208286ffb08d2e300ac6dd90db43dff91e4c78e8cb6a0d86c",
+    "results/training_manifest_v4.json": "9973a7f2b8935c33cb8d9b819d46658485bab931fdaabb59b6434ff0e3d78fe8",
+    "temporal_expansion_manifest_v8.json": "03a3055989effc67259e41e0e749480d2e94fd182656a44c8ebafa1d8e6ffef8"
+  },
+  "catalog_sha256": "b611669b7e8e4cb653cbda3b47ebc42c4151d019e4d28f2ed3e052e4e240ffbd",
+  "tree_sha256": "e2e1f04819b78ce4c2a04ca5330e22bda67727afe4abfc802d57f021441b7cae",
+  "publisher_receipt_sha256": "6d47729cee84e91b82661f1269a16503c93fa5e701b99deab0e4c4ae77559eba",
+  "selection_basis": "Pinned catalog descriptions and blob sizes only; no selected motion has been downloaded or parsed. Twelve new training catalog groups cover locomotion transitions, sidesteps, loads, stylized motion, sports and recovery from the ground. Catalog groups are not asserted to be independent actors.",
+  "excluded_before_freeze": {
+    "86_02": "Published8039762 bytes exceeds8000000 per-file cap; chose86_01 from descriptions instead."
+  },
+  "old_splits_preserved": true,
+  "eligibility": "Apply unchanged30Hz calibration/window construction. Missing required joint names, unsupported hierarchy, malformed/nonfinite motion or no gap8/16/32 eligible intervals is an explicit data exclusion without replacement. Short clips contribute only eligible gaps, never fabricated padding. Preserve order of all old manifest rows, append new rows in frozen plan order.",
+  "confirmation_rule": "Do not download, parse or inspect confirmation motion before a frozen model and development report pass all unchanged gates separately on old validation, new validation, and their union. Verify plan/model/report hashes and no prior confirmation access. Confirmation never enters training or model selection. Any later reuse must be labeled exposed.",
+  "provenance": "CMU public motion data via pinned Bruce Hahne BVH conversion. Publisher home and FAQ verified through public HTTP on2026-09-08; converter adds no restriction. Local training data is excluded from installable addon archives. Publisher direct-resale prohibition and acknowledgement preserved. No new paid service or runtime dependency."
+}

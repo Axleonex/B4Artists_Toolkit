@@ -1,0 +1,61 @@
+{
+  "schema": "full-hierarchy-store-v1",
+  "created_utc": "2026-09-09T00:00:00Z",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "purpose": "Create the frozen train-only full-hierarchy source for the next representation/model comparison after the mixture-Transformer hard stop.",
+  "source_manifest": "results/cmu-corpus-inventory-v1/train-download-manifest.json",
+  "source_manifest_sha256": "42bb98cb5de7fe5b23503110eebb21ace5ea9c429f32eab354c1748972455f76",
+  "source_layout": "results/cmu-sequence-store-v2/layout.json",
+  "source_layout_sha256": "c9c201267a415ed6cbb71a18228ec1ec6c4062d054a2ffd64a8ba1a68304d29b",
+  "clips": 1840,
+  "subjects": 85,
+  "frames": 773836,
+  "joints": 23,
+  "target_fps": 30,
+  "representation": {
+    "dynamic_root": "float32 source-space root translations, normalized from an authored start anchor only when a training window is requested",
+    "dynamic_rotation": "float32 sign-continuous WXYZ quaternions for every retained ancestor-local joint; the root quaternion is world orientation",
+    "proportions": "per-clip float32 offsets normalized by the semantic body reference scale, plus a float64 source scale",
+    "coordinates": "per-clip float64 rest reference and rest pelvis rotation preserve the existing observation-derived normalization contract",
+    "semantic_layer": "the fixed 17 semantic joint indices remain animator controls and evaluation targets",
+    "velocity": "root linear and joint-local angular velocities are derived from consecutive stored frames and exact per-clip dt during window materialization",
+    "authored_masks": "deterministic sparse masks address semantic animator controls; retained helper joints are never presented as authored controls",
+    "motion_tags": "weak metadata tags derived from source descriptions and existing style tags; explicitly not intent ground truth"
+  },
+  "storage": {
+    "location": "training/b4artists_ml/cache-expanded-v1/full-hierarchy-store-v1",
+    "git_ignored": true,
+    "format": "Six NumPy .npy arrays plus checked JSON layout/report",
+    "memory_mappable": true,
+    "single_copy_per_dynamic_value": true,
+    "derived_features_materialized_per_window": true,
+    "maximum_store_bytes": 310000000
+  },
+  "quality": {
+    "source_sha256_reverified_during_decode": true,
+    "single_retained_topology_required": true,
+    "finite_values_required": true,
+    "semantic_position_tolerance": 0.0001,
+    "semantic_rotation_tolerance": 0.000002,
+    "true_edge_tolerance": 0.000001,
+    "quaternion_dot_tolerance": 0.000001,
+    "stored_float32_roundtrip_checked": true,
+    "development_read": false,
+    "confirmation_read": false
+  },
+  "sources": {
+    "bvh_data.py": "0ecbb4a420555022f45eccbabca8c0f524b9a80a416409d32634efa036f95f86",
+    "context_data.py": "3da05704dcc815c4b55b24d04568c6908bebf86e1200652f580fa9c28985fc3f",
+    "temporal_data.py": "702472088603fca2b3c01fcdd589c1e972e2206e095666a6b0b5654a5be61858",
+    "sequence_kinematics.py": "125e940059e3a595f080cdf206402356db34a47e49732467ec9a5f775ff32af4",
+    "full_hierarchy_store_v1.py": "53cd3433e976d8f2aeac07c8848bad90970288abf00847110b45d264cd3f8b4d"
+  },
+  "script_sha256": "cf6272d26a77032f12d3601d762d9c4135e6b14bd82d65b7e97620b98577407e",
+  "validation_read": false,
+  "confirmation_read": false,
+  "downloads": false,
+  "training_allowed": false,
+  "runtime_promotion_allowed": false,
+  "full_goal_complete": false,
+  "deadline_epoch": 1789053845
+}

@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "fixture": "boneforge",
+  "events": [
+    "Blend boundaries and exact 50% influence reviewed"
+  ],
+  "phase": "Blend In",
+  "influence": 0.5,
+  "distance": 0.4862071541772101,
+  "handler_active": true,
+  "screenshot": "training\\b4artists_ml\\cache\\contact-visualization-ui-v1.png",
+  "elapsed_seconds": 1.9585542000131682
+}

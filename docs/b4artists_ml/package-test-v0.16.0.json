@@ -1,0 +1,91 @@
+{
+  "version": "0.16.0",
+  "files": 35,
+  "bytes": 247951,
+  "sha256": "c5f6b0237bba124a0241c0937f019fecb4c75a5e65bd0004bc95b7c7153a3501",
+  "package_matches_source": true,
+  "experimental": true,
+  "full_goal_complete": false,
+  "fresh_regression_cases": 43,
+  "retained_regression_cases": 214,
+  "unique_regression_cases": 257,
+  "regression_sha256": "09f2b11dd526236abfe633c7ff9ba7285355863ed5a16f8969666f985ca42f57",
+  "source_ui": [
+    {
+      "file": "training/b4artists_ml/results/live-pose-ui-imported-unity-v1.json",
+      "sha256": "568116fc30d906ec2e5d253684522bd9e695ce277ade1f57f11a6792f7568085"
+    },
+    {
+      "file": "training/b4artists_ml/results/live-pose-ui-imported-mocap_humanoid-v1.json",
+      "sha256": "7b5d473552564e6bbf43795e5273f4b23f2ba09fd8526d03988834c3dfc2cb83"
+    },
+    {
+      "file": "training/b4artists_ml/results/live-pose-ui-imported-unreal_mannequin-v1.json",
+      "sha256": "15d6f0f462c11500f0866d4ee94ab31f95c3b8e91a841c9ed62fbeea8f2811df"
+    }
+  ],
+  "version_only_change_after_checks": {
+    "before_sha256": "6d74d039afd12898c69f6844331cc20ffbabc47732237883d30c90859b61db8d",
+    "after_sha256": "350b9d4382d7fedb26a27d979269c6a45813eb4ed74afc49fd20cba731de5886",
+    "literal_only_verified": true
+  },
+  "offline_qualification": "passed",
+  "packaged_ui_qualification": "passed",
+  "host_shutdown_qualified": false,
+  "offline_cases": 95,
+  "offline_groups": 11,
+  "offline_evidence_sha256": "6762ff09467ab72882a01c884d93057788d11fda126a705c765245fb0746ce86",
+  "packaged_ui": [
+    {
+      "file": "training/b4artists_ml/results/live-pose-ui-imported-package-unity_humanoid-v1.json",
+      "sha256": "e48dd504d429443e53f983a883a0a653935d58d7b3ec2223ff3d15f17f4f865d",
+      "fixture": "unity_humanoid",
+      "timings": {
+        "scheduling": {
+          "count": 42,
+          "p95_ms": 7.690820025163697,
+          "max_ms": 16.59549999749288
+        },
+        "fit_and_completion": {
+          "count": 553,
+          "p95_ms": 22.404400014784155,
+          "max_ms": 49.697499955073
+        }
+      }
+    },
+    {
+      "file": "training/b4artists_ml/results/live-pose-ui-imported-package-mocap_humanoid-v1.json",
+      "sha256": "1aacac37664a404951931145c441dad9b3129ded60f27e9dc4e07ab9c8bcb07c",
+      "fixture": "mocap_humanoid",
+      "timings": {
+        "scheduling": {
+          "count": 41,
+          "p95_ms": 5.149699980393052,
+          "max_ms": 5.284999962896109
+        },
+        "fit_and_completion": {
+          "count": 552,
+          "p95_ms": 13.350095029454677,
+          "max_ms": 19.642699975520372
+        }
+      }
+    },
+    {
+      "file": "training/b4artists_ml/results/live-pose-ui-imported-package-unreal_mannequin-v1.json",
+      "sha256": "d38950eb2ee98831199f463c076af1a9569d0a5c2c227b6e2de7a136f7d9867c",
+      "fixture": "unreal_mannequin",
+      "timings": {
+        "scheduling": {
+          "count": 43,
+          "p95_ms": 6.137540005147456,
+          "max_ms": 7.007699983660132
+        },
+        "fit_and_completion": {
+          "count": 552,
+          "p95_ms": 13.65797998732887,
+          "max_ms": 21.873300021979958
+        }
+      }
+    }
+  ]
+}

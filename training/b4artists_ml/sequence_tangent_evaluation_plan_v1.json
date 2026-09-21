@@ -1,0 +1,51 @@
+{
+  "schema": "tangent-evaluation-v1",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "recorded_at": 1788941889.057215,
+  "training_plan_sha256": "3745547543a229a59ff01f7551212d10105958b50cd7d7e505129077df70ef7b",
+  "models": [
+    {
+      "kind": "direct",
+      "seed": 20260909
+    },
+    {
+      "kind": "direct",
+      "seed": 20260910
+    }
+  ],
+  "require_all_fits_frozen_before_validation": true,
+  "reference_protocol": "expanded_trajectory_protocol_v19.json",
+  "reference_protocol_sha256": "400e572c710af4f7150f9c15115d244546def0f8699cdfb96f7bf47a2e900990",
+  "reference_report": "results/expanded_trajectory_v19/report.json",
+  "reference_report_sha256": "97de5d7f4e13ac70dbe17119b1eb49a8e30a3640e5a3eebff9fe63e3d05688f5",
+  "sources": {
+    "semantic_projection.py": "ecbcd9633e5794e9284186c2ac81198669a04d473a9eca0126cb4997a2061d92",
+    "sequence_tangent_context_v1.py": "2e9789c30bf44f1ae96176cace4754d6c013249d5f2a2a5804c18b9890522d90",
+    "sequence_numpy_v1.py": "3c4ccd61c0e4f2f758bf6adbdfa13efdee3d87207f48ffc29c83ae00d8288b93",
+    "motion_coverage.py": "f08389e0fd876772ceb3829475f8d5065aa1f61ec9c4b6a3cfa64d8f73419b1b",
+    "sequence_tangent_provider_v1.py": "a51d14331fd1ee2e19757bf32f11198f4b26645d8802e89bf63e68f14425989c",
+    "rig_observations.py": "a3e07856e6baa771ca7abaaa82bf92cb6f4edd4ac0909db9ecec219c581044b9",
+    "sequence_tangent_numpy_v1.py": "85c17b51a0a427d86dfb5923b0d58a242207966cbad4d364055cc744846fb6df",
+    "kinematic_trajectory_v20.py": "b6c02153229e44e88a9591380ca97360fb7234745690395ce712d5cde580af26",
+    "sequence_model.py": "291b98be4291d38332833e7314e74128a8b9801605094133b41baa770c7e2690",
+    "sequence_kinematics.py": "125e940059e3a595f080cdf206402356db34a47e49732467ec9a5f775ff32af4",
+    "sequence_provider_v2.py": "0b3583c1953cdd6bcec61de19a7aa3ed95b729445185aad4e8236cb4cafd4232",
+    "evaluate_sequence_tangent_v1.py": "9482299c2011647b074a8d79005b42def21cb2102903bdfcde8bcd606aaca43c",
+    "semantic_motion_data.py": "5c4fd0501045b78dde5b64d4d830370eacbb0ce1090efe34fbee923424c96ced",
+    "sequence_conditioning_v1.py": "17ca85057f4515275b9a4c95c1cd2a8001bfbc0983acb84c288234335fe3ac28"
+  },
+  "partitions": [
+    "old_validation",
+    "new_validation",
+    "combined"
+  ],
+  "baseline_policy": "Recompute unchanged projected linear/Hermite/shape; reports must exactly match frozen reference. No weaker substitute.",
+  "family_policy": "Report all4fits; an objective family passes development only if both seeds pass every original gate in every partition. No post-validation retraining or seed cherry-picking.",
+  "confirmation": "Keep all6sealed clips absent even if development passes; a separate frozen confirmation plan is required.",
+  "chunk_size": 16,
+  "deadline_unix": 1789053845.0,
+  "runtime_promoted": false,
+  "full_goal_complete": false,
+  "experiment": "Explicit tangent conditioning only; all old/new/combined acceptance gates retained; both models frozen before validation.",
+  "predecessor_evaluation_sha256": "2d353a415df40ff4a3e1ba1541c91df9edcfd014fc919c7b82bbed082ad88786"
+}

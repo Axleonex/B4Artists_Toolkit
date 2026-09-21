@@ -1,0 +1,17 @@
+{
+  "schema": 25,
+  "scope": "Controlled2x2 diagnosis of frozen v23/v24 positions and rotations, before and after identical physical projection",
+  "models": {
+    "curve_mixture_v23": "dd6ff0959f058e48b5a5bdc834d5513d1f7921bee7889ea5b15852474f9f39a8",
+    "joint_mixture_v24": "ab8829d1dab9116ec5c73260f5251569015dd78e42fe1c9093e0fabc4b35d402"
+  },
+  "methods": [
+    "v23_position_v24_rotation",
+    "v24_position_v23_rotation"
+  ],
+  "originals": "Both intact frozen models serve as references. Recompute raw metrics; use hash-verified existing projected reports.",
+  "checks": "Exact raw position scores must match the position donor; exact raw rotation scores must match the rotation donor. Same768windows,old/new/combined and unchanged3procedural controls. No fitting, threshold changes, holdout reads or promotion.",
+  "next": "Use crossed contributions and interaction to determine whether joint selection, rotation selection or their coupling warrants the next bounded architecture. No automatic conclusion from aggregate error alone.",
+  "goal_policy": "Same original goal,50total evaluations and fixed15-hour deadline21:17:57UTC.",
+  "recorded_at": 1788899892.512267
+}

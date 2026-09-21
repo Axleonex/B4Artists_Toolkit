@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "outcome": "fallback",
+  "task": "Profile exact-constant curve handling as a bounded temporal-publication latency experiment.",
+  "declared_paths": [
+    "training/b4artists_ml",
+    "docs/b4artists_ml"
+  ],
+  "authorization_risk_tier": "workflow_scaffolding",
+  "recommended_lane": "T3 Prime+OMP",
+  "actual_lane": "DEGRADED_NATIVE_CONTINUE",
+  "policy_fingerprint": null,
+  "escalation_count": 0,
+  "router_command_completed": true,
+  "router_attempts": [
+    {
+      "executor": "local WSL",
+      "outcome": "blocked",
+      "reason": "REMOTE_EXECUTOR_REQUIRED"
+    },
+    {
+      "executor": "governed NUCBOX SSH preflight",
+      "outcome": "blocked",
+      "reason": "Prime+OMP required for coding-plan execution",
+      "omp_readiness": "PASS"
+    },
+    {
+      "executor": "governed NUCBOX SSH Prime+OMP",
+      "outcome": "blocked",
+      "reason": "DECLARED_PATH_INVALID",
+      "detail": "The authoritative repository is on desktop-local X: and is not mounted in the NUCBOX WSL executor."
+    }
+  ],
+  "eligibility": {
+    "explicit_user_authorization": true,
+    "project_local": true,
+    "reversible": true,
+    "training_and_documentation_only": true,
+    "credentials_or_identity": false,
+    "external_write_or_production_activation": false,
+    "destructive_or_history_operation": false,
+    "billing": false,
+    "undeclared_paths": false,
+    "commit_merge_or_push": false
+  },
+  "scope_guards": [
+    "Do not change production runtime, tests, releases, models, data splits, thresholds or sealed confirmation clips.",
+    "Compare exact evaluated motion, priority samples, source action, rig modes, inventory and recovery behavior.",
+    "Treat a single default-Rigify headless reference as profiling evidence only."
+  ],
+  "validation_required": [
+    "Hash every production runtime input before and after the experiment.",
+    "Measure current and candidate smoothing work on the same generated action.",
+    "Reject the candidate if any evaluated curve or source-recovery invariant differs.",
+    "Do not claim full responsiveness or promote production from this experiment."
+  ],
+  "recorded_at": 1788955386.11232
+}

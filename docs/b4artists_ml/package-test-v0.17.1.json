@@ -1,0 +1,37 @@
+{
+  "version": "0.17.1",
+  "files": 35,
+  "bytes": 251583,
+  "sha256": "8db72adfec272925985a2620a3b8b390e39db8d840b570044f24911d1139c004",
+  "package_matches_source": true,
+  "experimental": true,
+  "full_goal_complete": false,
+  "unique_regression_cases": 317,
+  "refreshed_cases": 71,
+  "reused_cases": 246,
+  "regression_sha256": "49621f6777a6f8ab072fcf0e643b4d4bd68b4727893cda3d5978135b100b5d41",
+  "offline_qualification": "passed",
+  "packaged_ui_qualification": "passed",
+  "host_shutdown_qualified": false,
+  "scope": "Native transitions and contact composition, generated timing metadata, legacy archive compatibility and editable recovery. No temporal model promoted.",
+  "ready_for_local_testing": true,
+  "offline_cases": 124,
+  "offline_groups": 14,
+  "offline_evidence_sha256": "9e2f7d93d5e25dd26d5816e80f4646facf55b777e5eedba41177e30e7605a82c",
+  "packaged_ui": [
+    {
+      "file": "docs/b4artists_ml/native-ui-native-contact-package-v1.json",
+      "sha256": "685319651bf254714cfe046075eb85adb408347dbe96614a50a7be68d71874b8",
+      "fixture": "rigify_default",
+      "events": [
+        "Escape cancelled native generation and restored its input",
+        "Native modal flight and both velocity transitions completed with visible character selection",
+        "Undo and Redo restored collection ownership and native drivers",
+        "Contacts applied after native transitions; Undo/Redo preserved the native layer and contact candidate",
+        "Keep and Restore Source archived the complete editable result",
+        "Saved result operator reopened an independent preview; Discard restored the source"
+      ]
+    }
+  ],
+  "qualification_note": "Functional package checks only; overlapping runs are not comparative latency benchmarks. Host shutdown crash and independent animator usability remain unqualified."
+}

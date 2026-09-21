@@ -1,0 +1,11 @@
+# Exact learned readout experiment v17
+
+The training-only coverage audit found a fitting gap before generalization: v16 raw train position0.1791 versus Hermite0.1733, with a label-access oracle0.0205. This experiment holds the observation schema, supervised hidden features, temporal basis, data and physical projection fixed and solves the convex output layer of the same objective exactly.
+
+For each semantic joint's position/rotation amplitude, assemble a260-variable normal equation from the65 hidden/bias features and four temporal terms. The loss includes the existing per-window trajectory/velocity/acceleration Gram matrices and clip/gap/context weights. Only non-bias readout parameters are regularized. Zero-amplitude channels return zero coefficients. The input parent model is copied, preserving all original weights and artifacts.
+
+Three regularizations (0.0001,0.001,0.01) are prospectively fixed. Matching v16 group-excluded hidden models train the12 readouts. Select by pooled training-only out-of-fold position plus0.1 rotation, then fit a single full-training candidate and freeze its checksum before validation. All original gates and identical projected baselines remain. The already-used validation partition is research evaluation, never blind confirmation; no confirmation clips are read. Failed gates forbid promotion.
+
+Verification: independent explicit augmented least squares; readout first-order stationarity; non-increasing same objective; exact parent immutability/determinism; endpoint and zero-motion invariants; serialized inference independent of hidden labels. Three tests passed on desktop and the bundled Bforartists Python/NumPy. The first native invocation used a shorthand module name and imported zero tests; its receipt is retained. The corrected full module name passed all three tests. The host's existing shutdown access violation persists.
+
+After corpus selection, repeat the frozen experiment and exercise the learned candidate on the same16 moving and16 stationary actual-rig workflows. These are integration diagnostics, not substitutes for motion-quality gates, independent animator judgment or equivalent Cascadeur comparison. No source runtime, installation, Git history or publication change is part of this experiment.

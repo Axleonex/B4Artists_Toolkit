@@ -1,0 +1,92 @@
+{
+  "schema": 2,
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "created_at": 1788941163.4513757,
+  "previous_plan_sha256": "534f1d06a5cc56c97497710e573880c2befa45b16003b8276b4a8311504be34c",
+  "stage_a_evidence_sha256": "dfe3ce4f30b7f0a9629c308a6e38a85ff3f7a3fdda44f056c623063524675a60",
+  "source_manifest": {
+    "path": "temporal_training_manifest_v19.json",
+    "sha256": "2aafaa5d69061f0b977584a2ed0b2ae1792466aabb23801173b02384ec469711"
+  },
+  "data": {
+    "partition": "train_only",
+    "fps": 30,
+    "gaps": [
+      8,
+      16,
+      32,
+      64,
+      96
+    ],
+    "windows_per_gap_per_clip": 8,
+    "contexts": [
+      false,
+      true
+    ],
+    "mask_patterns": [
+      "boundary",
+      "middle_full_pose",
+      "sparse_interior_positions_and_orientations"
+    ],
+    "pattern_assignment": "Cycle by clip index, window index, gap index and context, fixed before fitting",
+    "sampling_seed": 20260909,
+    "sampling": "Unique starts within each clip/gap, fixed sorted random sample; context frames included only when enabled",
+    "rest_calibration": "Artificial BVH frame0, never a motion sample or target",
+    "source_byte_validation": true,
+    "validation_or_confirmation_reads": false,
+    "downloads": false,
+    "cache_byte_cap": 1073741824,
+    "uncompressed_array_byte_cap": 3221225472,
+    "bucket_storage": "Separate finite float32 arrays by exact sequence length; boolean masks. No pickle.",
+    "observation_schema": "b4ml-semantic-observations-v1; per-bone rest-calibrated world rotations"
+  },
+  "training": {
+    "architecture_plan": "sequence_feasibility_plan_v2.json",
+    "seeds": [
+      20260909,
+      20260910
+    ],
+    "epochs": 60,
+    "batch_size": 16,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "direct_loss": "unknown position MSE +0.1 rotation6 MSE +0.01 velocity MSE +0.0001 acceleration MSE; derivatives use actual seconds and exclude all-known differences",
+    "diffusion_loss": "Same clean-sequence loss, random cosine-noise level per sample; observed residuals clamped0",
+    "selection": "Fixed final epoch. No development-set checkpoint selection. Nonfinite/memory/time failure preserves partial evidence and is not a completed fit.",
+    "maximum_seconds_each": 1800,
+    "total_fit_count": 4,
+    "gpu_memory_fraction": 0.25,
+    "runtime_training_libraries_not_bundled": true
+  },
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "evaluation": {
+    "old_new_and_combined_development": "All unchanged original gates, separately. Established control reports must be unchanged.",
+    "additional": "Full/multiple/partial authored controls, supported sequence lengths, response to edits, finite normalized rotations, actual rig projection and full source recovery",
+    "confirmation": "Six protected clips stay sealed until every development gate passes and candidates/protocol are frozen",
+    "parity_claim": false
+  },
+  "readiness": {
+    "require_before_fitting": [
+      "Verified frozen cache manifest and training-only identities",
+      "Actual exported NumPy inference parity at2,33,120frames including exact observations",
+      "No accidental loading of validation or confirmation",
+      "Deterministic CPU export and seeded training recipe"
+    ],
+    "full_goal_complete": false
+  },
+  "deadline_unix": 1789053845.0,
+  "supersedes_sha256": "a59bb03fafe1d6333ff3effc2dfd3760f2b14ea7eca9e85f1d713110537eb985",
+  "amendment": "Correct raw-rotation builder to shared semantic_motion_data/sequence_packet_v2 encoder before any development evaluation. Retain interrupted v1run and cache. All seeds, windows, masks, training recipe, time caps and original gates unchanged."
+}

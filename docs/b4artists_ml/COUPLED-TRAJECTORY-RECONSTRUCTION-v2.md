@@ -1,0 +1,19 @@
+﻿# Constraint-preserving trajectory reconstruction v2
+
+New stage after the frozen v1optimizer passes whole-frame constraints but fails between them. Preserve the v1run and all original criteria. Reuse its exact trajectory NPZ and input scene; no optimizer refit, changed weights, altered poses/timing/contact requests or source edits.
+
+Begin with quarter-frame samples of the globally optimized coordinate trajectory. Project each sample using the actual whole-body rig onto the same COM/ankle constraints, minimizing local coordinate displacement. Up to8iterations, forward derivative0.0005, damped minimum-norm correction1e-8, per-step root0.025trunk/rotation0.1rad bounds, backtracking1/.5/.25/.125. Projection targets are ten times tighter than final spatial tolerances. Priority coordinates remain byte-exact.
+
+Reconstruct with nonuniform central-tangent cubic Hermite interpolation. Validate knots and interval quarter/mid/three-quarter points plus near-takeoff/landing offsets through1/128frame. Add failed interior samples as projected knots, at most3refinement additions and512total knots. Stop and preserve failures when limits are reached. This follows the previous dense failure diagnosis; it is not a relaxation of acceptance or independent pose generation without a temporal guide. Angular velocity/acceleration, limits, forces, source lifecycle and animator assessment remain separate requirements even if sampled contacts pass.
+
+Same research-only training/docs scope and automatic native fallback after canonical router failure. One serial BoneForge process,900seconds internal/1000host,goal deadline1789053845. Preserve full goal,67/100checkpoint,production0.19.2and sealed model confirmation. No release or installation.
+
+## Completed two-stage result
+
+The16-iteration coupled solve passes whole-frame position constraints but initially fails dense checks: COM0.02244trunk lengths, ankle0.01157leg lengths. Adaptive reconstruction adds28samples to its193initial knots. The resulting221-knot trajectory passes881dense sampled checks with unchanged priorities and source data: COM0.00019436trunk lengths, ankle0.00010126leg lengths and orientation0.00000293rad. The original optimizer and failure remain frozen. No corrected result is installed or released.
+
+This is spatial progress, not successful animation qualification. Near takeoff, reconstructed leg rates remain bounded around12rad/s, while an upper-body control approaches98rad/s. The quarter-frame angular speed/acceleration estimates and control names are recorded in summary.json. They use normalized quaternion differences in evaluated pose orientations; finite sampling does not certify continuous bounds or force/torque plausibility. Numerical control rates are separate from anatomical joint-limit measurements.
+
+Decision: the temporal guide plus adaptive constraint projection can preserve geometry, but the projection can redistribute fast motion into other controls. A production trajectory solver needs joint temporal limits and regularization integrated with the contacts/COM solve. Do not declare the request globally impossible from these candidates, weaken the spatial gates, release a fast shoulder correction as natural motion, or discard the frozen stress case. Full learned-motion, broader rig/motion tests, independent animator assessment and Cascadeur comparison remain outstanding.
+
+The two runs took approximately155.6and52.5seconds including host startup/shutdown; these are single research runs, not responsive-UI qualification. Both completed assertions followed by the known3221225477shutdown failure. Block update algebra agrees with an independent direct KKT solve to3.6e-15on a small linear system; this is a numerical unit check, not independent code or visual review. The canonical adaptive-review entry point again failed before launch with the uv trampoline error.

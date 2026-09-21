@@ -1,0 +1,96 @@
+{
+  "schema": "transformer-sequence-fit-v1",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "hypothesis": "A compact global-attention model with observed-reference velocity features and learned residual confidence will improve long-range motion while leaving easy short-gap procedural references undisturbed more reliably than the local temporal convolution.",
+  "controlled_changes": [
+    "Replace the six-block dilated temporal convolution with a four-block, four-head, width-128 Transformer encoder.",
+    "Append signed-log finite-difference velocity of the observed-only procedural baseline to each condition row.",
+    "Predict a per-frame confidence gate and regularize residual magnitude and gate activation so the model can retain a strong procedural reference."
+  ],
+  "held_constant": [
+    "The 153-channel semantic pose, original 394 observed-only condition channels, exact strongest shape reference and C2 residual envelope.",
+    "The 1,840-clip, 85-subject, 7.158742-hour train split, subject-balanced sampler, two fixed seeds, gap/context/pattern cycle and 48,000 examples per seed.",
+    "AdamW settings, direct position/rotation/velocity/acceleration loss terms, protected development controls and all original acceptance gates.",
+    "No style conditioning, diffusion, runtime promotion or confirmation access in this experiment."
+  ],
+  "architecture": {
+    "input_channels": 547,
+    "original_condition_channels": 394,
+    "velocity_channels": 153,
+    "width": 128,
+    "heads": 4,
+    "layers": 4,
+    "feed_forward_width": 256,
+    "output_channels": 154,
+    "pose_residual_channels": 153,
+    "confidence_channels": 1,
+    "parameters": 620186,
+    "numpy_export": true
+  },
+  "data": {
+    "clips": 1840,
+    "subjects": 85,
+    "frames": 773836,
+    "source_hours": 7.15874219825,
+    "sampling": "Subject uniform, then clip uniform within subject, then start uniform within clip. Gap/context balanced by deterministic step cycle; patterns 0,1,2 balanced within each batch.",
+    "window_materialization": "Current batch only from memory-mapped positions and precomputed rotation matrices.",
+    "legacy_corpus_used": false,
+    "validation_read": false,
+    "confirmation_read": false,
+    "downloads_during_fit": false
+  },
+  "training": {
+    "seeds": [20260909, 20260910],
+    "steps": 3000,
+    "batch_size": 16,
+    "examples_each": 48000,
+    "gaps": [8, 16, 32, 64, 96],
+    "contexts": [false, true],
+    "patterns": [0, 1, 2],
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "residual_regularization": 0.001,
+    "gate_regularization": 0.0002,
+    "loss": "unknown position MSE + 0.1 rotation6 MSE + 0.01 velocity MSE + 0.0001 acceleration MSE using actual seconds + residual/gate regularization",
+    "selection": "Fixed final step only; no development checkpoint selection",
+    "maximum_seconds_each": 1800,
+    "process_timeout_seconds": 2100,
+    "gpu_memory_fraction": 0.25,
+    "fit_count": 2
+  },
+  "evaluation": {
+    "freeze_both_before_development": true,
+    "partitions": ["old_validation", "new_validation", "combined"],
+    "controls": ["projected_linear", "projected_hermite", "projected_shape", "expanded_c2_tcn"],
+    "all_original_gates_retained": true,
+    "require_both_seeds": true,
+    "confirmation": "All protected confirmation clips remain sealed unless both seeds pass every development gate.",
+    "runtime_promotion": false,
+    "parity_claim": false
+  },
+  "contracts": [
+    {"path": "results/sequence-transformer-contract-v1/report.json", "sha256": "01af3600ca5225cbe9d380875d4f2beb96c6583a5a9aa5c5373b33044488b144"},
+    {"path": "results/sequence-store-contract-v3/report.json", "sha256": "e2eebb29ea46e211f4fe465bf417d20b146c0144c3873c1fb8c3f5a7ac6c7258"},
+    {"path": "results/sequence-constrained-reference-v1/report.json", "sha256": "dd02d4819a615b9d06aaf6471f73da80a3bb003950a58a219a1874c9affa8843"},
+    {"path": "results/cmu-sequence-store-v2/report.json", "sha256": "44a13fecde26ee449db136a60d8d92addaad505d4b3767af79dcbed96689b6d4"},
+    {"path": "results/rotation-matrix-store-v1/report.json", "sha256": "6de4957d6c3bd0083ecb86feedfe1ef707cb1e6e16f1ae9fe9adb3d28c815eda"}
+  ],
+  "sources": {
+    "train_transformer_sequence_v1.py": "101b021bc2bd96bb0085d7073c85c1f6e0276d180783594a2ef083a1be948f3d",
+    "sequence_velocity_conditioning_v1.py": "c35191e33ba829437b1b701875453f741583610f629749db1665ab7ae77e9708",
+    "sequence_transformer_model_v1.py": "31ac6e1601a36fa2e8b9eb75f94bde59025cb52c1567e962da7cab546eb5cd08",
+    "sequence_transformer_numpy_v1.py": "a3e4b51358c8a0399fb0f921c7b6f5e9389ba905aea54cefe4ebe9fbca949c97",
+    "sequence_store_v1.py": "313e503123d3aa6acda322b3d855292a245cc71fe09d1ed587ae323460d50790",
+    "sequence_constrained_reference_v1.py": "574953c8848e036d3014f70c453de6531ac23e64fbbfdbf302c3e54fcb373655",
+    "sequence_conditioning_v1.py": "17ca85057f4515275b9a4c95c1cd2a8001bfbc0983acb84c288234335fe3ac28",
+    "sequence_packet_v2.py": "c49db8f24d9a9fe3f5fd0fd791ba202bbdf1e18966310703f220277ea81683a7",
+    "semantic_motion_data.py": "5c4fd0501045b78dde5b64d4d830370eacbb0ce1090efe34fbee923424c96ced",
+    "shape_reference.py": "064b4545ac0f276fb214d73a4afcbe82076499d93a496565909d3065e48ab9d0",
+    "rig_observations.py": "a3e07856e6baa771ca7abaaa82bf92cb6f4edd4ac0909db9ecec219c581044b9"
+  },
+  "deadline_unix": 1789053845.0,
+  "runtime_promoted": false,
+  "full_goal_complete": false
+}

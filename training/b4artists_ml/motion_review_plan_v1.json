@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "recorded_at": 1788885002.2609413,
+  "selection": "First deterministic sampled interval in each of all96 exposed validation clip/gap/context cohorts. No appearance-based selection.",
+  "methods": [
+    "reference",
+    "best_procedural_control_for_cohort",
+    "learned_v19",
+    "learned_v20"
+  ],
+  "control_selection": "The lowest positional error among original projected linear/Hermite/shape cohort reports. This is an explicitly post-evaluation diagnostic control, not an inference algorithm.",
+  "source_data": "Frozen v19 training manifest, validation partition only; all six confirmation clips remain unopened.",
+  "display": "Joint-center skeletons in a fixed rest-calibrated world-up frame, with common camera, scale and timeline across panels. No mesh/twist/contact-surface or Cascadeur assessment is implied.",
+  "max_embedded_bytes": 8000000,
+  "feedback": "Optional locally downloadable human review, bound to model and dataset hashes. Automation never fabricates human ratings."
+}

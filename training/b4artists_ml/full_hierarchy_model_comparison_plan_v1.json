@@ -1,0 +1,134 @@
+{
+  "schema": "full-hierarchy-model-comparison-plan-v1",
+  "created_utc": "2026-09-09T00:00:00Z",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "purpose": "Compare genuinely different full-hierarchy learned sequence families after the world-space selector and Transformer hard stop.",
+  "sources": {
+    "hierarchy_store": "53cd3433e976d8f2aeac07c8848bad90970288abf00847110b45d264cd3f8b4d",
+    "conditioning_schema": "f6259c29d8b34c4b112ddc5d9b07f95f92083345d22c28cc9ef14ec5c72bb9f1",
+    "conditioning_adapter": "41ae0459d679a76ba5426333e7fe4bb46da5983a92dde3e6cdbdde5bb4399e49",
+    "masked_baseline": "31e1380bba66ca1a440f9aba5baec0708aedbb3146a48a439e4f61431c9e3346",
+    "proposal_module": "5f519a8bbf7f8512c7bc0a1dbcdf161c7c9b288b70cae312cb58232eb7709348",
+    "proposal_plan": "452a378af0a60a5c8210454b52aa5c67a4201dbc04f720d0659318b064a392b0",
+    "subject_split": "8e999b3ffdb3d276fa4096e6a5cb30b100cbf20bdd253bf9833af40056201115",
+    "hierarchy_layout": "1cd373412cb8f482f9925712a1c4c45d0159736b71ea2c4e23632496f30501aa",
+    "proposal_report": "375a77c0c5c6c9a9504b93eb4efaf3ca5b81a9ecd3247a161a3c6d088977b377",
+    "proposal_contract": "df92ccc29e9873c5b5ee1359ca1fa9e3b7d261a085b34505e61d87dbb06b966c"
+    ,"tcn_implementation": "a723083cfcd9f9a15de0f95d8353765ca7a37c0491fbd7d1409dca47a4b34280"
+    ,"tcn_contract": "b1170bc2ad76f7ad2e014e23e4f5c5e665c0723c1b7667452bf2910f3d4f8a8b"
+    ,"torch_kinematics": "1f3d2ce0d43b883cab570fd382f187a4ce57025c154e91b9426fded99bfeac36"
+    ,"torch_kinematics_contract": "e15facd9f16686ab44baabecb9e0cdb9a8999018153097bedc47d90b9af87c63"
+    ,"loss_scale_diagnostic": "353056f5a70eab218645d58ec67ae1d52b9f1982c3e9e9b54e94ccefa99c2ac4"
+    ,"microfit_contract": "6f46063d49fa75e741ed77111e8629b4c65683262d262ec2106463a9ac9b95d2"
+  },
+  "representation": {
+    "joints": 23,
+    "state_per_frame": 141,
+    "state": "Root translation plus 23 ancestor-local continuous 6D rotations in fixed body-scale units.",
+    "conditioning_per_frame": 483,
+    "boundary_context_per_frame": 142,
+    "model_input_per_frame": 766,
+    "controls": "Exact authored root and rotation masks; helper joints never authored.",
+    "output": "Full local-state residual around a deterministic sparse-key procedural baseline, followed by exact control projection, forward kinematics, limits, contact/balance/collision refinement and original-rig validation.",
+    "window_gaps": [8, 16, 32, 64, 96],
+    "context_frames": 1,
+    "fixed_offsets": true,
+    "world_space_prediction_forbidden": true
+  },
+  "data_boundary": {
+    "training_subjects": 68,
+    "development_subjects": 17,
+    "confirmation": "sealed",
+    "weak_contact_training": "Allowed only as an opt-in low-confidence feature, with contact-condition dropout at 0.5.",
+    "weak_contact_development": "Forbidden when derived from hidden target motion. The primary development condition is unknown contact; an authored/measured-contact condition may be added only with independent input provenance.",
+    "metadata": "Description/style labels retain metadata provenance and confidence <= 0.5.",
+    "scene_and_hand_contacts": "Unknown unless independently measured or reviewed.",
+    "downloads": false,
+    "paid_services": false
+  },
+  "candidates": [
+    {
+      "id": "masked_residual_tcn",
+      "family": "Bidirectional dilated temporal convolution network",
+      "input": "Procedural state, 483-feature conditioning, observed masks, and a leak-resistant 142-feature immediate boundary-motion block derived only from previous-to-start and end-to-next observed frames.",
+      "output": "One residual full hierarchy state sequence.",
+      "capacity": "128 channels; six residual blocks with dilations 1,2,4,8,16,32; under 3 million parameters.",
+      "why": "Fast deterministic proposal suitable for responsive CPU/ONNX inference and a non-attention baseline. Its 253-frame receptive field covers the maximum 97-frame input without an encoder-decoder hierarchy.",
+      "inference": "One forward pass plus deterministic refinement.",
+      "implementation_status": {
+        "implemented": true,
+        "parameters": 711053,
+        "untrained_equals_procedural_baseline": true,
+        "exact_authored_projection": true,
+        "finite_gradients": true,
+        "actual_training_window_microfit_final_ratio": 0.07363897717479459,
+        "warm_cuda_training_environment_ms_97_frames": 3.9891650001663947,
+        "weights_trained": false,
+        "bforartists_latency_qualified": false,
+        "runtime_promoted": false
+      }
+    },
+    {
+      "id": "masked_conditional_diffusion_unet",
+      "family": "Constraint-conditioned temporal diffusion U-Net",
+      "input": "Noised full local state, procedural baseline, 483-feature conditioning, observed masks, leak-resistant immediate boundary motion and diffusion timestep.",
+      "output": "Velocity or residual target over the full hierarchy sequence.",
+      "capacity": "128 channels; four temporal scales; classifier-free contact/style dropout; under 8 million parameters.",
+      "why": "Represents multiple plausible inbetweens under partial controls without choosing among precomputed curves.",
+      "inference": "DDIM with 4, 8 and 12 steps, each followed by exact control projection."
+    }
+  ],
+  "shared_training": {
+    "baseline": "Deterministic sparse-key baseline is always measured and never relabelled as learned.",
+    "loss": "Masked local rotation, root, semantic FK position, rotation, velocity and acceleration losses; exact authored controls have zero learned freedom.",
+    "loss_weights": {
+      "root": 1.0,
+      "position": 1.0,
+      "rotation": 1.0,
+      "velocity": 0.05,
+      "acceleration": 0.0005,
+      "contact": 0.1
+    },
+    "loss_scale_evidence": "Frozen before model outcomes from 100 deterministic training-only windows, 20 per gap. Weighted means: root 0.06457, position 0.10403, rotation 0.06324, velocity 0.05891, acceleration 0.10554, contact 0.01918. No development or confirmation motion was read.",
+    "contact_ablation": ["unknown_contact", "weak_train_contact_with_dropout"],
+    "seeds": [20260909, 20260910],
+    "training_selection": "Select only from subject-disjoint future-development aggregate and worst-cohort results; do not open confirmation.",
+    "confirmation_promotion": "Only after one fixed candidate and export package pass all development gates."
+  },
+  "acceptance": {
+    "exact_authored_control_error": 1e-6,
+    "fixed_offset_edge_error": 1e-6,
+    "rotation_continuity_regression_allowed": false,
+    "joint_limit_regression_allowed": false,
+    "old_development_gates": "All retained prior gates must pass without dilution.",
+    "future_development_cohorts": "No aggregate-only win: every declared task/gap cohort must be reported and worst-cohort regression is a rejection.",
+    "unreviewed_contact_claim": "Cannot qualify physical contact, penetration, naturalness or intent.",
+    "runtime_promotion": "Requires original-rig lifecycle/undo/keep-discard checks, ONNX parity and measured Bforartists latency."
+  },
+  "latency_budgets": {
+    "training": "GPU permitted only in isolated local training environment.",
+    "deployment": "Bforartists core must have a CPU ONNX Runtime or pure local equivalent; no torch, online account or paid service dependency.",
+    "warm_inference_target_ms": 25,
+    "cold_inference_target_ms": 250,
+    "measurement": "Measure 8/16/32/64/96-frame windows separately on the target Bforartists host; do not extrapolate from desktop Python."
+  },
+  "hard_stops": [
+    "No more nearby world-space selector, mixture, Transformer or loss-weight variants.",
+    "No contact input derived from hidden development or confirmation target motion.",
+    "No runtime promotion from training fit, synthetic reconstruction or a single rig family.",
+    "No Cascadeur parity/surpass claim without direct documented comparison and animator assessment."
+  ],
+  "local_framework_status": {
+    "onnxruntime_cpu": "Available in system Python 3.14.3 (1.26.0).",
+    "pytorch_cuda": "Qualified through the existing unmodified ComfyUI embedded Python: Python 3.13.9, PyTorch 2.10.0+cu130, CUDA available on NVIDIA GeForce RTX 5070. This environment is training-only and is not a Bforartists dependency. The failed dedicated G: environment was removed.",
+    "tcn_contract": "Passed with 711053 parameters, exact authored projection, zero initialized residual, finite gradients and 3.9891650001663947 ms warm CUDA inference for 97 frames in the training environment. This timing does not qualify Bforartists deployment.",
+    "kinematics_contract": "Passed bone-length, zero-identity-loss, finite-gradient and invalid-input checks. Maximum synthetic edge error was 1.4901161193847656e-08.",
+    "microfit_contract": "The corrected 766-input model and balanced loss reduced one actual 33-frame training window from 0.1631194055 to 0.0120119462 in 160 steps (ratio 0.07363898), with exact authored projection. This is optimization integration only.",
+    "bforartists_runtime_dependency": false
+  },
+  "validation_read": false,
+  "confirmation_read": false,
+  "runtime_changed": false,
+  "full_goal_complete": false,
+  "deadline_epoch": 1789053845
+}

@@ -1,0 +1,34 @@
+{
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "baseline": "training/b4artists_ml/results/temporal-observer-baseline-v1/temporal_cooperative_v1.py",
+  "baseline_sha256": "a57e25ec5f71c9693a3c5d8e121553bbe69f69208fc1c07fb474a10bfa5f871c",
+  "candidate_sha256": "032f199fd9ca2ca62fb3f0540efbaf9a4d1ffce3e4e571570333df440e3b2cbd",
+  "sampler_sha256": "650b58ced60bfff229989dd66a834a05e2a84866d2511d91a1afc9c66231603c",
+  "profiles": [
+    "boneforge",
+    "rigify_basic",
+    "rigify_default"
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "runs_per_fixture": 4,
+  "orders": [
+    "ABBA",
+    "BAAB"
+  ],
+  "required": [
+    "Exact observations, generated samples and deterministic metrics",
+    "Exact source at every pause and after cleanup; newer edits preserved",
+    "Baseline phases exact after filtering added observed_pose phases",
+    "Mean default maximum-tick ratio <=0.9; every fixture maximum-tick ratio <=1.05",
+    "Mean active-work ratio per fixture <=1.25; explicit bounded scheduling-overhead experiment, no product regression-floor change",
+    "Original full 50ms responsiveness criterion remains unchanged and separate",
+    "Existing 25 native tests plus targeted observation and cancellation tests"
+  ],
+  "host_timeout_seconds": 900,
+  "deadline_unix": 1788981845.0,
+  "full_goal_complete": false,
+  "recorded_at": 1788919135.2601755
+}

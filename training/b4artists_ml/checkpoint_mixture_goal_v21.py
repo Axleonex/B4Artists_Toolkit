@@ -1,0 +1,55 @@
+"""Record the fixed mixture experiment under the existing full goal and limits."""
+import copy,time,subprocess,zipfile,hashlib
+from pathlib import Path
+from checkpoint_expanded_goal_v19 import ROOT,read,sha,write,g,evaluate
+
+def main():
+ base='docs/b4artists_ml/';gp=base+'goalposts/';tr='training/b4artists_ml/';res=tr+'results/'
+ prior=gp+'01a073fe-c240-70c0-b5cd-fe9653aac60e-cooperative-finalization-v1.json';dest=prior.replace('cooperative-finalization-v1','mixture-trajectory-v21');assert not (ROOT/dest).exists()
+ old=read(prior);s=copy.deepcopy(old);cp=read(base+'checkpoint-cooperative-finalization-v1.json');prev_ev=gp+'cooperative-finalization-evidence-v1.json';e=read(prev_ev)
+ model=read(res+'mixture_trajectory_v21/report.json');repro=read(res+'mixture-trajectory-reproduction-v21.json');verification=read(res+'mixture-experiment-verification-v21.json');assert verification['passed'] and repro['passed'] and verification['pre_fit_checks']==14
+ for n,h in repro['identical_sha256'].items():assert sha(res+'mixture_trajectory_v21/'+n)==h==sha(res+'mixture_trajectory_v21_repeat/'+n)
+ a=copy.deepcopy(model);b=read(res+'mixture_trajectory_v21_repeat/report.json')
+ for report in [a,b]:
+  report.pop('runtime');report['model_files']={Path(k).name:v for k,v in report['model_files'].items()}
+ assert a==b
+ previous=read(res+'kinematic_trajectory_v20/report.json');assert model['protocol']['gates']==previous['protocol']['gates'];assert model['protocol']['projection']==previous['protocol']['projection']
+ for part in ['old_validation','new_validation','combined']:
+  for name in model['protocol']['baselines']:assert model['partition_reports'][part][name]==previous['partition_reports'][part][name]
+ assert all(gate['checks']['position'] and not gate['checks']['cohorts'] for gate in model['development_gates'].values());assert not model['gates']['best_learned']['passed']
+ for name,h in model['source_sha256'].items():assert sha(tr+name)==h
+ plan=read(tr+'temporal_expansion_plan_v19.json');assert all(not (ROOT/tr/'cache'/(c+'.bvh')).exists() for c in plan['planned_splits']['confirmation']);assert not model['confirmation_read']
+ moving=read(res+'mixture-trajectory-host-v21.json');stationary=read(res+'stationary-mixture-host-v21.json');meta=read(base+'package-test-v0.17.4.json')
+ current={p.relative_to(ROOT).as_posix():sha(p.relative_to(ROOT)) for p in (ROOT/'b4artists_ml').glob('*.py')};assert current==meta['runtime_sha256']==moving['runtime_sha256']==stationary['runtime_sha256']
+ for host in [moving,stationary]:assert host['complete'] and host['passed'] and len(host['rows'])==16 and host['model_sha256']==model['selection']['best_learned_sha256']
+ assert sha('releases/b4artists_ml_v0.17.4.zip')==meta['sha256']
+ with zipfile.ZipFile(ROOT/'releases/b4artists_ml_v0.17.4.zip') as z:assert all(z.read(n)==(ROOT/n).read_bytes() for n in z.namelist())
+ changed=[p for p,h in e['artifacts'].items() if sha(p)!=h];assert set(changed)=={base+n+'.md' for n in ['PROJECT','ROADMAP','REQUIREMENTS']},changed
+ versions={}
+ for p in changed:
+  snapshot=res+'mixture-document-baseline-v21/'+Path(p).name;assert sha(snapshot)==e['artifacts'][p];versions[p]=dict(path=snapshot,sha256=sha(snapshot))
+ names=['mixture_trajectory_protocol_v21.json','mixture_trajectory_v21.py','check_mixture_trajectory_v21.py','train_mixture_trajectory_v21.py','check_mixture_trajectory_host_v21.py','check_stationary_mixture_host_v21.py','check_mixture_reproduction_v21.py','analyze_mixture_result_v21.py','verify_mixture_experiment_v21.py','checkpoint_mixture_goal_v21.py']
+ inputs=[tr+n for n in names]+[base+'MIXTURE-TRAJECTORY-PLAN-v21.md',base+'MIXTURE-TRAJECTORY-v21.md'];added=[p for p in inputs if p not in s['contract']['inputs']];s['contract']['inputs']+=added;s['contract_hash']=g.digest(s['contract'])
+ s['explicit_revisions'].append(dict(reason='Add one fixed supervised position-mixture experiment, group-excluded frozen parent predictions, unchanged development gates, pre-fit correction, exact reproduction and current real-rig recovery. Original endpoint, passed milestones/floors, 50 total evaluations and 15-hour resumed deadline unchanged.',prior_state=prior,prior_sha256=sha(prior),prior_contract_hash=old['contract_hash'],new_contract_hash=s['contract_hash'],added_inputs=added,recorded_at=time.time()))
+ fp=g.fingerprint(ROOT,s['contract']['inputs']);route=gp+'mixture-trajectory-routing-v21.json'
+ paths=set(e['artifacts'])|set(inputs)|{prior,prev_ev,route}
+ for pattern in ['mixture-*v21*.json','stationary-mixture-host-v21*.json']:paths.update(p.relative_to(ROOT).as_posix() for p in (ROOT/res).glob(pattern) if p.is_file())
+ for folder in ['mixture_trajectory_v21','mixture_trajectory_v21_repeat','mixture-prefit-initial-v21','mixture-document-baseline-v21']:paths.update(p.relative_to(ROOT).as_posix() for p in (ROOT/res/folder).glob('*') if p.is_file())
+ for name in ['mixture-trajectory-host-v21.log','stationary-mixture-host-v21.log']:paths.add(tr+'cache/'+name)
+ attribution=read(res+'mixture-failure-attribution-v21.json');assert attribution['failed']==11 and attribution['prior_failed']==25 and len(attribution['newly_failed'])==2
+ e.update(contract_hash=s['contract_hash'],input_fingerprint=fp,artifacts={p:sha(p) for p in sorted(paths)},previous_evidence_recheck=dict(path=prev_ev,sha256=sha(prev_ev),changed_artifacts=changed,preserved_prior_versions=versions,all_other_prior_artifacts_unchanged=True),learned_host=moving,stationary_host=stationary,temporal_selection=model['selection'],temporal_gates=model['gates'],development_gates=model['development_gates'],reproduction=repro,mixture_verification=verification,mixture_failure_attribution=attribution,preserved_milestones=old['passed_progress_milestones'],new_passing_milestones=[])
+ e['regression'].update(rerun_this_iteration=False,retained_from=prev_ev,note='Runtime and v0.17.4 package bytes unchanged. Prior330-case/31-suite coverage and four exact-package offline cases retained, not rerun. New14 pre-fit and32actual-rig cases check the research candidate separately.')
+ e['qualification'].update(full_goal_complete=False,temporal_model_qualification=False,temporal_animator_integration=False,host_shutdown=False,independent_usability='unknown',full_physics_acceptance=False,full_responsiveness=False)
+ e['limitations']=['Average position gates now pass on old/new/combined development, but all worst-cohort gates still fail. Eleven of96cohorts fail, versus25before, including two newly failed cases. No model promotion.','Gate training uses parent predictions from group-excluded existing models. The gate sees all training labels; this is not independent gate validation.','Raw positions are convex mixtures and raw rotations remain learned v20; nonlinear rig projection means this cannot isolate the contribution of position selection from rotation guidance.','All model and non-runtime results reproduce exactly. Six fresh confirmation clips remain absent; no new data downloaded.','32actual-rig checks establish editable results and recovery, not naturalness or broad production coverage. Known host shutdown crashes remain failures.','v0.17.4 runtime/package are unchanged. Historical UI evidence stays attached to its original release, and browser URL policy was not bypassed.','Original multi-priority/intent/style/partial-body learned motion, physics/refinement, broad humanoid/quadruped, optional connector, distribution, responsiveness, independent animator and equivalent Cascadeur requirements remain.']
+ args=['git','-c','safe.directory=X:/Scripting Attempts/B4Artists_Tools/B4Artists_Anim_Tools_github'];assert subprocess.check_output(args+['log','-1','--format=%H %an <%ae> %cn <%ce>'],cwd=ROOT,text=True).strip()==cp['publication']['head'];assert not subprocess.check_output(args+['diff','--name-only'],cwd=ROOT,text=True).strip();assert not subprocess.check_output(args+['diff','--cached','--name-only'],cwd=ROOT,text=True).strip()
+ ep=gp+'mixture-trajectory-evidence-v21.json';write(ep,e);obs=read(gp+'cooperative-finalization-observations-v1.json')
+ for group in obs.values():
+  for proof in group.values():proof.update(artifact=ep,sha256=sha(ep),input_fingerprint=fp)
+ write(gp+'mixture-trajectory-observations-v21.json',obs)
+ end=time.perf_counter();duration=end-cp['next_controller_monotonic_start'];event='controller-mixture-trajectory-v21';assert event not in s['work_events'];g.record_work(s,event,duration);result=evaluate(s,obs,ROOT)
+ assert result['round']==36 and result['decision']=='iterate';assert not result['implementation_progress']['new'] and not result['implementation_progress']['lost'];assert all(not c['regression'] for c in result['categories'].values());assert s['history'][:-1]==old['history'];assert cp['max_goalposts']==50 and cp['resumed_run_time_cap_hours']==15 and cp['deadline_unix']==1788902277.2365775
+ write(dest,s);(ROOT/dest).with_suffix('.md').write_text(g.markdown(result),encoding='utf-8')
+ cp.update(state_path=dest,contract_hash=s['contract_hash'],input_fingerprint=fp,round=36,remaining_evaluations=14,decision=result['decision'],stagnant_rounds=s['stagnant_rounds'],evidence=ep,active_jobs=[],next_controller_monotonic_start=end,current_turn_classification='Progress: fixed learned mixture clears all average-position development gates and reduces failed cohorts25to11; exact reproduction and32actual-rig cases pass. Worst-cohort gates still fail and two new failures are retained; full original goal incomplete.',work_accounting='Recorded controller-mixture-trajectory-v21 once from322644.1419204; sessions27151,84418,31360,81232terminal.',next_safe_actions=['Read original objective and this checkpoint; preserve50 total evaluations and unchanged15-hour resumed deadline21:17:57UTC.','Keep v21 frozen and six fresh confirmation clips sealed. Diagnose remaining failures using training-only evidence, focusing on confidence from observed expert disagreement and loss balancing against low-motion cohorts.','Separate raw position/rotation and projection contributions before asserting a causal reference-selection failure. Existing procedural controls have their own rotations; v21 retains learned v20 rotations.','Continue original physics/refinement, full learned workflow/intent/partial body, broad humanoid/quadruped, optional connector, distribution and responsiveness requirements.','Independent animator assessment and equivalent Cascadeur comparison remain unknown; do not fabricate or bypass browser policy.'],recorded_at=time.time())
+ write(base+'checkpoint-mixture-trajectory-v21.json',cp);progress=read(base+'mixture-trajectory-progress-v21.json');progress.update(status='evaluated',active_jobs=[],latest_checkpoint=base+'checkpoint-mixture-trajectory-v21.json',remaining_evaluations=14,rounds_completed=36,recorded_at=time.time());write(base+'mixture-trajectory-progress-v21.json',progress)
+ print(dict(round=36,remaining=14,decision=result['decision'],stagnant_rounds=s['stagnant_rounds'],work_seconds=duration,full_goal_complete=False))
+if __name__=='__main__':main()

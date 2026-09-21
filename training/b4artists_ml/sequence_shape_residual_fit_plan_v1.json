@@ -1,0 +1,74 @@
+{
+  "schema": "sequence-shape-residual-fit-v1",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "hypothesis": "A temporal convolution that predicts only the residual over an observed-only contextual Hermite/quaternion curve can learn motion-specific corrections without first relearning the established procedural curve.",
+  "architecture": {
+    "baseline": "Observed-only per-joint contextual position curve and aligned normalized-quaternion curve; exactly linear/SLERP when only two boundary poses exist.",
+    "learned_component": "Noncausal six-block residual temporal convolution, width 128, dilations 1,2,4,8,16,32, 153 outputs.",
+    "proposal": "procedural_shape_baseline + learned_residual",
+    "authored_values": "Residual is zeroed at all position/orientation masks and observations are restored after inference.",
+    "initialization": "Zero output layer makes the first proposal exactly the procedural ablation.",
+    "scope": "Research only. No addon registration, shipped weights or parity claim."
+  },
+  "data": {
+    "source": "Frozen sequence corpus v2",
+    "partition": "train_only",
+    "clips": 78,
+    "windows": 5778,
+    "array_bytes": 719621964,
+    "transformation": "Replace only baseline channels 0:153 and the separate baseline array with the observed-only shape curve. Preserve observed channels, masks, rest/timing features, targets, dt, splits and sampling.",
+    "hidden_target_access": false,
+    "validation_read": false,
+    "confirmation_read": false,
+    "downloads": false,
+    "additional_cache_bytes": 0,
+    "uncompressed_array_byte_cap": 3221225472,
+    "working_set_byte_cap": 4294967296
+  },
+  "training": {
+    "kinds": ["direct_shape_residual"],
+    "seeds": [20260909, 20260910],
+    "epochs": 60,
+    "batch_size": 16,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "loss": "unknown position MSE + 0.1 rotation6 MSE + 0.01 velocity MSE + 0.0001 acceleration MSE; derivatives use actual seconds and known observations remain excluded",
+    "checkpoint_selection": "Fixed final epoch only; no development checkpoint selection",
+    "maximum_seconds_each": 1800,
+    "process_timeout_seconds": 2460,
+    "gpu_memory_fraction": 0.25,
+    "fit_count": 2,
+    "runtime_training_libraries_not_bundled": true
+  },
+  "prospective_evaluation": {
+    "freeze_both_seeds_before_development": true,
+    "partitions": ["old_validation", "new_validation", "combined"],
+    "unchanged_controls": ["projected_linear", "projected_hermite", "projected_shape"],
+    "required_ablation": "observed_shape_ablation built by the same conditioning module as the learned proposal",
+    "attribution_gate": "Each learned seed must improve position over its exact procedural ablation and pass every pre-existing position, rotation, velocity, acceleration, edge-length, endpoint and cohort gate on all three partitions.",
+    "confirmation": "Protected confirmation clips remain sealed unless both fixed seeds pass all development gates.",
+    "runtime_promotion": false,
+    "parity_claim": false
+  },
+  "baseline_contract": {
+    "path": "results/sequence-shape-conditioning-v4/report.json",
+    "sha256": "17e62183a95640f613211e40273bdc4387cd566f4643713f173e050099c4bf6a"
+  },
+  "frozen_manifest_sha256": "d253aff0413f309ff7eb826b6659e611e3a7aa9df7eea6db607ab09d4f855db0",
+  "base_corpus_plan_sha256": "431fd4281cbd4e584414b4c4541a0ed640ece5c87cc42718ab9be20dc33a832f",
+  "deadline_unix": 1789053845.0,
+  "sources": {
+    "train_sequence_shape_residual_v1.py": "ac6454ff1b6f2b60bb0563838eb08329a70d94dd15bb3893b9c222e6ee823af4",
+    "sequence_shape_residual_provider_v1.py": "f8f6bfe27ea626a0a7fb8b8dac89c787e42adced444ae41b9ad051cd252c2514",
+    "sequence_shape_conditioning_v1.py": "391487233f75de48a4d1a4569cc8320dec41757de2bbdb0da72fd1f1f9ba78fd",
+    "sequence_model_v1.py": "ac59e2f8fd2e730061b0f915b1a5e78f1cfd74513dddca2cc9a64c1f79aa345f",
+    "sequence_numpy_v1.py": "3c4ccd61c0e4f2f758bf6adbdfa13efdee3d87207f48ffc29c83ae00d8288b93",
+    "sequence_conditioning_v1.py": "17ca85057f4515275b9a4c95c1cd2a8001bfbc0983acb84c288234335fe3ac28",
+    "sequence_packet_v2.py": "c49db8f24d9a9fe3f5fd0fd791ba202bbdf1e18966310703f220277ea81683a7",
+    "semantic_motion_data.py": "5c4fd0501045b78dde5b64d4d830370eacbb0ce1090efe34fbee923424c96ced",
+    "rig_observations.py": "a3e07856e6baa771ca7abaaa82bf92cb6f4edd4ac0909db9ecec219c581044b9"
+  },
+  "full_goal_complete": false
+}

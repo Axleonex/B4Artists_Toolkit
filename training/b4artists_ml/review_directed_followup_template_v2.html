@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B4Artists — Follow-up review 2</title>
+<style>
+:root{color-scheme:dark;font:15px/1.45 system-ui,sans-serif;background:#10151d;color:#e8edf5}*{box-sizing:border-box}body{margin:0 auto;max-width:1500px;padding:22px}h1{font-size:25px;margin:0}h2{font-size:17px;margin:0 0 8px}.eyebrow{color:#7dc8ff;font-size:12px;letter-spacing:1.5px;text-transform:uppercase}.muted{color:#aab5c7}.top,.toolbar,.transport,.identity,.actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px}.top{justify-content:space-between}.badge{border:1px solid #6a542f;background:#47391f;color:#ffdc99;border-radius:99px;padding:6px 12px}.toolbar,.transport,.box{background:#172130;border:1px solid #2f4057;border-radius:10px;padding:13px}.toolbar{margin:17px 0}.toolbar label:first-child{flex:1;min-width:250px}.panels{display:grid;grid-template-columns:1fr 1fr;gap:12px}.panel{background:#151e2b;border:1px solid #2f4057;border-radius:10px;overflow:hidden}.panel header{padding:12px}.panel .tag{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#91add0}.panel canvas{display:block;width:100%;height:430px;background:#0d1219}.panel footer{padding:9px 12px;color:#9fb0c6;min-height:42px}.transport{margin:13px 0}.transport input[type=range]{flex:1;min-width:220px}.details{display:grid;grid-template-columns:1fr 1.4fr;gap:14px}.box{min-width:0}button,select,input,textarea{font:inherit;color:inherit;background:#202d3e;border:1px solid #435873;border-radius:6px;padding:7px 9px}button{cursor:pointer}button.primary{background:#126a9f;border-color:#43a4dc}button:disabled,select:disabled,input:disabled,textarea:disabled{opacity:.55;cursor:not-allowed}button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #87d0ff;outline-offset:2px}textarea{width:100%;min-height:78px;resize:vertical}.ratings{width:100%;border-collapse:collapse;margin:9px 0}.ratings th,.ratings td{text-align:left;border-bottom:1px solid #33455c;padding:7px}.ratings select,.ratings input[type=number]{width:100%;min-width:90px}.tags{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tags fieldset{border:1px solid #35485f;border-radius:7px}.tags label{display:inline-flex;gap:5px;margin:4px 8px 4px 0}.identity{margin:8px 0}.identity input{min-width:190px}.reveal{display:none;background:#10291f;border:1px solid #2c7054;border-radius:8px;padding:10px;margin-top:10px;white-space:pre-wrap}.notice{min-height:22px;color:#9ed9ff;margin:8px 0}.progress{font-variant-numeric:tabular-nums}.caseinfo{margin:8px 0;color:#b7c4d5}.help{font-size:13px}.metric{font-family:ui-monospace,monospace;font-size:12px}.locked{color:#8fe1b8}.error{color:#ffb2a5}.hidden{display:none}@media(max-width:900px){body{padding:12px}.panels,.details{grid-template-columns:1fr}.panel canvas{height:340px}.top{align-items:flex-start}}
+</style></head><body>
+<div class="top"><div><div class="eyebrow">B4Artists Machine Learning</div><h1>Follow-up review 2</h1></div><span class="badge">Independent human assessment pending</span></div>
+<p class="muted">Compare the new v18 candidate with the previously reviewed v15/v17 candidate. A/B identities stay hidden until you lock each case. Your earlier ratings remain untouched.</p>
+<div class="toolbar"><label>Case <select id="case"></select></label><label>Rig <select id="profile"><option value="">All rigs</option></select></label><label>Task <select id="task"><option value="">All tasks</option></select></label><button id="prev">Previous</button><button id="next">Next</button><span id="progress" class="progress"></span></div>
+<div id="caseInfo" class="caseinfo"></div>
+<div class="panels">
+ <section class="panel"><header><span class="tag">Blind variant</span><h2>Candidate A</h2></header><canvas id="canvasA" aria-label="Candidate A skeleton animation"></canvas><footer id="footerA">Identity hidden until rating is locked</footer></section>
+ <section class="panel"><header><span class="tag">Blind variant</span><h2>Candidate B</h2></header><canvas id="canvasB" aria-label="Candidate B skeleton animation"></canvas><footer id="footerB">Identity hidden until rating is locked</footer></section>
+</div>
+<div class="transport"><button id="play" class="primary">Play</button><input id="frame" type="range" min="0" max="1" step="0.001" value="0" aria-label="Elapsed animation seconds"><output id="frameLabel"></output><label>Speed <select id="speed"><option value="0.5">0.5x</option><option value="1" selected>1x</option><option value="1.5">1.5x</option></select></label><label>View <select id="view"><option value="front">Front</option><option value="side">Side</option><option value="oblique" selected>Oblique</option></select></label><label><input id="ghosts" type="checkbox">Priority ghosts</label><label><input id="trail" type="checkbox" checked>Pelvis trail</label></div>
+<div class="details">
+ <section class="box help"><h2>Review protocol</h2><p>Watch each case at least twice and inspect front, side and oblique views. Judge motion naturalness, planted-contact stability, transition continuity and preservation of the stated task intent. Scores run from 1 (unacceptable) to 5 (excellent).</p><p>Both sides play at their own source frame rate. The shorter motion holds at its end; the loop boundary is not part of the animation. Correction estimates mean fixes needed; interactions mean editor actions needed. Leave estimates blank if unsure. After locking, you can amend this case without losing other ratings; the original blind rating is retained.</p><p>The display uses actual evaluated 17-joint centers from the saved BoneForge, Rigify and imported-rig scenes. It cannot show skin deformation, axial twist or mesh collisions. For a hands-on workflow check, open the source scene shown after lock and record a separate timed animator pass.</p><p class="muted">Nothing is uploaded or used for training. Drafts autosave in this browser. Export a backup at any time; a completed review requires all 16 cases locked. Save the JSON backup before changing browsers.</p></section>
+ <section class="box"><h2>Your rating</h2>
+  <table class="ratings"><thead><tr><th>Measure</th><th>Candidate A</th><th>Candidate B</th></tr></thead><tbody>
+   <tr><td>Naturalness</td><td><select id="naturalnessA"></select></td><td><select id="naturalnessB"></select></td></tr>
+   <tr><td>Contact stability</td><td><select id="contactA"></select></td><td><select id="contactB"></select></td></tr>
+   <tr><td>Transition continuity</td><td><select id="continuityA"></select></td><td><select id="continuityB"></select></td></tr>
+   <tr><td>Intent preservation</td><td><select id="intentA"></select></td><td><select id="intentB"></select></td></tr>
+   <tr><td>Acceptable for production?</td><td><select id="acceptableA"><option value="">Unrated</option><option value="yes">Yes</option><option value="no">No</option></select></td><td><select id="acceptableB"><option value="">Unrated</option><option value="yes">Yes</option><option value="no">No</option></select></td></tr>
+   <tr><td>Estimated corrections (optional)</td><td><input id="correctionsA" type="number" min="0" max="999"></td><td><input id="correctionsB" type="number" min="0" max="999"></td></tr>
+   <tr><td>Estimated interactions (optional)</td><td><input id="interactionsA" type="number" min="0" max="999"></td><td><input id="interactionsB" type="number" min="0" max="999"></td></tr>
+  </tbody></table>
+  <label>Overall preference <select id="preference"><option value="">Unrated</option><option value="A">Candidate A</option><option value="B">Candidate B</option><option value="tie">Tie</option><option value="neither">Neither usable</option></select></label>
+  <div id="tagFields" class="tags"></div>
+  <label for="notes">Evidence notes</label><textarea id="notes" placeholder="Describe slips, popping, timing, balance, intent loss, or needed fixes."></textarea>
+  <div class="actions"><button id="lock" class="primary">Lock rating and reveal</button><button id="amend">Amend this case</button><span id="lockState"></span></div>
+  <div id="reveal" class="reveal"></div>
+ </section>
+</div>
+<section class="box" style="margin-top:14px"><h2>Reviewer and export</h2><div class="identity"><label>Reviewer ID <input id="reviewer" autocomplete="off" placeholder="Name or anonymous code"></label><label>Animation experience <select id="experience"><option value="">Select</option><option>Student</option><option>0-2 years</option><option>3-5 years</option><option>6-10 years</option><option>10+ years</option></select></label><button id="export">Export / back up review</button></div><div id="notice" class="notice" role="status" aria-live="polite"></div><details id="exportDetails"><summary>Export JSON — download recovery</summary><textarea id="exportPayload" aria-label="Export JSON" readonly style="min-height:180px"></textarea></details></section>
+<script>
+
+"use strict";
+const data=__REVIEW_DATA__,dataHash="__DATA_SHA256__";
+const labels=["A","B"],dimensions=["naturalness","contact","continuity","intent"];
+const fields=[...dimensions.flatMap(d=>labels.map(s=>d+s)),...["acceptable","corrections","interactions"].flatMap(d=>labels.map(s=>d+s)),"preference","notes"];
+const failures=["foot_slide","penetration","popping","stretch","timing","balance","intent_loss","other"];
+const storageKey="b4ml-review-directed-followup-v2-"+dataHash;
+function sampleAt(method,seconds){
+  const sourceFrame=Math.min(method.frames.at(-1),Math.max(method.frames[0],method.frames[0]+Math.max(0,seconds)*method.fps));
+  let i=0;while(i<method.frames.length-2&&method.frames[i+1]<sourceFrame)i++;
+  const weight=Math.min(1,Math.max(0,(sourceFrame-method.frames[i])/(method.frames[i+1]-method.frames[i])));
+  return {sourceFrame,ended:seconds>method.duration_seconds,points:method.samples[i].map((p,j)=>p.map((v,k)=>v+(method.samples[i+1][j][k]-v)*weight))};
+}
+function ratingError(rating){
+  for(const dimension of dimensions)for(const label of labels)
+    if(!["1","2","3","4","5"].includes(rating.values[dimension+label]))return "Rate "+dimension+" for "+label+".";
+  for(const label of labels){
+    if(!["yes","no"].includes(rating.values["acceptable"+label]))return "Choose production acceptability for "+label+".";
+    for(const field of ["corrections","interactions"]){
+      const raw=rating.values[field+label]??"",n=Number(raw);
+      if(raw!==""&&(!Number.isInteger(n)||n<0||n>999))return "Use a whole-number "+field+" estimate (0–999), or leave it blank.";
+    }
+  }
+  return ["A","B","tie","neither"].includes(rating.values.preference)?"":"Choose an overall preference.";
+}
+function setDraft(state,id,rating){
+  const prior=state.reviews[id]||{};
+  if(prior.locked)throw Error("Amend the locked case first.");
+  return {...state,reviews:{...state.reviews,[id]:{...prior,...rating,locked:false}}};
+}
+function lockCase(state,id,rating,utc){
+  if(state.reviews[id]?.locked)throw Error("Case already locked.");
+  const error=ratingError(rating);if(error)throw Error(error);
+  const prior=state.reviews[id]||{};
+  return {...state,reviews:{...state.reviews,[id]:{...prior,...rating,locked:true,locked_utc:utc,reveal_seen:true,blind_at_rating:!prior.reveal_seen}}};
+}
+function amendCase(state,id,utc){
+  const prior=state.reviews[id];if(!prior?.locked)throw Error("Only a locked case can be amended.");
+  const {history=[],...snapshot}=prior;
+  return {...state,reviews:{...state.reviews,[id]:{...snapshot,locked:false,reveal_seen:true,history:[...history,{...snapshot,amended_utc:utc}]}}};
+}
+function exportValue(state,utc){
+  const completed=data.cases.every(c=>state.reviews[c.id]?.locked&&!ratingError(state.reviews[c.id]));
+  return {schema:"b4ml-review-directed-followup-human-review-v2",source_data_sha256:dataHash,
+    source_qualification_sha256:data.source_qualification_sha256,reviewer:{id:state.reviewer,experience:state.experience},
+    exported_utc:utc,complete:completed,human_authored:true,training_authorized:false,model_promotion_authorized:false,
+    cases:data.cases.map(c=>({id:c.id,rating:state.reviews[c.id]||null,revealed_identity:state.reviews[c.id]?.reveal_seen?c.reveal:null}))};
+}
+// Browser initialization
+const $=id=>document.getElementById(id);
+let state={reviews:{},reviewer:data.default_reviewer.id,experience:data.default_reviewer.experience};
+let filtered=data.cases.map((_,i)=>i),index=0,seconds=0,playing=false,lastTime=null,storageReady=true;
+try{
+  const stored=localStorage.getItem(storageKey);
+  if(stored){const parsed=JSON.parse(stored);if(!parsed.reviews||typeof parsed.reviews!=="object")throw Error("Malformed review");
+    state={...state,...parsed};}
+}catch(error){storageReady=false;$("notice").textContent="Stored review cannot be read. It has NOT been erased. Export recovery or ask for help before rating.";}
+function persist(next){
+  if(!storageReady){$("notice").textContent="Saving is blocked to protect existing browser data.";return false;}
+  try{localStorage.setItem(storageKey,JSON.stringify(next));state=next;return true;}
+  catch(error){$("notice").textContent="Browser storage could not save this edit. Keep this page open and export a backup.";return false;}
+}
+function current(){return data.cases[filtered[index]];}
+for(const id of dimensions.flatMap(d=>labels.map(s=>d+s))){
+  $(id).innerHTML='<option value="">Unrated</option>'+[1,2,3,4,5].map(n=>'<option value="'+n+'">'+n+'</option>').join("");
+}
+for(const side of labels){
+  const box=document.createElement("fieldset");
+  box.innerHTML="<legend>Candidate "+side+" visible failures</legend>"+failures.map(tag=>'<label><input type="checkbox" data-side="'+side+'" data-tag="'+tag+'">'+tag.replaceAll("_"," ")+"</label>").join("");
+  $("tagFields").append(box);
+}
+for(const p of new Set(data.cases.map(c=>c.profile)))$("profile").add(new Option(p,p));
+for(const t of new Set(data.cases.map(c=>c.task)))$("task").add(new Option(t,t));
+$("reviewer").value=state.reviewer;$("experience").value=state.experience;
+function collect(){
+  const values=Object.fromEntries(fields.map(id=>[id,$(id).value])),tags={A:[],B:[]};
+  document.querySelectorAll("#tagFields input:checked").forEach(x=>tags[x.dataset.side].push(x.dataset.tag));
+  return {values,failures:tags};
+}
+function saveDraft(){
+  if(state.reviews[current().id]?.locked)return;
+  if(persist(setDraft(state,current().id,collect())))$("notice").textContent="Draft saved locally — "+current().id;
+}
+function reveal(){
+  const c=current(),review=state.reviews[c.id],shown=Boolean(review?.reveal_seen);
+  $("reveal").style.display=shown?"block":"none";
+  $("reveal").textContent=shown?labels.map(label=>label+": "+c.reveal[label].kind+"\nSource: "+c.reveal[label].blend_path+"\nSHA-256: "+c.reveal[label].blend_sha256).join("\n\n"):"";
+  for(const label of labels)$("footer"+label).textContent=shown?c.reveal[label].kind:"Identity hidden until rating is locked";
+}
+function renderCase(){
+  const c=current(),review=state.reviews[c.id],locked=Boolean(review?.locked);
+  $("case").replaceChildren(...filtered.map((n,i)=>new Option(data.cases[n].id+(state.reviews[data.cases[n].id]?.locked?" [locked]":""),String(i))));
+  $("case").value=String(index);
+  $("caseInfo").textContent=c.id+" — "+c.prompt;
+  for(const id of fields){$(id).value=review?.values?.[id]??"";$(id).disabled=locked||!storageReady;}
+  document.querySelectorAll("#tagFields input").forEach(x=>{x.checked=Boolean(review?.failures?.[x.dataset.side]?.includes(x.dataset.tag));x.disabled=locked||!storageReady;});
+  $("lock").disabled=locked||!storageReady;$("amend").disabled=!locked||!storageReady;
+  $("lockState").textContent=locked?"Locked":review?.reveal_seen?"Amending (identity already seen)":"Draft";
+  $("progress").textContent=data.cases.filter(c=>state.reviews[c.id]?.locked).length+" / "+data.cases.length+" locked";
+  $("frame").max=String(c.duration_seconds);$("play").textContent=playing?"Pause":"Play";
+  reveal();drawAll();
+}
+function project(point,c,w,h){
+  function plane(p){if($("view").value==="front")return[p[0],p[2]];if($("view").value==="side")return[p[1],p[2]];return[(p[0]-p[1])*.7071,p[2]+(p[0]+p[1])*.12];}
+  const p=plane(point),center=plane(c.center),scale=.78*Math.min(w,h)/(2*c.radius);
+  return[w/2+(p[0]-center[0])*scale,h/2-(p[1]-center[1])*scale];
+}
+function skeleton(ctx,c,points,w,h,color,width){
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=width;
+  for(let child=1;child<data.parents.length;child++){
+    const a=project(points[data.parents[child]],c,w,h),b=project(points[child],c,w,h);
+    ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();
+  }
+  for(const p of points){ctx.beginPath();ctx.arc(...project(p,c,w,h),width,0,2*Math.PI);ctx.fill();}
+}
+function draw(label){
+  const c=current(),method=c.methods[label],canvas=$("canvas"+label),rect=canvas.getBoundingClientRect(),ratio=window.devicePixelRatio||1;
+  const w=Math.max(300,Math.round(rect.width*ratio)),h=Math.max(260,Math.round(rect.height*ratio));
+  if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+  const ctx=canvas.getContext("2d"),sample=sampleAt(method,seconds);
+  ctx.clearRect(0,0,w,h);ctx.lineCap="round";
+  ctx.strokeStyle="#34465b";ctx.lineWidth=ratio;
+  for(let n=-4;n<=4;n++){const a=project([n/4,-1,method.floor_z],c,w,h),b=project([n/4,1,method.floor_z],c,w,h),d=project([-1,n/4,method.floor_z],c,w,h),e=project([1,n/4,method.floor_z],c,w,h);
+    ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.moveTo(...d);ctx.lineTo(...e);ctx.stroke();}
+  if($("ghosts").checked)for(const frame of method.priority_frames)skeleton(ctx,c,sampleAt(method,(frame-method.frames[0])/method.fps).points,w,h,"rgba(115,190,255,.15)",ratio);
+  if($("trail").checked){ctx.strokeStyle="rgba(255,210,110,.5)";ctx.lineWidth=ratio;ctx.beginPath();method.samples.forEach((row,i)=>{const p=project(row[0],c,w,h);i?ctx.lineTo(...p):ctx.moveTo(...p);});ctx.stroke();}
+  skeleton(ctx,c,sample.points,w,h,"#7dc8ff",3*ratio);
+  ctx.fillStyle="#e8edf5";ctx.font=12*ratio+"px system-ui";
+  ctx.fillText($("view").value.toUpperCase()+" | "+method.fps+" fps",12*ratio,20*ratio);
+  ctx.fillText("frame "+sample.sourceFrame.toFixed(1)+" / "+method.frames.at(-1).toFixed(1)+(sample.ended?" — holding end":""),12*ratio,h-12*ratio);
+}
+function drawAll(){$("frame").value=String(Math.min(seconds,current().duration_seconds));$("frameLabel").textContent=Math.min(seconds,current().duration_seconds).toFixed(2)+" / "+current().duration_seconds.toFixed(2)+" s";for(const label of labels)draw(label);}
+function stop(){playing=false;lastTime=null;$("play").textContent="Play";}
+function selectCase(newIndex){stop();index=newIndex;seconds=0;renderCase();}
+function filter(){
+  const id=current().id,p=$("profile").value,t=$("task").value;
+  const next=data.cases.map((c,i)=>[c,i]).filter(([c])=>(!p||c.profile===p)&&(!t||c.task===t)).map(([,i])=>i);
+  if(!next.length){$("notice").textContent="No cases match. Showing all tasks for this rig.";$("task").value="";return filter();}
+  filtered=next;selectCase(Math.max(0,filtered.findIndex(i=>data.cases[i].id===id)));
+}
+function tick(now){
+  if(playing){if(lastTime!==null)seconds=(seconds+Math.min(.1,(now-lastTime)/1000)*Number($("speed").value))%(current().duration_seconds+.5);lastTime=now;drawAll();}
+  requestAnimationFrame(tick);
+}
+$("play").onclick=()=>{playing=!playing;lastTime=null;$("play").textContent=playing?"Pause":"Play";};
+$("frame").oninput=()=>{stop();seconds=Number($("frame").value);drawAll();};
+$("case").onchange=()=>selectCase(Number($("case").value));
+$("prev").onclick=()=>selectCase((index-1+filtered.length)%filtered.length);
+$("next").onclick=()=>selectCase((index+1)%filtered.length);
+$("profile").onchange=filter;$("task").onchange=filter;
+for(const id of ["view","ghosts","trail"])$(id).onchange=drawAll;
+for(const id of fields)$(id).addEventListener("input",saveDraft);
+document.querySelectorAll("#tagFields input").forEach(x=>x.addEventListener("change",saveDraft));
+$("lock").onclick=()=>{try{if(persist(lockCase(state,current().id,collect(),new Date().toISOString()))){$("notice").textContent="Saved and locked "+current().id;renderCase();}}catch(error){$("notice").textContent=error.message;}};
+$("amend").onclick=()=>{if(persist(amendCase(state,current().id,new Date().toISOString()))){$("notice").textContent="Only this case reopened; its original rating is retained.";renderCase();}};
+for(const id of ["reviewer","experience"])$(id).onchange=()=>persist({...state,reviewer:$("reviewer").value.trim(),experience:$("experience").value});
+$("export").onclick=()=>{
+  if(!state.reviewer||!state.experience){$("notice").textContent="Enter reviewer ID and experience.";return;}
+  const output=exportValue(state,new Date().toISOString()),encoded=JSON.stringify(output,null,2);
+  $("exportPayload").value=encoded;$("exportDetails").open=true;
+  const a=document.createElement("a"),url=URL.createObjectURL(new Blob([encoded],{type:"application/json"}));
+  a.href=url;a.download="b4ml-review-directed-followup-human-review-v2-"+(output.complete?"complete":"draft")+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  $("notice").textContent=(output.complete?"Completed review":"Draft backup")+" exported. The exact JSON is also shown below.";
+};
+window.addEventListener("resize",drawAll);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)stop();});
+renderCase();requestAnimationFrame(tick);
+
+</script></body></html>
+

@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "outcome": "fallback",
+  "task": "Design and validate a fixed-output-lattice boundary-window solver that uses adaptive interval samples only as collocation constraints.",
+  "declared_paths": [
+    "training/b4artists_ml",
+    "docs/b4artists_ml"
+  ],
+  "authorization_risk_tier": "workflow_scaffolding",
+  "recommended_lane": null,
+  "actual_lane": "DEGRADED_NATIVE_CONTINUE",
+  "policy_fingerprint": null,
+  "escalation_count": 0,
+  "router_command_completed": false,
+  "router_attempts": [
+    {
+      "runtime": "WSL system python",
+      "exit_code": 1,
+      "error": "python: command not found"
+    },
+    {
+      "runtime": "~/.hermes/hermes-agent/venv/bin/python",
+      "exit_code": 1,
+      "error": "ModuleNotFoundError: No module named 'jsonschema'"
+    }
+  ],
+  "eligibility": {
+    "explicit_user_authorization": true,
+    "project_local": true,
+    "reversible": true,
+    "credentials_or_identity": false,
+    "external_write_or_production_activation": false,
+    "destructive_or_history_operation": false,
+    "billing": false,
+    "undeclared_paths": false,
+    "commit_merge_or_push": false
+  },
+  "scope_guards": [
+    "Do not modify production add-on code, releases, source animation, authored pins, qualification thresholds, sealed confirmation clips or data splits.",
+    "Keep adaptive samples as constraints only; do not serialize them as output keys.",
+    "Reject any spatial pass that creates a temporal regression between evaluation samples."
+  ],
+  "validation_required": [
+    "Preserve frames 1, 9, 15, 33, 39 and 49 exactly.",
+    "Use the unchanged final COM, contact and orientation gates.",
+    "Measure quaternion speed and acceleration over every output interval and compare with the retained grouped baseline.",
+    "Record production hashes and limitations; do not promote from one artificial BoneForge jump."
+  ],
+  "recorded_at": 1788952616.25021
+}

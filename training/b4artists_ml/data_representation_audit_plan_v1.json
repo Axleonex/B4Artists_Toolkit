@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "created_utc": "2026-09-09T00:00:00Z",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "purpose": "Decide the next generative representation and expose data/contact evidence gaps after the frozen mixture-Transformer hard stop.",
+  "scope": "Read the already acquired train-only CMU corpus. Audit metadata coverage, heuristic foot-contact sensitivity, and exact reconstruction through the retained 23-joint hierarchy. Do not fit a model or change the add-on runtime.",
+  "validation_read": false,
+  "confirmation_read": false,
+  "downloads_allowed": false,
+  "training_allowed": false,
+  "runtime_promotion_allowed": false,
+  "contact_pseudo_label": {
+    "clip_floor_percentile": 2.0,
+    "primary_thresholds": {
+      "maximum_speed_body_heights_per_second": 0.15,
+      "maximum_height_above_clip_floor_body_heights": 0.04
+    },
+    "sensitivity_thresholds": [
+      {
+        "maximum_speed_body_heights_per_second": 0.05,
+        "maximum_height_above_clip_floor_body_heights": 0.02
+      },
+      {
+        "maximum_speed_body_heights_per_second": 0.10,
+        "maximum_height_above_clip_floor_body_heights": 0.04
+      },
+      {
+        "maximum_speed_body_heights_per_second": 0.25,
+        "maximum_height_above_clip_floor_body_heights": 0.08
+      }
+    ],
+    "decision_rule": "Treat every result as a weak pseudo-label estimate. Sensitivity or plausible aggregate rates do not upgrade it to ground truth or a hard contact constraint."
+  },
+  "hierarchy": {
+    "fps": 30,
+    "gap": 32,
+    "selection": "Smallest eligible train-only clip for each of the 85 subjects.",
+    "position_tolerance": 1e-5,
+    "rotation6_tolerance": 1e-5,
+    "true_edge_tolerance": 1e-6
+  },
+  "data_candidates": {
+    "CMU": {
+      "decision": "retain_current_core",
+      "reason": "Already acquired with provenance; broad action coverage but weak style/contact/scene labels.",
+      "source": "https://mocap.cs.cmu.edu/"
+    },
+    "100STYLE": {
+      "decision": "candidate_pending_separate_download_approval_and_adapter",
+      "reason": "CC BY 4.0 locomotion-style supplement with 100 styles and more than four million frames, but one actor and a different 28-bone topology do not cover contacts, scene interaction, or full action diversity.",
+      "source": "https://www.ianxmason.com/100style/"
+    },
+    "LAFAN1": {
+      "decision": "exclude_from_distributable_or_commercial_training_without_permission",
+      "reason": "Publisher labels the dataset CC BY-NC-ND 4.0.",
+      "source": "https://github.com/ubisoft/ubisoft-laforge-animation-dataset"
+    },
+    "AMASS": {
+      "decision": "exclude_without_a_separate_commercial_license",
+      "reason": "The free license prohibits commercial use and training commercial neural networks.",
+      "source": "https://amass.is.tue.mpg.de/license.html"
+    }
+  },
+  "representation_hypothesis": {
+    "generative_state": "Root translation and heading plus ancestor-local rotations over the complete retained hierarchy, fixed offsets/proportions, velocities, contact probabilities, support/scene context, intent/style, authored masks, and confidence.",
+    "constraint_state": "The existing 17 semantic controls remain the rig-neutral animator constraint and evaluation surface.",
+    "postprocess": "Exact authored-control projection, FK, joint limits, contact locking, collision, balance, gravity/momentum refinement, then validation on the original rig.",
+    "rejection": "Do not train another nearby world-space selector/Transformer/loss-weight variant."
+  },
+  "deadline_epoch": 1789053845
+}

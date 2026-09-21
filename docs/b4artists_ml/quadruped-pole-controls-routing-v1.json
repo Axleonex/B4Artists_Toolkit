@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "task": "Quadruped Pole Controls v1",
+  "harness": "codex",
+  "profile": "workspace / ChatGPT subscription",
+  "activation": {
+    "state": "production",
+    "basis": "owner_authorized_not_soak_qualified",
+    "authorization_expires_at": "2026-10-11T09:25:49.455367Z",
+    "declared_execution_start": 2,
+    "declared_adaptive_ceiling": 8,
+    "reviewer_ceilings": {
+      "S0": 0,
+      "S1": 1,
+      "S2": 2,
+      "S3": 4,
+      "S4": 4
+    },
+    "career_enabled": true,
+    "temperament_enabled": true,
+    "shadow_countercheck_enabled": true,
+    "live_authority_validated": false
+  },
+  "verification": {
+    "owner_operation_attempted": true,
+    "windows_failure": "ModuleNotFoundError: No module named rfc8785",
+    "wsl_failure": "Configured repository environment did not return within the bounded verification interval",
+    "harness_identity_declared": "codex/workspace",
+    "harness_identity_accepted_live": false
+  },
+  "router": {
+    "entrypoint": "G:/LapArt/hermes-agent-self-evolution/scripts/prime-code-execute.py",
+    "attempted": true,
+    "actual_lane_emitted": false,
+    "failure": "uv trampoline failed to spawn Python child process; entity not found",
+    "failed_binding": "The canonical evidence venv pyvenv.cfg points to an absent former-user uv Python home"
+  },
+  "outcome": "fallback",
+  "classification": "DEGRADED_NATIVE_CONTINUE",
+  "actual_lane": "DEGRADED_NATIVE_CONTINUE",
+  "actual_lane_reason": "The required router emitted no T0-T4 lane because its canonical evidence interpreter is unavailable. The existing static-native infrastructure fallback continued within the declared project scope without changing shared runtime state.",
+  "work_packets": [
+    {
+      "owner": "parent_integrator",
+      "files": [
+        "b4artists_ml/quadruped_pose.py",
+        "b4artists_ml/ui.py",
+        "tests/test_b4artists_ml_quadruped_pole_controls_v1.py",
+        "training/b4artists_ml/run_quadruped_pole_controls_affected_v1.py",
+        "training/b4artists_ml/check_quadruped_pole_controls_ui_v1.py"
+      ],
+      "writer": true,
+      "completion": "Focused, affected, foreground UI, rollback, source-binding, and final evidence pass"
+    },
+    {
+      "owner": "target_reset_review",
+      "files": [],
+      "writer": false,
+      "completion": "Read-only serial review with no remaining actionable finding"
+    }
+  ],
+  "conflicts": "Pole edit implementation, shared UI, and their evidence depend on one frozen runtime hash set, so one parent writer owned them. The reviewer was read-only and ran only after evidence publication. No parallel writer was admitted after live authority validation and routing failed.",
+  "adaptive_workers_admitted": 0,
+  "writer_count": 1,
+  "reviewer": {
+    "requested_level": "S0-S4 adaptive scheduler",
+    "authority_validated": false,
+    "fallback": "serial_read_only_advisory",
+    "verdict": "PASS",
+    "actionable_findings": 0
+  },
+  "reviewer_verdict": "PASS",
+  "production_changes": {
+    "activation_changed": false,
+    "providers_changed": false,
+    "defaults_changed": false,
+    "services_restarted": false,
+    "committed": false,
+    "merged": false,
+    "pushed": false
+  }
+}

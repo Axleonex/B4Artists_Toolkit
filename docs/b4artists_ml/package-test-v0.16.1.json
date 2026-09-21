@@ -1,0 +1,59 @@
+{
+  "version": "0.16.1",
+  "files": 35,
+  "bytes": 249100,
+  "sha256": "c1a1804a6ebce9cf2c5b9fb558bc7df3a08d4c062131ef19aca5d612b022433e",
+  "package_matches_source": true,
+  "experimental": true,
+  "full_goal_complete": false,
+  "unique_regression_cases": 303,
+  "regression_sha256": "c882a14c9d77f427a38bea02106563c74e6133b35dc7ac49c49c04f94d7b6292",
+  "offline_qualification": "passed",
+  "packaged_ui_qualification": "passed",
+  "host_shutdown_qualified": false,
+  "scope": "Runtime explicit proposal and validated sample interfaces; temporal provider orchestration remains research code, no new model or user-facing learned interpolation control.",
+  "offline_cases": 110,
+  "offline_groups": 12,
+  "offline_evidence_sha256": "2c18bcb67b8d492ca66a86a990dfdcb6daaab7ec42ea0c6c8965abf97efab485",
+  "packaged_ui": [
+    {
+      "file": "training/b4artists_ml/results/live-pose-ui-projection-package-rigify-v1.json",
+      "sha256": "fe8372409c5026d1d87c1d6d9872d2258628d1280cc48b5362e01bafd6824c68",
+      "fixture": "rigify_default",
+      "events": [
+        "Live modal solved initial targets",
+        "Immediate stop/start created a separately owned live session",
+        "Native keyboard target transform passed through live modal",
+        "New edit cancelled stale fitting and only newest request completed",
+        "Undo and Redo of an edit made while live restored both snapshots with scheduling off",
+        "Escape stopped live fitting and restored last solved preview",
+        "Keep rejected an unsolved target request",
+        "Stop and Keep stored one pose anchor and restored source action and keys",
+        "Actual Undo and Redo restored preview and kept anchor without resuming live",
+        "Save during fitting cancelled work; reload retained recoverable preview with live off",
+        "Cancel after actual file reload restored original source",
+        "Unregister during fitting restored source and removed live jobs and preview helpers"
+      ]
+    },
+    {
+      "file": "training/b4artists_ml/results/live-pose-ui-projection-package-unity-v1.json",
+      "sha256": "f10e84208bbe6e8895eb92d4d0cf17a0540d5a6019a9343fac675efa7c5b963a",
+      "fixture": "unity_humanoid",
+      "events": [
+        "Live modal solved initial targets",
+        "Immediate stop/start created a separately owned live session",
+        "Native keyboard target transform passed through live modal",
+        "New edit cancelled stale fitting and only newest request completed",
+        "Undo and Redo of an edit made while live restored both snapshots with scheduling off",
+        "Escape stopped live fitting and restored last solved preview",
+        "Keep rejected an unsolved target request",
+        "Stop and Keep stored one pose anchor and restored source action and keys",
+        "Actual Undo and Redo restored preview and kept anchor without resuming live",
+        "Save during fitting cancelled work; reload retained recoverable preview with live off",
+        "Cancel after actual file reload restored original source",
+        "Unregister during fitting restored source and removed live jobs and preview helpers"
+      ]
+    }
+  ],
+  "qualification_note": "Automated functional qualification; UI checks overlapped headless offline tests and are not comparative performance benchmarks. Existing host shutdown failure remains unqualified."
+}

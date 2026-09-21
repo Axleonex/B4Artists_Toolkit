@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "task": "Quadruped Pose Request Asset v1",
+  "detected_harness": "Codex Desktop",
+  "detected_profile": "ChatGPT subscription",
+  "actual_lane": "DEGRADED_NATIVE_CONTINUE",
+  "actual_lane_reason": "prime-code-execute uv trampoline failed before lane evaluation; no T0-T4 actual_lane was emitted",
+  "activation_state_observed": "production",
+  "authorization_expiry_observed": "2026-10-11T09:25:49.455367Z",
+  "policy_declared_initial_execution": 2,
+  "policy_declared_execution_ceiling": 8,
+  "policy_declared_reviewer_ceilings": {"S0": 0, "S1": 1, "S2": 2, "S3": 4, "S4": 4},
+  "current_harness_identity_validation": "unavailable: owner verifier failed before identity binding evaluation",
+  "adaptive_workers_admitted": 0,
+  "writer_count": 1,
+  "packets": [
+    {
+      "owner": "parent_integrator",
+      "files": [
+        "b4artists_ml/quadruped_pose.py",
+        "b4artists_ml/ui.py",
+        "tests/test_b4artists_ml_quadruped_pose_asset_v1.py",
+        "tests/test_b4artists_ml_quadruped_target_reset_v1.py",
+        "tests/test_b4artists_ml_quadruped_head_v1.py",
+        "training/b4artists_ml",
+        "docs/b4artists_ml"
+      ],
+      "completion": "implemented and source-bound verification passed"
+    },
+    {
+      "owner": "serial_read_only_reviewer",
+      "files": [
+        "b4artists_ml/quadruped_pose.py",
+        "b4artists_ml/ui.py",
+        "tests/test_b4artists_ml_quadruped_pose_asset_v1.py",
+        "tests/test_b4artists_ml_quadruped_target_reset_v1.py",
+        "tests/test_b4artists_ml_quadruped_head_v1.py"
+      ],
+      "completion": "PASS after scale, post-update, capture-range, independent-oracle, and legacy stability corrections"
+    }
+  ],
+  "conflict_decision": "one writer retained full integration ownership; reviewer made no edits",
+  "reviewer_level": "serial_read_only",
+  "reviewer_authority": "advisory_fail_closed",
+  "reviewer_verdict": "PASS",
+  "review_rounds": 5,
+  "verification": {
+    "focused": "7/7",
+    "legacy_stability": "reset 9/9 and Head 7/7",
+    "affected": "122/122 across 16 suites",
+    "foreground_ui": "PASS with Save/Apply and native Undo/Redo"
+  },
+  "verifier_failure": "ModuleNotFoundError: No module named rfc8785",
+  "router_failure": "uv trampoline failed to spawn Python child process; no actual_lane emitted",
+  "existing_session_immediate_use": "fail-closed serial execution only; declared adaptive ceilings were not exercised",
+  "reload_or_new_session_required": false,
+  "activation_changed": false,
+  "authorization_renewed": false,
+  "commit_merge_push": false
+}

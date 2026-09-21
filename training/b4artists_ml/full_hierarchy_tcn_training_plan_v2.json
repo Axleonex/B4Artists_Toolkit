@@ -1,0 +1,108 @@
+{
+  "schema": "full-hierarchy-tcn-training-plan-v2",
+  "created_utc": "2026-09-10T04:00:00Z",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "purpose": "One versioned correctness repair for complete priority-pose preservation, evaluated on a fresh holdout before any v2 outcomes are observed.",
+  "sources": {
+    "trainer": "685e8b4a0481584475f99d8629308d84f03fde9ccc24a27994ef5d1179e927b6",
+    "training_engine": "7b303260e773e5f3bd6a5aa58b8423ea5a7c6801b69fc8b74b66d2cf7637cbe4",
+    "model": "a723083cfcd9f9a15de0f95d8353765ca7a37c0491fbd7d1409dca47a4b34280",
+    "kinematics": "1f3d2ce0d43b883cab570fd382f187a4ce57025c154e91b9426fded99bfeac36",
+    "dataset": "d02e7c76ab2355fddd1de2e56cd6c1f2cef53a1ee1497bdc08c7cd39e71247a3",
+    "priority_plan": "7950db203413391efa6e56bb350778fb8112b901e5b50c0b145b778e67db4061",
+    "priority_split": "d8373ed9e5da396ad57c4bac4c605ecfd03d4036ae80963826d872cb932f5a22",
+    "priority_specs": "e6ef2952384f80936a7dfd3adf337bc0274cc90a7f6fdaf1ecd06bc6e79edcde",
+    "priority_report": "0ab928214adfd67a82770dee22775cf54938a8ed0808b5eb5a95aa1837c1e8f2",
+    "label_plan": "452a378af0a60a5c8210454b52aa5c67a4201dbc04f720d0659318b064a392b0",
+    "hierarchy_layout": "1cd373412cb8f482f9925712a1c4c45d0159736b71ea2c4e23632496f30501aa",
+    "v1_rejection": "32891d51bac5074bf97f7049a16618a9559b4eb0e6a16f0ca0fb578a22f352e3"
+  },
+  "repair_scope": {
+    "changed": "At full interval priority frames, all 23 captured hierarchy rotations are exact derived constraints. The 17 semantic joints remain the only direct animator controls at partial frames.",
+    "unchanged": "Model family, width, dilations, dropout, local-state representation, boundary context, loss weights, optimizer, contact ablation, model input width and runtime boundary.",
+    "v1_checkpoints_qualified": false,
+    "v1_development_may_select_v2": false
+  },
+  "model_input_width": 766,
+  "model": {
+    "width": 128,
+    "dilations": [1, 2, 4, 8, 16, 32],
+    "dropout": 0.05
+  },
+  "seeds": [20260912, 20260913],
+  "contact_modes": ["unknown_contact", "weak_contact"],
+  "runs": [
+    "unknown_contact-seed-20260912",
+    "unknown_contact-seed-20260913",
+    "weak_contact-seed-20260912",
+    "weak_contact-seed-20260913"
+  ],
+  "data": {
+    "training_windows": 4625,
+    "training_subjects": 54,
+    "development_windows": 1906,
+    "development_subjects": 14,
+    "excluded_exposed_v1_development_subjects": 17,
+    "gaps": [8, 16, 32, 64, 96],
+    "development_contact": "Always unknown; no hidden target contact input or contact loss.",
+    "confirmation": "Sealed and absent."
+  },
+  "optimization": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "minimum_epochs": 6,
+    "maximum_epochs": 24,
+    "early_stopping_patience": 5,
+    "minimum_delta": 0.00001,
+    "batch_size_by_gap": {"8": 32, "16": 32, "32": 32, "64": 16, "96": 8},
+    "weak_contact_input_dropout": 0.5,
+    "loss_weights": {
+      "root": 1.0,
+      "position": 1.0,
+      "rotation": 1.0,
+      "velocity": 0.05,
+      "acceleration": 0.0005,
+      "contact": 0.1
+    },
+    "precision": "float32",
+    "selection": "Lowest aggregate unknown-contact v2 development loss after at least six epochs; detailed frozen cohort gates remain separate."
+  },
+  "contact_ablation": {
+    "unknown_contact": "Zero all contact inputs and contact loss during training.",
+    "weak_contact": "Use confidence-weighted train-only heuristic foot contacts with 50 percent per-example contact-input dropout.",
+    "promotion": "Unknown mode may qualify independently. Weak mode requires both seeds and measurable contact benefit without non-contact regression."
+  },
+  "environment": {
+    "python": "Existing unmodified ComfyUI embedded Python 3.13.9",
+    "torch": "2.10.0+cu130",
+    "device": "NVIDIA GeForce RTX 5070",
+    "cuda_required": true,
+    "packages_may_be_modified": false,
+    "bforartists_runtime_dependency": false
+  },
+  "quality_evaluation": {
+    "all_runs_reported": true,
+    "no_seed_cherry_picking": true,
+    "aggregate_position_improvement_minimum": 0.05,
+    "aggregate_rotation_improvement_minimum": 0.02,
+    "worst_task_gap_position_ratio_maximum": 1.10,
+    "worst_task_gap_rotation_ratio_maximum": 1.10,
+    "contact_slip_regression_allowed": false,
+    "exact_complete_priority_error_maximum": 0.000001,
+    "fixed_offset_edge_error_maximum": 0.000001
+  },
+  "hard_stops": [
+    "Do not use the exposed v1 development cohort to select v2.",
+    "Do not make another TCN representation, seed, loss or hyperparameter repair after v2 outcomes.",
+    "If v2 fails frozen quality cohorts, advance to the distinct diffusion family or improve independently sourced evidence.",
+    "Do not export or promote before detailed quality, ONNX parity, Bforartists latency, rig lifecycle and animator comparison pass."
+  ],
+  "training_allowed": true,
+  "development_read_allowed": true,
+  "confirmation_read": false,
+  "runtime_promotion_allowed": false,
+  "full_goal_complete": false,
+  "deadline_epoch": 1789053845
+}

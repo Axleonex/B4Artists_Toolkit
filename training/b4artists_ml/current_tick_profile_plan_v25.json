@@ -1,0 +1,13 @@
+{
+  "scope": "Current0.17.4 runtime cost-center profiling, no runtime changes",
+  "rigs": [
+    "boneforge",
+    "rigify_default"
+  ],
+  "source_harness_sha256": "0a6cc61765ba378ef613a53743eb25056f6652b9b675c4119fb26512ef2bcef1",
+  "candidate_harness_sha256": "3447b15905e86cdfac412e99b5722db0c38522ca7527e84fc708ade6071b84d7",
+  "checks": "One warmed changed-target solve, head target+0.002Y, cProfile reset each tick, five slowest ticks and ready-stage calls. Original metrics/source action/keys/modes recovery required.",
+  "limits": "Instrumented headless timing while independent data diagnosis runs is not a latency benchmark, UI event latency or human-usability qualification.",
+  "goal": "Original endpoint and fixed50-evaluation/15-hour resumed limits unchanged.",
+  "recorded_at": 1788900066.932641
+}

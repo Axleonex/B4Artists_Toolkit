@@ -1,0 +1,72 @@
+{
+  "schema": 2,
+  "created_utc": "2026-09-06T10:41:18.418403+00:00",
+  "seed": 20260906,
+  "manifests": [
+    {
+      "path": "results/training_manifest_v4.json",
+      "sha256": "9973a7f2b8935c33cb8d9b819d46658485bab931fdaabb59b6434ff0e3d78fe8"
+    },
+    {
+      "path": "context_confirmation_manifest.json",
+      "sha256": "eb7f86927c538d0510d7432bbe8fba0b6fa8581748e69134332edfed8883c841"
+    }
+  ],
+  "gaps": [
+    8,
+    16,
+    32
+  ],
+  "contexts": [
+    false,
+    true
+  ],
+  "target_fps": 30,
+  "training_windows_per_gap": 16,
+  "evaluation_windows_per_gap": 8,
+  "architecture": "637 observed/rest/time features -> tanh 128 -> 4 x 141 curve coefficients; 23-joint local rotations and root translation decoded by differentiable FK",
+  "hidden_units": 128,
+  "terms": 4,
+  "max_epochs": 60,
+  "patience_epochs": 20,
+  "validate_every": 5,
+  "batch_size": 16,
+  "learning_rate": 0.0003,
+  "regularization": 0.0001,
+  "gradient_norm_max": 1.0,
+  "velocity_weight": 0.01,
+  "acceleration_weight": 0.0001,
+  "rotation_weight": 0.1,
+  "ridge_trials": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "basis": "duration_seconds**2 * 4*t*(1-t) * Legendre_0_to_3(2*t-1)",
+  "baseline": "linear root and local quaternion SLERP through complete ancestor hierarchy",
+  "selection": "validation position + 0.1 * geodesic rotation; include zero-residual epoch 0 and never call it learned improvement",
+  "baselines": [
+    "linear",
+    "hermite",
+    "fk_linear",
+    "fk_hermite",
+    "ridge"
+  ],
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "notes": [
+    "V1 confirmation clips are observed development data; new results there are exploratory, not fresh confirmation.",
+    "No new datasets, packages, paid compute or runtime changes.",
+    "Full local hierarchy removes physical bone stretching, while collapsed semantic lengths can vary with intermediate joint motion.",
+    "All existing position/rotation/velocity/semantic-length/cohort gates retained; acceleration and true-edge gates added."
+  ]
+}

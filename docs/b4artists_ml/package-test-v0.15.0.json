@@ -1,0 +1,23 @@
+{
+  "version": "0.15.0",
+  "files": 35,
+  "bytes": 246354,
+  "sha256": "3c2f925c0c426bf34589720f52818b18eb1cf1fbbe5b15fb5f380e11f5e4bd2b",
+  "package_matches_source": true,
+  "experimental": true,
+  "full_goal_complete": false,
+  "regression_cases": 238,
+  "regression_suites": 21,
+  "regression_sha256": "eee5deb68037a766f1a7d8580cd9c03ea99631133353bbdd200e8ffbca0a49a3",
+  "ui_evidence_sha256": "4210c188a40deb93e272dbe01912cc58d7da7b1df7674e853f0c3f6968b2a1bb",
+  "version_only_change_after_runtime_checks": {
+    "before_sha256": "8047757b12ae6d685bf8ce2708a44eaf989fbfdb07ef9e40a2915264a13b35f7",
+    "after_sha256": "6b54c4efc80b0b45bbcc1659ff0d4a508449dd85f6308802d03e71a7580b15e4",
+    "literal_only_verified": true
+  },
+  "offline_qualification": "passed: 76 actual cases in 9 groups; original selector failure retained",
+  "host_shutdown_qualified": false,
+  "offline_evidence_sha256": "6452a7ef45b721ecd26f6188f72aaab130fa75e9f51c933f652674acf1cb53be",
+  "packaged_ui_qualification": "passed",
+  "packaged_ui_sha256": "e4b09b03a5af9edb97828496d66690ac10c9edfa731a1ad5e34b5ac40c0c95e2"
+}

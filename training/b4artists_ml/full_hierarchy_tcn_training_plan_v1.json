@@ -1,0 +1,116 @@
+{
+  "schema": "full-hierarchy-tcn-training-plan-v1",
+  "created_utc": "2026-09-10T04:00:00Z",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "purpose": "Prospectively freeze the first full-hierarchy learned comparison before reading development outcomes.",
+  "sources": {
+    "trainer": "7b303260e773e5f3bd6a5aa58b8423ea5a7c6801b69fc8b74b66d2cf7637cbe4",
+    "model": "a723083cfcd9f9a15de0f95d8353765ca7a37c0491fbd7d1409dca47a4b34280",
+    "kinematics": "1f3d2ce0d43b883cab570fd382f187a4ce57025c154e91b9426fded99bfeac36",
+    "dataset": "0b61d1b92a8ecab6da3a8f8930d466557d749cd26ec89f89a896b8a434ede44c",
+    "baseline": "31e1380bba66ca1a440f9aba5baec0708aedbb3146a48a439e4f61431c9e3346",
+    "model_plan": "b75ec1f7fc59508332c1fb574463060dd8c2c88fed034a66a933f3151dd79d39",
+    "sequence_plan": "fc6228578acd7136c1d3e0bd5f427fd1911fd8b5a0715ebd5c45cba822b768c6",
+    "sequence_specs": "4d18d1aec4e3147f7d1f18822ba61488c1838cfd26f3474b9fabbe34a4dea126",
+    "sequence_report": "5ba61d33d698329daa860eca6a082f60dcebd1ce9de74b145865357c64731451",
+    "label_plan": "452a378af0a60a5c8210454b52aa5c67a4201dbc04f720d0659318b064a392b0",
+    "subject_split": "8e999b3ffdb3d276fa4096e6a5cb30b100cbf20bdd253bf9833af40056201115",
+    "loss_diagnostic": "353056f5a70eab218645d58ec67ae1d52b9f1982c3e9e9b54e94ccefa99c2ac4",
+    "microfit": "6f46063d49fa75e741ed77111e8629b4c65683262d262ec2106463a9ac9b95d2"
+  },
+  "model_input_width": 766,
+  "model": {
+    "width": 128,
+    "dilations": [1, 2, 4, 8, 16, 32],
+    "dropout": 0.05
+  },
+  "seeds": [20260909, 20260910],
+  "contact_modes": ["unknown_contact", "weak_contact"],
+  "runs": [
+    "unknown_contact-seed-20260909",
+    "unknown_contact-seed-20260910",
+    "weak_contact-seed-20260909",
+    "weak_contact-seed-20260910"
+  ],
+  "data": {
+    "training_windows": 6531,
+    "training_subjects": 68,
+    "development_windows": 1125,
+    "development_subjects": 17,
+    "gaps": [8, 16, 32, 64, 96],
+    "training_materialization": "Prepare fixed-length gap arrays in RAM once per invocation; do not rewrite identities or persist dense examples.",
+    "development_contact": "Always unknown. Never derive contact inputs or contact loss from hidden development target motion.",
+    "confirmation": "Sealed and absent from this trainer."
+  },
+  "optimization": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "minimum_epochs": 6,
+    "maximum_epochs": 24,
+    "early_stopping_patience": 5,
+    "minimum_delta": 0.00001,
+    "batch_size_by_gap": {
+      "8": 32,
+      "16": 32,
+      "32": 32,
+      "64": 16,
+      "96": 8
+    },
+    "weak_contact_input_dropout": 0.5,
+    "loss_weights": {
+      "root": 1.0,
+      "position": 1.0,
+      "rotation": 1.0,
+      "velocity": 0.05,
+      "acceleration": 0.0005,
+      "contact": 0.1
+    },
+    "precision": "float32",
+    "epoch_order": "Every frozen window once per epoch, shuffled deterministically within each gap from seed, epoch and gap.",
+    "selection": "Lowest aggregate unknown-contact development loss after at least six epochs; final cohort gates are evaluated separately from training."
+  },
+  "contact_ablation": {
+    "unknown_contact": "Zero all contact input/provenance fields and contact-loss weights for training.",
+    "weak_contact": "Use train-only heuristic foot contacts with confidence weighting; drop all contact inputs independently for 50 percent of training examples.",
+    "promotion": "Unknown mode may qualify independently. Weak mode is preferred only if both weak seeds pass all final gates and improve contact without material non-contact regression."
+  },
+  "environment": {
+    "python": "Existing unmodified ComfyUI embedded Python 3.13.9",
+    "torch": "2.10.0+cu130",
+    "device": "NVIDIA GeForce RTX 5070",
+    "cuda_required": true,
+    "packages_may_be_modified": false,
+    "bforartists_runtime_dependency": false
+  },
+  "resumption": {
+    "checkpoint_each_epoch": true,
+    "plan_hash_required": true,
+    "optimizer_state_required": true,
+    "deterministic_epoch_and_dropout_seeds": true
+  },
+  "quality_evaluation": {
+    "all_runs_reported": true,
+    "no_seed_cherry_picking": true,
+    "aggregate_position_improvement_minimum": 0.05,
+    "aggregate_rotation_improvement_minimum": 0.02,
+    "worst_task_gap_position_ratio_maximum": 1.10,
+    "worst_task_gap_rotation_ratio_maximum": 1.10,
+    "contact_slip_regression_allowed": false,
+    "exact_authored_control_error_maximum": 0.000001,
+    "fixed_offset_edge_error_maximum": 0.000001,
+    "confirmation_after_development": "Requires a separately frozen export and confirmation protocol only after one mode passes both seeds."
+  },
+  "hard_stops": [
+    "Do not change architecture, loss weights, seeds, masks, windows or thresholds after observing development outcomes.",
+    "Do not train another nearby TCN, Transformer, selector or loss-weight variant if this family fails.",
+    "Do not call a fitted checkpoint production-ready before detailed cohorts, ONNX parity, Bforartists latency, rig lifecycle and animator comparison pass."
+  ],
+  "training_allowed": true,
+  "development_read_allowed": true,
+  "confirmation_read": false,
+  "runtime_promotion_allowed": false,
+  "full_goal_complete": false,
+  "deadline_epoch": 1789053845
+}

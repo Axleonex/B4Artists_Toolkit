@@ -1,0 +1,17 @@
+{
+  "source_sha256": "985d04738b0239710b77c20bc0c674ba82440b872d281711e5094a32c25eba2a",
+  "prior_probe_sha256": "dc182ae19deb9205a5b8a81b5a3c601046bf3eee41001f7d384d3d985947cfc5",
+  "model_sha256": "310fa08151708ab8e1d076dc370b8b40fb0c6a7680e078c7389d6c8fee895bb3",
+  "sizes": [
+    1e-05,
+    0.0001,
+    0.001
+  ],
+  "cohorts": 96,
+  "cases": 1728,
+  "max_seconds": 900,
+  "deadline_unix": 1788981845.0,
+  "new_quality_threshold": false,
+  "scope": "Fixed matched raw stability diagnostic; requires soft primary report complete; no refit, model selection or promotion.",
+  "recorded_at": 1788923720.3921647
+}

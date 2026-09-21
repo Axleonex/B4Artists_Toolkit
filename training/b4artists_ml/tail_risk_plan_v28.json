@@ -1,0 +1,62 @@
+{
+  "schema": 28,
+  "created_unix": 1788925027.2142434,
+  "variant_count": 1,
+  "objective": "Equal-cohort expected P+.1R plus10times squared hinge of mean P above1 and mean R above1.02, normalized separately to best complete training procedural controls; L2 .0001.",
+  "training": {
+    "epochs": 200,
+    "learning_rate": 0.002,
+    "regularization": 0.0001,
+    "penalty": 10.0,
+    "backtracks": 8,
+    "hidden": 32
+  },
+  "warm_start": "Frozen v26weights, features, normalization and embedded parent; fullbatchAdam; unchanged v27softreadout.",
+  "training_source": "Immutable7358trainingwindows and12projectedlabels; no data acquisition, validation fitting or identity at inference.",
+  "source_sha256": {
+    "training/b4artists_ml/tail_risk_selector_v28.py": "f66b1ca7f9ba384203edb9e386e527a9fa398afa718a4cda2064fad2e00eed96",
+    "training/b4artists_ml/train_tail_risk_selector_v28.py": "856e84aa75db46b38bf64fddfcb558cef8e95bdeb5cfd5c24ab993c3f77bd34c",
+    "tests/test_b4artists_ml_tail_risk_selector_v28.py": "e2c21c1b7e09f6780b7e253d751c526cd0dec36d76cabf9704e76a01bfc02f3b",
+    "training/b4artists_ml/soft_selector_v27.py": "92816af3f2ab473994fd4c0346dc4825e367f386d3a292bb99d0aa730b576b20",
+    "training/b4artists_ml/projected_selector_v26.py": "764667e3328f91e14eabb2324f8f406b369573feda3a6f6c976568a9feb6132d"
+  },
+  "input_sha256": {
+    "projected_selector_protocol_v26.json": "953064f183db424f75068d2db3e28a35b87ab18497ac8e385d5b0295495bf06f",
+    "temporal_training_manifest_v19.json": "2aafaa5d69061f0b977584a2ed0b2ae1792466aabb23801173b02384ec469711",
+    "results/projected_selector_v26/best_learned.npz": "310fa08151708ab8e1d076dc370b8b40fb0c6a7680e078c7389d6c8fee895bb3",
+    "results/projected_selector_v26/labels.npz": "2878185b947c29e09fa97db995e50fea348d0feab5d13bf5a2917ebbbf569126",
+    "results/projected_selector_v26/label_manifest.json": "49b1cd70593eaec5023f01301eb1c1dcdebfc53e7bd1e5dad8fff3e41ef7ef50",
+    "results/projected_selector_v26/window_identity.json": "c5879f9721f8623b78a1bef8162e66ecf3dbb7ac69e303c95663650191f151de",
+    "results/projected_selector_v26/parent_membership.json": "5f5c6e3ea1d2e8fed5d8fae1e3aca694790b1d643ac6b9092a17d4b604b5de9b",
+    "results/projected_selector_v26/report.json": "498adea98373d9e24f13a47c1d91761c56a66477601ad52c0eb42d8f327f4701",
+    "results/projected-selector-reproduction-v26.json": "0e0d36dbfeb0ed79004fae881e5f8f2d079a1905dea7511cda2aa53b4af130f3",
+    "results/tail-risk-checks-v28.json": "abd63d603399fc0a8c5ccf9f7577e064f66eb1379c2e38f2f0d296cb0a3952c8"
+  },
+  "projection": {
+    "steps": 48,
+    "learning_rate": 0.02,
+    "rotation_weight": 0.5,
+    "regularization": 1e-05
+  },
+  "gates": {
+    "position_improvement_fraction": 0.05,
+    "rotation_ratio_max": 1.02,
+    "velocity_ratio_max": 1.05,
+    "length_ratio_max": 1.05,
+    "cohort_position_ratio_max": 1.1,
+    "endpoint_position_max": 1e-06,
+    "endpoint_rotation_matrix_max": 1e-06,
+    "acceleration_ratio_max": 1.05,
+    "true_edge_length_max": 1e-06
+  },
+  "budgets": {
+    "complete_run_seconds": 2400,
+    "max_output_bytes": 16777216,
+    "reproduction_runs": 2
+  },
+  "deadline_unix": 1788981845.0,
+  "goalpost_ceiling": 50,
+  "goalposts_used": 48,
+  "confirmation_read": false,
+  "production_promotion": false
+}

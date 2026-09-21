@@ -1,0 +1,43 @@
+{
+  "schema": "b4ml_quadruped_adapter_protocol_v1",
+  "release": "0.27.0",
+  "scope": "First quadruped compatibility milestone after the qualified humanoid vertical slice",
+  "fixtures": [
+    "Rigify generated cat",
+    "Rigify generated horse",
+    "Rigify generated wolf",
+    "Rigify cat metarig",
+    "Rigify horse metarig",
+    "Rigify wolf metarig"
+  ],
+  "acceptance": {
+    "anatomy": "Every fixture resolves to family=quadruped and schema=quadruped_v1 before humanoid Rigify detection",
+    "roles": "Pelvis, chest, head, and four upper/lower/foot/toe limb chains resolve without missing required roles",
+    "controls": "Captured controls exclude DEF, MCH, ORG, VIS and tweak/mechanism bones",
+    "workflow": "Generated cat, horse and wolf complete two-anchor capture, nine-frame pose blending, candidate review and discard",
+    "source_safety": "Original action curves and source selection remain byte-equivalent through preview and discard",
+    "fail_closed": "Humanoid assisted pose, whole-body, contact, flight and learned temporal entry paths do not mutate a quadruped rig",
+    "regression": "All 49 established source suites plus the quadruped suite pass with one runtime hash set"
+  },
+  "claim_boundaries": {
+    "qualified": [
+      "Rigify cat, horse and wolf recognition",
+      "Generic pose capture and pose-blending interpolation on generated fixtures",
+      "Source preservation and mechanism exclusion",
+      "Explicit UI and runtime boundary around humanoid-only solvers"
+    ],
+    "not_qualified": [
+      "Quadruped whole-body posing",
+      "Quadruped contact or flight correction",
+      "Quadruped learned posing or learned motion",
+      "Imported or custom quadruped rigs",
+      "Natural-motion quality",
+      "Human usability acceptance",
+      "Cascadeur parity or superiority",
+      "Clean host shutdown"
+    ]
+  },
+  "network": "No downloads, provider calls or outbound runtime calls are permitted",
+  "human_reviews_required_for_quality_claim": true,
+  "cascadeur_comparison_required_for_parity_claim": true
+}

@@ -1,0 +1,11 @@
+# Trajectory training experiment v13
+
+Prospective scope: change how the matching 667-feature learned predictor is fit, using v12 failure diagnostics. Preserve v12 files, data identities, source-only initialization, projection, gates and runtime/package 0.16.1.
+
+A 128-center motion RBF (width 1.5, same seed/normalization) produces four coefficients per calibrated joint coordinate. Solve the grouped quadratic trajectory objective exactly; couple the four coefficients through position/rotation6 sample errors, optionally finite-difference velocity (weight 0.01 s^2) and acceleration (0.0001 s^4), with regularization 0.001 or 0.01. These four frozen ablations isolate the loss change, not another arbitrary center/width search. Rotation6 error is a chordal surrogate, not full geodesic physics training.
+
+Choose the specification using four catalog-prefix-excluded folds only inside training; each fit derives normalization and centers only from its training fold. Pooled held-out predictions, position + 0.1*rotation, select the specification. Catalog prefixes do not prove actor independence. Refit on all 2912 training windows; persist selected weights and hash before loading the 480 validation windows. Compare one fixed candidate against identically projected controls; require exact reproduction of v12 control metrics. Preserve the original thresholds and historical confirmation exposure.
+
+Before corpus fitting: independent dense least squares must match grouped normal equations, finite-difference gradients must match the analytic objective, derivative terms must penalize oscillation, exact priorities and hidden-label isolation must hold, and save/load and repeated fitting must match. Then run the full experiment twice in independent processes, compare all model bytes/metrics, and apply its exact learned artifact through actual-rig editable-action/source-recovery checks. Failed gates prohibit promotion.
+
+No paid APIs, downloads, package/runtime changes, publication or new full milestone claims are authorized by this experiment. This remains part of the original full learned-motion objective, whose broader performance, multi-priority/partial-body/style, physics, rig, licensing, connector and independent comparative requirements remain.

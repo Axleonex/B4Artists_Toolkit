@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "release": "0.29.0",
+  "feature": "Optional body and four-paw orientation targets for generated Rigify quadrupeds",
+  "host": "Bforartists 5.2.0 Alpha",
+  "fixtures": ["Rigify cat", "Rigify horse", "Rigify wolf"],
+  "acceptance": {
+    "position": "Every enabled body/paw position residual remains within the established scale-aware 0.28 tolerance",
+    "orientation": "Every enabled native torso/paw IK control reaches its helper world rotation within 2e-5 radians",
+    "workflow": "Keep captures one editable anchor and restores source action, slot, transforms and IK modes; Cancel restores without an anchor",
+    "recovery": "Solved position and orientation targets survive save/reload and can be kept",
+    "guards": "Rotation locks, active constraints and rotation drivers fail before mutation when orientation is enabled",
+    "isolation": "Humanoid and other preview owners retain their existing behavior"
+  },
+  "claim_boundaries": {
+    "qualified": [
+      "Generated Rigify cat, horse and wolf recognition",
+      "Generic pose capture and Pose Blending on generated fixtures",
+      "Deterministic body and four-paw position targets through existing native IK",
+      "Optional body and four-paw IK-control orientation targets",
+      "Source restoration, editable anchor capture and save/reload recovery",
+      "Fail-closed rotation locks, constraints and drivers"
+    ],
+    "not_qualified": [
+      "Quadruped learned posing or learned motion",
+      "Quadruped gait, balance, contact or flight physics",
+      "Pole direction, automatic paw planting or detailed spine/head shaping",
+      "Direct metarig, imported or custom quadruped posing",
+      "Natural-motion quality",
+      "Human usability acceptance",
+      "Cascadeur parity or superiority",
+      "Clean host shutdown"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "scope": "Bounded64-bone private-copy pruning with context restored before every yield",
+  "baseline_version": "0.17.4",
+  "baseline_sha256": "3a07d44ae2ef4f703f8366befb8e1057b317264e3f909dc689f50279ba59ad66",
+  "batch_size": 64,
+  "changed_definition": "EvaluationProxy.prepare_steps",
+  "acceptance": {
+    "default_rigify_prune_tick_ratio_max": 0.7,
+    "default_rigify_worst_tick_ratio_max": 0.95,
+    "default_rigify_total_work_ratio_max": 1.1,
+    "all_five_profiles_exact_pose_signature_metrics": true,
+    "source_recovery": true
+  },
+  "benchmark": "Base/current/current/base on BoneForge and default Rigify; base/current on remainingthreeprofiles, two solves and100idle ticks per run, same deterministic logical clock, no concurrent host checks or profiler.",
+  "correctness": "Cancellation at all new prune yields, original context/Object mode, bounded removals, invalidation before further evaluation, partial-copy cleanup, full330-case regression and exact-package offline checks before promotion.",
+  "goal": "Original full endpoint,50total evaluations and fixed15-hour resumed deadline unchanged; reject/restore exact0.17.4 if gates fail.",
+  "recorded_at": 1788900539.7194905
+}

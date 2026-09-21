@@ -1,0 +1,120 @@
+{
+  "schema": "full-hierarchy-diffusion-training-plan-v1",
+  "created_utc": "2026-09-10T05:00:00Z",
+  "goal_id": "01a073fe-c240-70c0-b5cd-fe9653aac60e",
+  "purpose": "Run the one prospectively allowed model-family change after both complete-priority TCN seeds failed unchanged learned-motion gates.",
+  "sources": {
+    "trainer": "0f7d7534bf2c2c91dbd6cd7e95ea696632d77966e93138cedfa299dcfcbc3e18",
+    "data_engine": "685e8b4a0481584475f99d8629308d84f03fde9ccc24a27994ef5d1179e927b6",
+    "batch_engine": "7b303260e773e5f3bd6a5aa58b8423ea5a7c6801b69fc8b74b66d2cf7637cbe4",
+    "model": "e63789a9ea128d55123b42a23f621c1cfea9250277d719f08a04bb134b113e9e",
+    "model_contract": "65ce0fa8ceeb95c3e35312d8c1325de338828b9a19cc3ce75262a6c2a29227a8",
+    "microfit": "67084ad7f5fd0db27f0d90bc18724d2de2bc0f53a3b85df5f71ccaafcbdb23f7",
+    "kinematics": "1f3d2ce0d43b883cab570fd382f187a4ce57025c154e91b9426fded99bfeac36",
+    "dataset": "d02e7c76ab2355fddd1de2e56cd6c1f2cef53a1ee1497bdc08c7cd39e71247a3",
+    "priority_split": "d8373ed9e5da396ad57c4bac4c605ecfd03d4036ae80963826d872cb932f5a22",
+    "priority_specs": "e6ef2952384f80936a7dfd3adf337bc0274cc90a7f6fdaf1ecd06bc6e79edcde",
+    "tcn_evaluation": "12f843f4d1eb321d0d2073755a56c06b47f339e422d141eb89baeba87ab5f59d"
+  },
+  "family_change": {
+    "from": "single-pass bidirectional residual TCN",
+    "to": "four-scale constraint-conditioned temporal diffusion U-Net with deterministic DDIM",
+    "reason": "Both repaired TCN seeds and both contact modes failed aggregate and/or worst-cohort gates while exact priority and bone constraints passed.",
+    "nearby_tcn_tuning_performed": false
+  },
+  "model_input_width": 766,
+  "model": {
+    "channels": [128, 192, 256, 320],
+    "time_width": 128,
+    "dropout": 0.05
+  },
+  "parameters": 7010573,
+  "diffusion_steps": 100,
+  "prediction": "Clean full-hierarchy residual around the procedural baseline, zero on exact constraints.",
+  "sampler": "Deterministic DDIM with exact constraint projection at every step.",
+  "seeds": [20260914, 20260915],
+  "contact_modes": ["unknown_contact", "weak_contact"],
+  "runs": [
+    "unknown_contact-seed-20260914",
+    "unknown_contact-seed-20260915",
+    "weak_contact-seed-20260914",
+    "weak_contact-seed-20260915"
+  ],
+  "data": {
+    "training_windows": 4625,
+    "training_subjects": 54,
+    "development_windows": 1906,
+    "development_subjects": 14,
+    "excluded_v1_development_subjects": 17,
+    "complete_priority_hierarchy_exact": true,
+    "development_contact": "Always unknown; target-derived contact is not an input or loss.",
+    "confirmation": "Sealed and absent."
+  },
+  "optimization": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.0002,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "minimum_epochs": 5,
+    "maximum_epochs": 16,
+    "early_stopping_patience": 4,
+    "minimum_delta": 0.00001,
+    "batch_size_by_gap": {"8": 16, "16": 16, "32": 12, "64": 8, "96": 4},
+    "weak_contact_input_dropout": 0.5,
+    "style_input_dropout": 0.1,
+    "motion_loss_weight": 0.5,
+    "loss_weights": {
+      "root": 1.0,
+      "position": 1.0,
+      "rotation": 1.0,
+      "velocity": 0.05,
+      "acceleration": 0.0005,
+      "contact": 0.1
+    },
+    "selection_ddim_steps": 4,
+    "selection_noise_seed": 20260916,
+    "precision": "float32",
+    "selection": "Lowest aggregate four-step unknown-contact development motion loss after five epochs; final 4/8/12-step cohort evaluation is separate."
+  },
+  "quality_evaluation": {
+    "all_runs_reported": true,
+    "no_seed_cherry_picking": true,
+    "ddim_steps": [4, 8, 12],
+    "aggregate_position_improvement_minimum": 0.05,
+    "aggregate_rotation_improvement_minimum": 0.02,
+    "worst_task_gap_position_ratio_maximum": 1.10,
+    "worst_task_gap_rotation_ratio_maximum": 1.10,
+    "exact_complete_priority_error_maximum": 0.000001,
+    "fixed_offset_edge_error_maximum": 0.000001,
+    "reviewed_contact_required_for_physical_promotion": true,
+    "bforartists_latency_required_for_runtime_promotion": true
+  },
+  "contract_evidence": {
+    "parameter_limit_pass": true,
+    "exact_projection_pass": true,
+    "finite_gradient_pass": true,
+    "actual_training_window_microfit_pass": true,
+    "warm_cuda_97_frame_ms": {"4": 57.56832, "8": 112.95748, "12": 162.29222},
+    "bforartists_latency_qualified": false
+  },
+  "environment": {
+    "python": "Existing unmodified ComfyUI embedded Python 3.13.9",
+    "torch": "2.10.0+cu130",
+    "device": "NVIDIA GeForce RTX 5070",
+    "cuda_required": true,
+    "packages_may_be_modified": false,
+    "bforartists_runtime_dependency": false
+  },
+  "hard_stops": [
+    "Do not change channels, loss, schedules, seeds, dropout, sampler or thresholds after development outcomes.",
+    "Do not run a nearby diffusion variant if both seeds fail; improve independently sourced data/evidence or change product strategy.",
+    "Do not infer contact quality from hidden target heuristics.",
+    "Do not export or promote without detailed cohorts, ONNX parity, Bforartists latency, rig lifecycle and animator comparison."
+  ],
+  "training_allowed": true,
+  "development_read_allowed": true,
+  "confirmation_read": false,
+  "runtime_promotion_allowed": false,
+  "full_goal_complete": false,
+  "deadline_epoch": 1789053845
+}

@@ -1,0 +1,13 @@
+# Static capsule collision v1
+
+The secondary-motion world solver now supports an opt-in analytic capsule. A capsule is a finite line segment between two explicit endpoint objects swept by one explicit radius. It is useful for a limb, torso, or prop exclusion volume where a sphere is too short and a plane is too broad.
+
+Both endpoints must be separate, unparented, constraint-free, direct scene objects with no Action, drivers, NLA tracks, or rigid-body simulation. The radius is a finite value from `0.000001` through `1000` scene units and is rejected when keyed or driven. Arbitrary mesh, deforming, moving, volume, continuous-time, and self-collision behavior remain outside this slice.
+
+The solver uses closest-point projection on the finite segment, deterministic radial fallback when a sample lies on the centerline, authored clearance, restitution, and tangent friction. Priority poses remain conflict-checked and exact. Generated curves stay editable, and the report identifies `schema=13`, backend `implicit_selected_control_secondary_v12`, the endpoint names, radius, collision count, and penetration metrics.
+
+Validation is split between host-independent math tests in `tests/test_b4artists_ml_secondary_capsule_math_v1.py` and Blender binding tests in the version appropriate to the package under test. The frozen 54-member `v0.37.2-dev.zip` has SHA-256 `2fad2e635300c337023f0a593f20bc7c8ff367e5c1ac323c74fa33b29f93253d`; its pinned static binding contract passes 2/2 with zero failures, errors or skips on Bforartists 5.1.0 / Blender 5.2.0 Alpha (`dd23ab17120d`), recorded in `capsule-exact-archive-binding-v1.json`. The fresh exact modal foreground run verifies visible capsule controls, Escape cancellation, preview/generation, native Undo/Redo, Restore Input, Keep, save/reload, Action/rig recovery, and Restore Source in `capsule-ui-exact-checkpoint-v1.json`. The historical 148/148 affected regression remains separately recorded in `capsule-exact-revalidation-v2.json`; it is not relabelled as a fresh current-worktree result. The newer current-worktree capsule tests cover moving/continuous APIs and must not be mixed with the frozen static archive; the version-matched harness fails closed on that signature boundary.
+
+Both host runs still end with the previously isolated `ucrtbase.dll` shutdown access violation after assertions; assertion results and process-exit health are reported separately. The archive remains development-source only, with no learned temporal-quality or Cascadeur parity claim.
+
+The governed S3 review gate remains a separate fail-closed control: it returned `INCONCLUSIVE` with `host-evidence-required` and `deterministic-validation-not-proven`; no reviewer was invoked and no completion authority was granted.
