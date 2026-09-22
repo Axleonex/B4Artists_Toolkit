@@ -8,6 +8,32 @@ from . import bl_info, workflow, posing, body_preview, body_live, quadruped_pose
 from .rigs import detect_rig
 
 
+def _report_error(op, context, exc):
+    """Route operator exceptions to the feedback card and op.report.
+
+    Plan §2.3; feedback.py:243 guarded decorator is the async analogue.
+    Called from all execute/modal except-exc sites in this file.
+    """
+    text = str(exc)
+    try:
+        from .ui_workflow import feedback as _fb
+        from . import workflow as _wf
+        rig = _wf.active_rig(context)
+        if rig is not None:
+            key = _fb.classify(text)
+            if key:
+                _lvl, _tmpl, _fix, _props, _label = _fb.FAILURES[key]
+                _fb.set_feedback(rig, _lvl,
+                                 _tmpl.format(exc=text) if '{' in _tmpl else _tmpl,
+                                 fix=_fix, fix_label=_label, **_props)
+            else:
+                _fb.error(rig, text)
+    except Exception:
+        pass
+    op.report({'ERROR'}, text)
+
+
+
 def _joint_limit_override(self, context):
     self.preset_provenance = 'Custom override'
 
@@ -202,16 +228,13 @@ def _navigate_contact_proposal(obj, scene, direction):
     return target
 
 
-def _draw_contact_interval_controls(layout,state):
-    jump=layout.row(align=True)
-    jump.operator('b4ml.contact',text='Blend In').operation='GO_BLEND_IN'
-    jump.operator('b4ml.contact',text='Hold Start').operation='GO_START'
-    jump=layout.row(align=True)
-    jump.operator('b4ml.contact',text='Hold End').operation='GO_END'
-    jump.operator('b4ml.contact',text='Blend Out').operation='GO_BLEND_OUT'
-    trim=layout.row(align=True);trim.enabled=bool(state.candidate_action)
-    trim.operator('b4ml.contact',text='Set Start').operation='SET_START'
-    trim.operator('b4ml.contact',text='Set End').operation='SET_END'
+def _status_to_feedback(self, context):
+    try:
+        from .ui_workflow import feedback
+        feedback.from_status(self.id_data, self.status)
+    except Exception:
+        pass
+
 
 class B4ML_PG_settings(bpy.types.PropertyGroup):
     temporal_running: BoolProperty(default=False,options={'HIDDEN','SKIP_SAVE'})
@@ -407,65 +430,7 @@ class B4ML_PG_settings(bpy.types.PropertyGroup):
         for role in rig_mapping.HUMANOID_ROLES])
     mapping_bone: StringProperty(name='Animator Bone',
         description='Existing animator control to use for the selected semantic role')
-    status: StringProperty(default="Capture poses at two or more frames")
-
-
-def _draw_wrapped(layout,text,icon='NONE',width=30):
-    words=str(text).split();lines=[];line=[]
-    for word in words:
-        if line and len(' '.join(line+[word]))>width:
-            lines.append(' '.join(line));line=[word]
-        else:line.append(word)
-    if line:lines.append(' '.join(line))
-    for index,value in enumerate(lines):
-        layout.label(text=value,icon=icon if index==0 else 'BLANK1')
-
-
-def _draw_rig_diagnostics(layout, state, report):
-    box=layout.box()
-    box.prop(state,'show_rig_diagnostics',icon='TRIA_DOWN' if state.show_rig_diagnostics else 'TRIA_RIGHT',emboss=False)
-    if not state.show_rig_diagnostics:return
-    if report is None:
-        box.label(text='Click Inspect / Refresh above.',icon='INFO');return
-    box.label(text='Snapshot; refresh after rig edits',icon='INFO')
-    box.label(text=report['profile'],icon='ARMATURE_DATA')
-    box.label(text=f"{report['family']} / {report['mapping_schema']}")
-    box.label(text=(f"Semantic roles: {report['mapped_required_role_count']}/"
-                    f"{report['required_role_count']}"))
-    box.label(text=f"Mapped controls: {report['mapped_control_count']}")
-    box.label(text=f"Directly writable: {report['writable_control_count']}")
-    if report['correction_state']=='active':
-        box.label(text=f"Manual corrections: {len(report['manual_corrections'])}",icon='CHECKMARK')
-    elif report['correction_state']=='invalid':
-        _draw_wrapped(box,report['correction_error'],icon='ERROR')
-    excluded=[(key,value) for key,value in report['excluded_bone_counts'].items() if value]
-    if excluded:
-        box.label(text='Excluded from B4ML controls:')
-        for key,value in excluded:box.label(text=f'{key.title()}: {value}')
-    for workflow_row in report['workflows']:
-        if not workflow_row['applicable']:continue
-        row=box.row();row.alert=not workflow_row['ready']
-        short_label={'humanoid_whole_body':'Whole-Body Pose',
-                     'quadruped_whole_body':'Four-Paw Whole-Body Pose'}.get(
-                         workflow_row['id'],workflow_row['label'])
-        row.label(text=short_label,
-                  icon='CHECKMARK' if workflow_row['ready'] else 'ERROR')
-        if not workflow_row['ready']:_draw_wrapped(box,workflow_row['detail'])
-    if report['missing_roles']:
-        box.label(text='Missing semantic roles:',icon='ERROR')
-        for start in range(0,len(report['missing_roles']),4):
-            box.label(text=', '.join(report['missing_roles'][start:start+4]))
-    if report['blocked_mapped_controls']:
-        box.label(text='Blocked mapped controls:',icon='ERROR')
-        box.label(text=', '.join(report['blocked_mapped_controls'][:4]))
-    if report['unsafe_mapped_controls']:
-        box.label(text='Structural bones mapped as controls:',icon='ERROR')
-        box.label(text=', '.join(report['unsafe_mapped_controls'][:4]))
-    for warning in report['warnings']:_draw_wrapped(box,warning,icon='INFO')
-    box.prop(state,'show_rig_role_mappings',icon='TRIA_DOWN' if state.show_rig_role_mappings else 'TRIA_RIGHT',emboss=False)
-    if state.show_rig_role_mappings:
-        for mapping in report['mapped_roles']:
-            box.label(text=mapping['role']+' -> '+mapping['bone'])
+    status: StringProperty(default="Capture poses at two or more frames", update=_status_to_feedback)
 
 
 def _mapping_busy(state):
@@ -475,32 +440,6 @@ def _mapping_busy(state):
                 or state.flight_running or state.secondary_running
                 or state.cleanup_running)
 
-
-def _draw_rig_mapping_editor(layout,obj,state,profile,correction_rows,correction_error):
-    box=layout.box()
-    box.prop(state,'show_mapping_corrections',
-             icon='TRIA_DOWN' if state.show_mapping_corrections else 'TRIA_RIGHT',
-             emboss=False)
-    if not state.show_mapping_corrections and not correction_error:return
-    if correction_error:
-        _draw_wrapped(box,correction_error,icon='ERROR')
-        clear=box.row();clear.enabled=not _mapping_busy(state)
-        clear.operator('b4ml.mapping_correction',text='Clear Invalid Corrections',icon='X').operation='CLEAR_ALL'
-        return
-    if profile.family!='humanoid':
-        box.label(text='Available on recognized humanoid adapters.',icon='INFO');return
-    col=box.column();col.enabled=not _mapping_busy(state)
-    col.prop(state,'mapping_role',text='Role')
-    col.prop_search(state,'mapping_bone',obj.data,'bones',text='Bone')
-    row=col.row(align=True)
-    row.operator('b4ml.mapping_correction',text='Apply Role').operation='APPLY'
-    clear=row.operator('b4ml.mapping_correction',text='Clear Role').operation='CLEAR_ROLE'
-    clear_all=col.row();clear_all.enabled=bool(correction_rows) or bool(correction_error)
-    clear_all.operator('b4ml.mapping_correction',text='Clear All Corrections',icon='X').operation='CLEAR_ALL'
-    if correction_rows:
-        box.label(text='Active corrections:')
-        for role,bone in correction_rows:box.label(text=role+' -> '+bone)
-    else:box.label(text='No manual corrections.',icon='INFO')
 
 class B4ML_OT_anchor_page(bpy.types.Operator):
     bl_idname='b4ml.anchor_page'
@@ -550,7 +489,7 @@ class B4ML_OT_mapping_correction(bpy.types.Operator):
             state.rig_diagnostics_report=json.dumps(report,allow_nan=False)
             state.show_rig_diagnostics=True
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -594,7 +533,7 @@ class B4ML_OT_transition_timing(bpy.types.Operator):
         try:
             current=workflow.transition_timing(obj,self.frame)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         self.use_override=current is not None
         self.easing=current['easing'] if current else obj.b4ml.easing
         self.bias=current['bias'] if current else obj.b4ml.timing_bias
@@ -609,7 +548,7 @@ class B4ML_OT_transition_timing(bpy.types.Operator):
                 obj,self.frame,self.use_override,self.easing,self.bias,
                 self.departure_hold,self.arrival_hold)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -643,7 +582,7 @@ class B4ML_OT_breakdown_pose(bpy.types.Operator):
         try:
             values=workflow.breakdown_context(obj,context.scene)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         self.blend=values['natural_blend']
         self.left_frame=values['left'][0]
         self.right_frame=values['right'][0]
@@ -655,7 +594,7 @@ class B4ML_OT_breakdown_pose(bpy.types.Operator):
             workflow.create_breakdown_anchor(
                 obj,context.scene,self.blend,self.selected_only)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -686,7 +625,7 @@ class B4ML_OT_inbetween_series(bpy.types.Operator):
         try:
             values=workflow.breakdown_context(obj,context.scene)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         self.left_frame=values['left'][0]
         self.right_frame=values['right'][0]
         return context.window_manager.invoke_props_dialog(self,width=340)
@@ -696,7 +635,7 @@ class B4ML_OT_inbetween_series(bpy.types.Operator):
         try:
             workflow.create_inbetween_series(obj,context.scene,self.count)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -726,7 +665,7 @@ class B4ML_OT_retime_anchor(bpy.types.Operator):
             values=workflow.retime_anchor_context(
                 obj,context.scene,self.source_frame)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         self.source_frame=values['source_frame']
         self.destination_frame=values['destination_frame']
         return context.window_manager.invoke_props_dialog(self,width=330)
@@ -737,7 +676,7 @@ class B4ML_OT_retime_anchor(bpy.types.Operator):
             workflow.retime_anchor(
                 obj,context.scene,self.source_frame,self.destination_frame)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -770,7 +709,7 @@ class B4ML_OT_ripple_retime(bpy.types.Operator):
             values=workflow.ripple_retime_context(
                 obj,context.scene,self.source_frame)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         self.source_frame=values['source_frame']
         self.destination_frame=values['destination_frame']
         self.moved_count=values['moved_count']
@@ -784,7 +723,7 @@ class B4ML_OT_ripple_retime(bpy.types.Operator):
                 obj,context.scene,self.source_frame,self.destination_frame,
                 self.source_binding)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -816,7 +755,7 @@ class B4ML_OT_pose_spacing_scale(bpy.types.Operator):
         try:
             values=workflow.pose_spacing_scale_context(obj,self.pivot_frame)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         self.pivot_frame=values['pivot_frame'];self.moved_count=values['moved_count']
         self.source_binding=values['binding']
         return context.window_manager.invoke_props_dialog(self,width=380)
@@ -827,7 +766,7 @@ class B4ML_OT_pose_spacing_scale(bpy.types.Operator):
             workflow.scale_pose_spacing(
                 obj,self.pivot_frame,self.factor,self.source_binding or None)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -859,7 +798,7 @@ class B4ML_OT_pose_spacing_equalize(bpy.types.Operator):
         try:
             values=workflow.pose_spacing_equalize_context(obj,self.pivot_frame)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         self.pivot_frame=values['pivot_frame'];self.interval=values['interval']
         self.affected_count=values['affected_count'];self.source_binding=values['binding']
         return context.window_manager.invoke_props_dialog(self,width=380)
@@ -870,7 +809,7 @@ class B4ML_OT_pose_spacing_equalize(bpy.types.Operator):
             workflow.equalize_pose_spacing(
                 obj,self.pivot_frame,self.interval,self.source_binding or None)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -897,7 +836,7 @@ class B4ML_OT_transition_timing_transfer(bpy.types.Operator):
             else:
                 workflow.paste_transition_timing(obj,self.frame)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -906,9 +845,30 @@ class B4ML_OT_action(bpy.types.Operator):
     bl_label = 'B4Artists ML Action'
     bl_description = 'Inspect the rig, capture or reuse a pose, or manage a separate interpolation candidate'
     bl_options = {'REGISTER', 'UNDO'}
-    operation: EnumProperty(items=[(n, n.title(), '') for n in
-        ('INSPECT', 'CAPTURE', 'REUSE', 'REMOVE', 'PREVIEW', 'KEEP', 'DISCARD', 'RESTORE_SOURCE')])
+    operation: EnumProperty(items=[(n, n.replace('_', ' ').title(), '') for n in
+        ('INSPECT', 'CAPTURE', 'REUSE', 'REMOVE', 'PREVIEW', 'KEEP', 'DISCARD',
+         'RESTORE_SOURCE', 'SELECT_KEPT')])
     anchor_frame: FloatProperty(options={'HIDDEN'})
+
+    @classmethod
+    def description(cls, context, properties):
+        _STAGE_KEYS = {
+            'PREVIEW': 'motion.preview',
+            'KEEP': 'review.keep',
+            'DISCARD': 'review.discard',
+            'RESTORE_SOURCE': 'review.restore',
+        }
+        stage_key = _STAGE_KEYS.get(properties.operation)
+        if stage_key:
+            try:
+                from .ui_workflow import stage as _stage
+                st = _stage.evaluate(_stage.snapshot(context))
+                reason = _stage.locked(st, stage_key)
+                if reason:
+                    return reason
+            except Exception:
+                pass
+        return cls.bl_description
 
     @classmethod
     def poll(cls, context):
@@ -940,10 +900,16 @@ class B4ML_OT_action(bpy.types.Operator):
             elif self.operation == 'PREVIEW':
                 workflow.preview(obj, context.scene, state.easing,
                                  timing_bias=state.timing_bias)
+            elif self.operation == 'SELECT_KEPT':
+                if not state.kept_action:
+                    raise ValueError('No kept result to select')
+                if obj.animation_data is None:
+                    obj.animation_data_create()
+                obj.animation_data.action = state.kept_action
             else:
                 workflow.finish_preview(obj, context.scene, keep=self.operation == 'KEEP')
         except Exception as exc:
-            self.report({'ERROR'}, str(exc))
+            _report_error(self, context, exc)
             return {'CANCELLED'}
         return {'FINISHED'}
 
@@ -968,72 +934,9 @@ class B4ML_OT_pose(bpy.types.Operator):
             else:
                 posing.finish(obj, context.scene, self.operation == 'KEEP')
         except Exception as exc:
-            self.report({'ERROR'}, str(exc))
+            _report_error(self, context, exc)
             return {'CANCELLED'}
         return {'FINISHED'}
-
-def _draw_body_target_reset(row,name,enabled):
-    cell=row.row(align=True);cell.enabled=enabled
-    operator=cell.operator('b4ml.body',text='Reset')
-    operator.operation='RESET_TARGET';operator.target_name=name
-    return operator
-
-
-def _draw_body_pole_align(row,name,enabled):
-    cell=row.row(align=True);cell.enabled=enabled
-    operator=cell.operator('b4ml.body',text='Align Bend')
-    operator.operation='ALIGN_POLE';operator.target_name=name
-    return operator
-
-
-def _draw_body_pole_flip(row,name,enabled):
-    cell=row.row(align=True);cell.enabled=enabled
-    operator=cell.operator('b4ml.body',text='Flip Side')
-    operator.operation='FLIP_POLE';operator.target_name=name
-    return operator
-
-
-def _draw_body_pole_distance(row,item,enabled):
-    cell=row.row(align=True);cell.enabled=enabled
-    cell.prop(item,'pole_distance',text='')
-    operator=cell.operator('b4ml.body',text='Set Distance')
-    operator.operation='SET_POLE_DISTANCE';operator.target_name=item.name
-    return operator
-
-def _draw_body_pole_status(row,obj,name):
-    """Draw a compact read-only relation for a humanoid pole helper."""
-    try:
-        status=body_preview.pole_bend_status(obj,name)
-    except (KeyError,TypeError,ValueError):
-        return None
-    row.label(text='Current: '+status['relation']+' ('+
-              format(math.degrees(status['error_radians']),'.1f')+' deg)')
-    return status
-
-def _draw_body_mirror(row,direction,text):
-    operator=row.operator('b4ml.body',text=text)
-    operator.operation='MIRROR_TARGETS';operator.mirror_direction=direction
-    return operator
-
-
-def _draw_quadruped_mirror(row, direction, text):
-    operator = row.operator('b4ml.quadruped_pose', text=text)
-    operator.operation = 'MIRROR_TARGETS'
-    operator.mirror_direction = direction
-    return operator
-
-
-_QUADRUPED_POLE_UI_LABELS = {
-    'Fore Pole L': 'Fore L Pole',
-    'Fore Pole R': 'Fore R Pole',
-    'Hind Pole L': 'Hind L Pole',
-    'Hind Pole R': 'Hind R Pole',
-}
-
-
-def _quadruped_target_ui_label(name):
-    return _QUADRUPED_POLE_UI_LABELS.get(name, name)
-
 
 class B4ML_OT_body(bpy.types.Operator):
     bl_idname='b4ml.body'
@@ -1044,15 +947,26 @@ class B4ML_OT_body(bpy.types.Operator):
     mirror_direction: EnumProperty(items=(('LEFT_TO_RIGHT','Left to Right',''),('RIGHT_TO_LEFT','Right to Left','')),options={'HIDDEN'})
 
     @classmethod
-    def description(cls,context,properties):
-        descriptions={
-            'ALIGN_POLE':'Place this pole helper on the current evaluated elbow or knee bend.',
-            'FLIP_POLE':'Place this pole helper opposite the current evaluated bend to request the other side.',
-            'SET_POLE_DISTANCE':'Move this pole helper to the selected body-scale distance without changing its direction.',
-            'SAVE_POSE_ASSET':'Save the current verified target layout in scene-local semantic body coordinates for another supported humanoid.',
-            'APPLY_POSE_ASSET':'Apply the scene semantic target pose to this preview without changing the rig until you solve.',
+    def description(cls, context, properties):
+        descriptions = {
+            'ALIGN_POLE': 'Place this pole helper on the current evaluated elbow or knee bend.',
+            'FLIP_POLE': 'Place this pole helper opposite the current evaluated bend to request the other side.',
+            'SET_POLE_DISTANCE': 'Move this pole helper to the selected body-scale distance without changing its direction.',
+            'SAVE_POSE_ASSET': 'Save the current verified target layout in scene-local semantic body coordinates for another supported humanoid.',
+            'APPLY_POSE_ASSET': 'Apply the scene semantic target pose to this preview without changing the rig until you solve.',
         }
-        return descriptions.get(properties.operation,cls.bl_label)
+        _STAGE_KEYS = {'BEGIN': 'pose.begin', 'KEEP': 'pose.keep', 'CANCEL': 'pose.cancel'}
+        stage_key = _STAGE_KEYS.get(properties.operation)
+        if stage_key:
+            try:
+                from .ui_workflow import stage as _stage
+                st = _stage.evaluate(_stage.snapshot(context))
+                reason = _stage.locked(st, stage_key)
+                if reason:
+                    return reason
+            except Exception:
+                pass
+        return descriptions.get(properties.operation, cls.bl_label)
 
     @classmethod
     def poll(cls,context):
@@ -1076,7 +990,7 @@ class B4ML_OT_body(bpy.types.Operator):
             elif self.operation=='APPLY_POSE_ASSET':body_preview.apply_pose_asset(obj,context.scene)
             else:body_preview.finish(obj,context.scene,self.operation=='KEEP')
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -1089,6 +1003,18 @@ class B4ML_OT_body_solve(bpy.types.Operator):
     _obj=None
 
     @classmethod
+    def description(cls, context, properties):
+        try:
+            from .ui_workflow import stage as _stage
+            st = _stage.evaluate(_stage.snapshot(context))
+            reason = _stage.locked(st, 'pose.solve')
+            if reason:
+                return reason
+        except Exception:
+            pass
+        return cls.bl_description
+
+    @classmethod
     def poll(cls,context):
         obj=workflow.active_rig(context)
         return bool(obj and obj.b4ml.body_payload and not obj.b4ml.body_running and not obj.b4ml.body_live and not obj.b4ml.contact_suggest_running and not obj.b4ml.secondary_running and not obj.b4ml.cleanup_running)
@@ -1096,7 +1022,7 @@ class B4ML_OT_body_solve(bpy.types.Operator):
     def execute(self,context):
         try:body_preview.solve(workflow.active_rig(context))
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
     def invoke(self,context,event):
@@ -1108,7 +1034,7 @@ class B4ML_OT_body_solve(bpy.types.Operator):
             context.window_manager.modal_handler_add(self)
         except Exception as exc:
             body_preview.abort(self._obj);self._remove_timer(context)
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'RUNNING_MODAL'}
 
     def _remove_timer(self,context):
@@ -1134,7 +1060,7 @@ class B4ML_OT_body_solve(bpy.types.Operator):
             self._remove_timer(context)
             try:self._obj.b4ml.status='Whole-body solve failed: '+str(exc)
             except ReferenceError:pass
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         if event.type in ('MIDDLEMOUSE','WHEELUPMOUSE','WHEELDOWNMOUSE','MOUSEMOVE'):
             return {'PASS_THROUGH'}
         return {'RUNNING_MODAL'}
@@ -1211,7 +1137,7 @@ class B4ML_OT_quadruped_pose(bpy.types.Operator):
             else:
                 quadruped_pose.finish(obj, context.scene, self.operation == 'KEEP')
         except Exception as exc:
-            self.report({'ERROR'}, str(exc))
+            _report_error(self, context, exc)
             return {'CANCELLED'}
         return {'FINISHED'}
 
@@ -1249,7 +1175,7 @@ class B4ML_OT_body_live(bpy.types.Operator):
             context.window_manager.modal_handler_add(self)
         except Exception as exc:
             body_live.stop(obj);self._remove_timer(context)
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'RUNNING_MODAL'}
 
     def _remove_timer(self,context):
@@ -1343,7 +1269,7 @@ class B4ML_OT_contact(bpy.types.Operator):
                     state.contacts[state.contact_index].review_state='REJECTED';state.contacts[state.contact_index].enabled=False;state.status='Contact suggestion rejected and excluded from correction'
                 else:
                     state.contacts.remove(state.contact_index);state.contact_index=max(0,min(state.contact_index,len(state.contacts)-1))
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -1362,7 +1288,7 @@ class B4ML_OT_contact_suggest(bpy.types.Operator):
 
     def execute(self,context):
         try:contacts.suggest(workflow.active_rig(context),context.scene)
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
     def invoke(self,context,event):
@@ -1372,7 +1298,7 @@ class B4ML_OT_contact_suggest(bpy.types.Operator):
             contacts.suggest_start(self._obj,context.scene)
             self._timer=context.window_manager.event_timer_add(.01,window=context.window);context.window_manager.modal_handler_add(self)
         except Exception as exc:
-            contacts.suggest_abort(self._obj);self._remove_timer(context);self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            contacts.suggest_abort(self._obj);self._remove_timer(context);_report_error(self, context, exc);return {'CANCELLED'}
         return {'RUNNING_MODAL'}
 
     def _remove_timer(self,context):
@@ -1392,7 +1318,7 @@ class B4ML_OT_contact_suggest(bpy.types.Operator):
         except Exception as exc:
             try:contacts.suggest_abort(self._obj)
             except (ReferenceError,RuntimeError):pass
-            self._remove_timer(context);self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            self._remove_timer(context);_report_error(self, context, exc);return {'CANCELLED'}
         if event.type in ('MIDDLEMOUSE','WHEELUPMOUSE','WHEELDOWNMOUSE','MOUSEMOVE'):return {'PASS_THROUGH'}
         return {'RUNNING_MODAL'}
 
@@ -1436,7 +1362,7 @@ class B4ML_OT_quadruped_gait(bpy.types.Operator):
             else:
                 quadruped_gait.clear(obj)
         except Exception as exc:
-            self.report({'ERROR'}, str(exc))
+            _report_error(self, context, exc)
             return {'CANCELLED'}
         return {'FINISHED'}
 
@@ -1457,7 +1383,7 @@ class B4ML_OT_temporal_preview(bpy.types.Operator):
     def execute(self,context):
         try:temporal_preview.run(workflow.active_rig(context),context.scene)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
     def invoke(self,context,event):
@@ -1469,7 +1395,7 @@ class B4ML_OT_temporal_preview(bpy.types.Operator):
             context.window_manager.modal_handler_add(self)
         except Exception as exc:
             temporal_preview.abort(self._obj);self._remove_timer(context)
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'RUNNING_MODAL'}
 
     def _remove_timer(self,context):
@@ -1495,7 +1421,7 @@ class B4ML_OT_temporal_preview(bpy.types.Operator):
             self._remove_timer(context)
             try:self._obj.b4ml.status='Motion generation failed: '+str(exc)
             except ReferenceError:pass
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         if event.type in ('MIDDLEMOUSE','WHEELUPMOUSE','WHEELDOWNMOUSE','MOUSEMOVE'):
             return {'PASS_THROUGH'}
         return {'RUNNING_MODAL'}
@@ -1532,7 +1458,7 @@ class B4ML_OT_contact_solve(bpy.types.Operator):
         backend=quadruped_contacts if detect_rig(obj.data.bones.keys()).family=='quadruped' else contacts
         try:backend.solve(obj,context.scene)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
     def invoke(self,context,event):
@@ -1545,7 +1471,7 @@ class B4ML_OT_contact_solve(bpy.types.Operator):
             context.window_manager.modal_handler_add(self)
         except Exception as exc:
             self._backend.abort(self._obj);self._remove_timer(context)
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'RUNNING_MODAL'}
 
     def _remove_timer(self,context):
@@ -1571,7 +1497,7 @@ class B4ML_OT_contact_solve(bpy.types.Operator):
             self._remove_timer(context)
             try:self._obj.b4ml.status='Contact correction failed: '+str(exc)
             except ReferenceError:pass
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         if event.type in ('MIDDLEMOUSE','WHEELUPMOUSE','WHEELDOWNMOUSE','MOUSEMOVE'):
             return {'PASS_THROUGH'}
         return {'RUNNING_MODAL'}
@@ -1600,7 +1526,7 @@ class B4ML_OT_flight(bpy.types.Operator):
                 state=obj.b4ml
                 if not 0<=state.flight_index<len(state.flights):raise ValueError('Choose a flight interval to remove')
                 state.flights.remove(state.flight_index);state.flight_index=max(0,min(state.flight_index,len(state.flights)-1))
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 class B4ML_OT_flight_solve(bpy.types.Operator):
@@ -1619,7 +1545,7 @@ class B4ML_OT_flight_solve(bpy.types.Operator):
     def execute(self,context):
         try:flight.solve(workflow.active_rig(context),context.scene)
         except Exception as exc:
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
     def invoke(self,context,event):
@@ -1631,7 +1557,7 @@ class B4ML_OT_flight_solve(bpy.types.Operator):
             context.window_manager.modal_handler_add(self)
         except Exception as exc:
             flight.abort(self._obj);self._remove_timer(context)
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'RUNNING_MODAL'}
 
     def _remove_timer(self,context):
@@ -1657,7 +1583,7 @@ class B4ML_OT_flight_solve(bpy.types.Operator):
             self._remove_timer(context)
             try:self._obj.b4ml.status='Flight correction failed: '+str(exc)
             except ReferenceError:pass
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         if event.type in ('MIDDLEMOUSE','WHEELUPMOUSE','WHEELDOWNMOUSE','MOUSEMOVE'):
             return {'PASS_THROUGH'}
         return {'RUNNING_MODAL'}
@@ -1683,7 +1609,7 @@ class B4ML_OT_cleanup(bpy.types.Operator):
 
     def execute(self,context):
         try:cleanup.restore(workflow.active_rig(context),context.scene)
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -1704,7 +1630,7 @@ class B4ML_OT_cleanup_solve(bpy.types.Operator):
 
     def execute(self,context):
         try:cleanup.solve(workflow.active_rig(context),context.scene)
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
     def invoke(self,context,event):
@@ -1716,7 +1642,7 @@ class B4ML_OT_cleanup_solve(bpy.types.Operator):
             context.window_manager.modal_handler_add(self)
         except Exception as exc:
             cleanup.abort(self._obj);self._remove_timer(context)
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'RUNNING_MODAL'}
 
     def _remove_timer(self,context):
@@ -1742,7 +1668,7 @@ class B4ML_OT_cleanup_solve(bpy.types.Operator):
             self._remove_timer(context)
             try:self._obj.b4ml.status='Animation cleanup failed: '+str(exc)
             except ReferenceError:pass
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         if event.type in ('MIDDLEMOUSE','WHEELUPMOUSE','WHEELDOWNMOUSE','MOUSEMOVE'):
             return {'PASS_THROUGH'}
         return {'RUNNING_MODAL'}
@@ -1767,7 +1693,7 @@ class B4ML_OT_secondary(bpy.types.Operator):
 
     def execute(self,context):
         try:secondary_motion.restore(workflow.active_rig(context),context.scene)
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -1797,7 +1723,7 @@ class B4ML_OT_secondary_select_chain(bpy.types.Operator):
         try:
             secondary_motion.select_chain(obj,context.active_pose_bone.name,
                                           self.direction,self.max_controls)
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -1821,7 +1747,7 @@ class B4ML_OT_secondary_selection_swap(bpy.types.Operator):
 
     def execute(self,context):
         try:secondary_motion.swap_selection(workflow.active_rig(context))
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -1863,7 +1789,7 @@ class B4ML_OT_secondary_control_load(bpy.types.Operator):
             elif self.operation=='CLEAR':secondary_motion.clear_control_loads(obj)
             elif self.operation=='CLEAR_ALL':secondary_motion.clear_all_control_loads(obj)
             else:raise ValueError('Unknown secondary control-load operation')
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -1902,7 +1828,7 @@ class B4ML_OT_secondary_sphere(bpy.types.Operator):
                 secondary_motion.clear_sphere_colliders(obj)
             else:
                 raise ValueError('Unknown sphere-set operation')
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -1923,7 +1849,7 @@ class B4ML_OT_secondary_solve(bpy.types.Operator):
 
     def execute(self,context):
         try:secondary_motion.solve(workflow.active_rig(context),context.scene)
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
     def invoke(self,context,event):
@@ -1935,7 +1861,7 @@ class B4ML_OT_secondary_solve(bpy.types.Operator):
             context.window_manager.modal_handler_add(self)
         except Exception as exc:
             secondary_motion.abort(self._obj);self._remove_timer(context)
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         return {'RUNNING_MODAL'}
 
     def _remove_timer(self,context):
@@ -1961,7 +1887,7 @@ class B4ML_OT_secondary_solve(bpy.types.Operator):
             self._remove_timer(context)
             try:self._obj.b4ml.status='Secondary motion failed: '+str(exc)
             except ReferenceError:pass
-            self.report({'ERROR'},str(exc));return {'CANCELLED'}
+            _report_error(self, context, exc);return {'CANCELLED'}
         if event.type in ('MIDDLEMOUSE','WHEELUPMOUSE','WHEELDOWNMOUSE','MOUSEMOVE'):
             return {'PASS_THROUGH'}
         return {'RUNNING_MODAL'}
@@ -1988,7 +1914,7 @@ class B4ML_OT_support(bpy.types.Operator):
         try:
             if self.operation=='INITIALIZE':support.initialize(obj)
             else:support.snapshot(obj,context.scene,context.evaluated_depsgraph_get())
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -2005,829 +1931,13 @@ class B4ML_OT_motion_result(bpy.types.Operator):
     def execute(self,context):
         obj=workflow.active_rig(context)
         try:workflow.preview_motion_result(obj,context.scene,bpy.data.objects.get(self.result_name))
-        except Exception as exc:self.report({'ERROR'},str(exc));return {'CANCELLED'}
+        except Exception as exc:_report_error(self, context, exc);return {'CANCELLED'}
         visible=workflow.motion_layer.find(obj)
         context.view_layer.objects.active=visible;visible.select_set(True)
         return {'FINISHED'}
 
 
-class B4ML_PT_main(bpy.types.Panel):
-    bl_label = 'B4Artists Machine Learning'
-    bl_idname = 'B4ML_PT_main'
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = 'B4Artists ML'
-
-    def draw(self, context):
-        layout = self.layout
-        layout.label(text='Experimental '+'.'.join(map(str,bl_info['version'])), icon='INFO')
-        layout.label(text='Local animation assistance')
-        obj = workflow.active_rig(context)
-        if obj is None:
-            layout.label(text='Select an armature or bound mesh.')
-            return
-        state = obj.b4ml
-        profile, correction_rows, correction_error = rig_mapping.status(obj)
-        humanoid = profile.family == 'humanoid'
-        if humanoid:
-            layout.label(text='Humanoid IK input / FK output')
-        if profile.family == 'quadruped':
-            layout.label(text='Quadruped: four-paw pose + blending', icon='INFO')
-        if state.temporal_running:
-            box=layout.box();box.label(text='Generating Whole-body Motion')
-            box.label(text=state.temporal_progress)
-            box.operator('b4ml.temporal_cancel',text='Cancel',icon='X')
-            box.label(text='Escape cancels; source remains visible.')
-            return
-        alternatives=workflow.motion_layer.results(obj)
-        if alternatives:
-            saved=layout.box();saved.label(text='Saved Motion Results')
-            for result in alternatives:
-                saved.operator('b4ml.motion_result',text=result.name).result_name=result.name
-        layout.label(text=obj.name, icon='ARMATURE_DATA')
-        layout.operator('b4ml.action', text='Inspect / Refresh Rig Mapping').operation = 'INSPECT'
-        _draw_rig_diagnostics(layout,state,rig_diagnostics.decode(state.rig_diagnostics_report))
-        _draw_rig_mapping_editor(layout,obj,state,profile,correction_rows,correction_error)
-        box=layout.box()
-        box.prop(state,'show_support',icon='TRIA_DOWN' if state.show_support else 'TRIA_RIGHT',emboss=False)
-        if state.show_support:
-            col=box.column();col.enabled=not state.body_running and not state.contact_running and not state.contact_suggest_running and not state.flight_running and not state.cleanup_running
-            col.label(text='Artist-authored mass estimate')
-            if not state.mass_segments:col.operator('b4ml.support',text='Initialize Mass Model').operation='INITIALIZE'
-            else:
-                col.prop(state,'show_mass_settings',icon='TRIA_DOWN' if state.show_mass_settings else 'TRIA_RIGHT',emboss=False)
-                if state.show_mass_settings:
-                    col.prop(state,'mass_index')
-                    if state.mass_index<len(state.mass_segments):
-                        segment=state.mass_segments[state.mass_index]
-                        col.label(text=segment.name);col.prop(segment,'weight');col.prop(segment,'fraction');col.prop(segment,'inertia_radius')
-                col.prop(state,'show_support_settings',icon='TRIA_DOWN' if state.show_support_settings else 'TRIA_RIGHT',emboss=False)
-                if state.show_support_settings:
-                    for field in ('support_plane_point','support_plane_normal','support_tolerance','support_rotation_tolerance'):col.prop(state,field)
-                col.label(text='Patches: Animation Contacts')
-                col.operator('b4ml.support',text='Analyze Current Pose').operation='ANALYZE'
-            if state.support_report:
-                try:
-                    report=json.loads(state.support_report)
-                    box.label(text='Snapshot at frame '+format(report['frame'],'.3f'))
-                    box.label(text=report['status'].replace('_',' ').title())
-                    box.label(text='World COM (internal units):')
-                    for axis,value in zip('XYZ',report['com']):box.label(text=axis+': '+format(value,'.5f'))
-                    if report['margin'] is not None:box.label(text='Margin: '+format(report['margin'],'.5f'))
-                    box.label(text='Contacts: '+str(len(report['contacts']))+' in / '+str(len(report['excluded_contacts']))+' excluded')
-                    for item in report['excluded_contacts']:box.label(text=item['limb']+': '+item['reason'])
-                except (ValueError,KeyError,TypeError):box.label(text='Reanalyze to replace an unreadable snapshot.')
-            box.label(text='Reanalyze after edits.')
-            box.label(text='Static support estimate')
-
-        box=layout.box()
-        box.prop(state,'show_flights',icon='TRIA_DOWN' if state.show_flights else 'TRIA_RIGHT',emboss=False)
-        if state.show_flights:
-            box.label(text='Gravity arc for COM')
-            box.label(text='Use priority pose frames')
-            col=box.column();col.enabled=humanoid and not state.flight_running and not state.contact_running and not state.contact_suggest_running and not state.cleanup_running and bool(state.candidate_action)
-            if not state.mass_segments:col.operator('b4ml.support',text='Initialize Mass Model').operation='INITIALIZE'
-            col.operator('b4ml.flight',text='Add Airborne Interval').operation='ADD'
-            if state.flights:
-                col.prop(state,'flight_index')
-                if 0<=state.flight_index<len(state.flights):
-                    item=state.flights[state.flight_index]
-                    col.prop(item,'enabled');col.prop(item,'start',text='Takeoff');col.prop(item,'end',text='Landing')
-                    col.prop(item,'strength')
-                    if state.flight_backend=='NATIVE':
-                        col.label(text='Transition frames')
-                        col.prop(item,'takeoff_blend',text='Before takeoff')
-                        col.prop(item,'landing_blend',text='After landing')
-                        col.prop(item,'match_acceleration')
-                        col.label(text='Airborne rotation')
-                        col.prop(item,'angular_momentum_strength')
-                        col.label(text='Landing support')
-                        col.prop(item,'contact_impulse_strength')
-                        col.label(text='Static planar collision')
-                        col.prop(item,'collision_strength')
-                        if item.collision_strength:col.prop(item,'collision_clearance')
-                    col.operator('b4ml.flight',text='Remove Interval').operation='REMOVE'
-                col.prop(state,'flight_backend')
-                col.operator('b4ml.flight_solve',text='Preview COM Flight')
-            if state.flight_input and state.flight_output==state.candidate_action:
-                col.operator('b4ml.flight',text='Restore Before Flight').operation='RESET'
-            if state.flight_running:box.label(text=state.flight_progress)
-            if state.flight_metrics:
-                try:
-                    report=json.loads(state.flight_metrics)
-                    box.label(text='COM error (body units)')
-                    box.label(text=format(report['max_after'],'.3g'))
-                    jumps=[r[key]['corrected']['jump'] for r in report['intervals'] for key in ('takeoff_velocity','landing_velocity') if key in r]
-                    jumps.extend(r['after_jump'] for r in report.get('transitions',[]))
-                    if jumps:
-                        box.label(text='Boundary speed jump')
-                        box.label(text=format(max(jumps),'.3g')+' units/s (estimate)')
-                    acceleration=[r['after_acceleration_jump'] for r in report.get('transitions',[]) if r.get('match_acceleration')]
-                    if acceleration:
-                        box.label(text='Boundary acceleration jump')
-                        box.label(text=format(max(acceleration),'.3g')+' units/s^2 (estimate)')
-                    angular=[r for r in report.get('intervals',[]) if r.get('angular_momentum')]
-                    if angular:
-                        box.label(text='Angular variation reduction')
-                        box.label(text=format(max(r['angular_momentum']['improvement'] for r in angular)*100,'.1f')+'% (rigid-segment estimate)')
-                    collision=[r['collision_response'] for r in report.get('intervals',[]) if r.get('collision_response')]
-                    if collision:
-                        box.label(text='Planar penetration')
-                        box.label(text=format(max(r['max_penetration_after'] for r in collision),'.3g')+' world units')
-                except (ValueError,KeyError,TypeError):pass
-        box=layout.box()
-        box.prop(state,'show_contacts',icon='TRIA_DOWN' if state.show_contacts else 'TRIA_RIGHT',emboss=False)
-        if state.show_contacts:
-            box.label(text='Humanoid geometric contact correction')
-            box.label(text='Priority poses stay unchanged.')
-            col=box.column();col.enabled=humanoid and not state.contact_running and not state.contact_suggest_running and not state.flight_running and not state.cleanup_running and not state.body_payload and not state.posing_payload
-            col.label(text='Provisional foot-contact scan')
-            col.prop(state,'contact_surface')
-            for field in ('contact_suggest_distance','contact_suggest_speed','contact_suggest_min_frames','contact_suggest_gap_frames'):col.prop(state,field)
-            scan=col.row();scan.enabled=bool(state.candidate_action);scan.operator('b4ml.contact_suggest',text='Suggest Foot Contacts',icon='VIEWZOOM')
-            if state.contact_surface is None:col.label(text='Uses the authored support plane.')
-            col.label(text='Suggestions never change animation.')
-            col.prop(state,'show_contact_overlay')
-            overlay_options=col.row();overlay_options.enabled=state.show_contact_overlay
-            overlay_options.prop(state,'show_all_contact_overlays')
-            review_counts = _contact_review_counts(obj)
-            col.label(text=(f'{review_counts["PROPOSED"]} proposed | '
-                            f'{review_counts["ACCEPTED"]} accepted | '
-                            f'{review_counts["REJECTED"]} rejected'))
-            if review_counts['PROPOSED']:
-                navigate=col.row(align=True);navigate.operator('b4ml.contact',text='Previous Proposed',icon='TRIA_LEFT').operation='PREVIOUS_PROPOSED';navigate.operator('b4ml.contact',text='Next Proposed',icon='TRIA_RIGHT').operation='NEXT_PROPOSED'
-                bulk=col.row(align=True);bulk.operator('b4ml.contact',text='Accept All Proposed',icon='CHECKMARK').operation='ACCEPT_ALL';bulk.operator('b4ml.contact',text='Reject All Proposed',icon='X').operation='REJECT_ALL'
-            col.prop(state,'contact_limb')
-            col.prop(state,'show_contact_details')
-            if state.show_contact_details:col.prop(state,'contact_offset')
-            col.operator('b4ml.contact',text='Capture Contact Here').operation='CAPTURE'
-            if state.contacts:
-                col.prop(state,'contact_index')
-                if 0<=state.contact_index<len(state.contacts):
-                    item=state.contacts[state.contact_index]
-                    col.label(text=item.name);col.prop(item,'enabled');col.label(text='Review: '+item.review_state.title())
-                    if item.reason:col.label(text=item.reason)
-                    if item.review_state=='PROPOSED':
-                        col.prop(item,'confidence',slider=True);col.label(text=item.provenance)
-                        review=col.row(align=True);review.operator('b4ml.contact',text='Accept',icon='CHECKMARK').operation='ACCEPT';review.operator('b4ml.contact',text='Reject',icon='X').operation='REJECT'
-                    elif item.review_state=='REJECTED':col.label(text='Excluded from correction')
-                    for field in ('start','end'):col.prop(item,field)
-                    col.prop(item,'asymmetric_blend')
-                    for field in (('blend_in','blend_out') if item.asymmetric_blend else ('blend',)):
-                        col.prop(item,field)
-                    for field in ('strength','lock_rotation'):col.prop(item,field)
-                    try:
-                        timing=contact_visualization.timing(item,posing._frame(context.scene))
-                        col.label(text=f"Now: {timing['phase']} | {timing['influence']*100:.0f}% influence")
-                    except ValueError:
-                        col.label(text='Now: invalid contact timing',icon='ERROR')
-                    _draw_contact_interval_controls(col,state)
-                    if item.limb in _HUMANOID_CONTACT_LIMBS and item.limb.startswith('arm-'):
-                        col.label(text='Hand-to-Prop Hold')
-                        col.prop(item,'prop_object')
-                        prop_row=col.row(align=True)
-                        bind=prop_row.row();bind.enabled=bool(item.prop_object and state.candidate_action)
-                        bind.operator('b4ml.contact',text='Bind to Prop',icon='CONSTRAINT').operation='BIND_PROP'
-                        clear=prop_row.row();clear.enabled=item.prop_bound
-                        clear.operator('b4ml.contact',text='Clear',icon='X').operation='CLEAR_PROP'
-                        if item.prop_bound and item.prop_target:
-                            col.label(text='Following '+item.prop_target.name)
-                    elif item.limb in _HUMANOID_CONTACT_LIMBS and item.limb.startswith('leg-'):
-                        col.label(text='Foot-to-Moving-Platform')
-                        col.prop(item,'prop_object',text='Surface')
-                        surface_row=col.row(align=True)
-                        bind=surface_row.row();bind.enabled=bool(item.prop_object and state.candidate_action)
-                        bind.operator('b4ml.contact',text='Bind to Platform',icon='CONSTRAINT').operation='BIND_SURFACE'
-                        clear=surface_row.row();clear.enabled=item.prop_bound
-                        clear.operator('b4ml.contact',text='Clear',icon='X').operation='CLEAR_SURFACE'
-                        if item.prop_bound and item.prop_target:
-                            col.label(text='Following '+item.prop_target.name)
-                    support_controls=col.column();support_controls.enabled=not item.prop_bound
-                    support_controls.prop(item,'use_support')
-                    if item.use_support:
-                        for field in ('support_width','support_length','support_heading'):support_controls.prop(item,field)
-                    if state.show_contact_details:
-                        for field in ('point','offset'):col.prop(item,field)
-                        if item.prop_bound:
-                            col.prop(item,'prop_point');col.prop(item,'prop_rotation')
-                    col.operator('b4ml.contact',text='Remove Contact').operation='REMOVE'
-            row=col.row();row.enabled=bool(state.candidate_action and contacts.rows(obj))
-            row.operator('b4ml.contact_solve',text='Preview Contact Correction')
-            if state.contact_input and state.contact_output==state.candidate_action:col.operator('b4ml.contact',text='Restore Before Contacts').operation='RESET'
-            if state.contact_running:box.label(text=state.contact_progress)
-            if state.contact_suggest_running:box.label(text=state.contact_suggest_progress+' (Esc to cancel)')
-            box.label(text='No self-collision solve yet.')
-        box=layout.box()
-        box.prop(state,'show_cleanup',icon='TRIA_DOWN' if state.show_cleanup else 'TRIA_RIGHT',emboss=False)
-        if state.show_cleanup:
-            box.label(text='Deterministic copied-curve cleanup')
-            box.label(text='Priority poses and accepted contacts stay exact.')
-            col=box.column();col.enabled=bool(state.candidate_action) and not state.cleanup_running and not state.secondary_running and not state.flight_running and not state.contact_running and not state.contact_suggest_running
-            col.prop(state,'cleanup_scope')
-            col.prop(state,'cleanup_smooth')
-            smooth=col.column();smooth.enabled=state.cleanup_smooth;smooth.prop(state,'cleanup_strength')
-            col.prop(state,'cleanup_reduce')
-            reduce=col.column();reduce.enabled=state.cleanup_reduce;reduce.prop(state,'cleanup_tolerance')
-            col.operator('b4ml.cleanup_solve',text='Preview Cleanup',icon='PLAY')
-            if state.cleanup_input and state.cleanup_output==state.candidate_action:
-                col.operator('b4ml.cleanup',text='Restore Input').operation='RESET'
-            if state.cleanup_running:box.label(text=state.cleanup_progress+' (Esc to cancel)')
-            if state.cleanup_metrics:
-                try:
-                    report=json.loads(state.cleanup_metrics)
-                    box.label(text=(str(report['keys_before'])+' to '+str(report['keys_after'])+
-                                    ' keys; '+str(report['keys_removed'])+' removed'))
-                    box.label(text=str(report['curves_smoothed'])+' curves smoothed; '+str(len(report['cleaned_controls']))+' controls')
-                    if report['protected_contact_controls']:
-                        box.label(text=str(len(report['protected_contact_controls']))+' contact controls protected')
-                    if report.get('accepted_contacts'):
-                        box.label(text=(str(report['accepted_contacts'])+' accepted contacts; '+
-                                        str(report['contact_samples'])+' validation samples'))
-                        box.label(text=('Max contact drift: '+format(report['max_contact_position_drift'],'.3g')+
-                                        '; rotation '+format(math.degrees(report['max_contact_rotation_drift_radians']),'.3g')+' deg'))
-                    if report.get('reduction'):
-                        box.label(text='Max key error: '+format(report['max_reduction_error'],'.3g'))
-                    box.label(text='Derivative jump: '+format(report['max_scalar_derivative_jump_before'],'.3g')+' to '+format(report['max_scalar_derivative_jump_after'],'.3g'))
-                    if report['skipped_constrained_curves'] or report['skipped_unsupported_curves']:
-                        box.label(text=str(report['skipped_constrained_curves']+report['skipped_unsupported_curves'])+' curves safely skipped')
-                except (ValueError,KeyError,TypeError):pass
-            box.label(text='Procedural cleanup; no learned model used.')
-        box=layout.box()
-        box.prop(state,'show_secondary',icon='TRIA_DOWN' if state.show_secondary else 'TRIA_RIGHT',emboss=False)
-        if state.show_secondary:
-            box.label(text='Deterministic control physics')
-            box.label(text='Select pose controls.')
-            col=box.column();col.enabled=bool(state.candidate_action) and not secondary_motion.busy(state)
-            col.prop(state,'secondary_space',text='Space')
-            row=col.row(align=True);row.prop(state,'secondary_rotation');row.prop(state,'secondary_location')
-            col.prop(state,'secondary_chain')
-            chain=col.column();chain.enabled=state.secondary_chain and ((state.secondary_space=='LOCAL' and state.secondary_rotation) or (state.secondary_space=='WORLD' and state.secondary_location))
-            if state.secondary_chain and state.secondary_space=='WORLD' and state.secondary_location:
-                chain.label(text='World chain: assign a load to every control; no wind/impulse.',icon='INFO')
-            chain.prop(state,'secondary_chain_direction',text='Grow From Active')
-            chain.prop(state,'secondary_chain_length',text='Maximum Controls')
-            selector=chain.operator('b4ml.secondary_select_chain',text='Select Direct Chain',icon='BONE_DATA')
-            selector.direction=state.secondary_chain_direction;selector.max_controls=state.secondary_chain_length
-            if state.secondary_selection_swap:chain.operator('b4ml.secondary_selection_swap',text='Swap Previous Selection',icon='FILE_REFRESH')
-            chain.prop(state,'secondary_chain_propagation',text='Propagation')
-            for field in ('secondary_frequency','secondary_damping','secondary_air_friction','secondary_strength','secondary_blend_frames'):col.prop(state,field)
-            world=col.column();world.enabled=state.secondary_space=='WORLD' and state.secondary_location
-            world.prop(state,'secondary_gravity');world.prop(state,'secondary_external_acceleration')
-            world.prop(state,'secondary_self_collision',text='Self-Collision')
-            if state.secondary_self_collision:
-                world.prop(state,'secondary_self_collision_radius',text='Self Radius')
-                world.label(text='Selected controls only; World space and Location required.')
-            world.prop(state,'secondary_wind_velocity')
-            world.prop(state,'secondary_impulse_velocity')
-            impulse_frame=world.column();impulse_frame.enabled=any(value!=0. for value in state.secondary_impulse_velocity)
-            impulse_frame.prop(state,'secondary_impulse_frame')
-            world.prop(state,'secondary_load_force')
-            world.prop(state,'secondary_load_mass')
-            world.prop(state,'secondary_load_offset')
-            world.prop(state,'secondary_load_inertia')
-            recall=world.operator('b4ml.secondary_control_load',text='Load From Active',icon='IMPORT');recall.operation='LOAD_ACTIVE'
-            assign=world.operator('b4ml.secondary_control_load',text='Assign Load',icon='ADD');assign.operation='ASSIGN'
-            clear=world.operator('b4ml.secondary_control_load',text='Clear Load',icon='X');clear.operation='CLEAR'
-            load_count=secondary_motion.control_load_count(obj)
-            world.label(text=('Invalid stored control loads' if load_count is None else
-                              str(load_count)+' assigned control load'+('s' if load_count!=1 else '')))
-            if load_count is None:
-                reset=world.operator('b4ml.secondary_control_load',text='Clear Invalid Assignments',icon='TRASH');reset.operation='CLEAR_ALL'
-            world.prop(state,'secondary_collision')
-            if state.secondary_collision:
-                world.prop(state,'secondary_collision_shape',text='Shape')
-                if state.secondary_collision_shape in {'SPHERE','COMPOUND'}:
-                    if state.secondary_collision_shape=='COMPOUND':
-                        world.prop(state,'contact_surface',text='Support Surface')
-                        world.label(text='Static support surface is resolved before the static sphere set.')
-                        world.prop(state,'secondary_collision_compound_capsule',text='Also Include Capsule')
-                        world.prop(state,'secondary_collision_compound_mesh',text='Also Include Static Closed Mesh')
-                    world.prop(state,'secondary_sphere_collider',text='Sphere Center / Bounds Source')
-                    world.prop(state,'secondary_sphere_radius',text='New Radius')
-                    fit=world.operator('b4ml.secondary_sphere',text='Fit New Radius from Bounds',icon='FULLSCREEN_ENTER');fit.operation='FIT';fit.index=-1
-                    proxy=world.operator('b4ml.secondary_sphere',text='Create Bounds Proxy',icon='OUTLINER_OB_EMPTY');proxy.operation='PROXY'
-                    world.prop(state,'secondary_sphere_moving',text='Follow Center Animation')
-                    world.prop(state,'secondary_sphere_scaling',text='Follow Radius Scale')
-                    if state.secondary_collision_shape=='SPHERE':
-                        world.prop(state,'secondary_collision_continuous',text='Continuous-Time Sweep')
-                        world.label(text=('One sphere uses a bounded analytic relative-motion sweep.'
-                                          if state.secondary_collision_continuous else
-                                          'Sphere sets use bounded projection at solver samples.'))
-                    else:
-                        world.label(text=('Compound mode permits one moving sphere plus the support surface, optionally after static spheres, '
-                                          'two moving spheres plus the support surface, or one moving capsule after static spheres; '
-                                          'other moving-collider mixtures remain rejected.'))
-                    add=world.operator('b4ml.secondary_sphere',text='Add Sphere to Set',icon='ADD');add.operation='ADD'
-                    if state.secondary_spheres:
-                        moving_count=sum(bool(item.moving) for item in state.secondary_spheres)
-                        world.label(text=str(len(state.secondary_spheres))+' active sphere'+
-                                    ('s' if len(state.secondary_spheres)!=1 else ''))
-                        if moving_count:
-                            world.label(text=str(moving_count)+' following direct location animation')
-                        for index,item in enumerate(state.secondary_spheres):
-                            sphere=world.box()
-                            sphere.prop(item,'collider',text=str(index+1)+' Center')
-                            sphere.prop(item,'radius',text='Radius')
-                            fit=sphere.operator('b4ml.secondary_sphere',text='Fit Radius from Bounds',icon='FULLSCREEN_ENTER');fit.operation='FIT';fit.index=index
-                            sphere.prop(item,'moving',text='Follow Animation')
-                            sphere.prop(item,'scaling',text='Follow Radius Scale')
-                            remove=sphere.operator('b4ml.secondary_sphere',text='Remove',icon='X')
-                            remove.operation='REMOVE';remove.index=index
-                        clear=world.operator('b4ml.secondary_sphere',text='Clear Sphere Set',icon='TRASH');clear.operation='CLEAR'
-                    else:
-                        world.label(text='No set: uses New Sphere directly.')
-                    if (state.secondary_collision_shape=='COMPOUND'
-                            and state.secondary_collision_compound_capsule):
-                        world.prop(state,'secondary_capsule_start',text='Capsule Start Endpoint')
-                        world.prop(state,'secondary_capsule_end',text='Capsule End Endpoint')
-                        world.prop(state,'secondary_capsule_radius',text='Capsule Radius')
-                        world.prop(state,'secondary_capsule_moving',text='Follow Endpoint Animation')
-                        world.prop(state,'secondary_capsule_scaling',text='Follow Radius Scale')
-                        world.prop(state,'secondary_collision_continuous',text='Continuous-Time Sweep')
-                        world.label(text=('One moving capsule plus the support and static sphere set uses bounded relative-motion response; '
-                                          'mixed moving colliders and compound meshes are rejected.'
-                                          if state.secondary_capsule_moving else
-                                          'Static capsule only; enable endpoint animation for the bounded moving-capsule compound slice.'))
-                    if (state.secondary_collision_shape=='COMPOUND'
-                            and state.secondary_collision_compound_mesh):
-                        world.prop(state,'secondary_collision_mesh',text='Closed Mesh')
-                        if not state.secondary_collision_compound_capsule:
-                            world.prop(state,'secondary_collision_continuous',text='Continuous-Time Sweep (disable for compound mesh)')
-                        world.label(text='Static closed mesh only; deformation, object motion, volume mode, and continuous sweep are rejected in this compound.')
-                elif state.secondary_collision_shape=='CAPSULE':
-                    world.prop(state,'secondary_capsule_start',text='Start Endpoint')
-                    world.prop(state,'secondary_capsule_end',text='End Endpoint')
-                    world.prop(state,'secondary_capsule_radius',text='Radius')
-                    world.prop(state,'secondary_capsule_moving',text='Follow Endpoint Animation')
-                    world.prop(state,'secondary_capsule_scaling',text='Follow Radius Scale')
-                    world.prop(state,'secondary_collision_continuous',text='Continuous-Time Sweep')
-                    world.label(text=('Direct endpoint Actions with bounded interpolated sweep.' if state.secondary_capsule_moving and state.secondary_collision_continuous else
-                                      'Direct endpoint Actions sampled at solver frames.' if state.secondary_capsule_moving else
-                                      'Static, unparented endpoints; sweep is a bounded static capsule crossing check.' if state.secondary_collision_continuous else
-                                      'Static, unparented endpoints only.'))
-                elif state.secondary_collision_shape in {'MESH','VOLUME'}:
-                    world.prop(state,'secondary_collision_mesh',text='Triangle Mesh')
-                    world.prop(state,'secondary_collision_mesh_deforming',text='Follow Shape-Key Deformation')
-                    world.prop(state,'secondary_collision_mesh_moving',text='Follow Object Motion')
-                    if state.secondary_collision_shape=='VOLUME':
-                        world.prop(state,'secondary_collision_volume_radius',text='Control Volume Radius')
-                        world.label(text=('Closed mesh; finite spherical control volume; direct shape-key Action sampled per frame.'
-                                          if state.secondary_collision_mesh_deforming else
-                                          'Closed mesh; finite spherical control volume; static evaluated triangles.'))
-                    else:
-                        world.label(text=('Unparented mesh; direct shape-key Action sampled per frame.'
-                                          if state.secondary_collision_mesh_deforming else
-                                          'Static, unparented mesh without modifiers or animation.'))
-                    world.prop(state,'secondary_collision_continuous',text='Continuous-Time Sweep')
-                    if state.secondary_collision_continuous:
-                        world.label(text=('Closed shape-key mesh uses bounded interpolated sweep samples.'
-                                          if state.secondary_collision_mesh_deforming else
-                                          'Catches segment crossings between solver samples.'))
-                else:
-                    world.prop(state,'contact_surface',text='Planar Surface')
-                    if state.contact_surface is None:world.label(text='Uses the authored support plane.')
-                world.prop(state,'secondary_collision_clearance',text='Clearance')
-                world.prop(state,'secondary_restitution',text='Bounce')
-                world.prop(state,'secondary_surface_friction',text='Friction')
-            col.operator('b4ml.secondary_solve',text='Preview Secondary',icon='PLAY')
-            if state.secondary_input and state.secondary_output==state.candidate_action:
-                col.operator('b4ml.secondary',text='Restore Input').operation='RESET'
-            if state.secondary_running:box.label(text=state.secondary_progress+' (Esc to cancel)')
-            if state.secondary_metrics:
-                try:
-                    report=json.loads(state.secondary_metrics)
-                    count=len(report['controls']);box.label(text=str(count)+' control'+('s' if count!=1 else '')+'; '+report.get('space','LOCAL').title())
-                    if report.get('chain'):box.label(text=str(report.get('chain_links',0))+' coupled chain links')
-                    box.label(text=str(report['samples'])+' samples; '+str(report['curves'])+' editable curves')
-                    if report['rotation']:box.label(text='Max rotation: '+format(math.degrees(report['max_rotation_correction_radians']),'.2f')+' degrees')
-                    if report['location']:box.label(text='Max location: '+format(report['max_location_correction'],'.4g'))
-                    if report.get('torque_controls'):box.label(text=str(report['torque_controls'])+' torque control'+('s' if report['torque_controls']!=1 else '')+'; max '+format(report.get('max_control_torque',0.),'.4g'))
-                    if report.get('collision'):
-                        collider_count=report.get('collision_sphere_count',0)
-                        collider_label=('support + '+str(max(0,collider_count-1))+' sphere colliders'
-                                        if report.get('collision_compound') else
-                                        str(collider_count)+' sphere colliders' if collider_count>1 else
-                                        report.get('collision_shape','PLANE').title()+' collider')
-                        box.label(text=collider_label+'; '+str(report.get('collision_samples',0))+' contacts')
-                        box.label(text='Final penetration '+format(report.get('max_penetration_after',0.),'.3g'))
-                except (ValueError,KeyError,TypeError):pass
-            box.label(text='Priority poses remain exact; no learned model used.')
-        if profile.family == 'quadruped':
-            box = layout.box()
-            box.label(text='Quadruped Whole-Body Pose')
-            box.label(text='Generated Rigify cat, horse, or wolf')
-            if state.quadruped_payload:
-                quadruped_record = _json_object(state.quadruped_payload)
-                schema = quadruped_record.get('schema')
-                supports_spine_follow = schema in {3, 4}
-                supports_poles = schema == 4
-                if state.quadruped_targets.get('Head'):
-                    box.label(text=('Move body, paws, and poles; rotate Head.' if supports_poles else
-                                    'Move body/paws; rotate the location-locked Head.'))
-                else:
-                    box.label(text='Move body/paws; recover this legacy preview.')
-                for item in state.quadruped_targets:
-                    container = box.box() if item.name in quadruped_pose.POLE_TARGETS else box
-                    row = container.row(align=True)
-                    row.label(text=_quadruped_target_ui_label(item.name),
-                              icon='EMPTY_ARROWS' if item.name in {'Body','Head'} else 'EMPTY_DATA')
-                    if item.name in quadruped_pose.POLE_TARGETS:
-                        reset = row.operator('b4ml.quadruped_pose', text='Reset')
-                        reset.operation = 'RESET_TARGET'
-                        reset.target_name = item.name
-                        pole_actions = container.row(align=True)
-                        align = pole_actions.operator('b4ml.quadruped_pose', text='Align Bend')
-                        align.operation = 'ALIGN_POLE'
-                        align.target_name = item.name
-                        flip = pole_actions.operator('b4ml.quadruped_pose', text='Flip Side')
-                        flip.operation = 'FLIP_POLE'
-                        flip.target_name = item.name
-                        pole_distance = container.row(align=True)
-                        pole_distance.prop(item, 'pole_distance', text='')
-                        distance = pole_distance.operator('b4ml.quadruped_pose', text='Set Distance')
-                        distance.operation = 'SET_POLE_DISTANCE'
-                        distance.target_name = item.name
-                    else:
-                        row.prop(item, 'use_orientation', text='Rotation')
-                        reset = row.operator('b4ml.quadruped_pose', text='Reset')
-                        reset.operation = 'RESET_TARGET'
-                        reset.target_name = item.name
-                if supports_spine_follow:
-                    box.prop(state, 'quadruped_spine_follow')
-                    row = box.row()
-                    row.enabled = state.quadruped_spine_follow > 0
-                    row.prop(state, 'quadruped_neck_share')
-                else:
-                    box.label(text='Legacy direct recovery; Spine Follow is unavailable.')
-                mirror = box.row(align=True)
-                _draw_quadruped_mirror(mirror, 'LEFT_TO_RIGHT', 'Mirror L to R')
-                _draw_quadruped_mirror(mirror, 'RIGHT_TO_LEFT', 'Mirror R to L')
-                box.operator('b4ml.quadruped_pose', text='Solve Quadruped Pose').operation = 'SOLVE'
-                assets = box.row(align=True)
-                assets.operator('b4ml.quadruped_pose', text='Save Solved Pose').operation = 'SAVE_POSE_ASSET'
-                assets.operator('b4ml.quadruped_pose', text='Apply Pose').operation = 'APPLY_POSE_ASSET'
-                try:
-                    metrics = quadruped_record.get('metrics')
-                    if metrics:
-                        box.label(text='Max paw error: '+format(metrics['max_paw_error'], '.3g'))
-                        if 'max_pole_error' in metrics:
-                            box.label(text='Max pole error: '+format(metrics['max_pole_error'], '.3g'))
-                        if metrics.get('orientation_errors'):
-                            box.label(text='Max rotation error: '+format(math.degrees(metrics['max_orientation_error']), '.3g')+' deg')
-                        distribution = metrics.get('spine_distribution')
-                        if distribution and distribution.get('active'):
-                            box.label(text='Spine follow: '+format(distribution['follow'] * 100, '.0f')+'%; Neck share '+format(distribution['neck_share'] * 100, '.0f')+'%')
-                except (ValueError, KeyError, TypeError, AttributeError):
-                    pass
-                row = box.row(align=True)
-                row.operator('b4ml.quadruped_pose', text='Keep as Pose Anchor', icon='CHECKMARK').operation = 'KEEP'
-                row.operator('b4ml.quadruped_pose', text='Cancel', icon='X').operation = 'CANCEL'
-            else:
-                box.prop(state, 'quadruped_spine_follow')
-                row = box.row()
-                row.enabled = state.quadruped_spine_follow > 0
-                row.prop(state, 'quadruped_neck_share')
-                box.prop(state, 'quadruped_use_poles')
-                if state.quadruped_use_poles:
-                    try:
-                        pole_modes = quadruped_pose.pole_mode_values(obj)
-                        if not all(abs(value - 1.0) <= 1e-7 for value in pole_modes.values()):
-                            box.label(text='Pole Vectors need pose-preserving matching.', icon='INFO')
-                            row = box.row()
-                            row.enabled = (state.candidate_action is None and not state.posing_payload and
-                                           not state.body_payload and not state.temporal_running and
-                                           not state.flight_running and not state.contact_running and
-                                           not state.contact_suggest_running and not state.secondary_running and
-                                           not state.cleanup_running and not workflow.motion_layer.find(obj) and
-                                           not profile.missing)
-                            row.operator('b4ml.quadruped_pose',
-                                         text='Match + Enable All Poles',
-                                         icon='FORCE_MAGNETIC').operation = 'MATCH_POLES'
-                    except (ValueError, KeyError, TypeError) as exc:
-                        box.label(text=str(exc), icon='ERROR')
-                row = box.row()
-                row.enabled = (state.candidate_action is None and not state.posing_payload and
-                               not state.body_payload and not profile.missing and
-                               profile.name.startswith('Rigify Generated Quadruped'))
-                row.operator('b4ml.quadruped_pose', text='Start Quadruped Pose').operation = 'BEGIN'
-                if not profile.name.startswith('Rigify Generated Quadruped'):
-                    box.label(text='Generate this Rigify metarig to use paw and pole posing.')
-            box.label(text='Position, rotation and procedural spine follow; no learned gait model.')
-            contact_box = layout.box()
-            contact_box.prop(state, 'show_quadruped_contacts',
-                             icon='TRIA_DOWN' if state.show_quadruped_contacts else 'TRIA_RIGHT',
-                             emboss=False)
-            if state.show_quadruped_contacts:
-                contact_box.label(text='Review suggestions or capture paw holds.')
-                contact_box.label(text='Priority poses stay unchanged.')
-                col = contact_box.column()
-                col.enabled = (not state.contact_running and not state.contact_suggest_running and not state.flight_running and
-                               not state.secondary_running and not state.cleanup_running and not state.quadruped_payload)
-                col.prop(state, 'contact_surface')
-                if state.contact_surface is None:
-                    col.prop(state, 'support_plane_point')
-                    col.prop(state, 'support_plane_normal')
-                for field in ('contact_suggest_distance', 'contact_suggest_speed',
-                              'contact_suggest_min_frames', 'contact_suggest_gap_frames'):
-                    col.prop(state, field)
-                col.label(text='Thresholds use body-to-paw distance.')
-                col.operator('b4ml.contact_suggest', text='Suggest Paw Contacts', icon='VIEWZOOM')
-                col.prop(state,'show_contact_overlay')
-                overlay_options=col.row();overlay_options.enabled=state.show_contact_overlay
-                overlay_options.prop(state,'show_all_contact_overlays')
-                review_counts = _contact_review_counts(obj)
-                col.label(text=(f'{review_counts["PROPOSED"]} proposed | '
-                                f'{review_counts["ACCEPTED"]} accepted | '
-                                f'{review_counts["REJECTED"]} rejected'))
-                if review_counts['PROPOSED']:
-                    navigate = col.row(align=True)
-                    navigate.operator('b4ml.contact', text='Previous Proposed', icon='TRIA_LEFT').operation = 'PREVIOUS_PROPOSED'
-                    navigate.operator('b4ml.contact', text='Next Proposed', icon='TRIA_RIGHT').operation = 'NEXT_PROPOSED'
-                    bulk = col.row(align=True)
-                    bulk.operator('b4ml.contact', text='Accept All Proposed', icon='CHECKMARK').operation = 'ACCEPT_ALL'
-                    bulk.operator('b4ml.contact', text='Reject All Proposed', icon='X').operation = 'REJECT_ALL'
-                col.prop(state, 'quadruped_contact_limb')
-                col.prop(state, 'show_contact_details')
-                if state.show_contact_details:
-                    col.prop(state, 'contact_offset', text='Offset from Paw Tip')
-                col.operator('b4ml.contact', text='Capture Paw Contact Here').operation = 'CAPTURE'
-                quad_contacts = [item for item in state.contacts if item.limb in quadruped_contacts.LIMBS]
-                if quad_contacts:
-                    col.prop(state, 'contact_index')
-                    if 0 <= state.contact_index < len(state.contacts):
-                        item = state.contacts[state.contact_index]
-                        if item.limb in quadruped_contacts.LIMBS:
-                            col.label(text=item.name)
-                            col.prop(item, 'enabled')
-                            col.label(text='Review: ' + item.review_state.title())
-                            if item.reason:
-                                col.label(text=item.reason)
-                            if item.review_state == 'PROPOSED':
-                                col.label(text='Score: ' + format(item.confidence, '.2f'))
-                                col.label(text=item.provenance)
-                                review = col.row(align=True)
-                                review.operator('b4ml.contact', text='Accept').operation = 'ACCEPT'
-                                review.operator('b4ml.contact', text='Reject').operation = 'REJECT'
-                            for field in ('start', 'end'):
-                                col.prop(item, field)
-                            col.prop(item, 'asymmetric_blend')
-                            for field in (('blend_in', 'blend_out') if item.asymmetric_blend else ('blend',)):
-                                col.prop(item, field)
-                            for field in ('strength', 'lock_rotation'):
-                                col.prop(item, field)
-                            try:
-                                timing=contact_visualization.timing(item,posing._frame(context.scene))
-                                col.label(text=f"Now: {timing['phase']} | {timing['influence']*100:.0f}% influence")
-                            except ValueError:
-                                col.label(text='Now: invalid contact timing',icon='ERROR')
-                            _draw_contact_interval_controls(col, state)
-                            if state.show_contact_details:
-                                for field in ('point', 'offset'):
-                                    col.prop(item, field)
-                            col.operator('b4ml.contact', text='Remove Paw Contact').operation = 'REMOVE'
-                row = col.row()
-                row.enabled = bool(state.candidate_action and quadruped_contacts.rows(obj))
-                row.operator('b4ml.contact_solve', text='Preview Four-Paw Correction')
-                if state.contact_input and state.contact_output == state.candidate_action:
-                    col.operator('b4ml.contact', text='Restore Before Paw Contacts').operation = 'RESET'
-                if state.contact_running:
-                    contact_box.label(text=state.contact_progress + ' (Esc to cancel)')
-                if state.contact_suggest_running:
-                    contact_box.label(text=state.contact_suggest_progress + ' (Esc to cancel)')
-                try:
-                    metrics = json.loads(state.contact_metrics)
-                    if metrics.get('backend') == 'generated_rigify_four_paw_contacts_v1':
-                        contact_box.label(text='Paw drift: '+format(metrics['contact_drift_before'], '.3g')+
-                                               ' -> '+format(metrics['contact_drift_after'], '.3g'))
-                except (ValueError, KeyError, TypeError):
-                    pass
-                phase_row = col.row()
-                phase_row.enabled = bool(state.candidate_action and quadruped_contacts.rows(obj))
-                phase_row.operator('b4ml.quadruped_gait', text='Analyze Gait Phases', icon='TIME').operation = 'ANALYZE'
-                if state.quadruped_gait_report:
-                    try:
-                        gait = quadruped_gait.display_report(obj)
-                        index = min(max(int(state.quadruped_gait_index), 0), len(gait['phases']) - 1)
-                        phase = gait['phases'][index]
-                        contact_box.label(text=f"Phase {index + 1}/{len(gait['phases'])}: {phase['label']}")
-                        contact_box.label(text=f"Frames {phase['start']:g} to {phase['end']:g}")
-                        paws = ', '.join(value.replace('-', ' ') for value in phase['support_limbs'])
-                        contact_box.label(text='Support: ' + (paws if paws else 'none'))
-                        contact_box.label(text='Navigation revalidates the candidate action.')
-                        navigate = col.row(align=True)
-                        navigate.operator('b4ml.quadruped_gait', text='Previous Phase', icon='TRIA_LEFT').operation = 'PREVIOUS'
-                        navigate.operator('b4ml.quadruped_gait', text='Next Phase', icon='TRIA_RIGHT').operation = 'NEXT'
-                        col.operator('b4ml.quadruped_gait', text='Clear Phase Report', icon='X').operation = 'CLEAR'
-                    except ValueError as exc:
-                        _draw_wrapped(contact_box, str(exc), icon='ERROR')
-                        col.operator('b4ml.quadruped_gait', text='Clear Stale Report', icon='X').operation = 'CLEAR'
-                contact_box.label(text='Procedural contact-phase review; animation stays unchanged.')
-        box = layout.box()
-        box.label(text='Humanoid Whole-Body Pose')
-        box.label(text='Experimental learned model')
-        if state.body_payload:
-            box.label(text='Move targets in Object Mode.')
-            box.label(text='Use Live Solve or Solve Whole Body.')
-            box.label(text='Enable Rotation to use axes.')
-            box.label(text='Static balance is optional.')
-            col=box.column();col.enabled=not state.body_running or state.body_live
-            try:
-                controls_version=json.loads(state.body_payload).get('controls_version')
-                extra=isinstance(controls_version,int) and controls_version>=1
-                chest_orientation=isinstance(controls_version,int) and controls_version>=4
-                neck_orientation=isinstance(controls_version,int) and controls_version>=5
-            except (ValueError,TypeError):extra=False;chest_orientation=False;neck_orientation=False
-            col.prop(state,'show_body_targets',icon='TRIA_DOWN' if state.show_body_targets else 'TRIA_RIGHT')
-            if state.show_body_targets:
-                mirror=col.row(align=True);mirror.enabled=not state.body_live and not state.body_running
-                _draw_body_mirror(mirror,'LEFT_TO_RIGHT','Mirror L to R')
-                _draw_body_mirror(mirror,'RIGHT_TO_LEFT','Mirror R to L')
-                col.label(text='Semantic Pose Asset')
-                asset=col.row(align=True);asset.enabled=not state.body_live and not state.body_running
-                save=asset.operator('b4ml.body',text='Save Solved Pose');save.operation='SAVE_POSE_ASSET'
-                apply=asset.row(align=True);apply.enabled=isinstance(context.scene.get(body_preview.POSE_ASSET_KEY),str)
-                use=apply.operator('b4ml.body',text='Apply Pose');use.operation='APPLY_POSE_ASSET'
-                for item in state.body_targets:
-                    row=col.row(align=True)
-                    position=row.row();position.enabled=item.name!='Pelvis'
-                    if item.name=='Pelvis' and state.body_balance and state.body_balance_strength>0 and state.body_balance_free_pelvis:position.label(text='Pelvis position: free')
-                    else:position.prop(item,'enabled',text=item.name)
-                    if (extra and body_preview.target_supports_orientation(item.name)
-                            and (item.name!='Chest' or chest_orientation)
-                            and (item.name!='Neck' or neck_orientation)):
-                        row.prop(item,'use_orientation',text='Rot')
-                    elif item.name in {'Chest','Neck'}:row.label(text='Restart for rotation')
-                    _draw_body_target_reset(row,item.name,not state.body_live and not state.body_running)
-                    if extra and item.pole and body_preview.target_supports_pole(item.name):
-                        pole_row=col.row(align=True)
-                        pole_row.prop(item,'use_pole',text='Elbow Direction' if item.name.startswith('Hand') else 'Knee Direction')
-                        pole_actions=col.row(align=True)
-                        _draw_body_pole_align(pole_actions,item.name,not state.body_live and not state.body_running)
-                        _draw_body_pole_flip(pole_actions,item.name,not state.body_live and not state.body_running)
-                        pole_distance=col.row(align=True)
-                        _draw_body_pole_distance(pole_distance,item,not state.body_live and not state.body_running)
-                        _draw_body_pole_status(col,item.id_data,item.name)
-            if not extra:box.label(text='Restart for rotation/poles.')
-            col.prop(state,'show_body_limits',icon='TRIA_DOWN' if state.show_body_limits else 'TRIA_RIGHT')
-            if state.show_body_limits:
-                col.label(text='Rotation limits')
-                col.label(text='Opt-in animation estimates; tune per character.')
-                preset_row=col.row(align=True);preset_row.prop(state,'body_limit_preset',text='')
-                preset_row.operator('b4ml.body',text='Apply to Mapped Controls').operation='APPLY_LIMIT_PRESET'
-                col.prop_search(state,'body_limit_control',state,'body_limits',text='Control')
-                item=state.body_limits.get(state.body_limit_control)
-                if item is not None:
-                    limits_box=col.box();limits_box.prop(item,'enabled',text='Limit This Control')
-                    limits_box.label(text='Source: '+item.preset_provenance)
-                    if item.enabled:
-                        if item.joint_available:limits_box.prop(item,'space')
-                        else:limits_box.label(text='Control space only')
-                        limits_box.prop(item,'swing')
-                        limits_box.prop(item,'twist_min');limits_box.prop(item,'twist_max')
-                        limits_box.prop(item,'use_bend_plane')
-                        if item.use_bend_plane:
-                            limits_box.prop(item,'bend_axis')
-                            limits_box.operator('b4ml.body',text='Use Current Bend as Forward').operation='CALIBRATE_BEND'
-                            limits_box.prop(item,'bend_min');limits_box.prop(item,'bend_max');limits_box.prop(item,'bend_sideways')
-                col.label(text=f'{sum(i.enabled for i in state.body_limits)} controls limited')
-            col.prop(state,'body_balance')
-            if state.body_balance:
-                for field in ('body_balance_strength','body_balance_inset','body_balance_free_pelvis','body_balance_dynamic'):col.prop(state,field)
-                if state.body_balance_dynamic:
-                    col.prop(state,'body_balance_velocity')
-                    col.label(text='Procedural capture point; no force solve.')
-                col.label(text='Authored mass + support')
-                col.label(text='Support limbs stay pinned.')
-            col.prop(state,'body_strength');col.prop(state,'body_influence')
-            manual=col.row();manual.enabled=not state.body_live
-            manual.operator('b4ml.body_solve',text='Solve Whole Body')
-            live=box.row();live.operator('b4ml.body_live',text='Stop Live Solve' if state.body_live else 'Start Live Solve',icon='PAUSE' if state.body_live else 'PLAY')
-            if state.body_balance:
-                try:
-                    metrics=json.loads(state.body_payload).get('metrics',{}).get('balance')
-                    if metrics:
-                        col.label(text='Last dynamic balance solve:' if metrics.get('dynamic') else 'Last static balance solve:')
-                        col.label(text='COM error: '+format(metrics['com_error'],'.3g'))
-                        col.label(text='Margin: '+format(metrics['after_margin'],'.5f'))
-                except (ValueError,KeyError,TypeError):pass
-            col.operator('b4ml.body',text='Keep as Pose Anchor',icon='CHECKMARK').operation='KEEP'
-            col.operator('b4ml.body',text='Cancel Preview',icon='X').operation='CANCEL'
-            if state.body_running:box.label(text=state.body_progress+' (Esc to cancel)')
-        else:
-            row=box.row();row.enabled=humanoid and not state.posing_payload and not state.body_payload and not state.quadruped_payload and state.candidate_action is None
-            row.operator('b4ml.body',text='Start Whole-Body Pose').operation='BEGIN'
-            if not humanoid:box.label(text='Humanoid solver unavailable for this rig schema.')
-        box=layout.box()
-        box.label(text='Humanoid Assisted Pose - Geometric Solver')
-        if state.posing_payload:
-            box.label(text='Move the sphere targets in Object Mode.')
-            box.label(text='IK input is matched to an editable FK pose.')
-            for item in state.pose_targets:
-                row = box.row(align=True)
-                row.prop(item, 'enabled', text=item.name)
-                if item.pole:
-                    row.prop(item, 'learn_bend', text='Learn Bend')
-            if state.pose_metrics:
-                try:
-                    metrics = json.loads(state.pose_metrics)
-                except (ValueError, TypeError):
-                    metrics = {}
-                for limb in metrics.get('limbs', []):
-                    reason = limb.get('bend_source', 'authored pole')
-                    if reason not in ('learned', 'authored pole'):
-                        box.label(text=f"{limb['limb']}: {reason}", icon='INFO')
-            box.prop(state, 'pose_offset')
-            box.prop(state, 'pose_strength')
-            box.prop(state, 'max_bend')
-            if any(item.learn_bend for item in state.pose_targets):
-                box.prop(state, 'learned_bend_strength')
-            box.operator('b4ml.pose', text='Solve Pose').operation = 'SOLVE'
-            row = box.row(align=True)
-            row.operator('b4ml.pose', text='Keep as Pose Anchor', icon='CHECKMARK').operation = 'KEEP'
-            row.operator('b4ml.pose', text='Cancel', icon='X').operation = 'CANCEL'
-        else:
-            row = box.row()
-            row.enabled = humanoid and state.candidate_action is None and not state.body_payload and not state.quadruped_payload
-            row.operator('b4ml.pose', text='Start Assisted Pose').operation = 'BEGIN'
-        box = layout.box()
-        box.label(text='1. Capture Key Poses')
-        col = box.column()
-        col.enabled = state.candidate_action is None and not state.posing_payload and not state.body_payload and not state.quadruped_payload
-        col.prop(state, 'selected_only')
-        col.operator('b4ml.action', text='Capture Pose at Current Frame').operation = 'CAPTURE'
-        col.operator('b4ml.action', text='Remove Pose at Current Frame').operation = 'REMOVE'
-        if state.interpolation_method=='POSES':
-            breakdown=col.row();breakdown.enabled=len(state.anchors)>=2
-            breakdown.operator('b4ml.breakdown_pose',text='Create Breakdown Pose',icon='KEY_HLT')
-            series=col.row();series.enabled=len(state.anchors)>=2
-            series.operator('b4ml.inbetween_series',text='Procedural Inbetween Series',icon='KEYFRAME_HLT')
-        anchors, anchor_page, anchor_page_count = _anchor_page(state)
-        if anchor_page_count > 1:
-            row=col.row(align=True)
-            previous=row.row(align=True);previous.enabled=anchor_page>1
-            operation=previous.operator('b4ml.anchor_page',text='',icon='TRIA_LEFT')
-            operation.page=max(1,anchor_page-1)
-            row.label(text=_anchor_page_label(anchor_page,anchor_page_count))
-            following=row.row(align=True);following.enabled=anchor_page<anchor_page_count
-            operation=following.operator('b4ml.anchor_page',text='',icon='TRIA_RIGHT')
-            operation.page=min(anchor_page_count,anchor_page+1)
-        first_anchor_frame=min((anchor.frame for anchor in state.anchors),default=None)
-        last_anchor_frame=max((anchor.frame for anchor in state.anchors),default=None)
-        for anchor in anchors:
-            row=col.row(align=True);row.label(text=anchor.name,icon='KEY_HLT')
-            retime=row.operator('b4ml.retime_anchor',text='',icon='TIME')
-            retime.source_frame=anchor.frame
-            ripple=row.operator('b4ml.ripple_retime',text='',icon='TRIA_RIGHT')
-            ripple.source_frame=anchor.frame
-            if last_anchor_frame is not None and abs(anchor.frame-last_anchor_frame)>=1e-5:
-                scale=row.operator('b4ml.pose_spacing_scale',text='',icon='FULLSCREEN_ENTER')
-                scale.pivot_frame=anchor.frame
-                equalize=row.operator('b4ml.pose_spacing_equalize',text='=')
-                equalize.pivot_frame=anchor.frame
-            if (state.interpolation_method=='POSES' and first_anchor_frame is not None and
-                    abs(anchor.frame-first_anchor_frame)>=1e-5):
-                edit=row.operator('b4ml.transition_timing',
-                    text='Timing*' if workflow.has_transition_timing_override(anchor.payload) else 'Timing')
-                edit.frame=anchor.frame
-                copy=row.operator('b4ml.transition_timing_transfer',text='',icon='COPYDOWN')
-                copy.operation='COPY';copy.frame=anchor.frame
-                paste_row=row.row(align=True);paste_row.enabled=bool(state.timing_clipboard)
-                paste=paste_row.operator('b4ml.transition_timing_transfer',text='',icon='PASTEDOWN')
-                paste.operation='PASTE';paste.frame=anchor.frame
-            reuse=row.operator('b4ml.action',text='',icon='DUPLICATE')
-            reuse.operation='REUSE';reuse.anchor_frame=anchor.frame
-        box = layout.box()
-        box.label(text='2. Generate and Review')
-        if state.candidate_action:
-            box.label(text=state.candidate_action.name, icon='ACTION')
-            box.label(text='Scrub the timeline to review.')
-            row = box.row(align=True)
-            row.operator('b4ml.action', text='Keep Candidate', icon='CHECKMARK').operation = 'KEEP'
-            row.operator('b4ml.action', text='Discard', icon='X').operation = 'DISCARD'
-        else:
-            box.prop(state, 'interpolation_method')
-            if state.interpolation_method=='POSES':
-                box.prop(state, 'easing')
-                box.prop(state, 'timing_bias', slider=True)
-                if abs(state.timing_bias) > 1e-6:
-                    box.label(text=('Earlier arrival' if state.timing_bias > 0 else 'Later arrival') +
-                                   '; pose frames stay fixed.')
-            else:
-                box.prop(state,'temporal_strength',slider=True)
-                box.prop(state,'temporal_smoothing')
-                box.label(text='Procedural; strength blends toward endpoint interpolation')
-            row = box.row()
-            row.enabled = (len(state.anchors) >= 2 and not state.posing_payload and not state.body_payload and not state.quadruped_payload
-                           and (state.interpolation_method != 'AUTHORED' or humanoid))
-            if state.interpolation_method=='AUTHORED':row.operator('b4ml.temporal_preview',text='Generate Whole-body Preview',icon='PLAY')
-            else:row.operator('b4ml.action', text='Generate Interpolation Preview', icon='PLAY').operation = 'PREVIEW'
-            if state.interpolation_method=='AUTHORED' and not humanoid:
-                box.label(text='Choose Pose Blending for quadrupeds.')
-        if state.kept_action and not state.candidate_action and not state.posing_payload and not state.body_payload and not state.quadruped_payload:
-            layout.operator('b4ml.action', text='Restore Source Animation').operation = 'RESTORE_SOURCE'
-        layout.label(text=state.status)
-
-CLASSES = (B4ML_PG_anchor, B4ML_PG_target, B4ML_PG_joint_limit, B4ML_PG_mass_segment, B4ML_PG_secondary_sphere, B4ML_PG_contact, B4ML_PG_flight, B4ML_PG_settings, B4ML_OT_anchor_page, B4ML_OT_mapping_correction, B4ML_OT_transition_timing, B4ML_OT_breakdown_pose, B4ML_OT_inbetween_series, B4ML_OT_retime_anchor, B4ML_OT_ripple_retime, B4ML_OT_pose_spacing_scale, B4ML_OT_pose_spacing_equalize, B4ML_OT_transition_timing_transfer, B4ML_OT_action, B4ML_OT_pose, B4ML_OT_body, B4ML_OT_body_solve, B4ML_OT_body_live, B4ML_OT_quadruped_pose, B4ML_OT_contact, B4ML_OT_contact_suggest, B4ML_OT_quadruped_gait, B4ML_OT_contact_solve, B4ML_OT_temporal_preview, B4ML_OT_temporal_cancel, B4ML_OT_flight, B4ML_OT_flight_solve, B4ML_OT_cleanup, B4ML_OT_cleanup_solve, B4ML_OT_secondary, B4ML_OT_secondary_select_chain, B4ML_OT_secondary_selection_swap, B4ML_OT_secondary_control_load, B4ML_OT_secondary_sphere, B4ML_OT_secondary_solve, B4ML_OT_support, B4ML_OT_motion_result, B4ML_PT_main)
+CLASSES = (B4ML_PG_anchor, B4ML_PG_target, B4ML_PG_joint_limit, B4ML_PG_mass_segment, B4ML_PG_secondary_sphere, B4ML_PG_contact, B4ML_PG_flight, B4ML_PG_settings, B4ML_OT_anchor_page, B4ML_OT_mapping_correction, B4ML_OT_transition_timing, B4ML_OT_breakdown_pose, B4ML_OT_inbetween_series, B4ML_OT_retime_anchor, B4ML_OT_ripple_retime, B4ML_OT_pose_spacing_scale, B4ML_OT_pose_spacing_equalize, B4ML_OT_transition_timing_transfer, B4ML_OT_action, B4ML_OT_pose, B4ML_OT_body, B4ML_OT_body_solve, B4ML_OT_body_live, B4ML_OT_quadruped_pose, B4ML_OT_contact, B4ML_OT_contact_suggest, B4ML_OT_quadruped_gait, B4ML_OT_contact_solve, B4ML_OT_temporal_preview, B4ML_OT_temporal_cancel, B4ML_OT_flight, B4ML_OT_flight_solve, B4ML_OT_cleanup, B4ML_OT_cleanup_solve, B4ML_OT_secondary, B4ML_OT_secondary_select_chain, B4ML_OT_secondary_selection_swap, B4ML_OT_secondary_control_load, B4ML_OT_secondary_sphere, B4ML_OT_secondary_solve, B4ML_OT_support, B4ML_OT_motion_result)
 
 def register():
     registered = []
@@ -2845,7 +1955,13 @@ def register():
         cleanup.register()
         secondary_motion.register()
         temporal_preview.register()
+        from . import ui_workflow
+        ui_workflow.register()
     except Exception:
+        try:
+            from . import ui_workflow as _uw; _uw.unregister()
+        except Exception:
+            pass
         temporal_preview.unregister()
         secondary_motion.unregister()
         cleanup.unregister()
@@ -2862,6 +1978,11 @@ def register():
         raise
 
 def unregister():
+    try:
+        from . import ui_workflow
+        ui_workflow.unregister()
+    except Exception as exc:
+        print('[b4ml] ui_workflow.unregister failed:', exc)
     temporal_preview.unregister()
     secondary_motion.unregister()
     cleanup.unregister()
