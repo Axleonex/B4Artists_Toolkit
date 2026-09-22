@@ -44,7 +44,7 @@ class PublicBetaPackageV1Tests(unittest.TestCase):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         guide = (ROOT / "docs/b4artists_ml/PUBLIC-BETA-v0.37.51.md").read_text(encoding="utf-8")
         gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
-        self.assertIn("0.37.51 beta", readme)
+        self.assertIn("0.38.0 beta", readme)
         self.assertIn("no automatic telemetry", guide)
         self.assertIn("not training authorization", guide)
         self.assertIn("Repository publication checklist", guide)
