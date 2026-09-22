@@ -79,7 +79,7 @@ class B4ML_PT_setup(_Panel):  # type: ignore[valid-type]
         return True
 
     def draw(self, context) -> None:
-        rig, snap, st = header.prelude(self.layout, context)
+        rig, snap, st = header.prelude(self.layout, context, full=True)
 
         box = self.layout.box()
 
@@ -97,9 +97,10 @@ class B4ML_PT_setup(_Panel):  # type: ignore[valid-type]
             b4ml_state = getattr(rig, 'b4ml', None) if rig is not None else None
             box.label(text=getattr(b4ml_state, 'status', ''))
         else:
-            row = box.row()
-            row.alert = True
-            row.label(text=snap.mapping_error or copy.CARDS['UNSUPPORTED_RIG'])
+            err_box = box.box()
+            err_box.alert = True
+            header.wrap_label(err_box, snap.mapping_error, icon='ERROR',
+                              width_px=getattr(getattr(context, 'region', None), 'width', 220))
 
         # 4. Check Rig — primary action; drawn directly, never gated
         op = box.operator('b4ml.action', text=copy.BUTTONS['setup.inspect'], icon='VIEWZOOM')
