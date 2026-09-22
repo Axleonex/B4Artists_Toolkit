@@ -89,6 +89,16 @@ STAGE_SIZE: int = 14   # blf pixel size for HUD first line
 
 _N_CIRCLE: int = 32    # polyline segments per ring
 
+# HUD alert/accept colours — match contact_visualization._COLORS where available
+# (contact_visualization.py:22-27  _COLORS fallback values)
+try:
+    from b4artists_ml import contact_visualization as _contact_vis
+    _HUD_BAD_COLOR:  tuple[float, float, float] = _contact_vis._COLORS.get('REJECTED', (0.95, 0.18, 0.18))
+    _HUD_GOOD_COLOR: tuple[float, float, float] = _contact_vis._COLORS.get('ACCEPTED', (0.18, 0.92, 0.45))
+except Exception:
+    _HUD_BAD_COLOR  = (0.95, 0.18, 0.18)
+    _HUD_GOOD_COLOR = (0.18, 0.92, 0.45)
+
 # ---------------------------------------------------------------------------
 # Module-level state  (populated by register / cleared by unregister)
 # ---------------------------------------------------------------------------
@@ -197,6 +207,93 @@ def build_payload(context) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
+# Pure HUD helper (plan §4; contract §DESIGN PLAN)
+# ---------------------------------------------------------------------------
+
+def hud_lines(snapshot, rig=None) -> list[tuple[str, tuple]]:
+    """Return HUD text lines with colours for the current posing session.
+
+    stage.py:74-85  Snapshot.posing/.candidate/.kept/.mode
+    copy.py:87-98   BADGES — state badge templates
+    copy.py:129-140 HUD — mode_hint / mode_alert
+
+    Returns [] when no session or preview is active
+    (i.e. not (snapshot.posing or snapshot.candidate or snapshot.kept)).
+
+    Each element is (text, rgb_3tuple) for a normal line, or
+    ('', ((lbl, rgb), ...)) for the legend group — an empty text with a
+    tuple-of-pairs second field; the draw handler detects this form and
+    renders it horizontally at the current y position.
+
+    Pure: no bpy context access, never raises.
+    """
+    if not (snapshot.posing or snapshot.candidate or snapshot.kept):
+        return []
+
+    lines: list[tuple[str, tuple]] = []
+    try:
+        state_s = _st_module.evaluate(snapshot)
+
+        # Line 1 — stage + state badge
+        badge_tmpl = BADGES.get(state_s.state_name, '')
+        if '{name}' in badge_tmpl and rig is not None:
+            act = (getattr(rig.b4ml, 'candidate_action', None)
+                   if snapshot.candidate else getattr(rig.b4ml, 'kept_action', None))
+            act_name = getattr(act, 'name', '') if act is not None else ''
+            badge = badge_tmpl.format(name=act_name) if act_name else badge_tmpl.replace('{name}', '').strip()
+        else:
+            badge = badge_tmpl
+        line1 = f'{state_s.current}  {badge}' if badge else state_s.current
+        lines.append((line1, (1.0, 1.0, 1.0)))
+
+        # Line 2 — mode hint / alert
+        if snapshot.mode != 'OBJECT':
+            hint = HUD.get('mode_alert', 'Switch to Object Mode')
+            hcol: tuple[float, float, float] = _HUD_BAD_COLOR
+        else:
+            hint = HUD.get('mode_hint', 'Move targets in Object Mode')
+            hcol = (0.80, 0.80, 0.80)
+        lines.append((hint, hcol))
+
+        # Line 3 — legend group; ('', ((lbl, rgb), ...)) signals horizontal render
+        legend_items: tuple = tuple(
+            (lbl_text, ROLE_COLORS.get(role, (1.0, 1.0, 1.0)))
+            for role, lbl_text in ROLE_LABELS.items()
+        )
+        lines.append(('', legend_items))
+
+        # Line 4 — original-vs-preview badge when a preview or kept result exists
+        if snapshot.candidate and rig is not None:
+            act = getattr(rig.b4ml, 'candidate_action', None)
+            aname = getattr(act, 'name', '') if act is not None else ''
+            b4 = f'Preview: {aname}' if aname else 'Preview active'
+            lines.append((b4, _HUD_GOOD_COLOR))
+        elif snapshot.kept and rig is not None:
+            act = getattr(rig.b4ml, 'kept_action', None)
+            aname = getattr(act, 'name', '') if act is not None else ''
+            b4 = f'Kept: {aname}' if aname else 'Kept result'
+            lines.append((b4, _HUD_GOOD_COLOR))
+
+        # Line 5 — frame-range bar: "frames A–B  (N key poses)"
+        if rig is not None:
+            anchors = list(getattr(rig.b4ml, 'anchors', []))
+            if anchors:
+                frames = sorted(
+                    a.frame for a in anchors
+                    if hasattr(a, 'frame') and math.isfinite(float(a.frame))
+                )
+                if len(frames) >= 2:
+                    fr_text = (
+                        f'frames {int(frames[0])}\u2013{int(frames[-1])}'
+                        f'  ({len(frames)} key poses)'
+                    )
+                    lines.append((fr_text, (0.70, 0.70, 0.70)))
+    except Exception:
+        pass
+    return lines
+
+
+# ---------------------------------------------------------------------------
 # POST_VIEW draw — rings and joint lines in world space
 # ---------------------------------------------------------------------------
 
@@ -289,7 +386,6 @@ def _draw_2d() -> None:
             return
 
         from b4artists_ml import workflow as _workflow
-        from b4artists_ml import contact_visualization as _cv
         from bpy_extras import view3d_utils
         from mathutils import Vector
 
@@ -329,12 +425,9 @@ def _draw_2d() -> None:
             return
 
         snap = _st_module.snapshot(context)
-        if not (snap.posing or snap.candidate or snap.kept):
+        hud = hud_lines(snap, obj)
+        if not hud:
             return
-
-        state_s = _st_module.evaluate(snap)
-        bad_color  = _cv._COLORS.get('REJECTED', (0.95, 0.18, 0.18))
-        good_color = _cv._COLORS.get('ACCEPTED', (0.18, 0.92, 0.45))
 
         stage_px = max(1, int(STAGE_SIZE * ui_scale))
         lbl_px   = max(1, int(LABEL_SIZE * ui_scale))
@@ -353,71 +446,29 @@ def _draw_2d() -> None:
             blf.position(font_id, float(x), float(y_pos), 0.0)
             blf.draw(font_id, txt)
 
-        # Line 1 — stage + state badge
-        badge_tmpl = BADGES.get(state_s.state_name, '')
-        if '{name}' in badge_tmpl:
-            act = (getattr(obj.b4ml, 'candidate_action', None)
-                   if snap.candidate else getattr(obj.b4ml, 'kept_action', None))
-            act_name = getattr(act, 'name', '') if act is not None else ''
-            badge = badge_tmpl.format(name=act_name) if act_name else badge_tmpl.replace('{name}', '').strip()
-        else:
-            badge = badge_tmpl
-        line1 = f'{state_s.current}  {badge}' if badge else state_s.current
-        _text(line1, (1.0, 1.0, 1.0), stage_px, x0, y)
-        y -= line_h
-
-        # Line 2 — mode hint / alert
-        if context.mode != 'OBJECT':
-            hint = HUD.get('mode_alert', 'Switch to Object Mode')
-            hcol = bad_color
-        else:
-            hint = HUD.get('mode_hint', 'Move targets in Object Mode')
-            hcol = (0.80, 0.80, 0.80)
-        _text(hint, hcol, lbl_px, x0, y)
-        y -= lbl_h
-
-        # Line 3 — legend: role labels in their palette colours
-        blf.size(font_id, lbl_px)
-        lx = x0
-        for role, lbl_text in ROLE_LABELS.items():
-            rc = ROLE_COLORS.get(role, (1.0, 1.0, 1.0))
-            blf.color(font_id, 0.0, 0.0, 0.0, 0.7)
-            blf.position(font_id, float(lx + 1), float(y - 1), 0.0)
-            blf.draw(font_id, lbl_text)
-            blf.color(font_id, rc[0], rc[1], rc[2], 1.0)
-            blf.position(font_id, float(lx), float(y), 0.0)
-            blf.draw(font_id, lbl_text)
-            try:
-                tw, _ = blf.dimensions(font_id, lbl_text + ' ')
-            except Exception:
-                tw = lbl_px * (len(lbl_text) + 1)
-            lx += int(tw)
-        y -= lbl_h
-
-        # Line 4 — original-vs-preview badge when a preview or kept result exists
-        if snap.candidate:
-            act = getattr(obj.b4ml, 'candidate_action', None)
-            aname = getattr(act, 'name', '') if act is not None else ''
-            b4 = f'Preview: {aname}' if aname else 'Preview active'
-            _text(b4, good_color, lbl_px, x0, y)
-            y -= lbl_h
-        elif snap.kept:
-            act = getattr(obj.b4ml, 'kept_action', None)
-            aname = getattr(act, 'name', '') if act is not None else ''
-            b4 = f'Kept: {aname}' if aname else 'Kept result'
-            _text(b4, good_color, lbl_px, x0, y)
-            y -= lbl_h
-
-        # Line 5 — frame-range bar: "frames A–B  (N key poses)"
-        anchors = list(getattr(obj.b4ml, 'anchors', []))
-        if anchors:
-            frames = sorted(
-                a.frame for a in anchors
-                if hasattr(a, 'frame') and math.isfinite(float(a.frame))
-            )
-            if len(frames) >= 2:
-                fr_text = f'frames {int(frames[0])}\u2013{int(frames[-1])}  ({len(frames)} key poses)'
-                _text(fr_text, (0.70, 0.70, 0.70), lbl_px, x0, y)
+        for i, (line_text, line_color) in enumerate(hud):
+            if not line_text and line_color and isinstance(line_color[0], tuple):
+                # Legend group: render items horizontally at current y
+                blf.size(font_id, lbl_px)
+                lx = x0
+                for lbl_text, rc in line_color:
+                    blf.color(font_id, 0.0, 0.0, 0.0, 0.7)
+                    blf.position(font_id, float(lx + 1), float(y - 1), 0.0)
+                    blf.draw(font_id, lbl_text)
+                    blf.color(font_id, rc[0], rc[1], rc[2], 1.0)
+                    blf.position(font_id, float(lx), float(y), 0.0)
+                    blf.draw(font_id, lbl_text)
+                    try:
+                        tw, _ = blf.dimensions(font_id, lbl_text + ' ')
+                    except Exception:
+                        tw = lbl_px * (len(lbl_text) + 1)
+                    lx += int(tw)
+                y -= lbl_h
+            else:
+                sz     = stage_px if i == 0 else lbl_px
+                y_step = line_h   if i == 0 else lbl_h
+                _text(line_text, line_color, sz, x0, y)
+                y -= y_step
 
     except Exception:
         pass
