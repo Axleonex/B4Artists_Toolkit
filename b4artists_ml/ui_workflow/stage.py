@@ -43,6 +43,9 @@ from dataclasses import dataclass
 
 STAGES: tuple[str, ...] = ('SETUP', 'POSE', 'MOTION', 'POLISH', 'REVIEW')
 
+# State name constant for the active-polish state (candidate or kept, polish run at least once).
+POLISH_READY: str = 'POLISH_READY'
+
 ACTION_KEYS: tuple[str, ...] = (
     'pose.begin',
     'pose.solve',
@@ -84,6 +87,7 @@ class Snapshot:
     running:       str          # '' | 'BODY' | 'TEMPORAL' | 'CONTACT' | 'FLIGHT' | 'SECONDARY' | 'CLEANUP'
     mode:          str          # context.mode e.g. 'OBJECT' | 'POSE'
     playing:       bool
+    polished:      bool = False # True once any polish operation has produced a result
 
 
 @dataclass(frozen=True)
@@ -242,9 +246,23 @@ _NEED_SECOND_POSE  = "Capture a second key pose to generate motion"
 _POLISH_LOCKED     = "Available after a preview or kept result (Advanced)"
 
 
-def _polish_locks(unlocked: bool) -> dict[str, str]:
-    reason = '' if unlocked else _POLISH_LOCKED
-    return {k: reason for k in _POLISH_KEYS}
+def _polish_locks(s: Snapshot) -> dict[str, str]:
+    """Return per-feature polish lock reasons.
+
+    Precedence per key: no_rig → not_mapped → posing → no_result → available.
+    has_rig / mapped are guaranteed True at all call sites (checked upstream).
+    """
+    def _reason(key: str) -> str:
+        if not s.has_rig:
+            return _NO_RIG
+        if not s.mapped:
+            return _CHECK_RIG
+        if s.posing:
+            return _SESSION_BLOCKS
+        if not (s.candidate or s.kept):
+            return _POLISH_LOCKED
+        return ''
+    return {k: _reason(k) for k in _POLISH_KEYS}
 
 
 def _completed(s: Snapshot) -> frozenset[str]:
@@ -253,12 +271,12 @@ def _completed(s: Snapshot) -> frozenset[str]:
         c.add('POSE')
     if s.candidate or s.kept:
         c.add('MOTION')
+    if s.polished:
+        c.add('POLISH')
     return frozenset(c)
 
 
 def _base_evaluate(s: Snapshot) -> StageState:  # noqa: C901 — intentional flat dispatch
-    polish_open = s.candidate or s.kept
-
     # ── NO_RIG ─────────────────────────────────────────────────────────────
     if not s.has_rig:
         return StageState(
@@ -295,7 +313,7 @@ def _base_evaluate(s: Snapshot) -> StageState:  # noqa: C901 — intentional fla
             'review.discard':  _SESSION_BLOCKS,
             'review.restore':  _SESSION_BLOCKS,
         }
-        locks.update(_polish_locks(polish_open))
+        locks.update(_polish_locks(s))
         return StageState(
             current='POSE',
             completed=comp,
@@ -317,7 +335,7 @@ def _base_evaluate(s: Snapshot) -> StageState:  # noqa: C901 — intentional fla
             'review.discard':  _SESSION_BLOCKS,
             'review.restore':  _SESSION_BLOCKS,
         }
-        locks.update(_polish_locks(polish_open))
+        locks.update(_polish_locks(s))
         return StageState(
             current='POSE',
             completed=comp,
@@ -325,6 +343,40 @@ def _base_evaluate(s: Snapshot) -> StageState:  # noqa: C901 — intentional fla
             locks=locks,
             required_mode='OBJECT',
             state_name='POSING_OBJECT',
+        )
+
+    # ── POLISH_READY (polish run ≥1; candidate or kept still present) ──────
+    if s.polished and (s.candidate or s.kept):
+        if s.candidate:
+            pr_locks: dict[str, str] = {
+                'pose.begin':      _PREVIEW_BLOCKS,
+                'pose.solve':      _PREVIEW_BLOCKS,
+                'pose.keep':       '',
+                'pose.cancel':     '',
+                'motion.preview':  _PREVIEW_BLOCKS,
+                'review.keep':     '',
+                'review.discard':  '',
+                'review.restore':  _KEEP_FIRST,
+            }
+        else:
+            pr_locks = {
+                'pose.begin':      '',
+                'pose.solve':      '',
+                'pose.keep':       _ALREADY_KEPT,
+                'pose.cancel':     '',
+                'motion.preview':  '',
+                'review.keep':     _ALREADY_KEPT,
+                'review.discard':  _ALREADY_KEPT,
+                'review.restore':  '',
+            }
+        pr_locks.update(_polish_locks(s))
+        return StageState(
+            current='POLISH',
+            completed=_completed(s),
+            next_action=('Review contacts', 'b4ml.contact', {}),
+            locks=pr_locks,
+            required_mode=None,
+            state_name=POLISH_READY,
         )
 
     # ── PREVIEW_ACTIVE ─────────────────────────────────────────────────────
@@ -339,7 +391,7 @@ def _base_evaluate(s: Snapshot) -> StageState:  # noqa: C901 — intentional fla
             'review.discard':  '',
             'review.restore':  _KEEP_FIRST,
         }
-        locks.update(_polish_locks(True))
+        locks.update(_polish_locks(s))
         return StageState(
             current='REVIEW',
             completed=comp,
@@ -361,7 +413,7 @@ def _base_evaluate(s: Snapshot) -> StageState:  # noqa: C901 — intentional fla
             'review.discard':  _ALREADY_KEPT,
             'review.restore':  '',
         }
-        locks.update(_polish_locks(True))
+        locks.update(_polish_locks(s))
         return StageState(
             current='REVIEW',
             completed=comp,
@@ -383,7 +435,7 @@ def _base_evaluate(s: Snapshot) -> StageState:  # noqa: C901 — intentional fla
             'review.discard':  _NO_DISCARD,
             'review.restore':  _NO_RESTORE,
         }
-        locks.update(_polish_locks(False))
+        locks.update(_polish_locks(s))
         return StageState(
             current='MOTION',
             completed=comp,
@@ -404,7 +456,7 @@ def _base_evaluate(s: Snapshot) -> StageState:  # noqa: C901 — intentional fla
         'review.discard':  _NO_DISCARD,
         'review.restore':  _NO_RESTORE,
     }
-    locks.update(_polish_locks(False))
+    locks.update(_polish_locks(s))
     return StageState(
         current='POSE',
         completed=comp,
