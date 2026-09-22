@@ -140,9 +140,8 @@ def prelude(layout, context, full: bool = False) -> tuple:
             pass
 
     # ── 1. STAGE STRIP ─────────────────────────────────────────────────────
-    # Icon-only row fits narrow sidebars; one text line names current stage.
-    # 'Stage %d of 5 — %s': literal template; no copy_.fmt entry yet —
-    # flagged for Phase 4 copy audit (contains no forbidden term).
+    # Icon-only row fits narrow sidebars; one text line names current stage
+    # via copy_.STAGE_LINE (gaps-2).
     # Icons: CHECKMARK = completed, RADIOBUT_ON = current,
     #        LOCKED = primary key locked, RADIOBUT_OFF = future.
     current_idx = 1
@@ -161,7 +160,8 @@ def prelude(layout, context, full: bool = False) -> tuple:
         else:
             icon = 'RADIOBUT_OFF'
         row.label(text='', icon=icon)
-    layout.label(text='Stage %d of 5 — %s' % (current_idx, current_stage_label))
+    layout.label(text=copy_.fmt(copy_.STAGE_LINE, n=current_idx,
+                                total=len(copy_.STAGES), label=current_stage_label))
 
     # ── 2. FEEDBACK CARD ───────────────────────────────────────────────────
     # compact: WARNING/ERROR only; full: all levels, text word-wrapped.
