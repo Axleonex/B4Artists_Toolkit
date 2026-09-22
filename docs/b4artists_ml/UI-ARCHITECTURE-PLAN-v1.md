@@ -19,6 +19,8 @@ Nothing in this plan changes solver, contact, cleanup, flight, or secondary math
 
 ## 2. Architecture
 
+Design authority: `UI-EXPERIENCE-CONTRACT-v1.md` (fable-design pass, 2026-09-21). `stage.py` states/lock keys and `feedback.py` levels/fix operators implement its MAPPING TABLES one-to-one; Phase 1 tests assert that mapping. Phase 0 results are in `UI-SPIKE-v1.md`.
+
 ### 2.1 New package layout
 
 ```
@@ -148,10 +150,10 @@ Deferred option (Phase 5): a `GizmoGroup` with `move_3d`/`arrow_3d` gizmos bound
 
 Use native, already-visible mechanisms first; custom drawing second.
 
-1. **Key poses → timeline markers.** `markers.sync(scene, obj)` reconciles `scene.timeline_markers` with `state.anchors`: name `B4ML ◆ <Rig>: Pose 1`, frame = anchor. Markers appear in Timeline, Dope Sheet, Graph, NLA with zero extra drawing. Called after capture/remove/retime/ripple/reuse/undo (`undo_post` handler) and on load (`load_post`).
+1. **Key poses → timeline markers.** `markers.sync(scene, obj)` reconciles `scene.timeline_markers` with `state.anchors`: name `B4ML Pose 1` (ASCII only, ≤12 chars — the UI font renders ◆ as `\uFFFD`; labels truncate to the gap before the next marker), frame = anchor. Markers appear in Timeline, Dope Sheet, Graph, NLA with zero extra drawing. Called after capture/remove/retime/ripple/reuse/undo (`undo_post` handler) and on load (`load_post`).
 2. **Marker → anchor.** A `bpy.app.timers` poll (0.25 s, registered only while a rig has anchors) detects a moved or selected `B4ML` marker: moved → `workflow.retime_anchor`; selected → `state.active_anchor` so the Motion panel highlights that row. Contacts (`contacts`) and flights get the same treatment with `●` / `↗` glyphs.
 3. **Active range** — while a preview exists, set `scene.use_preview_range` and `frame_preview_start/end` to the key-pose span; restore the previous values on keep/discard. Action names already carry ` - B4ML Preview`, which the Action Editor header shows.
-4. **Dope Sheet panel** — `B4ML_PT_dopesheet` (`DOPESHEET_EDITOR / UI / 'B4ML'`, poll: rig with anchors or preview). Contents: key-pose list with Go/Retime, preview state, Capture Here / Generate / Keep / Discard. Header append (`DOPESHEET_HT_header`) adds the same four buttons as icons.
+4. **Dope Sheet panel** — `B4ML_PT_dopesheet` (`DOPESHEET_EDITOR / UI / 'B4ML'`, poll: rig with anchors or preview). Contents: key-pose list with Go/Retime, preview state, Capture Here / Generate / Keep / Discard. Header append to `DOPESHEET_HT_header` (Bforartists has no `TIME_HT_editor_buttons`; `DOPESHEET_HT_playback_controls` also exists) adds the same four buttons as icons. The factory Main workspace collapses the Timeline, so the Motion panel also offers a Show Timeline action.
 5. **Band overlay** — `SpaceDopeSheetEditor.draw_handler_add(POST_PIXEL)` draws translucent bands over the region using `region.view2d.view_to_region(frame, 0)`: candidate range, accepted contacts (green), proposed (orange), flight intervals (blue), protected priority frames (hatched). Same colours as `contact_visualization._COLORS`.
 
 Graph Editor / NLA get nothing until the humanoid journey passes usability.
@@ -167,7 +169,21 @@ Graph Editor / NLA get nothing until the humanoid journey passes usability.
 | 4 | **Copy audit, docs, package, animator session** | `copy.py` complete; PUBLIC-BETA doc + README + `bl_info` describe the delivered flow; zip via `build_public_beta_package_v1.py`; clean-profile smoke. Run the handoff's usability protocol with the original reviewer. | Grep test: no `candidate`, `payload`, `backend`, `internal units` in `copy.py` or panel strings. Session record: time-to-first-action ≤ 30 s, all eight handoff observations logged. | 2 d + session |
 | 5 | **Migrate Polish** (after 4 passes) | Contacts / cleanup / flight / secondary become Polish stage cards with prerequisites; quadruped enters Pose stage; gizmo evaluation. | Same lock-reason and feedback tests extended to Polish keys. | later |
 
-Phases 2 and 3 are independent after Phase 1 and can run in parallel.
+### 6.1 Parallel waves (2026-09-22)
+
+Each wave is executed in a dedicated git worktree under `Projects/b4ml-lanes/<lane>` on branch `lane/<lane>`, with one governed session per lane. Completed lanes merge per wave into `integration/b4ml-ui-slice-1` and are promoted to `main` at each phase goalpost with the commit confirmation rule. Separate checkouts are required because the change-evidence collector snapshots the whole worktree; parallel packets in the same checkout would produce conflicting snapshots.
+
+| Wave | Lanes | Key files |
+|---|---|---|
+| W1 | engine, feedback, copy | `stage.py` (re-route), `feedback.py`, `copy.py` |
+| W2 | engine, feedback, copy, docs | the three pure tests; plan §6.1 |
+| W3 | header | `panels/header.py` |
+| W4 | panels-a, panels-b, panels-c | `setup.py` + `review.py`; `pose.py`; `motion.py` + `advanced.py` |
+| W5 | sequential | `ui_workflow/__init__.py`; `ui.py` cut-over; native register test; Phase 1 goalpost |
+| W6 | phase2, phase3 | `viewport_overlay.py` + overlay test; `markers.py` + `editor_dopesheet.py` + markers test |
+| W7 | sequential | Phase 4: copy audit, docs, `bl_info` 0.38.0, ZIP, clean-profile smoke, usability protocol |
+
+Phases 2 and 3 run as parallel lanes (W6) after Phase 1 merges.
 
 ## 7. Tests to add
 
@@ -188,6 +204,7 @@ Fake-layout pattern: a recorder class with `row/column/box/prop/operator/label/s
 - **Bforartists header classes** may differ from Blender's; the spike decides between header append, a `HEADER`-region panel, or Dope Sheet sidebar only.
 - **Markers are scene-scoped, anchors are object-scoped.** Names carry the rig name; `sync` only touches markers with the `B4ML ` prefix; two rigs with anchors are covered by a test.
 - **Timer polling** must be cheap: compare a frozen tuple of `(name, frame, select)`; unregister when no rig has anchors.
+- **Timers do not fire in `--background`** — native tests call `markers.sync()` directly; timer firing is verified only in the windowed spike.
 - **Display-type changes** in `body_preview.begin` are a backend edit; allowed by the handoff only if a UI integration test needs it — the label overlay works without it, so shapes are a Phase 2 stretch, not a dependency.
 - **Version and claims**: bump to `0.38.0`, keep "public beta", and keep learned-motion language unqualified.
 
