@@ -71,6 +71,19 @@ W5 gates the design of W1/W2/W3, so the session runs first; W6 is independent an
 
 Reproducing every Cascadeur feature; replacing Bforartists' full animation workspace; claiming learned-motion quality before its separate qualification gate passes; rewriting verified collision/contact/motion math for layout reasons.
 
+## Execution waves
+
+Each lane is a git worktree under `/mnt/g/LapArt/Projects/b4ml-lanes/<lane>` on branch `lane/<lane>`, one governed headless session per lane, one declared path per packet. Lanes in the same wave must touch disjoint files. A wave ends with the operator reviewing receipts, running the tests, and merging the lanes into `integration/b4ml-ui-slice-2`; `main` moves only at a goalpost with the commit confirmation. Cap concurrency at 3 lanes — the limit is the shared account usage window, not the machine.
+
+| Wave | Lanes (parallel) | Packets | Gate to next wave |
+|---|---|---|---|
+| A | `gaps`, `answers` | **gaps**: three self-contained W6 items — wrap-width fix in `header.wrap_label`; move the `'Stage %d of 5 — %s'` and Advanced prerequisite literals into `copy.py` and extend the copy gate; extract a pure `hud_lines(snapshot)` helper from the overlay draw handler so its skipped test runs. **answers**: transcribe the animator session's decisions into `UI-EXPERIENCE-CONTRACT-v1.md` EVIDENCE.open and the STATE MAP. | Session answers recorded; gap tests green. |
+| B | `polish-engine`, `polish-panel`, `gizmo-spike` | **polish-engine**: real Polish state transitions in `stage.py` (replace the always-locked placeholder) plus the Polish copy entries. **polish-panel**: new `panels/polish.py` with the four feature cards, each carrying its prerequisite line and `stage.locked()` reason. **gizmo-spike**: the W3 spike — a `GizmoGroup` with `move_3d`/`arrow_3d` bound to body targets, measured against the Object-Mode guard on a real rig, written up in the `UI-SPIKE-v1.md` format with a ship-or-defer decision. | Stage matrix covers every `polish.*` key; spike decision written. |
+| C | `polish-tests`, `quadruped` | **polish-tests**: remove the migrated boxes from `panels/advanced.py`, extend the stage/copy/native suites to the Polish keys. **quadruped**: W2 — the quadruped Pose-stage path in `stage.py` and `panels/pose.py`, plus its native test. | All Polish and quadruped tests green; slice-1 suites unchanged. |
+| D | sequential (no parallel lanes) | Gizmo implementation if the spike said ship; the Phase 5 native goalpost run on Bforartists 5.1.2 with screenshots in both themes; the W4 Graph Editor/NLA go/no-go decision; the second usability protocol for the extended surface. | Endpoint conditions (a)–(g) met. |
+
+Notes: (1) W5 lives in wave A because it gates the design of W1/W2/W3 — running B before the session answers means guessing at the very questions the session exists to settle. (2) W4 stays conditional and gets its own spike before any code, exactly as the Timeline/Dope Sheet work did in slice 1.
+
 ## Activation
 
 This goal activates only after the slice-1 animator session runs and its record exists. On activation, derive the per-packet declared paths, keep the goal ID `b4ml-ui-slice-2` across harnesses, and reuse the lane/wave execution model from slice 1 (`G:/LapArt/.planning/b4ml-ui-slice-1/` scripts: `lane.sh`, `run-wave.sh`, `drive-lane.sh`, `auto-advance.sh`). Note that the parallel-lane model exists because the change-evidence collector snapshots the whole worktree, so concurrent packets need separate git worktrees.
