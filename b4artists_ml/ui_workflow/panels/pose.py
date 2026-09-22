@@ -95,6 +95,133 @@ except ImportError:
 # ---------------------------------------------------------------------------
 _POLE_LABELS: frozenset[str] = frozenset({'Hand L', 'Hand R', 'Foot L', 'Foot R'})
 
+# ---------------------------------------------------------------------------
+# Limb groups — humanoid (body_preview.TARGETS_V3 names).
+# W5 decision 5: targets are grouped with left/right as rows inside each group.
+# Any target whose name is absent from all groups falls into trailing 'Other'.
+# ---------------------------------------------------------------------------
+_HUMANOID_GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ('Body',  ('Pelvis', 'Spine', 'Chest', 'Neck', 'Head')),
+    ('Hands', ('Hand L', 'Hand R')),
+    ('Feet',  ('Foot L', 'Foot R')),
+)
+_HUMANOID_GROUPED_NAMES: frozenset[str] = frozenset(
+    n for _, names in _HUMANOID_GROUPS for n in names
+)
+
+# Quadruped groups derived from quadruped_pose.TARGETS + POLE_TARGETS:
+#   TARGETS      = ("Body","Fore Paw L","Fore Paw R","Hind Paw L","Hind Paw R","Head")
+#   POLE_TARGETS = ("Fore Pole L","Fore Pole R","Hind Pole L","Hind Pole R")
+_QUADRUPED_GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ('Body',       ('Body',)),
+    ('Head',       ('Head',)),
+    ('Front Paws', ('Fore Paw L', 'Fore Paw R')),
+    ('Hind Paws',  ('Hind Paw L', 'Hind Paw R')),
+    ('Poles',      ('Fore Pole L', 'Fore Pole R', 'Hind Pole L', 'Hind Pole R')),
+)
+_QUADRUPED_GROUPED_NAMES: frozenset[str] = frozenset(
+    n for _, names in _QUADRUPED_GROUPS for n in names
+)
+
+
+# ---------------------------------------------------------------------------
+# Per-target row renderers (extracted so group loops stay concise).
+# ---------------------------------------------------------------------------
+
+def _draw_humanoid_target_row(parent, item) -> None:
+    """Name label/toggle, Rot toggle, pole foldout for one humanoid target."""
+    row = parent.row(align=True)
+    if item.name != 'Pelvis':
+        row.prop(item, 'enabled', text=item.name)
+    else:
+        row.label(text=item.name)
+    row.prop(item, 'use_orientation', text='Rot')
+    if item.name in _POLE_LABELS and getattr(item, 'pole', None):
+        pole_label = (
+            'Elbow Direction' if item.name.startswith('Hand') else 'Knee Direction'
+        )
+        use_pole = getattr(item, 'use_pole', False)
+        parent.prop(
+            item, 'use_pole', text=pole_label,
+            icon='TRIA_DOWN' if use_pole else 'TRIA_RIGHT',
+        )
+        if use_pole:
+            p_row = parent.row(align=True)
+            op_a = p_row.operator('b4ml.body', text='Align Bend')
+            op_a.operation = 'ALIGN_POLE'
+            op_a.target_name = item.name
+            op_f = p_row.operator('b4ml.body', text='Flip Side')
+            op_f.operation = 'FLIP_POLE'
+            op_f.target_name = item.name
+            d_row = parent.row(align=True)
+            d_row.prop(item, 'pole_distance', text='')
+            op_d = d_row.operator('b4ml.body', text='Set Distance')
+            op_d.operation = 'SET_POLE_DISTANCE'
+            op_d.target_name = item.name
+
+
+def _draw_humanoid_groups(box_t, items) -> None:
+    """Render humanoid targets grouped by limb (Body/Hands/Feet/Other)."""
+    by_name: dict = {item.name: item for item in items}
+    for group_label, names in _HUMANOID_GROUPS:
+        present = [n for n in names if n in by_name]
+        if not present:
+            continue
+        grp = box_t.box()
+        grp.label(text=group_label, icon='GROUP_BONE')
+        for name in present:
+            _draw_humanoid_target_row(grp, by_name[name])
+    other = [item for item in items if item.name not in _HUMANOID_GROUPED_NAMES]
+    if other:
+        grp = box_t.box()
+        grp.label(text='Other', icon='GROUP_BONE')
+        for item in other:
+            _draw_humanoid_target_row(grp, item)
+
+
+def _draw_quadruped_target_row(parent, item, quad_poles: frozenset) -> None:
+    """Pole helpers, Body label, or Pin+Rot for one quadruped target."""
+    if item.name in quad_poles:
+        sub = parent.box()
+        sub.row(align=True).label(text=item.name, icon='FORCE_MAGNETIC')
+        p_row = sub.row(align=True)
+        op_a = p_row.operator('b4ml.quadruped_pose', text='Align Bend')
+        op_a.operation = 'ALIGN_POLE'
+        op_a.target_name = item.name
+        op_f = p_row.operator('b4ml.quadruped_pose', text='Flip Side')
+        op_f.operation = 'FLIP_POLE'
+        op_f.target_name = item.name
+        d_row = sub.row(align=True)
+        d_row.prop(item, 'pole_distance', text='')
+        op_d = d_row.operator('b4ml.quadruped_pose', text='Set Distance')
+        op_d.operation = 'SET_POLE_DISTANCE'
+        op_d.target_name = item.name
+    elif item.name == 'Body':
+        parent.row(align=True).label(text=item.name)
+    else:
+        row = parent.row(align=True)
+        row.prop(item, 'enabled', text=item.name)
+        row.prop(item, 'use_orientation', text='Rot')
+
+
+def _draw_quadruped_groups(box_q, items, quad_poles: frozenset) -> None:
+    """Render quadruped targets grouped by limb (Body/Head/Front Paws/Hind Paws/Poles/Other)."""
+    by_name: dict = {item.name: item for item in items}
+    for group_label, names in _QUADRUPED_GROUPS:
+        present = [n for n in names if n in by_name]
+        if not present:
+            continue
+        grp = box_q.box()
+        grp.label(text=group_label, icon='GROUP_BONE')
+        for name in present:
+            _draw_quadruped_target_row(grp, by_name[name], quad_poles)
+    other = [item for item in items if item.name not in _QUADRUPED_GROUPED_NAMES]
+    if other:
+        grp = box_q.box()
+        grp.label(text='Other', icon='GROUP_BONE')
+        for item in other:
+            _draw_quadruped_target_row(grp, item, quad_poles)
+
 
 # ---------------------------------------------------------------------------
 # Panel
@@ -164,32 +291,11 @@ class B4ML_PT_pose(_Panel):  # type: ignore[valid-type]
                 except (ImportError, AttributeError):
                     _quad_poles = frozenset()
                 box_q = layout.box()
-                for item in getattr(b4ml_q, 'quadruped_targets', []):
-                    if item.name in _quad_poles:
-                        sub = box_q.box()
-                        sub.row(align=True).label(text=item.name,
-                                                  icon='FORCE_MAGNETIC')
-                        p_row = sub.row(align=True)
-                        op_a = p_row.operator('b4ml.quadruped_pose',
-                                              text='Align Bend')
-                        op_a.operation = 'ALIGN_POLE'
-                        op_a.target_name = item.name
-                        op_f = p_row.operator('b4ml.quadruped_pose',
-                                              text='Flip Side')
-                        op_f.operation = 'FLIP_POLE'
-                        op_f.target_name = item.name
-                        d_row = sub.row(align=True)
-                        d_row.prop(item, 'pole_distance', text='')
-                        op_d = d_row.operator('b4ml.quadruped_pose',
-                                              text='Set Distance')
-                        op_d.operation = 'SET_POLE_DISTANCE'
-                        op_d.target_name = item.name
-                    elif item.name == 'Body':
-                        box_q.row(align=True).label(text=item.name)
-                    else:
-                        row = box_q.row(align=True)
-                        row.prop(item, 'enabled', text=item.name)
-                        row.prop(item, 'use_orientation', text='Rot')
+                _draw_quadruped_groups(
+                    box_q,
+                    getattr(b4ml_q, 'quadruped_targets', []),
+                    _quad_poles,
+                )
 
             # 3. Clustered task controls: Solve / Keep / Cancel.
             #    No b4ml.body_live equivalent exists for quadruped; omitted.
@@ -230,40 +336,7 @@ class B4ML_PT_pose(_Panel):  # type: ignore[valid-type]
             box_t.prop(b4ml, 'show_body_targets',
                        icon='TRIA_DOWN' if show_targets else 'TRIA_RIGHT')
             if show_targets:
-                for item in getattr(b4ml, 'body_targets', []):
-                    row = box_t.row(align=True)
-                    # Pelvis is always pinned; show label only (no toggle).
-                    if item.name != 'Pelvis':
-                        row.prop(item, 'enabled', text=item.name)
-                    else:
-                        row.label(text=item.name)
-                    # Rot toggle present on all targets; solver respects controls_version.
-                    row.prop(item, 'use_orientation', text='Rot')
-                    # Per-target pole foldout for Hand / Foot targets with a linked pole.
-                    if item.name in _POLE_LABELS and getattr(item, 'pole', None):
-                        pole_label = (
-                            'Elbow Direction'
-                            if item.name.startswith('Hand')
-                            else 'Knee Direction'
-                        )
-                        use_pole = getattr(item, 'use_pole', False)
-                        box_t.prop(
-                            item, 'use_pole', text=pole_label,
-                            icon='TRIA_DOWN' if use_pole else 'TRIA_RIGHT',
-                        )
-                        if use_pole:
-                            p_row = box_t.row(align=True)
-                            op_a = p_row.operator('b4ml.body', text='Align Bend')
-                            op_a.operation = 'ALIGN_POLE'
-                            op_a.target_name = item.name
-                            op_f = p_row.operator('b4ml.body', text='Flip Side')
-                            op_f.operation = 'FLIP_POLE'
-                            op_f.target_name = item.name
-                            d_row = box_t.row(align=True)
-                            d_row.prop(item, 'pole_distance', text='')
-                            op_d = d_row.operator('b4ml.body', text='Set Distance')
-                            op_d.operation = 'SET_POLE_DISTANCE'
-                            op_d.target_name = item.name
+                _draw_humanoid_groups(box_t, getattr(b4ml, 'body_targets', []))
 
         # 3. Task controls in one aligned row.
         task = layout.row(align=True)
