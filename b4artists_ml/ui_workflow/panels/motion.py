@@ -16,7 +16,8 @@ Verified facts (ui.py):
   b4ml.anchor_page .page prop (ui.py:2768-2773)
   workflow.has_transition_timing_override(anchor.payload) (ui.py:2790)
   No frame-jump pattern in draw() — frame drawn as label (ui.py:2776-2796)
-  screen.space_type_set_or_cycle not found in Bforartists 5.1 startup scripts — UNVERIFIED
+  screen.space_type_set_or_cycle verified against Bforartists 5.1.2 on 2026-09-22 (C operator,
+  not in Python startup scripts; hasattr(bpy.ops.screen, 'space_type_set_or_cycle') is True)
 """
 from __future__ import annotations
 
@@ -192,10 +193,10 @@ class B4ML_PT_motion(_Panel):
         )
 
         # ── Show Timeline ─────────────────────────────────────────────────────
-        # screen.space_type_set_or_cycle was not found in Bforartists 5.1 startup
-        # scripts; drawing a plain label as fallback (UNVERIFIED — cut-over packet
-        # should confirm operator availability and replace with the live operator).
-        layout.label(text=copy_.BUTTONS['motion.show_timeline'], icon='TIME')
+        # screen.space_type_set_or_cycle verified Bforartists 5.1.2 (C operator).
+        op = layout.operator('screen.space_type_set_or_cycle',
+                             text=copy_.BUTTONS['motion.show_timeline'], icon='TIME')
+        op.space_type = 'DOPESHEET_EDITOR'
 
 
 CLASSES = (B4ML_PT_motion,)
