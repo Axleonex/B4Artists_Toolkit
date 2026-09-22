@@ -34,6 +34,12 @@ Operators used (verified ui.py):
   b4ml.body_solve    (ui.py:1084)
   b4ml.body_live     (ui.py:1220)
   object.mode_set    mode='OBJECT'
+  b4ml.quadruped_pose  operation=BEGIN|SOLVE|KEEP|CANCEL|ALIGN_POLE|FLIP_POLE|
+                                   SET_POLE_DISTANCE  (ui.py:1074)
+
+Quadruped-specific properties (verified ui.py 2026-09-22):
+  B4ML_PG_settings.quadruped_targets  CollectionProperty(B4ML_PG_target)  (ui.py:377)
+  snap.family == 'quadruped' when rig_mapping profile.family is 'quadruped'  (stage.py:78)
 
 Pole-supporting target names derived from body_preview.POLE_JOINTS
   {7:6,10:9,13:12,16:15} × TARGETS → Hand L, Hand R, Foot L, Foot R
@@ -130,16 +136,80 @@ class B4ML_PT_pose(_Panel):  # type: ignore[valid-type]
                         layout.label(text=progress)
             return
 
-        # ── Non-whole-body posing modes ────────────────────────────────────
-        # ASSISTED and QUADRUPED are handled in the full panel.
-        if snap.posing not in ('', 'BODY'):
+        # ── ASSISTED: no inline controls; defer to Advanced ──────────────────
+        if snap.posing == 'ASSISTED':
             layout.label(text='Procedural or assisted posing — use the full panel.')
+            return
+
+        # ── Active quadruped session (snap.posing == 'QUADRUPED') ─────────────────
+        if snap.posing == 'QUADRUPED':
+            b4ml_q = getattr(rig, 'b4ml', None) if rig is not None else None
+
+            # 1. Mode guard: warn when not in Object Mode.
+            if snap.mode != 'OBJECT':
+                row = layout.row()
+                row.alert = True
+                row.label(text=copy_.HUD['mode_alert'], icon='ERROR')
+                row.operator('object.mode_set',
+                             text=copy_.BUTTONS['pose.mode_fix']).mode = 'OBJECT'
+
+            # 2. Target list from quadruped_targets.
+            #    Pole targets (Front/Hind Pole L/R) get pole-helper sub-rows.
+            #    'Body' is always pinned — label only.
+            #    All other targets (paw, Head) get Pin toggle + Rot toggle.
+            if b4ml_q is not None:
+                try:
+                    from b4artists_ml import quadruped_pose as _qp
+                    _quad_poles: frozenset[str] = frozenset(_qp.POLE_TARGETS)
+                except (ImportError, AttributeError):
+                    _quad_poles = frozenset()
+                box_q = layout.box()
+                for item in getattr(b4ml_q, 'quadruped_targets', []):
+                    if item.name in _quad_poles:
+                        sub = box_q.box()
+                        sub.row(align=True).label(text=item.name,
+                                                  icon='FORCE_MAGNETIC')
+                        p_row = sub.row(align=True)
+                        op_a = p_row.operator('b4ml.quadruped_pose',
+                                              text='Align Bend')
+                        op_a.operation = 'ALIGN_POLE'
+                        op_a.target_name = item.name
+                        op_f = p_row.operator('b4ml.quadruped_pose',
+                                              text='Flip Side')
+                        op_f.operation = 'FLIP_POLE'
+                        op_f.target_name = item.name
+                        d_row = sub.row(align=True)
+                        d_row.prop(item, 'pole_distance', text='')
+                        op_d = d_row.operator('b4ml.quadruped_pose',
+                                              text='Set Distance')
+                        op_d.operation = 'SET_POLE_DISTANCE'
+                        op_d.target_name = item.name
+                    elif item.name == 'Body':
+                        box_q.row(align=True).label(text=item.name)
+                    else:
+                        row = box_q.row(align=True)
+                        row.prop(item, 'enabled', text=item.name)
+                        row.prop(item, 'use_orientation', text='Rot')
+
+            # 3. Clustered task controls: Solve / Keep / Cancel.
+            #    No b4ml.body_live equivalent exists for quadruped; omitted.
+            task_q = layout.row(align=True)
+            header.action_row(task_q, st, 'pose.solve', 'b4ml.quadruped_pose',
+                              icon='PLAY', operation='SOLVE')
+            header.action_row(task_q, st, 'pose.keep', 'b4ml.quadruped_pose',
+                              icon='KEYFRAME_HLT', operation='KEEP')
+            header.action_row(task_q, st, 'pose.cancel', 'b4ml.quadruped_pose',
+                              icon='X', operation='CANCEL')
             return
 
         # ── Idle (no active session) ───────────────────────────────────────
         if snap.posing == '':
-            header.action_row(layout, st, 'pose.begin', 'b4ml.body',
-                              icon='ARMATURE_DATA', operation='BEGIN')
+            if snap.family == 'quadruped':
+                header.action_row(layout, st, 'pose.begin', 'b4ml.quadruped_pose',
+                                  icon='ARMATURE_DATA', operation='BEGIN')
+            else:
+                header.action_row(layout, st, 'pose.begin', 'b4ml.body',
+                                  icon='ARMATURE_DATA', operation='BEGIN')
             return
 
         # ── Active whole-body session (snap.posing == 'BODY') ─────────────
