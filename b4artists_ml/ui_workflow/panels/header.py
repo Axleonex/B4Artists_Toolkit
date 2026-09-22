@@ -74,6 +74,8 @@ _LEVEL_ICON: dict[str, str] = {
     'ERROR':   'CANCEL',
 }
 
+_CHAR_PX = 9.0  # Blender UI font at default ui_scale; 7.0 over-estimated and clipped (QA 2026-09-22)
+
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -83,10 +85,11 @@ def wrap_label(layout, text: str, icon: str = 'NONE',
                width_px: int | None = None) -> None:
     """Word-wrap *text* into successive label rows at sidebar width.
 
-    chars per line = max(18, int((width_px or 220) / 7))
+    chars per line = max(18, int(((width_px or 220) - 16) / _CHAR_PX))
+    Subtracts 16 px gutter for icon column and panel padding before dividing.
     Icon on first row; BLANK1 on subsequent rows to preserve alignment.
     """
-    cpl = max(18, int((width_px or 220) / 7))
+    cpl = max(18, int(((width_px or 220) - 16) / _CHAR_PX))
     words = text.split()
     lines: list[str] = []
     current: list[str] = []
