@@ -89,18 +89,26 @@ assumed:
   - [ASSUMED] Animator uses the default dark Bforartists theme; light theme
     coverage is required but is a secondary target.
 
+decided:
+  - Solve / Keep / Cancel are ONE cluster below the target list, not per-row
+    (confirms what slice 1 shipped). [owner proxy 2026-09-22; session may overturn]
+  - Long solves show a progress bar with the current phase/frame and a Cancel
+    where the solver supports interruption (today only the learned temporal path
+    has a cancel operator; contact, cleanup, airborne and secondary solves cannot
+    be interrupted, so they show progress text without a Cancel).
+    [owner proxy 2026-09-22; session may overturn]
+  - Review compares original and preview by A/B toggle (confirms what slice 1
+    shipped); a non-destructive overlay diff is not pursued.
+    [owner proxy 2026-09-22; session may overturn]
+  - The Dope Sheet panel is collapsed by default (DEFAULT_CLOSED); the Motion
+    panel's Show Timeline action remains the discovery path.
+    [owner proxy 2026-09-22; session may overturn]
+  - Target lists are grouped by limb (Body / Hands / Feet, plus Poles) with
+    left and right as rows inside each group.
+    [owner proxy 2026-09-22; session may overturn]
+
 open:
-  - Does the animator prefer inline controls on each target row, or a
-    shared Solve / Keep / Cancel cluster below the list?
-  - What is the minimum acceptable feedback latency before a "Running..."
-    indicator is needed (temporal solve takes several seconds)?
-  - Does A/B toggling (swapping animation_data.action) feel natural, or does
-    the animator expect a non-destructive overlay diff instead?
-  - Should the Dope Sheet panel be visible by default, or collapsed behind a
-    disclosure? (Factory Main hides the marker lane — the panel must help
-    reveal it.)
-  - Are foot-L and foot-R roles distinct enough for the animator's workflow,
-    or do they always operate both feet together?
+  - (the five design questions were decided by owner proxy on 2026-09-22 — see the decided list above — and remain listed in UI-USABILITY-PROTOCOL-v1.md so the animator session can validate or overturn them)
 ```
 
 ---
@@ -120,7 +128,7 @@ For each state: entry → presentation (most important fact) → available actio
 | 7 | **PREVIEW_ACTIVE** | `candidate_action` set; source swappable | Review stage lit. State badge: "Previewing: \<name>". Range line active. A/B toggle shows which is visible. Keep and Discard prominent. Source bytes unchanged (`workflow.py:1447` snapshotted before candidate created). | **Keep** (`b4ml.action operation=KEEP`), **Discard** (`b4ml.action operation=DISCARD`), **A/B toggle** (swap `animation_data.action` temporarily) | Keep → KEPT; Discard → MAPPED (anchors remain) | source_action ref, before_pose, before_modes (all in state props) |
 | 8 | **KEPT** | `kept_action` set, `candidate_action` cleared | Review stage. Badge: "Kept: \<name>". "Original animation available — Restore" button with copy "the kept result stays available as a separate action". | **Restore original** (`b4ml.action operation=RESTORE_SOURCE`) — only available when `animation_data.action == kept_action` | Restore → back to MAPPED / ANCHORS_CAPTURED | kept_action (fake_user=True, `workflow.py:1616`); kept_source |
 | 9 | **RESTORED** | `restore_kept_source` completed; `kept_action` cleared | Transient: SUCCESS card "Original action and input rig modes restored; kept result remains in Actions." Stage returns to MOTION or POSE depending on anchor count. | Continue posing or re-generate | Organic → ANCHORS_CAPTURED or MAPPED | Source action restored; kept candidate action persists with fake_user in bpy.data.actions |
-| 10 | **SOLVE_RUNNING** | `temporal_running=True` (or other `_running` flag) | Current stage preserved. Feedback card: "Generating — \<state.temporal_progress>". Panel reduces to one control: **Cancel**. Stage strip dims all other stages with "Wait for current task". | **Cancel** (`b4ml.temporal_cancel`) | Cancel or completion → previous stage | Source action, anchor list; partial output discarded on cancel |
+| 10 | **SOLVE_RUNNING** | `temporal_running=True` (or other `_running` flag) | Current stage preserved. Panel shows a progress bar with current phase and frame text. **Cancel** available only on the temporal (learned-motion) path (`b4ml.temporal_cancel`); contact, cleanup, airborne, and secondary solves cannot be interrupted and show progress text without a Cancel. Stage strip dims all other stages with "Wait for current task". | **Cancel** (`b4ml.temporal_cancel`) — temporal path only | Cancel or completion → previous stage | Source action, anchor list; partial output discarded on cancel |
 
 ---
 
