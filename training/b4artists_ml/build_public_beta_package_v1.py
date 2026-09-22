@@ -11,8 +11,8 @@ import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[2]
-VERSION = "0.37.51-beta.1"
-ADDON_VERSION = (0, 37, 51)
+VERSION = "0.38.0-beta.1"
+ADDON_VERSION = (0, 38, 0)
 DEFAULT_ARCHIVE = ROOT / f"releases/b4artists_ml_v{VERSION}.zip"
 
 
