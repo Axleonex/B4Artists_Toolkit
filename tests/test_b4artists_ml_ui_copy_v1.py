@@ -70,6 +70,9 @@ _PROP_KW_NAMES: frozenset[str] = frozenset({
     'active_propname', 'listtype_name', 'list_id',
 })
 
+# getattr/setattr/hasattr/delattr take a Python attribute name as arg index 1.
+ATTR_CALLS: tuple[str, ...] = ('getattr', 'setattr', 'hasattr', 'delattr')
+
 # Contract states that BADGES and CARDS must cover (contract §STATE MAP).
 _CONTRACT_STATES: tuple[str, ...] = (
     'NO_RIG',
@@ -259,22 +262,33 @@ class UiWorkflowStringsGate(unittest.TestCase):
         """
         exempt: set[int] = set()
         for node in ast.walk(tree):
-            if not isinstance(node, ast.Call):
-                continue
-            func = node.func
-            if not (isinstance(func, ast.Attribute) and func.attr in PROP_CALLS):
-                continue
-            # Positional args: skip index 0 (the data/layout object), exempt rest.
-            for i, arg in enumerate(node.args):
-                if i == 0:
-                    continue
-                if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
-                    exempt.add(id(arg))
-            # Keyword args whose name marks them as property identifiers.
-            for kw in node.keywords:
-                if kw.arg in _PROP_KW_NAMES:
-                    if isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
-                        exempt.add(id(kw.value))
+            # --- layout.prop / template_list: property-name positional/keyword args ---
+            if isinstance(node, ast.Call):
+                func = node.func
+                if isinstance(func, ast.Attribute) and func.attr in PROP_CALLS:
+                    # Positional args: skip index 0 (the data/layout object), exempt rest.
+                    for i, arg in enumerate(node.args):
+                        if i == 0:
+                            continue
+                        if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                            exempt.add(id(arg))
+                    # Keyword args whose name marks them as property identifiers.
+                    for kw in node.keywords:
+                        if kw.arg in _PROP_KW_NAMES:
+                            if isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
+                                exempt.add(id(kw.value))
+                # getattr/setattr/hasattr/delattr: arg index 1 is an attribute name.
+                if isinstance(func, ast.Name) and func.id in ATTR_CALLS:
+                    for i, arg in enumerate(node.args):
+                        if i == 0:
+                            continue
+                        if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                            exempt.add(id(arg))
+            # --- Subscript slice: dict key lookups (e.g. copy.VOCAB['candidate action']). ---
+            elif isinstance(node, ast.Subscript):
+                slc = node.slice
+                if isinstance(slc, ast.Constant) and isinstance(slc.value, str):
+                    exempt.add(id(slc))
         return exempt
 
     def _violations_in_file(self, path: Path) -> list[tuple[int, str, list[str]]]:
