@@ -44,3 +44,9 @@ DIAGNOSTICS_REPORT_*.md
 /.planning/
 /training/b4artists_ml/results/
 /releases/b4artists_ml_*.zip
+
+# Local evidence products (b4ml-ui-slice-1): keep out of git status and the change-evidence scope
+/docs/b4artists_ml/goalposts/
+/docs/b4artists_ml/motion-review-v1/
+/docs/b4artists_ml/*.json
+/b4artists_ml.zip
