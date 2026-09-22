@@ -14,12 +14,16 @@ Verified sibling names (b4artists_ml/ui_workflow/):
   feedback.py — current(rig) → dict with keys level/text/fix/fix_props/fix_label (feedback.py:225-235)
   copy.py     — STAGES tuple[tuple[str,str]], BUTTONS, BADGES, CARDS, NEXT_PREFIX,
                  fmt(), check() (copy.py:46-163)
+
+_RUNNING_PROGRESS_PROP mirrors stage.snapshot() running-flag detection order (stage.py:199-211);
+keeps the mapping local so stage.py stays pure-data with no UI dependency.
 """
 from __future__ import annotations
 
 import importlib.util
 import json
 import os
+import re as _re
 import sys
 
 # ---------------------------------------------------------------------------
@@ -76,6 +80,21 @@ _LEVEL_ICON: dict[str, str] = {
 
 _CHAR_PX = 9.0  # Blender UI font at default ui_scale; 7.0 over-estimated and clipped (QA 2026-09-22)
 
+# Maps snap.running values → B4ML_PG_settings progress-text property.
+# Mirrors stage.snapshot() running-flag detection order (stage.py:199-211).
+# BODY has no dedicated progress property (not in verified B4ML_PG_settings props).
+_RUNNING_PROGRESS_PROP: dict[str, str] = {
+    'TEMPORAL':  'temporal_progress',
+    'BODY':      '',
+    'CONTACT':   'contact_progress',
+    'FLIGHT':    'flight_progress',
+    'SECONDARY': 'secondary_progress',
+    'CLEANUP':   'cleanup_progress',
+}
+
+# Matches "frame 34" or "frame 34.5" in progress-text strings (temporal_preview.py:57 format).
+_FRAME_RE = _re.compile(r'frame (\d+(?:\.\d+)?)', _re.IGNORECASE)
+
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -109,6 +128,63 @@ def wrap_label(layout, text: str, icon: str = 'NONE',
         layout.label(text=line, icon=icon if i == 0 else 'BLANK1')
 
 
+def running_card(layout, rig, snap, width_px=None) -> None:
+    """Draw a progress card for the active running task; no-op when snap.running is falsy.
+
+    Contract §SOLVE_RUNNING: panel reduces to this card while a solve is active.
+    Progress text from B4ML_PG_settings.*_progress — phase strings such as
+    'Solving at frame 34' (temporal_preview.py:57); NOT fractions.
+
+    Fraction: parses 'frame N' from text; if derivable from anchor range draws a
+    BAR progress widget.  Falls back to wrap_label with icon='TIME'.
+    Cancel operator drawn only for TEMPORAL; all others show a no-cancel note.
+    All string literals here pass copy_.check (no forbidden terms).
+    """
+    if not snap.running:
+        return
+
+    box = layout.box()
+
+    # ── Progress text ───────────────────────────────────────────────────────
+    prog_text = ''
+    if rig is not None:
+        b4ml = getattr(rig, 'b4ml', None)
+        if b4ml is not None:
+            prop = _RUNNING_PROGRESS_PROP.get(snap.running, '')
+            if prop:
+                prog_text = str(getattr(b4ml, prop, '') or '')
+    if not prog_text:
+        prog_text = copy_.BADGES.get('SOLVE_RUNNING', 'Generating\u2026')
+
+    # ── Fraction from frame text + anchor range ─────────────────────────────
+    # Anchor frames read via min/max over rig.b4ml.anchors (mirrors motion.py:112-113,
+    # review.py:100-101).
+    factor = None
+    if rig is not None:
+        b4ml = getattr(rig, 'b4ml', None)
+        if b4ml is not None:
+            anchors = getattr(b4ml, 'anchors', [])
+            first_f = min((a.frame for a in anchors), default=None)
+            last_f  = max((a.frame for a in anchors), default=None)
+            if first_f is not None and last_f is not None and abs(last_f - first_f) >= 1e-5:
+                m = _FRAME_RE.search(prog_text)
+                if m:
+                    cur = float(m.group(1))
+                    raw = (cur - first_f) / (last_f - first_f)
+                    factor = max(0.0, min(1.0, raw))
+
+    if factor is not None:
+        box.progress(text=prog_text, factor=factor, type='BAR')
+    else:
+        wrap_label(box, prog_text, icon='TIME', width_px=width_px)
+
+    # ── Cancel / no-cancel ──────────────────────────────────────────────────
+    if snap.running == 'TEMPORAL':
+        box.operator('b4ml.temporal_cancel', text='Cancel', icon='X')
+    else:
+        box.label(text='Runs to completion (cannot be interrupted)', icon='INFO')
+
+
 def prelude(layout, context, full: bool = False) -> tuple:
     """Draw the shared panel prelude; return (rig, snap, st).
 
@@ -118,9 +194,11 @@ def prelude(layout, context, full: bool = False) -> tuple:
     sentence (wrapped) then Next button.  Pass full=True from setup.py.
 
     Drawing order (contract §STATE MAP, §BEHAVIORAL SUCCESS items 3, 7, 8):
-      1. Stage strip  — icon-only row + 'Stage N of 5 — Label' text line.
+      1. Stage strip   — icon-only row + 'Stage N of 5 — Label' text line.
       2. Feedback card — compact: WARNING/ERROR; full: all levels, wrapped.
-      3. Next line    — full: wrapped card sentence; both: verb button.
+      2b. Running card — always drawn when snap.running (both modes); progress bar + Cancel/note.
+      3. Next line     — full: wrapped card sentence; both: verb button.
+                         Next button suppressed while TEMPORAL running (running_card drew Cancel).
 
     Returns the active rig object (or None), the Snapshot, and the StageState.
     """
@@ -178,6 +256,8 @@ def prelude(layout, context, full: bool = False) -> tuple:
                 for k, v in json.loads(fb['fix_props'] or '{}').items():
                     setattr(op, k, v)
 
+    running_card(layout, rig, snap, width_px=width_px)
+
     # ── 3. NEXT LINE ───────────────────────────────────────────────────────
     # full: wrapped card sentence first; both modes: verb on button
     # (§BEHAVIORAL SUCCESS item 1).
@@ -185,7 +265,7 @@ def prelude(layout, context, full: bool = False) -> tuple:
     next_label, next_idname, next_props = st.next_action
     if full and card_text:
         wrap_label(layout, card_text, icon='INFO', width_px=width_px)
-    if next_idname:
+    if next_idname and snap.running != 'TEMPORAL':
         row = layout.row()
         row.scale_y = 1.3
         op = row.operator(next_idname, text=copy_.NEXT_PREFIX + ' ' + next_label, icon='PLAY')
