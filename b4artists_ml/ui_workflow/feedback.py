@@ -8,6 +8,8 @@ state.status assignments routed through from_status():
   workflow.py:1644  'Candidate kept as a separate action' / 'Original animation restored'
   workflow.py:1664  'Original action and input rig modes restored; candidate remains available'
   workflow.py:562   f"Reused pose from frame {source_frame:g} at frame {frame:g}"
+  ui.py:~L925 INSPECT path: "Unrecognized [family]: 0/14 roles; N blocked preflights" → ERROR card
+              via _STATUS_FAILURE_PREFIXES before the SUCCESS/INFO decision.
 
 B4ML_PG_settings defined at ui.py:216; active_rig() at workflow.py:31.
 Real ValueError messages mapped by _RULES:
@@ -286,6 +288,12 @@ def guarded(fn):
 # from_status — mechanical bridge for legacy state.status assignments.
 # Phase 4 will rewrite the copy; this is routing only.
 # ---------------------------------------------------------------------------
+# Status-text prefixes that map to a FAILURES card instead of SUCCESS/INFO.
+# Checked before _SUCCESS_PREFIXES; each entry is (prefix, FAILURES key).
+_STATUS_FAILURE_PREFIXES: tuple[tuple[str, str], ...] = (
+    ('Unrecognized', 'mapping_failure'),   # ui.py:~L925 INSPECT branch
+)
+
 _SUCCESS_PREFIXES = (
     'Kept',
     'Restored',
@@ -300,8 +308,16 @@ _SUCCESS_PREFIXES = (
 def from_status(target: Any, text: str) -> None:
     """Route a legacy state.status string into the feedback card.
 
+    Checks _STATUS_FAILURE_PREFIXES first; matching text becomes an ERROR card
+    using the FAILURES row (e.g. mapping_failure → ERROR + Check Rig fix button).
     SUCCESS when *text* starts with or contains a known success prefix; INFO otherwise.
     The `in` form handles prefixes that are mid-sentence substrings of the legacy text.
     """
+    for prefix, key in _STATUS_FAILURE_PREFIXES:
+        if text.startswith(prefix):
+            level, tmpl, fix_op, fix_props, fix_label = FAILURES[key]
+            formatted = tmpl.format(exc=text) if '{' in tmpl else tmpl
+            set_feedback(target, level, formatted, fix_op, fix_label, **fix_props)
+            return
     level = 'SUCCESS' if any(text.startswith(p) or p in text for p in _SUCCESS_PREFIXES) else 'INFO'
     set_feedback(target, level, text)
