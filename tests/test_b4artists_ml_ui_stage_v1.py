@@ -508,3 +508,132 @@ class TestReasonFor:
     def test_available_key_returns_empty(self):
         reason = stage.reason_for(snap_kept(), "review.restore")
         assert reason == ""
+
+
+# ---------------------------------------------------------------------------
+# Polish key lock reasons (polishtest-1)
+# ---------------------------------------------------------------------------
+
+_TEST_POLISH_KEYS = (
+    'polish.contacts', 'polish.cleanup', 'polish.flight', 'polish.secondary',
+)
+
+_SESSION_BLOCKING_REASON = "Finish or cancel the posing session"
+
+
+class TestPolishLocks:
+    """Lock reason is non-empty in every blocked situation; empty with preview or kept."""
+
+    @pytest.mark.parametrize("key", _TEST_POLISH_KEYS)
+    def test_no_rig_locked_with_specific_reason(self, key):
+        assert locked(evaluate(snap_no_rig()), key) == "Select an armature or bound mesh"
+
+    @pytest.mark.parametrize("key", _TEST_POLISH_KEYS)
+    def test_rig_not_mapped_locked_with_specific_reason(self, key):
+        assert locked(evaluate(snap_unsupported()), key) == "Check Rig first"
+
+    @pytest.mark.parametrize("key", _TEST_POLISH_KEYS)
+    def test_mapped_no_result_locked(self, key):
+        assert locked(evaluate(snap_mapped()), key) != ""
+
+    @pytest.mark.parametrize("key", _TEST_POLISH_KEYS)
+    def test_anchors_no_result_locked(self, key):
+        assert locked(evaluate(snap_anchors_captured()), key) != ""
+
+    @pytest.mark.parametrize("key", _TEST_POLISH_KEYS)
+    def test_posing_active_locked_with_specific_reason(self, key):
+        assert locked(evaluate(snap_posing_object()), key) == _SESSION_BLOCKING_REASON
+
+    @pytest.mark.parametrize("key", _TEST_POLISH_KEYS)
+    def test_solve_running_locked(self, key):
+        assert locked(evaluate(snap_solve_running_contact()), key) != ""
+
+    @pytest.mark.parametrize("key", _TEST_POLISH_KEYS)
+    def test_preview_active_available(self, key):
+        assert locked(evaluate(snap_preview_active()), key) == ""
+
+    @pytest.mark.parametrize("key", _TEST_POLISH_KEYS)
+    def test_kept_available(self, key):
+        assert locked(evaluate(snap_kept()), key) == ""
+
+
+# ---------------------------------------------------------------------------
+# polished field → POLISH in completed
+# ---------------------------------------------------------------------------
+
+class TestPolishedField:
+    def test_polished_true_adds_polish_to_completed(self):
+        snap = _snap(anchors=2, kept=True, polished=True)
+        assert 'POLISH' in evaluate(snap).completed
+
+    def test_polished_false_excludes_polish_from_completed(self):
+        snap = _snap(anchors=2, kept=True, polished=False)
+        assert 'POLISH' not in evaluate(snap).completed
+
+    def test_polished_default_is_false_positional_construction(self):
+        """Positional Snapshot construction without polished kwarg still works."""
+        snap = Snapshot(
+            has_rig=True, family="humanoid", mapped=True, mapping_error="",
+            posing="", anchors=2, candidate=False, kept=True,
+            running="", mode="OBJECT", playing=False,
+        )
+        assert 'POLISH' not in evaluate(snap).completed
+
+
+# ---------------------------------------------------------------------------
+# Quadruped posing path (polishtest-1)
+# ---------------------------------------------------------------------------
+
+def _snap_quadruped_posing() -> Snapshot:
+    return _snap(posing='QUADRUPED', mode='OBJECT', family='quadruped')
+
+
+class TestQuadrupedPosing:
+    """posing='QUADRUPED' must produce the same session-blocking locks as posing='BODY'."""
+
+    def setup_method(self):
+        self.quad_state = evaluate(_snap_quadruped_posing())
+        self.body_state = evaluate(snap_posing_object())
+
+    def test_current_is_pose(self):
+        assert self.quad_state.current == 'POSE'
+
+    def test_required_mode_is_object(self):
+        assert self.quad_state.required_mode == 'OBJECT'
+
+    def test_required_mode_matches_humanoid(self):
+        assert self.quad_state.required_mode == self.body_state.required_mode
+
+    def test_motion_preview_locked(self):
+        assert locked(self.quad_state, 'motion.preview') != ""
+
+    def test_motion_preview_lock_matches_humanoid(self):
+        assert (locked(self.quad_state, 'motion.preview')
+                == locked(self.body_state, 'motion.preview'))
+
+    def test_review_keys_locked_match_humanoid(self):
+        for k in ('review.keep', 'review.discard', 'review.restore'):
+            assert locked(self.quad_state, k) == locked(self.body_state, k), \
+                f"quadruped {k!r} lock reason differs from humanoid BODY"
+
+
+# ---------------------------------------------------------------------------
+# ACTION_KEYS covers every key any panel calls action_row with
+# ---------------------------------------------------------------------------
+
+class TestActionKeysCompleteness:
+    def test_panel_keys_all_in_action_keys(self):
+        import re
+        import pathlib as _pl
+        panels_dir = (
+            _pl.Path(__file__).parent.parent
+            / "b4artists_ml" / "ui_workflow" / "panels"
+        )
+        panel_keys: set[str] = set()
+        _pat = re.compile(r",\s*st,\s*['\"]([^'\"]+)['\"]")
+        for py_file in panels_dir.glob("*.py"):
+            source = py_file.read_text(encoding="utf-8")
+            for m in _pat.finditer(source):
+                panel_keys.add(m.group(1))
+        unknown = panel_keys - set(ACTION_KEYS)
+        assert not unknown, f"Keys used in panels but absent from ACTION_KEYS: {unknown}"
