@@ -59,6 +59,10 @@ STAGE_HINT: dict[str, str] = {
     'REVIEW':  'Keep or discard the generated motion.',
 }
 
+# Stage progress line template; header.prelude formats it with fmt()
+# using keys n (1-based index), total (len(STAGES)), label (stage display name).
+STAGE_LINE: str = 'Stage {n} of {total} — {label}'
+
 # ---------------------------------------------------------------------------
 # Button labels (plan §2.3 action keys; contract §STATE MAP; §BEHAVIORAL SUCCESS)
 # ---------------------------------------------------------------------------
@@ -121,6 +125,27 @@ CARDS: dict[str, str] = {
 }
 
 NEXT_PREFIX: str = 'Next:'
+
+# ---------------------------------------------------------------------------
+# Per-subpanel prerequisite / description lines (Advanced panel subpanels).
+# Keys: bl_label lowercased with spaces as underscores.
+# Values: the exact label(s) drawn by each subpanel after the rig-None check.
+# Where a subpanel draws a Procedural tag, both strings are stored as a tuple
+# so all_strings() / check() can validate them together.
+# ---------------------------------------------------------------------------
+
+PREREQ: dict[str, object] = {
+    'rig_mapping':      'Maps bone controls to semantic roles.',
+    'assisted_pose':    'Geometric IK-to-FK solver and whole-body pose for humanoid rigs.',
+    'quadruped':        'Four-paw whole-body pose for Rigify quadruped rigs.',
+    'center_of_mass':   'Artist-authored mass estimate for stability analysis.',
+    'contacts':         'Needs a preview or kept result.',
+    'airborne':         'Needs a preview or kept result.',
+    'cleanup':          ('Needs a preview or kept result.',
+                         'Procedural cleanup; no learned model used.'),
+    'secondary_motion': 'Needs a preview or kept result.',
+    'saved_results':    'Previously kept motion results for this rig.',
+}
 
 # ---------------------------------------------------------------------------
 # HUD viewport strings (Phase 2, plan §4; contract §DESIGN PLAN)
@@ -189,6 +214,7 @@ def all_strings() -> list[str]:
         VOCAB,
         STAGES,
         STAGE_HINT,
+        STAGE_LINE,
         BUTTONS,
         BADGES,
         FAMILY,
@@ -196,6 +222,7 @@ def all_strings() -> list[str]:
         NEXT_PREFIX,
         HUD,
         MARKER_PREFIX,
+        PREREQ,
     ]
     result: list[str] = []
     for table in tables:
