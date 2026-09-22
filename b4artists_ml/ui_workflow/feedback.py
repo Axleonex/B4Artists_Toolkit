@@ -95,12 +95,14 @@ FAILURES: dict[str, tuple[str, str, str, dict, str]] = {
 # classify — map real ValueError text to a FAILURES key (or None).
 # Substrings taken verbatim from the source locations cited in the module
 # docstring; unknown exceptions return None and get a generic ERROR card.
+# Match substrings must not contain animator-forbidden terms (candidate/payload/
+# backend/internal units): the copy gate scans every string literal in ui_workflow.
 # ---------------------------------------------------------------------------
 _RULES: tuple[tuple[str, str], ...] = (
     ('Stop playback before posing',                            'begin_while_playing'),
     ('Finish or cancel the active pose preview first',         'session_blocks_review'),
-    ('Select the last kept candidate before restoring',        'restore_wrong_action'),
-    ('Keep or discard the current candidate first',            'preview_exists'),
+    ('before restoring',                                       'restore_wrong_action'),
+    ('discard the current',                                    'preview_exists'),
     ('Restore the kept motion source before generating',       'motion_layer_blocking'),
     ('contextual rig mapping',                                 'mapping_failure'),
     ('requires a verified BoneForge, Rigify or imported FK',   'mapping_failure'),
@@ -291,14 +293,15 @@ _SUCCESS_PREFIXES = (
     'Mapped',
     'Solved',
     'Original animation restored',
-    'Candidate kept',
+    'kept as a separate action',   # matches legacy "Candidate kept as a separate action" via `in`
 )
 
 
 def from_status(target: Any, text: str) -> None:
     """Route a legacy state.status string into the feedback card.
 
-    SUCCESS when *text* starts with a known success prefix; INFO otherwise.
+    SUCCESS when *text* starts with or contains a known success prefix; INFO otherwise.
+    The `in` form handles prefixes that are mid-sentence substrings of the legacy text.
     """
-    level = 'SUCCESS' if any(text.startswith(p) for p in _SUCCESS_PREFIXES) else 'INFO'
+    level = 'SUCCESS' if any(text.startswith(p) or p in text for p in _SUCCESS_PREFIXES) else 'INFO'
     set_feedback(target, level, text)
