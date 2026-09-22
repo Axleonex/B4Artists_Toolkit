@@ -296,6 +296,11 @@ _SP_ATTRS: dict = {
     'bl_options': {'DEFAULT_CLOSED'},
 }
 
+# Subpanels whose primary Solve action has been promoted to the Polish stage
+# (packets polish-2, register-1, dedup-1).  Each class is kept with advanced
+# options only; the primary action_row and prerequisite label were removed.
+PROMOTED_TO_POLISH = ('contacts', 'airborne', 'cleanup', 'secondary')
+
 
 # ---------------------------------------------------------------------------
 # Parent panel
@@ -991,7 +996,7 @@ class B4ML_PT_adv_contacts(_Panel):
         rig, snap, st = header.prelude(layout, context)
         if rig is None:
             return
-        layout.label(text='Needs a preview or kept result.')
+        layout.label(text='Primary action: Polish stage', icon='INFO')
         state = rig.b4ml
         layout.label(text='Humanoid geometric contact correction')
         layout.label(text='Priority poses stay unchanged.')
@@ -1101,8 +1106,6 @@ class B4ML_PT_adv_contacts(_Panel):
                         col.prop(item, 'prop_point')
                         col.prop(item, 'prop_rotation')
                 col.operator('b4ml.contact', text='Remove Contact').operation = 'REMOVE'
-        header.action_row(layout, st, 'polish.contacts', 'b4ml.contact_solve',
-                          text='Preview Contact Correction')
         if (getattr(state, 'contact_input', None)
                 and getattr(state, 'contact_output', None) == getattr(
                     state, 'candidate_action', None)):
@@ -1142,7 +1145,7 @@ class B4ML_PT_adv_airborne(_Panel):
         rig, snap, st = header.prelude(layout, context)
         if rig is None:
             return
-        layout.label(text='Needs a preview or kept result.')
+        layout.label(text='Primary action: Polish stage', icon='INFO')
         state = rig.b4ml
 
         try:
@@ -1183,8 +1186,6 @@ class B4ML_PT_adv_airborne(_Panel):
                         col.prop(item, 'collision_clearance')
                 col.operator('b4ml.flight', text='Remove Interval').operation = 'REMOVE'
             col.prop(state, 'flight_backend')
-            header.action_row(col, st, 'polish.flight', 'b4ml.flight_solve',
-                              text='Preview COM Flight')
         candidate = getattr(state, 'candidate_action', None)
         if (getattr(state, 'flight_input', None)
                 and getattr(state, 'flight_output', None) == candidate):
@@ -1255,7 +1256,7 @@ class B4ML_PT_adv_cleanup(_Panel):
         rig, snap, st = header.prelude(layout, context)
         if rig is None:
             return
-        layout.label(text='Needs a preview or kept result.')
+        layout.label(text='Primary action: Polish stage', icon='INFO')
         state = rig.b4ml
         layout.label(text='Deterministic copied-curve cleanup')
         layout.label(text='Priority poses and accepted contacts stay exact.')
@@ -1267,8 +1268,6 @@ class B4ML_PT_adv_cleanup(_Panel):
         col.prop(state, 'cleanup_reduce')
         reduce = col.column()
         reduce.prop(state, 'cleanup_tolerance')
-        header.action_row(layout, st, 'polish.cleanup', 'b4ml.cleanup_solve',
-                          text='Preview Cleanup', icon='PLAY')
         if (getattr(state, 'cleanup_input', None)
                 and getattr(state, 'cleanup_output', None) == getattr(
                     state, 'candidate_action', None)):
@@ -1340,7 +1339,7 @@ class B4ML_PT_adv_secondary(_Panel):
         rig, snap, st = header.prelude(layout, context)
         if rig is None:
             return
-        layout.label(text='Needs a preview or kept result.')
+        layout.label(text='Primary action: Polish stage', icon='INFO')
         state = rig.b4ml
         layout.label(text='Deterministic control physics')
         layout.label(text='Select pose controls.')
@@ -1547,8 +1546,6 @@ class B4ML_PT_adv_secondary(_Panel):
             world.prop(state, 'secondary_collision_clearance', text='Clearance')
             world.prop(state, 'secondary_restitution', text='Bounce')
             world.prop(state, 'secondary_surface_friction', text='Friction')
-        header.action_row(layout, st, 'polish.secondary', 'b4ml.secondary_solve',
-                          text='Preview Secondary', icon='PLAY')
         if (getattr(state, 'secondary_input', None)
                 and getattr(state, 'secondary_output', None) == getattr(
                     state, 'candidate_action', None)):
