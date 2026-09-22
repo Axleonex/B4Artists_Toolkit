@@ -89,12 +89,58 @@ class NativeOverlayTests(unittest.TestCase):
             f'unexpected draw handlers registered in background: {viewport_overlay._HANDLERS}')
 
     def test_hud_lines_only_in_session(self):
-        # viewport_overlay has no standalone hud_lines() helper; HUD logic is embedded in
-        # _draw_2d() POST_PIXEL handler which requires live bpy draw context.
-        self.skipTest(
-            'no standalone hud_lines() helper in viewport_overlay; '
-            'HUD logic embedded in _draw_2d POST_PIXEL handler — '
-            'add a pure hud_lines(snap) helper to enable this test')
+        from b4artists_ml.ui_workflow import stage as _stage
+
+        # ── Part 1: no session → []  (the "only in session" invariant)
+        snap_empty = _stage.Snapshot(
+            has_rig=False, family='', mapped=False, mapping_error='',
+            posing='', anchors=0, candidate=False, kept=False,
+            running='', mode='OBJECT', playing=False,
+        )
+        self.assertEqual(viewport_overlay.hud_lines(snap_empty), [],
+            'hud_lines must return [] when no session active')
+
+        # ── Part 2: active session → non-empty list with well-formed entries
+        snap_obj = _stage.Snapshot(
+            has_rig=True, family='humanoid', mapped=True, mapping_error='',
+            posing='BODY', anchors=0, candidate=False, kept=False,
+            running='', mode='OBJECT', playing=False,
+        )
+        lines_obj = viewport_overlay.hud_lines(snap_obj)
+        self.assertGreater(len(lines_obj), 0,
+            'hud_lines must return entries for active posing session')
+        for text, colour in lines_obj:
+            if not text:
+                # legend group sentinel: colour is a tuple of (lbl, rgb) pairs
+                self.assertIsInstance(colour, tuple,
+                    'legend sentinel second field must be tuple')
+                for lbl, rc in colour:
+                    self.assertIsInstance(lbl, str)
+                    self.assertGreater(len(lbl), 0)
+                    self.assertIn(len(rc), (3, 4))
+                continue
+            self.assertIsInstance(text, str,
+                f'hud_lines entry text must be str, got {type(text)}')
+            self.assertGreater(len(text), 0, 'entry text must be non-empty')
+            self.assertIsInstance(colour, (tuple, list),
+                f'entry colour must be tuple/list, got {type(colour)}')
+            self.assertIn(len(colour), (3, 4),
+                f'colour must have 3 or 4 components, got {len(colour)}')
+            for c in colour:
+                self.assertIsInstance(c, (int, float),
+                    f'colour component must be numeric, got {type(c)}')
+
+        # ── Part 3: mode-alert path differs between OBJECT and POSE
+        snap_pose = _stage.Snapshot(
+            has_rig=True, family='humanoid', mapped=True, mapping_error='',
+            posing='BODY', anchors=0, candidate=False, kept=False,
+            running='', mode='POSE', playing=False,
+        )
+        lines_pose = viewport_overlay.hud_lines(snap_pose)
+        texts_obj  = [t for t, _ in lines_obj  if t]
+        texts_pose = [t for t, _ in lines_pose if t]
+        self.assertNotEqual(texts_obj, texts_pose,
+            'mode-alert text must differ between OBJECT and POSE mode')
 
 
 if __name__=='__main__':
