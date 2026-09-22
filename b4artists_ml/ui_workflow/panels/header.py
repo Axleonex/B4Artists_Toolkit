@@ -134,18 +134,20 @@ def prelude(layout, context) -> tuple:
                     setattr(op, k, v)
 
     # ── 3. NEXT LINE ───────────────────────────────────────────────────────
-    # Label = NEXT_PREFIX + ' ' + card guidance text for the current state.
-    # Rendered as an operator button when next_action carries an idname,
-    # otherwise as a plain label (e.g. NO_RIG, SOLVE_RUNNING wait states).
+    # Card sentence drawn as a plain label; verb from next_action[0] goes on
+    # the button so §BEHAVIORAL SUCCESS item 1 (verb on button) is satisfied.
     card_text = copy_.CARDS.get(st.state_name, '')
-    label = copy_.NEXT_PREFIX + (' ' + card_text if card_text else '')
-    _next_label, next_idname, next_props = st.next_action
+    next_label, next_idname, next_props = st.next_action
+    if card_text:
+        layout.label(text=card_text, icon='INFO')
     if next_idname:
-        op = layout.operator(next_idname, text=label)
+        row = layout.row()
+        row.scale_y = 1.3
+        op = row.operator(next_idname, text=copy_.NEXT_PREFIX + ' ' + next_label, icon='PLAY')
         for k, v in next_props.items():
             setattr(op, k, v)
-    else:
-        layout.label(text=label)
+    elif next_label:
+        layout.label(text=copy_.NEXT_PREFIX + ' ' + next_label)
 
     return (rig, snap, st)
 
