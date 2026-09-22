@@ -80,6 +80,7 @@ class B4ML_PT_dopesheet(_Panel):
     bl_region_type = 'UI'
     bl_category    = 'B4ML'
     bl_label       = 'B4Artists ML'
+    bl_options     = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
