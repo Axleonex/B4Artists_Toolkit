@@ -57,6 +57,19 @@ IDENTIFIER_STRINGS: tuple[str, ...] = (
     'source_action',   # no forbidden term but included for completeness
 )
 
+# layout.prop / template_list etc. accept a property-name string as their
+# second positional argument (index 1) or via the keywords below.  These are
+# Python attribute identifiers on the RNA struct — not animator-facing copy.
+# The animator-visible label is always the `text=` keyword, which stays checked.
+PROP_CALLS: tuple[str, ...] = (
+    'prop', 'prop_enum', 'prop_search', 'prop_menu_enum',
+    'template_list', 'prop_with_popover', 'prop_decorator',
+)
+_PROP_KW_NAMES: frozenset[str] = frozenset({
+    'property', 'propname', 'dataptr',
+    'active_propname', 'listtype_name', 'list_id',
+})
+
 # Contract states that BADGES and CARDS must cover (contract §STATE MAP).
 _CONTRACT_STATES: tuple[str, ...] = (
     'NO_RIG',
@@ -235,10 +248,40 @@ class UiWorkflowStringsGate(unittest.TestCase):
             return []
         return sorted(p for p in d.rglob('*.py') if p.name not in self._SKIP_FILES)
 
+    @staticmethod
+    def _prop_ident_exempt(tree: ast.AST) -> set[int]:
+        """IDs of ast.Constant nodes that are property-identifier arguments.
+
+        layout.prop(data, 'flight_backend', ...) — positional arg index 1 is
+        the RNA property name, not animator copy.  Keyword names in
+        _PROP_KW_NAMES carry the same role.  The `text=` keyword is NOT
+        exempted and stays checked.
+        """
+        exempt: set[int] = set()
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            func = node.func
+            if not (isinstance(func, ast.Attribute) and func.attr in PROP_CALLS):
+                continue
+            # Positional args: skip index 0 (the data/layout object), exempt rest.
+            for i, arg in enumerate(node.args):
+                if i == 0:
+                    continue
+                if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                    exempt.add(id(arg))
+            # Keyword args whose name marks them as property identifiers.
+            for kw in node.keywords:
+                if kw.arg in _PROP_KW_NAMES:
+                    if isinstance(kw.value, ast.Constant) and isinstance(kw.value.value, str):
+                        exempt.add(id(kw.value))
+        return exempt
+
     def _violations_in_file(self, path: Path) -> list[tuple[int, str, list[str]]]:
         src = path.read_text(encoding='utf-8')
         tree = ast.parse(src, filename=str(path))
         ds_ids = _docstring_nodes(tree)
+        prop_ids = self._prop_ident_exempt(tree)
         out: list[tuple[int, str, list[str]]] = []
         for node in ast.walk(tree):
             if not isinstance(node, ast.Constant):
@@ -246,6 +289,8 @@ class UiWorkflowStringsGate(unittest.TestCase):
             if not isinstance(node.value, str):
                 continue
             if id(node) in ds_ids:
+                continue
+            if id(node) in prop_ids:
                 continue
             s = node.value
             if s in IDENTIFIER_STRINGS:
