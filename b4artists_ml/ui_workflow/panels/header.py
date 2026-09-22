@@ -79,18 +79,53 @@ _LEVEL_ICON: dict[str, str] = {
 # Public API
 # ---------------------------------------------------------------------------
 
-def prelude(layout, context) -> tuple:
+def wrap_label(layout, text: str, icon: str = 'NONE',
+               width_px: int | None = None) -> None:
+    """Word-wrap *text* into successive label rows at sidebar width.
+
+    chars per line = max(18, int((width_px or 220) / 7))
+    Icon on first row; BLANK1 on subsequent rows to preserve alignment.
+    """
+    cpl = max(18, int((width_px or 220) / 7))
+    words = text.split()
+    lines: list[str] = []
+    current: list[str] = []
+    length = 0
+    for word in words:
+        wlen = len(word)
+        if length and length + 1 + wlen > cpl:
+            lines.append(' '.join(current))
+            current = [word]
+            length = wlen
+        else:
+            current.append(word)
+            length = (length + 1 + wlen) if length else wlen
+    if current:
+        lines.append(' '.join(current))
+    for i, line in enumerate(lines or ['']):
+        layout.label(text=line, icon=icon if i == 0 else 'BLANK1')
+
+
+def prelude(layout, context, full: bool = False) -> tuple:
     """Draw the shared panel prelude; return (rig, snap, st).
 
+    full=False (default): compact — icon strip + stage line, WARNING/ERROR
+    feedback card only, Next button without card sentence.
+    full=True: complete — same strip, all feedback levels (wrapped), card
+    sentence (wrapped) then Next button.  Pass full=True from setup.py.
+
     Drawing order (contract §STATE MAP, §BEHAVIORAL SUCCESS items 3, 7, 8):
-      1. Stage strip  — one row of stage labels with status icons.
-      2. Feedback card — shown only when the rig has a non-empty feedback text.
-      3. Next line    — card guidance text; rendered as an operator if clickable.
+      1. Stage strip  — icon-only row + 'Stage N of 5 — Label' text line.
+      2. Feedback card — compact: WARNING/ERROR; full: all levels, wrapped.
+      3. Next line    — full: wrapped card sentence; both: verb button.
 
     Returns the active rig object (or None), the Snapshot, and the StageState.
     """
     snap = stage.snapshot(context)
     st = stage.evaluate(snap)
+
+    # Region width for wrap_label; fallback 220 when no region attribute.
+    width_px: int = getattr(getattr(context, 'region', None), 'width', 220) or 220
 
     # Lazy rig resolution — workflow.active_rig requires bpy.
     rig = None
@@ -102,44 +137,51 @@ def prelude(layout, context) -> tuple:
             pass
 
     # ── 1. STAGE STRIP ─────────────────────────────────────────────────────
-    # One aligned row; each stage label carries a status icon.
+    # Icon-only row fits narrow sidebars; one text line names current stage.
+    # 'Stage %d of 5 — %s': literal template; no copy_.fmt entry yet —
+    # flagged for Phase 4 copy audit (contains no forbidden term).
     # Icons: CHECKMARK = completed, RADIOBUT_ON = current,
     #        LOCKED = primary key locked, RADIOBUT_OFF = future.
+    current_idx = 1
+    current_stage_label = ''
     row = layout.row(align=True)
-    for key, label in copy_.STAGES:
+    for i, (key, lbl) in enumerate(copy_.STAGES, 1):
         primary_key = STAGE_PRIMARY_KEY.get(key, '')
         if key in st.completed:
             icon = 'CHECKMARK'
         elif key == st.current:
             icon = 'RADIOBUT_ON'
+            current_idx = i
+            current_stage_label = lbl
         elif primary_key and stage.locked(st, primary_key):
             icon = 'LOCKED'
         else:
             icon = 'RADIOBUT_OFF'
-        row.label(text=label, icon=icon)
+        row.label(text='', icon=icon)
+    layout.label(text='Stage %d of 5 — %s' % (current_idx, current_stage_label))
 
     # ── 2. FEEDBACK CARD ───────────────────────────────────────────────────
-    # Shown only when the rig has a b4ml_ui holder with non-empty text.
-    # box.alert = True for ERROR level to trigger Bforartists red highlight.
+    # compact: WARNING/ERROR only; full: all levels, text word-wrapped.
+    # box.alert = True for ERROR level triggers Bforartists red highlight.
     if rig is not None and getattr(rig, 'b4ml_ui', None) is not None:
         fb = feedback.current(rig)
-        if fb['text']:
+        if fb['text'] and (full or fb['level'] in ('WARNING', 'ERROR')):
             box = layout.box()
             box.alert = (fb['level'] == 'ERROR')
             icon = _LEVEL_ICON.get(fb['level'], 'INFO')
-            box.label(text=fb['text'], icon=icon)
+            wrap_label(box, fb['text'], icon=icon, width_px=width_px)
             if fb['fix']:
                 op = box.operator(fb['fix'], text=fb['fix_label'] or 'Fix')
                 for k, v in json.loads(fb['fix_props'] or '{}').items():
                     setattr(op, k, v)
 
     # ── 3. NEXT LINE ───────────────────────────────────────────────────────
-    # Card sentence drawn as a plain label; verb from next_action[0] goes on
-    # the button so §BEHAVIORAL SUCCESS item 1 (verb on button) is satisfied.
+    # full: wrapped card sentence first; both modes: verb on button
+    # (§BEHAVIORAL SUCCESS item 1).
     card_text = copy_.CARDS.get(st.state_name, '')
     next_label, next_idname, next_props = st.next_action
-    if card_text:
-        layout.label(text=card_text, icon='INFO')
+    if full and card_text:
+        wrap_label(layout, card_text, icon='INFO', width_px=width_px)
     if next_idname:
         row = layout.row()
         row.scale_y = 1.3
