@@ -86,7 +86,7 @@ class B4ML_PT_review(_Panel):  # type: ignore[valid-type]
         return True
 
     def draw(self, context) -> None:
-        rig, snap, st = header.prelude(self.layout, context)
+        rig, snap, st = header.prelude(self.layout, context, stage_key='REVIEW')
         layout = self.layout
 
         # 1. State badge: Original animation / Previewing: name / Kept: name
@@ -130,7 +130,8 @@ class B4ML_PT_review(_Panel):  # type: ignore[valid-type]
             # RESTORED, MAPPED, ANCHORS_CAPTURED, etc. — keep panel non-blank
             card_text = copy.CARDS.get(st.state_name, '')
             if card_text:
-                layout.label(text=card_text)
+                header.wrap_label(layout, card_text, icon='INFO',
+                                  width_px=getattr(getattr(context, 'region', None), 'width', 220) or 220)
 
 
 CLASSES = (B4ML_PT_review,)
