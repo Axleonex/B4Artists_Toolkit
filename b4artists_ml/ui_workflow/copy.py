@@ -73,7 +73,7 @@ BUTTONS: dict[str, str] = {
     'pose.keep':          'Keep Pose',
     'pose.cancel':        'Cancel Posing',
     # {a} and {b} are frame-range placeholders; use fmt() to fill them.
-    'motion.preview':     'Generate Preview (frames {a}-{b})',
+    'motion.preview':     'Preview frames {a}–{b}',
     # contract §BEHAVIORAL SUCCESS criterion 6: copy must explain what is kept
     'review.keep':        'Keep (saves the preview as a new action; the original is kept too)',
     'review.discard':     'Discard (returns to the original animation)',
