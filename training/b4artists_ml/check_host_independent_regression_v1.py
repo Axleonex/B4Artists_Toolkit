@@ -9,6 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RECEIPT = ROOT / "training" / "b4artists_ml" / "results" / "host-independent-regression-v1.json"
+
+# Update this constant deliberately when the host-independent selection legitimately changes.
+EXPECTED_SELECTED_SOURCES = 133
 OUTPUT = ROOT / "training" / "b4artists_ml" / "results" / "host-independent-regression-validation-v1.json"
 RUNNER = ROOT / "training" / "b4artists_ml" / "run_host_independent_regression_v1.py"
 
@@ -31,7 +34,7 @@ def main() -> None:
             or pytest_report.get("passed_calls", 0) <= 0):
         raise ValueError("Host-independent regression receipt is not clean")
     selected = report.get("selected_sources", {})
-    if len(selected) != 56:
+    if len(selected) != EXPECTED_SELECTED_SOURCES:
         raise ValueError("Unexpected selected source count")
     for relative, expected in selected.items():
         path = ROOT / relative

@@ -115,6 +115,7 @@ def main() -> dict:
             "full_goal_complete": False,
         },
     }
+    RESULT.parent.mkdir(parents=True, exist_ok=True)
     RESULT.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
     if exit_code != 0:
