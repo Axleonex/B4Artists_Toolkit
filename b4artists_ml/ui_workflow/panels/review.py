@@ -23,6 +23,7 @@ Verified facts (2026-09-22):
 from __future__ import annotations
 
 import importlib.util
+import re
 import os
 import sys
 
@@ -35,6 +36,13 @@ except ImportError:
     bpy = None  # type: ignore[assignment]
 
 _Panel = bpy.types.Panel if bpy is not None else object
+
+
+def _split_button(label: str) -> tuple[str, str]:
+    """'Keep (saves …)' -> ('Keep', 'saves …'); a label without parentheses -> (label, '')."""
+    m = re.match(r'^\s*(.*?)\s*\((.*)\)\s*$', label)
+    return (m.group(1), m.group(2)) if m else (label, '')
+
 
 # ---------------------------------------------------------------------------
 # Sibling imports — relative inside the package; importlib fallback for tests.
@@ -117,14 +125,28 @@ class B4ML_PT_review(_Panel):  # type: ignore[valid-type]
                 layout.label(text=copy.VOCAB['candidate action'])   # 'Preview'
             else:
                 layout.label(text=copy.VOCAB['source action'])      # 'Original animation'
+            keep_short, keep_hint = _split_button(copy.BUTTONS['review.keep'])
+            disc_short, disc_hint = _split_button(copy.BUTTONS['review.discard'])
+            _width = getattr(getattr(context, 'region', None), 'width', 220) or 220
             header.action_row(layout, st, 'review.keep',    'b4ml.action',
-                              icon='CHECKMARK', operation='KEEP')
+                              text=keep_short, icon='CHECKMARK', operation='KEEP')
+            if keep_hint:
+                header.wrap_label(layout, f'{keep_short}: {keep_hint}', icon='INFO',
+                                  width_px=_width)
             header.action_row(layout, st, 'review.discard', 'b4ml.action',
-                              icon='X', operation='DISCARD')
+                              text=disc_short, icon='X', operation='DISCARD')
+            if disc_hint:
+                header.wrap_label(layout, f'{disc_short}: {disc_hint}', icon='BLANK1',
+                                  width_px=_width)
 
         elif st.state_name == 'KEPT':
+            rest_short, rest_hint = _split_button(copy.BUTTONS['review.restore'])
+            _width = getattr(getattr(context, 'region', None), 'width', 220) or 220
             header.action_row(layout, st, 'review.restore', 'b4ml.action',
-                              icon='LOOP_BACK', operation='RESTORE_SOURCE')
+                              text=rest_short, icon='LOOP_BACK', operation='RESTORE_SOURCE')
+            if rest_hint:
+                header.wrap_label(layout, f'{rest_short}: {rest_hint}', icon='INFO',
+                                  width_px=_width)
 
         else:
             # RESTORED, MAPPED, ANCHORS_CAPTURED, etc. — keep panel non-blank
