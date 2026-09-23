@@ -100,7 +100,7 @@ class AA_OT_p10_reset_ui(bpy.types.Operator):
     """Reset all UI panel states to defaults."""
     bl_idname = "animassist.p10_reset_ui"
     bl_label = "Reset UI State"
-    bl_options = {'REGISTER'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         from ..core import p10_diagnostics as diag

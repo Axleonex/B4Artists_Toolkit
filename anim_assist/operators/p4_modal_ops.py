@@ -154,9 +154,7 @@ class AA_OT_p4_modal_offset(bpy.types.Operator):
     bl_idname = "animassist.p4_modal_offset"
     bl_label = "Modal Drag Offset"
     bl_description = (
-        "Drag to offset selected targets interactively. Mouse X maps to "
-        "horizontal delta, mouse Y to vertical. Shift for fine, Ctrl for "
-        "coarse. LMB or Enter commits, RMB or Esc cancels."
+        "Drag to offset the selected targets. Shift: fine, Ctrl: coarse. Click or Enter commits, Esc cancels"
     )
     bl_options = {"REGISTER", "UNDO"}
 

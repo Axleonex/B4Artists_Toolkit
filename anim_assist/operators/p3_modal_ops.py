@@ -27,9 +27,7 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
     bl_idname = "animassist.modal_drag_breakdown"
     bl_label = "Modal Drag Breakdown"
     bl_description = (
-        "Enter modal mode and drag the mouse horizontally to scrub the "
-        "breakdown factor. LMB commits, RMB or Esc cancels and restores "
-        "the pre-drag state exactly"
+        "Drag horizontally to scrub the breakdown factor. Click commits, Esc cancels and restores the pose"
     )
     bl_options = {"REGISTER", "UNDO", "GRAB_CURSOR", "BLOCKING"}
 

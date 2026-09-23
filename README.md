@@ -26,7 +26,8 @@ To install in Bforartists:
 1. **Edit -> Preferences -> Add-ons -> Install from Disk...**
 2. Pick the `.zip` for the tool you want.
 3. Enable the add-on by ticking its checkbox.
-4. Open the **N-panel** in the 3D Viewport — Anim Assist adds tabs (Keys, Pose, Motion, Rig, Workspace, Layers, Lipsync); Ghost Tool adds a **Ghost Tool** tab.
+4. Press **N** to open the sidebar. In the **3D Viewport**, Anim Assist adds the tabs **AnimAssist** (Lipsync, Help, Diagnostics), **Pose**, **Motion**, **Rig**, **Workspace** and **Layers**; Ghost Tool adds **Ghost Tool**. In the **Graph Editor** sidebar you get **Keys** (curve and key tools) and **Motion**; in the **Dope Sheet** sidebar, **Pose** (breakdowns) and **Keys**.
+5. On the **Workspace** tab, run **First Run Setup** once — it builds the Quick Shelf and default hotkeys.
 
 You don't need to unzip anything by hand — Bforartists installs directly from the `.zip`.
 

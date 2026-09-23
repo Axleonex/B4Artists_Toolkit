@@ -13,6 +13,7 @@ from ..core.logging import get_logger
 from ..core.p10_audit import log_operation
 from ..core.p10_properties import get_p10
 from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -92,7 +93,7 @@ class AA_OT_p10_batch_selected(Operator):
     def execute(self, context: Context):
         """Run operator on each selected pose bone."""
         if not self.op_id:
-            self.report({"ERROR"}, "No operator ID specified")
+            self.report({"ERROR"}, "No tool selected. Pick a tool for this shelf slot first")
             return {"CANCELLED"}
 
         state = rts_mod.get_state()
@@ -135,7 +136,7 @@ class AA_OT_p10_batch_selected(Operator):
 
         except Exception as e:
             _log.exception(f"Error in batch_selected: {e}")
-            self.report({"ERROR"}, f"Batch operation failed: {e}")
+            report_failure(self, "Batch operation failed", "Undo (Ctrl+Z), check the selected targets, and run the batch again", e)
             return {"CANCELLED"}
         finally:
             state.is_batch_processing = False
@@ -167,7 +168,7 @@ class AA_OT_p10_batch_bookmarked(Operator):
     def execute(self, context: Context):
         """Run operator at each bookmarked frame."""
         if not self.op_id:
-            self.report({"ERROR"}, "No operator ID specified")
+            self.report({"ERROR"}, "No tool selected. Pick a tool for this shelf slot first")
             return {"CANCELLED"}
 
         state = rts_mod.get_state()
@@ -214,7 +215,7 @@ class AA_OT_p10_batch_bookmarked(Operator):
 
         except Exception as e:
             _log.exception(f"Error in batch_bookmarked: {e}")
-            self.report({"ERROR"}, f"Batch operation failed: {e}")
+            report_failure(self, "Batch operation failed", "Undo (Ctrl+Z), check the selected targets, and run the batch again", e)
             return {"CANCELLED"}
         finally:
             state.is_batch_processing = False
@@ -245,12 +246,12 @@ class AA_OT_p10_batch_frame_steps(Operator):
     def execute(self, context: Context):
         """Run operator at frame intervals."""
         if not self.op_id:
-            self.report({"ERROR"}, "No operator ID specified")
+            self.report({"ERROR"}, "No tool selected. Pick a tool for this shelf slot first")
             return {"CANCELLED"}
 
         p10 = get_p10(context)
         if p10 is None:
-            self.report({"ERROR"}, "Batch operation properties not available")
+            self.report({"ERROR"}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         state = rts_mod.get_state()
@@ -309,7 +310,7 @@ class AA_OT_p10_batch_frame_steps(Operator):
 
         except Exception as e:
             _log.exception(f"Error in batch_frame_steps: {e}")
-            self.report({"ERROR"}, f"Batch operation failed: {e}")
+            report_failure(self, "Batch operation failed", "Undo (Ctrl+Z), check the selected targets, and run the batch again", e)
             return {"CANCELLED"}
         finally:
             state.is_batch_processing = False

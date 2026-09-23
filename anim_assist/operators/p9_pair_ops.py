@@ -5,6 +5,7 @@ from ..core import p9_pair_detect as det
 from ..core import p9_pair_cache as cache
 from ..core.logging import get_logger
 from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
+from ..core.helpers import confirm_dialog
 
 _log = get_logger(__name__)
 
@@ -158,6 +159,7 @@ class AA_OT_p9_save_pair_preset(bpy.types.Operator):
     bl_idname = "animassist.p9_save_pair_preset"
     bl_label = "Save Pair Preset"
     bl_description = "Save the current pair overrides and naming exceptions as a JSON preset on the scene."
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -199,6 +201,10 @@ class AA_OT_p9_load_pair_preset(bpy.types.Operator):
     bl_idname = "animassist.p9_load_pair_preset"
     bl_label = "Load Pair Preset"
     bl_description = "Load pair overrides and naming exceptions from the saved JSON preset."
+    bl_options = {"REGISTER", "UNDO"}
+
+    def invoke(self, context, event):  # type: ignore[no-untyped-def]
+        return confirm_dialog(self, context, event, 'Replace the current pair overrides and naming exceptions with the saved preset?')
 
     @classmethod
     def poll(cls, context):

@@ -292,7 +292,7 @@ class AA_OT_p7_batch_create_proxies(bpy.types.Operator):
         p7 = get_p7(context)
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         cfg = PROXY_CONFIGS.get(p7.proxy_type)
@@ -554,7 +554,7 @@ class AA_OT_p7_mirror_proxy(bpy.types.Operator):
         p7 = get_p7(context)
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         src = context.active_object
@@ -605,7 +605,7 @@ class AA_OT_p7_one_click_proxy_bake(bpy.types.Operator):
         p7 = get_p7(context)
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         target = context.active_object
@@ -725,7 +725,7 @@ class AA_OT_p7_quick_proxy(bpy.types.Operator):
     def execute(self, context):
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         p7 = get_p7(context)

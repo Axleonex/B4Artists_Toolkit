@@ -13,6 +13,7 @@ from ..core import p9_mirror_math as mm
 from ..core import p8_match_math as p8mm
 from ..core.logging import get_logger
 from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -93,7 +94,7 @@ class AA_OT_p9_batch_mirror(bpy.types.Operator):
         obj = context.active_object
         p9 = get_p9(context)
         if not p9:
-            self.report({'ERROR'}, "No P9 properties found")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -337,7 +338,7 @@ class AA_OT_p9_missing_warning(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "No P9 properties found")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -383,7 +384,7 @@ class AA_OT_p9_ambiguous_warning(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "No P9 properties found")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -396,7 +397,7 @@ class AA_OT_p9_ambiguous_warning(bpy.types.Operator):
                 exceptions=exceptions
             )
         except Exception as e:
-            self.report({'ERROR'}, f"Ambiguity detection failed: {e}")
+            report_failure(self, "Could not detect bone pairs", "Check that bone names follow a .L/.R style convention", e)
             return {'CANCELLED'}
 
         if not ambiguous:
@@ -431,7 +432,7 @@ class AA_OT_p9_channel_resolver(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "No P9 properties found")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -490,7 +491,7 @@ class AA_OT_p9_mirror_metadata(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "No P9 properties found")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -546,7 +547,7 @@ class AA_OT_p9_mirror_preset_values(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "No P9 properties found")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -640,7 +641,7 @@ class AA_OT_p9_custom_pattern(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "No P9 properties found")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         left_pattern = p9.custom_left_pattern
@@ -661,7 +662,7 @@ class AA_OT_p9_custom_pattern(bpy.types.Operator):
             self.report({'INFO'}, "Custom pattern applied and cache rebuilt")
             return {'FINISHED'}
         except Exception as e:
-            self.report({'ERROR'}, f"Pattern compilation failed: {e}")
+            report_failure(self, "The pattern is not a valid regular expression", "Fix the pattern and try again", e, detail=str(e))
             _log.error(f"Custom pattern error: {e}")
             return {'CANCELLED'}
 

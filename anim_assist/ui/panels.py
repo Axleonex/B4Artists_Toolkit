@@ -239,9 +239,9 @@ class ANIMASSIST_PT_anim_offset(_GraphEditorMixin, Panel):
         row = box.row(align=True)
         row.prop(m, "start_frame", text="Start")
         row.prop(m, "end_frame", text="End")
-        row = box.row(align=True)
-        row.prop(m, "blend_left", text="Blend In")
-        row.prop(m, "blend_right", text="Blend Out")
+        col = box.column(align=True)
+        col.prop(m, "blend_left", text="Blend In")
+        col.prop(m, "blend_right", text="Blend Out")
         box.operator("animassist.anim_offset_range_from_scene", text="Range from Scene", icon="SCENE_DATA")
 
 

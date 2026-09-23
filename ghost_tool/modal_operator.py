@@ -23,6 +23,7 @@ from .ghost_data import Ghost, GhostStore
 from .session_state import SessionState
 from . import fcurve_utils
 from .utils import log, warn, debug, tag_viewport_redraw
+from .utils import report_failure
 
 
 # ---------------------------------------------------------------------------
@@ -526,7 +527,7 @@ class GhostDragOperator(bpy.types.Operator):
                 warn(f"Drag rollback could not finish: {rollback_error}")
             finally:
                 self._cleanup()
-            self.report({'ERROR'}, f"Ghost drag cancelled after an error: {exc}")
+            report_failure(self, "Ghost drag cancelled and the curve restored", "Regenerate the ghosts and try the drag again", exc)
             return {'CANCELLED'}
 
     def _modal_inner(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:

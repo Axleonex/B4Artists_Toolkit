@@ -10,6 +10,7 @@ from bpy.types import Operator
 from ..core.logging import get_logger
 from ..core.p10_audit import log_operation
 from ..core.p10_properties import get_p10
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -60,7 +61,7 @@ class AA_OT_p10_safe_disable(Operator):
 
         except Exception as e:
             _log.error(f"Safe disable failed: {e}", exc_info=True)
-            self.report({'ERROR'}, f"Safe disable failed: {e}")
+            report_failure(self, "Could not disable safely", "Save your file, then disable Anim Assist in Preferences > Add-ons", e)
             return {'CANCELLED'}
 
 
@@ -106,7 +107,7 @@ class AA_OT_p10_check_hotkey_conflicts(Operator):
 
         except Exception as e:
             _log.error(f"Hotkey conflict check failed: {e}", exc_info=True)
-            self.report({'ERROR'}, f"Hotkey check failed: {e}")
+            report_failure(self, "Could not check hotkeys", "Restart Bforartists and run First Run Setup again", e)
             return {'CANCELLED'}
 
 
@@ -121,7 +122,7 @@ class AA_OT_p10_first_run_setup(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "P10 state not available")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             # Set sensible defaults
@@ -143,7 +144,7 @@ class AA_OT_p10_first_run_setup(Operator):
 
         except Exception as e:
             _log.error(f"First run setup failed: {e}", exc_info=True)
-            self.report({'ERROR'}, f"First run setup failed: {e}")
+            report_failure(self, "First Run Setup did not finish", "Restart Bforartists and run it again from the Workspace tab", e)
             return {'CANCELLED'}
 
 
@@ -158,7 +159,7 @@ class AA_OT_p10_load_demo_config(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "P10 state not available")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             # Enable debug panel
@@ -196,7 +197,7 @@ class AA_OT_p10_load_demo_config(Operator):
 
         except Exception as e:
             _log.error(f"Demo config load failed: {e}", exc_info=True)
-            self.report({'ERROR'}, f"Demo config load failed: {e}")
+            report_failure(self, "Could not load the demo configuration", "Run First Run Setup from the Workspace tab instead", e)
             return {'CANCELLED'}
 
 
@@ -211,7 +212,7 @@ class AA_OT_p10_toggle_debug(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "P10 state not available")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             # Toggle the debug panel
@@ -228,7 +229,7 @@ class AA_OT_p10_toggle_debug(Operator):
 
         except Exception as e:
             _log.error(f"Debug toggle failed: {e}", exc_info=True)
-            self.report({'ERROR'}, f"Debug toggle failed: {e}")
+            report_failure(self, "Debug toggle failed", "Restart Bforartists and run First Run Setup again", e)
             return {'CANCELLED'}
 
 
@@ -307,7 +308,7 @@ class AA_OT_p10_final_validation(Operator):
 
         except Exception as e:
             _log.error(f"Final validation failed: {e}", exc_info=True)
-            self.report({'ERROR'}, f"Final validation error: {e}")
+            report_failure(self, "Final validation error", "Restart Bforartists and run First Run Setup again", e)
             return {'CANCELLED'}
 
 

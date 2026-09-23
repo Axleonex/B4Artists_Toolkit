@@ -689,3 +689,12 @@ def sampling_operation(function):
         with scene_sampling(context.scene):
             return function(*args, **kwargs)
     return wrapped
+
+
+def report_failure(operator, what: str, fix: str, exc=None, *, detail: str | None = None, level: str = "ERROR"):  # type: ignore[no-untyped-def]
+    """Report a failure the animator can act on; the exception goes to the log, not the UI."""
+    if exc is not None:
+        log(f"{what}: {exc!r}")
+    msg = f"{what} ({detail}). {fix}" if detail else f"{what}. {fix}"
+    operator.report({level}, msg)
+    return {"CANCELLED"}

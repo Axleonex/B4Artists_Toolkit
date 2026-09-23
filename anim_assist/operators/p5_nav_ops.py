@@ -173,7 +173,7 @@ class AA_OT_p5_select_bad_arc_keys(bpy.types.Operator):
 
         obj = getattr(context, "active_object", None)
         if obj is None:
-            self.report({"WARNING"}, "No active object")
+            self.report({"WARNING"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         adata = getattr(obj, "animation_data", None)

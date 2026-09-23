@@ -250,7 +250,7 @@ class AA_OT_p12_clear_auto_keys(Operator):
         p11 = get_p11(context)
         link = _resolve_link(p12, self.layer_name)
         if link is None:
-            self.report({"ERROR"}, "No lipsync layer link selected")
+            self.report({"ERROR"}, "No lipsync layer link selected. Select one in the Lipsync panel list first")
             return {"CANCELLED"}
 
         total_deleted = 0
@@ -321,7 +321,7 @@ class AA_OT_p12_mark_manual(Operator):
         p11 = get_p11(context)
         link = _resolve_link(p12, self.layer_name)
         if link is None:
-            self.report({"ERROR"}, "No lipsync layer link selected")
+            self.report({"ERROR"}, "No lipsync layer link selected. Select one in the Lipsync panel list first")
             return {"CANCELLED"}
         marked = 0
 

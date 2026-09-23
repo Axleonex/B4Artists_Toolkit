@@ -119,10 +119,7 @@ class AA_OT_p7_create_locator(bpy.types.Operator):
     bl_idname = "animassist.p7_create_locator"
     bl_label = "Create Locator at Target"
     bl_description = (
-        "Create a temporary locator empty at the selected target's "
-        "world-space position. If a pose bone is active, the locator "
-        "is created at the bone's head. The locator is tracked by "
-        "the session and can be safely cleaned up later."
+        "Create a temporary locator at the active target's world position (a bone's head when a bone is active). Session-managed"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -133,7 +130,7 @@ class AA_OT_p7_create_locator(bpy.types.Operator):
     def execute(self, context):
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         obj = context.active_object
@@ -162,9 +159,7 @@ class AA_OT_p7_create_locator_average(bpy.types.Operator):
     bl_idname = "animassist.p7_create_locator_average"
     bl_label = "Locator at Average"
     bl_description = (
-        "Create a temporary locator at the averaged world-space position "
-        "of all selected objects. Useful as a centroid reference for "
-        "multi-character or multi-prop setups."
+        "Create a temporary locator at the average world position of the selected objects"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -175,7 +170,7 @@ class AA_OT_p7_create_locator_average(bpy.types.Operator):
     def execute(self, context):
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         positions = [obj.matrix_world.translation for obj in context.selected_objects]
@@ -204,7 +199,7 @@ class AA_OT_p7_create_locator_cursor(bpy.types.Operator):
     def execute(self, context):
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         pos = context.scene.cursor.location.copy()
@@ -224,9 +219,7 @@ class AA_OT_p7_parent_locator(bpy.types.Operator):
     bl_idname = "animassist.p7_parent_locator"
     bl_label = "Parent Locator to Target"
     bl_description = (
-        "Parent the most recently created session locator to the active "
-        "object using 'keep transform' so the locator follows the target "
-        "without jumping. Useful for making locators ride along with rigs."
+        "Parent the latest locator to the active object, keeping its transform so it follows without jumping"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -266,9 +259,7 @@ class AA_OT_p7_constrain_target_to_locator(bpy.types.Operator):
     bl_idname = "animassist.p7_constrain_target_to_locator"
     bl_label = "Constrain Target → Locator"
     bl_description = (
-        "Inject a Copy Location constraint on the active object (or pose bone) "
-        "targeting the most recent session locator. The constraint is named with "
-        "the session prefix for automatic cleanup on rollback."
+        "Constrain the active object or bone to follow the latest locator (Copy Location, session-managed)"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -319,9 +310,7 @@ class AA_OT_p7_constrain_locator_to_target(bpy.types.Operator):
     bl_idname = "animassist.p7_constrain_locator_to_target"
     bl_label = "Constrain Locator → Target"
     bl_description = (
-        "Inject a Copy Location constraint on the most recent session "
-        "locator targeting the active object. Makes the locator follow "
-        "the target's position. The constraint is session-managed."
+        "Constrain the latest locator to follow the active object (Copy Location, session-managed)"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -365,10 +354,7 @@ class AA_OT_p7_bake_locator_from_target(bpy.types.Operator):
     bl_idname = "animassist.p7_bake_locator_from_target"
     bl_label = "Bake Locator from Target"
     bl_description = (
-        "Iterate over the bake frame range, evaluate the active target's "
-        "world-space position at each frame, and insert location keyframes "
-        "on the most recent session locator. The locator becomes an "
-        "independent animation reference."
+        "Bake the active target's world position onto the latest locator across the bake range"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -422,10 +408,7 @@ class AA_OT_p7_bake_target_from_locator(bpy.types.Operator):
     bl_idname = "animassist.p7_bake_target_from_locator"
     bl_label = "Bake Target from Locator"
     bl_description = (
-        "Read the most recent session locator's world position at each "
-        "frame in the bake range and insert location keyframes on the "
-        "active target. This transfers the locator's animation back "
-        "onto the original object."
+        "Bake the latest locator's world position back onto the active target across the bake range"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -479,9 +462,7 @@ class AA_OT_p7_match_target_to_locator(bpy.types.Operator):
     bl_idname = "animassist.p7_match_target_to_locator"
     bl_label = "Match Target → Locator"
     bl_description = (
-        "Copy the most recent session locator's world-space location "
-        "to the active target at the current frame. No keyframe is "
-        "inserted — use Blender's auto-key or insert manually."
+        "Move the active target to the latest locator's world position at the current frame (no key inserted)"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -517,9 +498,7 @@ class AA_OT_p7_match_locator_to_target(bpy.types.Operator):
     bl_idname = "animassist.p7_match_locator_to_target"
     bl_label = "Match Locator → Target"
     bl_description = (
-        "Copy the active target's world-space location to the most "
-        "recent session locator at the current frame. Useful for "
-        "repositioning a locator to track a moving target."
+        "Move the latest locator to the active target's world position at the current frame"
     )
     bl_options = {"REGISTER", "UNDO"}
 

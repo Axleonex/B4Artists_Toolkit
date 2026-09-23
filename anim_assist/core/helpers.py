@@ -10,6 +10,8 @@ import bpy
 from .logging import get_logger
 
 __all__ = [
+    "confirm_dialog",
+    "report_failure",
     "is_auto_key_enabled",
     "auto_key_guard",
     "undo_transaction",
@@ -117,3 +119,38 @@ def safe_depsgraph_update(context: bpy.types.Context | None = None) -> None:
         vl.update()
     except Exception:
         _log.debug("view_layer.update() skipped", exc_info=True)
+
+
+def report_failure(
+    operator: bpy.types.Operator,
+    what: str,
+    fix: str,
+    exc: BaseException | None = None,
+    *,
+    detail: str | None = None,
+    level: str = "ERROR",
+) -> set[str]:
+    """Report a failure the animator can act on: what happened + what to do next.
+
+    The raw exception goes to the log (with traceback), never to the UI.
+    *detail* is user-meaningful text worth showing inline (e.g. a regex error).
+    Returns ``{"CANCELLED"}`` so callers can ``return report_failure(...)``.
+    """
+    if exc is not None:
+        _log.error("%s [%s]", what, getattr(operator, "bl_idname", "?"), exc_info=exc)
+    msg = f"{what} ({detail}). {fix}" if detail else f"{what}. {fix}"
+    operator.report({level}, msg)
+    return {"CANCELLED"}
+
+
+def confirm_dialog(operator: bpy.types.Operator, context: bpy.types.Context, event, message: str) -> set[str]:  # type: ignore[no-untyped-def]
+    """Ask before a consequential action, stating the consequence.
+
+    Uses the richer dialog when the running Blender has it (4.1+) and falls
+    back to the plain confirm on older builds.
+    """
+    wm = context.window_manager
+    try:
+        return wm.invoke_confirm(operator, event, message=message, confirm_text=operator.bl_label, icon="WARNING")
+    except TypeError:  # pragma: no cover - Blender < 4.1
+        return wm.invoke_confirm(operator, event)

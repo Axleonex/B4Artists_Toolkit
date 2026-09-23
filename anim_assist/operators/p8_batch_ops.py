@@ -125,7 +125,7 @@ class AA_OT_p8_batch_switch(bpy.types.Operator):
         new_value = p8.switch_new_value if p8 else 0.0
 
         if not prop_path:
-            self.report({"ERROR"}, "No switch property path configured")
+            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
             return {"CANCELLED"}
 
         frame = context.scene.frame_current
@@ -274,7 +274,7 @@ class AA_OT_p8_contact_preserve_match(bpy.types.Operator):
         frame = context.scene.frame_current
 
         if not active.pose:
-            self.report({"ERROR"}, "Active object is not an armature")
+            self.report({"ERROR"}, "Active object is not an armature. Select an armature in Pose mode")
             return {"CANCELLED"}
 
         # Parse contact mask
@@ -295,7 +295,7 @@ class AA_OT_p8_contact_preserve_match(bpy.types.Operator):
         # Perform match
         targets = [obj for obj in context.selected_objects if obj != active]
         if not targets:
-            self.report({"ERROR"}, "No target objects selected")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         # Match active to first target's visual world matrix.
@@ -393,12 +393,12 @@ class AA_OT_p8_quick_match(bpy.types.Operator):
         frame = context.scene.frame_current
 
         if not active.pose:
-            self.report({"ERROR"}, "Active object is not an armature")
+            self.report({"ERROR"}, "Active object is not an armature. Select an armature in Pose mode")
             return {"CANCELLED"}
 
         targets = [obj for obj in context.selected_objects if obj != active]
         if not targets:
-            self.report({"ERROR"}, "No target objects selected")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         # Match active to first target's visual world matrix.

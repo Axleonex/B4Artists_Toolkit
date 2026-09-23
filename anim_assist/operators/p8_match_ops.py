@@ -145,7 +145,7 @@ class AA_OT_p8_match_to_target(bpy.types.Operator):
         # Get source from non-active selected objects
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "No other selected object found")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         source = sources[0]
@@ -270,7 +270,7 @@ class AA_OT_p8_match_location(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "No other selected object found")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         source = sources[0]
@@ -315,7 +315,7 @@ class AA_OT_p8_match_rotation(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "No other selected object found")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         source = sources[0]
@@ -360,7 +360,7 @@ class AA_OT_p8_match_scale(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "No other selected object found")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         source = sources[0]
@@ -405,7 +405,7 @@ class AA_OT_p8_match_trs(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "No other selected object found")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         source = sources[0]
@@ -450,7 +450,7 @@ class AA_OT_p8_match_axis_filtered(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "No other selected object found")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         source = sources[0]
@@ -495,7 +495,7 @@ class AA_OT_p8_match_with_offset(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "No other selected object found")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         source = sources[0]
@@ -540,7 +540,7 @@ class AA_OT_p8_match_without_offset(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "No other selected object found")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         source = sources[0]
@@ -585,7 +585,7 @@ class AA_OT_p8_match_visual_matrix(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "No other selected object found")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         source = sources[0]
@@ -630,7 +630,7 @@ class AA_OT_p8_match_local_matrix(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "No other selected object found")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         source = sources[0]

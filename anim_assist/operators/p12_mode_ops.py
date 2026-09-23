@@ -24,6 +24,7 @@ from ..core import p12_driver_engine as de
 from ..core import p12_lipsync_engine as engine
 from ..core import p12_properties as p12_props
 from ..core.logging import get_logger
+from ..core.helpers import confirm_dialog
 
 _log = get_logger(__name__)
 
@@ -105,7 +106,7 @@ class AA_OT_p12_toggle_mode(Operator):
         p12 = p12_props.get_p12(context)
         link = _resolve_link(p12, self.layer_name)
         if link is None:
-            self.report({"ERROR"}, "No lipsync layer link selected")
+            self.report({"ERROR"}, "No lipsync layer link selected. Select one in the Lipsync panel list first")
             return {"CANCELLED"}
 
         mesh = _resolve_mesh(link)
@@ -193,7 +194,10 @@ class AA_OT_p12_remove_drivers(Operator):
 
     bl_idname = "animassist.p12_remove_drivers"
     bl_label = "Remove Lipsync Drivers"
-    bl_options = {"REGISTER"}
+    bl_options = {"REGISTER", "UNDO"}
+
+    def invoke(self, context, event):  # type: ignore[no-untyped-def]
+        return confirm_dialog(self, context, event, "Remove the preview drivers from this layer's shape keys? The shape keys stop following the lipsync until drivers are rebuilt.")
 
     layer_name: StringProperty(default="")  # type: ignore[valid-type]
 
