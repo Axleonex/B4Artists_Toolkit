@@ -79,7 +79,7 @@ class B4ML_PT_setup(_Panel):  # type: ignore[valid-type]
         return True
 
     def draw(self, context) -> None:
-        rig, snap, st = header.prelude(self.layout, context, full=True)
+        rig, snap, st = header.prelude(self.layout, context, full=True, stage_key='SETUP')
 
         box = self.layout.box()
 
@@ -102,9 +102,12 @@ class B4ML_PT_setup(_Panel):  # type: ignore[valid-type]
             header.wrap_label(err_box, snap.mapping_error, icon='ERROR',
                               width_px=getattr(getattr(context, 'region', None), 'width', 220))
 
-        # 4. Check Rig — primary action; drawn directly, never gated
-        op = box.operator('b4ml.action', text=copy.BUTTONS['setup.inspect'], icon='VIEWZOOM')
-        op.operation = 'INSPECT'
+        # 4. Check Rig — only when rig is mapped; the error card's fix button
+        #    already offers INSPECT in the unsupported-rig state, so showing it
+        #    again here would produce a redundant third button on screen.
+        if rig is not None and snap.mapped:
+            op = box.operator('b4ml.action', text=copy.BUTTONS['setup.inspect'], icon='VIEWZOOM')
+            op.operation = 'INSPECT'
 
 
 CLASSES = (B4ML_PT_setup,)
