@@ -375,7 +375,7 @@ class AA_OT_p5_refresh_overlay(bpy.types.Operator):
             self.report({"INFO"}, f"Refreshed: {n_paths} paths, {n_issues} issues")
         except Exception:
             _log.exception("Refresh failed")
-            self.report({"ERROR"}, "Refresh failed — see console")
+            self.report({"ERROR"}, "Could not refresh the overlay. Details are in the system console (Window > Toggle System Console)")
 
         for area in context.screen.areas:
             if area.type == "VIEW_3D":
@@ -497,7 +497,7 @@ class AA_OT_p5_run_diagnostics(bpy.types.Operator):
             self.report({"INFO"}, f"Diagnostics: {n_issues} issues found")
         except Exception:
             _log.exception("Diagnostics failed")
-            self.report({"ERROR"}, "Diagnostics failed — see console")
+            self.report({"ERROR"}, "Could not run overlay diagnostics. Details are in the system console (Window > Toggle System Console)")
 
         for area in context.screen.areas:
             if area.type == "VIEW_3D":

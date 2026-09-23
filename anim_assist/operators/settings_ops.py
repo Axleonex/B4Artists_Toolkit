@@ -68,7 +68,7 @@ class AA_OT_export_settings(bpy.types.Operator, ExportHelper):
             return {"CANCELLED"}
 
         if not self.filepath:
-            self.report({"ERROR"}, "No export filepath provided")
+            self.report({"ERROR"}, "Choose a file to export to first")
             return {"CANCELLED"}
 
         data: dict[str, Any] = {}
@@ -115,7 +115,7 @@ class AA_OT_import_settings(bpy.types.Operator, ImportHelper):
             return {"CANCELLED"}
 
         if not self.filepath:
-            self.report({"ERROR"}, "No import filepath provided")
+            self.report({"ERROR"}, "Choose a settings file to import first")
             return {"CANCELLED"}
 
         try:

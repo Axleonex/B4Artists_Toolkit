@@ -141,7 +141,7 @@ class ANIMASSIST_PT_p9_mirror(PanelAnatomyMixin, DopeSheetSidebarPanel):
         row.prop(p9, "mirror_scale", text="Scale", toggle=True)
 
         uh.explained_prop(
-            layout, context, p9, "axis_mask",
+            layout, context, p9, "axis_mask", text="Axes",
         )
 
         uh.separator(layout)

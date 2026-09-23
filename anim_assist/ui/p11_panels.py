@@ -184,21 +184,21 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
         uh.draw_explainer_icon(row, context, "p11.layers_enabled")
 
         if not p11.layers_enabled:
-            layout.label(text="Layers disabled", icon="INFO")
+            layout.label(text="Turn on to animate in layers", icon="INFO")
             return
 
         uh.separator(layout)
 
         # ── Layer stack — UIList ──
         if len(p11.layers) == 0:
-            layout.label(text="No layers yet.", icon="INFO")
-            layout.label(text="Click Initialize to begin:")
+            layout.label(text="Next: add a base layer", icon="INFO")
+            layout.label(text="from the current animation.")
             # Use plain operator() so a missing operator shows disabled
             # rather than crashing the entire draw.
             col = layout.column()
             col.operator(
                 "animassist.p11_init_layers",
-                text="Initialize Layers",
+                text="Create Base Layer",
                 icon="FILE_NEW",
             )
             return
@@ -530,12 +530,16 @@ class ANIMASSIST_PT_p11_layers_v3d(PanelAnatomyMixin, View3DSidebarPanel):
         row = layout.row(align=True)
         row.prop(p11, "layers_enabled", text="Enable Layers", icon="RENDERLAYERS")
 
-        if not p11.layers_enabled or len(p11.layers) == 0:
-            if p11.layers_enabled and len(p11.layers) == 0:
-                layout.operator(
-                    "animassist.p11_init_layers",
-                    text="Initialize Layers", icon="FILE_NEW",
-                )
+        if not p11.layers_enabled:
+            layout.label(text="Turn on to animate in layers", icon="INFO")
+            return
+        if len(p11.layers) == 0:
+            layout.label(text="Next: add a base layer", icon="INFO")
+            layout.label(text="from the current animation.")
+            layout.operator(
+                "animassist.p11_init_layers",
+                text="Create Base Layer", icon="FILE_NEW",
+            )
             return
 
         uh.separator(layout)

@@ -349,7 +349,7 @@ class ANIMASSIST_OT_p11_load_preset(bpy.types.Operator):
             self.report({'INFO'}, f"Loaded preset '{preset.name}'")
             return {'FINISHED'}
         else:
-            self.report({'ERROR'}, "Failed to load preset")
+            self.report({'ERROR'}, "Could not load the preset. Pick a preset from the list or save a new one")
             return {'CANCELLED'}
 
 

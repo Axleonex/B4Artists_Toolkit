@@ -80,14 +80,14 @@ class AA_OT_copy_diagnostics(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         wm = getattr(context, "window_manager", None)
         if wm is None:
-            self.report({"ERROR"}, "Window manager not available")
+            self.report({"ERROR"}, "Window manager not available. Run this from the Bforartists interface, not a background script")
             return {"CANCELLED"}
 
         try:
             text = _build_diagnostics_text(context)
         except Exception:
             _log.exception("Failed to build diagnostics text")
-            self.report({"ERROR"}, "Diagnostics collection failed; see console")
+            self.report({"ERROR"}, "Could not collect diagnostics. Details are in the system console (Window > Toggle System Console)")
             return {"CANCELLED"}
 
         wm.clipboard = text

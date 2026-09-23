@@ -352,7 +352,7 @@ class AA_OT_p8_contact_mask_from_selection(bpy.types.Operator):
     def execute(self, context):
         p8 = get_p8(context)
         if not p8:
-            self.report({"ERROR"}, "P8 properties not initialized")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         active = context.active_object
@@ -446,7 +446,7 @@ class AA_OT_p8_repeat_last_switch(bpy.types.Operator):
         # Find the object
         obj = bpy.data.objects.get(event.obj_name)
         if obj is None:
-            self.report({"ERROR"}, f"Object '{event.obj_name}' not found")
+            self.report({"ERROR"}, f"Object '{event.obj_name}' was renamed or deleted. Clear the switch history and switch again")
             return {"CANCELLED"}
 
         frame = context.scene.frame_current
@@ -454,7 +454,7 @@ class AA_OT_p8_repeat_last_switch(bpy.types.Operator):
         # Resolve property owner
         owner = _resolve_prop_owner(obj, event.bone_name)
         if owner is None:
-            self.report({"ERROR"}, "Property owner could not be resolved")
+            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
             return {"CANCELLED"}
 
         # Read current property value before switching (for accurate history).

@@ -184,6 +184,8 @@ class ANIMASSIST_OT_p11_move_layer_up(bpy.types.Operator):
         if p11 is None:
             return False
         idx = p11.active_layer_index
+        if not (0 <= idx < len(p11.layers)):
+            return False
         return idx < len(p11.layers) - 1 and not p11.layers[idx].is_base_layer
 
     def execute(self, context: bpy.types.Context) -> set[str]:
@@ -207,6 +209,9 @@ class ANIMASSIST_OT_p11_move_layer_down(bpy.types.Operator):
         if p11 is None:
             return False
         idx = p11.active_layer_index
+        # Poll runs on every redraw: never index an empty or shorter list.
+        if not (0 <= idx < len(p11.layers)):
+            return False
         # Can't move below base layer (index 0).
         min_idx = 1 if p11.layers[0].is_base_layer else 0
         return idx > min_idx and not p11.layers[idx].is_base_layer

@@ -297,7 +297,7 @@ class AA_OT_p7_batch_create_proxies(bpy.types.Operator):
 
         cfg = PROXY_CONFIGS.get(p7.proxy_type)
         if cfg is None:
-            self.report({"ERROR"}, f"Unknown proxy type: {p7.proxy_type}")
+            self.report({"ERROR"}, f"Unknown proxy type '{p7.proxy_type}'. Pick a type in the Create Proxy dropdown")
             return {"CANCELLED"}
 
         created = 0

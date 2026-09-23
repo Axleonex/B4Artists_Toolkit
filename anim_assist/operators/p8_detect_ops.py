@@ -248,12 +248,12 @@ class AA_OT_p8_apply_detected_pattern(bpy.types.Operator):
             return {"CANCELLED"}
 
         if not _cached_patterns:
-            self.report({"ERROR"}, "No cached patterns available")
+            self.report({"ERROR"}, "No patterns detected yet. Run Detect first")
             return {"CANCELLED"}
 
         idx = min(p8.detected_pattern_index, len(_cached_patterns) - 1)
         if idx < 0:
-            self.report({"ERROR"}, "Invalid pattern index")
+            self.report({"ERROR"}, "Select a detected pattern in the list first")
             return {"CANCELLED"}
 
         pattern = _cached_patterns[idx]
@@ -426,7 +426,7 @@ class AA_OT_p8_compensation_report(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         wm = getattr(context, "window_manager", None)
         if wm is None:
-            self.report({"ERROR"}, "Window manager not available")
+            self.report({"ERROR"}, "Window manager not available. Run this from the Bforartists interface, not a background script")
             return {"CANCELLED"}
 
         try:
@@ -581,7 +581,7 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         wm = getattr(context, "window_manager", None)
         if wm is None:
-            self.report({"ERROR"}, "Window manager not available")
+            self.report({"ERROR"}, "Window manager not available. Run this from the Bforartists interface, not a background script")
             return {"CANCELLED"}
 
         obj = context.active_object

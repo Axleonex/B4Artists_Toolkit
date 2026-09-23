@@ -674,19 +674,19 @@ class AA_OT_p8_match_opposite(bpy.types.Operator):
         bone = context.active_pose_bone
 
         if not bone:
-            self.report({"ERROR"}, "No active bone in POSE mode")
+            self.report({"ERROR"}, "No active bone. Select a bone in Pose mode")
             return {"CANCELLED"}
 
         # Find the mirror bone
         mirror_name = mm.mirror_name(bone.name)
         if not mirror_name:
-            self.report({"ERROR"}, f"No mirror bone found for '{bone.name}'")
+            self.report({"ERROR"}, f"No mirror bone found for '{bone.name}'. Use .L/.R naming or add a pair override in the Rig tab")
             return {"CANCELLED"}
 
         obj = context.active_object
         arm = obj.data
         if mirror_name not in arm.bones:
-            self.report({"ERROR"}, f"Mirror bone '{mirror_name}' not found in armature")
+            self.report({"ERROR"}, f"Mirror bone '{mirror_name}' is not in this armature. Add a pair override in the Rig tab")
             return {"CANCELLED"}
 
         cf = _build_channel_filter(p8)

@@ -151,18 +151,18 @@ class AA_OT_p7_rename_proxy(bpy.types.Operator):
         p7 = get_p7(context)
 
         if p7 is None:
-            self.report({"ERROR"}, "P7 properties not available")
+            self.report({"ERROR"}, "Proxy settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         # Get the session ID from the object tag
         session_id = obj.get(p7s.TAG_SESSION_ID)
         if not session_id:
-            self.report({"ERROR"}, "Object is not tagged with a session ID")
+            self.report({"ERROR"}, "This object is not part of a proxy session. Select a proxy created by Anim Assist")
             return {"CANCELLED"}
 
         session = p7s.get_session(session_id)
         if session is None:
-            self.report({"ERROR"}, "Session not found")
+            self.report({"ERROR"}, "Proxy session not found. Run Recover Proxy Session, or create a new proxy")
             return {"CANCELLED"}
 
         # Get the owner object name
@@ -653,7 +653,7 @@ class AA_OT_p7_temp_pivot(bpy.types.Operator):
         # Create a POLE proxy at the 3D cursor position
         cfg = PROXY_CONFIGS.get("POLE")
         if cfg is None:
-            self.report({"ERROR"}, "POLE configuration not found")
+            self.report({"ERROR"}, "No pole setup found. Create a pole proxy first")
             return {"CANCELLED"}
 
         # Use cursor location

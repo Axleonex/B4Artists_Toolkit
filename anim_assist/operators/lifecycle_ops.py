@@ -23,7 +23,7 @@ from bpy.types import Operator
 
 from ..core import lifecycle
 from ..core.logging import get_logger
-from ..core.helpers import confirm_dialog
+from ..core.helpers import confirm_dialog, report_failure
 
 _log = get_logger(__name__)
 
@@ -111,8 +111,7 @@ class AA_OT_deep_uninstall(Operator):
             )
         except Exception as exc:
             _log.exception("deep_uninstall failed")
-            self.report({"ERROR"}, "Deep uninstall failed: " + str(exc))
-            return {"CANCELLED"}
+            return report_failure(self, "Deep uninstall did not finish", "Save your file, restart Bforartists, and run it again", exc)
 
         msg = (
             "Purged: " + str(counts["action_idprops"]) + " action flags, "

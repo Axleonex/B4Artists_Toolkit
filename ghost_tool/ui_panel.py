@@ -733,7 +733,7 @@ class GHOST_PT_marker_tools(_GhostHelpPanelMixin, bpy.types.Panel):
         # pinned reference frame.  Pin stores the pose; the overlay colors
         # bones by how far they have moved from it.
         layout.separator()
-        layout.label(text="Visual Diff", icon='MOD_LENGTH')
+        layout.label(text="Visual Diff", icon='ARROW_LEFTRIGHT')
 
         diff_row = layout.row(align=True)
         diff_row.prop(

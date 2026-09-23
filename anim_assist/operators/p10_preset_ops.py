@@ -70,7 +70,7 @@ class AA_OT_p10_export_workspace(Operator):
                     success=False,
                     detail="export_workspace_profile returned False",
                 )
-                self.report({'ERROR'}, "Failed to export workspace profile")
+                self.report({'ERROR'}, "Could not export the profile. Choose a writable location and try again")
                 return {'CANCELLED'}
         except Exception as exc:
             _log.exception("Export workspace failed")
@@ -125,7 +125,7 @@ class AA_OT_p10_import_workspace(Operator):
                     success=False,
                     detail="import_workspace_profile returned -1",
                 )
-                self.report({'ERROR'}, "Failed to import workspace profile")
+                self.report({'ERROR'}, "Could not import the profile. Choose a profile exported by Anim Assist")
                 return {'CANCELLED'}
         except Exception as exc:
             _log.exception("Import workspace failed")
@@ -329,7 +329,7 @@ class AA_OT_p10_tag_preset(Operator):
                 return {'CANCELLED'}
 
             if not self.tag:
-                self.report({'ERROR'}, "Tag cannot be empty")
+                self.report({'ERROR'}, "Enter a tag name first")
                 return {'CANCELLED'}
 
             profile = p10.profiles[self.index]

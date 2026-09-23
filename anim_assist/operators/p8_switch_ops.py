@@ -338,7 +338,7 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
 
         # Get selected keyframe range
         if not obj.animation_data or not obj.animation_data.action:
-            self.report({"ERROR"}, "Object has no action")
+            self.report({"ERROR"}, "This object has no animation. Key it first")
             return {"CANCELLED"}
 
         frames = []
@@ -348,7 +348,7 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
                     frames.append(int(kp.co.x))
 
         if not frames:
-            self.report({"ERROR"}, "No selected keyframes found")
+            self.report({"ERROR"}, "No keyframes selected. Select keyframes in the Dope Sheet or Graph Editor first")
             return {"CANCELLED"}
 
         start_frame = min(frames)
@@ -805,7 +805,7 @@ class AA_OT_p8_restore_switch(bpy.types.Operator):
         # Get last event from history
         last_event = hist.get_last_event()
         if not last_event:
-            self.report({"ERROR"}, "No switch history available")
+            self.report({"ERROR"}, "No switch history yet. Perform a switch first")
             return {"CANCELLED"}
 
         owner = _resolve_prop_owner(obj, last_event.bone_name)
@@ -818,7 +818,7 @@ class AA_OT_p8_restore_switch(bpy.types.Operator):
 
         # Restore old value
         if not _set_prop_value(owner, last_event.prop_path, last_event.old_value):
-            self.report({"ERROR"}, "Failed to restore property")
+            self.report({"ERROR"}, "Could not restore the switch property. Check it is not locked or driven")
             return {"CANCELLED"}
 
         context.view_layer.update()
@@ -874,7 +874,7 @@ class AA_OT_p8_toggle_preview(bpy.types.Operator):
             return {"CANCELLED"}
 
         if not p8:
-            self.report({"ERROR"}, "P8 properties not available")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         # Check if preview is currently enabled

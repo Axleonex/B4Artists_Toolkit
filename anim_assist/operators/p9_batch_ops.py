@@ -193,7 +193,7 @@ class AA_OT_p9_batch_mirror_active_side(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9 or active_bone is None:
-            self.report({'ERROR'}, "No active bone or P9 properties")
+            self.report({'ERROR'}, "No active bone. Select a bone in Pose mode")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -202,7 +202,7 @@ class AA_OT_p9_batch_mirror_active_side(bpy.types.Operator):
         # Detect active bone's side
         active_side = det.detect_side(active_bone.name)
         if active_side not in ('L', 'R'):
-            self.report({'ERROR'}, "Cannot determine active bone's side")
+            self.report({'ERROR'}, "Cannot tell which side the active bone is on. Use .L/.R naming or add a naming exception in the Rig tab")
             return {'CANCELLED'}
 
         # Collect all bones on that side
@@ -648,7 +648,7 @@ class AA_OT_p9_custom_pattern(bpy.types.Operator):
         right_pattern = p9.custom_right_pattern
 
         if not left_pattern or not right_pattern:
-            self.report({'ERROR'}, "Custom patterns not configured")
+            self.report({'ERROR'}, "No custom patterns set. Add them in the mirroring settings first")
             return {'CANCELLED'}
 
         try:

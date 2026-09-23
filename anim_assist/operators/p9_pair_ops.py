@@ -217,7 +217,7 @@ class AA_OT_p9_load_pair_preset(bpy.types.Operator):
         try:
             preset_data = json.loads(preset_json)
         except json.JSONDecodeError:
-            self.report({'ERROR'}, "Invalid preset JSON")
+            self.report({'ERROR'}, "The saved pair preset is damaged. Save the pair preset again")
             return {'CANCELLED'}
 
         # Clear existing collections

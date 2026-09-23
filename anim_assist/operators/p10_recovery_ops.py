@@ -45,7 +45,7 @@ class AA_OT_p10_restore_snapshot(bpy.types.Operator):
             return {'FINISHED'}
         else:
             log_operation(self.bl_idname, False, f"index {self.index} invalid")
-            self.report({'ERROR'}, f"Could not restore snapshot #{self.index}")
+            self.report({'ERROR'}, f"Could not restore snapshot #{self.index}. Pick another snapshot or take a new one")
             return {'CANCELLED'}
 
 

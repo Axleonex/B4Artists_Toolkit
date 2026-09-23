@@ -200,8 +200,8 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
     )
 
     shelf_filter_phase: IntProperty(  # type: ignore[valid-type]
-        name="Shelf Filter Phase",
-        description="Filter shelf by phase (0=all, 1-10=specific phase)",
+        name="Tool Group",
+        description="Show only tools from one group on the shelf (0 shows all groups)",
         default=0,
         min=0,
         max=10,

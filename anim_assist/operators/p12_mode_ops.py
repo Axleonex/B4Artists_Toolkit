@@ -127,7 +127,7 @@ class AA_OT_p12_toggle_mode(Operator):
             if link.target_kind in ("SHAPE_KEYS", "BOTH") and mesh is not None:
                 action = _ensure_shape_key_action(mesh, link)
                 if action is None:
-                    self.report({"ERROR"}, "Mesh has no shape keys")
+                    self.report({"ERROR"}, "This mesh has no shape keys. Add mouth shape keys first")
                     return {"CANCELLED"}
                 fps = context.scene.render.fps / max(1, context.scene.render.fps_base)
                 report = engine.bake_shape_keys(

@@ -200,7 +200,14 @@ def explained_prop(
     operator instance). ``prop`` is the property name string.
     """
     row = layout.row(align=True)
-    if text is None:
+    rna = getattr(getattr(data, "bl_rna", None), "properties", {}).get(prop) if hasattr(data, "bl_rna") else None
+    if rna is not None and rna.type == "ENUM" and not rna.is_enum_flag and text != "":
+        # A dropdown in a row shares width with its label and the explainer
+        # icon; without a fixed split, even "Preset" clips at sidebar width.
+        split = row.split(factor=0.4, align=True)
+        split.label(text=(text if text is not None else rna.name) + ":")
+        split.prop(data, prop, text="")
+    elif text is None:
         row.prop(data, prop)
     else:
         row.prop(data, prop, text=text)

@@ -370,7 +370,7 @@ class AA_OT_p10_remove_macro_step(bpy.types.Operator):
 
         macro = p10.macros[self.macro_index]
         if self.step_index >= len(macro.steps):
-            self.report({'ERROR'}, f"Step index {self.step_index} out of range")
+            self.report({'ERROR'}, f"Select a macro step in the list first")
             return {'CANCELLED'}
 
         step_label = macro.steps[self.step_index].label

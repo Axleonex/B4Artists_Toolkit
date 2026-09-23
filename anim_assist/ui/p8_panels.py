@@ -62,6 +62,10 @@ class ANIMASSIST_PT_p8_matching(PanelAnatomyMixin, DopeSheetSidebarPanel):
 
         # ── Quick match ──
         uh.section_header(layout, "Quick Match", icon="SNAP_ON")
+        # Most match buttons need a second selected object; without one they
+        # grey out silently, so say what they are waiting for.
+        if len(getattr(context, "selected_objects", None) or ()) < 2:
+            layout.label(text="Select target, then this object", icon="INFO")
         uh.explained_op(
             layout, context,
             "animassist.p8_quick_match",
@@ -198,7 +202,7 @@ class ANIMASSIST_PT_p8_matching(PanelAnatomyMixin, DopeSheetSidebarPanel):
             return
 
         uh.explained_prop(
-            body, context, p8, "match_channels",
+            body, context, p8, "match_channels", text="Channels",
             help_id="prop.p8_match_channels",
         )
 
@@ -745,7 +749,7 @@ class ANIMASSIST_PT_p8_match_v3d(PanelAnatomyMixin, View3DSidebarPanel):
         if not expanded:
             return
 
-        uh.explained_prop(body, context, p8, "match_channels",
+        uh.explained_prop(body, context, p8, "match_channels", text="Channels",
                           help_id="prop.p8_match_channels")
         row = body.row(align=True)
         row.label(text="Axes:")

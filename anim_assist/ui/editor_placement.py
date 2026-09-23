@@ -110,6 +110,24 @@ _EDITOR_BASE_BY_SPACE: dict[str, type[_SidebarPanelBase]] = {
 # Cross-editor cloning helper
 # ---------------------------------------------------------------------------
 
+def detached_panel_clone(base_cls: type[Panel], name: str, *, _editor_base=None, **overrides) -> type[Panel]:
+    """Copy a panel class into an independent class for another editor.
+
+    Never subclass a registered panel to make an editor variant: registering
+    a subclass of a registered ``bpy.types.Panel`` rebinds the parent's RNA
+    struct, the parent loses its Python class ("unable to get Python class
+    for RNA struct"), and its panel draws empty. Copying the class body and
+    reusing the base's own bases keeps both panels independent.
+    """
+    ns = {k: v for k, v in vars(base_cls).items() if k not in ("__dict__", "__weakref__", "bl_rna")}
+    ns.update(overrides)
+    bases = base_cls.__bases__
+    if _editor_base is not None:
+        editor_bases = set(_EDITOR_BASE_BY_SPACE.values())
+        bases = tuple(_editor_base if b in editor_bases else b for b in bases)
+    return type(name, bases, ns)
+
+
 def make_editor_variants(
     base_cls: type[Panel],
     editors: Iterable[str],
@@ -146,13 +164,11 @@ def make_editor_variants(
         clone_name = f"{base_cls.__name__}{suffix.upper()}"
         clone_idname = f"{base_idname}{suffix}"
 
-        clone = type(
-            clone_name,
-            (base_cls, editor_base),
-            {
-                "bl_idname": clone_idname,
-                "bl_space_type": editor,
-            },
+        clone = detached_panel_clone(
+            base_cls, clone_name,
+            bl_idname=clone_idname,
+            bl_space_type=editor,
+            _editor_base=editor_base,
         )
         variants.append(clone)
 
@@ -160,6 +176,7 @@ def make_editor_variants(
 
 
 __all__ = [
+    "detached_panel_clone",
     "EDITOR_DOPESHEET",
     "EDITOR_GRAPH",
     "EDITOR_VIEW3D",

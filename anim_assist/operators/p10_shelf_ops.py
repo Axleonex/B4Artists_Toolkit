@@ -123,7 +123,7 @@ class AA_OT_p10_remove_favorite(Operator):
                 return {'CANCELLED'}
 
             if self.index < 0 or self.index >= len(p10.favorites):
-                self.report({'ERROR'}, f"Invalid favorite index: {self.index}")
+                self.report({'ERROR'}, f"Select a favorite in the list first")
                 return {'CANCELLED'}
 
             removed_label = p10.favorites[self.index].label
@@ -180,7 +180,7 @@ class AA_OT_p10_search_tools(Operator):
                 # Dispatch operator via bpy.ops getattr chain
                 parts = self.tool_enum.split(".")
                 if len(parts) != 2:
-                    self.report({'ERROR'}, f"Invalid operator ID: {self.tool_enum}")
+                    self.report({'ERROR'}, f"'{self.tool_enum}' is not a valid tool. Pick a tool from the search list")
                     return {'CANCELLED'}
                 category = getattr(bpy.ops, parts[0], None)
                 if category is None:
@@ -188,7 +188,7 @@ class AA_OT_p10_search_tools(Operator):
                     return {'CANCELLED'}
                 op_func = getattr(category, parts[1], None)
                 if op_func is None:
-                    self.report({'ERROR'}, f"Operator not found: {self.tool_enum}")
+                    self.report({'ERROR'}, f"Tool '{self.tool_enum}' is not available. Pick another tool from the search list")
                     return {'CANCELLED'}
                 op_func("EXEC_DEFAULT")
                 self.report({'INFO'}, f"Executed: {self.tool_enum}")
@@ -289,7 +289,7 @@ class AA_OT_p10_repeat_last(Operator):
             label = last_tool.label
 
             if not op_id:
-                self.report({'ERROR'}, "Invalid recent tool")
+                self.report({'ERROR'}, "That recent tool is no longer available. Clear Recents and use the tool again")
                 return {'CANCELLED'}
 
             # Dispatch operator via bpy.ops getattr chain
