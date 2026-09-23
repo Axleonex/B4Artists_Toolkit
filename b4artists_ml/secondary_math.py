@@ -2750,7 +2750,8 @@ def _capsule_sweep_hit(previous, current, start, end, radius, clearance,
 
 def _capsule_trajectory_sweep_hit(previous, current, previous_start,
                                   previous_end, previous_radius, start, end,
-                                  radius, clearance, fallbacks=()):
+                                  radius, clearance, fallbacks=(),
+                                  max_penetration=False):
     """Find a bounded contact while both point and capsule interpolate.
 
     Each substep uses the static analytic capsule sweep at the substep's
@@ -2797,6 +2798,7 @@ def _capsule_trajectory_sweep_hit(previous, current, previous_start,
         return midpoint-vector, midpoint+vector
 
     best = None
+    all_candidates = []
     for step in range(1, MAX_CAPSULE_SWEEP_SUBSTEPS + 1):
         start_alpha = (step - 1) / MAX_CAPSULE_SWEEP_SUBSTEPS
         end_alpha = step / MAX_CAPSULE_SWEEP_SUBSTEPS
@@ -2847,9 +2849,19 @@ def _capsule_trajectory_sweep_hit(previous, current, previous_start,
             candidates.append((1.0, closest + normal * threshold, normal,
                                threshold - distance))
         if candidates:
-            alpha, projected, normal, penetration = min(candidates, key=lambda row: row[0])
-            return projected, normal, penetration, (
-                start_alpha + (end_alpha - start_alpha) * alpha)
+            if max_penetration:
+                alpha, projected, normal, penetration = max(candidates, key=lambda row: row[3])
+            else:
+                alpha, projected, normal, penetration = min(candidates, key=lambda row: row[0])
+            global_alpha = start_alpha + (end_alpha - start_alpha) * alpha
+            if max_penetration:
+                all_candidates.append((penetration, global_alpha, projected, normal))
+            else:
+                return projected, normal, penetration, global_alpha
+    if max_penetration and all_candidates:
+        penetration, global_alpha, projected, normal = max(
+            all_candidates, key=lambda row: row[0])
+        return projected, normal, penetration, global_alpha
     return best
 
 
@@ -3822,7 +3834,8 @@ def follow_world_vectors(values, frame_steps, *, dt, frequency, damping,
                 fallbacks = (target[index] - current, -velocity)
                 swept = (_capsule_trajectory_sweep_hit(
                     previous, current, previous_start, previous_end,
-                    previous_radius, start, end, radius, clearance, fallbacks)
+                    previous_radius, start, end, radius, clearance, fallbacks,
+                    max_penetration=True)
                          if capsule_trajectory is not None and capsule_continuous
                          else _capsule_sweep_hit(
                              previous, current, start, end, radius, clearance,
@@ -3833,8 +3846,10 @@ def follow_world_vectors(values, frame_steps, *, dt, frequency, damping,
                     maximum_penetration = max(maximum_penetration, penetration)
                     current = projected
                     respond_capsule(response_normal)
-                    if capsule_trajectory is not None:
-                        current = projected+velocity*seconds*(1.0-hit)
+                    if capsule_trajectory is not None and (
+                            np.any(midpoint_velocity != 0.0)
+                            or radius_velocity != 0.0):
+                        current = projected + velocity * seconds * (1.0 - hit)
                     continuous_collisions += 1
                 else:
                     for _ in range(16):
@@ -3940,6 +3955,24 @@ def follow_world_vectors(values, frame_steps, *, dt, frequency, damping,
                 velocity = normal_speed * response_normal + tangent * (1.0 - surface_friction)
                 collisions += 1
         result[index] = current
+    if capsule_trajectory is not None and capsule_continuous:
+        for index in range(1, len(target)):
+            if not mask[index]:
+                continue
+            _cs = capsule_trajectory[0][index]
+            _ce = capsule_trajectory[1][index]
+            _cr = capsule_trajectory[2][index]
+            _closest_end = _capsule_closest(result[index], _cs, _ce)
+            if _cr + clearance - float(np.linalg.norm(result[index] - _closest_end)) > 1e-10:
+                _ps = capsule_trajectory[0][index - 1]
+                _pe = capsule_trajectory[1][index - 1]
+                _pr = capsule_trajectory[2][index - 1]
+                _fallbacks = (target[index] - result[index], result[index - 1] - result[index])
+                _swept = _capsule_trajectory_sweep_hit(
+                    result[index - 1], result[index], _ps, _pe, _pr,
+                    _cs, _ce, _cr, clearance, _fallbacks, max_penetration=True)
+                if _swept is not None:
+                    result[index] = _swept[0]
     if not np.isfinite(result).all():
         raise ValueError("World secondary dynamics produced nonfinite output")
     return result, dict(collision_samples=collisions,
@@ -4013,6 +4046,7 @@ def apply_world_vector_follow(values, frames, *, dt, frequency, damping,
     result[-1] = target[-1]
     editable_mask=weight>0.0
     editable_mask[0]=False;editable_mask[-1]=False
+    _applied_endpoint_pins = False
     if collision_point is not None:
         _, point, normal = validate_world_settings(
             gravity=gravity, gravity_scale=gravity_scale,
@@ -4119,6 +4153,19 @@ def apply_world_vector_follow(values, frames, *, dt, frequency, damping,
             closest = _capsule_closest(result[index], starts[index], ends[index])
             if radii[index] + clearance - float(np.linalg.norm(result[index] - closest)) > 1e-8:
                 raise ValueError("Secondary moving capsule did not converge to an exterior point")
+        result[0] = target[0]
+        result[-1] = target[-1]
+        for index in np.flatnonzero(base_mask):
+            for _ in range(16):
+                closest = _capsule_closest(result[index], starts[index], ends[index])
+                distance = float(np.linalg.norm(result[index] - closest))
+                penetration = radii[index] + clearance - distance
+                if penetration <= 1e-10:
+                    break
+                direction = _capsule_normal(
+                    result[index], starts[index], ends[index],
+                    (follower[index] - closest, target[index] - closest))
+                result[index] = closest + direction * (radii[index] + clearance)
         after = np.asarray([
             float(np.linalg.norm(value - _capsule_closest(value, starts[index], ends[index])))
             - (radii[index] + clearance)
@@ -4127,6 +4174,7 @@ def apply_world_vector_follow(values, frames, *, dt, frequency, damping,
         finite_after = after[base_mask]
         metrics["max_penetration_before"] = float(max(0.0, -np.min(finite_before))) if finite_before.size else 0.0
         metrics["max_penetration_after"] = float(max(0.0, -np.min(finite_after))) if finite_after.size else 0.0
+        _applied_endpoint_pins = True
     elif (collision_capsule_start is not None or collision_capsule_end is not None
           or collision_capsule_radius is not None):
         start, end, radius = _capsule_specs(
@@ -4156,6 +4204,20 @@ def apply_world_vector_follow(values, frames, *, dt, frequency, damping,
             closest = _capsule_closest(result[index], start, end)
             if radius + clearance - float(np.linalg.norm(result[index] - closest)) > 1e-8:
                 raise ValueError("Secondary capsule collider did not converge to an exterior point")
+        result[0] = target[0]
+        result[-1] = target[-1]
+        if envelope is not None:
+            for index in np.flatnonzero(base_mask):
+                for _ in range(16):
+                    closest = _capsule_closest(result[index], start, end)
+                    distance = float(np.linalg.norm(result[index] - closest))
+                    penetration = radius + clearance - distance
+                    if penetration <= 1e-10:
+                        break
+                    direction = _capsule_normal(
+                        result[index], start, end,
+                        (follower[index] - closest, target[index] - closest))
+                    result[index] = closest + direction * (radius + clearance)
         after = np.asarray([
             float(np.linalg.norm(value - _capsule_closest(value, start, end)))
             - (radius + clearance) for value in result])
@@ -4163,6 +4225,7 @@ def apply_world_vector_follow(values, frames, *, dt, frequency, damping,
         finite_after = after[base_mask]
         metrics["max_penetration_before"] = float(max(0.0, -np.min(finite_before))) if finite_before.size else 0.0
         metrics["max_penetration_after"] = float(max(0.0, -np.min(finite_after))) if finite_after.size else 0.0
+        _applied_endpoint_pins = True
     elif (collision_mesh_triangles is not None
           or collision_mesh_trajectories is not None):
         mesh = (validate_mesh_triangles(collision_mesh_triangles)
@@ -4272,6 +4335,7 @@ def apply_world_vector_follow(values, frames, *, dt, frequency, damping,
         metrics["max_penetration_before"] = 0.0
         metrics["max_penetration_after"] = 0.0
     metrics["max_world_correction"] = float(np.max(np.linalg.norm(result-target, axis=1)))
-    result[0] = target[0]
-    result[-1] = target[-1]
+    if not _applied_endpoint_pins:
+        result[0] = target[0]
+        result[-1] = target[-1]
     return result, metrics
