@@ -14,10 +14,10 @@ unregister functions are called in the correct dependency order.
 bl_info = {
     "name": "Ghost Tool",
     "author": "GoingGhost",
-    "version": (3, 3, 3),
+    "version": (3, 3, 4),
     "blender": (4, 0, 0),
     "location": "View3D > Sidebar > Ghost Tool",
-    "description": "Ghost keyframe visualization and manipulation for Bforartists. v3.3.3 adds validated imports, exact snapshots, scene isolation, and animation correctness fixes.",
+    "description": "Ghost keyframe visualization and manipulation for Bforartists. v3.3.4 fixes easing on zero-width ranges, handle recalculation on non-Bezier segments, the Initialize repair button, and bone ghost drag direction.",
     "category": "Animation",
     "doc_url": "",
     "tracker_url": "",

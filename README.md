@@ -4,8 +4,8 @@ Two animation add-ons for **Bforartists** (the Blender fork). Both are **Bforart
 
 | Tool | Version | What it does |
 |---|---|---|
-| **Anim Assist** | 12.0.2 | A production animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Inspired by Maya's AnimBot. |
-| **Ghost Tool** | 3.3.3 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. |
+| **Anim Assist** | 12.0.3 | A production animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Inspired by Maya's AnimBot. |
+| **Ghost Tool** | 3.3.4 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. |
 
 > These tools were built with heavy AI assistance and are under active bug-fixing. If you hit an issue, a screenshot or a note about what you were doing helps a lot — please open an [issue](../../issues).
 
@@ -13,8 +13,8 @@ Two animation add-ons for **Bforartists** (the Blender fork). Both are **Bforart
 
 The ready-to-install add-ons live in [`releases/`](releases/):
 
-- `b4_anim_assist_v12.0.2.zip`
-- `b4_ghost_tool_v3.3.3.zip`
+- `b4_anim_assist_v12.0.3.zip`
+- `b4_ghost_tool_v3.3.4.zip`
 
 That folder holds only the current build of each tool. Earlier builds stay
 available through git history and the release tags — see
