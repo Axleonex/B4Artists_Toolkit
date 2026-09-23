@@ -25,7 +25,6 @@ from ..ui.panel_anatomy import PanelAnatomyMixin
 from ..ui.editor_placement import (
     DopeSheetSidebarPanel,
     View3DSidebarPanel,
-    make_editor_variants,
 )
 
 

@@ -14,7 +14,6 @@ from ..core.p10_macro_engine import (
     execute_macro,
     validate_macro,
     build_macro_from_property,
-    MacroStep,
     macro_breakdown_offset,
     macro_proxy_workflow,
     macro_switch_compensate,

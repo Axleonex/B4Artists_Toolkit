@@ -7,7 +7,6 @@ already use ``ui/panels.py``.
 
 from __future__ import annotations
 
-import bpy
 from bpy.types import Panel
 
 from ..operators.p2_diag_ops import get_last_summary

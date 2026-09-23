@@ -6,14 +6,12 @@ visible FCurves via ``core.context_utils`` / ``core.selection_p2``.
 
 from __future__ import annotations
 
-import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatProperty, IntProperty, StringProperty
 from bpy.types import Operator
 
 from ..core import selection_p2 as sel
 from ..core.context_utils import (
     in_anim_editor,
-    iter_selected_keys,
     iter_visible_fcurves,
     key_identity,
 )

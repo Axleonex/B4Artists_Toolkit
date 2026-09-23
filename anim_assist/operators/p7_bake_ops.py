@@ -20,10 +20,11 @@ Operators:
 
 from __future__ import annotations
 
+import math
+
 import bpy
 
 from ..core.logging import get_logger
-from ..core import p7_session as p7s
 from ..core.p7_properties import get_p7
 from ..core.p7_proxy_math import (
     resolve_bake_range,
@@ -66,7 +67,8 @@ def _get_bake_range(context, p7):
         if action is not None:
             for fc in get_fcurves(action, anim_data=ad):
                 for kp in fc.keyframe_points:
-                    frames.add(int(kp.co.x))
+                    if kp.select_control_point:
+                        frames.add(float(kp.co.x))
         selected_frames = sorted(frames) if frames else None
 
     # For PREVIEW mode, pass preview range parameters
@@ -89,6 +91,15 @@ def _get_bake_range(context, p7):
     )
 
 
+def _restore_frame(scene, frame: float) -> None:
+    """Restore a possibly fractional frame without truncating the subframe."""
+    base = math.floor(frame)
+    try:
+        scene.frame_set(base, subframe=float(frame) - base)
+    except TypeError:  # pragma: no cover - very old Blender
+        scene.frame_set(base)
+
+
 def _bake_object_transform(context, obj, frame_start, frame_end, step=1,
                            channel_mode="ALL"):
     """Sample evaluated transforms and insert keyframes.
@@ -96,7 +107,7 @@ def _bake_object_transform(context, obj, frame_start, frame_end, step=1,
     Returns the number of keyframes inserted.
     """
     scene = context.scene
-    original_frame = scene.frame_current
+    original_frame = float(scene.frame_current_final)
     channels = channels_for_mode(channel_mode)
     inserted = 0
 
@@ -133,7 +144,7 @@ def _bake_object_transform(context, obj, frame_start, frame_end, step=1,
             inserted += 3
 
     # Restore frame.
-    scene.frame_set(original_frame)
+    _restore_frame(scene, original_frame)
 
     # Update all FCurves.
     if obj.animation_data and obj.animation_data.action:
@@ -176,7 +187,7 @@ def _bake_at_existing_keys(context, obj, channel_mode="ALL"):
     keyframes updated.
     """
     scene = context.scene
-    original_frame = scene.frame_current
+    original_frame = float(scene.frame_current_final)
     channels = channels_for_mode(channel_mode)
     updated = 0
 
@@ -189,13 +200,14 @@ def _bake_at_existing_keys(context, obj, channel_mode="ALL"):
     frames = set()
     for fc in get_fcurves(action, anim_data=ad):
         for kp in fc.keyframe_points:
-            frames.add(int(kp.co.x))
+            frames.add(float(kp.co.x))
 
     if not frames:
         return 0
 
     for frame in sorted(frames):
-        scene.frame_set(frame)
+        base = math.floor(frame)
+        scene.frame_set(base, subframe=frame - base)
         mat = obj.matrix_world
 
         if "location" in channels:
@@ -219,7 +231,7 @@ def _bake_at_existing_keys(context, obj, channel_mode="ALL"):
             updated += 3
 
     # Restore frame.
-    scene.frame_set(original_frame)
+    _restore_frame(scene, original_frame)
 
     # Update all FCurves.
     if action:
@@ -354,7 +366,7 @@ class AA_OT_p7_bake_selected_channels(bpy.types.Operator):
 
         # Manually bake only the selected channels
         scene = context.scene
-        original_frame = scene.frame_current
+        original_frame = float(scene.frame_current_final)
         inserted = 0
 
         for frame in range(frame_start, frame_end + 1, p7.bake_step):
@@ -381,7 +393,7 @@ class AA_OT_p7_bake_selected_channels(bpy.types.Operator):
                 obj.keyframe_insert(data_path="scale", frame=frame)
                 inserted += 3
 
-        scene.frame_set(original_frame)
+        _restore_frame(scene, original_frame)
 
         if action:
             for fc in get_fcurves(action, anim_data=ad):

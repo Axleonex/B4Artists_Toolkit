@@ -33,7 +33,6 @@ from .breakdown_masks import BreakdownMask, ExclusionSet, apply_exclusion
 from .fcurve_compat import get_fcurves
 from .fcurve_utils import (
     get_bone_name_from_fcurve,
-    get_sub_path_from_bone_fcurve,
 )
 from .logging import get_logger
 
@@ -239,7 +238,12 @@ def _write_key(
     *,
     match_tangents: bool,
 ) -> bpy.types.Keyframe | None:
-    kp = fcurve.keyframe_points.insert(frame, value, options={"NEEDED", "FAST"})
+    # Bracket BEFORE inserting: afterwards the new key is its own nearest
+    # neighbour and match_tangents would copy its own default handle type.
+    prev_kp, next_kp = nearest_bracket(fcurve, frame) if match_tangents else (None, None)
+    # No NEEDED flag: a breakdown key is wanted even when it lands exactly on
+    # the evaluated curve (common on LINEAR segments); NEEDED silently skips it.
+    kp = fcurve.keyframe_points.insert(frame, value, options={"FAST"})
     # Blender 4.x: insert() with the NEEDED flag returns None when the value
     # matched an existing key and no new key was inserted. Recover the existing
     # keyframe at this frame so callers (and attribute access below) stay safe.
@@ -253,7 +257,6 @@ def _write_key(
             return None
     if match_tangents:
         # Match tangent type to the closer neighbor for continuity.
-        prev_kp, next_kp = nearest_bracket(fcurve, frame)
         ref_handle = "AUTO_CLAMPED"
         if prev_kp is not None and next_kp is not None:
             prev_dist = frame - prev_kp[0]
@@ -437,13 +440,13 @@ def _process_quaternion_group(
                 )
                 current = comp_value
             comp_value = current + options.offset_amount
-        _write_key(
+        if _write_key(
             fc,
             frame,
             comp_value,
             match_tangents=options.match_tangents,
-        )
-        result.keys_written += 1
+        ) is not None:
+            result.keys_written += 1
         touched.add(id(fc))
 
 
@@ -584,13 +587,13 @@ def apply_breakdown(
                             exc_info=True,
                         )
                         continue
-                    _write_key(
+                    if _write_key(
                         fc,
                         frame,
                         eval_val,
                         match_tangents=options.match_tangents,
-                    )
-                    result.keys_written += 1
+                    ) is not None:
+                        result.keys_written += 1
                     touched.add(id(fc))
                 continue
 
@@ -629,11 +632,11 @@ def apply_breakdown(
                     current = float(value)
                 value = current + options.offset_amount
 
-            _write_key(
+            if _write_key(
                 fc, frame, float(value),
                 match_tangents=options.match_tangents,
-            )
-            result.keys_written += 1
+            ) is not None:
+                result.keys_written += 1
             touched.add(id(fc))
 
         # -- Quaternion groups ----------------------------------------------

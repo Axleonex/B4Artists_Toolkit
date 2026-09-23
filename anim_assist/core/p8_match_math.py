@@ -30,7 +30,6 @@ Key concepts
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -274,7 +273,6 @@ def compute_match(
     MatchResult
         The computed channel values and list of what was written.
     """
-    from mathutils import Vector, Euler
 
     if channel_filter is None:
         channel_filter = ChannelFilter.all()

@@ -21,6 +21,7 @@ from __future__ import annotations
 from typing import Callable
 
 import bpy
+from bpy.app.handlers import persistent
 
 from .logging import get_logger
 
@@ -140,6 +141,10 @@ def _clear_p10_state() -> None:
     p10_aud.clear_all()
 
 
+# Every handler below is @persistent: Blender drops non-persistent handlers
+# when a file loads, which would silently disable cache invalidation on
+# undo/redo and the load hook itself after the first File > Open.
+@persistent
 def _on_load_post(*_args) -> None:
     """Called after a .blend file is loaded.
 
@@ -199,11 +204,13 @@ def _on_history_step(*_args) -> None:
     _safe_call("p8 chain cache invalidation", _invalidate_p8_chain_cache)
 
 
+@persistent
 def _on_undo_post(*_args) -> None:
     """Called after an undo step."""
     _on_history_step(*_args)
 
 
+@persistent
 def _on_redo_post(*_args) -> None:
     """Called after a redo step."""
     _on_history_step(*_args)

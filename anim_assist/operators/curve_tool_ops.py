@@ -52,7 +52,12 @@ def _snapshot_keys(fcurve) -> list[KeyData]:
 def _write_values(fcurve, indices: list[int], values: list[float]) -> None:
     kps = fcurve.keyframe_points
     for idx, val in zip(indices, values):
-        kps[idx].co[1] = val
+        kp = kps[idx]
+        # Move handles with the key so FREE/ALIGNED/VECTOR tangents keep their shape.
+        delta = val - kp.co[1]
+        kp.co[1] = val
+        kp.handle_left[1] += delta
+        kp.handle_right[1] += delta
     fcurve.update()
 
 

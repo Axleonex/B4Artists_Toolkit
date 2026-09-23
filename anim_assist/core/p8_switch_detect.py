@@ -13,8 +13,7 @@ suggestion but cannot discover a hidden switch control.
 
 from __future__ import annotations
 
-import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Literal
 
 from .logging import get_logger

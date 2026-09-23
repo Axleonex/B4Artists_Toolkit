@@ -22,7 +22,7 @@ from mathutils import Vector
 from ..core.logging import get_logger
 from ..core import p7_session as p7s
 from ..core.p7_properties import get_p7
-from ..core.p7_proxy_math import locator_object_name, resolve_bake_range, channels_for_mode
+from ..core.p7_proxy_math import locator_object_name, resolve_bake_range
 from ..core.fcurve_compat import get_fcurves
 
 _log = get_logger(__name__)

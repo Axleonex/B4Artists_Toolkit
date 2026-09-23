@@ -19,6 +19,7 @@ from bpy.props import EnumProperty, IntProperty, StringProperty
 from ..core.logging import get_logger
 from ..core.p11_properties import get_p11, PRESET_ITEMS
 from ..core import p11_layer_engine as engine
+from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
 
 logger = get_logger(__name__)
 
@@ -441,7 +442,7 @@ class ANIMASSIST_OT_p11_select_assigned(bpy.types.Operator):
         selected = 0
         for bone in obj.pose.bones:
             if bone.name in assigned_names:
-                bone.bone.select = True
+                set_pose_bone_selected(bone, True)
                 selected += 1
 
         self.report({'INFO'}, f"Selected {selected} assigned bones")

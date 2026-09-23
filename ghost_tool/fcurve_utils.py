@@ -248,17 +248,25 @@ def recalculate_handles(
     if left_kp is None or right_kp is None:
         warn(f"Cannot recalculate handles at frame {frame} — missing adjacent keyframes.")
         return False
+    if left_kp.interpolation != 'BEZIER':
+        # Handles only shape BEZIER segments. On LINEAR/CONSTANT the loop
+        # below would push handle offsets forever with no effect, then
+        # corrupt the curve the moment the user switches to Bezier.
+        warn(f"Cannot reshape a {left_kp.interpolation} segment at frame {frame}; handles have no effect there.")
+        return False
 
     try:
         if mode == "free":
-            _recalc_free(fcurve, left_kp, right_kp, frame, new_value)
+            if not _recalc_free(fcurve, left_kp, right_kp, frame, new_value):
+                return False
         elif mode == "locked":
             _recalc_locked(fcurve, left_kp, right_kp, frame, new_value)
         elif mode == "smooth":
             _recalc_smooth(fcurve, left_kp, right_kp, frame, new_value)
         else:
             warn(f"Unknown curve mode '{mode}', using 'free'")
-            _recalc_free(fcurve, left_kp, right_kp, frame, new_value)
+            if not _recalc_free(fcurve, left_kp, right_kp, frame, new_value):
+                return False
 
         # Clamp handles to prevent overshoot
         _clamp_handles(left_kp, right_kp)
@@ -277,7 +285,7 @@ def _recalc_free(
     right_kp: bpy.types.Keyframe,
     frame: float,
     new_value: float,
-) -> None:
+) -> bool:
     """Free mode: adjust handle angles and lengths to pass through the target.
 
     This uses a simple proportional offset approach.  The current
@@ -291,6 +299,13 @@ def _recalc_free(
         frame: The target frame.
         new_value: The desired value at the target frame.
     """
+    # Snapshot so a non-converging solve can be rolled back instead of
+    # leaving partially pushed handles behind.
+    orig_lr = tuple(left_kp.handle_right)
+    orig_rl = tuple(right_kp.handle_left)
+    orig_lrt = left_kp.handle_right_type
+    orig_rlt = right_kp.handle_left_type
+
     # Set handles to FREE type so we can manipulate them directly
     left_kp.handle_right_type = 'FREE'
     right_kp.handle_left_type = 'FREE'
@@ -300,12 +315,12 @@ def _recalc_free(
     delta = new_value - current_value
 
     if abs(delta) < 1e-7:
-        return
+        return True
 
     # Parametric position of the frame within the segment [0..1]
     segment_width = right_kp.co.x - left_kp.co.x
     if segment_width < 0.001:
-        return
+        return True
     parametric_position = (frame - left_kp.co.x) / segment_width
 
     # Distribute the correction to both handles based on parametric position.
@@ -336,8 +351,16 @@ def _recalc_free(
         left_kp.handle_right[1] += residual * left_influence * ITERATIVE_HANDLE_DAMPING
         right_kp.handle_left[1] += residual * right_influence * ITERATIVE_HANDLE_DAMPING
     else:
-        # Loop completed without converging
+        # Loop completed without converging: roll back and report failure so
+        # callers stop claiming success on an unchanged (or damaged) curve.
         warn(f"Handle recalculation did not converge after {MAX_CONVERGENCE_ITERATIONS} iterations (residual: {residual:.6f})")
+        left_kp.handle_right = orig_lr
+        right_kp.handle_left = orig_rl
+        left_kp.handle_right_type = orig_lrt
+        right_kp.handle_left_type = orig_rlt
+        fcurve.update()
+        return False
+    return True
 
 
 def _recalc_locked(

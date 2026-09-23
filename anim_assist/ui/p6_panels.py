@@ -22,7 +22,7 @@ from ..core.p6_properties import get_p6
 from ..operators.p6_gap_ops import get_cached_gaps
 from ..operators.p6_diag_ops import get_cached_diag
 from . import ui_helpers as uh
-from .editor_placement import DopeSheetSidebarPanel, GraphEditorSidebarPanel, make_editor_variants
+from .editor_placement import DopeSheetSidebarPanel, make_editor_variants
 from .panel_anatomy import PanelAnatomyMixin
 
 

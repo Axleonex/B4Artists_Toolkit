@@ -19,11 +19,10 @@ through a thin wrapper so the logic lives in exactly one place.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Iterable, Optional
+from dataclasses import dataclass
+from typing import Optional
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty, StringProperty
 
 try:
     from mathutils import Vector, Quaternion, Euler

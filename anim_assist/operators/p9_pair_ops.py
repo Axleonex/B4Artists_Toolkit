@@ -4,6 +4,7 @@ from ..core.p9_properties import get_p9
 from ..core import p9_pair_detect as det
 from ..core import p9_pair_cache as cache
 from ..core.logging import get_logger
+from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
 
 _log = get_logger(__name__)
 
@@ -342,7 +343,7 @@ class AA_OT_p9_mirror_selection_sets(bpy.types.Operator):
             opposite_name = det.find_opposite(bone.name, overrides=overrides, exceptions=exceptions)
             if opposite_name and opposite_name in armature.data.bones:
                 opposite_bone = armature.pose.bones[opposite_name]
-                opposite_bone.bone.select = True
+                set_pose_bone_selected(opposite_bone, True)
                 mirrored_count += 1
 
         self.report({'INFO'}, f"Selected {mirrored_count} mirrored bones")
@@ -393,7 +394,7 @@ class AA_OT_p9_nav_next_unpaired(bpy.types.Operator):
         # Select and make active
         bpy.ops.pose.select_all(action='DESELECT')
         target_bone = armature.pose.bones[next_unpaired]
-        target_bone.bone.select = True
+        set_pose_bone_selected(target_bone, True)
         armature.data.bones.active = target_bone.bone
 
         self.report({'INFO'}, f"Selected unpaired bone: {next_unpaired}")

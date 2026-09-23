@@ -39,6 +39,16 @@ from .logging import get_logger
 from . import p11_blend_math as bm
 from .fcurve_compat import get_fcurves, find_fcurve, new_fcurve
 
+
+def _escape_bone_name(name: str) -> str:
+    """``bpy.utils.escape_identifier`` via a runtime-only import.
+
+    This module does not bind ``bpy`` at module level, so a direct reference
+    would NameError at call time.
+    """
+    import bpy
+    return bpy.utils.escape_identifier(name)
+
 if TYPE_CHECKING:
     from bpy.types import Action, Object, PoseBone, PropertyGroup
 
@@ -115,7 +125,7 @@ def read_bone_from_action(
     if action is None:
         return snap
 
-    prefix = f'pose.bones["{bone_name}"].'
+    prefix = f'pose.bones["{_escape_bone_name(bone_name)}"].'
 
     loc = list(bm.REST_LOCATION)
     rot = list(bm.REST_ROTATION)
@@ -176,7 +186,7 @@ def write_bone_to_action(
     if action is None:
         return 0
 
-    prefix = f'pose.bones["{bone_name}"].'
+    prefix = f'pose.bones["{_escape_bone_name(bone_name)}"].'
     keyed = 0
 
     channel_map = []
@@ -187,6 +197,7 @@ def write_bone_to_action(
     if scale is not None:
         channel_map.append(("scale", scale))
 
+    touched = []
     for channel_name, values in channel_map:
         data_path = prefix + channel_name
         for idx in range(3):
@@ -194,7 +205,12 @@ def write_bone_to_action(
             if fc is None:
                 fc = new_fcurve(action, data_path, idx)
             fc.keyframe_points.insert(frame, values[idx], options={'FAST'})
+            touched.append(fc)
             keyed += 1
+
+    # FAST skips handle recalculation; flush once per curve or handles stay stale.
+    for fc in touched:
+        fc.update()
 
     return keyed
 
@@ -546,7 +562,6 @@ def duplicate_layer(p11, index: int) -> int:
         new_ovr.scale_weight = ovr.scale_weight
 
     # Copy Action data if it exists.
-    import bpy
     src_action = get_layer_action(src)
     if src_action is not None:
         new_action = src_action.copy()
@@ -581,7 +596,6 @@ def merge_layer_down(p11, index: int, armature_obj=None) -> bool:
     bool
         True if merged, False if refused.
     """
-    import bpy
 
     if index <= 0 or index >= len(p11.layers):
         return False

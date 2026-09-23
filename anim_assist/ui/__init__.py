@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import bpy
-
 #: Cached detection result. ``None`` until first queried; resolved lazily so
 #: the header draw callbacks never see a stale default.
 IS_BFORARTISTS: bool | None = None

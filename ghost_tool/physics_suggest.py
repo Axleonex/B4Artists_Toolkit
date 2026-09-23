@@ -270,6 +270,9 @@ def compute_ballistic_preview(
     if total_frames <= 0:
         return []
 
+    if frame_rate <= 0 or not math.isfinite(frame_rate):
+        return []
+
     total_time_seconds = total_frames / frame_rate
     previews = []
 

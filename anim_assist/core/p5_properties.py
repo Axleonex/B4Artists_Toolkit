@@ -16,7 +16,7 @@ from bpy.props import (
     IntProperty,
 )
 
-from .p5_colors import PALETTE_ENUM_ITEMS, palette_enum_items_callback
+from .p5_colors import palette_enum_items_callback
 
 P5_SCENE_ATTR = "anim_assist_p5"
 

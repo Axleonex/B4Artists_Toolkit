@@ -33,7 +33,7 @@ from .logging import get_logger
 from . import p8_match_math as mm
 
 if TYPE_CHECKING:
-    import bpy
+    pass
 
 __all__ = [
     "MirrorAxis",
@@ -520,7 +520,6 @@ def key_mirror_result(bone, channels_written: list[str], frame: int) -> int:
         Number of keyframes inserted.
     """
     try:
-        import bpy
 
         keyed = 0
 

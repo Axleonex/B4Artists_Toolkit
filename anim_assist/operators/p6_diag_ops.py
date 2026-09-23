@@ -16,7 +16,6 @@ import bpy
 from ..core.logging import get_logger
 from ..core.p6_properties import get_p6
 from ..core import p6_diagnostics as diag
-from ..core import p6_retime_math as rm
 from ..core.fcurve_compat import get_fcurves
 from .p6_gap_ops import get_cached_gaps, clear_cached_gaps
 

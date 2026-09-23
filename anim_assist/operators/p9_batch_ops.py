@@ -12,6 +12,7 @@ from ..core import p9_pair_cache as cache
 from ..core import p9_mirror_math as mm
 from ..core import p8_match_math as p8mm
 from ..core.logging import get_logger
+from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
 
 _log = get_logger(__name__)
 
@@ -98,7 +99,7 @@ class AA_OT_p9_batch_mirror(bpy.types.Operator):
         overrides = _get_overrides(p9)
         exceptions = _get_exceptions(p9)
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'CANCELLED'}
@@ -423,7 +424,7 @@ class AA_OT_p9_channel_resolver(bpy.types.Operator):
     def poll(cls, context):
         obj = context.active_object
         return (_pose_poll(context) and obj is not None
-                and any(b.bone.select for b in obj.pose.bones))
+                and any(pose_bone_selected(b) for b in obj.pose.bones))
 
     def execute(self, context):
         obj = context.active_object
@@ -437,7 +438,7 @@ class AA_OT_p9_channel_resolver(bpy.types.Operator):
         exceptions = _get_exceptions(p9)
         channel_filter = _build_channel_filter(p9)
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         report_lines = ["Channel Mapping Resolution:"]
 
         for bone in selected_bones:
@@ -482,7 +483,7 @@ class AA_OT_p9_mirror_metadata(bpy.types.Operator):
     def poll(cls, context):
         obj = context.active_object
         return (_pose_poll(context) and obj is not None
-                and any(b.bone.select for b in obj.pose.bones))
+                and any(pose_bone_selected(b) for b in obj.pose.bones))
 
     def execute(self, context):
         obj = context.active_object
@@ -495,7 +496,7 @@ class AA_OT_p9_mirror_metadata(bpy.types.Operator):
         overrides = _get_overrides(p9)
         exceptions = _get_exceptions(p9)
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         mirrored_count = 0
 
         for source_bone in selected_bones:

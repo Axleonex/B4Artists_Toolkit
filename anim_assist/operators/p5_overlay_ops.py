@@ -23,7 +23,6 @@ from ..core.p5_properties import get_p5
 from ..core.p5_sampling import (
     sample_path_fast,
     sample_path_constraints,
-    SamplePoint,
 )
 from ..core.p5_path_cache import (
     make_target_key,

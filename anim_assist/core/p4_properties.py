@@ -19,8 +19,8 @@ from bpy.props import (
     FloatVectorProperty,
 )
 
-from .p4_presets import PRESET_ENUM_ITEMS, preset_enum_items_callback
-from .p4_space import SPACE_ITEMS, space_enum_items
+from .p4_presets import preset_enum_items_callback
+from .p4_space import space_enum_items
 
 P4_SCENE_ATTR = "anim_assist_p4"
 

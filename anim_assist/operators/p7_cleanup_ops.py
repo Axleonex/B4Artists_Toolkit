@@ -178,15 +178,18 @@ class AA_OT_p7_remove_proxy(bpy.types.Operator):
 
         # Remove constraints referencing this proxy.
         removed_cons = 0
+        removed_keys: set[tuple[str, str, str]] = set()
         for obj in bpy.data.objects:
             for con in list(obj.constraints):
                 if getattr(con, "target", None) == proxy:
+                    removed_keys.add((obj.name, "", con.name))
                     obj.constraints.remove(con)
                     removed_cons += 1
             if hasattr(obj, "pose") and obj.pose:
                 for bone in obj.pose.bones:
                     for con in list(bone.constraints):
                         if getattr(con, "target", None) == proxy:
+                            removed_keys.add((obj.name, bone.name, con.name))
                             bone.constraints.remove(con)
                             removed_cons += 1
 
@@ -200,12 +203,13 @@ class AA_OT_p7_remove_proxy(bpy.types.Operator):
             if proxy_name in session.created_objects:
                 session.created_objects.remove(proxy_name)
             # Remove matching constraint records.
+            # Drop only the records for constraints removed above. The old
+            # prefix match (CONSTRAINT_PREFIX + session id) matched EVERY
+            # constraint of the session, orphaning the other proxies' records.
             session.created_constraints = [
                 rec for rec in session.created_constraints
                 if not (bpy.data.objects.get(rec.object_name) is None
-                        or rec.constraint_name.startswith(
-                            p7s.CONSTRAINT_PREFIX + sid[:8]
-                        ))
+                        or (rec.object_name, rec.bone_name, rec.constraint_name) in removed_keys)
             ]
             p7s.save_session_to_scene(session.session_id)
 

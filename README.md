@@ -49,6 +49,7 @@ Human-readable manuals are in [`docs/`](docs/):
 ## Requirements
 
 - **Bforartists 4.2+** (Anim Assist) / **Bforartists 4.x** (Ghost Tool). Not compatible with standard Blender.
+- Registration, first-run setup and teardown of both add-ons are verified headless on **Bforartists 5.1.2** (Blender 5.2 base) via [`tests/smoke_bforartists.py`](tests/smoke_bforartists.py).
 
 ## License
 

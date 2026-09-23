@@ -30,7 +30,6 @@ from __future__ import annotations
 
 from typing import Iterable
 
-import bpy
 from bpy.types import Panel
 
 from .. import constants

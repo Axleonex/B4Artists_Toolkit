@@ -5,7 +5,6 @@ Operators for safe disable, hotkey conflict checking, first-run setup,
 demo configuration loading, debug toggling, and comprehensive validation.
 """
 
-import bpy
 from bpy.types import Operator
 
 from ..core.logging import get_logger

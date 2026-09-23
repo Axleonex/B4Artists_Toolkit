@@ -18,7 +18,6 @@ Provides:
 
 from __future__ import annotations
 
-import bpy
 from bpy.props import BoolProperty
 from bpy.types import Operator
 

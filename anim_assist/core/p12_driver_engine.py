@@ -100,6 +100,22 @@ def unregister_driver_namespace() -> None:
 # load_post handler - re-registers the driver namespace after every file open
 # ---------------------------------------------------------------------------
 
+
+def _persistent(fn):  # type: ignore[no-untyped-def]
+    """``bpy.app.handlers.persistent`` when available; identity under test stubs.
+
+    Imported lazily: this module only binds ``bpy`` inside functions so it
+    stays importable without Blender.
+    """
+    try:
+        import bpy
+        deco = bpy.app.handlers.persistent
+    except (ImportError, AttributeError):
+        return fn
+    return deco(fn)
+
+
+@_persistent  # non-persistent handlers are dropped on file load - fatal for load_post
 def load_post_handler(_scene) -> None:
     """Re-install the driver namespace entry. Bound to bpy.app.handlers.load_post."""
     register_driver_namespace()

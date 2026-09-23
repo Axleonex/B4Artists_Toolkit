@@ -331,7 +331,6 @@ def rollback_session(session_id: str) -> bool:
     4. Remove custom properties.
     5. Drop session from registry.
     """
-    import bpy
 
     session = _sessions.get(session_id)
     if session is None:

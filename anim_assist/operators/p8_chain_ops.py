@@ -9,11 +9,12 @@ matching and switch-compensation pipeline.
 from __future__ import annotations
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import BoolProperty, IntProperty
 
 from ..core.logging import get_logger
 from ..core.p8_properties import get_p8
 from ..core import p8_chain_resolver as cr
+from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
 
 _log = get_logger(__name__)
 
@@ -196,13 +197,13 @@ class AA_OT_p8_select_chain_bones(bpy.types.Operator):
 
         if not self.extend:
             for pbone in pose.bones:
-                pbone.bone.select = False
+                set_pose_bone_selected(pbone, False)
 
         selected_count = 0
         for name in chain.bone_names:
             pbone = pose.bones.get(name)
             if pbone is not None:
-                pbone.bone.select = True
+                set_pose_bone_selected(pbone, True)
                 selected_count += 1
 
         tip = pose.bones.get(chain.tip_bone)

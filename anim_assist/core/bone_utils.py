@@ -11,6 +11,8 @@ from .fcurve_compat import get_fcurves
 from .logging import get_logger
 
 __all__ = [
+    "pose_bone_selected",
+    "set_pose_bone_selected",
     "get_bone_data_path",
     "get_bone_transform_paths",
     "get_bone_fcurves",
@@ -30,8 +32,11 @@ def get_bone_data_path(bone_name: str, property_name: str) -> str:
     """Build a Blender data path string for a pose bone property (e.g., location, rotation).
 
     Encapsulates bone name quoting rules so operators don't hardcode bracket syntax.
+    Names are escaped: a bone called ``Arm"L`` or one containing a backslash
+    would otherwise produce a path Blender cannot resolve (and that never
+    matches the ``data_path`` Blender itself stores on the FCurve).
     """
-    return f'pose.bones["{bone_name}"].{property_name}'
+    return f'pose.bones["{bpy.utils.escape_identifier(bone_name)}"].{property_name}'
 
 
 def get_bone_transform_paths(bone_name: str) -> dict[str, str]:
@@ -58,7 +63,7 @@ def get_bone_fcurves(
     Filters by data_path prefix so operators can work with a single bone's animation
     without iterating through the entire action.
     """
-    prefix = f'pose.bones["{bone_name}"].'
+    prefix = f'pose.bones["{bpy.utils.escape_identifier(bone_name)}"].'
     return [fc for fc in get_fcurves(action) if fc.data_path.startswith(prefix)]
 
 
@@ -143,3 +148,23 @@ def resolve_bone_from_context(
         return None
 
     return (obj, active_bone.name)
+
+
+def pose_bone_selected(pose_bone) -> bool:  # type: ignore[no-untyped-def]
+    """Selection state of a pose bone across Blender versions.
+
+    Blender 5.x removed ``Bone.select``; selection now lives on ``PoseBone``.
+    4.x exposes it only on ``Bone``.  Read whichever this build provides.
+    """
+    sel = getattr(pose_bone, "select", None)
+    if sel is not None:
+        return bool(sel)
+    return bool(pose_bone.bone.select)
+
+
+def set_pose_bone_selected(pose_bone, value: bool) -> None:  # type: ignore[no-untyped-def]
+    """Set pose-bone selection on whichever attribute this Blender build exposes."""
+    if hasattr(pose_bone, "select"):
+        pose_bone.select = value
+    else:
+        pose_bone.bone.select = value

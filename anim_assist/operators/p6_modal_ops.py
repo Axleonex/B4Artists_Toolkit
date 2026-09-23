@@ -15,7 +15,6 @@ No ``bpy.ops.*`` calls inside the modal body.
 
 from __future__ import annotations
 
-from typing import Optional
 
 import bpy
 

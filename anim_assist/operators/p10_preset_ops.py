@@ -8,7 +8,7 @@ Provides operators for:
 """
 
 import json
-from typing import Any, Optional
+from typing import Any
 
 import bpy
 from bpy.props import IntProperty, StringProperty
@@ -17,8 +17,6 @@ from bpy.types import Operator
 from ..core.logging import get_logger
 from ..core.p10_properties import get_p10
 from ..core.p10_preset_io import (
-    export_preset,
-    import_preset,
     export_workspace_profile,
     import_workspace_profile,
     get_preset_directory,

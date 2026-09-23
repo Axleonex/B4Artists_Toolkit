@@ -8,6 +8,7 @@ from ..core.p8_properties import get_p8
 from ..core import p8_match_math as mm
 from ..core import p8_switch_history as hist
 from ..core.logging import get_logger
+from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
 
 _log = get_logger(__name__)
 
@@ -354,7 +355,7 @@ class AA_OT_p8_contact_mask_from_selection(bpy.types.Operator):
 
         active = context.active_object
         selected_bones = [
-            bone.name for bone in active.pose.bones if bone.bone.select
+            bone.name for bone in active.pose.bones if pose_bone_selected(bone)
         ]
 
         if not selected_bones:

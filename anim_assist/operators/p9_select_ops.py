@@ -1,7 +1,6 @@
 import bpy
 from ..core.p9_properties import get_p9
 from ..core import p9_pair_detect as det
-from ..core import p9_pair_cache as cache
 from ..core.logging import get_logger
 
 

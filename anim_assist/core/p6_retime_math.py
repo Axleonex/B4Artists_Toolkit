@@ -257,6 +257,7 @@ def apply_ripple(
     threshold_frame: float,
     delta: float,
     direction: str = "FORWARD",
+    inclusive: bool = False,
     snap: bool = False,
 ) -> None:
     """Shift all keys on one side of *threshold_frame* by *delta*.
@@ -264,13 +265,16 @@ def apply_ripple(
     direction:
         ``"FORWARD"``  — shift keys with x > threshold_frame.
         ``"BACKWARD"`` — shift keys with x < threshold_frame.
+
+    inclusive:
+        When True a key sitting exactly on *threshold_frame* is shifted too.
     """
     for fc in fcurves:
         for kp in fc.keyframe_points:
             x = kp.co.x
-            if direction == "FORWARD"  and x <= threshold_frame:
+            if direction == "FORWARD"  and (x < threshold_frame if inclusive else x <= threshold_frame):
                 continue
-            if direction == "BACKWARD" and x >= threshold_frame:
+            if direction == "BACKWARD" and (x > threshold_frame if inclusive else x >= threshold_frame):
                 continue
             new_x = x + delta
             if snap:

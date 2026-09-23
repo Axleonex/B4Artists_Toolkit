@@ -21,7 +21,6 @@ from bpy.props import (
 )
 
 from .breakdown_presets import (
-    PRESET_ENUM_ITEMS,
     preset_enum_items_callback,
 )
 

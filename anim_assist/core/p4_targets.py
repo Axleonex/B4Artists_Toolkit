@@ -23,7 +23,7 @@ Each ``OffsetTarget`` carries everything needed by
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Iterable, Iterator
+from typing import Iterator
 
 try:
     import bpy

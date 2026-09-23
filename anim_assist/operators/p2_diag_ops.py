@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import bpy
 from bpy.props import FloatProperty
 from bpy.types import Operator
 
 from ..core import key_diag as diag
-from ..core import selection_p2 as sel
 from ..core.context_utils import in_anim_editor, iter_visible_fcurves
 from ..core.logging import get_logger
 

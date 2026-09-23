@@ -146,6 +146,11 @@ def apply_preset_to_range(
     if keyframe_left is None or keyframe_right is None:
         warn(f"Cannot find keyframes at frames {frame_a} and {frame_b} for preset application")
         return False
+    if keyframe_left == keyframe_right or abs(float(frame_b) - float(frame_a)) < 1e-6:
+        # Zero-width range: both ends resolve to the same key.  Applying a
+        # preset here collapses that key's handles onto its own co.
+        debug(f"Easing preset skipped: zero-width range at frame {frame_a}")
+        return False
 
     try:
         # Calculate segment dimensions for proportional handle placement
@@ -302,6 +307,11 @@ class GHOST_OT_apply_easing(bpy.types.Operator):
             if range_key in processed_ranges:
                 continue
             processed_ranges.add(range_key)
+
+            # Keyframe ghosts (level 0) and out-of-range step ghosts carry a
+            # zero-width parent range; there is no segment to ease.
+            if ghost.parent_frame_a == ghost.parent_frame_b:
+                continue
 
             obj = bpy.data.objects.get(ghost.object_name)
             if not obj:

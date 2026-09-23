@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import re
-from typing import Callable, Iterable
+from typing import Callable
 
 import bpy
 
-from .context_utils import iter_visible_fcurves
 from .fcurve_compat import get_fcurves
 
 __all__ = [
@@ -169,7 +168,7 @@ def match_selected_bones(
     obj = context.object
     if obj and obj.type == "ARMATURE" and obj.mode == "POSE":
         for pb in context.selected_pose_bones or []:
-            bone_paths.add(f'pose.bones["{pb.name}"]')
+            bone_paths.add(f'pose.bones["{bpy.utils.escape_identifier(pb.name)}"]')
 
     def _predicate(_o: bpy.types.Object, _a: bpy.types.Action, fc: bpy.types.FCurve) -> bool:
         return any(fc.data_path.startswith(p) for p in bone_paths)

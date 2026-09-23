@@ -24,7 +24,6 @@ from ..core import p12_driver_engine as de
 from ..core import p12_lipsync_engine as engine
 from ..core import p12_properties as p12_props
 from ..core.logging import get_logger
-from ..core.p11_properties import get_p11
 
 _log = get_logger(__name__)
 

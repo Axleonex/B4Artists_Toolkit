@@ -772,7 +772,7 @@ class AA_OT_p8_restore_switch(bpy.types.Operator):
             return {"CANCELLED"}
 
         # Get last event from history
-        last_event = hist.last_event()
+        last_event = hist.get_last_event()
         if not last_event:
             self.report({"ERROR"}, "No switch history available")
             return {"CANCELLED"}
@@ -870,7 +870,10 @@ class AA_OT_p8_toggle_preview(bpy.types.Operator):
         else:
             # Enabling preview: save current state
             p8.switch_preview = True
-            _preview_state = mm.record_visual_state(obj)
+            # Keyed by object name: the restore loop iterates .items() as
+            # (obj_name, transforms); a bare state dict made it look up
+            # scene.objects['matrix_world'] and restore nothing.
+            _preview_state = {obj.name: mm.record_visual_state(obj)}
             _preview_obj_name = obj.name
             self.report({"INFO"}, "Preview enabled, state saved")
 

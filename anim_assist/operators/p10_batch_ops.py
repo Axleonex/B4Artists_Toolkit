@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import time
-from typing import Optional
 
 import bpy
 from bpy.props import StringProperty
@@ -13,6 +12,7 @@ from ..core import runtime as rts_mod
 from ..core.logging import get_logger
 from ..core.p10_audit import log_operation
 from ..core.p10_properties import get_p10
+from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
 
 _log = get_logger(__name__)
 
@@ -107,7 +107,7 @@ class AA_OT_p10_batch_selected(Operator):
             for bone in selected_bones:
                 # Select this bone exclusively
                 bpy.ops.pose.select_all(action="DESELECT")
-                bone.bone.select = True
+                set_pose_bone_selected(bone, True)
                 context.view_layer.update()
 
                 # Run the operator
@@ -121,7 +121,7 @@ class AA_OT_p10_batch_selected(Operator):
             # Restore original selection
             bpy.ops.pose.select_all(action="DESELECT")
             for bone in selected_bones:
-                bone.bone.select = True
+                set_pose_bone_selected(bone, True)
             context.view_layer.update()
 
             # Log the batch operation

@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-import bpy
-from bpy.props import BoolProperty, EnumProperty, StringProperty
+from bpy.props import EnumProperty, StringProperty
 from bpy.types import Operator
 
 from ..core import channel_iso as ch

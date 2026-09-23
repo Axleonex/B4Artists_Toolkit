@@ -7,7 +7,7 @@ integer frames, mirror, protection-aware delete, and bake to range.
 from __future__ import annotations
 
 import bpy
-from bpy.props import FloatProperty, IntProperty
+from bpy.props import FloatProperty
 from bpy.types import Operator
 
 from ..core import key_utils as ku

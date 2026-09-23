@@ -21,8 +21,6 @@ import json
 from dataclasses import dataclass
 
 from . import p12_viseme_library as vl
-from . import p12_rhubarb_adapter as rh
-from . import p12_cue_table as ct
 from .logging import get_logger
 
 _KEY_MANUAL_OVERRIDE = "aa_p12_manual"
