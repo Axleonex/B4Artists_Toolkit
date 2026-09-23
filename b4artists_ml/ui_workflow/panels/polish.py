@@ -10,9 +10,7 @@ Verified source lines:
   Airborne  action_row  panels/advanced.py:1186  idname 'b4ml.flight_solve'    key 'polish.flight'
   Cleanup   action_row  panels/advanced.py:1270  idname 'b4ml.cleanup_solve'   key 'polish.cleanup'
   Secondary action_row  panels/advanced.py:1550  idname 'b4ml.secondary_solve' key 'polish.secondary'
-  PREREQ literal        panels/advanced.py:994,1145,1258,1343 — 'Needs a preview or kept result.'
   snap.running values   stage.py:87  'CONTACT' | 'FLIGHT' | 'CLEANUP' | 'SECONDARY'
-  copy.PREREQ absent in this lane (gaps-2 not landed); literals used.
 
 DESIGN DEFAULTS (assumed, pending animator session):
   Controls clustered per card (not inline per row), matching Pose panel slice 1.
@@ -63,9 +61,6 @@ except ImportError:
 # Panel
 # ---------------------------------------------------------------------------
 
-# Literal matching panels/advanced.py:994,1145,1258,1343
-_PREREQ = 'Needs a preview or kept result.'
-
 
 class B4ML_PT_polish(_Panel):  # type: ignore[valid-type]
     """Polish stage panel: Contacts, Airborne, Cleanup, Secondary Motion.
@@ -87,7 +82,7 @@ class B4ML_PT_polish(_Panel):  # type: ignore[valid-type]
         return True
 
     def draw(self, context) -> None:
-        rig, snap, st = header.prelude(self.layout, context)
+        rig, snap, st = header.prelude(self.layout, context, stage_key='POLISH')
         layout = self.layout
         b4ml = getattr(rig, 'b4ml', None) if rig is not None else None
 
@@ -96,7 +91,6 @@ class B4ML_PT_polish(_Panel):  # type: ignore[valid-type]
         # Operator: b4ml.contact_solve (advanced.py:1104); key: polish.contacts.
         box = layout.box()
         box.label(text='Contacts', icon='MOD_PHYSICS')
-        box.label(text=_PREREQ)
         if snap.running == 'CONTACT':
             box.label(text='Running\u2026', icon='TIME')
         else:
@@ -111,7 +105,6 @@ class B4ML_PT_polish(_Panel):  # type: ignore[valid-type]
         # Operator: b4ml.flight_solve (advanced.py:1186); key: polish.flight.
         box = layout.box()
         box.label(text='Airborne', icon='FORCE_WIND')
-        box.label(text=_PREREQ)
         if snap.running == 'FLIGHT':
             box.label(text='Running\u2026', icon='TIME')
         else:
@@ -125,7 +118,6 @@ class B4ML_PT_polish(_Panel):  # type: ignore[valid-type]
         # Operator: b4ml.cleanup_solve (advanced.py:1270); key: polish.cleanup.
         box = layout.box()
         box.label(text='Cleanup', icon='BRUSH_DATA')
-        box.label(text=_PREREQ)
         if snap.running == 'CLEANUP':
             box.label(text='Running\u2026', icon='TIME')
         else:
@@ -140,7 +132,6 @@ class B4ML_PT_polish(_Panel):  # type: ignore[valid-type]
         # Operator: b4ml.secondary_solve (advanced.py:1550); key: polish.secondary.
         box = layout.box()
         box.label(text='Secondary Motion', icon='RIGID_BODY')
-        box.label(text=_PREREQ)
         if snap.running == 'SECONDARY':
             box.label(text='Running\u2026', icon='TIME')
         else:
