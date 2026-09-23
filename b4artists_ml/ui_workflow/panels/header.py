@@ -185,8 +185,11 @@ def running_card(layout, rig, snap, width_px=None) -> None:
         box.label(text='Runs to completion (cannot be interrupted)', icon='INFO')
 
 
-def prelude(layout, context, full: bool = False) -> tuple:
+def prelude(layout, context, full: bool = False, stage_key: str = '') -> tuple:
     """Draw the shared panel prelude; return (rig, snap, st).
+
+    stage_key: STAGES key for this panel ('SETUP','POSE','MOTION','POLISH','REVIEW').
+    Pass '' (default) to draw all steps unconditionally — preserves existing behaviour.
 
     full=False (default): compact — icon strip + stage line, WARNING/ERROR
     feedback card only, Next button without card sentence.
@@ -194,16 +197,21 @@ def prelude(layout, context, full: bool = False) -> tuple:
     sentence (wrapped) then Next button.  Pass full=True from setup.py.
 
     Drawing order (contract §STATE MAP, §BEHAVIORAL SUCCESS items 3, 7, 8):
-      1. Stage strip   — icon-only row + 'Stage N of 5 — Label' text line.
-      2. Feedback card — compact: WARNING/ERROR; full: all levels, wrapped.
-      2b. Running card — always drawn when snap.running (both modes); progress bar + Cancel/note.
-      3. Next line     — full: wrapped card sentence; both: verb button.
-                         Next button suppressed while TEMPORAL running (running_card drew Cancel).
+      1. Stage strip   — icon-only row: ALWAYS drawn in every panel (orientation anchor).
+                         'Stage N of 5 — Label' text line: only when is_current.
+      2. Feedback card — compact: WARNING/ERROR; full: all levels, wrapped. ALWAYS drawn
+                         (contract §BEHAVIORAL SUCCESS item 8: never scroll to learn outcome).
+      2b. Running card — only when is_current; progress bar + Cancel/note.
+      3. Next line     — only when is_current; full: wrapped card sentence first; both: verb
+                         button. Next button suppressed while TEMPORAL running (Cancel shown).
+                         Next button also suppressed when the feedback fix-button IS the next
+                         action (same idname + props) — prevents the duplicate shown in QA #1/#2.
 
     Returns the active rig object (or None), the Snapshot, and the StageState.
     """
     snap = stage.snapshot(context)
     st = stage.evaluate(snap)
+    is_current = (stage_key == '' or stage_key == st.current)
 
     # Region width for wrap_label; fallback 220 when no region attribute.
     width_px: int = getattr(getattr(context, 'region', None), 'width', 220) or 220
@@ -216,6 +224,9 @@ def prelude(layout, context, full: bool = False) -> tuple:
             rig = _workflow.active_rig(context)
         except Exception:
             pass
+
+    # Resolve next action early so the feedback card can detect duplicates.
+    next_label, next_idname, next_props = st.next_action
 
     # ── 1. STAGE STRIP ─────────────────────────────────────────────────────
     # Icon-only row fits narrow sidebars; one text line names current stage
@@ -238,12 +249,15 @@ def prelude(layout, context, full: bool = False) -> tuple:
         else:
             icon = 'RADIOBUT_OFF'
         row.label(text='', icon=icon)
-    layout.label(text=copy_.fmt(copy_.STAGE_LINE, n=current_idx,
-                                total=len(copy_.STAGES), label=current_stage_label))
+    if is_current:
+        layout.label(text=copy_.fmt(copy_.STAGE_LINE, n=current_idx,
+                                    total=len(copy_.STAGES), label=current_stage_label))
 
     # ── 2. FEEDBACK CARD ───────────────────────────────────────────────────
     # compact: WARNING/ERROR only; full: all levels, text word-wrapped.
     # box.alert = True for ERROR level triggers Bforartists red highlight.
+    # Drawn in every panel regardless of is_current (item 8: never scroll to learn outcome).
+    fix_is_next = False
     if rig is not None and getattr(rig, 'b4ml_ui', None) is not None:
         fb = feedback.current(rig)
         if fb['text'] and (full or fb['level'] in ('WARNING', 'ERROR')):
@@ -255,24 +269,32 @@ def prelude(layout, context, full: bool = False) -> tuple:
                 op = box.operator(fb['fix'], text=fb['fix_label'] or 'Fix')
                 for k, v in json.loads(fb['fix_props'] or '{}').items():
                     setattr(op, k, v)
+                fix_is_next = (
+                    fb['fix'] == next_idname
+                    and json.loads(fb['fix_props'] or '{}') == next_props
+                )
 
-    running_card(layout, rig, snap, width_px=width_px)
+    # ── 2b. RUNNING CARD ───────────────────────────────────────────────────
+    # Only for the current stage's panel — running state is stage-specific.
+    if is_current:
+        running_card(layout, rig, snap, width_px=width_px)
 
     # ── 3. NEXT LINE ───────────────────────────────────────────────────────
     # full: wrapped card sentence first; both modes: verb on button
     # (§BEHAVIORAL SUCCESS item 1).
-    card_text = copy_.CARDS.get(st.state_name, '')
-    next_label, next_idname, next_props = st.next_action
-    if full and card_text:
-        wrap_label(layout, card_text, icon='INFO', width_px=width_px)
-    if next_idname and snap.running != 'TEMPORAL':
-        row = layout.row()
-        row.scale_y = 1.3
-        op = row.operator(next_idname, text=copy_.NEXT_PREFIX + ' ' + next_label, icon='PLAY')
-        for k, v in next_props.items():
-            setattr(op, k, v)
-    elif next_label:
-        layout.label(text=copy_.NEXT_PREFIX + ' ' + next_label)
+    # Suppressed in non-current panels and when fix button already IS the next action.
+    if is_current:
+        card_text = copy_.CARDS.get(st.state_name, '')
+        if full and card_text:
+            wrap_label(layout, card_text, icon='INFO', width_px=width_px)
+        if next_idname and snap.running != 'TEMPORAL' and not fix_is_next:
+            row = layout.row()
+            row.scale_y = 1.3
+            op = row.operator(next_idname, text=copy_.NEXT_PREFIX + ' ' + next_label, icon='PLAY')
+            for k, v in next_props.items():
+                setattr(op, k, v)
+        elif next_label and not fix_is_next:
+            layout.label(text=copy_.NEXT_PREFIX + ' ' + next_label)
 
     return (rig, snap, st)
 
