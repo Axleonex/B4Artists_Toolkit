@@ -95,7 +95,7 @@ class B4ML_PT_motion(_Panel):
 
     def draw(self, context):
         layout = self.layout
-        rig, snap, st = header.prelude(layout, context)
+        rig, snap, st = header.prelude(layout, context, stage_key='MOTION')
 
         if rig is None:
             return
@@ -112,15 +112,18 @@ class B4ML_PT_motion(_Panel):
         first_anchor_frame = min((a.frame for a in anchors), default=None)
         last_anchor_frame = max((a.frame for a in anchors), default=None)
 
+        ready = (first_anchor_frame is not None and last_anchor_frame is not None
+                 and abs(last_anchor_frame - first_anchor_frame) >= 1e-5)
+
         interp = getattr(state, 'interpolation_method', 'POSES')
 
         col = layout.column()
 
-        # Breakdown / inbetween series — POSES mode only; operators' poll()
-        # guards the >=2-anchor requirement.
-        if interp == 'POSES':
+        # Breakdown / inbetween series — POSES mode only; shown only when ready
+        # (two distinct key-pose frames exist).
+        if ready and interp == 'POSES':
             col.operator('b4ml.breakdown_pose', text='Create Breakdown Pose', icon='KEY_HLT')
-            col.operator('b4ml.inbetween_series', text='Procedural Inbetween Series',
+            col.operator('b4ml.inbetween_series', text='Procedural Inbetweens',
                          icon='KEYFRAME_HLT')
 
         # Pagination (only shown when more than one page; operators guard bounds).
@@ -166,14 +169,15 @@ class B4ML_PT_motion(_Panel):
                 paste.frame = anchor.frame
 
         # ── Method + timing ───────────────────────────────────────────────────
-        layout.prop(state, 'interpolation_method')
-        if interp == 'POSES':
-            layout.prop(state, 'easing')
-            layout.prop(state, 'timing_bias', slider=True)
-        else:
-            layout.prop(state, 'temporal_strength', slider=True)
-            layout.prop(state, 'temporal_smoothing')
-            layout.label(text='Procedural; strength blends toward endpoint interpolation')
+        if ready:
+            layout.prop(state, 'interpolation_method')
+            if interp == 'POSES':
+                layout.prop(state, 'easing')
+                layout.prop(state, 'timing_bias', slider=True)
+            else:
+                layout.prop(state, 'temporal_strength', slider=True)
+                layout.prop(state, 'temporal_smoothing')
+                layout.label(text='Procedural; strength blends toward endpoint interpolation')
 
         # ── Primary action ────────────────────────────────────────────────────
         # copy.BUTTONS['motion.preview'] = 'Generate Preview (frames {a}-{b})';
@@ -194,9 +198,10 @@ class B4ML_PT_motion(_Panel):
 
         # ── Show Timeline ─────────────────────────────────────────────────────
         # screen.space_type_set_or_cycle verified Bforartists 5.1.2 (C operator).
-        op = layout.operator('screen.space_type_set_or_cycle',
-                             text=copy_.BUTTONS['motion.show_timeline'], icon='TIME')
-        op.space_type = 'DOPESHEET_EDITOR'
+        if snap.mapped:
+            op = layout.operator('screen.space_type_set_or_cycle',
+                                 text=copy_.BUTTONS['motion.show_timeline'], icon='TIME')
+            op.space_type = 'DOPESHEET_EDITOR'
 
 
 CLASSES = (B4ML_PT_motion,)
