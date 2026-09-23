@@ -115,6 +115,32 @@ class B4ML_PT_motion(_Panel):
         ready = (first_anchor_frame is not None and last_anchor_frame is not None
                  and abs(last_anchor_frame - first_anchor_frame) >= 1e-5)
 
+        # btn_text shared by collapsed summary path and full-panel path
+        if (first_anchor_frame is not None and last_anchor_frame is not None
+                and abs(last_anchor_frame - first_anchor_frame) >= 1e-5):
+            btn_text = copy_.fmt(
+                copy_.BUTTONS['motion.preview'],
+                a=round(first_anchor_frame),
+                b=round(last_anchor_frame),
+            )
+        else:
+            btn_text = 'Generate Preview'
+
+        # ── Collapsed summary once motion stage is complete ────────────────────
+        if 'MOTION' in st.completed and st.current != 'MOTION':
+            n = len(anchors)
+            if ready:
+                summary = (f'{n} key poses, frames '
+                           f'{round(first_anchor_frame)}–{round(last_anchor_frame)}')
+            else:
+                summary = f'{n} key poses'
+            layout.label(text=summary, icon='KEYFRAME_HLT')
+            header.action_row(
+                layout, st, 'motion.preview', 'b4ml.action',
+                text=btn_text, icon='RENDER_ANIMATION', operation='PREVIEW',
+            )
+            return
+
         interp = getattr(state, 'interpolation_method', 'POSES')
 
         col = layout.column()
@@ -180,17 +206,6 @@ class B4ML_PT_motion(_Panel):
                 layout.label(text='Procedural; strength blends toward endpoint interpolation')
 
         # ── Primary action ────────────────────────────────────────────────────
-        # copy.BUTTONS['motion.preview'] = 'Generate Preview (frames {a}-{b})';
-        # strip the frame range when fewer than two distinct key-pose frames exist.
-        if (first_anchor_frame is not None and last_anchor_frame is not None
-                and abs(last_anchor_frame - first_anchor_frame) >= 1e-5):
-            btn_text = copy_.fmt(
-                copy_.BUTTONS['motion.preview'],
-                a=round(first_anchor_frame),
-                b=round(last_anchor_frame),
-            )
-        else:
-            btn_text = 'Generate Preview'
         header.action_row(
             layout, st, 'motion.preview', 'b4ml.action',
             text=btn_text, icon='RENDER_ANIMATION', operation='PREVIEW',
