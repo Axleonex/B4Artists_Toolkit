@@ -11,6 +11,8 @@ from .fcurve_compat import get_fcurves
 from .logging import get_logger
 
 __all__ = [
+    "bone_path_prefixes",
+    "fcurve_belongs_to_bone",
     "pose_bone_selected",
     "set_pose_bone_selected",
     "get_bone_data_path",
@@ -55,16 +57,30 @@ def get_bone_transform_paths(bone_name: str) -> dict[str, str]:
     }
 
 
+def bone_path_prefixes(bone_name: str) -> tuple[str, str]:
+    """Both data-path prefixes a pose bone's channels can carry.
+
+    Transform channels look like ``pose.bones["x"].location``; custom
+    properties keyed on the bone look like ``pose.bones["x"]["ik_fk"]``.
+    A prefix ending in a dot silently drops the second kind.
+    """
+    base = f'pose.bones["{bpy.utils.escape_identifier(bone_name)}"]'
+    return (base + ".", base + "[")
+
+
+def fcurve_belongs_to_bone(fcurve: bpy.types.FCurve, bone_name: str) -> bool:
+    """True for any FCurve driving *bone_name* - transforms or custom properties."""
+    return fcurve.data_path.startswith(bone_path_prefixes(bone_name))
+
+
 def get_bone_fcurves(
     action: bpy.types.Action, bone_name: str
 ) -> list[bpy.types.FCurve]:
     """Return all FCurves (animation channels) belonging to a specific pose bone in an action.
 
-    Filters by data_path prefix so operators can work with a single bone's animation
-    without iterating through the entire action.
+    Includes custom-property channels keyed on the bone, not only transforms.
     """
-    prefix = f'pose.bones["{bpy.utils.escape_identifier(bone_name)}"].'
-    return [fc for fc in get_fcurves(action) if fc.data_path.startswith(prefix)]
+    return [fc for fc in get_fcurves(action) if fcurve_belongs_to_bone(fc, bone_name)]
 
 
 # ---------------------------------------------------------------------------
@@ -118,15 +134,25 @@ def set_bone_metadata(
     if props is None:
         return False
 
+    # Serialise BEFORE touching the collection: a non-JSON value (Vector,
+    # bpy struct, set) used to raise after add(), leaving a stub entry with
+    # metadata_json == "{}" behind and breaking the "return False" contract.
+    try:
+        payload = json.dumps(data, ensure_ascii=False)
+    except (TypeError, ValueError) as exc:
+        _log.warning("Bone metadata for %s/%s is not JSON-serialisable: %s",
+                     object_name, bone_name, exc)
+        return False
+
     for item in props.bone_metadata:
         if item.object_name == object_name and item.bone_name == bone_name:
-            item.metadata_json = json.dumps(data, ensure_ascii=False)
+            item.metadata_json = payload
             return True
 
     item = props.bone_metadata.add()
     item.object_name = object_name
     item.bone_name = bone_name
-    item.metadata_json = json.dumps(data, ensure_ascii=False)
+    item.metadata_json = payload
     return True
 
 
