@@ -16,6 +16,11 @@ The ready-to-install add-ons live in [`releases/`](releases/):
 - `b4_anim_assist_v12.0.2.zip`
 - `b4_ghost_tool_v3.3.3.zip`
 
+That folder holds only the current build of each tool. Earlier builds stay
+available through git history and the release tags — see
+[`releases/VERSIONS.md`](releases/VERSIONS.md) for the version index, checksums,
+and how to read the real version out of a zip.
+
 To install in Bforartists:
 
 1. **Edit -> Preferences -> Add-ons -> Install from Disk...**
@@ -36,10 +41,10 @@ The source folders and the `releases/` zips contain the same code; the zips are 
 
 ## Documentation
 
-Human-readable manuals and diagnostic reports are in [`docs/`](docs/):
+Human-readable manuals are in [`docs/`](docs/):
 
-- [`docs/anim_assist/`](docs/anim_assist/) — Anim Assist user manual (PDF) + diagnostics report
-- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool user manual (PDF) + diagnostics report
+- [`docs/anim_assist/`](docs/anim_assist/) — Anim Assist user manual (PDF)
+- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool user manual (PDF)
 
 ## Requirements
 
