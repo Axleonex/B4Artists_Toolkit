@@ -91,7 +91,9 @@ class AA_OT_p9_match_to_opposite(bpy.types.Operator):
         channel_filter = _build_channel_filter(p9)
 
         try:
-            mm.mirror_bone_pose(active_bone, opposite_bone, "X", channel_filter)
+            # "Match to opposite": the ACTIVE bone takes the opposite's pose.
+            # Was mirror_bone_pose(active, opposite): wrong bone, and mirrored.
+            mm.copy_bone_pose(opposite_bone, active_bone, channel_filter)
             self.report({'INFO'}, f"Matched {active_bone.name} to {opposite_name}")
         except Exception as e:
             _log.error(f"match_to_opposite failed: {e}")
@@ -129,7 +131,8 @@ class AA_OT_p9_match_opposite_to_active(bpy.types.Operator):
         channel_filter = _build_channel_filter(p9)
 
         try:
-            mm.mirror_bone_pose(opposite_bone, active_bone, "X", channel_filter)
+            # "Match opposite to active": the OPPOSITE bone takes the active's pose.
+            mm.copy_bone_pose(active_bone, opposite_bone, channel_filter)
             self.report({'INFO'}, f"Matched {opposite_name} to {active_bone.name}")
         except Exception as e:
             _log.error(f"match_opposite_to_active failed: {e}")

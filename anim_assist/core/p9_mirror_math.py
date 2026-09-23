@@ -133,6 +133,127 @@ def mirror_rotation_euler(
         return rot
 
 
+def mirror_rotation_quaternion(
+    quat: tuple[float, float, float, float],
+    axis: str = "X",
+) -> tuple[float, float, float, float]:
+    """Mirror a (w, x, y, z) quaternion across the given axis.
+
+    Reflecting a rotation across the plane normal to *axis* keeps the
+    rotation's component along that axis and negates the other two - the
+    exact counterpart of :func:`mirror_rotation_euler`'s convention.
+    """
+    w, x, y, z = quat
+    if axis == "X":
+        return (w, x, -y, -z)
+    elif axis == "Y":
+        return (w, -x, y, -z)
+    elif axis == "Z":
+        return (w, -x, -y, z)
+    logger.warning(f"Unknown mirror axis: {axis}, returning unchanged")
+    return quat
+
+
+def mirror_rotation_axis_angle(
+    aa: tuple[float, float, float, float],
+    axis: str = "X",
+) -> tuple[float, float, float, float]:
+    """Mirror an (angle, x, y, z) axis-angle rotation across the given axis."""
+    angle, x, y, z = aa
+    if axis == "X":
+        return (angle, x, -y, -z)
+    elif axis == "Y":
+        return (angle, -x, y, -z)
+    elif axis == "Z":
+        return (angle, -x, -y, z)
+    logger.warning(f"Unknown mirror axis: {axis}, returning unchanged")
+    return aa
+
+
+# ---------------------------------------------------------------------------
+# Rotation-mode aware bone rotation I/O
+# ---------------------------------------------------------------------------
+
+_EULER_MODES = ("XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX")
+
+
+def rotation_data_path(bone) -> str:  # type: ignore[no-untyped-def]
+    """Property that carries *bone*'s rotation for its ``rotation_mode``."""
+    return mm.rotation_data_path(getattr(bone, "rotation_mode", "XYZ"))
+
+
+def _rotation_values(bone):  # type: ignore[no-untyped-def]
+    """Return ``(mode, values)`` for *bone* in its own rotation mode."""
+    mode = getattr(bone, "rotation_mode", "XYZ")
+    return mode, tuple(getattr(bone, mm.rotation_data_path(mode)))
+
+
+def _mirror_rotation_values(values, mode: str, axis: str):  # type: ignore[no-untyped-def]
+    if mode == "QUATERNION":
+        return mirror_rotation_quaternion(values, axis)
+    if mode == "AXIS_ANGLE":
+        return mirror_rotation_axis_angle(values, axis)
+    return mirror_rotation_euler(values, axis)
+
+
+def _convert_rotation(values, from_mode: str, to_mode: str):  # type: ignore[no-untyped-def]
+    """Re-express a rotation from one ``rotation_mode`` in another."""
+    if from_mode == to_mode:
+        return tuple(values)
+    from mathutils import Euler, Quaternion
+
+    if from_mode == "QUATERNION":
+        q = Quaternion(values)
+    elif from_mode == "AXIS_ANGLE":
+        q = Quaternion(values[1:], values[0])
+    else:
+        q = Euler(values, from_mode if from_mode in _EULER_MODES else "XYZ").to_quaternion()
+
+    if to_mode == "QUATERNION":
+        return tuple(q)
+    if to_mode == "AXIS_ANGLE":
+        ax, ang = q.to_axis_angle()
+        return (ang, ax.x, ax.y, ax.z)
+    return tuple(q.to_euler(to_mode if to_mode in _EULER_MODES else "XYZ"))
+
+
+def _write_rotation_values(
+    dst_bone, mode: str, values, axis_mask, respect_locks: bool, respect_drivers: bool,
+) -> list[str]:  # type: ignore[no-untyped-def]
+    """Write rotation *values* (already in *mode*) to *dst_bone*.
+
+    Euler is written per component under the axis mask.  Quaternion and
+    axis-angle are written whole: a partial quaternion has no meaning, so
+    the mask is read as "any rotation requested" and any lock on a requested
+    axis (or the W lock) skips the write entirely.
+    """
+    written: list[str] = []
+    path = mm.rotation_data_path(mode)
+    if mode in ("QUATERNION", "AXIS_ANGLE"):
+        if not axis_mask.any():
+            return written
+        if respect_locks and (
+            getattr(dst_bone, "lock_rotation_w", False)
+            or any(f and dst_bone.lock_rotation[i] for i, f in enumerate(axis_mask.as_tuple()))
+        ):
+            return written
+        if respect_drivers and mm.is_channel_driven(dst_bone, path):
+            return written
+        setattr(dst_bone, path, values)
+        written.append(path)
+        return written
+    for i, axis_name in enumerate(("x", "y", "z")):
+        if not axis_mask.as_tuple()[i]:
+            continue
+        if respect_locks and dst_bone.lock_rotation[i]:
+            continue
+        if respect_drivers and mm.is_channel_driven(dst_bone, "rotation_euler", i):
+            continue
+        dst_bone.rotation_euler[i] = values[i]
+        written.append(f"rotation_euler.{axis_name}")
+    return written
+
+
 def mirror_scale(
     sca: tuple[float, float, float],
     axis: str = "X",
@@ -325,17 +446,16 @@ def mirror_bone_pose(
                 dst_bone.location[i] = mir_loc[i]
                 channels_written.append(f"location.{axis_name}")
 
-        # --- Rotation ---
+        # --- Rotation (in the bones' own rotation modes) ---
         if channel_filter.rotation.any():
-            for i, axis_name in enumerate(("x", "y", "z")):
-                if not channel_filter.rotation.as_tuple()[i]:
-                    continue
-                if respect_locks and dst_bone.lock_rotation[i]:
-                    continue
-                if respect_drivers and mm.is_channel_driven(dst_bone, "rotation_euler", i):
-                    continue
-                dst_bone.rotation_euler[i] = mir_rot[i]
-                channels_written.append(f"rotation_euler.{axis_name}")
+            src_mode, src_vals = _rotation_values(src_bone)
+            mir_vals = _mirror_rotation_values(src_vals, src_mode, axis)
+            dst_mode = getattr(dst_bone, "rotation_mode", "XYZ")
+            mir_vals = _convert_rotation(mir_vals, src_mode, dst_mode)
+            channels_written += _write_rotation_values(
+                dst_bone, dst_mode, mir_vals, channel_filter.rotation,
+                respect_locks, respect_drivers,
+            )
 
         # --- Scale ---
         if channel_filter.scale.any():
@@ -377,10 +497,13 @@ def swap_bone_poses(bone_a, bone_b) -> tuple[list[str], list[str]]:
         a_loc = tuple(bone_a.location)
         a_rot = tuple(bone_a.rotation_euler)
         a_sca = tuple(bone_a.scale)
+        a_mode, a_rot_vals = _rotation_values(bone_a)
 
         b_loc = tuple(bone_b.location)
         b_rot = tuple(bone_b.rotation_euler)
         b_sca = tuple(bone_b.scale)
+        b_mode, b_rot_vals = _rotation_values(bone_b)
+        full_rot = mm.ChannelFilter.all().rotation
 
         # Mirror and cross-assign.
         mir_a_loc, mir_a_rot, mir_a_sca = mirror_transform(a_loc, a_rot, a_sca)
@@ -397,10 +520,10 @@ def swap_bone_poses(bone_a, bone_b) -> tuple[list[str], list[str]]:
             logger.debug(f"Could not write location to {bone_b.name}: {e}")
 
         try:
-            bone_b.rotation_euler = mir_a_rot
-            channels_a.append("rotation_euler")
+            vals = _convert_rotation(_mirror_rotation_values(a_rot_vals, a_mode, "X"), a_mode, b_mode)
+            channels_a += _write_rotation_values(bone_b, b_mode, vals, full_rot, False, False)
         except Exception as e:
-            logger.debug(f"Could not write rotation_euler to {bone_b.name}: {e}")
+            logger.debug(f"Could not write rotation to {bone_b.name}: {e}")
 
         try:
             bone_b.scale = mir_a_sca
@@ -415,10 +538,10 @@ def swap_bone_poses(bone_a, bone_b) -> tuple[list[str], list[str]]:
             logger.debug(f"Could not write location to {bone_a.name}: {e}")
 
         try:
-            bone_a.rotation_euler = mir_b_rot
-            channels_b.append("rotation_euler")
+            vals = _convert_rotation(_mirror_rotation_values(b_rot_vals, b_mode, "X"), b_mode, a_mode)
+            channels_b += _write_rotation_values(bone_a, a_mode, vals, full_rot, False, False)
         except Exception as e:
-            logger.debug(f"Could not write rotation_euler to {bone_a.name}: {e}")
+            logger.debug(f"Could not write rotation to {bone_a.name}: {e}")
 
         try:
             bone_a.scale = mir_b_sca
@@ -498,6 +621,64 @@ def mirror_bone_visual(
     return channels_written
 
 
+def copy_bone_pose(
+    src_bone,
+    dst_bone,
+    channel_filter: mm.ChannelFilter | None = None,
+    respect_locks: bool = True,
+    respect_drivers: bool = True,
+) -> list[str]:
+    """Copy transforms from src_bone to dst_bone **without** mirroring.
+
+    This is what "match" means: make *dst_bone* take *src_bone*'s local
+    pose.  Rotation is converted between rotation modes when they differ.
+
+    Returns
+    -------
+    list[str]
+        Channels written (e.g. ["location.x", "rotation_quaternion"]).
+    """
+    if channel_filter is None:
+        channel_filter = mm.ChannelFilter.all()
+
+    channels_written: list[str] = []
+    try:
+        if channel_filter.location.any():
+            for i, axis_name in enumerate(("x", "y", "z")):
+                if not channel_filter.location.as_tuple()[i]:
+                    continue
+                if respect_locks and dst_bone.lock_location[i]:
+                    continue
+                if respect_drivers and mm.is_channel_driven(dst_bone, "location", i):
+                    continue
+                dst_bone.location[i] = src_bone.location[i]
+                channels_written.append(f"location.{axis_name}")
+
+        if channel_filter.rotation.any():
+            src_mode, src_vals = _rotation_values(src_bone)
+            dst_mode = getattr(dst_bone, "rotation_mode", "XYZ")
+            vals = _convert_rotation(src_vals, src_mode, dst_mode)
+            channels_written += _write_rotation_values(
+                dst_bone, dst_mode, vals, channel_filter.rotation,
+                respect_locks, respect_drivers,
+            )
+
+        if channel_filter.scale.any():
+            for i, axis_name in enumerate(("x", "y", "z")):
+                if not channel_filter.scale.as_tuple()[i]:
+                    continue
+                if respect_locks and dst_bone.lock_scale[i]:
+                    continue
+                if respect_drivers and mm.is_channel_driven(dst_bone, "scale", i):
+                    continue
+                dst_bone.scale[i] = src_bone.scale[i]
+                channels_written.append(f"scale.{axis_name}")
+    except Exception as e:
+        logger.error(f"Error copying pose {src_bone.name} -> {dst_bone.name}: {e}")
+
+    return channels_written
+
+
 # ---------------------------------------------------------------------------
 # Keyframing
 # ---------------------------------------------------------------------------
@@ -530,7 +711,7 @@ def key_mirror_result(bone, channels_written: list[str], frame: int) -> int:
 
         # Check for rotation channels.
         if any(c.startswith("rotation") for c in channels_written):
-            bone.keyframe_insert(data_path="rotation_euler", frame=frame)
+            bone.keyframe_insert(data_path=rotation_data_path(bone), frame=frame)
             keyed += 1
 
         # Check for scale channels.

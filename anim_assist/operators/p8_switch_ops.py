@@ -145,7 +145,7 @@ class AA_OT_p8_compensate_single(bpy.types.Operator):
             return {"CANCELLED"}
 
         # Record visual state BEFORE switch
-        state = mm.record_visual_state(obj)
+        state = mm.record_visual_state(owner)
 
         # Read old value and set new value
         old_value = _get_prop_value(owner, prop_path)
@@ -160,18 +160,18 @@ class AA_OT_p8_compensate_single(bpy.types.Operator):
         # Compensate
         cf = mm.ChannelFilter.all()
         result = mm.compensate_after_switch(
-            obj,
+            owner,
             state,
             cf,
             respect_locks=p8.respect_locks if p8 else True,
             respect_drivers=p8.respect_drivers if p8 else True,
         )
-        mm.apply_match_result(obj, result)
+        mm.apply_match_result(owner, result)
 
         # Auto-key
         if p8 and p8.auto_key_switch:
             frame = context.scene.frame_current
-            mm.key_match_result(obj, result, frame)
+            mm.key_match_result(owner, result, frame)
             # Also key the switch property itself
             _key_prop(owner, prop_path, frame)
 
@@ -242,8 +242,16 @@ class AA_OT_p8_compensate_multi(bpy.types.Operator):
                 context.scene.frame_set(frame)
                 context.view_layer.update()
 
+                # Once the property is keyed (by the previous iteration),
+                # frame_set() evaluates the NEW value here and the recorded
+                # baseline would already be the switched pose.  Restore the
+                # old value first so compensation targets the true pre-switch
+                # placement at this frame.
+                _set_prop_value(owner, prop_path, old_value)
+                context.view_layer.update()
+
                 # Record state at this frame
-                state = mm.record_visual_state(obj)
+                state = mm.record_visual_state(owner)
 
                 # Apply switch
                 if not _set_prop_value(owner, prop_path, new_value):
@@ -253,19 +261,21 @@ class AA_OT_p8_compensate_multi(bpy.types.Operator):
                 # Compensate
                 cf = mm.ChannelFilter.all()
                 result = mm.compensate_after_switch(
-                    obj,
+                    owner,
                     state,
                     cf,
                     respect_locks=p8.respect_locks if p8 else True,
                     respect_drivers=p8.respect_drivers if p8 else True,
                 )
-                mm.apply_match_result(obj, result)
+                mm.apply_match_result(owner, result)
                 total_channels += len(result.channels_written)
 
                 # Auto-key
-                if p8 and p8.auto_key_switch:
-                    mm.key_match_result(obj, result, frame)
-                    _key_prop(owner, prop_path, frame)
+                # A range compensation only persists through keys: the next
+                # frame_set() re-evaluates the animated channels and discards
+                # this frame's compensation.  Key regardless of auto-key.
+                mm.key_match_result(owner, result, frame)
+                _key_prop(owner, prop_path, frame)
 
             # Record history event once for the range
             hist.push_event(
@@ -353,7 +363,15 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
                 context.scene.frame_set(frame)
                 context.view_layer.update()
 
-                state = mm.record_visual_state(obj)
+                # Once the property is keyed (by the previous iteration),
+                # frame_set() evaluates the NEW value here and the recorded
+                # baseline would already be the switched pose.  Restore the
+                # old value first so compensation targets the true pre-switch
+                # placement at this frame.
+                _set_prop_value(owner, prop_path, old_value)
+                context.view_layer.update()
+
+                state = mm.record_visual_state(owner)
 
                 if not _set_prop_value(owner, prop_path, new_value):
                     continue
@@ -361,18 +379,20 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
 
                 cf = mm.ChannelFilter.all()
                 result = mm.compensate_after_switch(
-                    obj,
+                    owner,
                     state,
                     cf,
                     respect_locks=p8.respect_locks if p8 else True,
                     respect_drivers=p8.respect_drivers if p8 else True,
                 )
-                mm.apply_match_result(obj, result)
+                mm.apply_match_result(owner, result)
                 total_channels += len(result.channels_written)
 
-                if p8 and p8.auto_key_switch:
-                    mm.key_match_result(obj, result, frame)
-                    _key_prop(owner, prop_path, frame)
+                # A range compensation only persists through keys: the next
+                # frame_set() re-evaluates the animated channels and discards
+                # this frame's compensation.  Key regardless of auto-key.
+                mm.key_match_result(owner, result, frame)
+                _key_prop(owner, prop_path, frame)
 
             hist.push_event(
                 hist.SwitchEvent(
@@ -450,7 +470,15 @@ class AA_OT_p8_bake_switch_preview(bpy.types.Operator):
                 context.scene.frame_set(frame)
                 context.view_layer.update()
 
-                state = mm.record_visual_state(obj)
+                # Once the property is keyed (by the previous iteration),
+                # frame_set() evaluates the NEW value here and the recorded
+                # baseline would already be the switched pose.  Restore the
+                # old value first so compensation targets the true pre-switch
+                # placement at this frame.
+                _set_prop_value(owner, prop_path, old_value)
+                context.view_layer.update()
+
+                state = mm.record_visual_state(owner)
 
                 if not _set_prop_value(owner, prop_path, new_value):
                     continue
@@ -458,18 +486,20 @@ class AA_OT_p8_bake_switch_preview(bpy.types.Operator):
 
                 cf = mm.ChannelFilter.all()
                 result = mm.compensate_after_switch(
-                    obj,
+                    owner,
                     state,
                     cf,
                     respect_locks=p8.respect_locks if p8 else True,
                     respect_drivers=p8.respect_drivers if p8 else True,
                 )
-                mm.apply_match_result(obj, result)
+                mm.apply_match_result(owner, result)
                 total_channels += len(result.channels_written)
 
-                if p8 and p8.auto_key_switch:
-                    mm.key_match_result(obj, result, frame)
-                    _key_prop(owner, prop_path, frame)
+                # A range compensation only persists through keys: the next
+                # frame_set() re-evaluates the animated channels and discards
+                # this frame's compensation.  Key regardless of auto-key.
+                mm.key_match_result(owner, result, frame)
+                _key_prop(owner, prop_path, frame)
 
             hist.push_event(
                 hist.SwitchEvent(
@@ -533,7 +563,7 @@ class AA_OT_p8_switch_enum(bpy.types.Operator):
             return {"CANCELLED"}
 
         # Record state before switch
-        state = mm.record_visual_state(obj)
+        state = mm.record_visual_state(owner)
 
         # Set the enum value
         old_value = _get_prop_value(owner, prop_path)
@@ -546,18 +576,18 @@ class AA_OT_p8_switch_enum(bpy.types.Operator):
         # Compensate
         cf = mm.ChannelFilter.all()
         result = mm.compensate_after_switch(
-            obj,
+            owner,
             state,
             cf,
             respect_locks=p8.respect_locks if p8 else True,
             respect_drivers=p8.respect_drivers if p8 else True,
         )
-        mm.apply_match_result(obj, result)
+        mm.apply_match_result(owner, result)
 
         # Key result and property
         frame = context.scene.frame_current
         if p8 and p8.auto_key_switch:
-            mm.key_match_result(obj, result, frame)
+            mm.key_match_result(owner, result, frame)
             _key_prop(owner, prop_path, frame)
 
         hist.push_event(
@@ -613,7 +643,7 @@ class AA_OT_p8_switch_bool(bpy.types.Operator):
             return {"CANCELLED"}
 
         # Record state before switch
-        state = mm.record_visual_state(obj)
+        state = mm.record_visual_state(owner)
 
         # Toggle boolean
         old_value = _get_prop_value(owner, prop_path)
@@ -627,18 +657,18 @@ class AA_OT_p8_switch_bool(bpy.types.Operator):
         # Compensate
         cf = mm.ChannelFilter.all()
         result = mm.compensate_after_switch(
-            obj,
+            owner,
             state,
             cf,
             respect_locks=p8.respect_locks if p8 else True,
             respect_drivers=p8.respect_drivers if p8 else True,
         )
-        mm.apply_match_result(obj, result)
+        mm.apply_match_result(owner, result)
 
         # Key result and property
         frame = context.scene.frame_current
         if p8 and p8.auto_key_switch:
-            mm.key_match_result(obj, result, frame)
+            mm.key_match_result(owner, result, frame)
             _key_prop(owner, prop_path, frame)
 
         hist.push_event(
@@ -702,7 +732,7 @@ class AA_OT_p8_switch_influence(bpy.types.Operator):
             return {"CANCELLED"}
 
         # Record state before switch
-        state = mm.record_visual_state(obj)
+        state = mm.record_visual_state(owner)
 
         # Set influence
         old_value = _get_prop_value(owner, prop_path)
@@ -715,18 +745,18 @@ class AA_OT_p8_switch_influence(bpy.types.Operator):
         # Compensate
         cf = mm.ChannelFilter.all()
         result = mm.compensate_after_switch(
-            obj,
+            owner,
             state,
             cf,
             respect_locks=p8.respect_locks if p8 else True,
             respect_drivers=p8.respect_drivers if p8 else True,
         )
-        mm.apply_match_result(obj, result)
+        mm.apply_match_result(owner, result)
 
         # Key result and property
         frame = context.scene.frame_current
         if p8 and p8.auto_key_switch:
-            mm.key_match_result(obj, result, frame)
+            mm.key_match_result(owner, result, frame)
             _key_prop(owner, prop_path, frame)
 
         hist.push_event(
@@ -783,7 +813,7 @@ class AA_OT_p8_restore_switch(bpy.types.Operator):
             return {"CANCELLED"}
 
         # Record state for re-compensation
-        state = mm.record_visual_state(obj)
+        state = mm.record_visual_state(owner)
 
         # Restore old value
         if not _set_prop_value(owner, last_event.prop_path, last_event.old_value):
@@ -795,18 +825,18 @@ class AA_OT_p8_restore_switch(bpy.types.Operator):
         # Compensate back
         cf = mm.ChannelFilter.all()
         result = mm.compensate_after_switch(
-            obj,
+            owner,
             state,
             cf,
             respect_locks=p8.respect_locks if p8 else True,
             respect_drivers=p8.respect_drivers if p8 else True,
         )
-        mm.apply_match_result(obj, result)
+        mm.apply_match_result(owner, result)
 
         # Auto-key if enabled
         if p8 and p8.auto_key_switch:
             frame = context.scene.frame_current
-            mm.key_match_result(obj, result, frame)
+            mm.key_match_result(owner, result, frame)
             _key_prop(owner, last_event.prop_path, frame)
 
         self.report(

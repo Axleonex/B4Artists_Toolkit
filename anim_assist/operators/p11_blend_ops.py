@@ -160,8 +160,8 @@ class ANIMASSIST_OT_p11_blend_layers(bpy.types.Operator):
         tgt_action = engine.get_layer_action(p11.layers[self.target_index])
 
         for bone in obj.pose.bones:
-            src_snap = engine.read_bone_from_action(src_action, bone.name, frame)
-            tgt_snap = engine.read_bone_from_action(tgt_action, bone.name, frame)
+            src_snap = engine.read_bone_from_action(src_action, bone.name, frame, rotation_mode=bone.rotation_mode)
+            tgt_snap = engine.read_bone_from_action(tgt_action, bone.name, frame, rotation_mode=bone.rotation_mode)
             self._bone_snapshots[bone.name] = (src_snap, tgt_snap)
 
         context.window_manager.modal_handler_add(self)
@@ -264,8 +264,8 @@ class ANIMASSIST_OT_p11_set_blend_factor(bpy.types.Operator):
 
         updated = 0
         for bone in obj.pose.bones:
-            src_snap = engine.read_bone_from_action(src_action, bone.name, frame)
-            tgt_snap = engine.read_bone_from_action(tgt_action, bone.name, frame)
+            src_snap = engine.read_bone_from_action(src_action, bone.name, frame, rotation_mode=bone.rotation_mode)
+            tgt_snap = engine.read_bone_from_action(tgt_action, bone.name, frame, rotation_mode=bone.rotation_mode)
 
             result = bm.interpolate_layers(
                 source_loc=src_snap.location,

@@ -142,19 +142,21 @@ class AA_OT_p8_batch_switch(bpy.types.Operator):
                 continue
 
             # Record -> Switch -> Update -> Compensate -> Apply -> Key
-            state = mm.record_visual_state(obj)
+            # Compensate the OWNER (the pose bone when one is set): the
+            # armature object's world matrix never changes on a bone switch.
+            state = mm.record_visual_state(owner)
             _set_prop_value(owner, prop_path, new_value)
             context.view_layer.update()
 
             result = mm.compensate_after_switch(
-                obj, state,
+                owner, state,
                 respect_locks=p8.respect_locks if p8 else True,
                 respect_drivers=p8.respect_drivers if p8 else True,
             )
-            mm.apply_match_result(obj, result)
+            mm.apply_match_result(owner, result)
 
             if p8 and p8.auto_key_switch:
-                mm.key_match_result(obj, result, frame)
+                mm.key_match_result(owner, result, frame)
                 if not _key_prop(owner, prop_path, frame):
                     key_failures += 1
 
