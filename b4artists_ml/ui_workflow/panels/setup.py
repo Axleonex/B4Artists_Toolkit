@@ -85,7 +85,7 @@ class B4ML_PT_setup(_Panel):  # type: ignore[valid-type]
         if 'SETUP' in st.completed and st.current != 'SETUP' and rig is not None:
             family_label = copy.FAMILY.get((snap.family or '').upper(), copy.FAMILY[''])
             row = self.layout.row()
-            row.label(text=f'{rig.name} \u2014 {family_label}', icon='ARMATURE_DATA')
+            row.label(text=f'{family_label} \u2014 {rig.name}', icon='ARMATURE_DATA')
             op = row.operator('b4ml.action', text='', icon='VIEWZOOM')
             op.operation = 'INSPECT'
             return
