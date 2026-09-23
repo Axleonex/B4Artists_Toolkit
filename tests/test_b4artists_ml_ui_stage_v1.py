@@ -558,29 +558,6 @@ class TestPolishLocks:
 
 
 # ---------------------------------------------------------------------------
-# polished field → POLISH in completed
-# ---------------------------------------------------------------------------
-
-class TestPolishedField:
-    def test_polished_true_adds_polish_to_completed(self):
-        snap = _snap(anchors=2, kept=True, polished=True)
-        assert 'POLISH' in evaluate(snap).completed
-
-    def test_polished_false_excludes_polish_from_completed(self):
-        snap = _snap(anchors=2, kept=True, polished=False)
-        assert 'POLISH' not in evaluate(snap).completed
-
-    def test_polished_default_is_false_positional_construction(self):
-        """Positional Snapshot construction without polished kwarg still works."""
-        snap = Snapshot(
-            has_rig=True, family="humanoid", mapped=True, mapping_error="",
-            posing="", anchors=2, candidate=False, kept=True,
-            running="", mode="OBJECT", playing=False,
-        )
-        assert 'POLISH' not in evaluate(snap).completed
-
-
-# ---------------------------------------------------------------------------
 # Quadruped posing path (polishtest-1)
 # ---------------------------------------------------------------------------
 

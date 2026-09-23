@@ -43,9 +43,6 @@ from dataclasses import dataclass
 
 STAGES: tuple[str, ...] = ('SETUP', 'POSE', 'MOTION', 'POLISH', 'REVIEW')
 
-# State name constant for the active-polish state (candidate or kept, polish run at least once).
-POLISH_READY: str = 'POLISH_READY'
-
 ACTION_KEYS: tuple[str, ...] = (
     'pose.begin',
     'pose.solve',
@@ -87,7 +84,6 @@ class Snapshot:
     running:       str          # '' | 'BODY' | 'TEMPORAL' | 'CONTACT' | 'FLIGHT' | 'SECONDARY' | 'CLEANUP'
     mode:          str          # context.mode e.g. 'OBJECT' | 'POSE'
     playing:       bool
-    polished:      bool = False # True once any polish operation has produced a result
 
 
 @dataclass(frozen=True)
@@ -271,8 +267,6 @@ def _completed(s: Snapshot) -> frozenset[str]:
         c.add('POSE')
     if s.candidate or s.kept:
         c.add('MOTION')
-    if s.polished:
-        c.add('POLISH')
     return frozenset(c)
 
 
@@ -343,40 +337,6 @@ def _base_evaluate(s: Snapshot) -> StageState:  # noqa: C901 — intentional fla
             locks=locks,
             required_mode='OBJECT',
             state_name='POSING_OBJECT',
-        )
-
-    # ── POLISH_READY (polish run ≥1; candidate or kept still present) ──────
-    if s.polished and (s.candidate or s.kept):
-        if s.candidate:
-            pr_locks: dict[str, str] = {
-                'pose.begin':      _PREVIEW_BLOCKS,
-                'pose.solve':      _PREVIEW_BLOCKS,
-                'pose.keep':       '',
-                'pose.cancel':     '',
-                'motion.preview':  _PREVIEW_BLOCKS,
-                'review.keep':     '',
-                'review.discard':  '',
-                'review.restore':  _KEEP_FIRST,
-            }
-        else:
-            pr_locks = {
-                'pose.begin':      '',
-                'pose.solve':      '',
-                'pose.keep':       _ALREADY_KEPT,
-                'pose.cancel':     '',
-                'motion.preview':  '',
-                'review.keep':     _ALREADY_KEPT,
-                'review.discard':  _ALREADY_KEPT,
-                'review.restore':  '',
-            }
-        pr_locks.update(_polish_locks(s))
-        return StageState(
-            current='POLISH',
-            completed=_completed(s),
-            next_action=('Review contacts', 'b4ml.contact', {}),
-            locks=pr_locks,
-            required_mode=None,
-            state_name=POLISH_READY,
         )
 
     # ── PREVIEW_ACTIVE ─────────────────────────────────────────────────────
