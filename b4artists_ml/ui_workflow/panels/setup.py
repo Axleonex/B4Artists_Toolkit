@@ -10,7 +10,7 @@ Verified facts (2026-09-22):
   copy.py:100-104 FAMILY dict keys: 'HUMANOID', 'QUADRUPED', ''
   copy.py:110-121 CARDS['NO_RIG'], CARDS['UNSUPPORTED_RIG']
   stage.py:73-86  Snapshot.mapped, .mapping_error, .family
-  header.py:82-150 prelude(layout, context) -> (rig, snap, st)
+  header.py prelude(layout, context, full=False, stage_key='') -> (rig, snap, st)
   ui.py:926-928   rig.b4ml.status set by INSPECT to one-line mapping summary
 """
 from __future__ import annotations
@@ -81,6 +81,15 @@ class B4ML_PT_setup(_Panel):  # type: ignore[valid-type]
     def draw(self, context) -> None:
         rig, snap, st = header.prelude(self.layout, context, full=True, stage_key='SETUP')
 
+        # Collapsed summary: setup done and animator is in a later stage
+        if 'SETUP' in st.completed and st.current != 'SETUP' and rig is not None:
+            family_label = copy.FAMILY.get((snap.family or '').upper(), copy.FAMILY[''])
+            row = self.layout.row()
+            row.label(text=f'{rig.name} \u2014 {family_label}', icon='ARMATURE_DATA')
+            op = row.operator('b4ml.action', text='', icon='VIEWZOOM')
+            op.operation = 'INSPECT'
+            return
+
         box = self.layout.box()
 
         # 1. Rig name, or no-rig guidance
@@ -90,13 +99,11 @@ class B4ML_PT_setup(_Panel):  # type: ignore[valid-type]
             box.label(text=rig.name, icon='ARMATURE_DATA')
 
         # 2. Family badge
-        box.label(text=copy.FAMILY.get(snap.family, copy.FAMILY['']))
+        box.label(text=copy.FAMILY.get((snap.family or '').upper(), copy.FAMILY['']))
 
-        # 3. Mapping result line
-        if snap.mapped:
-            b4ml_state = getattr(rig, 'b4ml', None) if rig is not None else None
-            box.label(text=getattr(b4ml_state, 'status', ''))
-        else:
+        # 3. Mapping error — only shown for unmapped rigs; mapped rigs need no
+        #    extra line since the family badge already confirms support.
+        if not snap.mapped:
             err_box = box.box()
             err_box.alert = True
             header.wrap_label(err_box, snap.mapping_error, icon='ERROR',
