@@ -71,6 +71,9 @@ STAGE_PRIMARY_KEY: dict[str, str] = {
     'REVIEW': 'review.keep',
 }
 
+# Stages whose panel body always draws the stage's next action itself (see stage.next_action).
+_BODY_DRAWS_NEXT: frozenset[str] = frozenset({'POSE', 'MOTION', 'REVIEW'})
+
 _LEVEL_ICON: dict[str, str] = {
     'INFO':    'INFO',
     'SUCCESS': 'CHECKMARK',
@@ -206,6 +209,8 @@ def prelude(layout, context, full: bool = False, stage_key: str = '') -> tuple:
                          button. Next button suppressed while TEMPORAL running (Cancel shown).
                          Next button also suppressed when the feedback fix-button IS the next
                          action (same idname + props) — prevents the duplicate shown in QA #1/#2.
+                         When stage_key is in _BODY_DRAWS_NEXT the button becomes a label
+                         (icon='FORWARD') — the body already draws that action itself.
 
     Returns the active rig object (or None), the Snapshot, and the StageState.
     """
@@ -289,11 +294,14 @@ def prelude(layout, context, full: bool = False, stage_key: str = '') -> tuple:
         if full and card_text:
             wrap_label(layout, card_text, icon='INFO', width_px=width_px)
         if next_idname and snap.running != 'TEMPORAL' and not fix_is_next:
-            row = layout.row()
-            row.scale_y = 1.3
-            op = row.operator(next_idname, text=copy_.NEXT_PREFIX + ' ' + next_label, icon='PLAY')
-            for k, v in next_props.items():
-                setattr(op, k, v)
+            if stage_key in _BODY_DRAWS_NEXT:
+                layout.label(text=copy_.NEXT_PREFIX + ' ' + next_label, icon='FORWARD')
+            else:
+                row = layout.row()
+                row.scale_y = 1.3
+                op = row.operator(next_idname, text=copy_.NEXT_PREFIX + ' ' + next_label, icon='PLAY')
+                for k, v in next_props.items():
+                    setattr(op, k, v)
         elif next_label and not fix_is_next:
             layout.label(text=copy_.NEXT_PREFIX + ' ' + next_label)
 
