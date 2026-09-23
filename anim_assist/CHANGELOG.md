@@ -12,6 +12,21 @@ Each release updates four places in lockstep: `bl_info` in `__init__.py`,
 `ADDON_VERSION` and `ADDON_VERSION_STRING` in `constants.py`, and `version`
 in `blender_manifest.toml`.
 
+## v12.0.4 - Every Panel Draws, Clearer Sidebar
+
+Patch: fixes 11 sidebar panels that drew empty under a normal header
+(Dope Sheet Retime, Bake, Match & Switch, Mirror and Quick Shelf; Graph
+Editor Key Selection, Channels, Metadata, Diagnostics and Key Utilities) -
+editor copies were built as subclasses of registered panels, which detached
+the originals. Fixes a layer-reorder check that raised an error on every
+redraw with no layers. Every error now says what to do next and never shows
+a raw Python exception. Destructive actions are undoable or ask first with
+the consequence stated. Sidebar labels no longer clip at default width,
+abbreviations are spelled out, the Layers and Match & Switch panels explain
+their empty and disabled states, and the README lists the real tabs and the
+First Run Setup step. Verified on Bforartists 5.1.2 by running every
+editor-only tool inside a real Graph Editor and Dope Sheet.
+
 ## v12.0.3 - Blender 5.x Compatibility and Correctness
 
 Patch: restores every "selected bones" operator on Blender 5.x (Bone.select
