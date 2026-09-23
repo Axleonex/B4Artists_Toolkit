@@ -12,6 +12,7 @@ state.status assignments routed through from_status():
               via _STATUS_FAILURE_PREFIXES before the SUCCESS/INFO decision.
 
 B4ML_PG_settings defined at ui.py:216; active_rig() at workflow.py:31.
+Public helpers: humanize_mapping_error().
 Real ValueError messages mapped by _RULES:
   body_preview.py:182  'Stop playback before posing'                               → begin_while_playing
   workflow.py:1597     'Finish or cancel the active pose preview first'            → session_blocks_review
@@ -23,6 +24,7 @@ from __future__ import annotations
 
 import functools
 import json
+import re
 from typing import Any
 
 # bpy touched only inside _define_property_group(), register(), and unregister().
@@ -118,6 +120,56 @@ def classify(exc_text: str) -> str | None:
         if substring in exc_text:
             return key
     return None
+
+
+def humanize_mapping_error(text: str) -> str:
+    """Rewrite a raw rig-mapping diagnostic string into plain animator wording.
+
+    Recognised transformations (applied in order):
+      - "Unrecognized [unknown]: …"  → leading prefix removed
+      - "Unrecognized [<family>]: …" → "<Family> rig — …"
+      - ";? N blocked preflight(s)"  → removed entirely
+      - "N/M roles"                  → "N of M bone roles found"
+    Inputs that match none of the above are returned unchanged.
+    After any transformation: double spaces collapsed, stray leading
+    punctuation stripped, trailing period added if absent.
+    Never introduces forbidden terms (candidate/payload/backend/internal units).
+    """
+    original = text
+    changed = False
+
+    # Strip / rewrite "Unrecognized [family]:" prefix
+    m = re.match(r'^Unrecognized\s+\[([^\]]+)\]:\s*', text)
+    if m:
+        changed = True
+        family = m.group(1)
+        rest = text[m.end():]
+        text = rest if family.lower() == 'unknown' else family.capitalize() + ' rig \u2014 ' + rest
+
+    # Remove "; N blocked preflight(s)"
+    cleaned = re.sub(r';?\s*\d+\s+blocked\s+preflights?', '', text)
+    if cleaned != text:
+        changed = True
+        text = cleaned
+
+    # "N/M roles" → "N of M bone roles found"
+    rewritten = re.sub(
+        r'(\d+)/(\d+)\s+roles',
+        lambda m2: f'{m2.group(1)} of {m2.group(2)} bone roles found',
+        text,
+    )
+    if rewritten != text:
+        changed = True
+        text = rewritten
+
+    if not changed:
+        return original
+
+    # Cleanup after a recognised transformation
+    text = re.sub(r'  +', ' ', text).strip(' ;,')
+    if text and text[-1] not in '.!?':
+        text += '.'
+    return text
 
 
 # ---------------------------------------------------------------------------
@@ -269,16 +321,18 @@ def guarded(fn):
             if rig is not None:
                 if key:
                     level, tmpl, fix_op, fix_props, fix_label = FAILURES[key]
-                    text = tmpl.format(exc=exc_text)
+                    exc_arg = humanize_mapping_error(exc_text) if key == 'mapping_failure' else exc_text
+                    text = tmpl.format(exc=exc_arg)
                     set_feedback(rig, level, text, fix_op, fix_label, **fix_props)
                 else:
                     text = 'Something went wrong: ' + exc_text
                     error(rig, text)
             else:
-                text = (
-                    FAILURES[key][1].format(exc=exc_text) if key
-                    else 'Something went wrong: ' + exc_text
-                )
+                if key:
+                    exc_arg = humanize_mapping_error(exc_text) if key == 'mapping_failure' else exc_text
+                    text = FAILURES[key][1].format(exc=exc_arg)
+                else:
+                    text = 'Something went wrong: ' + exc_text
             self.report({'ERROR'}, text)
             return {'CANCELLED'}
     return wrapper
@@ -316,7 +370,8 @@ def from_status(target: Any, text: str) -> None:
     for prefix, key in _STATUS_FAILURE_PREFIXES:
         if text.startswith(prefix):
             level, tmpl, fix_op, fix_props, fix_label = FAILURES[key]
-            formatted = tmpl.format(exc=text) if '{' in tmpl else tmpl
+            exc_arg = humanize_mapping_error(text) if key == 'mapping_failure' else text
+            formatted = tmpl.format(exc=exc_arg) if '{' in tmpl else tmpl
             set_feedback(target, level, formatted, fix_op, fix_label, **fix_props)
             return
     level = 'SUCCESS' if any(text.startswith(p) or p in text for p in _SUCCESS_PREFIXES) else 'INFO'
