@@ -12,7 +12,7 @@ state.status assignments routed through from_status():
               via _STATUS_FAILURE_PREFIXES before the SUCCESS/INFO decision.
 
 B4ML_PG_settings defined at ui.py:216; active_rig() at workflow.py:31.
-Public helpers: humanize_mapping_error().
+Public helpers: humanize_mapping_error(), humanize_status(), card().
 Real ValueError messages mapped by _RULES:
   body_preview.py:182  'Stop playback before posing'                               → begin_while_playing
   workflow.py:1597     'Finish or cancel the active pose preview first'            → session_blocks_review
@@ -96,6 +96,27 @@ FAILURES: dict[str, tuple[str, str, str, dict, str]] = {
 }
 
 # ---------------------------------------------------------------------------
+# _SOLVE_CARDS — cards for classify() keys outside the FAILURES contract table.
+# Same tuple shape as FAILURES; guarded() checks FAILURES first, then here.
+# ---------------------------------------------------------------------------
+_SOLVE_CARDS: dict[str, tuple[str, str, str, dict, str]] = {
+    'unreachable_target': (
+        'ERROR',
+        'A target is out of reach. Move it closer to the body, then solve again.',
+        'b4ml.body_solve',
+        {},
+        'Retry Solve',
+    ),
+}
+
+def card(key: str | None):
+    """Return the (level, template, fix_op, fix_props, fix_label) row for *key*, or None."""
+    if not key:
+        return None
+    return FAILURES.get(key) or _SOLVE_CARDS.get(key)
+
+
+# ---------------------------------------------------------------------------
 # classify — map real ValueError text to a FAILURES key (or None).
 # Substrings taken verbatim from the source locations cited in the module
 # docstring; unknown exceptions return None and get a generic ERROR card.
@@ -103,6 +124,7 @@ FAILURES: dict[str, tuple[str, str, str, dict, str]] = {
 # backend/internal units): the copy gate scans every string literal in ui_workflow.
 # ---------------------------------------------------------------------------
 _RULES: tuple[tuple[str, str], ...] = (
+    ('Actual rig projection failed',                           'unreachable_target'),
     ('Stop playback before posing',                            'begin_while_playing'),
     ('Finish or cancel the active pose preview first',         'session_blocks_review'),
     ('before restoring',                                       'restore_wrong_action'),
@@ -169,6 +191,34 @@ def humanize_mapping_error(text: str) -> str:
     text = re.sub(r'  +', ' ', text).strip(' ;,')
     if text and text[-1] not in '.!?':
         text += '.'
+    return text
+
+
+def humanize_status(text: str) -> str:
+    """Rewrite a legacy state.status string into plain animator wording.
+
+    Recognised transformations (applied in order):
+      - Ends with 'kept as a separate action' (non-clean form) → plain kept message.
+      - Starts with 'Original action and input rig modes restored' → plain restored message.
+      - Exact 'Saved whole-body pose anchor and restored source' → 'Key pose saved.'
+      - '<Name> [family]: N/M roles; N blocked preflights' → compact roles summary.
+      - '; pin error <num> body units' suffix stripped from preview-ready messages.
+    Inputs matching none of the above are returned unchanged.
+    Never introduces forbidden terms.
+    """
+    if text.endswith('kept as a separate action') and text != 'Kept as a separate action':
+        return 'Kept the preview as a new action; the original animation is unchanged.'
+    if text.startswith('Original action and input rig modes restored'):
+        return 'Original animation restored; the kept result stays available.'
+    if text == 'Saved whole-body pose anchor and restored source':
+        return 'Key pose saved.'
+    m = re.match(r'^(.*?) \[([a-z]+)\]: (\d+)/(\d+) roles(?:; \d+ blocked preflights?)?$', text)
+    if m:
+        return f'{m.group(1)} \u2014 {m.group(3)} of {m.group(4)} bone roles found.'
+    cleaned = re.sub(r';\s*pin error [0-9.eE+-]+ body units', '', text)
+    if cleaned != text:
+        tail = cleaned.rstrip()
+        return tail + ('' if tail.endswith(('.', '!', '?')) else '.')
     return text
 
 
@@ -318,9 +368,10 @@ def guarded(fn):
             except Exception:
                 pass
             key = classify(exc_text)
+            _card = card(key)
             if rig is not None:
-                if key:
-                    level, tmpl, fix_op, fix_props, fix_label = FAILURES[key]
+                if _card:
+                    level, tmpl, fix_op, fix_props, fix_label = _card
                     exc_arg = humanize_mapping_error(exc_text) if key == 'mapping_failure' else exc_text
                     text = tmpl.format(exc=exc_arg)
                     set_feedback(rig, level, text, fix_op, fix_label, **fix_props)
@@ -328,9 +379,9 @@ def guarded(fn):
                     text = 'Something went wrong: ' + exc_text
                     error(rig, text)
             else:
-                if key:
+                if _card:
                     exc_arg = humanize_mapping_error(exc_text) if key == 'mapping_failure' else exc_text
-                    text = FAILURES[key][1].format(exc=exc_arg)
+                    text = _card[1].format(exc=exc_arg)
                 else:
                     text = 'Something went wrong: ' + exc_text
             self.report({'ERROR'}, text)
@@ -375,4 +426,4 @@ def from_status(target: Any, text: str) -> None:
             set_feedback(target, level, formatted, fix_op, fix_label, **fix_props)
             return
     level = 'SUCCESS' if any(text.startswith(p) or p in text for p in _SUCCESS_PREFIXES) else 'INFO'
-    set_feedback(target, level, text)
+    set_feedback(target, level, humanize_status(text))

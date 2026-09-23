@@ -21,8 +21,9 @@ def _report_error(op, context, exc):
         rig = _wf.active_rig(context)
         if rig is not None:
             key = _fb.classify(text)
-            if key:
-                _lvl, _tmpl, _fix, _props, _label = _fb.FAILURES[key]
+            row = _fb.card(key)
+            if row:
+                _lvl, _tmpl, _fix, _props, _label = row
                 _fb.set_feedback(rig, _lvl,
                                  _tmpl.format(exc=text) if '{' in _tmpl else _tmpl,
                                  fix=_fix, fix_label=_label, **_props)
