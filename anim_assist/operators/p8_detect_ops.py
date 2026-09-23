@@ -648,7 +648,7 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
             if hasattr(obj, "pose") and obj.pose:
                 for bone in obj.pose.bones:
                     bone_props += len([k for k in bone.keys() if not k.startswith("_")])
-            lines.append(f"Custom Properties:")
+            lines.append("Custom Properties:")
             lines.append(f"  Object-level: {obj_props}")
             lines.append(f"  Bone-level: {bone_props}")
             lines.append(f"  Total: {obj_props + bone_props}")

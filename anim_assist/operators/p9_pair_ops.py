@@ -81,6 +81,7 @@ class AA_OT_p9_remove_pair_override(bpy.types.Operator):
     bl_idname = "animassist.p9_remove_pair_override"
     bl_label = "Remove Pair Override"
     bl_description = "Remove the selected manual pair override."
+    bl_options = {"REGISTER", "UNDO"}
 
     index: bpy.props.IntProperty(
         name="Index",
@@ -127,6 +128,7 @@ class AA_OT_p9_remove_naming_exception(bpy.types.Operator):
     bl_idname = "animassist.p9_remove_naming_exception"
     bl_label = "Remove Naming Exception"
     bl_description = "Remove the selected naming exception."
+    bl_options = {"REGISTER", "UNDO"}
 
     index: bpy.props.IntProperty(
         name="Index",

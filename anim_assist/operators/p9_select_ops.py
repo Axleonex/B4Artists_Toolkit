@@ -18,7 +18,6 @@ def _pose_poll(context):
 def _get_opposite_name(context, bone_name):
     """Get opposite bone name using cache and properties."""
     p9 = get_p9(context)
-    obj = context.active_object
 
     # Build overrides dict from properties
     overrides = {}

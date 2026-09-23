@@ -256,7 +256,7 @@ class AA_OT_p10_remove_profile(Operator):
     """Remove a profile by index"""
     bl_idname = "animassist.p10_remove_profile"
     bl_label = "Remove Profile"
-    bl_options = {'REGISTER'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     index: IntProperty(
         name="Profile Index",

@@ -56,7 +56,6 @@ def init() -> None:
 
 def get_registry() -> CapabilityRegistry:
     """Retrieve the capability registry singleton, lazily initializing if needed."""
-    global _registry
     if _registry is None:
         init()
     return _registry

@@ -52,8 +52,13 @@ def _set_prop_value(owner, prop_path: str, value):
         return False
 
 
-def _key_prop(owner, prop_path: str, frame: int):
-    """Insert keyframe for property."""
+def _key_prop(owner, prop_path: str, frame: int) -> bool:
+    """Insert a keyframe for the switch property.
+
+    Returns ``False`` instead of raising when Blender refuses the insert (bad
+    path, locked/driven property, linked data) so callers can count and report
+    the miss rather than silently claiming success.
+    """
     try:
         if prop_path.startswith('["') and prop_path.endswith('"]'):
             key = prop_path[2:-2]
@@ -61,7 +66,8 @@ def _key_prop(owner, prop_path: str, frame: int):
         else:
             owner.keyframe_insert(data_path=prop_path, frame=frame)
     except Exception:
-        pass
+        return False
+    return True
 
 
 # ============================================================================
@@ -123,6 +129,7 @@ class AA_OT_p8_batch_switch(bpy.types.Operator):
 
         frame = context.scene.frame_current
         switched = 0
+        key_failures = 0
 
         for obj in context.selected_objects:
             owner = _resolve_prop_owner(obj, bone_name)
@@ -147,7 +154,8 @@ class AA_OT_p8_batch_switch(bpy.types.Operator):
 
             if p8 and p8.auto_key_switch:
                 mm.key_match_result(obj, result, frame)
-                _key_prop(owner, prop_path, frame)
+                if not _key_prop(owner, prop_path, frame):
+                    key_failures += 1
 
             hist.push_event(hist.SwitchEvent(
                 frame=frame, obj_name=obj.name, bone_name=bone_name,
@@ -155,7 +163,14 @@ class AA_OT_p8_batch_switch(bpy.types.Operator):
             ))
             switched += 1
 
-        self.report({"INFO"}, f"Batch switched {switched} object(s)")
+        if key_failures:
+            self.report(
+                {"WARNING"},
+                f"Batch switched {switched} object(s); switch property could not "
+                f"be keyed on {key_failures} of them",
+            )
+        else:
+            self.report({"INFO"}, f"Batch switched {switched} object(s)")
         return {"FINISHED"}
 
 
@@ -274,9 +289,6 @@ class AA_OT_p8_contact_preserve_match(bpy.types.Operator):
                 if bone:
                     contact_positions[bone_name] = bone.head.copy()
 
-        # Record visual state before match
-        state = mm.record_visual_state(active)
-
         # Perform match
         targets = [obj for obj in context.selected_objects if obj != active]
         if not targets:
@@ -385,9 +397,6 @@ class AA_OT_p8_quick_match(bpy.types.Operator):
         if not targets:
             self.report({"ERROR"}, "No target objects selected")
             return {"CANCELLED"}
-
-        # Record visual state
-        state = mm.record_visual_state(active)
 
         # Match active to first target's visual world matrix.
         source_world = mm.visual_world_matrix(targets[0])

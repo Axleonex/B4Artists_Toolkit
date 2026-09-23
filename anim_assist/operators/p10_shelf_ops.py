@@ -105,7 +105,7 @@ class AA_OT_p10_remove_favorite(Operator):
     """Remove a favorite by index"""
     bl_idname = "animassist.p10_remove_favorite"
     bl_label = "Remove Favorite"
-    bl_options = {'REGISTER'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     index: IntProperty(
         name="Index",

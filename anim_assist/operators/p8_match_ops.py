@@ -690,7 +690,6 @@ class AA_OT_p8_match_opposite(bpy.types.Operator):
             return {"CANCELLED"}
 
         cf = _build_channel_filter(p8)
-        mirror_bone = arm.bones[mirror_name]
         mirror_pb = obj.pose.bones[mirror_name]
 
         # Get mirror bone's visual world matrix
