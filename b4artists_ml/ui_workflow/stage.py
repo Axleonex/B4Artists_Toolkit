@@ -239,7 +239,7 @@ _KEEP_FIRST        = "Keep the preview first, then restore"
 _PREVIEW_BLOCKS    = "Discard or keep the preview first"
 _ALREADY_KEPT      = "Already kept — restore or start a new posing session"
 _NEED_SECOND_POSE  = "Capture a second key pose to generate motion"
-_POLISH_LOCKED     = "Available after a preview or kept result (Advanced)"
+_POLISH_LOCKED     = "Available after a preview or kept result."
 
 
 def _polish_locks(s: Snapshot) -> dict[str, str]:
