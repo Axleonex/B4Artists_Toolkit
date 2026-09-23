@@ -245,7 +245,7 @@ class B4ML_PT_pose(_Panel):  # type: ignore[valid-type]
         return bpy is not None
 
     def draw(self, context) -> None:
-        rig, snap, st = header.prelude(self.layout, context)
+        rig, snap, st = header.prelude(self.layout, context, stage_key='POSE')
         layout = self.layout
 
         # ── SOLVE_RUNNING ──────────────────────────────────────────────────
