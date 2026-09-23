@@ -199,7 +199,7 @@ def prelude(layout, context, full: bool = False, stage_key: str = '') -> tuple:
     Drawing order (contract §STATE MAP, §BEHAVIORAL SUCCESS items 3, 7, 8):
       1. Stage strip   — icon-only row: ALWAYS drawn in every panel (orientation anchor).
                          'Stage N of 5 — Label' text line: only when is_current.
-      2. Feedback card — compact: WARNING/ERROR; full: all levels, wrapped. ALWAYS drawn
+      2. Feedback card — current-panel: all levels (wrapped); non-current: WARNING/ERROR only. ALWAYS drawn
                          (contract §BEHAVIORAL SUCCESS item 8: never scroll to learn outcome).
       2b. Running card — only when is_current; progress bar + Cancel/note.
       3. Next line     — only when is_current; full: wrapped card sentence first; both: verb
@@ -260,7 +260,8 @@ def prelude(layout, context, full: bool = False, stage_key: str = '') -> tuple:
     fix_is_next = False
     if rig is not None and getattr(rig, 'b4ml_ui', None) is not None:
         fb = feedback.current(rig)
-        if fb['text'] and (full or fb['level'] in ('WARNING', 'ERROR')):
+        show_all = is_current if stage_key else full
+        if fb['text'] and (show_all or fb['level'] in ('WARNING', 'ERROR')):
             box = layout.box()
             box.alert = (fb['level'] == 'ERROR')
             icon = _LEVEL_ICON.get(fb['level'], 'INFO')
@@ -316,7 +317,7 @@ def action_row(layout, st, key: str, idname: str, text: str | None = None,
     for k, v in props.items():
         setattr(op, k, v)
     if reason:
-        layout.label(text=reason, icon='LOCKED')
+        wrap_label(layout, reason, icon='LOCKED')
     return op
 
 
@@ -337,7 +338,7 @@ def badge(layout, st, rig) -> None:
                       or getattr(b4ml, 'candidate_action', None))
             if action is not None:
                 name = getattr(action, 'name', '')
-    layout.label(text=copy_.fmt(template, name=name))
+    wrap_label(layout, copy_.fmt(template, name=name))
 
 
 def lock_description(st, key: str) -> str:
