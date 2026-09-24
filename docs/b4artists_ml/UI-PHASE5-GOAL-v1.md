@@ -59,7 +59,7 @@ W5 gates the design of W1/W2/W3, so the session runs first; W6 is independent an
 
 2. `'Stage %d of 5 — %s'` in `header.py` and the Advanced subpanel prerequisite lines are literals, not `copy.py` entries — verified by the copy gate extended to cover them.
 
-3. Bforartists 5.1.2's bundled Rigify cannot generate a rig (`make_custom_pivot` AttributeError — upstream bug), so mapped-rig screenshots used fallbacks; verified by capturing the mapped-rig journey with the repo's `rigify_default` fixture instead.
+3. Rigify generation in QA captures — **corrected 2026-09-23: not a Bforartists bug.** The capture script enabled Rigify with `addon_utils.enable('rigify', default_set=False)`, which never actually enables the add-on, so generation failed on a half-registered `RigifyParameters` (`make_custom_pivot`). Enabled normally, Bforartists 5.1.2's bundled Rigify generates human and quadruped rigs; the capture script now uses `default_set=True`, and the mapped-rig journey was captured with a generated Rigify fixture.
 
 4. One malformed auto-advance commit message (`": auto-advance (receipt 38fc6f10 …)"`, empty path prefix) — cosmetic; verified by the commit-message helper deriving a non-empty subject or the message being corrected in a future rewrite window (do NOT rewrite published history for this).
 
