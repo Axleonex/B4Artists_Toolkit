@@ -43,6 +43,7 @@ def main() -> dict:
             errors.append(f"missing_token:{key}")
 
     receipt = None
+    orientation_records: list = []
     if not RECEIPT.is_file():
         errors.append(f"missing:{RECEIPT.as_posix()}")
     else:
