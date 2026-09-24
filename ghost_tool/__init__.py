@@ -14,10 +14,10 @@ unregister functions are called in the correct dependency order.
 bl_info = {
     "name": "Ghost Tool",
     "author": "GoingGhost",
-    "version": (3, 3, 5),
+    "version": (3, 4, 0),
     "blender": (4, 0, 0),
     "location": "View3D > Header > Ghost Tool",
-    "description": "Ghost keyframe visualization and manipulation for Bforartists. v3.3.5 fixes the Visual Diff panel on Bforartists 5.x and clearer sidebar layout.",
+    "description": "Ghost keyframe visualization and manipulation for Bforartists. v3.4 moves Ghost Tool into the viewport header, follows rotation keys, and onion-skins whole characters.",
     "category": "Animation",
     "doc_url": "",
     "tracker_url": "",

@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Anim Assist",
     "author": "Developer",
-    "version": (12, 0, 4),
+    "version": (12, 1, 0),
     "blender": (4, 2, 0),
     "location": "Properties > Scene > Anim Assist; Graph Editor and Dope Sheet > Sidebar > Anim Assist; editor header menus",
     "description": "Production animation workflow tools for Bforartists. v12 adds hybrid PREVIEW/SHIPPED lipsync layers with shape key support.",

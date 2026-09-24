@@ -12,7 +12,7 @@ Each release updates four places in lockstep: `bl_info` in `__init__.py`,
 `ADDON_VERSION` and `ADDON_VERSION_STRING` in `constants.py`, and `version`
 in `blender_manifest.toml`.
 
-## v12.1.0 (unreleased) - Three Organised Homes, No Viewport Tab
+## v12.1.0 - Three Organised Homes, No Viewport Tab
 
 Minor: Anim Assist no longer adds tabs to the 3D Viewport sidebar (it
 added six). Its panels now live in three homes, each organised for the
