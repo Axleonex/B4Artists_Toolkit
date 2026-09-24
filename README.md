@@ -28,13 +28,13 @@ Release notes and checksums for each download are on the [Releases page](../../r
 2. Pick the `.zip` you downloaded.
 3. Enable the add-on by ticking its checkbox.
 4. Find the add-on:
-   - **Anim Assist** adds no tab to the 3D Viewport sidebar. It lives in three places, each organised for its editor, and each starts with an **Anim Assist** label:
+   - **Anim Assist** lives in three places, each organised for its editor, and each starts with an **Anim Assist** label:
      - **Graph Editor** sidebar (press **N**), **Anim Assist** tab, organised by what you do to curves: Select, Shape Curves, Retime, Clean Up, Pose & Rig, Quick Shelf.
      - **Dope Sheet** sidebar (press **N**), **Anim Assist** tab, organised by animation stage: Block, Inbetween, Time, Mirror & Match, Keys & Channels, Shelf & Macros.
      - **Properties editor**, **Scene** tab, **Anim Assist** section (near the bottom), organised by scope: This Pose, Whole Animation, Rig, Face, then Setup, Settings and Help.
 
      Each of those editors' headers also has an **Anim Assist** menu with the most-used tools. The menu can open the full panel, switch to the **Anim Assist workspace** (the Animation layout plus a Graph Editor, with every home open), or open the panel in a **separate window** you can move to a second monitor.
-   - **Ghost Tool** adds no sidebar tab. Its home is the **3D Viewport header**: a ghost on/off toggle and a **Ghost Tool** dropdown after the **Pose** menu, grouped as Show Ghosts, Onion Skin, Edit Motion, Compare, Physics, Look and Settings. **Open in Separate Window** at the bottom keeps it open in its own window.
+   - **Ghost Tool** home is the **3D Viewport header**: a ghost on/off toggle and a **Ghost Tool** dropdown after the **Pose** menu, grouped as Show Ghosts, Onion Skin, Edit Motion, Compare, Physics, Look and Settings. **Open in Separate Window** at the bottom keeps it open in its own window.
    - **B4Artists Machine Learning** adds the **B4Artists ML** tab. Select an armature and click **Check Rig** to start; the panel walks you through the remaining steps.
 5. Anim Assist only: in **Properties > Scene > Anim Assist > Setup**, run **First Run Setup** once. It builds the Quick Shelf. The same section can add the Anim Assist workspace, and **Settings** turns on the optional **Anim Assist pie** shortcut (Shift Alt D, off by default).
 
