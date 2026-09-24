@@ -52,9 +52,11 @@ from . import ui_helpers as ui_helpers              # noqa: E402, F401
 from . import panel_anatomy as panel_anatomy        # noqa: E402, F401
 from . import editor_placement as editor_placement  # noqa: E402, F401
 from . import scope_ui as scope_ui                  # noqa: E402, F401
+from . import layout_homes                          # noqa: E402
+from . import header_menus                         # noqa: E402
 
 
-CLASSES: tuple[type, ...] = (
+CLASSES: tuple[type, ...] = layout_homes.arrange((
     *_ui_state_mod.CLASSES,
     AA_PT_diagnostics,
     *_panel_classes,
@@ -73,4 +75,5 @@ CLASSES: tuple[type, ...] = (
     # --- LIPSYNC LAYER PANELS (Phase 12) ---
     *_p12_panel_classes,
     *_help_browser_classes,
-)
+    *header_menus.CLASSES,
+))

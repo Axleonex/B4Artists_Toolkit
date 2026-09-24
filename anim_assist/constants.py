@@ -23,7 +23,7 @@ HELP_POPUP_WIDTH: int = 400
 HELP_DEFAULT_CATEGORY: str = "General"
 
 UI_STATE_ATTR: str = "anim_assist_ui"
-ANIMASSIST_CATEGORY: str = "AnimAssist"
+ANIMASSIST_CATEGORY: str = "Anim Assist"
 
 P7_TAG_TEMP: str = "anim_assist_temp"
 P7_TAG_SESSION_ID: str = "anim_assist_session_id"

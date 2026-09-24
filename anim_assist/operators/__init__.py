@@ -88,7 +88,11 @@ from .p12_shape_key_ops import CLASSES as _p12_shape_key_classes
 # --- INSTALL/UNINSTALL HYGIENE (v11.1) ---
 from .lifecycle_ops import CLASSES as _lifecycle_classes
 
+# --- ANIM ASSIST HOMES ---
+from .home_ops import CLASSES as _home_classes
+
 CLASSES: tuple[type, ...] = (
+    *_home_classes,
     *_p3_property_classes,
     *_p4_property_classes,
     AA_OT_export_settings,

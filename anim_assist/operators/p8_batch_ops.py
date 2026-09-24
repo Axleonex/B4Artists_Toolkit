@@ -352,7 +352,7 @@ class AA_OT_p8_contact_mask_from_selection(bpy.types.Operator):
     def execute(self, context):
         p8 = get_p8(context)
         if not p8:
-            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {"CANCELLED"}
 
         active = context.active_object

@@ -251,7 +251,7 @@ class AA_OT_p10_batch_frame_steps(Operator):
 
         p10 = get_p10(context)
         if p10 is None:
-            self.report({"ERROR"}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({"ERROR"}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {"CANCELLED"}
 
         state = rts_mod.get_state()

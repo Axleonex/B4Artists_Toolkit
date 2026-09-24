@@ -155,7 +155,7 @@ class AA_OT_p10_save_profile(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             # Collect current scene settings
@@ -211,7 +211,7 @@ class AA_OT_p10_load_profile(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             if self.index >= len(p10.profiles):
@@ -225,7 +225,7 @@ class AA_OT_p10_load_profile(Operator):
                 profile_data = json.loads(profile.data_json)
             except json.JSONDecodeError as exc:
                 _log.exception("Failed to deserialize profile JSON")
-                report_failure(self, "The profile data is not valid", "Re-save the profile from the Workspace tab", exc)
+                report_failure(self, "The profile data is not valid", "Re-save the profile from Dope Sheet > Anim Assist > Shelf & Macros > System & Recovery", exc)
                 return {'CANCELLED'}
 
             # Extract and apply settings
@@ -269,7 +269,7 @@ class AA_OT_p10_remove_profile(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             if self.index >= len(p10.profiles):
@@ -321,7 +321,7 @@ class AA_OT_p10_tag_preset(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             if self.index >= len(p10.profiles):

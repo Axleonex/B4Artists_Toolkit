@@ -7,7 +7,8 @@ tracked-append pattern as ``ui/headers.py`` for safe teardown.
 
 Currently wired callbacks:
 
-* ``load_post`` — tears down all draw handlers (stale after file load)
+* ``load_post`` — checks and migrates the loaded file's scenes, then tears
+  down all draw handlers (stale after file load)
   and resets the session cache generation.
 * ``undo_post`` / ``redo_post`` — increments the session cache generation
   counter so overlay caches know their data is stale.
@@ -153,6 +154,12 @@ def _on_load_post(*_args) -> None:
     the cache generation, and clear the action-change hash cache.
     """
     from . import draw_registry as dreg
+    from . import migration
+
+    # The newly loaded file's scenes need the same check and migration as
+    # the file open when Anim Assist was enabled.
+    migration.cancel_pending_check()
+    _safe_call("saved-version check and scene migration", migration.check_open_file)
 
     count = dreg.unregister_all()
     if count:

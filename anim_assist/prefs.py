@@ -14,6 +14,11 @@ from .ui.help_browser import draw_help_browser
 _log = get_logger(__name__)
 
 
+def _update_pie_hotkey(self, _context: bpy.types.Context) -> None:
+    from .ui import header_menus
+    header_menus.set_pie_hotkey_active(self.pie_hotkey_enabled)
+
+
 class AA_AddonPreferences(bpy.types.AddonPreferences):
     bl_idname = constants.ADDON_PACKAGE
 
@@ -32,7 +37,7 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
 
     diagnostics_visible: BoolProperty(  # type: ignore[valid-type]
         name="Show Diagnostics Panel",
-        description="Show the diagnostics panel in the 3D viewport sidebar",
+        description="Show the diagnostics panel in Properties > Scene > Anim Assist > Help & Diagnostics",
         default=False,
     )
 
@@ -93,6 +98,32 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         min=1.0,
     )
 
+    # Where Anim Assist appears (Properties > Scene > Anim Assist > Settings).
+    pie_hotkey_enabled: BoolProperty(  # type: ignore[valid-type]
+        name="Anim Assist Pie Menu Hotkey",
+        description=(
+            "Open the Anim Assist pie with a shortcut in the 3D Viewport, Graph Editor "
+            "and Dope Sheet (Shift Alt D unless you change it)"
+        ),
+        default=False,
+        update=_update_pie_hotkey,
+    )
+    header_menu_view3d: BoolProperty(  # type: ignore[valid-type]
+        name="3D Viewport",
+        description="Show the Anim Assist menu in the 3D Viewport header",
+        default=True,
+    )
+    header_menu_graph: BoolProperty(  # type: ignore[valid-type]
+        name="Graph Editor",
+        description="Show the Anim Assist menu in the Graph Editor header",
+        default=True,
+    )
+    header_menu_dopesheet: BoolProperty(  # type: ignore[valid-type]
+        name="Dope Sheet",
+        description="Show the Anim Assist menu in the Dope Sheet header",
+        default=True,
+    )
+
     # Feature module toggles.
     enable_selection: BoolProperty(name="Selection Tools", description="Enable keyframe and channel selection tools", default=True)  # type: ignore[valid-type]
     enable_keys: BoolProperty(name="Key Utilities", description="Enable key editing and metadata utilities", default=True)  # type: ignore[valid-type]
@@ -130,6 +161,14 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         row = box.row(align=True)
         row.prop(self, "compact_ui_mode")
         draw_explainer_icon(row, context, "pref.compact_ui_mode")
+
+        box = layout.box()
+        box.label(text="Where Anim Assist Appears", icon='WINDOW')
+        box.prop(self, "pie_hotkey_enabled")
+        col = box.column(heading="Header menu in", align=True)
+        col.prop(self, "header_menu_view3d")
+        col.prop(self, "header_menu_graph")
+        col.prop(self, "header_menu_dopesheet")
 
         box = layout.box()
         box.label(text="Modules", icon='PACKAGE')

@@ -9,7 +9,15 @@ import bpy
 from .. import constants
 from .logging import get_logger
 
-__all__ = ["register_migration", "migrate_scene", "migrate_all_scenes"]
+__all__ = [
+    "register_migration",
+    "migrate_scene",
+    "migrate_all_scenes",
+    "data_available",
+    "check_open_file",
+    "check_open_file_when_ready",
+    "cancel_pending_check",
+]
 
 _log = get_logger(__name__)
 
@@ -97,3 +105,52 @@ def migrate_all_scenes() -> None:
     """Upgrade all open scenes' PropertyGroups to the current addon version."""
     for scene in bpy.data.scenes:
         migrate_scene(scene)
+
+
+# ---------------------------------------------------------------------------
+# When to run: after enabling, and after every file load
+# ---------------------------------------------------------------------------
+
+def data_available() -> bool:
+    """False while Blender restricts ``bpy.data``.
+
+    Blender enables every add-on (at startup and from the Preferences
+    checkbox) with ``bpy.data`` swapped for a restricted stand-in that has no
+    ``scenes``, so register() cannot read or migrate the open file.
+    """
+    return hasattr(bpy.data, "scenes")
+
+
+def check_open_file() -> None:
+    """Warn about scenes saved by a newer Anim Assist, then migrate every scene."""
+    from . import lifecycle
+
+    try:
+        lifecycle.check_saved_versions()  # logs its own warnings
+    except Exception:
+        _log.exception("Saved-version check failed - continuing")
+    try:
+        migrate_all_scenes()
+    except Exception:
+        _log.exception("Migration failed - continuing")
+
+
+def _check_open_file_timer() -> float | None:
+    if not data_available():
+        return 0.1  # keep waiting; the restriction lifts right after enabling
+    check_open_file()
+    return None
+
+
+def check_open_file_when_ready() -> None:
+    """Run ``check_open_file`` now, or as soon as ``bpy.data`` is readable."""
+    if data_available():
+        check_open_file()
+    elif not bpy.app.timers.is_registered(_check_open_file_timer):
+        bpy.app.timers.register(_check_open_file_timer, first_interval=0.0)
+
+
+def cancel_pending_check() -> None:
+    """Drop a check still waiting on a timer (unregister, or a file load ran it)."""
+    if bpy.app.timers.is_registered(_check_open_file_timer):
+        bpy.app.timers.unregister(_check_open_file_timer)

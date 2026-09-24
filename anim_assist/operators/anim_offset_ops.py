@@ -24,8 +24,15 @@ def _addon_prefs(context: bpy.types.Context):
     return addon.preferences if addon else None
 
 
+def _target_object(context: bpy.types.Context):
+    """The object Anim Offset works on. ``context.object`` is empty in the
+    Properties editor's Scene tab, where the Anim Assist home lives, so fall
+    back to the active object."""
+    return context.object or context.active_object
+
+
 def _object_fcurves(context: bpy.types.Context) -> list:
-    obj = context.object
+    obj = _target_object(context)
     if obj and obj.animation_data and obj.animation_data.action:
         return [fc for fc in get_fcurves(obj.animation_data.action, anim_data=obj.animation_data) if not fc.lock and not fc.hide]
     return []
@@ -67,7 +74,7 @@ class ANIMASSIST_OT_anim_offset(Operator):
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        return context.object is not None
+        return _target_object(context) is not None
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event):
         # ACCESS_GATE_HERE

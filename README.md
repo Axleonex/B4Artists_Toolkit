@@ -27,11 +27,16 @@ Release notes and checksums for each download are on the [Releases page](../../r
 1. In Bforartists, open **Edit -> Preferences -> Add-ons -> Install from Disk...**
 2. Pick the `.zip` you downloaded.
 3. Enable the add-on by ticking its checkbox.
-4. Press **N** in the **3D Viewport** to open the sidebar, then open the add-on's tab:
-   - **Anim Assist** adds the tabs **AnimAssist** (Lipsync, Help, Diagnostics), **Pose**, **Motion**, **Rig**, **Workspace** and **Layers**. In the **Graph Editor** sidebar you get **Keys** (curve and key tools) and **Motion**; in the **Dope Sheet** sidebar, **Pose** (breakdowns) and **Keys**.
-   - **Ghost Tool** adds the **Ghost Tool** tab.
+4. Find the add-on:
+   - **Anim Assist** adds no tab to the 3D Viewport sidebar. It lives in three places, each organised for its editor, and each starts with an **Anim Assist** label:
+     - **Graph Editor** sidebar (press **N**), **Anim Assist** tab, organised by what you do to curves: Select, Shape Curves, Retime, Clean Up, Pose & Rig, Quick Shelf.
+     - **Dope Sheet** sidebar (press **N**), **Anim Assist** tab, organised by animation stage: Block, Inbetween, Time, Mirror & Match, Keys & Channels, Shelf & Macros.
+     - **Properties editor**, **Scene** tab, **Anim Assist** section (near the bottom), organised by scope: This Pose, Whole Animation, Rig, Face, then Setup, Settings and Help.
+
+     Each of those editors' headers also has an **Anim Assist** menu with the most-used tools. The menu can open the full panel, switch to the **Anim Assist workspace** (the Animation layout plus a Graph Editor, with every home open), or open the panel in a **separate window** you can move to a second monitor.
+   - **Ghost Tool** adds the **Ghost Tool** tab to the 3D Viewport sidebar (press **N**).
    - **B4Artists Machine Learning** adds the **B4Artists ML** tab. Select an armature and click **Check Rig** to start; the panel walks you through the remaining steps.
-5. Anim Assist only: on the **Workspace** tab, run **First Run Setup** once — it builds the Quick Shelf and default hotkeys.
+5. Anim Assist only: in **Properties > Scene > Anim Assist > Setup**, run **First Run Setup** once. It builds the Quick Shelf. The same section can add the Anim Assist workspace, and **Settings** turns on the optional **Anim Assist pie** shortcut (Shift Alt D, off by default).
 
 ## Browse the source
 

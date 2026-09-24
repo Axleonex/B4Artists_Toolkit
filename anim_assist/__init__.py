@@ -5,7 +5,7 @@ bl_info = {
     "author": "Developer",
     "version": (12, 0, 4),
     "blender": (4, 2, 0),
-    "location": "View3D > Sidebar > AnimAssist",
+    "location": "Properties > Scene > Anim Assist; Graph Editor and Dope Sheet > Sidebar > Anim Assist; editor header menus",
     "description": "Production animation workflow tools for Bforartists. v12 adds hybrid PREVIEW/SHIPPED lipsync layers with shape key support.",
     "category": "Animation",
 }
@@ -130,6 +130,7 @@ def register() -> None:
         ui_state_mod.register_properties()
         ui_pkg.headers.register()
         ui_pkg.header_toolbars.register()
+        ui_pkg.header_menus.register()
         cache_mod.init()
         rts_mod.init()
         dreg_mod.init()
@@ -173,16 +174,9 @@ def register() -> None:
         except Exception:
             _log.debug("Could not sync logging level from preferences", exc_info=True)
 
-        try:
-            mig_mod.migrate_all_scenes()
-        except Exception:
-            _log.exception("Migration failed - continuing")
-
-        try:
-            for warning in lifecycle_mod.check_saved_versions():
-                _log.warning(warning)
-        except Exception:
-            _log.debug("Saved-version check failed - continuing", exc_info=True)
+        # bpy.data is restricted while Blender enables add-ons, so the open
+        # file's check and migration usually wait for the next timer tick.
+        mig_mod.check_open_file_when_ready()
 
         _log.info("Anim Assist %s registered", constants.ADDON_VERSION_STRING)
 
@@ -229,6 +223,8 @@ def register() -> None:
                 _log.debug("%s property rollback failed", label, exc_info=True)
 
         for cleanup in (
+            mig_mod.cancel_pending_check,
+            ui_pkg.header_menus.unregister,
             ui_pkg.header_toolbars.unregister,
             ui_pkg.headers.unregister,
             hk_mod.shutdown,
@@ -322,6 +318,8 @@ def unregister() -> None:
             pass
 
     for cleanup in (
+        mig_mod.cancel_pending_check,
+        ui_pkg.header_menus.unregister,
         ui_pkg.header_toolbars.unregister,
         ui_pkg.headers.unregister,
         hk_mod.shutdown,

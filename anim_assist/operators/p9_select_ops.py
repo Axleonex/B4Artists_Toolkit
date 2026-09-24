@@ -58,12 +58,12 @@ class AA_OT_p9_select_opposite(bpy.types.Operator):
         opposite_name = _get_opposite_name(context, active_bone.name)
 
         if not opposite_name:
-            self.report({"ERROR"}, f"No opposite bone found for '{active_bone.name}'. Use .L/.R naming or add a pair override in the Rig tab")
+            self.report({"ERROR"}, f"No opposite bone found for '{active_bone.name}'. Use .L/.R naming or add a pair override under Mirror & Symmetry")
             return {"CANCELLED"}
 
         # Check opposite bone exists
         if opposite_name not in obj.data.bones:
-            self.report({"ERROR"}, f"Opposite bone '{opposite_name}' is not in this armature. Add a pair override in the Rig tab")
+            self.report({"ERROR"}, f"Opposite bone '{opposite_name}' is not in this armature. Add a pair override under Mirror & Symmetry")
             return {"CANCELLED"}
 
         # Deselect all

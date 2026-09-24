@@ -55,10 +55,10 @@ PHASE1_ENTRIES: tuple[HelpEntry, ...] = (
     HelpEntry(
         id="pref.diagnostics_visible",
         label="Show Diagnostics Panel",
-        tooltip="Show the diagnostics panel in the 3D viewport sidebar",
+        tooltip="Show the diagnostics panel in Properties > Scene > Anim Assist > Help & Diagnostics",
         description=(
-            "Controls whether the AnimAssist Diagnostics panel appears in the "
-            "3D viewport sidebar under the AnimAssist tab.\n\n"
+            "Controls whether the Anim Assist Diagnostics panel appears in the "
+            "Properties editor: Scene tab > Anim Assist > Help & Diagnostics.\n\n"
             "The panel itself has no performance cost when collapsed; this "
             "toggle is provided so you can hide it entirely when demoing to "
             "artists."
@@ -307,10 +307,10 @@ PHASE1_ENTRIES: tuple[HelpEntry, ...] = (
     HelpEntry(
         id="panel.aa_pt_diagnostics",
         label="Diagnostics Panel",
-        tooltip="The 3D-view sidebar panel that surfaces addon internals",
+        tooltip="The Properties panel that surfaces add-on internals",
         description=(
-            "The AnimAssist Diagnostics panel lives under the AnimAssist tab "
-            "in the 3D viewport sidebar. It surfaces the active target, the "
+            "The Anim Assist Diagnostics panel lives in the Properties editor: "
+            "Scene tab > Anim Assist > Help & Diagnostics. It surfaces the active target, the "
             "effective timeline range, which animation editors are open, the "
             "capabilities registry, and the current runtime cache.\n\n"
             "Everything it shows is read-only; the Refresh and Copy buttons "

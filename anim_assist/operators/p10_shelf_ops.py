@@ -28,7 +28,7 @@ class AA_OT_p10_toggle_shelf_mode(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             # Cycle through modes: 0 (COMPACT) -> 1 (EXPANDED) -> 2 (FAVORITES) -> 0
@@ -43,7 +43,7 @@ class AA_OT_p10_toggle_shelf_mode(Operator):
 
         except Exception as e:
             _log.error(f"Error toggling shelf mode: {e}")
-            report_failure(self, "Could not change the shelf mode", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
+            report_failure(self, "Could not change the shelf mode", "Run First Run Setup from Properties > Scene > Anim Assist > Setup to rebuild the shelf", e)
             return {'CANCELLED'}
 
 
@@ -73,7 +73,7 @@ class AA_OT_p10_add_favorite(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             if not self.op_id:
@@ -98,7 +98,7 @@ class AA_OT_p10_add_favorite(Operator):
 
         except Exception as e:
             _log.error(f"Error adding favorite: {e}")
-            report_failure(self, "Could not add the favorite", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
+            report_failure(self, "Could not add the favorite", "Run First Run Setup from Properties > Scene > Anim Assist > Setup to rebuild the shelf", e)
             return {'CANCELLED'}
 
 
@@ -119,7 +119,7 @@ class AA_OT_p10_remove_favorite(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             if self.index < 0 or self.index >= len(p10.favorites):
@@ -135,7 +135,7 @@ class AA_OT_p10_remove_favorite(Operator):
 
         except Exception as e:
             _log.error(f"Error removing favorite: {e}")
-            report_failure(self, "Could not remove the favorite", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
+            report_failure(self, "Could not remove the favorite", "Run First Run Setup from Properties > Scene > Anim Assist > Setup to rebuild the shelf", e)
             return {'CANCELLED'}
 
 
@@ -227,7 +227,7 @@ class AA_OT_p10_record_recent(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             if not self.op_id:
@@ -262,7 +262,7 @@ class AA_OT_p10_record_recent(Operator):
 
         except Exception as e:
             _log.error(f"Error recording recent tool: {e}")
-            report_failure(self, "Failed to record recent tool", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
+            report_failure(self, "Failed to record recent tool", "Run First Run Setup from Properties > Scene > Anim Assist > Setup to rebuild the shelf", e)
             return {'CANCELLED'}
 
 
@@ -276,7 +276,7 @@ class AA_OT_p10_repeat_last(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             if len(p10.recents) == 0:
@@ -296,7 +296,7 @@ class AA_OT_p10_repeat_last(Operator):
             _log.info(f"Repeating last tool: {op_id}")
             parts = op_id.split(".")
             if len(parts) != 2:
-                report_failure(self, "Invalid operator ID", "Run First Run Setup from the Workspace tab to rebuild the shelf", op_id)
+                report_failure(self, "Invalid operator ID", "Run First Run Setup from Properties > Scene > Anim Assist > Setup to rebuild the shelf", op_id)
                 return {'CANCELLED'}
             category = getattr(bpy.ops, parts[0], None)
             if category is None:
@@ -304,7 +304,7 @@ class AA_OT_p10_repeat_last(Operator):
                 return {'CANCELLED'}
             op_func = getattr(category, parts[1], None)
             if op_func is None:
-                report_failure(self, "Operator not found", "Run First Run Setup from the Workspace tab to rebuild the shelf", op_id)
+                report_failure(self, "Operator not found", "Run First Run Setup from Properties > Scene > Anim Assist > Setup to rebuild the shelf", op_id)
                 return {'CANCELLED'}
             op_func("EXEC_DEFAULT")
             self.report({'INFO'}, f"Repeated: {label}")
@@ -312,7 +312,7 @@ class AA_OT_p10_repeat_last(Operator):
 
         except Exception as e:
             _log.error(f"Error repeating last tool: {e}")
-            report_failure(self, "Failed to repeat last tool", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
+            report_failure(self, "Failed to repeat last tool", "Run First Run Setup from Properties > Scene > Anim Assist > Setup to rebuild the shelf", e)
             return {'CANCELLED'}
 
 
@@ -326,7 +326,7 @@ class AA_OT_p10_clear_recents(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             count = len(p10.recents)
@@ -338,7 +338,7 @@ class AA_OT_p10_clear_recents(Operator):
 
         except Exception as e:
             _log.error(f"Error clearing recents: {e}")
-            report_failure(self, "Failed to clear recents", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
+            report_failure(self, "Failed to clear recents", "Run First Run Setup from Properties > Scene > Anim Assist > Setup to rebuild the shelf", e)
             return {'CANCELLED'}
 
 

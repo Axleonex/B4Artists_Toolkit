@@ -151,7 +151,7 @@ class AA_OT_p7_rename_proxy(bpy.types.Operator):
         p7 = get_p7(context)
 
         if p7 is None:
-            self.report({"ERROR"}, "Proxy settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({"ERROR"}, "Proxy settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {"CANCELLED"}
 
         # Get the session ID from the object tag

@@ -94,7 +94,7 @@ class AA_OT_p9_batch_mirror(bpy.types.Operator):
         obj = context.active_object
         p9 = get_p9(context)
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -202,7 +202,7 @@ class AA_OT_p9_batch_mirror_active_side(bpy.types.Operator):
         # Detect active bone's side
         active_side = det.detect_side(active_bone.name)
         if active_side not in ('L', 'R'):
-            self.report({'ERROR'}, "Cannot tell which side the active bone is on. Use .L/.R naming or add a naming exception in the Rig tab")
+            self.report({'ERROR'}, "Cannot tell which side the active bone is on. Use .L/.R naming or add a naming exception under Mirror & Symmetry")
             return {'CANCELLED'}
 
         # Collect all bones on that side
@@ -338,7 +338,7 @@ class AA_OT_p9_missing_warning(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -384,7 +384,7 @@ class AA_OT_p9_ambiguous_warning(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -432,7 +432,7 @@ class AA_OT_p9_channel_resolver(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -491,7 +491,7 @@ class AA_OT_p9_mirror_metadata(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -547,7 +547,7 @@ class AA_OT_p9_mirror_preset_values(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -641,7 +641,7 @@ class AA_OT_p9_custom_pattern(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         left_pattern = p9.custom_left_pattern

@@ -874,7 +874,7 @@ class AA_OT_p8_toggle_preview(bpy.types.Operator):
             return {"CANCELLED"}
 
         if not p8:
-            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {"CANCELLED"}
 
         # Check if preview is currently enabled

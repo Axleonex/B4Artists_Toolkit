@@ -192,7 +192,7 @@ class AA_OT_p10_run_custom_macro(bpy.types.Operator):
 
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         if self.index >= len(p10.macros):
@@ -237,7 +237,7 @@ class AA_OT_p10_add_macro(bpy.types.Operator):
     def execute(self, context):
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         macro = p10.macros.add()
@@ -269,7 +269,7 @@ class AA_OT_p10_remove_macro(bpy.types.Operator):
     def execute(self, context):
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         if self.index >= len(p10.macros):
@@ -317,7 +317,7 @@ class AA_OT_p10_add_macro_step(bpy.types.Operator):
     def execute(self, context):
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         if self.macro_index >= len(p10.macros):
@@ -361,7 +361,7 @@ class AA_OT_p10_remove_macro_step(bpy.types.Operator):
     def execute(self, context):
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         if self.macro_index >= len(p10.macros):
@@ -402,7 +402,7 @@ class AA_OT_p10_validate_macro(bpy.types.Operator):
     def execute(self, context):
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {'CANCELLED'}
 
         if self.index >= len(p10.macros):

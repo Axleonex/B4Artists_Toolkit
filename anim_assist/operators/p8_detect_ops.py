@@ -244,7 +244,7 @@ class AA_OT_p8_apply_detected_pattern(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         p8 = get_p8(context)
         if p8 is None:
-            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {"CANCELLED"}
 
         if not _cached_patterns:
@@ -295,7 +295,7 @@ class AA_OT_p8_save_switch_preset(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         p8 = get_p8(context)
         if p8 is None:
-            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {"CANCELLED"}
 
         name = p8.switch_preset_name.strip()
@@ -342,7 +342,7 @@ class AA_OT_p8_load_switch_preset(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         p8 = get_p8(context)
         if p8 is None:
-            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
             return {"CANCELLED"}
 
         preset_name = self.preset_name.strip()

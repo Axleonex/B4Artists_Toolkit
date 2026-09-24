@@ -122,7 +122,7 @@ class AA_OT_p10_first_run_setup(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             # Set sensible defaults
@@ -144,7 +144,7 @@ class AA_OT_p10_first_run_setup(Operator):
 
         except Exception as e:
             _log.error(f"First run setup failed: {e}", exc_info=True)
-            report_failure(self, "First Run Setup did not finish", "Restart Bforartists and run it again from the Workspace tab", e)
+            report_failure(self, "First Run Setup did not finish", "Restart Bforartists and run it again from Properties > Scene > Anim Assist > Setup", e)
             return {'CANCELLED'}
 
 
@@ -159,7 +159,7 @@ class AA_OT_p10_load_demo_config(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             # Enable debug panel
@@ -197,7 +197,7 @@ class AA_OT_p10_load_demo_config(Operator):
 
         except Exception as e:
             _log.error(f"Demo config load failed: {e}", exc_info=True)
-            report_failure(self, "Could not load the demo configuration", "Run First Run Setup from the Workspace tab instead", e)
+            report_failure(self, "Could not load the demo configuration", "Run First Run Setup from Properties > Scene > Anim Assist > Setup instead", e)
             return {'CANCELLED'}
 
 
@@ -212,7 +212,7 @@ class AA_OT_p10_toggle_debug(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
             # Toggle the debug panel

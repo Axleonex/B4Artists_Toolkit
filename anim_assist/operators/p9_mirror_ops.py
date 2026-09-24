@@ -84,7 +84,7 @@ class AA_OT_p9_match_to_opposite(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override under Mirror & Symmetry")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
@@ -124,7 +124,7 @@ class AA_OT_p9_match_opposite_to_active(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override under Mirror & Symmetry")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
@@ -163,7 +163,7 @@ class AA_OT_p9_mirror_pose(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override under Mirror & Symmetry")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
@@ -255,7 +255,7 @@ class AA_OT_p9_mirror_location(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override under Mirror & Symmetry")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
@@ -304,7 +304,7 @@ class AA_OT_p9_mirror_rotation(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override under Mirror & Symmetry")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
@@ -353,7 +353,7 @@ class AA_OT_p9_mirror_scale(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override under Mirror & Symmetry")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]

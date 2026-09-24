@@ -12,6 +12,43 @@ Each release updates four places in lockstep: `bl_info` in `__init__.py`,
 `ADDON_VERSION` and `ADDON_VERSION_STRING` in `constants.py`, and `version`
 in `blender_manifest.toml`.
 
+## v12.1.0 (unreleased) - Three Organised Homes, No Viewport Tab
+
+Minor: Anim Assist no longer adds tabs to the 3D Viewport sidebar (it
+added six). Its panels now live in three homes, each organised for the
+editor it sits in and each headed "Anim Assist":
+
+- Graph Editor sidebar, one "Anim Assist" tab, by action: Select, Shape
+  Curves, Retime, Clean Up, Pose & Rig, Quick Shelf.
+- Dope Sheet sidebar, one "Anim Assist" tab, by stage: Block, Inbetween,
+  Time, Mirror & Match, Keys & Channels, Shelf & Macros.
+- Properties editor, Scene tab, "Anim Assist" section, by scope: This
+  Pose, Whole Animation, Rig, Face, then Setup (First Run Setup, pair and
+  switch detection, lipsync setup), Settings and Help & Diagnostics. The
+  former 3D Viewport panels moved here.
+
+New: an "Anim Assist" menu in the 3D Viewport, Graph Editor and Dope Sheet
+headers, following each editor's structure and ending with Open Anim Assist
+Panel, Anim Assist Workspace and Open in Separate Window. "Anim Assist
+Workspace" adds a copy of the Animation workspace with a Graph Editor and
+every home open; the stock Animation workspace is not changed. An optional
+Anim Assist pie (Shift Alt D, off by default, free in every default keymap)
+gathers the existing pies; turn it on and rebind it in Settings. Each
+header menu can be hidden per editor in Settings.
+
+Fixes: Anim Offset works from the Properties editor (it needed an object in
+context, which the Scene tab does not provide). Error messages that sent
+you to the removed Workspace tab now point to Properties > Scene > Anim
+Assist > Setup. The README no longer claims First Run Setup creates
+hotkeys: Anim Assist registered none before this release.
+
+Scene migrations now run. Blender enables add-ons with scene data locked,
+so the migration at registration always failed (printing an error trace at
+every startup and whenever the add-on was ticked on), and nothing migrated
+files opened later, so v11 lipsync links never received the v12 fix.
+Migration and the "saved with a newer Anim Assist" check now run as soon as
+scene data is readable after enabling, and again after every file open.
+
 ## v12.0.4 - Every Panel Draws, Clearer Sidebar
 
 Patch: fixes 11 sidebar panels that drew empty under a normal header
