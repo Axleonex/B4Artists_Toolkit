@@ -1,11 +1,13 @@
+import math
+
 import bpy
 from ..core.p9_properties import get_p9
 from ..core import p9_pair_detect as det
-from ..core import p9_pair_cache as cache
 from ..core import p9_mirror_math as mm
 from ..core import p8_match_math as p8mm
 from ..core.logging import get_logger
 from ..core.fcurve_compat import get_fcurves
+from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
 
 _log = get_logger(__name__)
 
@@ -52,6 +54,15 @@ def _build_channel_filter(p9):
     )
 
 
+def _restore_frame(scene, frame: float) -> None:
+    """Restore a possibly fractional frame without truncating the subframe."""
+    base = math.floor(frame)
+    try:
+        scene.frame_set(base, subframe=float(frame) - base)
+    except TypeError:  # pragma: no cover - very old Blender
+        scene.frame_set(base)
+
+
 class AA_OT_p9_match_to_opposite(bpy.types.Operator):
     """Match active bone's transform to opposite bone (no mirroring)"""
     bl_idname = "animassist.p9_match_to_opposite"
@@ -73,14 +84,16 @@ class AA_OT_p9_match_to_opposite(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite found for {active_bone.name}")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
         channel_filter = _build_channel_filter(p9)
 
         try:
-            mm.mirror_bone_pose(active_bone, opposite_bone, "X", channel_filter)
+            # "Match to opposite": the ACTIVE bone takes the opposite's pose.
+            # Was mirror_bone_pose(active, opposite): wrong bone, and mirrored.
+            mm.copy_bone_pose(opposite_bone, active_bone, channel_filter)
             self.report({'INFO'}, f"Matched {active_bone.name} to {opposite_name}")
         except Exception as e:
             _log.error(f"match_to_opposite failed: {e}")
@@ -111,14 +124,15 @@ class AA_OT_p9_match_opposite_to_active(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite found for {active_bone.name}")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
         channel_filter = _build_channel_filter(p9)
 
         try:
-            mm.mirror_bone_pose(opposite_bone, active_bone, "X", channel_filter)
+            # "Match opposite to active": the OPPOSITE bone takes the active's pose.
+            mm.copy_bone_pose(active_bone, opposite_bone, channel_filter)
             self.report({'INFO'}, f"Matched {opposite_name} to {active_bone.name}")
         except Exception as e:
             _log.error(f"match_opposite_to_active failed: {e}")
@@ -149,7 +163,7 @@ class AA_OT_p9_mirror_pose(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite found for {active_bone.name}")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
@@ -192,7 +206,7 @@ class AA_OT_p9_mirror_selected(bpy.types.Operator):
         channel_filter = _build_channel_filter(p9)
         mirror_space = p9.mirror_space if p9 else "LOCAL"
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}
@@ -241,7 +255,7 @@ class AA_OT_p9_mirror_location(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite found for {active_bone.name}")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
@@ -290,7 +304,7 @@ class AA_OT_p9_mirror_rotation(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite found for {active_bone.name}")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
@@ -339,7 +353,7 @@ class AA_OT_p9_mirror_scale(bpy.types.Operator):
 
         opposite_name = det.find_opposite(active_bone.name, overrides=overrides, exceptions=exceptions)
         if not opposite_name or opposite_name not in obj.pose.bones:
-            self.report({'ERROR'}, f"No opposite found for {active_bone.name}")
+            self.report({'ERROR'}, f"No opposite bone found for {active_bone.name}. Use .L/.R naming or add a pair override in the Rig tab")
             return {'FINISHED'}
 
         opposite_bone = obj.pose.bones[opposite_name]
@@ -388,7 +402,7 @@ class AA_OT_p9_mirror_frame(bpy.types.Operator):
         channel_filter = _build_channel_filter(p9)
         mirror_space = p9.mirror_space if p9 else "LOCAL"
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}
@@ -455,12 +469,13 @@ class AA_OT_p9_mirror_range(bpy.types.Operator):
         channel_filter = _build_channel_filter(p9)
         mirror_space = p9.mirror_space if p9 else "LOCAL"
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}
 
         frame_count = 0
+        original_frame = float(context.scene.frame_current_final)
         try:
             for frame in range(self.start_frame, self.end_frame + 1):
                 context.scene.frame_set(frame)
@@ -488,6 +503,9 @@ class AA_OT_p9_mirror_range(bpy.types.Operator):
         except Exception as e:
             _log.error(f"mirror_range failed: {e}")
             self.report({'ERROR'}, str(e))
+        finally:
+            # The loop scrubs the playhead; always put it back, even on error.
+            _restore_frame(context.scene, original_frame)
 
         return {'FINISHED'}
 
@@ -517,7 +535,7 @@ class AA_OT_p9_mirror_preview(bpy.types.Operator):
         channel_filter = _build_channel_filter(p9)
         mirror_space = p9.mirror_space if p9 else "LOCAL"
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}
@@ -531,6 +549,7 @@ class AA_OT_p9_mirror_preview(bpy.types.Operator):
             end_frame = scene.frame_end
 
         frame_count = 0
+        original_frame = float(context.scene.frame_current_final)
         try:
             for frame in range(start_frame, end_frame + 1):
                 context.scene.frame_set(frame)
@@ -558,6 +577,9 @@ class AA_OT_p9_mirror_preview(bpy.types.Operator):
         except Exception as e:
             _log.error(f"mirror_preview failed: {e}")
             self.report({'ERROR'}, str(e))
+        finally:
+            # The loop scrubs the playhead; always put it back, even on error.
+            _restore_frame(context.scene, original_frame)
 
         return {'FINISHED'}
 
@@ -583,7 +605,7 @@ class AA_OT_p9_mirror_keyed_only(bpy.types.Operator):
         channel_filter = _build_channel_filter(p9)
         mirror_space = p9.mirror_space if p9 else "LOCAL"
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}
@@ -605,7 +627,7 @@ class AA_OT_p9_mirror_keyed_only(bpy.types.Operator):
                 if obj.animation_data and obj.animation_data.action:
                     for fcurve in get_fcurves(obj.animation_data.action, anim_data=obj.animation_data):
                         # Pose bone fcurves look like "pose.bones["BoneName"].location" etc
-                        if f'pose.bones["{bone.name}"]' in fcurve.data_path:
+                        if f'pose.bones["{bpy.utils.escape_identifier(bone.name)}"]' in fcurve.data_path:
                             for keyframe_point in fcurve.keyframe_points:
                                 if abs(keyframe_point.co[0] - current_frame) < 0.01:
                                     has_keyframe = True
@@ -652,7 +674,7 @@ class AA_OT_p9_mirror_visible_only(bpy.types.Operator):
         channel_filter = _build_channel_filter(p9)
         mirror_space = p9.mirror_space if p9 else "LOCAL"
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}
@@ -672,7 +694,7 @@ class AA_OT_p9_mirror_visible_only(bpy.types.Operator):
                 if obj.animation_data and obj.animation_data.action:
                     for fcurve in get_fcurves(obj.animation_data.action, anim_data=obj.animation_data):
                         # Pose bone fcurves look like "pose.bones["BoneName"].location" etc
-                        if f'pose.bones["{bone.name}"]' in fcurve.data_path and not fcurve.hide:
+                        if f'pose.bones["{bpy.utils.escape_identifier(bone.name)}"]' in fcurve.data_path and not fcurve.hide:
                             visible = True
                             break
 
@@ -714,7 +736,7 @@ class AA_OT_p9_mirror_local(bpy.types.Operator):
         axis = p9.mirror_axis if p9 else "X"
         channel_filter = _build_channel_filter(p9)
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}
@@ -758,7 +780,7 @@ class AA_OT_p9_mirror_world(bpy.types.Operator):
         axis = p9.mirror_axis if p9 else "X"
         channel_filter = _build_channel_filter(p9)
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}
@@ -802,7 +824,7 @@ class AA_OT_p9_visual_mirror(bpy.types.Operator):
         axis = p9.mirror_axis if p9 else "X"
         channel_filter = _build_channel_filter(p9)
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}
@@ -847,7 +869,7 @@ class AA_OT_p9_mirror_with_offset(bpy.types.Operator):
         channel_filter = _build_channel_filter(p9)
         mirror_space = p9.mirror_space if p9 else "LOCAL"
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}
@@ -903,7 +925,7 @@ class AA_OT_p9_mirror_without_offset(bpy.types.Operator):
         channel_filter = _build_channel_filter(p9)
         mirror_space = p9.mirror_space if p9 else "LOCAL"
 
-        selected_bones = [b for b in obj.pose.bones if b.bone.select]
+        selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
             self.report({'WARNING'}, "No bones selected")
             return {'FINISHED'}

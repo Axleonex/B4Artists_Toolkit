@@ -14,7 +14,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-from .p5_sampling import SamplePoint, VelocityInfo, derive_velocity, segment_lengths
+from .p5_sampling import SamplePoint, derive_velocity, segment_lengths
 
 __all__ = [
     "IssueMarker",

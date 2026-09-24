@@ -12,6 +12,39 @@ Each release updates four places in lockstep: `bl_info` in `__init__.py`,
 `ADDON_VERSION` and `ADDON_VERSION_STRING` in `constants.py`, and `version`
 in `blender_manifest.toml`.
 
+## v12.0.4 - Every Panel Draws, Clearer Sidebar
+
+Patch: fixes 11 sidebar panels that drew empty under a normal header
+(Dope Sheet Retime, Bake, Match & Switch, Mirror and Quick Shelf; Graph
+Editor Key Selection, Channels, Metadata, Diagnostics and Key Utilities) -
+editor copies were built as subclasses of registered panels, which detached
+the originals. Fixes a layer-reorder check that raised an error on every
+redraw with no layers. Every error now says what to do next and never shows
+a raw Python exception. Destructive actions are undoable or ask first with
+the consequence stated. Sidebar labels no longer clip at default width,
+abbreviations are spelled out, the Layers and Match & Switch panels explain
+their empty and disabled states, and the README lists the real tabs and the
+First Run Setup step. Verified on Bforartists 5.1.2 by running every
+editor-only tool inside a real Graph Editor and Dope Sheet.
+
+## v12.0.3 - Blender 5.x Compatibility and Correctness
+
+Patch: restores every "selected bones" operator on Blender 5.x (Bone.select
+moved to PoseBone), makes all app handlers persistent so undo/redo cache
+invalidation survives file loads, and adds undo to Anim Offset and the
+remove-item operators. Matching, space-switch compensation and mirroring
+now accept pose bones and honour each bone's rotation mode (quaternion and
+axis-angle rigs mirror, swap, match and layer correctly). Range
+compensation persists through keys and records the true pre-switch pose per
+frame. Layer actions get a slot on 4.4+ instead of crashing. Fixes Remove
+Time deleting the playhead and window-edge keys, bake truncating fractional
+keys and dropping the subframe, breakdown tangent matching and key counts,
+curve tools moving keys without their handles, Remove Proxy orphaning other
+proxies' records, "Match to Opposite" writing the wrong bone, Restore Switch
+calling a missing function, preview restore doing nothing, bone-targeted
+operators skipping custom-property keys, and bone-name escaping in data
+paths. Bforartists 5.1.2 verified headless.
+
 ## v12.0.2 - Onboarding Reliability
 
 Patch: fixes First Run Setup under Blender's string-based enum API, surfaces

@@ -19,11 +19,10 @@ through a thin wrapper so the logic lives in exactly one place.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Iterable, Optional
+from dataclasses import dataclass
+from typing import Optional
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty, StringProperty
 
 try:
     from mathutils import Vector, Quaternion, Euler
@@ -609,9 +608,7 @@ class AA_OT_p4_nudge_current(_OffsetBase, bpy.types.Operator):
     bl_idname = "animassist.p4_nudge_current"
     bl_label = "Nudge Current Frame"
     bl_description = (
-        "Applies the current translate, rotate, and scale deltas to every selected "
-        "target at the scene's current frame. Honours channel mask, space, pivot, "
-        "falloff, preserve-contact, and mirror-sign options."
+        "Apply the current translate/rotate/scale deltas to every selected target at the current frame"
     )
 
     def execute(self, context):
@@ -622,9 +619,7 @@ class AA_OT_p4_offset_selected(_OffsetBase, bpy.types.Operator):
     bl_idname = "animassist.p4_offset_selected"
     bl_label = "Offset Selected Keys"
     bl_description = (
-        "Applies the current offset delta to every selected keyframe on the "
-        "target channels. Frames without any selected key are skipped. Honours "
-        "falloff and mirror-sign options."
+        "Apply the current offset to every selected keyframe on the target channels"
     )
 
     def execute(self, context):
@@ -749,8 +744,7 @@ class AA_OT_p4_invert_last(bpy.types.Operator):
     bl_idname = "animassist.p4_invert_last"
     bl_label = "Invert Last Offset"
     bl_description = (
-        "Negates every component of the most recent offset and re-runs with the "
-        "same options. Useful as an explicit undo that survives intervening edits."
+        "Re-run the last offset with every component negated"
     )
     bl_options = {"REGISTER", "UNDO"}
 

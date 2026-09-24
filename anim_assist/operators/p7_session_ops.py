@@ -35,7 +35,7 @@ class AA_OT_p7_purge_artifacts(bpy.types.Operator):
     """Remove all temporary rigging objects, constraints, and collections."""
 
     bl_idname = "animassist.p7_purge_artifacts"
-    bl_label = "Purge P7 Artifacts"
+    bl_label = "Purge Proxy Artifacts"
     bl_description = (
         "Remove all temporary objects, constraints, and collections "
         "created by proxy/bake workflows"
@@ -77,7 +77,7 @@ class AA_OT_p7_recover_session(bpy.types.Operator):
     """Inspect and optionally roll back a stale rigging session on this scene."""
 
     bl_idname = "animassist.p7_recover_session"
-    bl_label = "Recover P7 Session"
+    bl_label = "Recover Proxy Session"
     bl_description = (
         "Detect incomplete proxy sessions and roll back "
         "their artifacts to restore the scene to a clean state"

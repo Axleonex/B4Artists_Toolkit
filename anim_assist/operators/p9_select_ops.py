@@ -1,7 +1,6 @@
 import bpy
 from ..core.p9_properties import get_p9
 from ..core import p9_pair_detect as det
-from ..core import p9_pair_cache as cache
 from ..core.logging import get_logger
 
 
@@ -18,7 +17,6 @@ def _pose_poll(context):
 def _get_opposite_name(context, bone_name):
     """Get opposite bone name using cache and properties."""
     p9 = get_p9(context)
-    obj = context.active_object
 
     # Build overrides dict from properties
     overrides = {}
@@ -54,18 +52,18 @@ class AA_OT_p9_select_opposite(bpy.types.Operator):
         active_bone = obj.data.bones.active
 
         if not active_bone:
-            self.report({"ERROR"}, "No active bone")
+            self.report({"ERROR"}, "No active bone. Select a bone in Pose mode")
             return {"CANCELLED"}
 
         opposite_name = _get_opposite_name(context, active_bone.name)
 
         if not opposite_name:
-            self.report({"ERROR"}, f"No opposite found for '{active_bone.name}'")
+            self.report({"ERROR"}, f"No opposite bone found for '{active_bone.name}'. Use .L/.R naming or add a pair override in the Rig tab")
             return {"CANCELLED"}
 
         # Check opposite bone exists
         if opposite_name not in obj.data.bones:
-            self.report({"ERROR"}, f"Opposite bone '{opposite_name}' does not exist")
+            self.report({"ERROR"}, f"Opposite bone '{opposite_name}' is not in this armature. Add a pair override in the Rig tab")
             return {"CANCELLED"}
 
         # Deselect all

@@ -15,7 +15,6 @@ import bpy
 from bpy.props import (
     BoolProperty,
     BoolVectorProperty,
-    CollectionProperty,
     EnumProperty,
     FloatProperty,
     IntProperty,

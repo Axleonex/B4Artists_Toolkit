@@ -7,6 +7,7 @@ import bpy
 from bpy.props import IntProperty
 
 from ..core.logging import get_logger
+from ..core.helpers import confirm_dialog
 
 _log = get_logger(__name__)
 
@@ -74,6 +75,9 @@ class AA_OT_p10_clear_history(bpy.types.Operator):
     bl_label = "Clear History"
     bl_options = {'REGISTER'}
 
+    def invoke(self, context, event):  # type: ignore[no-untyped-def]
+        return confirm_dialog(self, context, event, 'Clear the whole operation history? This cannot be undone.')
+
     def execute(self, context):
         from ..core import p10_audit as audit
         audit.clear_history()
@@ -86,6 +90,9 @@ class AA_OT_p10_clear_errors(bpy.types.Operator):
     bl_idname = "animassist.p10_clear_errors"
     bl_label = "Clear Errors"
     bl_options = {'REGISTER'}
+
+    def invoke(self, context, event):  # type: ignore[no-untyped-def]
+        return confirm_dialog(self, context, event, 'Clear the error log? This cannot be undone.')
 
     def execute(self, context):
         from ..core import p10_audit as audit

@@ -7,12 +7,12 @@ already use ``ui/panels.py``.
 
 from __future__ import annotations
 
-import bpy
 from bpy.types import Panel
 
 from ..operators.p2_diag_ops import get_last_summary
 # --- EXPLAINER HELP INTEGRATION ---
 from ..core.help_draw import draw_explainer_icon
+from .editor_placement import detached_panel_clone
 
 
 _CATEGORY = "Keys"
@@ -187,31 +187,37 @@ class ANIMASSIST_PT_p2_keyutils(_P2Panel):
         _op_with_help(col, context, "animassist.safe_delete_selected_keys", icon="X")
 
 
-# Dope Sheet duplicates of the same panels (Blender needs distinct bl_idnames).
+# Dope Sheet copies of the same panels. Built as independent classes, not
+# subclasses: a registered subclass would detach the Graph Editor originals.
 
-class ANIMASSIST_PT_p2_selection_ds(ANIMASSIST_PT_p2_selection):
-    bl_idname = "ANIMASSIST_PT_p2_selection_ds"
-    bl_space_type = "DOPESHEET_EDITOR"
-
-
-class ANIMASSIST_PT_p2_channels_ds(ANIMASSIST_PT_p2_channels):
-    bl_idname = "ANIMASSIST_PT_p2_channels_ds"
-    bl_space_type = "DOPESHEET_EDITOR"
+ANIMASSIST_PT_p2_selection_ds = detached_panel_clone(
+    ANIMASSIST_PT_p2_selection, "ANIMASSIST_PT_p2_selection_ds",
+    bl_idname="ANIMASSIST_PT_p2_selection_ds", bl_space_type="DOPESHEET_EDITOR",
+)
 
 
-class ANIMASSIST_PT_p2_metadata_ds(ANIMASSIST_PT_p2_metadata):
-    bl_idname = "ANIMASSIST_PT_p2_metadata_ds"
-    bl_space_type = "DOPESHEET_EDITOR"
+ANIMASSIST_PT_p2_channels_ds = detached_panel_clone(
+    ANIMASSIST_PT_p2_channels, "ANIMASSIST_PT_p2_channels_ds",
+    bl_idname="ANIMASSIST_PT_p2_channels_ds", bl_space_type="DOPESHEET_EDITOR",
+)
 
 
-class ANIMASSIST_PT_p2_diagnostics_ds(ANIMASSIST_PT_p2_diagnostics):
-    bl_idname = "ANIMASSIST_PT_p2_diagnostics_ds"
-    bl_space_type = "DOPESHEET_EDITOR"
+ANIMASSIST_PT_p2_metadata_ds = detached_panel_clone(
+    ANIMASSIST_PT_p2_metadata, "ANIMASSIST_PT_p2_metadata_ds",
+    bl_idname="ANIMASSIST_PT_p2_metadata_ds", bl_space_type="DOPESHEET_EDITOR",
+)
 
 
-class ANIMASSIST_PT_p2_keyutils_ds(ANIMASSIST_PT_p2_keyutils):
-    bl_idname = "ANIMASSIST_PT_p2_keyutils_ds"
-    bl_space_type = "DOPESHEET_EDITOR"
+ANIMASSIST_PT_p2_diagnostics_ds = detached_panel_clone(
+    ANIMASSIST_PT_p2_diagnostics, "ANIMASSIST_PT_p2_diagnostics_ds",
+    bl_idname="ANIMASSIST_PT_p2_diagnostics_ds", bl_space_type="DOPESHEET_EDITOR",
+)
+
+
+ANIMASSIST_PT_p2_keyutils_ds = detached_panel_clone(
+    ANIMASSIST_PT_p2_keyutils, "ANIMASSIST_PT_p2_keyutils_ds",
+    bl_idname="ANIMASSIST_PT_p2_keyutils_ds", bl_space_type="DOPESHEET_EDITOR",
+)
 
 
 classes: tuple[type, ...] = (

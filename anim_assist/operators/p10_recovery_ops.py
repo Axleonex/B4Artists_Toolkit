@@ -8,6 +8,7 @@ from bpy.props import IntProperty, StringProperty
 
 from ..core.logging import get_logger
 from ..core.p10_audit import log_operation
+from ..core.helpers import confirm_dialog
 
 _log = get_logger(__name__)
 
@@ -44,7 +45,7 @@ class AA_OT_p10_restore_snapshot(bpy.types.Operator):
             return {'FINISHED'}
         else:
             log_operation(self.bl_idname, False, f"index {self.index} invalid")
-            self.report({'ERROR'}, f"Could not restore snapshot #{self.index}")
+            self.report({'ERROR'}, f"Could not restore snapshot #{self.index}. Pick another snapshot or take a new one")
             return {'CANCELLED'}
 
 
@@ -53,6 +54,9 @@ class AA_OT_p10_clear_snapshots(bpy.types.Operator):
     bl_idname = "animassist.p10_clear_snapshots"
     bl_label = "Clear Snapshots"
     bl_options = {'REGISTER'}
+
+    def invoke(self, context, event):  # type: ignore[no-untyped-def]
+        return confirm_dialog(self, context, event, 'Delete all recovery snapshots? You will not be able to restore from them. This cannot be undone.')
 
     def execute(self, context):
         from ..core import p10_recovery as recovery

@@ -8,6 +8,7 @@ import bpy
 
 from .cache import push_selection_entry, remember_active_target
 from .fcurve_compat import get_fcurves
+from .bone_utils import fcurve_belongs_to_bone, pose_bone_selected, set_pose_bone_selected
 
 __all__ = [
     "TargetSnapshot",
@@ -108,16 +109,14 @@ def _get_selected_bones_snapshots(
     if pose is None:
         return results
 
-    selected_bones = [b for b in pose.bones if b.bone.select]
+    selected_bones = [b for b in pose.bones if pose_bone_selected(b)]
     if not selected_bones:
         return results
 
     for bone in selected_bones:
-        prefix = f'pose.bones["{bone.name}"].'
-        bone_fcurves = [
-            fc for fc in fcurves
-            if fc.data_path.startswith(prefix)
-        ]
+        # Transforms AND custom properties keyed on the bone (e.g. an IK/FK
+        # switch), so bone-targeted operators keep them in step.
+        bone_fcurves = [fc for fc in fcurves if fcurve_belongs_to_bone(fc, bone.name)]
         results.append(
             TargetSnapshot(
                 obj=obj,

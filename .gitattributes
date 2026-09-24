@@ -1,0 +1,16 @@
+# Normalize text to LF in the repository; check out native on each platform.
+# Without this, Windows clones store CRLF against the repo's LF and every
+# source file shows as modified when comparing a clone against a release zip.
+* text=auto
+
+# Explicitly binary. Never let text normalization touch these — it corrupts them.
+*.zip   binary
+*.pdf   binary
+*.blend binary
+*.png   binary
+*.jpg   binary
+
+# Python sources are text.
+*.py    text
+*.md    text
+*.toml  text

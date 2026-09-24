@@ -236,9 +236,11 @@ class AA_OT_p6_remove_time(bpy.types.Operator):
         # First delete keys inside the removed window.
         deleted = 0
         for fc in fcurves:
+            # Exclusive on both ends: the key on the playhead and the key at
+            # the window's far edge survive (the latter ripples back below).
             to_remove = [
                 kp for kp in fc.keyframe_points
-                if threshold <= kp.co.x <= window_end
+                if threshold < kp.co.x < window_end
             ]
             for kp in reversed(to_remove):
                 fc.keyframe_points.remove(kp)
@@ -248,7 +250,8 @@ class AA_OT_p6_remove_time(bpy.types.Operator):
 
         # Then ripple-shift keys after the window's end backward.
         rm.apply_ripple(
-            fcurves, window_end, -float(self.remove_frames), direction="FORWARD"
+            fcurves, window_end, -float(self.remove_frames), direction="FORWARD",
+            inclusive=True,
         )
 
         _tag_redraw(context)

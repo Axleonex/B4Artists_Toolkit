@@ -13,6 +13,7 @@ from bpy.types import Operator
 
 from ..core.p10_properties import get_p10
 from ..core.logging import get_logger
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -27,7 +28,7 @@ class AA_OT_p10_toggle_shelf_mode(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "P10 properties not found")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             # Cycle through modes: 0 (COMPACT) -> 1 (EXPANDED) -> 2 (FAVORITES) -> 0
@@ -42,7 +43,7 @@ class AA_OT_p10_toggle_shelf_mode(Operator):
 
         except Exception as e:
             _log.error(f"Error toggling shelf mode: {e}")
-            self.report({'ERROR'}, f"Failed to toggle shelf mode: {str(e)}")
+            report_failure(self, "Could not change the shelf mode", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
             return {'CANCELLED'}
 
 
@@ -72,11 +73,11 @@ class AA_OT_p10_add_favorite(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "P10 properties not found")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             if not self.op_id:
-                self.report({'ERROR'}, "No operator ID provided")
+                self.report({'ERROR'}, "No tool selected. Pick a tool for this shelf slot first")
                 return {'CANCELLED'}
 
             # Check for duplicate
@@ -97,7 +98,7 @@ class AA_OT_p10_add_favorite(Operator):
 
         except Exception as e:
             _log.error(f"Error adding favorite: {e}")
-            self.report({'ERROR'}, f"Failed to add favorite: {str(e)}")
+            report_failure(self, "Could not add the favorite", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
             return {'CANCELLED'}
 
 
@@ -105,7 +106,7 @@ class AA_OT_p10_remove_favorite(Operator):
     """Remove a favorite by index"""
     bl_idname = "animassist.p10_remove_favorite"
     bl_label = "Remove Favorite"
-    bl_options = {'REGISTER'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     index: IntProperty(
         name="Index",
@@ -118,11 +119,11 @@ class AA_OT_p10_remove_favorite(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "P10 properties not found")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             if self.index < 0 or self.index >= len(p10.favorites):
-                self.report({'ERROR'}, f"Invalid favorite index: {self.index}")
+                self.report({'ERROR'}, f"Select a favorite in the list first")
                 return {'CANCELLED'}
 
             removed_label = p10.favorites[self.index].label
@@ -134,7 +135,7 @@ class AA_OT_p10_remove_favorite(Operator):
 
         except Exception as e:
             _log.error(f"Error removing favorite: {e}")
-            self.report({'ERROR'}, f"Failed to remove favorite: {str(e)}")
+            report_failure(self, "Could not remove the favorite", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
             return {'CANCELLED'}
 
 
@@ -179,15 +180,15 @@ class AA_OT_p10_search_tools(Operator):
                 # Dispatch operator via bpy.ops getattr chain
                 parts = self.tool_enum.split(".")
                 if len(parts) != 2:
-                    self.report({'ERROR'}, f"Invalid operator ID: {self.tool_enum}")
+                    self.report({'ERROR'}, f"'{self.tool_enum}' is not a valid tool. Pick a tool from the search list")
                     return {'CANCELLED'}
                 category = getattr(bpy.ops, parts[0], None)
                 if category is None:
-                    self.report({'ERROR'}, f"Category not found: {parts[0]}")
+                    self.report({'ERROR'}, f"Tool category '{parts[0]}' not found. Pick a tool from the shelf list")
                     return {'CANCELLED'}
                 op_func = getattr(category, parts[1], None)
                 if op_func is None:
-                    self.report({'ERROR'}, f"Operator not found: {self.tool_enum}")
+                    self.report({'ERROR'}, f"Tool '{self.tool_enum}' is not available. Pick another tool from the search list")
                     return {'CANCELLED'}
                 op_func("EXEC_DEFAULT")
                 self.report({'INFO'}, f"Executed: {self.tool_enum}")
@@ -197,7 +198,7 @@ class AA_OT_p10_search_tools(Operator):
 
         except Exception as e:
             _log.error(f"Error executing tool search: {e}")
-            self.report({'ERROR'}, f"Failed to execute tool: {str(e)}")
+            report_failure(self, "Could not run the tool from the shelf", "Open the tool from its own panel instead", e)
             return {'CANCELLED'}
 
     def invoke(self, context, event):
@@ -226,11 +227,11 @@ class AA_OT_p10_record_recent(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "P10 properties not found")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             if not self.op_id:
-                self.report({'ERROR'}, "No operator ID provided")
+                self.report({'ERROR'}, "No tool selected. Pick a tool for this shelf slot first")
                 return {'CANCELLED'}
 
             # Check if tool already exists in recents
@@ -261,7 +262,7 @@ class AA_OT_p10_record_recent(Operator):
 
         except Exception as e:
             _log.error(f"Error recording recent tool: {e}")
-            self.report({'ERROR'}, f"Failed to record recent tool: {str(e)}")
+            report_failure(self, "Failed to record recent tool", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
             return {'CANCELLED'}
 
 
@@ -275,7 +276,7 @@ class AA_OT_p10_repeat_last(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "P10 properties not found")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             if len(p10.recents) == 0:
@@ -288,22 +289,22 @@ class AA_OT_p10_repeat_last(Operator):
             label = last_tool.label
 
             if not op_id:
-                self.report({'ERROR'}, "Invalid recent tool")
+                self.report({'ERROR'}, "That recent tool is no longer available. Clear Recents and use the tool again")
                 return {'CANCELLED'}
 
             # Dispatch operator via bpy.ops getattr chain
             _log.info(f"Repeating last tool: {op_id}")
             parts = op_id.split(".")
             if len(parts) != 2:
-                self.report({'ERROR'}, f"Invalid operator ID: {op_id}")
+                report_failure(self, "Invalid operator ID", "Run First Run Setup from the Workspace tab to rebuild the shelf", op_id)
                 return {'CANCELLED'}
             category = getattr(bpy.ops, parts[0], None)
             if category is None:
-                self.report({'ERROR'}, f"Category not found: {parts[0]}")
+                self.report({'ERROR'}, f"Tool category '{parts[0]}' not found. Pick a tool from the shelf list")
                 return {'CANCELLED'}
             op_func = getattr(category, parts[1], None)
             if op_func is None:
-                self.report({'ERROR'}, f"Operator not found: {op_id}")
+                report_failure(self, "Operator not found", "Run First Run Setup from the Workspace tab to rebuild the shelf", op_id)
                 return {'CANCELLED'}
             op_func("EXEC_DEFAULT")
             self.report({'INFO'}, f"Repeated: {label}")
@@ -311,7 +312,7 @@ class AA_OT_p10_repeat_last(Operator):
 
         except Exception as e:
             _log.error(f"Error repeating last tool: {e}")
-            self.report({'ERROR'}, f"Failed to repeat last tool: {str(e)}")
+            report_failure(self, "Failed to repeat last tool", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
             return {'CANCELLED'}
 
 
@@ -319,13 +320,13 @@ class AA_OT_p10_clear_recents(Operator):
     """Clear the recent tools list"""
     bl_idname = "animassist.p10_clear_recents"
     bl_label = "Clear Recents"
-    bl_options = {'REGISTER'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "P10 properties not found")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             count = len(p10.recents)
@@ -337,7 +338,7 @@ class AA_OT_p10_clear_recents(Operator):
 
         except Exception as e:
             _log.error(f"Error clearing recents: {e}")
-            self.report({'ERROR'}, f"Failed to clear recents: {str(e)}")
+            report_failure(self, "Failed to clear recents", "Run First Run Setup from the Workspace tab to rebuild the shelf", e)
             return {'CANCELLED'}
 
 

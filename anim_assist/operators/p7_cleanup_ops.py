@@ -178,15 +178,18 @@ class AA_OT_p7_remove_proxy(bpy.types.Operator):
 
         # Remove constraints referencing this proxy.
         removed_cons = 0
+        removed_keys: set[tuple[str, str, str]] = set()
         for obj in bpy.data.objects:
             for con in list(obj.constraints):
                 if getattr(con, "target", None) == proxy:
+                    removed_keys.add((obj.name, "", con.name))
                     obj.constraints.remove(con)
                     removed_cons += 1
             if hasattr(obj, "pose") and obj.pose:
                 for bone in obj.pose.bones:
                     for con in list(bone.constraints):
                         if getattr(con, "target", None) == proxy:
+                            removed_keys.add((obj.name, bone.name, con.name))
                             bone.constraints.remove(con)
                             removed_cons += 1
 
@@ -200,12 +203,13 @@ class AA_OT_p7_remove_proxy(bpy.types.Operator):
             if proxy_name in session.created_objects:
                 session.created_objects.remove(proxy_name)
             # Remove matching constraint records.
+            # Drop only the records for constraints removed above. The old
+            # prefix match (CONSTRAINT_PREFIX + session id) matched EVERY
+            # constraint of the session, orphaning the other proxies' records.
             session.created_constraints = [
                 rec for rec in session.created_constraints
                 if not (bpy.data.objects.get(rec.object_name) is None
-                        or rec.constraint_name.startswith(
-                            p7s.CONSTRAINT_PREFIX + sid[:8]
-                        ))
+                        or (rec.object_name, rec.bone_name, rec.constraint_name) in removed_keys)
             ]
             p7s.save_session_to_scene(session.session_id)
 
@@ -288,12 +292,12 @@ class AA_OT_p7_batch_create_proxies(bpy.types.Operator):
         p7 = get_p7(context)
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         cfg = PROXY_CONFIGS.get(p7.proxy_type)
         if cfg is None:
-            self.report({"ERROR"}, f"Unknown proxy type: {p7.proxy_type}")
+            self.report({"ERROR"}, f"Unknown proxy type '{p7.proxy_type}'. Pick a type in the Create Proxy dropdown")
             return {"CANCELLED"}
 
         created = 0
@@ -550,7 +554,7 @@ class AA_OT_p7_mirror_proxy(bpy.types.Operator):
         p7 = get_p7(context)
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         src = context.active_object
@@ -601,7 +605,7 @@ class AA_OT_p7_one_click_proxy_bake(bpy.types.Operator):
         p7 = get_p7(context)
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         target = context.active_object
@@ -721,7 +725,7 @@ class AA_OT_p7_quick_proxy(bpy.types.Operator):
     def execute(self, context):
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         p7 = get_p7(context)

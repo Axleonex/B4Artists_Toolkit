@@ -10,6 +10,7 @@ from ..core import p8_match_math as mm
 from ..core import p8_switch_history as hist
 from ..core.logging import get_logger
 from ..core.fcurve_compat import get_fcurves
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -130,28 +131,28 @@ class AA_OT_p8_compensate_single(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         # Resolve property owner (object or pose bone)
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot resolve property owner")
+            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property path configured")
+            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
             return {"CANCELLED"}
 
         # Record visual state BEFORE switch
-        state = mm.record_visual_state(obj)
+        state = mm.record_visual_state(owner)
 
         # Read old value and set new value
         old_value = _get_prop_value(owner, prop_path)
         new_value = p8.switch_new_value if p8 else 0.0
         if not _set_prop_value(owner, prop_path, new_value):
-            self.report({"ERROR"}, f"Failed to set property: {prop_path}")
+            report_failure(self, "Failed to set property", "Undo (Ctrl+Z) and try again", prop_path)
             return {"CANCELLED"}
 
         # Force depsgraph update
@@ -160,18 +161,18 @@ class AA_OT_p8_compensate_single(bpy.types.Operator):
         # Compensate
         cf = mm.ChannelFilter.all()
         result = mm.compensate_after_switch(
-            obj,
+            owner,
             state,
             cf,
             respect_locks=p8.respect_locks if p8 else True,
             respect_drivers=p8.respect_drivers if p8 else True,
         )
-        mm.apply_match_result(obj, result)
+        mm.apply_match_result(owner, result)
 
         # Auto-key
         if p8 and p8.auto_key_switch:
             frame = context.scene.frame_current
-            mm.key_match_result(obj, result, frame)
+            mm.key_match_result(owner, result, frame)
             # Also key the switch property itself
             _key_prop(owner, prop_path, frame)
 
@@ -215,18 +216,18 @@ class AA_OT_p8_compensate_multi(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         # Resolve property owner
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot resolve property owner")
+            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property path configured")
+            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
             return {"CANCELLED"}
 
         # Get frame range
@@ -242,8 +243,16 @@ class AA_OT_p8_compensate_multi(bpy.types.Operator):
                 context.scene.frame_set(frame)
                 context.view_layer.update()
 
+                # Once the property is keyed (by the previous iteration),
+                # frame_set() evaluates the NEW value here and the recorded
+                # baseline would already be the switched pose.  Restore the
+                # old value first so compensation targets the true pre-switch
+                # placement at this frame.
+                _set_prop_value(owner, prop_path, old_value)
+                context.view_layer.update()
+
                 # Record state at this frame
-                state = mm.record_visual_state(obj)
+                state = mm.record_visual_state(owner)
 
                 # Apply switch
                 if not _set_prop_value(owner, prop_path, new_value):
@@ -253,19 +262,21 @@ class AA_OT_p8_compensate_multi(bpy.types.Operator):
                 # Compensate
                 cf = mm.ChannelFilter.all()
                 result = mm.compensate_after_switch(
-                    obj,
+                    owner,
                     state,
                     cf,
                     respect_locks=p8.respect_locks if p8 else True,
                     respect_drivers=p8.respect_drivers if p8 else True,
                 )
-                mm.apply_match_result(obj, result)
+                mm.apply_match_result(owner, result)
                 total_channels += len(result.channels_written)
 
                 # Auto-key
-                if p8 and p8.auto_key_switch:
-                    mm.key_match_result(obj, result, frame)
-                    _key_prop(owner, prop_path, frame)
+                # A range compensation only persists through keys: the next
+                # frame_set() re-evaluates the animated channels and discards
+                # this frame's compensation.  Key regardless of auto-key.
+                mm.key_match_result(owner, result, frame)
+                _key_prop(owner, prop_path, frame)
 
             # Record history event once for the range
             hist.push_event(
@@ -311,23 +322,23 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         # Resolve property owner
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot resolve property owner")
+            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property path configured")
+            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
             return {"CANCELLED"}
 
         # Get selected keyframe range
         if not obj.animation_data or not obj.animation_data.action:
-            self.report({"ERROR"}, "Object has no action")
+            self.report({"ERROR"}, "This object has no animation. Key it first")
             return {"CANCELLED"}
 
         frames = []
@@ -337,7 +348,7 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
                     frames.append(int(kp.co.x))
 
         if not frames:
-            self.report({"ERROR"}, "No selected keyframes found")
+            self.report({"ERROR"}, "No keyframes selected. Select keyframes in the Dope Sheet or Graph Editor first")
             return {"CANCELLED"}
 
         start_frame = min(frames)
@@ -353,7 +364,15 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
                 context.scene.frame_set(frame)
                 context.view_layer.update()
 
-                state = mm.record_visual_state(obj)
+                # Once the property is keyed (by the previous iteration),
+                # frame_set() evaluates the NEW value here and the recorded
+                # baseline would already be the switched pose.  Restore the
+                # old value first so compensation targets the true pre-switch
+                # placement at this frame.
+                _set_prop_value(owner, prop_path, old_value)
+                context.view_layer.update()
+
+                state = mm.record_visual_state(owner)
 
                 if not _set_prop_value(owner, prop_path, new_value):
                     continue
@@ -361,18 +380,20 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
 
                 cf = mm.ChannelFilter.all()
                 result = mm.compensate_after_switch(
-                    obj,
+                    owner,
                     state,
                     cf,
                     respect_locks=p8.respect_locks if p8 else True,
                     respect_drivers=p8.respect_drivers if p8 else True,
                 )
-                mm.apply_match_result(obj, result)
+                mm.apply_match_result(owner, result)
                 total_channels += len(result.channels_written)
 
-                if p8 and p8.auto_key_switch:
-                    mm.key_match_result(obj, result, frame)
-                    _key_prop(owner, prop_path, frame)
+                # A range compensation only persists through keys: the next
+                # frame_set() re-evaluates the animated channels and discards
+                # this frame's compensation.  Key regardless of auto-key.
+                mm.key_match_result(owner, result, frame)
+                _key_prop(owner, prop_path, frame)
 
             hist.push_event(
                 hist.SwitchEvent(
@@ -416,18 +437,18 @@ class AA_OT_p8_bake_switch_preview(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         # Resolve property owner
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot resolve property owner")
+            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property path configured")
+            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
             return {"CANCELLED"}
 
         # Get preview range
@@ -450,7 +471,15 @@ class AA_OT_p8_bake_switch_preview(bpy.types.Operator):
                 context.scene.frame_set(frame)
                 context.view_layer.update()
 
-                state = mm.record_visual_state(obj)
+                # Once the property is keyed (by the previous iteration),
+                # frame_set() evaluates the NEW value here and the recorded
+                # baseline would already be the switched pose.  Restore the
+                # old value first so compensation targets the true pre-switch
+                # placement at this frame.
+                _set_prop_value(owner, prop_path, old_value)
+                context.view_layer.update()
+
+                state = mm.record_visual_state(owner)
 
                 if not _set_prop_value(owner, prop_path, new_value):
                     continue
@@ -458,18 +487,20 @@ class AA_OT_p8_bake_switch_preview(bpy.types.Operator):
 
                 cf = mm.ChannelFilter.all()
                 result = mm.compensate_after_switch(
-                    obj,
+                    owner,
                     state,
                     cf,
                     respect_locks=p8.respect_locks if p8 else True,
                     respect_drivers=p8.respect_drivers if p8 else True,
                 )
-                mm.apply_match_result(obj, result)
+                mm.apply_match_result(owner, result)
                 total_channels += len(result.channels_written)
 
-                if p8 and p8.auto_key_switch:
-                    mm.key_match_result(obj, result, frame)
-                    _key_prop(owner, prop_path, frame)
+                # A range compensation only persists through keys: the next
+                # frame_set() re-evaluates the animated channels and discards
+                # this frame's compensation.  Key regardless of auto-key.
+                mm.key_match_result(owner, result, frame)
+                _key_prop(owner, prop_path, frame)
 
             hist.push_event(
                 hist.SwitchEvent(
@@ -519,26 +550,26 @@ class AA_OT_p8_switch_enum(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot resolve property owner")
+            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property path configured")
+            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
             return {"CANCELLED"}
 
         # Record state before switch
-        state = mm.record_visual_state(obj)
+        state = mm.record_visual_state(owner)
 
         # Set the enum value
         old_value = _get_prop_value(owner, prop_path)
         if not _set_prop_value(owner, prop_path, self.value):
-            self.report({"ERROR"}, f"Failed to set property: {prop_path}")
+            report_failure(self, "Failed to set property", "Undo (Ctrl+Z) and try again", prop_path)
             return {"CANCELLED"}
 
         context.view_layer.update()
@@ -546,18 +577,18 @@ class AA_OT_p8_switch_enum(bpy.types.Operator):
         # Compensate
         cf = mm.ChannelFilter.all()
         result = mm.compensate_after_switch(
-            obj,
+            owner,
             state,
             cf,
             respect_locks=p8.respect_locks if p8 else True,
             respect_drivers=p8.respect_drivers if p8 else True,
         )
-        mm.apply_match_result(obj, result)
+        mm.apply_match_result(owner, result)
 
         # Key result and property
         frame = context.scene.frame_current
         if p8 and p8.auto_key_switch:
-            mm.key_match_result(obj, result, frame)
+            mm.key_match_result(owner, result, frame)
             _key_prop(owner, prop_path, frame)
 
         hist.push_event(
@@ -599,27 +630,27 @@ class AA_OT_p8_switch_bool(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot resolve property owner")
+            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property path configured")
+            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
             return {"CANCELLED"}
 
         # Record state before switch
-        state = mm.record_visual_state(obj)
+        state = mm.record_visual_state(owner)
 
         # Toggle boolean
         old_value = _get_prop_value(owner, prop_path)
         new_value = 1 if (old_value == 0 or not old_value) else 0
         if not _set_prop_value(owner, prop_path, new_value):
-            self.report({"ERROR"}, f"Failed to set property: {prop_path}")
+            report_failure(self, "Failed to set property", "Undo (Ctrl+Z) and try again", prop_path)
             return {"CANCELLED"}
 
         context.view_layer.update()
@@ -627,18 +658,18 @@ class AA_OT_p8_switch_bool(bpy.types.Operator):
         # Compensate
         cf = mm.ChannelFilter.all()
         result = mm.compensate_after_switch(
-            obj,
+            owner,
             state,
             cf,
             respect_locks=p8.respect_locks if p8 else True,
             respect_drivers=p8.respect_drivers if p8 else True,
         )
-        mm.apply_match_result(obj, result)
+        mm.apply_match_result(owner, result)
 
         # Key result and property
         frame = context.scene.frame_current
         if p8 and p8.auto_key_switch:
-            mm.key_match_result(obj, result, frame)
+            mm.key_match_result(owner, result, frame)
             _key_prop(owner, prop_path, frame)
 
         hist.push_event(
@@ -688,26 +719,26 @@ class AA_OT_p8_switch_influence(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot resolve property owner")
+            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property path configured")
+            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
             return {"CANCELLED"}
 
         # Record state before switch
-        state = mm.record_visual_state(obj)
+        state = mm.record_visual_state(owner)
 
         # Set influence
         old_value = _get_prop_value(owner, prop_path)
         if not _set_prop_value(owner, prop_path, self.influence):
-            self.report({"ERROR"}, f"Failed to set property: {prop_path}")
+            report_failure(self, "Failed to set property", "Undo (Ctrl+Z) and try again", prop_path)
             return {"CANCELLED"}
 
         context.view_layer.update()
@@ -715,18 +746,18 @@ class AA_OT_p8_switch_influence(bpy.types.Operator):
         # Compensate
         cf = mm.ChannelFilter.all()
         result = mm.compensate_after_switch(
-            obj,
+            owner,
             state,
             cf,
             respect_locks=p8.respect_locks if p8 else True,
             respect_drivers=p8.respect_drivers if p8 else True,
         )
-        mm.apply_match_result(obj, result)
+        mm.apply_match_result(owner, result)
 
         # Key result and property
         frame = context.scene.frame_current
         if p8 and p8.auto_key_switch:
-            mm.key_match_result(obj, result, frame)
+            mm.key_match_result(owner, result, frame)
             _key_prop(owner, prop_path, frame)
 
         hist.push_event(
@@ -768,26 +799,26 @@ class AA_OT_p8_restore_switch(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         # Get last event from history
-        last_event = hist.last_event()
+        last_event = hist.get_last_event()
         if not last_event:
-            self.report({"ERROR"}, "No switch history available")
+            self.report({"ERROR"}, "No switch history yet. Perform a switch first")
             return {"CANCELLED"}
 
         owner = _resolve_prop_owner(obj, last_event.bone_name)
         if owner is None:
-            self.report({"ERROR"}, "Cannot resolve property owner")
+            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
             return {"CANCELLED"}
 
         # Record state for re-compensation
-        state = mm.record_visual_state(obj)
+        state = mm.record_visual_state(owner)
 
         # Restore old value
         if not _set_prop_value(owner, last_event.prop_path, last_event.old_value):
-            self.report({"ERROR"}, "Failed to restore property")
+            self.report({"ERROR"}, "Could not restore the switch property. Check it is not locked or driven")
             return {"CANCELLED"}
 
         context.view_layer.update()
@@ -795,18 +826,18 @@ class AA_OT_p8_restore_switch(bpy.types.Operator):
         # Compensate back
         cf = mm.ChannelFilter.all()
         result = mm.compensate_after_switch(
-            obj,
+            owner,
             state,
             cf,
             respect_locks=p8.respect_locks if p8 else True,
             respect_drivers=p8.respect_drivers if p8 else True,
         )
-        mm.apply_match_result(obj, result)
+        mm.apply_match_result(owner, result)
 
         # Auto-key if enabled
         if p8 and p8.auto_key_switch:
             frame = context.scene.frame_current
-            mm.key_match_result(obj, result, frame)
+            mm.key_match_result(owner, result, frame)
             _key_prop(owner, last_event.prop_path, frame)
 
         self.report(
@@ -839,11 +870,11 @@ class AA_OT_p8_toggle_preview(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         if not p8:
-            self.report({"ERROR"}, "P8 properties not available")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         # Check if preview is currently enabled
@@ -870,7 +901,10 @@ class AA_OT_p8_toggle_preview(bpy.types.Operator):
         else:
             # Enabling preview: save current state
             p8.switch_preview = True
-            _preview_state = mm.record_visual_state(obj)
+            # Keyed by object name: the restore loop iterates .items() as
+            # (obj_name, transforms); a bare state dict made it look up
+            # scene.objects['matrix_world'] and restore nothing.
+            _preview_state = {obj.name: mm.record_visual_state(obj)}
             _preview_obj_name = obj.name
             self.report({"INFO"}, "Preview enabled, state saved")
 

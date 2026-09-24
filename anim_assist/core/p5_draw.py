@@ -280,8 +280,6 @@ def draw_paths_3d() -> None:
     if gpu is None:
         return
 
-    from . import draw_registry as dreg
-    from . import runtime as rts_mod
 
     try:
         if not _state.paths:
@@ -389,8 +387,6 @@ def draw_labels_2d() -> None:
     if blf is None or bpy is None:
         return
 
-    from . import draw_registry as dreg
-    from . import runtime as rts_mod
 
     try:
         context = bpy.context

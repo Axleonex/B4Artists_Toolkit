@@ -23,6 +23,7 @@ from .ghost_data import Ghost, GhostStore
 from .session_state import SessionState
 from . import fcurve_utils
 from .utils import log, warn, debug, tag_viewport_redraw
+from .utils import report_failure
 
 
 # ---------------------------------------------------------------------------
@@ -526,7 +527,7 @@ class GhostDragOperator(bpy.types.Operator):
                 warn(f"Drag rollback could not finish: {rollback_error}")
             finally:
                 self._cleanup()
-            self.report({'ERROR'}, f"Ghost drag cancelled after an error: {exc}")
+            report_failure(self, "Ghost drag cancelled and the curve restored", "Regenerate the ghosts and try the drag again", exc)
             return {'CANCELLED'}
 
     def _modal_inner(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:
@@ -717,18 +718,22 @@ class GhostDragOperator(bpy.types.Operator):
             else:
                 delta_local = delta_world.copy()
 
-            # If this is a bone channel, convert to bone local space.
-            # Chain: world → object-local → bone-parent-local.
+            # If this is a bone channel, convert to the bone's CHANNEL space:
+            # a pose bone's location is relative to its rest matrix
+            # (bone.matrix_local), re-parented under the parent's posed matrix.
+            # Using only the parent's pose matrix (or only object space for a
+            # root bone) dropped matrix_local and dragged the bone off-axis.
             if ghost.bone_name and obj.type == 'ARMATURE':
                 pose_bone = obj.pose.bones.get(ghost.bone_name)
-                if pose_bone and pose_bone.parent:
-                    object_matrix_inverted = obj.matrix_world.inverted().to_3x3()
-                    bone_parent_matrix_inverted = pose_bone.parent.matrix.inverted().to_3x3()
-                    delta_local = bone_parent_matrix_inverted @ (object_matrix_inverted @ delta_world)
-                elif pose_bone:
-                    # Root bone — object-local space is enough
-                    object_matrix_inverted = obj.matrix_world.inverted().to_3x3()
-                    delta_local = object_matrix_inverted @ delta_world
+                if pose_bone:
+                    bone = pose_bone.bone
+                    if pose_bone.parent:
+                        channel = (pose_bone.parent.matrix
+                                   @ pose_bone.parent.bone.matrix_local.inverted()
+                                   @ bone.matrix_local)
+                    else:
+                        channel = bone.matrix_local
+                    delta_local = (obj.matrix_world @ channel).to_3x3().inverted() @ delta_world
 
             # Extract the relevant axis component
             if channel_lower.endswith(".x"):

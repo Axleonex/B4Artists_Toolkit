@@ -2294,8 +2294,9 @@ def _is_class_registered(cls) -> bool:
         bpy.utils.unregister_class(cls)
         # If we got here, it was NOT registered (we just did a round-trip).
         return False
-    except RuntimeError:
-        # RuntimeError means it's already registered.
+    except (RuntimeError, ValueError):
+        # Already registered: Blender raises ValueError here (RuntimeError on
+        # older builds).  Either way the class is present.
         return True
 
 

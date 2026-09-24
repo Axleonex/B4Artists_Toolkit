@@ -24,7 +24,7 @@ from ..core import p12_driver_engine as de
 from ..core import p12_lipsync_engine as engine
 from ..core import p12_properties as p12_props
 from ..core.logging import get_logger
-from ..core.p11_properties import get_p11
+from ..core.helpers import confirm_dialog
 
 _log = get_logger(__name__)
 
@@ -106,7 +106,7 @@ class AA_OT_p12_toggle_mode(Operator):
         p12 = p12_props.get_p12(context)
         link = _resolve_link(p12, self.layer_name)
         if link is None:
-            self.report({"ERROR"}, "No lipsync layer link selected")
+            self.report({"ERROR"}, "No lipsync layer link selected. Select one in the Lipsync panel list first")
             return {"CANCELLED"}
 
         mesh = _resolve_mesh(link)
@@ -127,7 +127,7 @@ class AA_OT_p12_toggle_mode(Operator):
             if link.target_kind in ("SHAPE_KEYS", "BOTH") and mesh is not None:
                 action = _ensure_shape_key_action(mesh, link)
                 if action is None:
-                    self.report({"ERROR"}, "Mesh has no shape keys")
+                    self.report({"ERROR"}, "This mesh has no shape keys. Add mouth shape keys first")
                     return {"CANCELLED"}
                 fps = context.scene.render.fps / max(1, context.scene.render.fps_base)
                 report = engine.bake_shape_keys(
@@ -194,7 +194,10 @@ class AA_OT_p12_remove_drivers(Operator):
 
     bl_idname = "animassist.p12_remove_drivers"
     bl_label = "Remove Lipsync Drivers"
-    bl_options = {"REGISTER"}
+    bl_options = {"REGISTER", "UNDO"}
+
+    def invoke(self, context, event):  # type: ignore[no-untyped-def]
+        return confirm_dialog(self, context, event, "Remove the preview drivers from this layer's shape keys? The shape keys stop following the lipsync until drivers are rebuilt.")
 
     layer_name: StringProperty(default="")  # type: ignore[valid-type]
 

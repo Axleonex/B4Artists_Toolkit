@@ -8,6 +8,7 @@ from ..core.p8_properties import get_p8
 from ..core import p8_switch_detect as det
 from ..core import p8_switch_history as hist
 from ..core.logging import get_logger
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -70,7 +71,7 @@ class AA_OT_p8_detect_space_enums(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         try:
@@ -82,7 +83,7 @@ class AA_OT_p8_detect_space_enums(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("detect_space_enums failed")
-            self.report({"ERROR"}, f"Detection failed: {e}")
+            report_failure(self, "Detection failed", "Select an armature with IK/FK constraints and try again", e)
             return {"CANCELLED"}
 
 
@@ -100,7 +101,7 @@ class AA_OT_p8_detect_parent_patterns(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         try:
@@ -118,7 +119,7 @@ class AA_OT_p8_detect_parent_patterns(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("detect_parent_patterns failed")
-            self.report({"ERROR"}, f"Detection failed: {e}")
+            report_failure(self, "Detection failed", "Select an armature with IK/FK constraints and try again", e)
             return {"CANCELLED"}
 
 
@@ -136,7 +137,7 @@ class AA_OT_p8_detect_influence_patterns(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         try:
@@ -154,7 +155,7 @@ class AA_OT_p8_detect_influence_patterns(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("detect_influence_patterns failed")
-            self.report({"ERROR"}, f"Detection failed: {e}")
+            report_failure(self, "Detection failed", "Select an armature with IK/FK constraints and try again", e)
             return {"CANCELLED"}
 
 
@@ -172,7 +173,7 @@ class AA_OT_p8_detect_custom_props(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         try:
@@ -190,7 +191,7 @@ class AA_OT_p8_detect_custom_props(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("detect_custom_props failed")
-            self.report({"ERROR"}, f"Detection failed: {e}")
+            report_failure(self, "Detection failed", "Select an armature with IK/FK constraints and try again", e)
             return {"CANCELLED"}
 
 
@@ -208,7 +209,7 @@ class AA_OT_p8_detect_all(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         try:
@@ -220,7 +221,7 @@ class AA_OT_p8_detect_all(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("detect_all_patterns failed")
-            self.report({"ERROR"}, f"Detection failed: {e}")
+            report_failure(self, "Detection failed", "Select an armature with IK/FK constraints and try again", e)
             return {"CANCELLED"}
 
 
@@ -243,16 +244,16 @@ class AA_OT_p8_apply_detected_pattern(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         p8 = get_p8(context)
         if p8 is None:
-            self.report({"ERROR"}, "Motion matching properties not found")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         if not _cached_patterns:
-            self.report({"ERROR"}, "No cached patterns available")
+            self.report({"ERROR"}, "No patterns detected yet. Run Detect first")
             return {"CANCELLED"}
 
         idx = min(p8.detected_pattern_index, len(_cached_patterns) - 1)
         if idx < 0:
-            self.report({"ERROR"}, "Invalid pattern index")
+            self.report({"ERROR"}, "Select a detected pattern in the list first")
             return {"CANCELLED"}
 
         pattern = _cached_patterns[idx]
@@ -272,7 +273,7 @@ class AA_OT_p8_apply_detected_pattern(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("apply_detected_pattern failed")
-            self.report({"ERROR"}, f"Failed to apply pattern: {e}")
+            report_failure(self, "Failed to apply pattern", "Undo (Ctrl+Z) and try again", e)
             return {"CANCELLED"}
 
 
@@ -294,7 +295,7 @@ class AA_OT_p8_save_switch_preset(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         p8 = get_p8(context)
         if p8 is None:
-            self.report({"ERROR"}, "Motion matching properties not found")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         name = p8.switch_preset_name.strip()
@@ -317,7 +318,7 @@ class AA_OT_p8_save_switch_preset(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("save_switch_preset failed")
-            self.report({"ERROR"}, f"Failed to save preset: {e}")
+            report_failure(self, "Failed to save preset", "Undo (Ctrl+Z) and try again", e)
             return {"CANCELLED"}
 
 
@@ -341,18 +342,18 @@ class AA_OT_p8_load_switch_preset(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         p8 = get_p8(context)
         if p8 is None:
-            self.report({"ERROR"}, "Motion matching properties not found")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         preset_name = self.preset_name.strip()
         if not preset_name:
-            self.report({"ERROR"}, "No preset name specified")
+            self.report({"ERROR"}, "Enter a preset name first")
             return {"CANCELLED"}
 
         try:
             presets = _get_presets(context)
             if preset_name not in presets:
-                self.report({"ERROR"}, f"Preset '{preset_name}' not found")
+                self.report({"ERROR"}, f"Preset '{preset_name}' not found. Pick one from the list or save it first")
                 return {"CANCELLED"}
 
             preset = presets[preset_name]
@@ -364,7 +365,7 @@ class AA_OT_p8_load_switch_preset(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("load_switch_preset failed")
-            self.report({"ERROR"}, f"Failed to load preset: {e}")
+            report_failure(self, "Failed to load preset", "Undo (Ctrl+Z) and try again", e)
             return {"CANCELLED"}
 
 
@@ -388,13 +389,13 @@ class AA_OT_p8_delete_switch_preset(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         preset_name = self.preset_name.strip()
         if not preset_name:
-            self.report({"ERROR"}, "No preset name specified")
+            self.report({"ERROR"}, "Enter a preset name first")
             return {"CANCELLED"}
 
         try:
             presets = _get_presets(context)
             if preset_name not in presets:
-                self.report({"ERROR"}, f"Preset '{preset_name}' not found")
+                self.report({"ERROR"}, f"Preset '{preset_name}' not found. Pick one from the list or save it first")
                 return {"CANCELLED"}
 
             del presets[preset_name]
@@ -403,7 +404,7 @@ class AA_OT_p8_delete_switch_preset(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("delete_switch_preset failed")
-            self.report({"ERROR"}, f"Failed to delete preset: {e}")
+            report_failure(self, "Failed to delete preset", "Undo (Ctrl+Z) and try again", e)
             return {"CANCELLED"}
 
 
@@ -425,7 +426,7 @@ class AA_OT_p8_compensation_report(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         wm = getattr(context, "window_manager", None)
         if wm is None:
-            self.report({"ERROR"}, "Window manager not available")
+            self.report({"ERROR"}, "Window manager not available. Run this from the Bforartists interface, not a background script")
             return {"CANCELLED"}
 
         try:
@@ -459,7 +460,7 @@ class AA_OT_p8_compensation_report(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("compensation_report failed")
-            self.report({"ERROR"}, f"Report generation failed: {e}")
+            report_failure(self, "Report generation failed", "Undo (Ctrl+Z) and try again", e)
             return {"CANCELLED"}
 
 
@@ -477,7 +478,7 @@ class AA_OT_p8_unsupported_warning(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         try:
@@ -561,7 +562,7 @@ class AA_OT_p8_unsupported_warning(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("unsupported_warning failed")
-            self.report({"ERROR"}, f"Check failed: {e}")
+            report_failure(self, "Check failed", "Undo (Ctrl+Z) and try again", e)
             return {"CANCELLED"}
 
 
@@ -580,12 +581,12 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         wm = getattr(context, "window_manager", None)
         if wm is None:
-            self.report({"ERROR"}, "Window manager not available")
+            self.report({"ERROR"}, "Window manager not available. Run this from the Bforartists interface, not a background script")
             return {"CANCELLED"}
 
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object")
+            self.report({"ERROR"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         try:
@@ -648,7 +649,7 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
             if hasattr(obj, "pose") and obj.pose:
                 for bone in obj.pose.bones:
                     bone_props += len([k for k in bone.keys() if not k.startswith("_")])
-            lines.append(f"Custom Properties:")
+            lines.append("Custom Properties:")
             lines.append(f"  Object-level: {obj_props}")
             lines.append(f"  Bone-level: {bone_props}")
             lines.append(f"  Total: {obj_props + bone_props}")
@@ -679,7 +680,7 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
             return {"FINISHED"}
         except Exception as e:
             _log.exception("debug_diagnostics failed")
-            self.report({"ERROR"}, f"Diagnostics generation failed: {e}")
+            report_failure(self, "Diagnostics generation failed", "Undo (Ctrl+Z) and try again", e)
             return {"CANCELLED"}
 
 

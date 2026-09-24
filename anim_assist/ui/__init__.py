@@ -2,18 +2,30 @@
 
 from __future__ import annotations
 
-import bpy
-
-IS_BFORARTISTS: bool = False
+#: Cached detection result. ``None`` until first queried; resolved lazily so
+#: the header draw callbacks never see a stale default.
+IS_BFORARTISTS: bool | None = None
 
 
 def is_bforartists() -> bool:
-    return IS_BFORARTISTS
+    if IS_BFORARTISTS is None:
+        init_detection()
+    return bool(IS_BFORARTISTS)
 
 
 def init_detection() -> None:
+    """Resolve Bforartists detection using the package-level multi-signal check.
+
+    Previously this compared ``bpy.app.version_string`` alone, which on
+    Bforartists 5.x is the bare Blender base version (e.g. ``"5.2.0 Alpha"``)
+    and never contains "bforartists" - and it was also never invoked, so the
+    flag stayed ``False`` everywhere.  The parent package's ``_is_bforartists``
+    also inspects ``bpy.app.bforartists``, ``build_branch`` (``Bfa...``) and
+    ``binary_path``.
+    """
     global IS_BFORARTISTS
-    IS_BFORARTISTS = "bforartists" in bpy.app.version_string.lower()
+    from .. import _is_bforartists  # parent package is fully imported by now
+    IS_BFORARTISTS = _is_bforartists()
 
 
 from .diagnostics_panel import AA_PT_diagnostics  # noqa: E402

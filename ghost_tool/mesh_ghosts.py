@@ -1381,4 +1381,4 @@ def unregister() -> None:
         try:
             bpy.utils.unregister_class(cls)
         except RuntimeError as exc:
-            debug("Could not set frame during mesh ghost update")
+            debug(f"Could not unregister {cls.__name__}: {exc}")

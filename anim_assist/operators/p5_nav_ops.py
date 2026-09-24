@@ -20,12 +20,6 @@ from ..core.p5_properties import get_p5
 from ..core import p5_draw as p5_draw_mod
 from ..core.p5_issues import (
     IssueMarker,
-    ISSUE_ARC_DRIFT,
-    ISSUE_FLAT_ARC,
-    ISSUE_ZIGZAG,
-    ISSUE_POP,
-    ISSUE_OVERSPACED,
-    ISSUE_UNDERSPACED,
 )
 
 _log = get_logger(__name__)
@@ -179,7 +173,7 @@ class AA_OT_p5_select_bad_arc_keys(bpy.types.Operator):
 
         obj = getattr(context, "active_object", None)
         if obj is None:
-            self.report({"WARNING"}, "No active object")
+            self.report({"WARNING"}, "No active object. Select an object and try again")
             return {"CANCELLED"}
 
         adata = getattr(obj, "animation_data", None)

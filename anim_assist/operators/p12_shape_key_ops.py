@@ -89,7 +89,7 @@ class AA_OT_p12_pick_mesh(Operator):
     def execute(self, context):
         p12 = p12_props.get_p12(context)
         if not p12.layer_links or p12.active_link_index < 0 or p12.active_link_index >= len(p12.layer_links):
-            self.report({"ERROR"}, "No active lipsync layer link")
+            self.report({"ERROR"}, "No lipsync layer link selected. Select one in the Lipsync panel list first")
             return {"CANCELLED"}
         link = p12.layer_links[p12.active_link_index]
         link.mesh_name = context.active_object.name

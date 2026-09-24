@@ -8,6 +8,7 @@ from ..core.p8_properties import get_p8
 from ..core import p8_match_math as mm
 from ..core import p8_switch_history as hist
 from ..core.logging import get_logger
+from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
 
 _log = get_logger(__name__)
 
@@ -52,8 +53,13 @@ def _set_prop_value(owner, prop_path: str, value):
         return False
 
 
-def _key_prop(owner, prop_path: str, frame: int):
-    """Insert keyframe for property."""
+def _key_prop(owner, prop_path: str, frame: int) -> bool:
+    """Insert a keyframe for the switch property.
+
+    Returns ``False`` instead of raising when Blender refuses the insert (bad
+    path, locked/driven property, linked data) so callers can count and report
+    the miss rather than silently claiming success.
+    """
     try:
         if prop_path.startswith('["') and prop_path.endswith('"]'):
             key = prop_path[2:-2]
@@ -61,7 +67,8 @@ def _key_prop(owner, prop_path: str, frame: int):
         else:
             owner.keyframe_insert(data_path=prop_path, frame=frame)
     except Exception:
-        pass
+        return False
+    return True
 
 
 # ============================================================================
@@ -118,11 +125,12 @@ class AA_OT_p8_batch_switch(bpy.types.Operator):
         new_value = p8.switch_new_value if p8 else 0.0
 
         if not prop_path:
-            self.report({"ERROR"}, "No switch property path configured")
+            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
             return {"CANCELLED"}
 
         frame = context.scene.frame_current
         switched = 0
+        key_failures = 0
 
         for obj in context.selected_objects:
             owner = _resolve_prop_owner(obj, bone_name)
@@ -134,20 +142,23 @@ class AA_OT_p8_batch_switch(bpy.types.Operator):
                 continue
 
             # Record -> Switch -> Update -> Compensate -> Apply -> Key
-            state = mm.record_visual_state(obj)
+            # Compensate the OWNER (the pose bone when one is set): the
+            # armature object's world matrix never changes on a bone switch.
+            state = mm.record_visual_state(owner)
             _set_prop_value(owner, prop_path, new_value)
             context.view_layer.update()
 
             result = mm.compensate_after_switch(
-                obj, state,
+                owner, state,
                 respect_locks=p8.respect_locks if p8 else True,
                 respect_drivers=p8.respect_drivers if p8 else True,
             )
-            mm.apply_match_result(obj, result)
+            mm.apply_match_result(owner, result)
 
             if p8 and p8.auto_key_switch:
-                mm.key_match_result(obj, result, frame)
-                _key_prop(owner, prop_path, frame)
+                mm.key_match_result(owner, result, frame)
+                if not _key_prop(owner, prop_path, frame):
+                    key_failures += 1
 
             hist.push_event(hist.SwitchEvent(
                 frame=frame, obj_name=obj.name, bone_name=bone_name,
@@ -155,7 +166,14 @@ class AA_OT_p8_batch_switch(bpy.types.Operator):
             ))
             switched += 1
 
-        self.report({"INFO"}, f"Batch switched {switched} object(s)")
+        if key_failures:
+            self.report(
+                {"WARNING"},
+                f"Batch switched {switched} object(s); switch property could not "
+                f"be keyed on {key_failures} of them",
+            )
+        else:
+            self.report({"INFO"}, f"Batch switched {switched} object(s)")
         return {"FINISHED"}
 
 
@@ -256,7 +274,7 @@ class AA_OT_p8_contact_preserve_match(bpy.types.Operator):
         frame = context.scene.frame_current
 
         if not active.pose:
-            self.report({"ERROR"}, "Active object is not an armature")
+            self.report({"ERROR"}, "Active object is not an armature. Select an armature in Pose mode")
             return {"CANCELLED"}
 
         # Parse contact mask
@@ -274,13 +292,10 @@ class AA_OT_p8_contact_preserve_match(bpy.types.Operator):
                 if bone:
                     contact_positions[bone_name] = bone.head.copy()
 
-        # Record visual state before match
-        state = mm.record_visual_state(active)
-
         # Perform match
         targets = [obj for obj in context.selected_objects if obj != active]
         if not targets:
-            self.report({"ERROR"}, "No target objects selected")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
 
         # Match active to first target's visual world matrix.
@@ -337,12 +352,12 @@ class AA_OT_p8_contact_mask_from_selection(bpy.types.Operator):
     def execute(self, context):
         p8 = get_p8(context)
         if not p8:
-            self.report({"ERROR"}, "P8 properties not initialized")
+            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         active = context.active_object
         selected_bones = [
-            bone.name for bone in active.pose.bones if bone.bone.select
+            bone.name for bone in active.pose.bones if pose_bone_selected(bone)
         ]
 
         if not selected_bones:
@@ -378,16 +393,13 @@ class AA_OT_p8_quick_match(bpy.types.Operator):
         frame = context.scene.frame_current
 
         if not active.pose:
-            self.report({"ERROR"}, "Active object is not an armature")
+            self.report({"ERROR"}, "Active object is not an armature. Select an armature in Pose mode")
             return {"CANCELLED"}
 
         targets = [obj for obj in context.selected_objects if obj != active]
         if not targets:
-            self.report({"ERROR"}, "No target objects selected")
+            self.report({"ERROR"}, "Select the target object as well as the active object")
             return {"CANCELLED"}
-
-        # Record visual state
-        state = mm.record_visual_state(active)
 
         # Match active to first target's visual world matrix.
         source_world = mm.visual_world_matrix(targets[0])
@@ -434,7 +446,7 @@ class AA_OT_p8_repeat_last_switch(bpy.types.Operator):
         # Find the object
         obj = bpy.data.objects.get(event.obj_name)
         if obj is None:
-            self.report({"ERROR"}, f"Object '{event.obj_name}' not found")
+            self.report({"ERROR"}, f"Object '{event.obj_name}' was renamed or deleted. Clear the switch history and switch again")
             return {"CANCELLED"}
 
         frame = context.scene.frame_current
@@ -442,7 +454,7 @@ class AA_OT_p8_repeat_last_switch(bpy.types.Operator):
         # Resolve property owner
         owner = _resolve_prop_owner(obj, event.bone_name)
         if owner is None:
-            self.report({"ERROR"}, "Property owner could not be resolved")
+            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
             return {"CANCELLED"}
 
         # Read current property value before switching (for accurate history).

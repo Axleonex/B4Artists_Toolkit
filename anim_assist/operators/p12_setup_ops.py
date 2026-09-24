@@ -194,7 +194,7 @@ class AA_OT_p12_setup_lipsync(Operator):
         p11 = get_p11(context)
         p12 = p12_props.get_p12(context)
         if p11 is None or p12 is None:
-            self.report({"ERROR"}, "Phase 11 / 12 properties not available on this scene.")
+            self.report({"ERROR"}, "Layer and lipsync settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         arm_obj = context.active_object

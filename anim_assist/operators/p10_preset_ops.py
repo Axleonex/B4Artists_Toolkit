@@ -8,7 +8,7 @@ Provides operators for:
 """
 
 import json
-from typing import Any, Optional
+from typing import Any
 
 import bpy
 from bpy.props import IntProperty, StringProperty
@@ -17,8 +17,6 @@ from bpy.types import Operator
 from ..core.logging import get_logger
 from ..core.p10_properties import get_p10
 from ..core.p10_preset_io import (
-    export_preset,
-    import_preset,
     export_workspace_profile,
     import_workspace_profile,
     get_preset_directory,
@@ -26,6 +24,7 @@ from ..core.p10_preset_io import (
     apply_scene_settings,
 )
 from ..core.p10_audit import log_operation
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -71,7 +70,7 @@ class AA_OT_p10_export_workspace(Operator):
                     success=False,
                     detail="export_workspace_profile returned False",
                 )
-                self.report({'ERROR'}, "Failed to export workspace profile")
+                self.report({'ERROR'}, "Could not export the profile. Choose a writable location and try again")
                 return {'CANCELLED'}
         except Exception as exc:
             _log.exception("Export workspace failed")
@@ -80,7 +79,7 @@ class AA_OT_p10_export_workspace(Operator):
                 success=False,
                 detail=str(exc),
             )
-            self.report({'ERROR'}, f"Export failed: {exc}")
+            report_failure(self, "Could not export the profile", "Choose a writable location and try again", exc)
             return {'CANCELLED'}
 
 
@@ -126,7 +125,7 @@ class AA_OT_p10_import_workspace(Operator):
                     success=False,
                     detail="import_workspace_profile returned -1",
                 )
-                self.report({'ERROR'}, "Failed to import workspace profile")
+                self.report({'ERROR'}, "Could not import the profile. Choose a profile exported by Anim Assist")
                 return {'CANCELLED'}
         except Exception as exc:
             _log.exception("Import workspace failed")
@@ -135,7 +134,7 @@ class AA_OT_p10_import_workspace(Operator):
                 success=False,
                 detail=str(exc),
             )
-            self.report({'ERROR'}, f"Import failed: {exc}")
+            report_failure(self, "Could not import the profile", "Choose a profile exported by Anim Assist", exc)
             return {'CANCELLED'}
 
 
@@ -156,7 +155,7 @@ class AA_OT_p10_save_profile(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Batch operation properties not available")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             # Collect current scene settings
@@ -190,7 +189,7 @@ class AA_OT_p10_save_profile(Operator):
                 success=False,
                 detail=str(exc),
             )
-            self.report({'ERROR'}, f"Save failed: {exc}")
+            report_failure(self, "Could not save the profile", "Give the profile a name and try again", exc)
             return {'CANCELLED'}
 
 
@@ -212,11 +211,11 @@ class AA_OT_p10_load_profile(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Batch operation properties not available")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             if self.index >= len(p10.profiles):
-                self.report({'ERROR'}, f"Profile index {self.index} out of range")
+                self.report({'ERROR'}, f"Select a profile in the list first")
                 return {'CANCELLED'}
 
             profile = p10.profiles[self.index]
@@ -226,7 +225,7 @@ class AA_OT_p10_load_profile(Operator):
                 profile_data = json.loads(profile.data_json)
             except json.JSONDecodeError as exc:
                 _log.exception("Failed to deserialize profile JSON")
-                self.report({'ERROR'}, f"Invalid profile data: {exc}")
+                report_failure(self, "The profile data is not valid", "Re-save the profile from the Workspace tab", exc)
                 return {'CANCELLED'}
 
             # Extract and apply settings
@@ -248,7 +247,7 @@ class AA_OT_p10_load_profile(Operator):
                 success=False,
                 detail=str(exc),
             )
-            self.report({'ERROR'}, f"Load failed: {exc}")
+            report_failure(self, "Could not load the profile", "Select a profile in the list and try again", exc)
             return {'CANCELLED'}
 
 
@@ -256,7 +255,7 @@ class AA_OT_p10_remove_profile(Operator):
     """Remove a profile by index"""
     bl_idname = "animassist.p10_remove_profile"
     bl_label = "Remove Profile"
-    bl_options = {'REGISTER'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     index: IntProperty(
         name="Profile Index",
@@ -270,11 +269,11 @@ class AA_OT_p10_remove_profile(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Batch operation properties not available")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             if self.index >= len(p10.profiles):
-                self.report({'ERROR'}, f"Profile index {self.index} out of range")
+                self.report({'ERROR'}, f"Select a profile in the list first")
                 return {'CANCELLED'}
 
             profile_name = p10.profiles[self.index].name
@@ -295,7 +294,7 @@ class AA_OT_p10_remove_profile(Operator):
                 success=False,
                 detail=str(exc),
             )
-            self.report({'ERROR'}, f"Remove failed: {exc}")
+            report_failure(self, "Remove failed", "Select a profile in the list and try again", exc)
             return {'CANCELLED'}
 
 
@@ -303,7 +302,7 @@ class AA_OT_p10_tag_preset(Operator):
     """Add a tag to a profile (stored in data_json metadata)"""
     bl_idname = "animassist.p10_tag_preset"
     bl_label = "Tag Preset"
-    bl_options = {'REGISTER'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     index: IntProperty(
         name="Profile Index",
@@ -322,15 +321,15 @@ class AA_OT_p10_tag_preset(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Batch operation properties not available")
+                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
                 return {'CANCELLED'}
 
             if self.index >= len(p10.profiles):
-                self.report({'ERROR'}, f"Profile index {self.index} out of range")
+                self.report({'ERROR'}, f"Select a profile in the list first")
                 return {'CANCELLED'}
 
             if not self.tag:
-                self.report({'ERROR'}, "Tag cannot be empty")
+                self.report({'ERROR'}, "Enter a tag name first")
                 return {'CANCELLED'}
 
             profile = p10.profiles[self.index]
@@ -373,7 +372,7 @@ class AA_OT_p10_tag_preset(Operator):
                 success=False,
                 detail=str(exc),
             )
-            self.report({'ERROR'}, f"Tag failed: {exc}")
+            report_failure(self, "Tag failed", "Select a profile in the list and try again", exc)
             return {'CANCELLED'}
 
 

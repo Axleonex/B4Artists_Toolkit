@@ -20,7 +20,6 @@ from .. import constants
 from ..core import p12_audio_utils as au
 from ..core import p12_properties as p12_props
 from ..core import p12_session as session
-from ..core import p12_shape_key_wiring as skw
 from ..ui import ui_helpers as uh
 from ..ui.editor_placement import View3DSidebarPanel
 from ..ui.panel_anatomy import PanelAnatomyMixin

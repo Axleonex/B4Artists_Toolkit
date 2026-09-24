@@ -30,7 +30,6 @@ Key concepts
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -159,12 +158,36 @@ def compose_matrix(loc, rot, sca):  # type: ignore[no-untyped-def]
 # Object-level queries (need bpy lazily)
 # ---------------------------------------------------------------------------
 
+def is_pose_bone(obj) -> bool:  # type: ignore[no-untyped-def]
+    """True when *obj* is a ``PoseBone`` rather than an ``Object``."""
+    import bpy
+    return isinstance(obj, bpy.types.PoseBone)
+
+
+def _armature_of(pose_bone):  # type: ignore[no-untyped-def]
+    return pose_bone.id_data
+
+
 def visual_world_matrix(obj):  # type: ignore[no-untyped-def]
     """Return the depsgraph-evaluated world matrix of *obj*.
 
-    Falls back to ``obj.matrix_world`` if no depsgraph available.
+    Accepts an ``Object`` or a ``PoseBone``.  For a pose bone the result is
+    ``armature.matrix_world @ pose_bone.matrix`` on the evaluated armature,
+    i.e. the bone's final world placement after constraints and drivers.
+    Falls back to un-evaluated matrices if no depsgraph is available.
     """
     import bpy
+    if is_pose_bone(obj):
+        arm = _armature_of(obj)
+        try:
+            dg = bpy.context.evaluated_depsgraph_get()
+            arm_eval = arm.evaluated_get(dg)
+            pb_eval = arm_eval.pose.bones.get(obj.name)
+            if pb_eval is not None:
+                return (arm_eval.matrix_world @ pb_eval.matrix).copy()
+        except Exception:  # noqa: BLE001
+            pass
+        return (arm.matrix_world @ obj.matrix).copy()
     try:
         dg = bpy.context.evaluated_depsgraph_get()
         eval_obj = obj.evaluated_get(dg)
@@ -173,13 +196,75 @@ def visual_world_matrix(obj):  # type: ignore[no-untyped-def]
         return obj.matrix_world.copy()
 
 
+def _pose_bone_channel_world(pb):  # type: ignore[no-untyped-def]
+    """World matrix of the space a pose bone's loc/rot/scale channels live in.
+
+    ``pb.matrix_basis`` is expressed relative to the bone's rest matrix,
+    re-parented under the parent's *posed* matrix.  Used only as a fallback
+    when ``Bone.convert_local_to_pose`` is unavailable.
+    """
+    arm = _armature_of(pb)
+    bone = pb.bone
+    if pb.parent is not None:
+        channel = (pb.parent.matrix
+                   @ pb.parent.bone.matrix_local.inverted_safe()
+                   @ bone.matrix_local)
+    else:
+        channel = bone.matrix_local.copy()
+    return arm.matrix_world @ channel
+
+
 def parent_world_matrix(obj):  # type: ignore[no-untyped-def]
-    """Return the parent's evaluated world matrix, or Identity if none."""
+    """Return the parent's evaluated world matrix, or Identity if none.
+
+    For a ``PoseBone`` this is the world matrix of its channel space.
+    """
     from mathutils import Matrix
 
+    if is_pose_bone(obj):
+        return _pose_bone_channel_world(obj)
     if obj.parent is None:
         return Matrix.Identity(4)
     return visual_world_matrix(obj.parent)
+
+
+def world_to_local(target, desired_world, use_visual: bool = True):  # type: ignore[no-untyped-def]
+    """Local (channel-space) matrix that places *target* at *desired_world*.
+
+    Objects: ``(parent_world @ matrix_parent_inverse)^-1 @ desired_world``.
+    Pose bones: ``Bone.convert_local_to_pose(..., invert=True)`` so Inherit
+    Rotation / Inherit Scale are honoured; falls back to the channel-space
+    matrix when that API is missing.
+    """
+    from mathutils import Matrix
+
+    if is_pose_bone(target):
+        arm = _armature_of(target)
+        desired_pose = arm.matrix_world.inverted_safe() @ desired_world
+        bone = target.bone
+        conv = getattr(bone, "convert_local_to_pose", None)
+        if conv is not None:
+            try:
+                if target.parent is not None:
+                    return conv(
+                        desired_pose, bone.matrix_local,
+                        parent_matrix=target.parent.matrix,
+                        parent_matrix_local=target.parent.bone.matrix_local,
+                        invert=True,
+                    )
+                return conv(desired_pose, bone.matrix_local, invert=True)
+            except (TypeError, RuntimeError):
+                pass
+        return _pose_bone_channel_world(target).inverted_safe() @ desired_world
+
+    if use_visual:
+        p_world = parent_world_matrix(target)
+    elif target.parent:
+        p_world = target.parent.matrix_world.copy()
+    else:
+        p_world = Matrix.Identity(4)
+    effective_parent = p_world @ target.matrix_parent_inverse
+    return effective_parent.inverted_safe() @ desired_world
 
 
 def compute_local_from_world(desired_world, parent_world):  # type: ignore[no-untyped-def]
@@ -208,7 +293,9 @@ def is_channel_locked(obj, channel: str, axis: int) -> bool:
     """
     if channel == "location":
         return obj.lock_location[axis]
-    if channel in ("rotation_euler", "rotation_quaternion"):
+    if channel in ("rotation_euler", "rotation_quaternion", "rotation_axis_angle"):
+        if axis == 3:  # W component of quaternion / angle of axis-angle
+            return bool(getattr(obj, "lock_rotation_w", False))
         return obj.lock_rotation[axis]
     if channel == "scale":
         return obj.lock_scale[axis]
@@ -237,8 +324,23 @@ class MatchResult:
 
     location: tuple[float, float, float] | None = None
     rotation_euler: tuple[float, float, float] | None = None
+    rotation_quaternion: tuple[float, float, float, float] | None = None
+    rotation_axis_angle: tuple[float, float, float, float] | None = None
+    rotation_mode: str = "XYZ"
     scale: tuple[float, float, float] | None = None
     channels_written: list[str] = field(default_factory=list)
+
+
+_EULER_MODES = ("XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX")
+
+
+def rotation_data_path(mode: str) -> str:
+    """Property name that holds rotation for a given ``rotation_mode``."""
+    if mode == "QUATERNION":
+        return "rotation_quaternion"
+    if mode == "AXIS_ANGLE":
+        return "rotation_axis_angle"
+    return "rotation_euler"
 
 
 def compute_match(
@@ -274,39 +376,30 @@ def compute_match(
     MatchResult
         The computed channel values and list of what was written.
     """
-    from mathutils import Vector, Euler
 
     if channel_filter is None:
         channel_filter = ChannelFilter.all()
 
     result = MatchResult()
 
-    # Compute the parent's world matrix.
-    if use_visual:
-        p_world = parent_world_matrix(target_obj)
-    else:
-        if target_obj.parent:
-            p_world = target_obj.matrix_parent_inverse @ target_obj.parent.matrix_world.copy()
-        else:
-            from mathutils import Matrix
-            p_world = target_obj.matrix_parent_inverse @ Matrix.Identity(4)
-
-    # Account for parent_inverse matrix (Blender's keep-transform offset).
-    # In Blender: world = parent_world @ parent_inverse @ local
-    # So: local = (parent_world @ parent_inverse)^-1 @ desired_world
-    effective_parent = p_world @ target_obj.matrix_parent_inverse
-    desired_local = effective_parent.inverted_safe() @ source_world
-
+    desired_world = source_world
     if maintain_offset:
         # Compute current offset in world space and re-apply after match.
-        if use_visual:
+        if use_visual or is_pose_bone(target_obj):
             current_world = visual_world_matrix(target_obj)
         else:
             current_world = target_obj.matrix_world.copy()
         offset = source_world.inverted_safe() @ current_world
-        desired_local = effective_parent.inverted_safe() @ (source_world @ offset)
+        desired_world = source_world @ offset
 
-    d_loc, d_rot, d_sca = decompose_matrix(desired_local)
+    # Works for Objects (parent + matrix_parent_inverse) and PoseBones
+    # (rest matrix under the posed parent, honouring inherit flags).
+    desired_local = world_to_local(target_obj, desired_world, use_visual)
+
+    d_loc = desired_local.to_translation()
+    d_sca = desired_local.to_scale()
+    mode = getattr(target_obj, "rotation_mode", "XYZ")
+    result.rotation_mode = mode
 
     # --- Location ---
     _apply_channel_match(
@@ -314,11 +407,24 @@ def compute_match(
         "location", respect_locks, respect_drivers
     )
 
-    # --- Rotation ---
-    _apply_channel_match(
-        result, d_rot, target_obj, channel_filter.rotation,
-        "rotation_euler", respect_locks, respect_drivers
-    )
+    # --- Rotation (dispatch on the target's rotation mode) ---
+    if mode == "QUATERNION":
+        _apply_rotation_match_4(
+            result, tuple(desired_local.to_quaternion()), target_obj,
+            channel_filter.rotation, "rotation_quaternion", respect_locks, respect_drivers,
+        )
+    elif mode == "AXIS_ANGLE":
+        axis, angle = desired_local.to_quaternion().to_axis_angle()
+        _apply_rotation_match_4(
+            result, (angle, axis.x, axis.y, axis.z), target_obj,
+            channel_filter.rotation, "rotation_axis_angle", respect_locks, respect_drivers,
+        )
+    else:
+        order = mode if mode in _EULER_MODES else "XYZ"
+        _apply_channel_match(
+            result, desired_local.to_euler(order), target_obj, channel_filter.rotation,
+            "rotation_euler", respect_locks, respect_drivers
+        )
 
     # --- Scale ---
     _apply_channel_match(
@@ -371,14 +477,52 @@ def _apply_channel_match(
         result.scale = tuple(new_val)
 
 
+def _apply_rotation_match_4(
+    result: MatchResult,
+    desired_values,  # type: ignore[no-untyped-def]
+    target_obj,  # type: ignore[no-untyped-def]
+    axis_mask: AxisMask,
+    channel_name: str,
+    respect_locks: bool,
+    respect_drivers: bool,
+) -> None:
+    """Quaternion / axis-angle match: written whole or not at all.
+
+    A partial quaternion has no geometric meaning, so the per-axis filter
+    is treated as "any rotation requested".  Any lock on a requested axis
+    (or the W lock) or a driver on the property skips the write.
+    """
+    if not axis_mask.any():
+        return
+    if respect_locks:
+        if is_channel_locked(target_obj, channel_name, 3):
+            return
+        if any(f and is_channel_locked(target_obj, channel_name, i)
+               for i, f in enumerate(axis_mask.as_tuple())):
+            return
+    if respect_drivers and is_channel_driven(target_obj, channel_name):
+        return
+    values = tuple(float(v) for v in desired_values)
+    if channel_name == "rotation_quaternion":
+        result.rotation_quaternion = values
+    else:
+        result.rotation_axis_angle = values
+    result.channels_written.append(channel_name)
+
+
 def apply_match_result(target_obj, match: MatchResult) -> None:  # type: ignore[no-untyped-def]
-    """Write a MatchResult to the target object's transform channels."""
-    from mathutils import Vector, Euler
+    """Write a MatchResult to the target's transform channels (Object or PoseBone)."""
+    from mathutils import Vector, Euler, Quaternion
 
     if match.location is not None:
         target_obj.location = Vector(match.location)
-    if match.rotation_euler is not None:
-        target_obj.rotation_euler = Euler(match.rotation_euler)
+    if match.rotation_quaternion is not None:
+        target_obj.rotation_quaternion = Quaternion(match.rotation_quaternion)
+    elif match.rotation_axis_angle is not None:
+        target_obj.rotation_axis_angle = match.rotation_axis_angle
+    elif match.rotation_euler is not None:
+        order = match.rotation_mode if match.rotation_mode in _EULER_MODES else "XYZ"
+        target_obj.rotation_euler = Euler(match.rotation_euler, order)
     if match.scale is not None:
         target_obj.scale = Vector(match.scale)
 
@@ -387,8 +531,9 @@ def key_match_result(
     target_obj, match: MatchResult, frame: int
 ) -> int:  # type: ignore[no-untyped-def]
     """Insert keyframes for all channels in *match*.  Returns key count."""
-    if target_obj.animation_data is None:
-        target_obj.animation_data_create()
+    id_owner = target_obj.id_data if is_pose_bone(target_obj) else target_obj
+    if id_owner.animation_data is None:
+        id_owner.animation_data_create()
 
     keyed = 0
     if match.location is not None and any(
@@ -396,10 +541,8 @@ def key_match_result(
     ):
         target_obj.keyframe_insert(data_path="location", frame=frame)
         keyed += 1
-    if match.rotation_euler is not None and any(
-        c.startswith("rotation") for c in match.channels_written
-    ):
-        target_obj.keyframe_insert(data_path="rotation_euler", frame=frame)
+    if any(c.startswith("rotation") for c in match.channels_written):
+        target_obj.keyframe_insert(data_path=rotation_data_path(match.rotation_mode), frame=frame)
         keyed += 1
     if match.scale is not None and any(
         c.startswith("scale") for c in match.channels_written

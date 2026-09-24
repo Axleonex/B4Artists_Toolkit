@@ -19,6 +19,8 @@ from bpy.props import EnumProperty, IntProperty, StringProperty
 from ..core.logging import get_logger
 from ..core.p11_properties import get_p11, PRESET_ITEMS
 from ..core import p11_layer_engine as engine
+from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
+from ..core.helpers import report_failure
 
 logger = get_logger(__name__)
 
@@ -239,7 +241,7 @@ class ANIMASSIST_OT_p11_assign_by_pattern(bpy.types.Operator):
         try:
             regex = re.compile(self.pattern, re.IGNORECASE)
         except re.error as e:
-            self.report({'ERROR'}, f"Invalid regex: {e}")
+            report_failure(self, "The pattern is not a valid regular expression", "Fix the pattern and try again", e, detail=str(e))
             return {'CANCELLED'}
 
         existing = {b.bone_name for b in layer.assigned_bones}
@@ -441,7 +443,7 @@ class ANIMASSIST_OT_p11_select_assigned(bpy.types.Operator):
         selected = 0
         for bone in obj.pose.bones:
             if bone.name in assigned_names:
-                bone.bone.select = True
+                set_pose_bone_selected(bone, True)
                 selected += 1
 
         self.report({'INFO'}, f"Selected {selected} assigned bones")

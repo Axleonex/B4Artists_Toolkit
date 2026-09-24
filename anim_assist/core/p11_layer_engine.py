@@ -39,6 +39,16 @@ from .logging import get_logger
 from . import p11_blend_math as bm
 from .fcurve_compat import get_fcurves, find_fcurve, new_fcurve
 
+
+def _escape_bone_name(name: str) -> str:
+    """``bpy.utils.escape_identifier`` via a runtime-only import.
+
+    This module does not bind ``bpy`` at module level, so a direct reference
+    would NameError at call time.
+    """
+    import bpy
+    return bpy.utils.escape_identifier(name)
+
 if TYPE_CHECKING:
     from bpy.types import Action, Object, PoseBone, PropertyGroup
 
@@ -87,10 +97,80 @@ class LayerEvalResult:
 # Action reading utilities
 # ---------------------------------------------------------------------------
 
+_EULER_MODES = ("XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX")
+
+
+def _rotation_path_for_mode(mode: str) -> str:
+    if mode == "QUATERNION":
+        return "rotation_quaternion"
+    if mode == "AXIS_ANGLE":
+        return "rotation_axis_angle"
+    return "rotation_euler"
+
+
+def _euler_to_mode(rot, mode: str):  # type: ignore[no-untyped-def]
+    """Express an (x, y, z) euler triple in *mode* (4-tuple for quat/axis-angle)."""
+    if mode not in ("QUATERNION", "AXIS_ANGLE"):
+        return tuple(rot)
+    from mathutils import Euler
+    q = Euler(rot, "XYZ").to_quaternion()
+    if mode == "QUATERNION":
+        return tuple(q)
+    ax, ang = q.to_axis_angle()
+    return (ang, ax.x, ax.y, ax.z)
+
+
+def _mode_to_euler(values, mode: str):  # type: ignore[no-untyped-def]
+    """Bring a rotation stored in *mode* back to the engine's euler triple."""
+    if mode not in ("QUATERNION", "AXIS_ANGLE"):
+        return tuple(values)
+    from mathutils import Quaternion
+    if mode == "QUATERNION":
+        q = Quaternion(values)
+    else:
+        q = Quaternion(values[1:], values[0])
+    return tuple(q.to_euler("XYZ"))
+
+
+def _infer_rotation_mode(action, prefix: str) -> str:  # type: ignore[no-untyped-def]
+    """Rotation mode implied by the curves already keyed under *prefix*."""
+    found = set()
+    for fc in get_fcurves(action):
+        if fc.data_path.startswith(prefix):
+            found.add(fc.data_path[len(prefix):])
+    if "rotation_quaternion" in found:
+        return "QUATERNION"
+    if "rotation_axis_angle" in found:
+        return "AXIS_ANGLE"
+    if "rotation_euler" in found:
+        return "XYZ"
+    # Nothing keyed yet (fresh layer action): ask the rig itself.  Only
+    # trust an unambiguous answer - exactly one armature owning that bone.
+    try:
+        import bpy
+        end = prefix.find('"]')
+        bone_name = prefix[len('pose.bones["'):end] if end > 0 else ""
+        owners = [o for o in bpy.data.objects
+                  if o.type == "ARMATURE" and o.pose and o.pose.bones.get(bone_name)]
+        if len(owners) == 1:
+            return owners[0].pose.bones[bone_name].rotation_mode
+    except Exception:  # noqa: BLE001 - outside Blender or no data
+        pass
+    return "XYZ"
+
+
+def bone_rotation_mode(armature_obj, bone_name: str) -> str:  # type: ignore[no-untyped-def]
+    """``rotation_mode`` of a pose bone, or XYZ when it cannot be resolved."""
+    pose = getattr(armature_obj, "pose", None)
+    pb = pose.bones.get(bone_name) if pose is not None else None
+    return getattr(pb, "rotation_mode", "XYZ") if pb is not None else "XYZ"
+
+
 def read_bone_from_action(
     action: Action | None,
     bone_name: str,
     frame: float,
+    rotation_mode: str = "XYZ",
 ) -> BoneSnapshot:
     """Read a bone's transform from an Action at a specific frame.
 
@@ -115,12 +195,15 @@ def read_bone_from_action(
     if action is None:
         return snap
 
-    prefix = f'pose.bones["{bone_name}"].'
+    prefix = f'pose.bones["{_escape_bone_name(bone_name)}"].'
 
     loc = list(bm.REST_LOCATION)
     rot = list(bm.REST_ROTATION)
     sca = list(bm.REST_SCALE)
     found = False
+    quat = [1.0, 0.0, 0.0, 0.0]
+    aa = [0.0, 0.0, 1.0, 0.0]
+    quat_found = aa_found = False
 
     for fc in get_fcurves(action):
         if not fc.data_path.startswith(prefix):
@@ -135,8 +218,25 @@ def read_bone_from_action(
             loc[idx] = val
         elif channel == "rotation_euler" and 0 <= idx <= 2:
             rot[idx] = val
+        elif channel == "rotation_quaternion" and 0 <= idx <= 3:
+            quat[idx] = val
+            quat_found = True
+        elif channel == "rotation_axis_angle" and 0 <= idx <= 3:
+            aa[idx] = val
+            aa_found = True
         elif channel == "scale" and 0 <= idx <= 2:
             sca[idx] = val
+
+    # The engine blends euler triples; bring quaternion / axis-angle curves to
+    # that form.  Prefer the curves matching the bone's own rotation mode.
+    if rotation_mode == "QUATERNION" and quat_found:
+        rot = list(_mode_to_euler(quat, "QUATERNION"))
+    elif rotation_mode == "AXIS_ANGLE" and aa_found:
+        rot = list(_mode_to_euler(aa, "AXIS_ANGLE"))
+    elif quat_found and rot == list(bm.REST_ROTATION):
+        rot = list(_mode_to_euler(quat, "QUATERNION"))
+    elif aa_found and rot == list(bm.REST_ROTATION):
+        rot = list(_mode_to_euler(aa, "AXIS_ANGLE"))
 
     snap.location = tuple(loc)
     snap.rotation = tuple(rot)
@@ -152,6 +252,7 @@ def write_bone_to_action(
     location: tuple[float, float, float] | None = None,
     rotation: tuple[float, float, float] | None = None,
     scale: tuple[float, float, float] | None = None,
+    rotation_mode: str | None = None,
 ) -> int:
     """Write a bone's transform into an Action at a specific frame.
 
@@ -176,25 +277,38 @@ def write_bone_to_action(
     if action is None:
         return 0
 
-    prefix = f'pose.bones["{bone_name}"].'
+    prefix = f'pose.bones["{_escape_bone_name(bone_name)}"].'
     keyed = 0
 
     channel_map = []
     if location is not None:
         channel_map.append(("location", location))
     if rotation is not None:
-        channel_map.append(("rotation_euler", rotation))
+        # Key the property the bone actually reads; a quaternion bone keyed on
+        # rotation_euler never moves and collects dead curves.  When the
+        # caller does not say which mode the bone uses, follow whatever
+        # rotation curves already exist for this bone on the action.
+        if rotation_mode is None:
+            rotation_mode = _infer_rotation_mode(action, prefix)
+        channel_map.append((_rotation_path_for_mode(rotation_mode),
+                            _euler_to_mode(rotation, rotation_mode)))
     if scale is not None:
         channel_map.append(("scale", scale))
 
+    touched = []
     for channel_name, values in channel_map:
         data_path = prefix + channel_name
-        for idx in range(3):
+        for idx in range(len(values)):
             fc = find_fcurve(action, data_path, idx)
             if fc is None:
                 fc = new_fcurve(action, data_path, idx)
             fc.keyframe_points.insert(frame, values[idx], options={'FAST'})
+            touched.append(fc)
             keyed += 1
+
+    # FAST skips handle recalculation; flush once per curve or handles stay stale.
+    for fc in touched:
+        fc.update()
 
     return keyed
 
@@ -333,7 +447,10 @@ def evaluate_layer_stack(
             if anim_data is not None:
                 action = anim_data.action
 
-        snap = read_bone_from_action(action, bone_name, frame)
+        snap = read_bone_from_action(
+            action, bone_name, frame,
+            rotation_mode=bone_rotation_mode(armature_obj, bone_name),
+        )
 
         if not snap.has_keys and not layer.is_base_layer:
             continue
@@ -406,11 +523,23 @@ def apply_eval_result(
         channels.append("location")
 
     if "rotation" in eval_result.channels_written:
-        for i in range(3):
-            if respect_locks and bone.lock_rotation[i]:
-                continue
-            bone.rotation_euler[i] = eval_result.final_rotation[i]
-        channels.append("rotation_euler")
+        mode = getattr(bone, "rotation_mode", "XYZ")
+        if mode in ("QUATERNION", "AXIS_ANGLE"):
+            # Written whole; any rotation lock skips it (a partial quaternion
+            # has no meaning).
+            locked = respect_locks and (
+                any(bone.lock_rotation) or getattr(bone, "lock_rotation_w", False)
+            )
+            if not locked:
+                path = _rotation_path_for_mode(mode)
+                setattr(bone, path, _euler_to_mode(eval_result.final_rotation, mode))
+                channels.append(path)
+        else:
+            for i in range(3):
+                if respect_locks and bone.lock_rotation[i]:
+                    continue
+                bone.rotation_euler[i] = eval_result.final_rotation[i]
+            channels.append("rotation_euler")
 
     if "scale" in eval_result.channels_written:
         for i in range(3):
@@ -546,7 +675,6 @@ def duplicate_layer(p11, index: int) -> int:
         new_ovr.scale_weight = ovr.scale_weight
 
     # Copy Action data if it exists.
-    import bpy
     src_action = get_layer_action(src)
     if src_action is not None:
         new_action = src_action.copy()
@@ -581,7 +709,6 @@ def merge_layer_down(p11, index: int, armature_obj=None) -> bool:
     bool
         True if merged, False if refused.
     """
-    import bpy
 
     if index <= 0 or index >= len(p11.layers):
         return False
@@ -621,8 +748,9 @@ def merge_layer_down(p11, index: int, armature_obj=None) -> bool:
     for frame in sorted(keyed_frames):
         for bone_name in bone_names:
             # Read both layers.
-            lower_snap = read_bone_from_action(lower_action, bone_name, frame)
-            upper_snap = read_bone_from_action(upper_action, bone_name, frame)
+            mode = bone_rotation_mode(armature_obj, bone_name)
+            lower_snap = read_bone_from_action(lower_action, bone_name, frame, rotation_mode=mode)
+            upper_snap = read_bone_from_action(upper_action, bone_name, frame, rotation_mode=mode)
 
             if not upper_snap.has_keys:
                 continue
@@ -649,6 +777,7 @@ def merge_layer_down(p11, index: int, armature_obj=None) -> bool:
                 location=blend_result.location,
                 rotation=blend_result.rotation,
                 scale=blend_result.scale,
+                rotation_mode=mode,
             )
 
     # Remove upper layer.

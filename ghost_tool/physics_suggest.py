@@ -21,6 +21,7 @@ from .ghost_data import GhostStore, Ghost
 from . import fcurve_utils
 from .utils import debug, warn, tag_viewport_redraw
 from .physics_archetypes import ARCHETYPES
+from .utils import report_failure
 
 
 # ---------------------------------------------------------------------------
@@ -268,6 +269,9 @@ def compute_ballistic_preview(
     last_frame = all_ghosts[-1].frame
     total_frames = last_frame - first_frame
     if total_frames <= 0:
+        return []
+
+    if frame_rate <= 0 or not math.isfinite(frame_rate):
         return []
 
     total_time_seconds = total_frames / frame_rate
@@ -649,7 +653,7 @@ class GHOST_OT_archetype_bake(bpy.types.Operator):
         archetype_name = settings.archetype_active
         archetype_fn = ARCHETYPES.get(archetype_name)
         if archetype_fn is None:
-            self.report({'ERROR'}, f"Unknown archetype: {archetype_name!r}")
+            report_failure(self, "Unknown archetype", "Undo (Ctrl+Z) and try again", archetype_name)
             return {'CANCELLED'}
 
         start = settings.archetype_start_frame
@@ -692,7 +696,7 @@ class GHOST_OT_archetype_bake(bpy.types.Operator):
                 stamped += 1
         except Exception as exc:
             fcurve_utils.restore_fcurve(fcurve, backup)
-            self.report({'ERROR'}, f"Archetype bake cancelled; original curve restored: {exc}")
+            report_failure(self, "Archetype bake cancelled and the curve restored", "Choose a range with at least two keyframes and try again", exc)
             return {'CANCELLED'}
 
         fcurve.update()

@@ -12,6 +12,7 @@ from bpy_extras.io_utils import ExportHelper, ImportHelper
 
 from .. import constants
 from ..core.logging import get_logger
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -63,11 +64,11 @@ class AA_OT_export_settings(bpy.types.Operator, ExportHelper):
     def execute(self, context: bpy.types.Context):
         prefs = _get_prefs(context)
         if prefs is None:
-            self.report({"ERROR"}, "Addon preferences not found")
+            self.report({"ERROR"}, "Add-on preferences unavailable. Re-enable Anim Assist in Preferences > Add-ons")
             return {"CANCELLED"}
 
         if not self.filepath:
-            self.report({"ERROR"}, "No export filepath provided")
+            self.report({"ERROR"}, "Choose a file to export to first")
             return {"CANCELLED"}
 
         data: dict[str, Any] = {}
@@ -86,7 +87,7 @@ class AA_OT_export_settings(bpy.types.Operator, ExportHelper):
                 encoding="utf-8",
             )
         except (OSError, ValueError, TypeError) as exc:
-            self.report({"ERROR"}, f"Export failed: {exc}")
+            report_failure(self, "Could not export settings", "Choose a writable location and try again", exc)
             _log.exception("Settings export failed")
             return {"CANCELLED"}
 
@@ -110,18 +111,18 @@ class AA_OT_import_settings(bpy.types.Operator, ImportHelper):
     def execute(self, context: bpy.types.Context):
         prefs = _get_prefs(context)
         if prefs is None:
-            self.report({"ERROR"}, "Addon preferences not found")
+            self.report({"ERROR"}, "Add-on preferences unavailable. Re-enable Anim Assist in Preferences > Add-ons")
             return {"CANCELLED"}
 
         if not self.filepath:
-            self.report({"ERROR"}, "No import filepath provided")
+            self.report({"ERROR"}, "Choose a settings file to import first")
             return {"CANCELLED"}
 
         try:
             raw = Path(self.filepath).read_text(encoding="utf-8")
             data = json.loads(raw)
         except (OSError, json.JSONDecodeError) as exc:
-            self.report({"ERROR"}, f"Import failed: {exc}")
+            report_failure(self, "Could not import settings", "Choose a settings file exported by Anim Assist", exc)
             _log.exception("Settings import failed")
             return {"CANCELLED"}
 

@@ -22,9 +22,9 @@ from ..core import p12_driver_engine as de
 from ..core import p12_lipsync_engine as engine
 from ..core import p12_properties as p12_props
 from ..core import p12_session as session
-from ..core import p12_rhubarb_adapter as rh
 from ..core.logging import get_logger
 from ..core.p11_properties import get_p11
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -120,11 +120,11 @@ class AA_OT_p12_bake_lipsync(Operator):
         p11 = get_p11(context)
         link = _resolve_link(p12, self.layer_name)
         if link is None:
-            self.report({"ERROR"}, "No lipsync layer link to bake")
+            self.report({"ERROR"}, "No lipsync layer link to bake. Add one in the Lipsync panel first")
             return {"CANCELLED"}
 
         if not au.is_supported_audio(link.audio_path):
-            self.report({"ERROR"}, "Bound audio is not a .wav file")
+            self.report({"ERROR"}, "The bound audio is not a .wav file. Bind a .wav file in the Lipsync panel")
             return {"CANCELLED"}
 
         # Refresh hash + run analysis through the cache.
@@ -251,7 +251,7 @@ class AA_OT_p12_clear_auto_keys(Operator):
         p11 = get_p11(context)
         link = _resolve_link(p12, self.layer_name)
         if link is None:
-            self.report({"ERROR"}, "No lipsync layer link selected")
+            self.report({"ERROR"}, "No lipsync layer link selected. Select one in the Lipsync panel list first")
             return {"CANCELLED"}
 
         total_deleted = 0
@@ -295,8 +295,7 @@ class AA_OT_p12_rebake(Operator):
             bpy.ops.animassist.p12_clear_auto_keys(layer_name=self.layer_name)
             bpy.ops.animassist.p12_bake_lipsync(layer_name=self.layer_name)
         except RuntimeError as exc:
-            self.report({"ERROR"}, "Rebake failed: " + str(exc))
-            return {"CANCELLED"}
+            return report_failure(self, "Rebake did not finish", "Check the bound .wav file and the layer link, then rebake", exc)
         return {"FINISHED"}
 
 
@@ -322,7 +321,7 @@ class AA_OT_p12_mark_manual(Operator):
         p11 = get_p11(context)
         link = _resolve_link(p12, self.layer_name)
         if link is None:
-            self.report({"ERROR"}, "No lipsync layer link selected")
+            self.report({"ERROR"}, "No lipsync layer link selected. Select one in the Lipsync panel list first")
             return {"CANCELLED"}
         marked = 0
 

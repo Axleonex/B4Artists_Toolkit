@@ -14,7 +14,6 @@ from ..core.p10_macro_engine import (
     execute_macro,
     validate_macro,
     build_macro_from_property,
-    MacroStep,
     macro_breakdown_offset,
     macro_proxy_workflow,
     macro_switch_compensate,
@@ -193,11 +192,11 @@ class AA_OT_p10_run_custom_macro(bpy.types.Operator):
 
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "P10 properties not found")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         if self.index >= len(p10.macros):
-            self.report({'ERROR'}, f"Macro index {self.index} out of range")
+            self.report({'ERROR'}, f"Select a macro in the list first")
             return {'CANCELLED'}
 
         macro_prop = p10.macros[self.index]
@@ -238,7 +237,7 @@ class AA_OT_p10_add_macro(bpy.types.Operator):
     def execute(self, context):
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "P10 properties not found")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         macro = p10.macros.add()
@@ -270,11 +269,11 @@ class AA_OT_p10_remove_macro(bpy.types.Operator):
     def execute(self, context):
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "P10 properties not found")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         if self.index >= len(p10.macros):
-            self.report({'ERROR'}, f"Macro index {self.index} out of range")
+            self.report({'ERROR'}, f"Select a macro in the list first")
             return {'CANCELLED'}
 
         macro_name = p10.macros[self.index].name
@@ -318,11 +317,11 @@ class AA_OT_p10_add_macro_step(bpy.types.Operator):
     def execute(self, context):
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "P10 properties not found")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         if self.macro_index >= len(p10.macros):
-            self.report({'ERROR'}, f"Macro index {self.macro_index} out of range")
+            self.report({'ERROR'}, f"Select a macro in the list first")
             return {'CANCELLED'}
 
         macro = p10.macros[self.macro_index]
@@ -362,16 +361,16 @@ class AA_OT_p10_remove_macro_step(bpy.types.Operator):
     def execute(self, context):
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "P10 properties not found")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         if self.macro_index >= len(p10.macros):
-            self.report({'ERROR'}, f"Macro index {self.macro_index} out of range")
+            self.report({'ERROR'}, f"Select a macro in the list first")
             return {'CANCELLED'}
 
         macro = p10.macros[self.macro_index]
         if self.step_index >= len(macro.steps):
-            self.report({'ERROR'}, f"Step index {self.step_index} out of range")
+            self.report({'ERROR'}, f"Select a macro step in the list first")
             return {'CANCELLED'}
 
         step_label = macro.steps[self.step_index].label
@@ -403,11 +402,11 @@ class AA_OT_p10_validate_macro(bpy.types.Operator):
     def execute(self, context):
         p10 = get_p10(context)
         if not p10:
-            self.report({'ERROR'}, "P10 properties not found")
+            self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from the Workspace tab")
             return {'CANCELLED'}
 
         if self.index >= len(p10.macros):
-            self.report({'ERROR'}, f"Macro index {self.index} out of range")
+            self.report({'ERROR'}, f"Select a macro in the list first")
             return {'CANCELLED'}
 
         macro_prop = p10.macros[self.index]

@@ -270,7 +270,7 @@ class GHOST_PT_strip(bpy.types.Panel):
         if not settings.is_active:
             return  # Everything hidden when tools are off
 
-        layout.label(text="Generate -> Drag (Shift+G) -> Refine", icon='INFO')
+        layout.label(text="Generate → Drag → Refine", icon='INFO')
         status = layout.row(align=True)
         status.label(text=f"{len(store)} markers", icon='GHOST_ENABLED')
         status.label(text=f"{len(store.get_pinned())} pinned", icon='PINNED')
@@ -321,7 +321,8 @@ class GHOST_PT_onion_skin(_GhostHelpPanelMixin, bpy.types.Panel):
 
         # Frame mode toggle (Frame Step / Keyframes Only)
         row = layout.row(align=True)
-        row.prop(settings, "mesh_ghost_frame_mode", expand=True)
+        row.label(text="Frames:")
+        row.prop(settings, "mesh_ghost_frame_mode", text="")
 
         # Keyframe interval selector (only in KEYFRAMES mode)
         # Controls the stepped interval between ghost keyframes
@@ -337,7 +338,7 @@ class GHOST_PT_onion_skin(_GhostHelpPanelMixin, bpy.types.Panel):
         row.prop(settings, "mesh_ghost_future_count", text="Future")
 
         # Step (only relevant in STEP mode) and opacity
-        row = layout.row(align=True)
+        row = layout.column(align=True)
         sub = row.row(align=True)
         sub.enabled = (settings.mesh_ghost_frame_mode == 'STEP')
         sub.prop(settings, "mesh_ghost_step", text="Interval")
@@ -351,9 +352,9 @@ class GHOST_PT_onion_skin(_GhostHelpPanelMixin, bpy.types.Panel):
                   icon='FF' if settings.show_mesh_future else 'BLANK1')
 
         # Mesh ghost colors
-        row = layout.row(align=True)
-        row.prop(settings, "mesh_ghost_past_color", text="Past Color")
-        row.prop(settings, "mesh_ghost_future_color", text="Future Color")
+        col = layout.column(align=True)
+        col.prop(settings, "mesh_ghost_past_color", text="Past Color")
+        col.prop(settings, "mesh_ghost_future_color", text="Future Color")
 
         # Outline controls
         row = layout.row(align=True)
@@ -396,12 +397,12 @@ class GHOST_PT_motion_trails(_GhostHelpPanelMixin, bpy.types.Panel):
         layout = self.layout
         settings = context.scene.ghost_tool
 
-        layout.label(text="Dots on bones showing motion paths & spacing", icon='INFO')
+        layout.label(text="Motion paths on bones", icon='INFO')
 
         # Generate / Clear point ghosts
         row = layout.row(align=True)
         row.scale_y = 1.2
-        row.operator("ghost_tool.generate_ghosts", text="Generate Markers", icon='ADD')
+        row.operator("ghost_tool.generate_ghosts", text="Generate", icon='ADD')
         row.operator("ghost_tool.clear_ghosts", text="Clear", icon='TRASH')
 
         # Live / Snapshot mode toggle for bone markers
@@ -416,7 +417,7 @@ class GHOST_PT_motion_trails(_GhostHelpPanelMixin, bpy.types.Panel):
         # Show freeze + throttle when any live mode is active
         if settings.live_point_ghosts or settings.live_mesh_ghosts:
             row2 = layout.row(align=True)
-            row2.prop(settings, "live_freeze", text="Freeze Updates", toggle=True,
+            row2.prop(settings, "live_freeze", text="Freeze", toggle=True,
                       icon='SNAP_ON' if settings.live_freeze else 'SNAP_OFF')
             row2.prop(settings, "live_throttle_ms", text="Delay")
 
@@ -446,7 +447,8 @@ class GHOST_PT_marker_placement(_GhostHelpPanelMixin, bpy.types.Panel):
 
         # Mode selector: SUBDIVISION, FRAME_STEP, KEYFRAMES_ONLY
         row = layout.row(align=True)
-        row.prop(settings, "ghost_mode", expand=True)
+        row.label(text="Placement:")
+        row.prop(settings, "ghost_mode", text="")
 
         # Mode-specific controls
         if settings.ghost_mode == "SUBDIVISION":
@@ -603,7 +605,7 @@ class GHOST_PT_marker_tools(_GhostHelpPanelMixin, bpy.types.Panel):
 
         # -- Editing Mode --
         row = layout.row(align=True)
-        row.label(text="On Drag Confirm:")
+        row.label(text="On confirm:")
         row.prop(settings, "editing_mode", text="")
 
         # -- Smooth neighbors toggle (only relevant for INSERT_KEY) --
@@ -623,11 +625,12 @@ class GHOST_PT_marker_tools(_GhostHelpPanelMixin, bpy.types.Panel):
         row = layout.row(align=True)
         row.scale_y = 1.2
         row.operator("ghost_tool.drag_ghost", text="Drag Marker", icon='ORIENTATION_CURSOR')
-        sub = row.row(align=True)
+        sub = layout.row(align=True)
         sub.enabled = (settings.editing_mode == 'RESHAPE')
+        sub.label(text="Curve:")
         sub.prop(settings, "curve_mode", text="")
         if settings.editing_mode != 'RESHAPE':
-            sub.label(text="(RESHAPE only)")
+            sub.label(text="(reshape only)")
 
         # -- Select Marker --
         row = layout.row(align=True)
@@ -730,7 +733,7 @@ class GHOST_PT_marker_tools(_GhostHelpPanelMixin, bpy.types.Panel):
         # pinned reference frame.  Pin stores the pose; the overlay colors
         # bones by how far they have moved from it.
         layout.separator()
-        layout.label(text="Visual Diff", icon='MOD_LENGTH')
+        layout.label(text="Visual Diff", icon='ARROW_LEFTRIGHT')
 
         diff_row = layout.row(align=True)
         diff_row.prop(

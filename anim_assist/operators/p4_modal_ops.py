@@ -25,7 +25,7 @@ from __future__ import annotations
 from typing import Optional
 
 import bpy
-from bpy.props import FloatProperty, BoolProperty
+from bpy.props import FloatProperty
 
 try:
     from mathutils import Vector
@@ -33,11 +33,8 @@ except Exception:  # pragma: no cover
     Vector = None  # type: ignore[assignment]
 
 from ..core import p4_offset_math as om
-from ..core import p4_falloff as fo
-from ..core import p4_mirror as mr
-from ..core import p4_presets as pr
-from ..core import p4_space as sp
 from ..core import p4_targets as tg
+from ..core.logging import get_logger
 from ..core.p4_properties import get_p4
 
 from .p4_offset_ops import (
@@ -73,6 +70,9 @@ def _snapshot_fcurves(action, fc_list):
     return snap
 
 
+_log = get_logger(__name__)
+
+
 def _restore_snapshot(fc_list, snap: dict):
     """Remove all keys and recreate from the snapshot."""
     for fc in fc_list:
@@ -87,7 +87,15 @@ def _restore_snapshot(fc_list, snap: dict):
             try:
                 kps.remove(kps[i])
             except Exception:
-                pass
+                _log.debug("keyframe remove failed on %s[%d]", fc.data_path, fc.array_index, exc_info=True)
+        # A failed remove leaves stale keys under the rebuild; ``insert`` at an
+        # existing frame updates rather than duplicates, but keys at frames the
+        # snapshot never held would survive.  Make that visible instead of silent.
+        if len(kps):
+            _log.warning(
+                "cancel restore left %d stale key(s) on %s[%d]; curve may not "
+                "match its pre-drag state", len(kps), fc.data_path, fc.array_index,
+            )
         # Rebuild.
         for row in rows:
             frame, value, hlx, hly, hrx, hry, hlt, hrt, interp = row
@@ -146,9 +154,7 @@ class AA_OT_p4_modal_offset(bpy.types.Operator):
     bl_idname = "animassist.p4_modal_offset"
     bl_label = "Modal Drag Offset"
     bl_description = (
-        "Drag to offset selected targets interactively. Mouse X maps to "
-        "horizontal delta, mouse Y to vertical. Shift for fine, Ctrl for "
-        "coarse. LMB or Enter commits, RMB or Esc cancels."
+        "Drag to offset the selected targets. Shift: fine, Ctrl: coarse. Click or Enter commits, Esc cancels"
     )
     bl_options = {"REGISTER", "UNDO"}
 

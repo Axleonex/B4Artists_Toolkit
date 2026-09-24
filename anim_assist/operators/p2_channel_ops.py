@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import bpy
-from bpy.props import BoolProperty, EnumProperty, StringProperty
+from bpy.props import EnumProperty, StringProperty
 from bpy.types import Operator
 
 from ..core import channel_iso as ch
 from ..core.context_utils import in_anim_editor
 from ..core.logging import get_logger
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -109,7 +109,7 @@ class ANIMASSIST_OT_isolate_by_regex(_AnimEditorOp):
         try:
             pred = ch.match_data_path_regex(self.pattern)
         except Exception as exc:  # noqa: BLE001
-            self.report({"ERROR"}, f"Bad regex: {exc}")
+            report_failure(self, "The pattern is not a valid regular expression", "Fix the pattern and try again", exc, detail=str(exc))
             return {"CANCELLED"}
         shown = ch.isolate_where(context, pred)
         self.report({"INFO"}, f"Isolated {shown} channels")

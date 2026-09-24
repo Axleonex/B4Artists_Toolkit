@@ -15,7 +15,7 @@ entirely.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, replace
 
 try:
     from mathutils import Vector

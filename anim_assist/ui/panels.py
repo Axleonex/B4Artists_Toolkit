@@ -16,7 +16,7 @@ def _draw_key_manager(layout: bpy.types.UILayout) -> None:
     box = layout.box()
     box.label(text="Batch Interpolation", icon="IPO_BEZIER")
     row = box.row(align=True)
-    for itype, label in (("CONSTANT", "Const"), ("LINEAR", "Lin"), ("BEZIER", "Bez")):
+    for itype, label in (("CONSTANT", "Constant"), ("LINEAR", "Linear"), ("BEZIER", "Bezier")):
         op = row.operator("animassist.batch_interpolation", text=label)
         op.interp_type = itype
 
@@ -31,11 +31,11 @@ def _draw_key_manager(layout: bpy.types.UILayout) -> None:
     box.label(text="Key Types", icon="KEYTYPE_KEYFRAME_VEC")
     col = box.column(align=True)
     for kt_id, kt_name in (
-        ("KEYFRAME", "Key"),
-        ("BREAKDOWN", "BD"),
-        ("MOVING_HOLD", "MH"),
-        ("EXTREME", "Ext"),
-        ("JITTER", "Jit"),
+        ("KEYFRAME", "Keyframe"),
+        ("BREAKDOWN", "Breakdown"),
+        ("MOVING_HOLD", "Moving Hold"),
+        ("EXTREME", "Extreme"),
+        ("JITTER", "Jitter"),
     ):
         row = col.row(align=True)
         row.label(text=kt_name)
@@ -78,10 +78,9 @@ class ANIMASSIST_PT_curve_tools(_GraphEditorMixin, Panel):
         layout = self.layout
         settings = context.scene.anim_assist
 
-        row = layout.row(align=True)
-        icon = "TRIA_RIGHT" if settings.panel_compact else "TRIA_DOWN"
-        row.prop(settings, "panel_compact", text="", icon=icon, emboss=False)
-        row.label(text="Curve Tools")
+        # A plain checkbox: the old triangle + "Curve Tools" label repeated the
+        # panel title and looked like a collapse control.
+        layout.prop(settings, "panel_compact", text="Compact buttons")
 
         if settings.panel_compact:
             col = layout.column(align=True)
@@ -239,9 +238,9 @@ class ANIMASSIST_PT_anim_offset(_GraphEditorMixin, Panel):
         row = box.row(align=True)
         row.prop(m, "start_frame", text="Start")
         row.prop(m, "end_frame", text="End")
-        row = box.row(align=True)
-        row.prop(m, "blend_left", text="Blend In")
-        row.prop(m, "blend_right", text="Blend Out")
+        col = box.column(align=True)
+        col.prop(m, "blend_left", text="Blend In")
+        col.prop(m, "blend_right", text="Blend Out")
         box.operator("animassist.anim_offset_range_from_scene", text="Range from Scene", icon="SCENE_DATA")
 
 

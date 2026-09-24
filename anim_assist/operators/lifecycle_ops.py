@@ -18,12 +18,12 @@ Provides:
 
 from __future__ import annotations
 
-import bpy
 from bpy.props import BoolProperty
 from bpy.types import Operator
 
 from ..core import lifecycle
 from ..core.logging import get_logger
+from ..core.helpers import confirm_dialog, report_failure
 
 _log = get_logger(__name__)
 
@@ -111,8 +111,7 @@ class AA_OT_deep_uninstall(Operator):
             )
         except Exception as exc:
             _log.exception("deep_uninstall failed")
-            self.report({"ERROR"}, "Deep uninstall failed: " + str(exc))
-            return {"CANCELLED"}
+            return report_failure(self, "Deep uninstall did not finish", "Save your file, restart Bforartists, and run it again", exc)
 
         msg = (
             "Purged: " + str(counts["action_idprops"]) + " action flags, "
@@ -132,8 +131,12 @@ class AA_OT_purge_zombie_classes(Operator):
     """
 
     bl_idname = "animassist.purge_zombie_classes"
-    bl_label = "Anim Assist: Purge Zombie Classes"
+    bl_label = "Anim Assist: Repair Registration"
+    bl_description = "Force-unregister leftover Anim Assist classes from a previous load. Use when enabling reports 'class already registered'"
     bl_options = {"REGISTER"}
+
+    def invoke(self, context, event):  # type: ignore[no-untyped-def]
+        return confirm_dialog(self, context, event, 'Force-unregister leftover Anim Assist classes? Disable and re-enable the add-on afterwards.')
 
     def execute(self, context):  # noqa: ARG002
         removed = lifecycle.purge_zombie_classes()
@@ -148,7 +151,7 @@ class AA_OT_report_saved_versions(Operator):
     """Report any open scenes saved with a newer Anim Assist than installed."""
 
     bl_idname = "animassist.report_saved_versions"
-    bl_label = "Anim Assist: Check Saved Schema Versions"
+    bl_label = "Anim Assist: Check Saved Settings Version"
     bl_options = {"REGISTER"}
 
     def execute(self, context):  # noqa: ARG002

@@ -160,8 +160,8 @@ class ANIMASSIST_OT_p11_blend_layers(bpy.types.Operator):
         tgt_action = engine.get_layer_action(p11.layers[self.target_index])
 
         for bone in obj.pose.bones:
-            src_snap = engine.read_bone_from_action(src_action, bone.name, frame)
-            tgt_snap = engine.read_bone_from_action(tgt_action, bone.name, frame)
+            src_snap = engine.read_bone_from_action(src_action, bone.name, frame, rotation_mode=bone.rotation_mode)
+            tgt_snap = engine.read_bone_from_action(tgt_action, bone.name, frame, rotation_mode=bone.rotation_mode)
             self._bone_snapshots[bone.name] = (src_snap, tgt_snap)
 
         context.window_manager.modal_handler_add(self)
@@ -264,8 +264,8 @@ class ANIMASSIST_OT_p11_set_blend_factor(bpy.types.Operator):
 
         updated = 0
         for bone in obj.pose.bones:
-            src_snap = engine.read_bone_from_action(src_action, bone.name, frame)
-            tgt_snap = engine.read_bone_from_action(tgt_action, bone.name, frame)
+            src_snap = engine.read_bone_from_action(src_action, bone.name, frame, rotation_mode=bone.rotation_mode)
+            tgt_snap = engine.read_bone_from_action(tgt_action, bone.name, frame, rotation_mode=bone.rotation_mode)
 
             result = bm.interpolate_layers(
                 source_loc=src_snap.location,
@@ -349,7 +349,7 @@ class ANIMASSIST_OT_p11_load_preset(bpy.types.Operator):
             self.report({'INFO'}, f"Loaded preset '{preset.name}'")
             return {'FINISHED'}
         else:
-            self.report({'ERROR'}, "Failed to load preset")
+            self.report({'ERROR'}, "Could not load the preset. Pick a preset from the list or save a new one")
             return {'CANCELLED'}
 
 

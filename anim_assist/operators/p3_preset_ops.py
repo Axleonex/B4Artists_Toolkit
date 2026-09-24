@@ -6,13 +6,11 @@ from __future__ import annotations
 import bpy
 from bpy.props import EnumProperty, StringProperty
 
-from ..core import breakdown_core as bc
 from ..core import breakdown_presets as bp
 from ..core.breakdown_masks import BreakdownMask
 from ..core.p3_properties import get_p3
 from .p3_breakdown_ops import (
     _options_from_scene,
-    _resolve_target,
     _poll_animated,
     _run,
 )

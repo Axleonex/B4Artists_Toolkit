@@ -61,7 +61,9 @@ class ANIMASSIST_OT_anim_offset(Operator):
     bl_idname = "animassist.anim_offset"
     bl_label = "Anim Offset"
     bl_description = "Toggle Anim Offset mode and propagate current-frame edits across keyed animation"
-    bl_options = {"REGISTER"}
+    # UNDO: the modal writes keyframe values and inserts keys directly; without
+    # it, Blender pushes no undo step on FINISHED and the session can't be reverted.
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:

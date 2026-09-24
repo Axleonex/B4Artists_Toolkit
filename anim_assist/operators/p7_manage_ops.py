@@ -13,6 +13,7 @@ from ..core.logging import get_logger
 from ..core import p7_session as p7s
 from ..core.p7_properties import get_p7
 from ..core.p7_proxy_math import PROXY_CONFIGS, proxy_object_name
+from ..core.helpers import report_failure
 
 _log = get_logger(__name__)
 
@@ -150,18 +151,18 @@ class AA_OT_p7_rename_proxy(bpy.types.Operator):
         p7 = get_p7(context)
 
         if p7 is None:
-            self.report({"ERROR"}, "P7 properties not available")
+            self.report({"ERROR"}, "Proxy settings are not initialised. Run First Run Setup from the Workspace tab")
             return {"CANCELLED"}
 
         # Get the session ID from the object tag
         session_id = obj.get(p7s.TAG_SESSION_ID)
         if not session_id:
-            self.report({"ERROR"}, "Object is not tagged with a session ID")
+            self.report({"ERROR"}, "This object is not part of a proxy session. Select a proxy created by Anim Assist")
             return {"CANCELLED"}
 
         session = p7s.get_session(session_id)
         if session is None:
-            self.report({"ERROR"}, "Session not found")
+            self.report({"ERROR"}, "Proxy session not found. Run Recover Proxy Session, or create a new proxy")
             return {"CANCELLED"}
 
         # Get the owner object name
@@ -270,7 +271,7 @@ class AA_OT_p7_reconnect_session(bpy.types.Operator):
                     p7s.restore_session(existing_session)
                 except Exception as e:
                     _log.error("Failed to reconstruct session: %s", e)
-                    self.report({"ERROR"}, f"Failed to reconstruct session: {e}")
+                    report_failure(self, "Could not rebuild the proxy session", "Run Recover Session, or Cleanup Session to start fresh", e)
                     return {"CANCELLED"}
             else:
                 # Create a new session with the tagged objects
@@ -442,12 +443,12 @@ class AA_OT_p7_lock_target(bpy.types.Operator):
         # Get the owner object (the target being proxied)
         owner_name = obj.get(p7s.TAG_OWNER_OBJ)
         if not owner_name:
-            self.report({"ERROR"}, "Proxy does not have an owner object")
+            self.report({"ERROR"}, "This proxy is not linked to an object. Recreate it from its target")
             return {"CANCELLED"}
 
         target = bpy.data.objects.get(owner_name)
         if target is None:
-            self.report({"ERROR"}, f"Target object '{owner_name}' not found")
+            self.report({"ERROR"}, f"Target object '{owner_name}' was renamed or deleted. Recreate the proxy from its target")
             return {"CANCELLED"}
 
         # Lock all transform channels on the target
@@ -512,12 +513,12 @@ class AA_OT_p7_apply_offset(bpy.types.Operator):
         # Get the target object
         owner_name = proxy.get(p7s.TAG_OWNER_OBJ)
         if not owner_name:
-            self.report({"ERROR"}, "Proxy does not have an owner object")
+            self.report({"ERROR"}, "This proxy is not linked to an object. Recreate it from its target")
             return {"CANCELLED"}
 
         target = bpy.data.objects.get(owner_name)
         if target is None:
-            self.report({"ERROR"}, f"Target object '{owner_name}' not found")
+            self.report({"ERROR"}, f"Target object '{owner_name}' was renamed or deleted. Recreate the proxy from its target")
             return {"CANCELLED"}
 
         # Compute additive delta between proxy and target world transforms,
@@ -610,12 +611,12 @@ class AA_OT_p7_recenter_proxy(bpy.types.Operator):
         # Get the target object
         owner_name = proxy.get(p7s.TAG_OWNER_OBJ)
         if not owner_name:
-            self.report({"ERROR"}, "Proxy does not have an owner object")
+            self.report({"ERROR"}, "This proxy is not linked to an object. Recreate it from its target")
             return {"CANCELLED"}
 
         target = bpy.data.objects.get(owner_name)
         if target is None:
-            self.report({"ERROR"}, f"Target object '{owner_name}' not found")
+            self.report({"ERROR"}, f"Target object '{owner_name}' was renamed or deleted. Recreate the proxy from its target")
             return {"CANCELLED"}
 
         # Snap proxy to target's world position
@@ -646,13 +647,13 @@ class AA_OT_p7_temp_pivot(bpy.types.Operator):
         p7 = get_p7(context)
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot initialise P7 session")
+            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
             return {"CANCELLED"}
 
         # Create a POLE proxy at the 3D cursor position
         cfg = PROXY_CONFIGS.get("POLE")
         if cfg is None:
-            self.report({"ERROR"}, "POLE configuration not found")
+            self.report({"ERROR"}, "No pole setup found. Create a pole proxy first")
             return {"CANCELLED"}
 
         # Use cursor location

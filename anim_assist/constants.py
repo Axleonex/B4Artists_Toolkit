@@ -4,8 +4,8 @@ from __future__ import annotations
 
 ADDON_PACKAGE: str = "anim_assist"
 
-ADDON_VERSION: tuple[int, int, int] = (12, 0, 2)
-ADDON_VERSION_STRING: str = "12.0.2"
+ADDON_VERSION: tuple[int, int, int] = (12, 0, 4)
+ADDON_VERSION_STRING: str = "12.0.4"
 
 SCENE_PROP_ATTR: str = "anim_assist"
 WM_PROP_ATTR: str = "anim_assist_wm"

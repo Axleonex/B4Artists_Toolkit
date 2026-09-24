@@ -486,6 +486,14 @@ class GHOST_OT_delete_snapshot(bpy.types.Operator):
 
     bl_idname = "ghost_tool.delete_snapshot"
     bl_label = "Delete Snapshot"
+    bl_description = "Delete this snapshot permanently. This cannot be undone"
+
+    def invoke(self, context, event):  # type: ignore[no-untyped-def]
+        wm = context.window_manager
+        try:
+            return wm.invoke_confirm(self, event, message="Delete this snapshot? This cannot be undone.", confirm_text="Delete", icon="WARNING")
+        except TypeError:  # pragma: no cover - Blender < 4.1
+            return wm.invoke_confirm(self, event)
 
     snapshot_uid: bpy.props.StringProperty(
         name="Snapshot UID",

@@ -156,7 +156,7 @@ class ANIMASSIST_PT_p4_offset(PanelAnatomyMixin, DopeSheetSidebarPanel):
         # uh.explained_prop(layout, context, p4, "pivot_mode",
         #                   help_id="prop.p4_pivot_individual")
 
-        uh.explained_prop(layout, context, p4, "preserve_contact_axis",
+        uh.explained_prop(layout, context, p4, "preserve_contact_axis", text="Contact",
                           help_id="prop.p4_preserve_contact")
         uh.explained_prop(layout, context, p4, "auto_key_missing",
                           help_id="prop.p4_auto_key_missing")
@@ -285,7 +285,7 @@ class ANIMASSIST_PT_p4_pose_offset(PanelAnatomyMixin, View3DSidebarPanel):
 
         uh.explained_prop(layout, context, p4, "space",
                           help_id="prop.p4_space_local")
-        uh.explained_prop(layout, context, p4, "preserve_contact_axis",
+        uh.explained_prop(layout, context, p4, "preserve_contact_axis", text="Contact",
                           help_id="prop.p4_preserve_contact")
         uh.explained_prop(layout, context, p4, "mirror_sign_enabled",
                           help_id="prop.p4_mirror_sign")

@@ -97,8 +97,24 @@ def _ensure_channelbag(
 
     if slot is None:
         slots = getattr(action, "slots", None)
-        if slots and len(slots) > 0:
+        if slots is not None and len(slots) > 0:
             slot = slots[0]
+        elif slots is not None:
+            # Blender 4.4+: a freshly created Action has NO slots, so there is
+            # nowhere to put fcurves and new_fcurve() would return None.
+            # Create one, typed for the owner when known, and bind it.
+            try:
+                owner = getattr(anim_data, "id_data", None)
+                id_type = getattr(owner, "id_type", None) or "OBJECT"
+                name = getattr(owner, "name", None) or "Slot"
+                slot = slots.new(id_type=id_type, name=name)
+                if anim_data is not None and getattr(anim_data, "action", None) == action:
+                    try:
+                        anim_data.action_slot = slot
+                    except (AttributeError, TypeError, RuntimeError):
+                        pass
+            except (AttributeError, TypeError, RuntimeError):
+                slot = None
 
     if slot is None:
         return None

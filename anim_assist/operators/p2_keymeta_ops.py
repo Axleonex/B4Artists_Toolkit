@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import bpy
 from bpy.props import BoolProperty, StringProperty
 from bpy.types import Operator
 

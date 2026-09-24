@@ -4,6 +4,8 @@ from ..core.p9_properties import get_p9
 from ..core import p9_pair_detect as det
 from ..core import p9_pair_cache as cache
 from ..core.logging import get_logger
+from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
+from ..core.helpers import confirm_dialog
 
 _log = get_logger(__name__)
 
@@ -81,6 +83,7 @@ class AA_OT_p9_remove_pair_override(bpy.types.Operator):
     bl_idname = "animassist.p9_remove_pair_override"
     bl_label = "Remove Pair Override"
     bl_description = "Remove the selected manual pair override."
+    bl_options = {"REGISTER", "UNDO"}
 
     index: bpy.props.IntProperty(
         name="Index",
@@ -127,6 +130,7 @@ class AA_OT_p9_remove_naming_exception(bpy.types.Operator):
     bl_idname = "animassist.p9_remove_naming_exception"
     bl_label = "Remove Naming Exception"
     bl_description = "Remove the selected naming exception."
+    bl_options = {"REGISTER", "UNDO"}
 
     index: bpy.props.IntProperty(
         name="Index",
@@ -155,6 +159,7 @@ class AA_OT_p9_save_pair_preset(bpy.types.Operator):
     bl_idname = "animassist.p9_save_pair_preset"
     bl_label = "Save Pair Preset"
     bl_description = "Save the current pair overrides and naming exceptions as a JSON preset on the scene."
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -196,6 +201,10 @@ class AA_OT_p9_load_pair_preset(bpy.types.Operator):
     bl_idname = "animassist.p9_load_pair_preset"
     bl_label = "Load Pair Preset"
     bl_description = "Load pair overrides and naming exceptions from the saved JSON preset."
+    bl_options = {"REGISTER", "UNDO"}
+
+    def invoke(self, context, event):  # type: ignore[no-untyped-def]
+        return confirm_dialog(self, context, event, 'Replace the current pair overrides and naming exceptions with the saved preset?')
 
     @classmethod
     def poll(cls, context):
@@ -208,7 +217,7 @@ class AA_OT_p9_load_pair_preset(bpy.types.Operator):
         try:
             preset_data = json.loads(preset_json)
         except json.JSONDecodeError:
-            self.report({'ERROR'}, "Invalid preset JSON")
+            self.report({'ERROR'}, "The saved pair preset is damaged. Save the pair preset again")
             return {'CANCELLED'}
 
         # Clear existing collections
@@ -340,7 +349,7 @@ class AA_OT_p9_mirror_selection_sets(bpy.types.Operator):
             opposite_name = det.find_opposite(bone.name, overrides=overrides, exceptions=exceptions)
             if opposite_name and opposite_name in armature.data.bones:
                 opposite_bone = armature.pose.bones[opposite_name]
-                opposite_bone.bone.select = True
+                set_pose_bone_selected(opposite_bone, True)
                 mirrored_count += 1
 
         self.report({'INFO'}, f"Selected {mirrored_count} mirrored bones")
@@ -391,7 +400,7 @@ class AA_OT_p9_nav_next_unpaired(bpy.types.Operator):
         # Select and make active
         bpy.ops.pose.select_all(action='DESELECT')
         target_bone = armature.pose.bones[next_unpaired]
-        target_bone.bone.select = True
+        set_pose_bone_selected(target_bone, True)
         armature.data.bones.active = target_bone.bone
 
         self.report({'INFO'}, f"Selected unpaired bone: {next_unpaired}")

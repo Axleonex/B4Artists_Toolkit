@@ -99,9 +99,7 @@ class AA_OT_pose_snapshot_reference(bpy.types.Operator):
     bl_idname = "animassist.pose_snapshot_reference"
     bl_label = "Set Reference Pose"
     bl_description = (
-        "Capture the evaluated fcurve values of the active object at the "
-        "current frame into the 'reference pose' compare slot used by "
-        "Blend Toward Reference"
+        "Capture the active object's current pose as the reference for Blend Toward Reference"
     )
     bl_options = {"REGISTER", "INTERNAL"}
 

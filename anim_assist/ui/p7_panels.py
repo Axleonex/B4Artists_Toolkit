@@ -102,20 +102,21 @@ class ANIMASSIST_PT_p7_proxy_bake(PanelAnatomyMixin, View3DSidebarPanel):
             icon="PIVOT_MEDIAN",
             help_id="op.animassist.p7_create_locator_average",
         )
+        row = layout.row(align=True)
         uh.explained_op(
             row, context,
             "animassist.p7_create_locator_cursor",
-            text="@ Cursor",
+            text="At Cursor",
             icon="PIVOT_CURSOR",
             help_id="op.animassist.p7_create_locator_cursor",
         )
 
-        row2 = layout.row(align=True)
-        row2.operator("animassist.p7_parent_locator", text="Parent", icon="LINKED")
-        row2.operator("animassist.p7_constrain_target_to_locator",
-                       text="Con→Loc", icon="CONSTRAINT")
-        row2.operator("animassist.p7_constrain_locator_to_target",
-                       text="Loc→Tgt", icon="CONSTRAINT_BONE")
+        col2 = layout.column(align=True)
+        col2.operator("animassist.p7_parent_locator", text="Parent Locator", icon="LINKED")
+        col2.operator("animassist.p7_constrain_target_to_locator",
+                      text="Target Follows Locator", icon="CONSTRAINT")
+        col2.operator("animassist.p7_constrain_locator_to_target",
+                      text="Locator Follows Target", icon="CONSTRAINT_BONE")
 
         row3 = layout.row(align=True)
         row3.operator("animassist.p7_match_target_to_locator",
@@ -141,7 +142,7 @@ class ANIMASSIST_PT_p7_proxy_bake(PanelAnatomyMixin, View3DSidebarPanel):
         row5.prop(p7, "proxy_color", text="")
 
         row6 = layout.row(align=True)
-        row6.prop(p7, "auto_constrain")
+        row6.prop(p7, "auto_constrain", text="Auto")
         row6.prop(p7, "proxy_mode", text="")
 
         uh.explained_op(
@@ -152,7 +153,7 @@ class ANIMASSIST_PT_p7_proxy_bake(PanelAnatomyMixin, View3DSidebarPanel):
             help_id=f"op.animassist.p7_create_proxy.{p7.proxy_type}",
         )
 
-        row7 = layout.row(align=True)
+        row7 = layout.column(align=True)
         uh.explained_op(
             row7, context,
             "animassist.p7_quick_proxy",
@@ -191,12 +192,12 @@ class ANIMASSIST_PT_p7_proxy_bake(PanelAnatomyMixin, View3DSidebarPanel):
 
         row9 = layout.row(align=True)
         row9.operator("animassist.p7_bake_preview", text="Preview", icon="PLAY")
-        row9.operator("animassist.p7_bake_selected_channels",
-                       text="Sel. Channels", icon="ANIM")
         row9.operator("animassist.p7_bake_preserve_timing",
                        text="Preserve", icon="TIME")
+        layout.operator("animassist.p7_bake_selected_channels",
+                        text="Selected Channels", icon="ANIM")
 
-        row10 = layout.row(align=True)
+        row10 = layout.column(align=True)
         row10.operator("animassist.p7_reduce_keys", text="Reduce Keys",
                         icon="IPO_EASE_IN_OUT")
         row10.operator("animassist.p7_bake_step", text="Bake Step",
@@ -333,7 +334,7 @@ class ANIMASSIST_PT_p7_proxy_bake(PanelAnatomyMixin, View3DSidebarPanel):
 
         body = uh.danger_box(layout, context, label="Cleanup")
 
-        row = body.row(align=True)
+        row = body.column(align=True)
         uh.explained_op(
             row, context,
             "animassist.p7_cleanup_session",
@@ -349,7 +350,7 @@ class ANIMASSIST_PT_p7_proxy_bake(PanelAnatomyMixin, View3DSidebarPanel):
 
         body.separator(factor=0.5)
 
-        row3 = body.row(align=True)
+        row3 = body.column(align=True)
         uh.explained_op(
             row3, context,
             "animassist.p7_one_click_proxy_bake",
@@ -366,14 +367,14 @@ class ANIMASSIST_PT_p7_proxy_bake(PanelAnatomyMixin, View3DSidebarPanel):
         )
 
         body.separator(factor=0.5)
-        row4 = body.row(align=True)
+        row4 = body.column(align=True)
         row4.operator("animassist.p7_auto_cleanup", text="Auto Cleanup",
                        icon="FILE_REFRESH")
         row4.operator("animassist.p7_cleanup_all", text="Purge All", icon="CANCEL")
 
         # Safety-hatch operators for session recovery.
         body.separator(factor=0.5)
-        row5 = body.row(align=True)
+        row5 = body.column(align=True)
         row5.operator("animassist.p7_purge_artifacts", text="Purge Artifacts",
                        icon="ERROR")
         row5.operator("animassist.p7_recover_session", text="Recover",
@@ -390,7 +391,7 @@ class ANIMASSIST_PT_p7_bake_ds(DopeSheetSidebarPanel):
     bl_category = "Rig"
     bl_order = 20
     bl_idname = "ANIMASSIST_PT_p7_bake_ds"
-    bl_label = "P7 Bake"
+    bl_label = "Bake"
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context: bpy.types.Context) -> None:

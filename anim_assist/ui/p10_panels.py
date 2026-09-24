@@ -133,12 +133,12 @@ class ANIMASSIST_PT_p10_shelf(PanelAnatomyMixin, DopeSheetSidebarPanel):
         uh.section_header(layout, "Shelf Filter", icon="FILTER")
 
         uh.explained_prop(
-            layout, context, p10, "shelf_filter_phase",
+            layout, context, p10, "shelf_filter_phase", text="Tool Group",
             help_id="p10_shelf_filter_phase",
         )
 
         uh.explained_prop(
-            layout, context, p10, "shelf_search_query",
+            layout, context, p10, "shelf_search_query", text="Search",
             help_id="p10_shelf_search_query",
         )
 
