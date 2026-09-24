@@ -45,7 +45,7 @@ from .ghost_data import (
     generate_ghosts_frame_step,
     generate_ghosts_at_keyframes,
     build_frame_list_from_settings,
-    LOCATION_CHANNELS,
+    MOTION_CHANNELS,
 )
 from .ghost_cache import GhostCache
 from .session_state import SessionState
@@ -499,7 +499,8 @@ class GhostPipeline:
             frame_range = (context.scene.frame_start, context.scene.frame_end)
 
         mode = settings.ghost_mode
-        channels = LOCATION_CHANNELS
+        # Every animated location and rotation channel; rotation markers follow the bone tail.
+        channels = MOTION_CHANNELS
 
         # Evaluate and store
         ghosts = self._evaluate_ghosts(
@@ -527,7 +528,8 @@ class GhostPipeline:
             from .mesh_ghosts import (
                 update_mesh_ghosts_incremental,
                 generate_mesh_ghosts,
-                _resolve_mesh_object,
+                resolve_mesh_objects,
+                ghost_source_objects,
                 _compute_desired_mesh_frames_from_settings,
             )
 
@@ -536,12 +538,8 @@ class GhostPipeline:
 
             if not success:
                 # Need full rebuild — frame window shifted or no existing ghosts
-                obj = context.active_object
-                if obj is None:
-                    return
-
-                mesh_obj = _resolve_mesh_object(obj)
-                if mesh_obj is None:
+                obj = ghost_source_objects(context)
+                if not resolve_mesh_objects(obj):
                     return
 
                 current_frame = context.scene.frame_current
@@ -850,7 +848,8 @@ def _forced_mesh_regen_callback() -> Optional[float]:
         from .mesh_ghosts import (
             clear_mesh_ghosts,
             generate_mesh_ghosts,
-            _resolve_mesh_object,
+            resolve_mesh_objects,
+            ghost_source_objects,
             _compute_desired_mesh_frames_from_settings,
         )
 
@@ -860,14 +859,13 @@ def _forced_mesh_regen_callback() -> Optional[float]:
         frame_mode = settings.mesh_ghost_frame_mode
         print(f"[GhostTool] Forced regen START (frame_mode={frame_mode})")
 
-        obj = context.active_object
-        if obj is None:
-            print("[GhostTool] Forced regen ABORT: no active object")
+        obj = ghost_source_objects(context)
+        if not obj:
+            print("[GhostTool] Forced regen ABORT: no character selected")
             return None
 
-        mesh_obj = _resolve_mesh_object(obj)
-        if mesh_obj is None:
-            print(f"[GhostTool] Forced regen ABORT: no mesh for {obj.name}")
+        if not resolve_mesh_objects(obj):
+            print(f"[GhostTool] Forced regen ABORT: no mesh for {[o.name for o in obj]}")
             return None
 
         current_frame = scene.frame_current

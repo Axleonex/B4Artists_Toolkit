@@ -32,6 +32,10 @@ import bpy
 from mathutils import Vector
 
 from .utils import sampling_operation, warn, debug, find_fcurve_in_action, get_scene_id, tag_viewport_redraw
+from .motion_channels import (  # noqa: F401  (re-exported for existing callers)
+    LOCATION_CHANNELS, MOTION_CHANNELS, ROTATION_EULER_CHANNELS, ROTATION_QUAT_CHANNELS,
+    is_rotation_channel,
+)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -703,6 +707,14 @@ def _on_mesh_ghost_mode_changed(self, context):
         warn(f"Failed to change mesh ghost display mode: {exc}")
 
 
+def _on_mesh_ghost_xray_changed(self, context):
+    """Show existing onion skins through the character (or stop), without a rebuild."""
+    if not context or not context.scene:
+        return
+    from .mesh_ghosts import set_mesh_ghost_xray
+    set_mesh_ghost_xray(context.scene, self.mesh_ghost_xray)
+
+
 def _on_mesh_ghost_setting_changed(self, context):
     """Re-trigger mesh ghost generation when a mesh ghost setting changes.
 
@@ -899,6 +911,26 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         ],
         default="SOLID",
         update=_on_mesh_ghost_mode_changed,
+    )  # type: ignore[assignment]
+
+    mesh_ghost_xray: bpy.props.BoolProperty(
+        name="X-Ray",
+        description="Draw onion skins in front of everything, so poses behind the character stay visible",
+        default=False,
+        update=_on_mesh_ghost_xray_changed,
+    )  # type: ignore[assignment]
+
+    mesh_ghost_falloff: bpy.props.EnumProperty(
+        name="Onion Skin Fade",
+        description="How onion skins fade with distance from the current frame",
+        items=[
+            ("LINEAR", "Linear", "Even fade across the range"),
+            ("SMOOTH", "Smooth", "Gentle near the current frame and at the ends, faster in the middle"),
+            ("EXPONENTIAL", "Exponential", "Fade quickly near the current frame, long faint tail"),
+            ("CONSTANT", "Constant", "No fade: every onion skin at the same opacity"),
+        ],
+        default="LINEAR",
+        update=_on_mesh_ghost_setting_changed,
     )  # type: ignore[assignment]
 
     mesh_ghost_opacity: bpy.props.FloatProperty(
@@ -1653,8 +1685,12 @@ def _get_world_position_cached(
     bone_name: str,
     frame: float,
     cache: dict[tuple[str, str, float], Vector],
+    tail: bool = False,
 ) -> Vector:
     """Evaluate the world-space position of an object or bone at a given frame.
+
+    ``tail=True`` returns the bone's tail instead of its head: rotation
+    channels never move a bone's own head, so their markers follow the tail.
 
     Uses a cache keyed on (object_name, bone_name, frame) to avoid
     redundant scene.frame_set() calls, which are expensive.
@@ -1674,7 +1710,7 @@ def _get_world_position_cached(
     if _IN_DRAW_HANDLER:
         raise RuntimeError("_get_world_position_cached must not be called from a draw handler (calls scene.frame_set)")
 
-    cache_key = (obj.name, bone_name, frame)
+    cache_key = (obj.name, bone_name, frame, tail)
     if cache_key in cache:
         return cache[cache_key].copy()
 
@@ -1686,12 +1722,14 @@ def _get_world_position_cached(
     for name in getattr(cache, 'bone_names', (bone_name,)):
         pose_bone = evaluated.pose.bones.get(name) if name and evaluated.type == 'ARMATURE' else None
         if pose_bone is not None:
-            position = evaluated.matrix_world @ pose_bone.head
+            head = evaluated.matrix_world @ pose_bone.head
+            tail_position = evaluated.matrix_world @ pose_bone.tail
         else:
             if name:
                 warn(f"Bone '{name}' not found on '{obj.name}'")
-            position = evaluated.matrix_world.translation
-        cache[(obj.name, name, frame)] = position.copy()
+            head = tail_position = evaluated.matrix_world.translation
+        cache[(obj.name, name, frame, False)] = head.copy()
+        cache[(obj.name, name, frame, True)] = tail_position.copy()
     return cache[cache_key].copy()
 
 
@@ -1782,7 +1820,8 @@ def _subdivide_segment(
 
     # Get world position for viewport display
     world_pos = _get_world_position_cached(
-        depsgraph, scene, obj, bone_name, mid_frame, cache
+        depsgraph, scene, obj, bone_name, mid_frame, cache,
+        tail=is_rotation_channel(channel),
     )
 
     ghost = Ghost(
@@ -1989,7 +2028,8 @@ def generate_ghosts_frame_step(
 
                 local_value = fcurve.evaluate(frame)
                 world_pos = _get_world_position_cached(
-                    depsgraph, scene, target_obj, bone_name, frame, position_cache
+                    depsgraph, scene, target_obj, bone_name, frame, position_cache,
+                    tail=is_rotation_channel(channel),
                 )
 
                 # Determine which two keyframes this frame sits between.
@@ -2059,7 +2099,8 @@ def generate_ghosts_at_keyframes(
 
                 local_value = fcurve.evaluate(frame)
                 world_pos = _get_world_position_cached(
-                    depsgraph, scene, target_obj, bone_name, frame, position_cache
+                    depsgraph, scene, target_obj, bone_name, frame, position_cache,
+                    tail=is_rotation_channel(channel),
                 )
 
                 ghost = Ghost(
@@ -2212,14 +2253,7 @@ def generate_and_store_ghosts(
 # Default channel lists for common animation workflows
 # ---------------------------------------------------------------------------
 
-LOCATION_CHANNELS: list[str] = ["location.x", "location.y", "location.z"]
-ROTATION_EULER_CHANNELS: list[str] = [
-    "rotation_euler.x", "rotation_euler.y", "rotation_euler.z"
-]
-ROTATION_QUAT_CHANNELS: list[str] = [
-    "rotation_quaternion.w", "rotation_quaternion.x",
-    "rotation_quaternion.y", "rotation_quaternion.z",
-]
+# LOCATION_CHANNELS, ROTATION_*_CHANNELS and MOTION_CHANNELS live in motion_channels.
 SCALE_CHANNELS: list[str] = ["scale.x", "scale.y", "scale.z"]
 ALL_TRANSFORM_CHANNELS: list[str] = (
     LOCATION_CHANNELS + ROTATION_EULER_CHANNELS + SCALE_CHANNELS
@@ -2235,7 +2269,7 @@ class GHOST_OT_initialize(bpy.types.Operator):
 
     This operator attaches the GhostToolSceneSettings PropertyGroup
     to bpy.types.Scene if it is missing.  It is shown as a button in
-    the N-panel when the addon detects that ``scene.ghost_tool`` does
+    the Ghost Tool menu when the addon detects that ``scene.ghost_tool`` does
     not exist — typically after a failed registration or a file that
     was saved before the addon was installed.
     """

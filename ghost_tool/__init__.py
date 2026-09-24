@@ -16,7 +16,7 @@ bl_info = {
     "author": "GoingGhost",
     "version": (3, 3, 5),
     "blender": (4, 0, 0),
-    "location": "View3D > Sidebar > Ghost Tool",
+    "location": "View3D > Header > Ghost Tool",
     "description": "Ghost keyframe visualization and manipulation for Bforartists. v3.3.5 fixes the Visual Diff panel on Bforartists 5.x and clearer sidebar layout.",
     "category": "Animation",
     "doc_url": "",

@@ -214,7 +214,7 @@ def _compute_ghost_color_alpha(
     raw_normalized_distance = min(abs(frame_offset) / frame_range_width, 1.0)
 
     # Apply falloff curve
-    falloff_curve = settings.ghost_falloff_curve if settings else 'LINEAR'
+    falloff_curve = getattr(settings, 'mesh_ghost_falloff', 'LINEAR') if settings else 'LINEAR'
     falloff_adjusted_distance = _apply_mesh_falloff(raw_normalized_distance, falloff_curve)
 
     # Colour: mesh-specific overrides take priority, fall back to point ghost colors
@@ -407,6 +407,7 @@ def _evaluate_and_create_ghost_mesh(
     use_wire: bool,
     frame_range_width: float,
     scene_settings,
+    set_frame: bool = True,
 ) -> Optional[bpy.types.Object]:
     """Evaluate the mesh at a specific frame and create a ghost duplicate.
 
@@ -430,8 +431,9 @@ def _evaluate_and_create_ghost_mesh(
     """
     scene = context.scene
 
-    # Move to frame and evaluate
-    scene.frame_set(math.floor(frame), subframe=frame - math.floor(frame))
+    # Move to frame and evaluate (generate_mesh_ghosts sets it once per frame)
+    if set_frame:
+        scene.frame_set(math.floor(frame), subframe=frame - math.floor(frame))
     depsgraph = context.evaluated_depsgraph_get()
 
     # Get the evaluated (deformed) mesh
@@ -479,7 +481,7 @@ def _evaluate_and_create_ghost_mesh(
         eval_obj.to_mesh_clear()
 
     # Create the ghost object
-    ghost_name = f"{GHOST_MESH_PREFIX}f{frame:.0f}"
+    ghost_name = f"{GHOST_MESH_PREFIX}{mesh_obj.name}_f{frame:.0f}"
     ghost_obj = bpy.data.objects.new(ghost_name, ghost_mesh)
 
     # Custom properties to identify and track this ghost mesh
@@ -521,6 +523,7 @@ def _evaluate_and_create_ghost_mesh(
     # Make non-selectable and non-renderable
     ghost_obj.hide_select = True
     ghost_obj.hide_render = True
+    ghost_obj.show_in_front = bool(getattr(scene_settings, 'mesh_ghost_xray', False))
 
     # Enable smooth shading for solid mode
     if not use_wire:
@@ -555,7 +558,8 @@ def generate_mesh_ghosts(
 
     Args:
         context:      Current Blender context.
-        source_obj:   The mesh object (or armature's child mesh) to duplicate.
+        source_obj:   A mesh or armature, or a list of them. An armature
+                      contributes every mesh it deforms.
         ghost_frames: List of frame numbers to create ghosts at.
         mode:         Display mode — "SOLID" for shaded, "WIRE" for wireframe.
         past_count:   Max number of past-frame ghosts.
@@ -568,9 +572,10 @@ def generate_mesh_ghosts(
     scene = context.scene
     current_frame = scene.frame_current
 
-    # Determine the actual mesh object to duplicate
-    mesh_obj = _resolve_mesh_object(source_obj)
-    if mesh_obj is None:
+    # Every mesh the sources deform: a character's body, clothes, hair and
+    # eyes, for each selected character.
+    mesh_objs = resolve_mesh_objects(source_obj)
+    if not mesh_objs:
         warn("No mesh object found for mesh ghost generation.")
         return 0
 
@@ -598,20 +603,23 @@ def generate_mesh_ghosts(
     mesh_settings = getattr(scene, 'ghost_tool', None)
 
     for frame in all_frames:
-        ghost_obj = _evaluate_and_create_ghost_mesh(
-            context,
-            mesh_obj,
-            frame,
-            current_frame,
-            coll,
-            use_wire,
-            frame_range_width,
-            mesh_settings,
-        )
-        if ghost_obj is not None:
-            created += 1
-        else:
-            failed += 1
+        scene.frame_set(math.floor(frame), subframe=frame - math.floor(frame))
+        for mesh_obj in mesh_objs:
+            ghost_obj = _evaluate_and_create_ghost_mesh(
+                context,
+                mesh_obj,
+                frame,
+                current_frame,
+                coll,
+                use_wire,
+                frame_range_width,
+                mesh_settings,
+                set_frame=False,
+            )
+            if ghost_obj is not None:
+                created += 1
+            else:
+                failed += 1
 
     if failed > 0:
         log(f"Created {created} of {created + failed} mesh ghosts ({failed} failed to evaluate)")
@@ -674,6 +682,61 @@ def _apply_outline_modifier(
     mod.use_flip_normals = True
     mod.use_rim = False
     mod.material_offset = outline_mat_idx  # Assign outline mat to shell
+
+
+def resolve_mesh_objects(sources) -> list[bpy.types.Object]:
+    """Every visible mesh to onion-skin for one object or a list of objects.
+
+    A mesh contributes itself. An armature contributes every visible mesh
+    parented under it or deformed by it through an Armature modifier, so a
+    character split into body, clothes, hair and eyes is ghosted whole.
+    """
+    if sources is None:
+        return []
+    if isinstance(sources, bpy.types.Object):
+        sources = [sources]
+    meshes: list[bpy.types.Object] = []
+    for obj in sources:
+        if obj is None:
+            continue
+        if obj.type == 'MESH':
+            candidates = [obj]
+        elif obj.type == 'ARMATURE':
+            candidates = [child for child in obj.children_recursive if child.type == 'MESH']
+            candidates += [
+                other for other in bpy.data.objects
+                if other.type == 'MESH' and any(
+                    mod.type == 'ARMATURE' and mod.object == obj for mod in other.modifiers)
+            ]
+        else:
+            continue
+        for mesh in candidates:
+            if mesh.get(GHOST_TOOL_MESH_GHOST_KEY) or mesh in meshes:
+                continue
+            if mesh is obj or mesh.visible_get():
+                meshes.append(mesh)
+    return meshes
+
+
+def ghost_source_objects(context: bpy.types.Context) -> list[bpy.types.Object]:
+    """The characters to onion-skin: the active object plus any selected mesh or armature."""
+    sources: list[bpy.types.Object] = []
+    active = getattr(context, 'active_object', None)
+    for obj in [active, *getattr(context, 'selected_objects', ())]:
+        if obj is not None and obj.type in {'MESH', 'ARMATURE'} and obj not in sources \
+                and not obj.get(GHOST_TOOL_MESH_GHOST_KEY):
+            sources.append(obj)
+    return sources
+
+
+def set_mesh_ghost_xray(scene: bpy.types.Scene, enabled: bool) -> None:
+    """Toggle drawing existing onion skins in front of everything."""
+    coll = _get_mesh_collection(scene)
+    if coll is None:
+        return
+    for obj in coll.objects:
+        if obj.get(GHOST_TOOL_MESH_GHOST_KEY):
+            obj.show_in_front = enabled
 
 
 def _resolve_mesh_object(obj: bpy.types.Object) -> Optional[bpy.types.Object]:
@@ -974,7 +1037,8 @@ def update_mesh_ghosts_incremental(
 
     # Check if we need to rebuild (frame window has shifted)
     # For "around cursor" mode, the desired frames depend on current_frame
-    desired_frames = _compute_desired_mesh_frames_from_settings(settings, current_frame, scene)
+    desired_frames = _compute_desired_mesh_frames_from_settings(
+        settings, current_frame, scene, ghost_source_objects(context))
     # Note: _compute_desired_mesh_frames returns a set; convert existing frames to set for comparison
 
     existing_frames = set(f for f, _ in ghost_objects)
@@ -986,16 +1050,12 @@ def update_mesh_ghosts_incremental(
     # Good — same frame set. Do incremental vertex update.
     depsgraph = context.evaluated_depsgraph_get()
 
-    # Find the source mesh object (same logic as initial generation)
-    source_obj = context.active_object
-    if source_obj is None:
+    # The meshes to ghost now must be the ones the existing ghosts were made from
+    mesh_objs = resolve_mesh_objects(ghost_source_objects(context))
+    if not mesh_objs:
         return False
-
-    mesh_obj = _resolve_mesh_object(source_obj)
-    if mesh_obj is None:
-        return False
-
-    if any(obj.get('ghost_tool_source') != mesh_obj.name for _frame, obj in ghost_objects):
+    mesh_by_name = {mesh.name: mesh for mesh in mesh_objs}
+    if {obj.get('ghost_tool_source') for _frame, obj in ghost_objects} != set(mesh_by_name):
         return False
 
     # Compute frame range for color/alpha
@@ -1006,9 +1066,13 @@ def update_mesh_ghosts_incremental(
 
     success = True
 
-    for frame, ghost_obj in ghost_objects:
-        # Move to frame and evaluate
-        scene.frame_set(math.floor(frame), subframe=frame - math.floor(frame))
+    last_frame = None
+    for frame, ghost_obj in sorted(ghost_objects, key=lambda item: item[0]):
+        mesh_obj = mesh_by_name[ghost_obj.get('ghost_tool_source')]
+        # Move to frame and evaluate (once per frame for all meshes)
+        if frame != last_frame:
+            scene.frame_set(math.floor(frame), subframe=frame - math.floor(frame))
+            last_frame = frame
         depsgraph = context.evaluated_depsgraph_get()
 
         eval_obj = mesh_obj.evaluated_get(depsgraph)
@@ -1146,8 +1210,9 @@ def _compute_desired_mesh_frames_from_settings(
     frame_end_bound = scene.frame_end
 
     if frame_mode == 'KEYFRAMES' and obj is not None:
-        # Only generate at keyframe positions
-        all_keyframes = _get_keyframe_frames_for_object(obj)
+        # Only generate at keyframe positions (every source's keys)
+        sources = obj if isinstance(obj, (list, tuple)) else [obj]
+        all_keyframes = sorted({f for source in sources for f in _get_keyframe_frames_for_object(source)})
 
         # Determine keyframe skip interval (every Nth keyframe)
         kf_skip_enum = settings.mesh_ghost_keyframe_skip
@@ -1205,18 +1270,11 @@ class GHOST_OT_generate_mesh_ghosts(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        """Require an active mesh or armature object.
-
-        Args:
-            context: Current Blender context.
-
-        Returns:
-            bool: True if a valid source object exists.
-        """
-        obj = context.active_object
-        if obj is None:
-            return False
-        return obj.type in {'MESH', 'ARMATURE'}
+        """Require a selected or active mesh or armature."""
+        if ghost_source_objects(context):
+            return True
+        cls.poll_message_set("Select a character (its armature or mesh) first")
+        return False
 
     def execute(self, context: bpy.types.Context) -> set[str]:
         """Generate mesh ghost duplicates.
@@ -1229,8 +1287,12 @@ class GHOST_OT_generate_mesh_ghosts(bpy.types.Operator):
         """
         scene = context.scene
         settings = scene.ghost_tool
-        obj = context.active_object
+        obj = ghost_source_objects(context)
         current_frame = scene.frame_current
+        if not resolve_mesh_objects(obj):
+            self.report({'WARNING'}, "No visible mesh on the selected character(s): "
+                                     "onion skins need a mesh deformed by the rig")
+            return {'CANCELLED'}
 
         # Build the frame list from settings (respects STEP vs KEYFRAMES mode)
         past_count = settings.mesh_ghost_past_count
@@ -1264,7 +1326,8 @@ class GHOST_OT_generate_mesh_ghosts(bpy.types.Operator):
         settings.live_mesh_ghosts = True
 
         mode_label = "at keyframes" if frame_mode == 'KEYFRAMES' else "frame-step"
-        self.report({'INFO'}, f"Created {count} mesh ghosts ({mode_label}, live update enabled)")
+        meshes = len(resolve_mesh_objects(obj))
+        self.report({'INFO'}, f"Created {count} onion skins from {meshes} mesh(es) ({mode_label}, live update enabled)")
         if context.area:
             context.area.tag_redraw()
         return {'FINISHED'}

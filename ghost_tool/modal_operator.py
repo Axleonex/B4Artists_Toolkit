@@ -22,6 +22,7 @@ from mathutils import Vector, Matrix
 from .ghost_data import Ghost, GhostStore
 from .session_state import SessionState
 from . import fcurve_utils
+from . import motion_channels
 from .utils import log, warn, debug, tag_viewport_redraw
 from .utils import report_failure
 
@@ -375,7 +376,8 @@ class GhostDragOperator(bpy.types.Operator):
     _undo_snapshots: dict  # fcurve_key -> snapshot list
     _affected_fcurves: dict  # fcurve_key -> FCurve
     _editing_mode: str  # captured at invoke for consistency
-    _temp_key_inserted: bool  # True if Model A inserted a temp key during drag
+    _temp_keys: dict  # fcurve_key -> True if Model A reused an existing key
+    _driven: list  # channels moved together: dicts of channel, fcurve, key, ghost, original
     _falloff_neighbors: list  # list of (ghost, original_value, weight) for sculpt falloff
     _transform_space: str  # WORLD, LOCAL, or VIEW
     _multi_drag_ghosts: list  # list of (ghost, original_value, original_position) for multi-ghost drag
@@ -434,21 +436,26 @@ class GhostDragOperator(bpy.types.Operator):
         self._undo_snapshots = {}
         self._affected_fcurves = {}
         self._editing_mode = settings.editing_mode
-        self._temp_key_inserted = False
-        self._reusing_existing_key = False
+        self._temp_keys = {}  # fc_key -> True if an existing key was reused
         self._transform_space = "WORLD"
         self._falloff_neighbors = []
+        self._driven = []
+        self._rotation_frame = None
 
         # Clear frame position cache to prevent stale data from previous drags
         fcurve_utils.clear_frame_cache()
 
         obj = bpy.data.objects.get(ghost.object_name)
         if obj:
-            fcurve = fcurve_utils.resolve_fcurve(obj, ghost.bone_name, ghost.channel)
-            if fcurve:
-                fc_key = f"{ghost.object_name}:{ghost.bone_name}:{ghost.channel}"
-                self._undo_snapshots[fc_key] = fcurve_utils.snapshot_fcurve(fcurve)
-                self._affected_fcurves[fc_key] = fcurve
+            # Every animated channel of the dragged marker's group moves together,
+            # so the marker ends up where it is dropped (not just along one axis).
+            self._driven = self._collect_driven_channels(context, ghost, obj)
+            for entry in self._driven:
+                self._undo_snapshots.setdefault(entry["key"], fcurve_utils.snapshot_fcurve(entry["fcurve"]))
+                self._affected_fcurves[entry["key"]] = entry["fcurve"]
+            if motion_channels.is_rotation_channel(ghost.channel) and ghost.bone_name:
+                self._rotation_frame = motion_channels.capture_rotation_frame(
+                    context.scene, obj, ghost.bone_name, ghost.frame)
 
         # Gather neighboring ghosts for falloff sculpting
         self._falloff_neighbors = []  # list of (ghost, original_value, weight)
@@ -456,9 +463,11 @@ class GhostDragOperator(bpy.types.Operator):
         if falloff_radius > 0 and obj:
             falloff_curve = settings.sculpt_falloff_curve
             store = GhostStore.get(context.scene)
-            chain = store.get_chain(ghost.object_name, ghost.bone_name, ghost.channel)
+            driven_uids = {e["ghost"].uid for e in self._driven if e["ghost"] is not None} | {ghost.uid}
+            chain = [n for e in (self._driven or [{"channel": ghost.channel}])
+                     for n in store.get_chain(ghost.object_name, ghost.bone_name, e["channel"])]
             for neighbor in chain:
-                if neighbor.uid == ghost.uid:
+                if neighbor.uid in driven_uids:
                     continue
                 frame_dist = abs(neighbor.frame - ghost.frame)
                 if frame_dist <= falloff_radius:
@@ -488,8 +497,9 @@ class GhostDragOperator(bpy.types.Operator):
         session = SessionState.get(context.scene)
         if len(session.selection_set) > 1 and ghost.uid in session.selection_set:
             store = GhostStore.get(context.scene)
+            driven_uids = {e["ghost"].uid for e in self._driven if e["ghost"] is not None}
             for uid in session.selection_set:
-                if uid == ghost.uid:
+                if uid == ghost.uid or uid in driven_uids:
                     continue
                 other = store.get_by_uid(uid)
                 if other is None:
@@ -687,9 +697,11 @@ class GhostDragOperator(bpy.types.Operator):
     ) -> None:
         """Recalculate the f-curve to match the ghost's new world position.
 
-        For location channels, the world-space delta is converted to
-        local space and applied directly.  For other channel types,
-        a proportional approximation is used.
+        Location markers move the bone (or object) by the world-space delta,
+        converted to channel space. Rotation markers sit on the bone's tail,
+        so the bone is re-aimed at the new position. Every animated channel
+        of the marker's group is updated together, so the marker lands where
+        it was dropped.
 
         Args:
             context: The current Blender context.
@@ -704,68 +716,36 @@ class GhostDragOperator(bpy.types.Operator):
         if fcurve is None:
             return
 
-        # Determine which value axis this channel represents
-        channel_lower = ghost.channel.lower()
+        new_values = self._solve_channel_values(obj, ghost, new_world_pos)
+        if ghost.channel not in new_values:
+            return
+        new_value = new_values[ghost.channel]
 
-        if "location" in channel_lower:
-            # For location channels, compute the local-space value from world pos
-            delta_world = new_world_pos - self._original_position
-
-            # Convert world delta to object local space
-            if obj.parent:
-                parent_matrix_inverted = obj.parent.matrix_world.inverted()
-                delta_local = parent_matrix_inverted.to_3x3() @ delta_world
-            else:
-                delta_local = delta_world.copy()
-
-            # If this is a bone channel, convert to the bone's CHANNEL space:
-            # a pose bone's location is relative to its rest matrix
-            # (bone.matrix_local), re-parented under the parent's posed matrix.
-            # Using only the parent's pose matrix (or only object space for a
-            # root bone) dropped matrix_local and dragged the bone off-axis.
-            if ghost.bone_name and obj.type == 'ARMATURE':
-                pose_bone = obj.pose.bones.get(ghost.bone_name)
-                if pose_bone:
-                    bone = pose_bone.bone
-                    if pose_bone.parent:
-                        channel = (pose_bone.parent.matrix
-                                   @ pose_bone.parent.bone.matrix_local.inverted()
-                                   @ bone.matrix_local)
-                    else:
-                        channel = bone.matrix_local
-                    delta_local = (obj.matrix_world @ channel).to_3x3().inverted() @ delta_world
-
-            # Extract the relevant axis component
-            if channel_lower.endswith(".x"):
-                new_value = self._original_local_value + delta_local.x
-            elif channel_lower.endswith(".y"):
-                new_value = self._original_local_value + delta_local.y
-            elif channel_lower.endswith(".z"):
-                new_value = self._original_local_value + delta_local.z
-            else:
-                new_value = self._original_local_value + delta_local.length
-        else:
-            # For non-location channels, use a proportional approximation.
-            # The world-space delta magnitude is mapped to a value change.
-            delta = new_world_pos - self._original_position
-            new_value = self._original_local_value + delta.length * DRAG_SENSITIVITY
-
-        # Apply to the f-curve based on editing mode.
-        # Model B (RESHAPE): adjust bezier handles so curve passes through new_value.
+        # Apply to every driven f-curve based on editing mode.
+        # Model B (RESHAPE): adjust bezier handles so curve passes through the value.
         # Model A (INSERT_KEY): insert/update a temporary keyframe for live preview.
-        if self._editing_mode == 'INSERT_KEY':
-            self._preview_model_a(fcurve, ghost.frame, new_value)
-        else:
-            mode = context.scene.ghost_tool.curve_mode.lower()
-            fcurve_utils.recalculate_handles(fcurve, ghost.frame, new_value, mode=mode)
+        curve_mode = context.scene.ghost_tool.curve_mode.lower()
+        deltas: dict[str, float] = {}
+        for entry in self._driven:
+            value = new_values.get(entry["channel"])
+            if value is None:
+                continue
+            deltas[entry["channel"]] = value - entry["original"]
+            if self._editing_mode == 'INSERT_KEY':
+                self._preview_model_a(entry["key"], entry["fcurve"], ghost.frame, value)
+            else:
+                fcurve_utils.recalculate_handles(entry["fcurve"], ghost.frame, value, mode=curve_mode)
+            if entry["ghost"] is not None:
+                entry["ghost"].local_value = value
+                entry["ghost"].world_position = new_world_pos.copy()
 
         # Update the ghost's local value
         ghost.local_value = new_value
 
         # Apply falloff to neighboring ghosts
         if hasattr(self, '_falloff_neighbors') and self._falloff_neighbors:
-            delta_from_original = new_value - self._original_local_value
             for neighbor, orig_val, weight in self._falloff_neighbors:
+                delta_from_original = deltas.get(neighbor.channel, 0.0)
                 neighbor_new_val = orig_val + delta_from_original * weight
                 neighbor.local_value = neighbor_new_val
 
@@ -788,7 +768,7 @@ class GhostDragOperator(bpy.types.Operator):
             for other_ghost, orig_val, orig_pos in self._multi_drag_ghosts:
                 if other_ghost.uid in falloff_uids:
                     continue
-                other_new_val = orig_val + value_delta
+                other_new_val = orig_val + deltas.get(other_ghost.channel, value_delta)
                 other_ghost.local_value = other_new_val
 
                 # Update the other ghost's f-curve
@@ -805,47 +785,95 @@ class GhostDragOperator(bpy.types.Operator):
 
     def _preview_model_a(
         self,
+        fc_key: str,
         fcurve: bpy.types.FCurve,
         frame: float,
         value: float,
     ) -> None:
         """Live preview for Model A: insert or update a temporary keyframe.
 
-        On the first call, inserts a new keyframe at the ghost's frame.
-        On subsequent calls, updates the temp key's value without reinserting.
-        This gives the user an accurate preview of what the curve will look
-        like with a real key at this position.
-
-        Args:
-            fcurve: The f-curve being edited.
-            frame: The ghost's frame number.
-            value: The new f-curve value at this frame.
+        The first call per f-curve inserts a key at the ghost's frame (or
+        reuses a real key already there); later calls only update its value.
+        Tracked per f-curve because a drag can drive several channels.
         """
-        if not self._temp_key_inserted:
-            # Check if a real keyframe already exists at this frame
-            existing = fcurve_utils.get_keyframe_at_frame(fcurve, frame, tolerance=0.01)
-            if existing:
-                # Real keyframe exists — modify it, don't insert a duplicate
-                existing.co.y = value
-                fcurve.update()
-                self._temp_key_inserted = True
-                self._reusing_existing_key = True
-            else:
-                # Insert new temp key
-                keyframe = fcurve.keyframe_points.insert(
-                    frame, value, options={'FAST'}
-                )
+        existing = fcurve_utils.get_keyframe_at_frame(fcurve, frame, tolerance=0.01)
+        if fc_key not in self._temp_keys:
+            if existing is None:
+                keyframe = fcurve.keyframe_points.insert(frame, value, options={'FAST'})
                 keyframe.handle_left_type = 'AUTO_CLAMPED'
                 keyframe.handle_right_type = 'AUTO_CLAMPED'
                 keyframe.interpolation = 'BEZIER'
                 fcurve.update()
-                self._temp_key_inserted = True
-        else:
-            # Subsequent calls — just update the value of the existing temp key
-            existing = fcurve_utils.get_keyframe_at_frame(fcurve, frame, tolerance=0.01)
-            if existing:
-                existing.co.y = value
-                fcurve.update()
+                self._temp_keys[fc_key] = False
+                return
+            # Real keyframe exists: modify it, don't insert a duplicate
+            self._temp_keys[fc_key] = True
+        if existing is not None:
+            existing.co.y = value
+            fcurve.update()
+
+    def _collect_driven_channels(self, context, ghost: Ghost, obj: bpy.types.Object) -> list[dict]:
+        """The dragged channel plus every animated sibling in the same group.
+
+        Siblings share the ghost's object, bone and frame, and belong to the
+        same family (location, Euler rotation or quaternion rotation).
+        """
+        family = motion_channels.channel_family(ghost.channel)
+        family_channels = {
+            "location": motion_channels.LOCATION_CHANNELS,
+            "rotation_euler": motion_channels.ROTATION_EULER_CHANNELS,
+            "rotation_quaternion": motion_channels.ROTATION_QUAT_CHANNELS,
+        }.get(family, [ghost.channel])
+        store = GhostStore.get(context.scene)
+        siblings = {
+            g.channel: g for g in store.all_ghosts
+            if g.object_name == ghost.object_name and g.bone_name == ghost.bone_name
+            and abs(g.frame - ghost.frame) < 1e-4 and g.channel in family_channels
+        }
+        siblings[ghost.channel] = ghost
+        driven = []
+        for channel in family_channels:
+            fcurve = fcurve_utils.resolve_fcurve(obj, ghost.bone_name, channel)
+            if fcurve is None:
+                continue
+            driven.append({
+                "channel": channel,
+                "fcurve": fcurve,
+                "key": f"{ghost.object_name}:{ghost.bone_name}:{channel}",
+                "ghost": siblings.get(channel),
+                "original": fcurve.evaluate(ghost.frame),
+            })
+        return driven
+
+    def _solve_channel_values(self, obj, ghost: Ghost, new_world_pos: Vector) -> dict[str, float]:
+        """New value for every driven channel so the marker lands on ``new_world_pos``."""
+        family = motion_channels.channel_family(ghost.channel)
+        if family == "location":
+            delta_world = new_world_pos - self._original_position
+            if obj.parent:
+                delta_local = obj.parent.matrix_world.inverted().to_3x3() @ delta_world
+            else:
+                delta_local = delta_world.copy()
+            # A pose bone's location is relative to its rest matrix
+            # (bone.matrix_local), re-parented under the parent's posed matrix.
+            if ghost.bone_name and obj.type == 'ARMATURE':
+                pose_bone = obj.pose.bones.get(ghost.bone_name)
+                if pose_bone:
+                    parent_matrix = pose_bone.parent.matrix if pose_bone.parent else None
+                    channel_matrix = motion_channels.rest_channel_matrix(pose_bone, parent_matrix)
+                    delta_local = (obj.matrix_world @ channel_matrix).to_3x3().inverted() @ delta_world
+            return {
+                entry["channel"]: entry["original"] + delta_local[motion_channels.channel_component(entry["channel"])]
+                for entry in self._driven
+            }
+        if self._rotation_frame is not None:
+            solved = motion_channels.solve_rotation_drag(self._rotation_frame, new_world_pos)
+            if solved:
+                return solved
+            return {entry["channel"]: entry["original"] for entry in self._driven}
+        # Object-level rotation or scale: no bone to aim, keep the old proportional nudge.
+        delta = new_world_pos - self._original_position
+        return {ghost.channel: self._original_local_value + delta.length * DRAG_SENSITIVITY}
 
     def _confirm_drag(self, context: bpy.types.Context) -> None:
         """Finalize the drag operation.
@@ -869,35 +897,25 @@ class GhostDragOperator(bpy.types.Operator):
             # --- Model A: Insert Keyframe ---
             # The temp key was already inserted during the drag preview.
             # On confirm, we just keep it and finalize the handles.
-            if editing_mode == 'INSERT_KEY' and self._temp_key_inserted:
-                obj = bpy.data.objects.get(ghost.object_name)
-                if obj:
-                    fcurve = fcurve_utils.resolve_fcurve(
-                        obj, ghost.bone_name, ghost.channel
-                    )
-                    if fcurve:
-                        # Ensure the temp key has clean handle types
-                        temp_key = fcurve_utils.get_keyframe_at_frame(
-                            fcurve, ghost.frame, tolerance=0.01
-                        )
-                        if temp_key:
-                            temp_key.handle_left_type = 'AUTO_CLAMPED'
-                            temp_key.handle_right_type = 'AUTO_CLAMPED'
-                            fcurve.update()
-
-                            # Optionally smooth neighboring handles
-                            smooth = context.scene.ghost_tool.smooth_neighbors_on_commit
-                            if smooth:
-                                left_kp, right_kp = fcurve_utils.get_adjacent_keyframes(fcurve, ghost.frame)
-                                if left_kp and right_kp:
-                                    # Apply smooth recalculation to blend the new key into the curve
-                                    fcurve_utils.recalculate_handles(
-                                        fcurve, ghost.frame, ghost.local_value, mode="smooth"
-                                    )
-
-                            log(f"Model A: Confirmed keyframe at f{ghost.frame:.1f}")
-                        else:
-                            warn(f"Model A: Temp key lost at f{ghost.frame:.1f}")
+            if editing_mode == 'INSERT_KEY' and self._temp_keys:
+                smooth = context.scene.ghost_tool.smooth_neighbors_on_commit
+                for fc_key in self._temp_keys:
+                    fcurve = self._affected_fcurves.get(fc_key)
+                    if fcurve is None:
+                        continue
+                    temp_key = fcurve_utils.get_keyframe_at_frame(fcurve, ghost.frame, tolerance=0.01)
+                    if temp_key is None:
+                        warn(f"Model A: Temp key lost at f{ghost.frame:.1f}")
+                        continue
+                    # Ensure the temp key has clean handle types
+                    temp_key.handle_left_type = 'AUTO_CLAMPED'
+                    temp_key.handle_right_type = 'AUTO_CLAMPED'
+                    fcurve.update()
+                    if smooth:
+                        left_kp, right_kp = fcurve_utils.get_adjacent_keyframes(fcurve, ghost.frame)
+                        if left_kp and right_kp:
+                            fcurve_utils.recalculate_handles(fcurve, ghost.frame, temp_key.co.y, mode="smooth")
+                log(f"Model A: Confirmed {len(self._temp_keys)} keyframe(s) at f{ghost.frame:.1f}")
 
                 # Mark cache dirty so live mode regenerates ghosts
                 try:
@@ -942,6 +960,10 @@ class GhostDragOperator(bpy.types.Operator):
             ghost.world_position = self._original_position.copy()
             ghost.local_value = self._original_local_value
 
+        for entry in getattr(self, "_driven", []):
+            if entry["ghost"] is not None:
+                entry["ghost"].local_value = entry["original"]
+                entry["ghost"].world_position = self._original_position.copy()
         for neighbor, original_value, _weight in self._falloff_neighbors:
             neighbor.local_value = original_value
         for other, original_value, original_position in self._multi_drag_ghosts:
@@ -956,17 +978,17 @@ class GhostDragOperator(bpy.types.Operator):
         # restore_fcurve only writes values for existing keyframes — it cannot
         # remove an extra keyframe that was inserted during the drag preview.
         # Only remove if we inserted a new key (not reusing an existing one).
-        if self._editing_mode == 'INSERT_KEY' and self._temp_key_inserted and ghost and not self._reusing_existing_key:
-            for fc_key, fcurve in self._affected_fcurves.items():
-                if fcurve:
-                    temp_key = fcurve_utils.get_keyframe_at_frame(
-                        fcurve, ghost.frame, tolerance=0.01
-                    )
-                    if temp_key:
-                        try:
-                            fcurve.keyframe_points.remove(temp_key)
-                        except Exception as exc:
-                            debug(f"Failed to remove temp key: {exc}")
+        if self._editing_mode == 'INSERT_KEY' and ghost:
+            for fc_key, reused in self._temp_keys.items():
+                fcurve = self._affected_fcurves.get(fc_key)
+                if reused or fcurve is None:
+                    continue
+                temp_key = fcurve_utils.get_keyframe_at_frame(fcurve, ghost.frame, tolerance=0.01)
+                if temp_key:
+                    try:
+                        fcurve.keyframe_points.remove(temp_key)
+                    except Exception as exc:
+                        debug(f"Failed to remove temp key: {exc}")
 
         # Restore all affected f-curves to pre-drag state
         for fcurve_key, snapshot in self._undo_snapshots.items():
@@ -991,8 +1013,9 @@ class GhostDragOperator(bpy.types.Operator):
         self._undo_snapshots = {}
         self._affected_fcurves = {}
         self._editing_mode = "RESHAPE"
-        self._temp_key_inserted = False
-        self._reusing_existing_key = False
+        self._temp_keys = {}
+        self._driven = []
+        self._rotation_frame = None
         self._falloff_neighbors = []
         self._transform_space = "WORLD"
         self._multi_drag_ghosts = []
@@ -1039,7 +1062,7 @@ class GHOST_OT_generate(bpy.types.Operator):
         Returns:
             set[str]: {'FINISHED'} on success.
         """
-        from .ghost_data import LOCATION_CHANNELS
+        from .ghost_data import MOTION_CHANNELS
         from .ghost_pipeline import GhostPipeline
 
         obj = context.active_object
@@ -1074,8 +1097,8 @@ class GHOST_OT_generate(bpy.types.Operator):
             frame_range = (context.scene.frame_start, context.scene.frame_end)
         # AROUND_CURSOR and BETWEEN_KEYS are handled inside the pipeline
 
-        # Generate for location channels by default
-        channels = LOCATION_CHANNELS
+        # Every animated location and rotation channel; rotation markers follow the bone tail.
+        channels = MOTION_CHANNELS
 
         # Route through the pipeline for cache awareness
         pipeline = GhostPipeline.get(context.scene)
@@ -1100,7 +1123,11 @@ class GHOST_OT_generate(bpy.types.Operator):
         # ghost_mode determines generation strategy: SUBDIVISION, FRAME_STEP, or KEYFRAMES_ONLY
         mode_label = settings.ghost_mode
         range_label = range_mode.replace('_', ' ').title()
-        self.report({'INFO'}, f"Generated {count} ghosts ({mode_label}, {range_label})")
+        if count == 0:
+            self.report({'WARNING'}, "No markers: the selected bones have no location or rotation keys "
+                                     "in this frame range. Key them, or set Frames to Full Timeline")
+        else:
+            self.report({'INFO'}, f"Generated {count} ghosts ({mode_label}, {range_label})")
         tag_viewport_redraw(context)
         return {'FINISHED'}
 
