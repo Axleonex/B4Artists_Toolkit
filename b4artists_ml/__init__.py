@@ -5,10 +5,10 @@ SPDX-License-Identifier: GPL-2.0-or-later
 bl_info = {
     "name": "B4Artists Machine Learning",
     "author": "axlbot",
-    "version": (0, 38, 0),
+    "version": (1, 0, 0),
     "blender": (4, 2, 0),
     "location": "View3D > Sidebar > B4Artists ML",
-    "description": "Standalone local procedural animation assistance (public beta).",
+    "description": "Standalone local procedural animation assistance.",
     "category": "Animation",
 }
 _registered = False
