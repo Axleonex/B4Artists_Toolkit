@@ -403,6 +403,23 @@ class UiWorkflowStringsGate(unittest.TestCase):
             violations.extend(self._bare_blender_imports(f))
         self.assertEqual(violations, [], msg='Unguarded imports:\n' + '\n'.join(violations))
 
+    def test_prerequisite_and_stage_lines_come_from_copy(self):
+        """Panels read copy.PREREQ and copy.STAGE_LINE; a pasted copy of their
+        text would drift from copy.py without the copy gate noticing."""
+        owned: set[str] = {_copy.STAGE_LINE, _copy.STAGE_LINE.split(' {')[0]}
+        for value in _copy.PREREQ.values():
+            owned.update(value if isinstance(value, tuple) else (value,))
+        files = [f for f in self._py_files() if f.name != 'copy.py']
+        if not files:
+            self.skipTest('b4artists_ml/ui_workflow/ absent or empty')
+        pasted: list[str] = []
+        for f in files:
+            tree = ast.parse(f.read_text(encoding='utf-8'))
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Constant) and isinstance(node.value, str) and node.value in owned:
+                    pasted.append(f'{f.relative_to(_ROOT)}:{node.lineno}: {node.value!r}')
+        self.assertEqual(pasted, [], msg='Use copy.PREREQ / copy.STAGE_LINE instead of:\n' + '\n'.join(pasted))
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

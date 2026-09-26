@@ -355,7 +355,7 @@ class B4ML_PT_adv_rig_mapping(_Panel):
         rig, snap, st = header.prelude(layout, context)
         if rig is None:
             return
-        layout.label(text='Maps bone controls to semantic roles.')
+        layout.label(text=copy_.PREREQ['rig_mapping'])
         state = rig.b4ml
         try:
             from b4artists_ml import rig_mapping as _rm
@@ -402,7 +402,7 @@ class B4ML_PT_adv_assisted_pose(_Panel):
         rig, snap, st = header.prelude(layout, context)
         if rig is None:
             return
-        layout.label(text='Geometric IK-to-FK solver and whole-body pose for humanoid rigs.')
+        layout.label(text=copy_.PREREQ['assisted_pose'])
         state = rig.b4ml
 
         try:
@@ -624,7 +624,7 @@ class B4ML_PT_adv_quadruped(_Panel):
         rig, snap, st = header.prelude(layout, context)
         if rig is None:
             return
-        layout.label(text='Four-paw whole-body pose for Rigify quadruped rigs.')
+        layout.label(text=copy_.PREREQ['quadruped'])
         state = rig.b4ml
 
         try:
@@ -921,7 +921,7 @@ class B4ML_PT_adv_center_of_mass(_Panel):
         rig, snap, st = header.prelude(layout, context)
         if rig is None:
             return
-        layout.label(text='Artist-authored mass estimate for stability analysis.')
+        layout.label(text=copy_.PREREQ['center_of_mass'])
         state = rig.b4ml
         col = layout.column()
         col.label(text='Artist-authored mass estimate')
@@ -1310,7 +1310,7 @@ class B4ML_PT_adv_cleanup(_Panel):
                               ' curves safely skipped'))
             except (ValueError, KeyError, TypeError):
                 pass
-        layout.label(text='Procedural cleanup; no learned model used.')
+        layout.label(text=copy_.PREREQ['cleanup'][1])
 
 
 # ---------------------------------------------------------------------------
@@ -1616,7 +1616,7 @@ class B4ML_PT_adv_saved_results(_Panel):
         rig, snap, st = header.prelude(layout, context)
         if rig is None:
             return
-        layout.label(text='Previously kept motion results for this rig.')
+        layout.label(text=copy_.PREREQ['saved_results'])
         try:
             from b4artists_ml import workflow as _wf
             alternatives = _wf.motion_layer.results(rig)

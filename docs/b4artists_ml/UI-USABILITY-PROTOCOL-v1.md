@@ -18,7 +18,8 @@ Milestone is complete only when that animator finishes all ten steps unaided.
 
 ### Addon version
 
-`0.38.0` public beta.
+`1.0.0` (release `ml-v1.0.0`, file `b4artists_ml_v1.0.0.zip`). Updated 2026-09-26; the protocol was
+written against the `0.38.0` public beta and the journey is unchanged.
 
 ### Required setup
 
@@ -26,6 +27,11 @@ Milestone is complete only when that animator finishes all ten steps unaided.
 - **File**: a Rigify humanoid blend file prepared in advance and provided to the animator;
   the armature must be mapped and posable (at least one existing keyframe on the source action
   so the Restore step has something to restore to). File is opened before the session begins.
+  Prepared 2026-09-26: `G:/LapArt/output/b4ml-usability-session/usability-session-rigify-humanoid.blend`
+  (Bforartists 5.1.2 bundled Rigify human rig named `Character`, keys on `torso`, `hand_ik.L`,
+  `hand_ik.R` at frame 1, selected, Object Mode). A scripted pilot of all ten steps passed on it.
+- **Other add-ons**: disable Anim Assist and Ghost Tool for the session; their header menus and
+  panels would change what the animator sees and are not part of this test.
 - **Screen recording**: active for the full session, capturing the Bforartists window and the
   animator's voice if think-aloud is used.
 - **Note-taker**: a second person watching and recording observations, or the animator

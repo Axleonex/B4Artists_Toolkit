@@ -55,15 +55,15 @@ W5 gates the design of W1/W2/W3, so the session runs first; W6 is independent an
 
 ## Known gaps carried from slice 1
 
-1. Feedback-card wrap width estimate (~7 px/char in `header.wrap_label`) still clips a few characters at default sidebar width — verified by a screenshot at default width with no clipped line.
+1. Feedback-card wrap width estimate (~7 px/char in `header.wrap_label`) still clips a few characters at default sidebar width — verified by a screenshot at default width with no clipped line. **Closed 2026-09-26:** `_CHAR_PX` is 9.0 (changed 2026-09-22); all 61 animator-facing strings from `copy.py`, `feedback.py` and `stage.py` rendered through `wrap_label` at the factory-default 220 px sidebar on Bforartists 5.1.2 show no clipped line, and measured with `blf` the widest wrapped line is 130 px of ~178 px usable (0 of 170 lines over).
 
-2. `'Stage %d of 5 — %s'` in `header.py` and the Advanced subpanel prerequisite lines are literals, not `copy.py` entries — verified by the copy gate extended to cover them.
+2. `'Stage %d of 5 — %s'` in `header.py` and the Advanced subpanel prerequisite lines are literals, not `copy.py` entries — verified by the copy gate extended to cover them. **Closed 2026-09-26:** the stage line reads `copy.STAGE_LINE`, and the six Advanced subpanel lines now read `copy.PREREQ`; `test_prerequisite_and_stage_lines_come_from_copy` fails if any panel pastes that text back (negative control run: re-pasting the quadruped line turns it red). Note: the `'Needs a preview or kept result.'` entries for contacts, airborne, cleanup and secondary motion are no longer drawn anywhere since those features moved to the Polish panel; the entries are kept for the copy gate.
 
 3. Rigify generation in QA captures — **corrected 2026-09-23: not a Bforartists bug.** The capture script enabled Rigify with `addon_utils.enable('rigify', default_set=False)`, which never actually enables the add-on, so generation failed on a half-registered `RigifyParameters` (`make_custom_pivot`). Enabled normally, Bforartists 5.1.2's bundled Rigify generates human and quadruped rigs; the capture script now uses `default_set=True`, and the mapped-rig journey was captured with a generated Rigify fixture.
 
 4. One malformed auto-advance commit message (`": auto-advance (receipt 38fc6f10 …)"`, empty path prefix) — cosmetic; verified by the commit-message helper deriving a non-empty subject or the message being corrected in a future rewrite window (do NOT rewrite published history for this).
 
-5. The overlay's `hud_lines()` logic is embedded in the `POST_PIXEL` draw handler, so `test_b4artists_ml_native_overlay_v1::test_hud_lines_only_in_session` self-skips — verified by extracting a pure `hud_lines(snapshot)` helper and that test running for real.
+5. The overlay's `hud_lines()` logic is embedded in the `POST_PIXEL` draw handler, so `test_b4artists_ml_native_overlay_v1::test_hud_lines_only_in_session` self-skips — verified by extracting a pure `hud_lines(snapshot)` helper and that test running for real. **Closed 2026-09-26:** `viewport_overlay.hud_lines(snapshot, rig=None)` is a pure helper, and the test runs and passes on Bforartists 5.1.2 (`test_hud_lines_only_in_session ... ok`).
 
 6. BoneForge-gated native tests remain skipped on this host (9 across the new suites, consistent with the project's pre-existing 37) — verified only by naming it a host-configuration limitation, not by pretending it is closed.
 
