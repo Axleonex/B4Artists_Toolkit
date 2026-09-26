@@ -4,9 +4,8 @@ BoneCraft BFA rigs a humanoid character so you can animate it with Anim Assist,
 Ghost Tool and B4Artists ML. It is optional: the animation tools work on any
 rig, and BoneCraft does not need them.
 
-- **Version:** 8.9.8
-- **Download:** [`releases/BoneCraft-BFA-8.9.8.zip`](../../releases/BoneCraft-BFA-8.9.8.zip)
-- **Source repository:** [Axleonex/BoneForge_B4Artists](https://github.com/Axleonex/BoneForge_B4Artists)
+- **Version:** 8.9.9
+- **Download:** [`releases/BoneCraft-BFA-8.9.9.zip`](../../releases/BoneCraft-BFA-8.9.9.zip)
 - **Requires:** Bforartists (it refuses to run on standard Blender)
 
 ## BoneCraft BFA vs the open Blender BoneForge
