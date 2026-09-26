@@ -1,4 +1,4 @@
-# B4Artists Anim Tools
+# B4Artists Toolkit
 
 Three animation add-ons for **Bforartists** (the Blender fork), plus an optional rigging add-on, BoneCraft BFA. All of them are **Bforartists-exclusive** — they do not run on standard Blender.
 
@@ -26,9 +26,9 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.1.0 | [b4_anim_assist_v12.1.0.zip](https://github.com/Axleonex/B4Artists_Anim_Tools/releases/download/v12.1.0/b4_anim_assist_v12.1.0.zip) |
-| Ghost Tool 3.4.0 | [b4_ghost_tool_v3.4.0.zip](https://github.com/Axleonex/B4Artists_Anim_Tools/releases/download/ghost-v3.4.0/b4_ghost_tool_v3.4.0.zip) |
-| B4Artists Machine Learning 1.0.0 | [b4artists_ml_v1.0.0.zip](https://github.com/Axleonex/B4Artists_Anim_Tools/releases/download/ml-v1.0.0/b4artists_ml_v1.0.0.zip) |
+| Anim Assist 12.1.0 | [b4_anim_assist_v12.1.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.0/b4_anim_assist_v12.1.0.zip) |
+| Ghost Tool 3.4.0 | [b4_ghost_tool_v3.4.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v3.4.0/b4_ghost_tool_v3.4.0.zip) |
+| B4Artists Machine Learning 1.0.0 | [b4artists_ml_v1.0.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ml-v1.0.0/b4artists_ml_v1.0.0.zip) |
 | BoneCraft BFA 8.9.9 (optional) | [BoneCraft-BFA-8.9.9.zip](releases/BoneCraft-BFA-8.9.9.zip) |
 
 Release notes and checksums for each download are on the [Releases page](../../releases). The Anim Assist and Ghost Tool zips are also kept in [`releases/`](releases/) — see [`releases/VERSIONS.md`](releases/VERSIONS.md) for the version index, checksums, and how to read the real version out of a zip.
