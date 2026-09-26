@@ -1,17 +1,36 @@
 # BoneCraft BFA — optional rigging add-on
 
-BoneCraft BFA was previously named **BoneForge BFA**. Only the displayed
-name changed: rigs and files made with BoneForge BFA keep working, and
-internally the add-on is still `boneforge`.
-
 BoneCraft BFA rigs a humanoid character so you can animate it with Anim Assist,
 Ghost Tool and B4Artists ML. It is optional: the animation tools work on any
 rig, and BoneCraft does not need them.
 
-- **Version:** 8.9.7
-- **Download:** [`releases/BoneCraft-BFA-8.9.7.zip`](../../releases/BoneCraft-BFA-8.9.7.zip)
-- **Source repository** (still under the old name, updated separately): [Axleonex/BoneForge_B4Artists](https://github.com/Axleonex/BoneForge_B4Artists)
+- **Version:** 8.9.8
+- **Download:** [`releases/BoneCraft-BFA-8.9.8.zip`](../../releases/BoneCraft-BFA-8.9.8.zip)
+- **Source repository:** [Axleonex/BoneForge_B4Artists](https://github.com/Axleonex/BoneForge_B4Artists)
 - **Requires:** Bforartists (it refuses to run on standard Blender)
+
+## BoneCraft BFA vs the open Blender BoneForge
+
+BoneCraft BFA is the advanced version of [BoneForge](https://github.com/Axleonex/BoneForge_ALTERNATIVE_CATS_for_5.0_Blender), the free add-on for
+standard Blender. It has everything BoneForge has, plus advanced rigging
+tools that are **not available in the open Blender version**:
+
+| Feature | BoneForge (open, standard Blender) | BoneCraft BFA (Bforartists) |
+|---|---|---|
+| CATS-style avatar cleanup, VRM/VRoid import and export, material atlas | Yes | Yes |
+| Basic auto-rig and Mixamo-style avatar helpers | Yes | Yes |
+| Smart joint detection (Rig Builder wizard) | — | Yes |
+| Production control rig: IK/FK arms and legs, no-pop switching, pole follow, stretch | — | Yes |
+| Control Picker and animator control layer | — | Yes |
+| Joint corrective shapes (elbows, knees, deep bends, dress over a lifted leg) | — | Yes |
+| Face controls: eye aim, blinks, jaw with lip follow and sticky lips | — | Yes |
+| Skirt and dress bones | — | Yes |
+| Advanced retargeting of walk/run clips | — | Yes |
+| Profile-driven game export (VRChat, Unity, Unreal) with T-pose export | — | Yes |
+
+If you use standard Blender, install BoneForge. If you use Bforartists and want
+the advanced rigging tools, install BoneCraft BFA (install one or the other,
+not both).
 
 ## Install
 
