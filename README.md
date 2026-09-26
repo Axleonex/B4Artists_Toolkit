@@ -1,12 +1,22 @@
 # B4Artists Anim Tools
 
-Three animation add-ons for **Bforartists** (the Blender fork). All three are **Bforartists-exclusive** — they do not run on standard Blender.
+Three animation add-ons for **Bforartists** (the Blender fork), plus an optional rigging add-on, BoneCraft BFA. All of them are **Bforartists-exclusive** — they do not run on standard Blender.
 
 | Tool | Version | What it does |
 |---|---|---|
 | **Anim Assist** | 12.1.0 | A production animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Inspired by Maya's AnimBot. |
 | **Ghost Tool** | 3.4.0 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. |
 | **B4Artists Machine Learning** | 1.0.0 | Local, procedural posing and motion for humanoid and quadruped rigs, in a guided five-step panel (Setup, Pose, Motion, Review, Polish): pose with draggable targets, generate the in-betweens between key poses, keep or discard the result, then add contacts, cleanup and secondary motion. Key poses show as markers in the Timeline and Dope Sheet. Everything runs on your machine — nothing is uploaded. |
+
+### Optional add-on: BoneCraft BFA (rigging)
+
+A separate, optional add-on for rigging characters before you animate them with the tools above. You don't need it to use Anim Assist, Ghost Tool or B4Artists ML, and they don't need it.
+
+| Tool | Version | What it does |
+|---|---|---|
+| **BoneCraft BFA** | 8.9.7 | Auto-rigging for humanoid characters (VRoid/VRM and similar): a Rig Builder wizard that finds the joints on the mesh, generates a skeleton and skin weights, then builds an animator control rig: IK/FK arms and legs with no-pop switching, a Control Picker, twist bones, joint corrective shapes, skirt/dress bones, and face controls (eye aim, blinks, jaw with lip follow). Also retargets walk/run clips and exports to VRChat, Unity and Unreal, with an optional T-pose export. |
+
+BoneCraft BFA was previously named BoneForge BFA; its source repository still carries the old name: [Axleonex/BoneForge_B4Artists](https://github.com/Axleonex/BoneForge_B4Artists). See [`docs/bonecraft/`](docs/bonecraft/) for a short guide.
 
 > These tools were built with heavy AI assistance and are under active bug-fixing. If you hit an issue, a screenshot or a note about what you were doing helps a lot — please open an [issue](../../issues).
 
@@ -19,6 +29,7 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 | Anim Assist 12.1.0 | [b4_anim_assist_v12.1.0.zip](https://github.com/Axleonex/B4Artists_Anim_Tools/releases/download/v12.1.0/b4_anim_assist_v12.1.0.zip) |
 | Ghost Tool 3.4.0 | [b4_ghost_tool_v3.4.0.zip](https://github.com/Axleonex/B4Artists_Anim_Tools/releases/download/ghost-v3.4.0/b4_ghost_tool_v3.4.0.zip) |
 | B4Artists Machine Learning 1.0.0 | [b4artists_ml_v1.0.0.zip](https://github.com/Axleonex/B4Artists_Anim_Tools/releases/download/ml-v1.0.0/b4artists_ml_v1.0.0.zip) |
+| BoneCraft BFA 8.9.7 (optional) | [BoneCraft-BFA-8.9.7.zip](releases/BoneCraft-BFA-8.9.7.zip) |
 
 Release notes and checksums for each download are on the [Releases page](../../releases). The Anim Assist and Ghost Tool zips are also kept in [`releases/`](releases/) — see [`releases/VERSIONS.md`](releases/VERSIONS.md) for the version index, checksums, and how to read the real version out of a zip.
 
@@ -36,6 +47,7 @@ Release notes and checksums for each download are on the [Releases page](../../r
      Each of those editors' headers also has an **Anim Assist** menu with the most-used tools. The menu can open the full panel, switch to the **Anim Assist workspace** (the Animation layout plus a Graph Editor, with every home open), or open the panel in a **separate window** you can move to a second monitor.
    - **Ghost Tool** home is the **3D Viewport header**: a ghost on/off toggle and a **Ghost Tool** dropdown after the **Pose** menu, grouped as Show Ghosts, Onion Skin, Edit Motion, Compare, Physics, Look and Settings. **Open in Separate Window** at the bottom keeps it open in its own window.
    - **B4Artists Machine Learning** adds the **B4Artists ML** tab. Select an armature and click **Check Rig** to start; the panel walks you through the remaining steps.
+   - **BoneCraft BFA** (optional) adds the **Rig Builder** and **BoneCraft** tabs to the 3D Viewport sidebar (press **N**). Select your character's mesh and start the wizard on the **Rig Builder** tab.
 5. Anim Assist only: in **Properties > Scene > Anim Assist > Setup**, run **First Run Setup** once. It builds the Quick Shelf. The same section can add the Anim Assist workspace, and **Settings** turns on the optional **Anim Assist pie** shortcut (Shift Alt D, off by default).
 
 ## Browse the source

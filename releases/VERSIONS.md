@@ -6,9 +6,14 @@ The current build of each add-on. **Install these.**
 |---|---|---|---|---|
 | Anim Assist | **12.1.0** | `b4_anim_assist_v12.1.0.zip` | 557,834 | `ee4ea5f1f517` |
 | Ghost Tool | **3.4.0** | `b4_ghost_tool_v3.4.0.zip` | 154,640 | `69adf612e996` |
+| BoneCraft BFA (optional) | **8.9.7** | `BoneCraft-BFA-8.9.7.zip` | 791,102 | `4043f7ee652f` |
 
 Each zip is byte-identical to the matching source folder in this repository
 (`anim_assist/`, `ghost_tool/`) — the zip is only the packaged form.
+BoneCraft BFA (previously BoneForge BFA) has its own source repository,
+[Axleonex/BoneForge_B4Artists](https://github.com/Axleonex/BoneForge_B4Artists).
+The add-on folder inside the zip is still `boneforge/` (internal name, so
+existing rigs and files keep working).
 
 ## How to tell which build you have
 
