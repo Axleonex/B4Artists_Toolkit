@@ -6,7 +6,7 @@ The current build of each add-on. **Install these.**
 |---|---|---|---|---|
 | Anim Assist | **12.1.0** | `b4_anim_assist_v12.1.0.zip` | 557,834 | `ee4ea5f1f517` |
 | Ghost Tool | **3.4.0** | `b4_ghost_tool_v3.4.0.zip` | 154,640 | `69adf612e996` |
-| BoneCraft BFA (optional) | **8.9.9** | `BoneCraft-BFA-8.9.9.zip` | 791,160 | `2bcb76b9fe82` |
+| BoneCraft BFA (optional) | **8.9.9** | `BoneCraft-BFA-8.9.9.zip` | 797,293 | `689378dff20a` |
 
 Each zip is byte-identical to the matching source folder in this repository
 (`anim_assist/`, `ghost_tool/`) — the zip is only the packaged form.
