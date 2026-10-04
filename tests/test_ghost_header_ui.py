@@ -337,6 +337,80 @@ class GhostHeaderUI(unittest.TestCase):
         settings.mesh_ghost_past_count = 1  # window size changed: incremental must refuse
         self.assertFalse(mg.update_mesh_ghosts_incremental(bpy.context))
 
+    def test_curve_objects_get_onion_skins(self):
+        curve_data = bpy.data.curves.new("Path", 'CURVE')
+        curve_data.dimensions = '3D'
+        curve_data.bevel_depth = 0.05
+        spline = curve_data.splines.new('BEZIER')
+        spline.bezier_points.add(1)
+        spline.bezier_points[0].co = (0, 0, 0)
+        spline.bezier_points[1].co = (0, 0, 2)
+        curve = bpy.data.objects.new("Path", curve_data)
+        self.scene.collection.objects.link(curve)
+        for frame, x in ((1, 0.0), (20, 3.0)):
+            curve.location.x = x
+            curve.keyframe_insert('location', frame=frame)
+        self._select_only(curve)
+        self.assertEqual(mg.selected_ghost_sources(bpy.context), [curve])
+        self.scene.ghost_tool.is_active = True
+        self.scene.ghost_tool.mesh_ghost_frame_mode = 'STEP'
+        self.scene.frame_set(10)
+        self.assertEqual(bpy.ops.ghost_tool.generate_mesh_ghosts(), {'FINISHED'})
+        ghosts = self._ghosts()
+        self.assertTrue(ghosts)
+        self.assertEqual({o["ghost_tool_source"] for o in ghosts}, {"Path"})
+        self.assertTrue(all(len(o.data.polygons) > 0 for o in ghosts))  # bevelled tube, not a bare line
+        self.scene.frame_set(11)
+        self.assertTrue(mg.update_mesh_ghosts_incremental(bpy.context))
+
+    def test_onion_skins_stay_pinned_to_their_character(self):
+        from ghost_tool import ghost_pipeline as gp
+        rig, meshes = self._character("G")
+        bpy.ops.mesh.primitive_cube_add()
+        prop = bpy.context.object
+        prop.name = "Prop"
+        settings = self.scene.ghost_tool
+        settings.is_active = True
+        settings.mesh_ghost_frame_mode = 'STEP'
+        settings.mesh_ghost_step = 2
+        settings.mesh_ghost_past_count = 2
+        settings.mesh_ghost_future_count = 2
+        self._select_only(rig)
+        self.scene.frame_set(10)
+        bpy.ops.ghost_tool.generate_mesh_ghosts()
+        self.assertEqual(mg.pinned_ghost_sources(self.scene), [rig])
+        self._select_only(prop)  # a prop gets selected: the character keeps its onion skins
+        self.scene.frame_set(11)
+        gp.GhostPipeline.get(self.scene)._update_mesh_ghosts_live(bpy.context, settings)
+        self.assertEqual({o["ghost_tool_source"] for o in self._ghosts()}, {m.name for m in meshes})
+        for obj in bpy.data.objects:  # nothing selected: still follows the playhead
+            obj.select_set(False)
+        bpy.context.view_layer.objects.active = None
+        self.scene.frame_set(12)
+        self.assertTrue(mg.update_mesh_ghosts_incremental(bpy.context))
+        self.assertEqual({o[mg.GHOST_TOOL_FRAME_KEY] for o in self._ghosts()}, {8.0, 10.0, 14.0, 16.0})
+        bpy.ops.ghost_tool.clear_mesh_ghosts()  # Clear unpins: selection drives again
+        self.assertEqual(mg.pinned_ghost_sources(self.scene), [])
+        self._select_only(prop)
+        self.assertEqual(mg.ghost_source_objects(bpy.context), [prop])
+
+    def test_playback_stop_refreshes_live_ghosts(self):
+        from unittest.mock import patch
+        from ghost_tool import ghost_pipeline as gp
+        self.assertIn(gp._on_playback_post, bpy.app.handlers.animation_playback_post)
+        settings = self.scene.ghost_tool
+        settings.is_active = True
+        settings.live_mesh_ghosts = True
+        settings.live_freeze = False
+        pipeline = gp.GhostPipeline.get(self.scene)
+        pipeline._get_cache().mark_clean()
+        gp._deferred_update_pending = False
+        with patch.object(gp.bpy.app.timers, 'register') as register:
+            gp._on_playback_post(self.scene)
+        self.assertTrue(pipeline._get_cache().is_dirty)
+        self.assertEqual(register.call_count, 1)
+        gp._deferred_update_pending = False
+
 
 if __name__ == "__main__":
     ghost_tool.register()

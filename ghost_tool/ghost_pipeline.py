@@ -752,9 +752,11 @@ def _deferred_live_update() -> Optional[float]:
             _deferred_update_pending = True
             return 0.05
 
-        # Skip during animation playback to avoid performance issues
+        # Playback: wait and retry, so the frame it stops on gets ghosts even
+        # if nothing fires a frame_change afterwards.
         if context.screen and context.screen.is_animation_playing:
-            return None
+            _deferred_update_pending = True
+            return 0.25
 
         pipeline = GhostPipeline.get(scene)
         cache = pipeline._get_cache()
@@ -952,6 +954,20 @@ def _on_frame_change_pipeline(scene: bpy.types.Scene, depsgraph=None) -> None:
 
 
 @bpy.app.handlers.persistent
+def _on_playback_post(scene: bpy.types.Scene, *_args) -> None:
+    """Playback stopped: bring live ghosts to the frame it stopped on."""
+    if is_sampling() or not hasattr(scene, 'ghost_tool'):
+        return
+    settings = scene.ghost_tool
+    if not settings.is_active or settings.live_freeze:
+        return
+    if not settings.live_point_ghosts and not settings.live_mesh_ghosts:
+        return
+    GhostPipeline.get(scene).mark_dirty()
+    _schedule_deferred_update()
+
+
+@bpy.app.handlers.persistent
 def _on_depsgraph_update_pipeline(scene: bpy.types.Scene, depsgraph=None) -> None:
     """Handler called on depsgraph_update_post.
 
@@ -1027,6 +1043,9 @@ def _register_live_handlers() -> None:
             bpy.app.handlers.depsgraph_update_post.append(_depsgraph_update_handler)
             debug("Registered depsgraph_update_post handler.")
 
+    if _on_playback_post not in bpy.app.handlers.animation_playback_post:
+        bpy.app.handlers.animation_playback_post.append(_on_playback_post)
+
 
 def _unregister_live_handlers() -> None:
     """Remove frame_change and depsgraph handlers.
@@ -1050,6 +1069,11 @@ def _unregister_live_handlers() -> None:
             debug("Handler depsgraph_update_post already removed")
         _depsgraph_update_handler = None
         debug("Unregistered depsgraph_update_post handler.")
+
+    try:
+        bpy.app.handlers.animation_playback_post.remove(_on_playback_post)
+    except ValueError:
+        pass
 
 
 # ---------------------------------------------------------------------------

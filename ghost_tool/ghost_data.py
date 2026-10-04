@@ -674,6 +674,7 @@ def _on_ghost_feature_enabled(self, context):
         # Also disable onion skin so it's clean for next enable
         if settings.show_mesh_ghosts:
             settings["show_mesh_ghosts"] = False
+        settings["mesh_ghost_sources"] = ""
         # Tag viewport redraw to clear visuals
         tag_viewport_redraw(context)
         return
@@ -1041,6 +1042,16 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         description="Show mesh ghosts from after the current frame",
         default=True,
         update=_on_mesh_ghost_setting_changed,
+    )  # type: ignore[assignment]
+
+    mesh_ghost_sources: bpy.props.StringProperty(
+        name="Onion Skin Sources",
+        description=(
+            "Objects the onion skins follow, pinned by Show Onion Skin "
+            "(newline-separated names). Empty: follow the selection"
+        ),
+        default="",
+        options={'HIDDEN'},
     )  # type: ignore[assignment]
 
     # ── Ghost Mode & Range ──────────────────────────────────────────────

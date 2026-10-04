@@ -240,7 +240,13 @@ def _draw_onion_skin(layout, context) -> None:
     row.scale_y = 1.3
     row.operator("ghost_tool.generate_mesh_ghosts", text="Show Onion Skin", icon='MESH_DATA')
     row.operator("ghost_tool.clear_mesh_ghosts", text="", icon='TRASH')
-    _row_label(layout, "Every mesh of each selected character")
+    from .mesh_ghosts import pinned_ghost_sources
+    pinned = pinned_ghost_sources(context.scene)
+    if pinned:
+        names = ", ".join(obj.name for obj in pinned[:3]) + (", ..." if len(pinned) > 3 else "")
+        _row_label(layout, f"Following {names}", icon='PINNED')
+    else:
+        _row_label(layout, "Every mesh or curve of each selected character")
 
     row = layout.row(align=True)
     row.prop(settings, "mesh_ghost_mode", expand=True)

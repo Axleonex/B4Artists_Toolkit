@@ -48,6 +48,9 @@ GHOST_TOOL_FRAME_KEY = "ghost_tool_frame"            # Float: the frame at which
 GHOST_TOOL_IS_PAST_KEY = "ghost_tool_is_past"        # Boolean: whether the ghost is in the past
 GHOST_TOOL_BASE_ALPHA_KEY = "ghost_tool_base_alpha"  # Float: base transparency (before opacity_scale)
 
+GHOST_SOURCE_TYPES = frozenset({'MESH', 'CURVE', 'SURFACE', 'FONT'})
+"""Object types whose evaluated geometry can be onion-skinned through to_mesh()."""
+
 PAST_COLOR = (0.25, 0.55, 1.0)       # Cool blue
 FUTURE_COLOR = (1.0, 0.55, 0.15)     # Warm orange
 CURRENT_COLOR = (0.2, 1.0, 0.4)      # Bright green (for the current frame)
@@ -685,11 +688,12 @@ def _apply_outline_modifier(
 
 
 def resolve_mesh_objects(sources) -> list[bpy.types.Object]:
-    """Every visible mesh to onion-skin for one object or a list of objects.
+    """Every visible object to onion-skin for one object or a list of objects.
 
-    A mesh contributes itself. An armature contributes every visible mesh
-    parented under it or deformed by it through an Armature modifier, so a
-    character split into body, clothes, hair and eyes is ghosted whole.
+    A mesh, curve, surface or text object contributes itself. An armature
+    contributes every visible such object parented under it or deformed by it
+    through an Armature modifier, so a character split into body, clothes,
+    hair and eyes is ghosted whole.
     """
     if sources is None:
         return []
@@ -699,13 +703,13 @@ def resolve_mesh_objects(sources) -> list[bpy.types.Object]:
     for obj in sources:
         if obj is None:
             continue
-        if obj.type == 'MESH':
+        if obj.type in GHOST_SOURCE_TYPES:
             candidates = [obj]
         elif obj.type == 'ARMATURE':
-            candidates = [child for child in obj.children_recursive if child.type == 'MESH']
+            candidates = [child for child in obj.children_recursive if child.type in GHOST_SOURCE_TYPES]
             candidates += [
                 other for other in bpy.data.objects
-                if other.type == 'MESH' and any(
+                if other.type in GHOST_SOURCE_TYPES and any(
                     mod.type == 'ARMATURE' and mod.object == obj for mod in other.modifiers)
             ]
         else:
@@ -718,15 +722,43 @@ def resolve_mesh_objects(sources) -> list[bpy.types.Object]:
     return meshes
 
 
-def ghost_source_objects(context: bpy.types.Context) -> list[bpy.types.Object]:
-    """The characters to onion-skin: the active object plus any selected mesh or armature."""
+def _is_ghost_source(obj) -> bool:
+    return obj is not None and not obj.get(GHOST_TOOL_MESH_GHOST_KEY) \
+        and (obj.type in GHOST_SOURCE_TYPES or obj.type == 'ARMATURE')
+
+
+def selected_ghost_sources(context: bpy.types.Context) -> list[bpy.types.Object]:
+    """The active object plus any selected mesh, curve, surface, text or armature."""
     sources: list[bpy.types.Object] = []
     active = getattr(context, 'active_object', None)
     for obj in [active, *getattr(context, 'selected_objects', ())]:
-        if obj is not None and obj.type in {'MESH', 'ARMATURE'} and obj not in sources \
-                and not obj.get(GHOST_TOOL_MESH_GHOST_KEY):
+        if _is_ghost_source(obj) and obj not in sources:
             sources.append(obj)
     return sources
+
+
+def pinned_ghost_sources(scene: bpy.types.Scene) -> list[bpy.types.Object]:
+    """Objects pinned by Show Onion Skin; deleted or renamed ones drop out."""
+    settings = getattr(scene, 'ghost_tool', None)
+    names = getattr(settings, 'mesh_ghost_sources', '') if settings is not None else ''
+    sources: list[bpy.types.Object] = []
+    for name in names.split('\n'):
+        obj = bpy.data.objects.get(name) if name else None
+        if _is_ghost_source(obj) and obj not in sources:
+            sources.append(obj)
+    return sources
+
+
+def pin_ghost_sources(scene: bpy.types.Scene, sources) -> None:
+    """Remember which objects the onion skins follow, independent of selection."""
+    settings = getattr(scene, 'ghost_tool', None)
+    if settings is not None:
+        settings["mesh_ghost_sources"] = "\n".join(obj.name for obj in sources)
+
+
+def ghost_source_objects(context: bpy.types.Context) -> list[bpy.types.Object]:
+    """The characters to onion-skin: the pinned ones, else the current selection."""
+    return pinned_ghost_sources(context.scene) or selected_ghost_sources(context)
 
 
 def set_mesh_ghost_xray(scene: bpy.types.Scene, enabled: bool) -> None:
@@ -737,39 +769,6 @@ def set_mesh_ghost_xray(scene: bpy.types.Scene, enabled: bool) -> None:
     for obj in coll.objects:
         if obj.get(GHOST_TOOL_MESH_GHOST_KEY):
             obj.show_in_front = enabled
-
-
-def _resolve_mesh_object(obj: bpy.types.Object) -> Optional[bpy.types.Object]:
-    """Find the mesh object to use for onion skinning.
-
-    If the given object is an armature, look for a child mesh.
-    If it's already a mesh, use it directly.
-
-    Args:
-        obj: The active object.
-
-    Returns:
-        The mesh object, or None if no mesh is found.
-    """
-    if obj is None:
-        return None
-
-    if obj.type == 'MESH':
-        return obj
-
-    if obj.type == 'ARMATURE':
-        # Find the first child mesh with the most vertices (likely the body)
-        best_mesh = None
-        best_vertex_count = 0
-        for child in obj.children:
-            if child.type == 'MESH' and child.visible_get():
-                child_vertex_count = len(child.data.vertices)
-                if child_vertex_count > best_vertex_count:
-                    best_mesh = child
-                    best_vertex_count = child_vertex_count
-        return best_mesh
-
-    return None
 
 
 # ---------------------------------------------------------------------------
@@ -1300,10 +1299,10 @@ class GHOST_OT_generate_mesh_ghosts(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        """Require a selected or active mesh or armature."""
-        if ghost_source_objects(context):
+        """Require a selected or active mesh, curve, surface, text or armature."""
+        if selected_ghost_sources(context):
             return True
-        cls.poll_message_set("Select a character (its armature or mesh) first")
+        cls.poll_message_set("Select a character (its armature, mesh or curve) first")
         return False
 
     def execute(self, context: bpy.types.Context) -> set[str]:
@@ -1317,12 +1316,13 @@ class GHOST_OT_generate_mesh_ghosts(bpy.types.Operator):
         """
         scene = context.scene
         settings = scene.ghost_tool
-        obj = ghost_source_objects(context)
+        obj = selected_ghost_sources(context)
         current_frame = scene.frame_current
         if not resolve_mesh_objects(obj):
-            self.report({'WARNING'}, "No visible mesh on the selected character(s): "
-                                     "onion skins need a mesh deformed by the rig")
+            self.report({'WARNING'}, "No visible geometry on the selected character(s): "
+                                     "onion skins need a mesh or curve deformed by the rig")
             return {'CANCELLED'}
+        pin_ghost_sources(scene, obj)
 
         # Build the frame list from settings (respects STEP vs KEYFRAMES mode)
         past_count = settings.mesh_ghost_past_count
@@ -1383,6 +1383,7 @@ class GHOST_OT_clear_mesh_ghosts(bpy.types.Operator):
             set[str]: {'FINISHED'}.
         """
         count = clear_mesh_ghosts(context)
+        pin_ghost_sources(context.scene, [])
         self.report({'INFO'}, f"Removed {count} mesh ghosts")
         if context.area:
             context.area.tag_redraw()
