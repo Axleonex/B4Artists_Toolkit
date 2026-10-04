@@ -227,12 +227,12 @@ def _compute_ghost_color_alpha(
 
     color = past_rgb if frame_offset < 0 else future_rgb
 
-    # Min alpha from settings
+    max_alpha = getattr(settings, 'mesh_ghost_opacity', MAX_ALPHA) if settings else MAX_ALPHA
     user_min_alpha = settings.ghost_min_alpha if settings else MIN_ALPHA
-    effective_min_alpha = max(MIN_ALPHA, user_min_alpha)
+    effective_min_alpha = min(max(MIN_ALPHA, user_min_alpha), max_alpha)
 
-    # Alpha: lerp from MAX_ALPHA at distance=0 to effective_min_alpha at distance=1
-    alpha = MAX_ALPHA + (effective_min_alpha - MAX_ALPHA) * falloff_adjusted_distance
+    # Alpha: lerp from max_alpha at distance=0 to effective_min_alpha at distance=1
+    alpha = max_alpha + (effective_min_alpha - max_alpha) * falloff_adjusted_distance
 
     return color, alpha
 
@@ -988,11 +988,30 @@ def _same_mesh_topology(source, target):
     if (len(source.vertices), len(source.edges), len(source.polygons), len(source.loops)) != (
             len(target.vertices), len(target.edges), len(target.polygons), len(target.loops)):
         return False
-    # from_pydata may reorder edges; faces/loops retain source order.
-    if any(tuple(a.vertices) != tuple(b.vertices) for a, b in zip(source.polygons, target.polygons)):
+    import numpy as np
+
+    def _array(collection, attr, count, width=1):
+        data = np.empty(count * width, dtype=np.int32)
+        if count:
+            collection.foreach_get(attr, data)
+        return data.reshape(count, width) if width > 1 else data
+
+    # Faces/loops retain source order through from_pydata.
+    loop_count = len(source.loops)
+    if not np.array_equal(_array(source.loops, 'vertex_index', loop_count),
+                          _array(target.loops, 'vertex_index', loop_count)):
         return False
-    return {tuple(sorted(e.vertices)) for e in source.edges} == {
-        tuple(sorted(e.vertices)) for e in target.edges}
+    poly_count = len(source.polygons)
+    if not np.array_equal(_array(source.polygons, 'loop_start', poly_count),
+                          _array(target.polygons, 'loop_start', poly_count)):
+        return False
+    # from_pydata may reorder edges: compare as sorted vertex pairs.
+    edge_count = len(source.edges)
+    a = np.sort(_array(source.edges, 'vertices', edge_count, 2), axis=1)
+    b = np.sort(_array(target.edges, 'vertices', edge_count, 2), axis=1)
+    a = a[np.lexsort((a[:, 1], a[:, 0]))] if edge_count else a
+    b = b[np.lexsort((b[:, 1], b[:, 0]))] if edge_count else b
+    return bool(np.array_equal(a, b))
 
 
 @sampling_operation
@@ -1035,40 +1054,40 @@ def update_mesh_ghosts_incremental(
     if not ghost_objects:
         return False
 
-    # Check if we need to rebuild (frame window has shifted)
-    # For "around cursor" mode, the desired frames depend on current_frame
-    desired_frames = _compute_desired_mesh_frames_from_settings(
-        settings, current_frame, scene, ghost_source_objects(context))
-    # Note: _compute_desired_mesh_frames returns a set; convert existing frames to set for comparison
+    # Same ghost count per mesh as the playhead now wants: reuse the objects and
+    # move them to the new frames. Anything else needs a full rebuild.
+    sources = ghost_source_objects(context)
+    desired_frames = sorted(_compute_desired_mesh_frames_from_settings(
+        settings, current_frame, scene, sources))
+    if not desired_frames:
+        return False
 
-    existing_frames = set(f for f, _ in ghost_objects)
-
-    # If the desired frame set doesn't match existing, we need a full rebuild
-    if desired_frames != existing_frames:
-        return False  # Signal caller to do a full rebuild
-
-    # Good — same frame set. Do incremental vertex update.
-    depsgraph = context.evaluated_depsgraph_get()
-
-    # The meshes to ghost now must be the ones the existing ghosts were made from
-    mesh_objs = resolve_mesh_objects(ghost_source_objects(context))
+    mesh_objs = resolve_mesh_objects(sources)
     if not mesh_objs:
         return False
     mesh_by_name = {mesh.name: mesh for mesh in mesh_objs}
-    if {obj.get('ghost_tool_source') for _frame, obj in ghost_objects} != set(mesh_by_name):
+
+    ghosts_by_source: dict[str, list] = {}
+    for frame, obj in ghost_objects:
+        ghosts_by_source.setdefault(obj.get('ghost_tool_source'), []).append((frame, obj))
+    if set(ghosts_by_source) != set(mesh_by_name):
+        return False
+    if any(len(items) != len(desired_frames) for items in ghosts_by_source.values()):
         return False
 
-    # Compute frame range for color/alpha
-    all_frames = [f for f, _ in ghost_objects]
-    min_frame = min(all_frames)
-    max_frame = max(all_frames)
-    frame_range_width = max(max_frame - min_frame, 1.0)
+    plan: list[tuple[float, bpy.types.Object, bpy.types.Object]] = []
+    for source_name, items in ghosts_by_source.items():
+        items.sort(key=lambda item: item[0])
+        for frame, (_old_frame, obj) in zip(desired_frames, items):
+            plan.append((frame, obj, mesh_by_name[source_name]))
+
+    frame_range_width = max(desired_frames[-1] - desired_frames[0], 1.0)
 
     success = True
 
     last_frame = None
-    for frame, ghost_obj in sorted(ghost_objects, key=lambda item: item[0]):
-        mesh_obj = mesh_by_name[ghost_obj.get('ghost_tool_source')]
+    for frame, ghost_obj, mesh_obj in sorted(plan, key=lambda item: item[0]):
+        ghost_obj[GHOST_TOOL_FRAME_KEY] = frame
         # Move to frame and evaluate (once per frame for all meshes)
         if frame != last_frame:
             scene.frame_set(math.floor(frame), subframe=frame - math.floor(frame))
@@ -1138,6 +1157,17 @@ def update_mesh_ghosts_incremental(
         show_future = settings.show_mesh_future
         is_past = frame < current_frame
         ghost_obj.hide_viewport = (not show_past) if is_past else (not show_future)
+
+    if success:
+        renames = []
+        for frame, ghost_obj, mesh_obj in plan:
+            name = f"{GHOST_MESH_PREFIX}{mesh_obj.name}_f{frame:.0f}"
+            if ghost_obj.name != name:
+                renames.append((ghost_obj, name))
+        for ghost_obj, _name in renames:
+            ghost_obj.name = f"{ghost_obj.name}~"  # release every target name first
+        for ghost_obj, name in renames:
+            ghost_obj.name = name
 
     return success
 
@@ -1320,9 +1350,11 @@ class GHOST_OT_generate_mesh_ghosts(bpy.types.Operator):
             step=1,  # step already applied above
         )
 
-        # Activate mesh ghost display and live updates
-        if hasattr(settings, 'show_mesh_ghosts'):
-            settings.show_mesh_ghosts = True
+        # Raw writes: the ghosts were just built, so skip the callbacks that
+        # would clear them (Ghost Tools off) or queue a second full build.
+        if not settings.is_active:
+            settings["is_active"] = True
+        settings["show_mesh_ghosts"] = True
         settings.live_mesh_ghosts = True
 
         mode_label = "at keyframes" if frame_mode == 'KEYFRAMES' else "frame-step"

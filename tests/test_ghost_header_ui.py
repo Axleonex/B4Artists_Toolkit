@@ -271,6 +271,72 @@ class GhostHeaderUI(unittest.TestCase):
         alphas = [mg._compute_ghost_color_alpha(f, 10.0, 16.0, settings)[1] for f in (9.0, 2.0)]
         self.assertGreater(alphas[0], alphas[1])
 
+    def _ghosts(self):
+        return [o for o in bpy.data.objects if o.get(mg.GHOST_TOOL_MESH_GHOST_KEY)]
+
+    def _select_only(self, obj):
+        for other in bpy.data.objects:
+            other.select_set(other is obj)
+        bpy.context.view_layer.objects.active = obj
+
+    def test_opacity_slider_sets_closest_alpha(self):
+        settings = self.scene.ghost_tool
+        self.addCleanup(setattr, settings, 'mesh_ghost_opacity', 0.35)
+        settings.mesh_ghost_falloff = 'LINEAR'
+        settings.mesh_ghost_opacity = 0.8
+        high = mg._compute_ghost_color_alpha(9.0, 10.0, 16.0, settings)[1]
+        settings.mesh_ghost_opacity = 0.1
+        low = mg._compute_ghost_color_alpha(9.0, 10.0, 16.0, settings)[1]
+        self.assertGreater(high, low)
+        self.assertAlmostEqual(low, 0.1, places=5)  # the slider caps the closest ghost
+
+    def test_show_mesh_ghosts_toggle_turns_off_and_clears(self):
+        rig, _ = self._character("D")
+        settings = self.scene.ghost_tool
+        settings.is_active = True
+        mg.generate_mesh_ghosts(bpy.context, rig, [2.0, 4.0], past_count=5, future_count=5)
+        self.assertTrue(self._ghosts())
+        settings.show_mesh_ghosts = False
+        self.assertFalse(settings.show_mesh_ghosts)
+        self.assertFalse(self._ghosts())
+
+    def test_show_onion_skin_operator_keeps_ghosts_and_builds_once(self):
+        from ghost_tool import ghost_pipeline as gp
+        rig, _ = self._character("E")
+        self._select_only(rig)
+        settings = self.scene.ghost_tool
+        settings.is_active = False
+        gp._forced_mesh_regen_pending = False
+        self.assertEqual(bpy.ops.ghost_tool.generate_mesh_ghosts(), {'FINISHED'})
+        self.assertTrue(self._ghosts())
+        self.assertTrue(settings.is_active)
+        self.assertTrue(settings.show_mesh_ghosts)
+        self.assertFalse(gp._forced_mesh_regen_pending)  # no second full build queued
+
+    def test_step_scrub_moves_existing_ghosts(self):
+        rig, meshes = self._character("F")
+        self._select_only(rig)
+        settings = self.scene.ghost_tool
+        settings.is_active = True
+        settings.mesh_ghost_frame_mode = 'STEP'
+        settings.mesh_ghost_step = 2
+        settings.mesh_ghost_past_count = 2
+        settings.mesh_ghost_future_count = 2
+        self.scene.frame_start, self.scene.frame_end = 1, 40
+        self.scene.frame_set(10)
+        bpy.ops.ghost_tool.generate_mesh_ghosts()
+        before = {o.as_pointer() for o in self._ghosts()}
+        self.scene.frame_set(11)
+        self.assertTrue(mg.update_mesh_ghosts_incremental(bpy.context))
+        ghosts = self._ghosts()
+        self.assertEqual({o.as_pointer() for o in ghosts}, before)  # reused, not rebuilt
+        self.assertEqual({o[mg.GHOST_TOOL_FRAME_KEY] for o in ghosts}, {7.0, 9.0, 13.0, 15.0})
+        self.assertEqual({o.name for o in ghosts},
+                         {f"GhostMesh_{m.name}_f{f}" for m in meshes for f in (7, 9, 13, 15)})
+        self.assertEqual(self.scene.frame_current, 11)
+        settings.mesh_ghost_past_count = 1  # window size changed: incremental must refuse
+        self.assertFalse(mg.update_mesh_ghosts_incremental(bpy.context))
+
 
 if __name__ == "__main__":
     ghost_tool.register()

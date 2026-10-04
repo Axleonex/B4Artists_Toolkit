@@ -652,8 +652,6 @@ def _on_ghost_feature_enabled(self, context):
         - Clears all mesh ghosts from the scene
         - Clears all point ghosts from the store
         - Disables show_mesh_ghosts
-
-    Also fires when show_mesh_ghosts is toggled independently.
     """
     if not context or not context.scene:
         return
@@ -695,6 +693,28 @@ def _on_ghost_feature_enabled(self, context):
         _schedule_deferred_update()
     except Exception as exc:
         warn(f"Failed to schedule ghost regeneration: {exc}")
+
+
+def _on_show_mesh_ghosts_changed(self, context):
+    """Onion skins on: build them for the selected character. Off: clear them."""
+    if not context or not context.scene:
+        return
+    settings = context.scene.ghost_tool
+    if not settings.is_active:
+        return
+    if not settings.show_mesh_ghosts:
+        try:
+            from .mesh_ghosts import clear_mesh_ghosts
+            clear_mesh_ghosts(context)
+        except Exception as exc:
+            warn(f"Failed to clear mesh ghosts: {exc}")
+        tag_viewport_redraw(context)
+        return
+    try:
+        from .ghost_pipeline import _schedule_forced_mesh_regen
+        _schedule_forced_mesh_regen()
+    except Exception as exc:
+        warn(f"Failed to schedule onion skin rebuild: {exc}")
 
 
 def _on_mesh_ghost_mode_changed(self, context):
@@ -870,7 +890,7 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         name="Show Mesh Ghosts",
         description="Display transparent mesh duplicates at ghost frames (onion skinning)",
         default=False,
-        update=_on_ghost_feature_enabled,
+        update=_on_show_mesh_ghosts_changed,
     )  # type: ignore[assignment]
 
     mesh_ghost_past_count: bpy.props.IntProperty(
