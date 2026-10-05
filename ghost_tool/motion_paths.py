@@ -150,6 +150,13 @@ def mark_dirty(key: PathKey) -> None:
     _dirty.add(key)
 
 
+def forget(key: PathKey) -> None:
+    """Drop one path's cached positions, so a draw sees it as unsampled and asks for a refresh."""
+    for stale in [c for c in _cache if (c[0], c[1]) == key]:
+        del _cache[stale]
+    _anchors.pop(key, None)
+
+
 def _dependencies(obj: bpy.types.Object) -> set[str]:
     """Names of the objects whose motion can move ``obj``: parents and constraint
     targets, followed transitively (a parent's parent, a target's parent)."""
@@ -296,6 +303,20 @@ def _active_key(context) -> Optional[PathKey]:
         return (pb.id_data.name, pb.name)
     obj = getattr(context, 'active_object', None)
     return (obj.name, "") if obj is not None else None
+
+
+def active_entry_index(context) -> int:
+    """Index of the pinned path that follows the active bone or object, or -1."""
+    key = _active_key(context)
+    for index, entry in enumerate(context.scene.ghost_tool.motion_paths):
+        if (entry.object_name, entry.bone_name) == key:
+            return index
+    return -1
+
+
+def dialog_props(entry) -> tuple[str, ...]:
+    """Properties the path settings dialog shows; an object origin has no tail."""
+    return ("color", "thickness", "anchor") if entry.bone_name else ("color", "thickness")
 
 
 def draw_motion_paths() -> None:
@@ -549,8 +570,7 @@ class GHOST_OT_paths_remove(bpy.types.Operator):
         entry = settings.motion_paths[idx]
         key = (entry.object_name, entry.bone_name)
         settings.motion_paths.remove(idx)
-        for stale in [c for c in _cache if (c[0], c[1]) == key]:
-            del _cache[stale]
+        forget(key)
         settings.motion_paths_index = min(idx, len(settings.motion_paths) - 1)
         _sync_markers_if_shown(context)
         tag_viewport_redraw(context)
@@ -596,27 +616,49 @@ class GHOST_OT_paths_toggle_visible(bpy.types.Operator):
 
 class GHOST_OT_paths_set_color(bpy.types.Operator):
     bl_idname = "ghost_tool.paths_set_color"
-    bl_label = "Path Colour"
-    bl_description = "Change the colour and thickness of this motion path"
+    bl_label = "Path Settings"
+    bl_description = "Change the colour, thickness and traced point of this motion path"
     bl_options = {'REGISTER', 'UNDO'}
     index: bpy.props.IntProperty(default=-1)  # type: ignore[assignment]
-    color: bpy.props.FloatVectorProperty(subtype='COLOR', size=3, min=0.0, max=1.0)  # type: ignore[assignment]
-    thickness: bpy.props.IntProperty(min=1, max=6, default=2)  # type: ignore[assignment]
+    color: bpy.props.FloatVectorProperty(
+        name="Colour", description="Colour of this path", subtype='COLOR', size=3, min=0.0, max=1.0,
+    )  # type: ignore[assignment]
+    thickness: bpy.props.IntProperty(
+        name="Thickness", description="Line width of this path in pixels", min=1, max=6, default=2,
+    )  # type: ignore[assignment]
+    anchor: bpy.props.EnumProperty(
+        name="Trace",
+        description="Which point of the bone the path traces",
+        items=[('HEAD', "Head", "Trace the bone head"), ('TAIL', "Tail", "Trace the bone tail")],
+        default='HEAD',
+    )  # type: ignore[assignment]
 
     def invoke(self, context, event):
         paths = context.scene.ghost_tool.motion_paths
         if not 0 <= self.index < len(paths):   # -1 would silently pick the last path
             return {'CANCELLED'}
         entry = paths[self.index]
-        self.color, self.thickness = tuple(entry.color), entry.thickness
+        self.color, self.thickness, self.anchor = tuple(entry.color), entry.thickness, entry.anchor
         return context.window_manager.invoke_props_dialog(self, width=220)
+
+    def draw(self, context):
+        paths = context.scene.ghost_tool.motion_paths
+        if 0 <= self.index < len(paths):
+            for name in dialog_props(paths[self.index]):
+                self.layout.prop(self, name, expand=name == "anchor")
 
     def execute(self, context):
         paths = context.scene.ghost_tool.motion_paths
         if not 0 <= self.index < len(paths):
             return {'CANCELLED'}
         entry = paths[self.index]
-        entry.color, entry.thickness = self.color, self.thickness
+        # Only what the caller set: the list's Head/Tail button passes the anchor alone.
+        for name in dialog_props(entry):
+            if not self.properties.is_property_set(name):
+                continue
+            if name == "anchor" and entry.anchor == self.anchor:
+                continue   # rewriting the same anchor would re-sample the whole path
+            setattr(entry, name, getattr(self, name))
         tag_viewport_redraw(context)
         return {'FINISHED'}
 

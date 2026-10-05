@@ -116,7 +116,8 @@ _HELP_TOPICS = {
         "Pin a path to any bone or object and watch it follow the playhead.",
         "Add pins the selected bones (Pose mode) or objects. Follow adds a grey path for "
         "whatever is selected. Paths sample the bone itself, so they work with markers off; "
-        "turn Markers on to drag keys along a path. One range and style apply to all paths.",
+        "turn Markers on to drag keys along a path. A bone path traces its head or its tail: "
+        "click H/T in the list to switch. One range and style apply to all paths.",
     ),
 }
 
@@ -481,11 +482,18 @@ def _draw_settings(layout, context) -> None:
     row.operator("ghost_tool.import_ghosts", text="Import", icon='IMPORT')
 
 
+def _row_icon(entry, is_active: bool) -> str:
+    """Kind icon of a path row; the active bone's or object's row gets a dot instead."""
+    if is_active:
+        return 'RADIOBUT_ON'
+    return 'BONE_DATA' if entry.bone_name else 'OBJECT_DATA'
+
+
 class GHOST_UL_paths(bpy.types.UIList):
     bl_idname = "GHOST_UL_paths"
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        from .motion_paths import entry_is_missing
+        from .motion_paths import active_entry_index, entry_is_missing
         row = layout.row(align=True)
         op = row.operator("ghost_tool.paths_toggle_visible", text="", emboss=False,
                           icon='HIDE_OFF' if item.visible else 'HIDE_ON')
@@ -494,9 +502,25 @@ class GHOST_UL_paths(bpy.types.UIList):
         swatch.index = index
         missing = entry_is_missing(item)
         sub = row.row(); sub.enabled = not missing
-        sub.label(text=item.label + ("  (missing)" if missing else ""))
+        sub.label(text=item.label + ("  (missing)" if missing else ""),
+                  icon=_row_icon(item, index == active_entry_index(context)))
+        if item.bone_name:
+            flip = row.row(align=True)
+            flip.operator_context = 'EXEC_DEFAULT'   # one click flips; no dialog
+            anchor = flip.operator("ghost_tool.paths_set_color", text="T" if item.anchor == 'TAIL' else "H",
+                                   emboss=False)
+            anchor.index, anchor.anchor = index, 'HEAD' if item.anchor == 'TAIL' else 'TAIL'
         rm = row.operator("ghost_tool.paths_remove", text="", icon='X', emboss=False)
         rm.index = index
+
+
+def _range_props(settings) -> tuple[str, ...]:
+    """The frame fields the chosen range mode needs."""
+    if settings.paths_range_mode == 'AROUND_CURSOR':
+        return ("paths_before", "paths_after")
+    if settings.paths_range_mode == 'CUSTOM':
+        return ("custom_range_start", "custom_range_end")
+    return ()
 
 
 def _draw_motion_paths(layout, context) -> None:
@@ -513,10 +537,11 @@ def _draw_motion_paths(layout, context) -> None:
     col = layout.column(align=True)
     col.label(text="Range")
     col.prop(settings, "paths_range_mode", text="")
-    if settings.paths_range_mode == 'AROUND_CURSOR':
+    fields = _range_props(settings)
+    if fields:
         row = col.row(align=True)
-        row.prop(settings, "paths_before", text="Before")
-        row.prop(settings, "paths_after", text="After")
+        for name, label in zip(fields, ("Before", "After") if fields[0] == "paths_before" else ("Start", "End")):
+            row.prop(settings, name, text=label)
     col.prop(settings, "paths_step", text="Every")
     col = layout.column(align=True)
     col.label(text="Style")
@@ -706,6 +731,11 @@ class GHOST_OT_floating_toolbar(bpy.types.Operator):
 # ║  SECTION 5 — TIMELINE / DOPESHEET HEADER EXTENSION                    ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 
+def _slow_label(refresh_ms: float) -> str:
+    """Warning text for the header strip when a path refresh took over 200 ms."""
+    return "paths are slow — reduce range" if refresh_ms > 200.0 else ""
+
+
 def _draw_paths_segment(row, settings) -> None:
     row.separator(factor=0.5)
     row.prop(settings, "paths_enabled", text="Paths", icon='CURVE_PATH', toggle=True)
@@ -713,8 +743,9 @@ def _draw_paths_segment(row, settings) -> None:
     row.prop(settings, "paths_follow_selection", text="Follow", icon='RESTRICT_SELECT_OFF', toggle=True)
     row.popover(panel="GHOST_PT_paths_popover", text="", icon='DOWNARROW_HLT')
     from .motion_paths import last_refresh_ms
-    if last_refresh_ms() > 200.0:
-        row.label(text="slow", icon='ERROR')
+    slow = _slow_label(last_refresh_ms())
+    if slow:
+        row.label(text=slow, icon='ERROR')
 
 
 def _draw_timeline_header_extension(self, context: bpy.types.Context) -> None:

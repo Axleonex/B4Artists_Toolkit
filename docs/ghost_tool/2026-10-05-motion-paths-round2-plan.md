@@ -59,10 +59,10 @@ regressions 20.
 **Steps:**
 1. Failing test `test_active_bone_row_is_flagged`: `mp.active_entry_index(context)`
    returns the index of the entry matching `_active_key(context)` or -1.
-2. In `draw_item`, when `index == active_entry_index`, draw the row with
-   `row.alert = False` and icon `'RADIOBUT_ON'` in place of the kind icon (Blender
-   UIList cannot colour a row; the icon swap is the visible cue). Add a test that
-   `_row_icon(entry, is_active)` returns `'RADIOBUT_ON'` for the active one.
+2. In `draw_item`, when `index == active_entry_index`, draw icon `'RADIOBUT_ON'`
+   in place of the kind icon (Blender UIList cannot colour a row; the icon swap is
+   the visible cue). Add a test that `_row_icon(entry, is_active)` returns
+   `'RADIOBUT_ON'` for the active one.
 **Commit:** `Ghost Tool paths: mark the active bone's row`.
 
 ### Task A3: Custom range fields in the popover
@@ -92,16 +92,32 @@ Add, in `tests/test_ghost_paths.py` (fix any behaviour they expose):
 - `test_range_change_samples_only_new_frames` — count `_sample` calls with
   `patch.object(mp, "_sample", wraps=mp._sample)`: `paths_after 3 → 5` samples
   exactly 2 per target.
-- `test_save_reload_keeps_list_and_rebuilds_cache` — `bpy.ops.wm.save_as_mainfile`
-  to the scratch dir, `wm.open_mainfile`, assert `len(motion_paths) == 1`,
-  `_cache == {}` after `_on_file_load`, then `refresh_paths` refills it. Re-register
-  the add-on's scene reference as the other suites do after a file load.
+- `test_z_save_reload_keeps_list_and_rebuilds_cache` — save to a
+  `tempfile.TemporaryDirectory`, `wm.open_mainfile`, assert the list survived,
+  `_cache == {}` after `_on_file_load`, then `refresh_paths` refills it. The `test_z_`
+  name makes it run last (unittest sorts by name), the same pattern as
+  `test_ghost_correctness.py:test_z_file_load_retains_handlers_and_clears_runtime_state`;
+  read the reloaded scene from `bpy.context`, never from `self.scene`.
 **Commit:** `Ghost Tool paths: design §6 tests`.
+
+**Done 2026-10-05 (A1–A5, one commit).** Findings while executing:
+- A1: `paths_set_color` writes only the properties the caller set
+  (`is_property_set`); otherwise the list's one-click H/T button would have reset the
+  colour to black. Skipping an unchanged anchor avoids a needless re-sample.
+- A5's range test exposed waste: every range, step, Follow or anchor change emptied the
+  whole cache, so widening the window by 2 frames re-sampled 9. Only `paths_enabled`
+  still clears everything (edits made while paths are off are never marked dirty);
+  window changes keep the cache; an anchor change forgets only that path
+  (`motion_paths.forget`).
+- The other four §6 tests passed on first run: that behaviour already worked.
+- Not checked by eye: the list row drawing (icon, H/T button) cannot run headless;
+  it is on the A6 manual checklist.
 
 ### Task A6: release 3.5.1 (owner-gated)
 Version `(3, 5, 1)`, zip, `releases/VERSIONS.md`, README rows, GitHub release
 `ghost-v3.5.1`. Manual checklist in the commit message: Head/Tail flip visible in
-the list; Custom shows start/end; Ctrl+Z after a key move snaps the path back
+the list and one click moves the path to the tail without changing its colour; the
+active bone's row shows a dot; Custom shows Start/End; Ctrl+Z after a key move snaps the path back
 (the open-loop probe for `228a946`); turning Ghost Tools off then on after a key
 edit shows the new path. **Ask "Confirm merge update?" before merging to main.**
 

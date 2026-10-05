@@ -769,6 +769,132 @@ class GhostPaths(unittest.TestCase):
         self.assertLess(dt, 50.0)
         self.assertAlmostEqual(mp.last_refresh_ms(), timings[-1], delta=timings[-1] * 0.5 + 5.0)
 
+    # --- Round A: finish the 3.5.0 design ---
+
+    def _drop_deferred_timer(self):
+        from ghost_tool import ghost_pipeline as gp
+        if bpy.app.timers.is_registered(gp._deferred_live_update):
+            bpy.app.timers.unregister(gp._deferred_live_update)
+        gp._deferred_update_pending = False
+
+    def test_settings_dialog_edits_anchor(self):
+        # A1: the anchor existed but no control reached it.
+        rig = _rig(); cube = _cube()
+        b = self.settings.motion_paths.add(); b.object_name, b.bone_name = rig.name, "lower"
+        b.color = (0.1, 0.2, 0.3)
+        o = self.settings.motion_paths.add(); o.object_name = cube.name
+        self.assertEqual(bpy.ops.ghost_tool.paths_set_color(index=0, anchor='TAIL'), {'FINISHED'})
+        self.assertEqual(b.anchor, 'TAIL')
+        self.assertEqual(tuple(round(c, 3) for c in b.color), (0.1, 0.2, 0.3))   # unset props keep their value
+        bpy.ops.ghost_tool.paths_set_color(index=1, anchor='TAIL')
+        self.assertEqual(o.anchor, 'HEAD')   # an object origin has no tail
+        self.assertIn("anchor", mp.dialog_props(b))
+        self.assertNotIn("anchor", mp.dialog_props(o))
+        self._drop_deferred_timer()
+
+    def test_active_bone_row_is_flagged(self):
+        # A2: the design asks for the active bone's row to stand out.
+        from ghost_tool import ui_panel
+        rig = _rig()
+        for bone in ("upper", "lower"):
+            e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, bone
+        self.select_bones(rig, "lower")
+        self.assertEqual(mp.active_entry_index(bpy.context), 1)
+        self.assertEqual(ui_panel._row_icon(self.settings.motion_paths[1], True), 'RADIOBUT_ON')
+        self.assertEqual(ui_panel._row_icon(self.settings.motion_paths[0], False), 'BONE_DATA')
+        bpy.ops.object.mode_set(mode='OBJECT')
+        for obj in bpy.data.objects:
+            obj.select_set(False)
+        bpy.context.view_layer.objects.active = None
+        self.assertEqual(mp.active_entry_index(bpy.context), -1)
+
+    def test_popover_lists_range_props_per_mode(self):
+        # A3: Custom showed no fields to edit.
+        from ghost_tool import ui_panel
+        self.assertEqual(ui_panel._range_props(self.settings), ("paths_before", "paths_after"))
+        self.settings.paths_range_mode = 'CUSTOM'
+        self.assertEqual(ui_panel._range_props(self.settings), ("custom_range_start", "custom_range_end"))
+        self.settings.paths_range_mode = 'SCENE'
+        self.assertEqual(ui_panel._range_props(self.settings), ())
+        self._drop_deferred_timer()
+
+    def test_slow_label_text(self):
+        # A4: the design's warning text, only past 200 ms.
+        from ghost_tool import ui_panel
+        self.assertEqual(ui_panel._slow_label(199.0), "")
+        self.assertEqual(ui_panel._slow_label(201.0), "paths are slow — reduce range")
+
+    def test_rename_marks_missing_and_rename_back_restores(self):
+        # A5 / design §6.
+        rig = _rig()
+        e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "lower"
+        mp.refresh_paths(bpy.context)
+        rig.data.bones["lower"].name = "foo"
+        self.assertTrue(mp.entry_is_missing(e))
+        self.assertEqual(mp.pinned_targets(self.scene), [])
+        mp.refresh_paths(bpy.context)
+        self.assertNotIn((rig.name, "lower", 10.0), mp._cache)
+        rig.data.bones["foo"].name = "lower"
+        self.assertFalse(mp.entry_is_missing(e))
+        self.assertEqual(mp.refresh_paths(bpy.context), 7)
+
+    def test_deleted_bone_draws_nothing_without_exception(self):
+        # A5 / design §6.
+        rig = _rig()
+        e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "lower"
+        mp.refresh_paths(bpy.context)
+        target = mp.pinned_targets(self.scene)[0]
+        bpy.context.view_layer.objects.active = rig
+        bpy.ops.object.mode_set(mode='EDIT')
+        rig.data.edit_bones.remove(rig.data.edit_bones["lower"])
+        bpy.ops.object.mode_set(mode='OBJECT')
+        self.assertTrue(mp.entry_is_missing(e))
+        mp.request_missing_samples(bpy.context)
+        mp.refresh_paths(bpy.context)
+        self.assertEqual(mp.path_segments(bpy.context, target, mp.desired_frames(self.settings, self.scene)), [])
+        self._drop_deferred_timer()
+
+    def test_follow_deselect_removes_only_follow_paths(self):
+        # A5 / design §6.
+        rig = _rig()
+        e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "upper"
+        self.settings.paths_follow_selection = True
+        self.select_bones(rig, "upper", "lower")
+        self.assertEqual({(t.key, t.pinned) for t in mp.all_targets(bpy.context)},
+                         {((rig.name, "upper"), True), ((rig.name, "lower"), False)})
+        for pb in rig.pose.bones:
+            pb.select = False
+        self.assertEqual([(t.key, t.pinned) for t in mp.all_targets(bpy.context)], [((rig.name, "upper"), True)])
+        bpy.ops.object.mode_set(mode='OBJECT')
+        self._drop_deferred_timer()
+
+    def test_range_change_samples_only_new_frames(self):
+        # A5 / design §6: widening the window samples only the frames that entered it.
+        rig = _rig()
+        e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "upper"
+        self.assertEqual(mp.refresh_paths(bpy.context), 7)
+        self.settings.paths_after = 5
+        self.assertEqual(mp.refresh_paths(bpy.context), 2)
+        self.settings.paths_step = 2   # frames 7, 9, ..., 15: all already cached
+        self.assertEqual(mp.refresh_paths(bpy.context), 0)
+        self._drop_deferred_timer()
+
+    def test_z_save_reload_keeps_list_and_rebuilds_cache(self):
+        # A5 / design §6. Named test_z_ so the file load runs last, as in test_ghost_correctness.
+        import tempfile
+        rig = _rig()
+        e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "lower"
+        mp.refresh_paths(bpy.context)
+        with tempfile.TemporaryDirectory(prefix="ghost-paths-load-") as temp:
+            path = str(Path(temp) / "paths.blend")
+            bpy.ops.wm.save_as_mainfile(filepath=path)
+            bpy.ops.wm.open_mainfile(filepath=path)
+            settings = bpy.context.scene.ghost_tool
+            self.assertEqual([(p.object_name, p.bone_name) for p in settings.motion_paths], [("Rig", "lower")])
+            self.assertEqual(mp._cache, {})
+            self.assertEqual(mp.refresh_paths(bpy.context), 7)
+        self._drop_deferred_timer()
+
 
 if __name__ == "__main__":
     result = unittest.TextTestRunner(verbosity=2).run(

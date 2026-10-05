@@ -776,20 +776,42 @@ def _on_mesh_ghost_setting_changed(self, context):
 # Blender PropertyGroup — lightweight scene-level settings
 # ---------------------------------------------------------------------------
 
-def _on_path_setting_changed(self, context):
-    """Range/toggle changed: drop the path cache and schedule the re-sample.
-
-    Sampling calls frame_set, which an update callback must not do, so the
-    pipeline's deferred timer runs it on the next idle tick."""
+def _schedule_path_refresh(context, clear: bool) -> None:
+    """Schedule the re-sample; sampling calls frame_set, which an update callback
+    must not do, so the pipeline's deferred timer runs it on the next idle tick."""
     try:
         from .motion_paths import clear_cache
         from .ghost_pipeline import GhostPipeline, _schedule_deferred_update
-        clear_cache()
+        if clear:
+            clear_cache()
         GhostPipeline.get(context.scene).mark_dirty()
         _schedule_deferred_update()
         tag_viewport_redraw(context)
     except Exception as exc:
-        warn(f"Motion paths: could not reset cache: {exc}")
+        warn(f"Motion paths: could not schedule refresh: {exc}")
+
+
+def _on_path_setting_changed(self, context):
+    """Paths turned on or off: key edits made while off were never marked dirty,
+    so drop the cache and re-sample everything."""
+    _schedule_path_refresh(context, clear=True)
+
+
+def _on_path_anchor_changed(self, context):
+    """Head <-> Tail: this path's cached points belong to the other end of the bone."""
+    try:
+        from .motion_paths import forget
+        forget((self.object_name, self.bone_name))
+    except Exception as exc:
+        warn(f"Motion paths: could not drop the path cache: {exc}")
+    _schedule_path_refresh(context, clear=False)
+
+
+def _on_path_window_changed(self, context):
+    """Range, step, follow or anchor changed: cached positions stay valid (they are
+    keyed by frame; refresh_paths re-samples an anchor change), so only the frames
+    that entered the window are sampled."""
+    _schedule_path_refresh(context, clear=False)
 
 
 def _on_paths_show_markers_changed(self, context):
@@ -819,7 +841,7 @@ class GhostPathEntry(bpy.types.PropertyGroup):
     anchor: bpy.props.EnumProperty(
         name="Anchor",
         description="Which point of the bone the path traces",
-        update=_on_path_setting_changed,
+        update=_on_path_anchor_changed,
         items=[('HEAD', "Head", "Bone head / object origin"), ('TAIL', "Tail", "Bone tail")],
         default='HEAD',
     )  # type: ignore[assignment]
@@ -1128,7 +1150,7 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         name="Follow Selection",
         description="Also draw a grey path for whatever is selected right now",
         default=False,
-        update=_on_path_setting_changed,
+        update=_on_path_window_changed,
     )  # type: ignore[assignment]
     paths_show_markers: bpy.props.BoolProperty(
         name="Markers on Paths",
@@ -1152,19 +1174,19 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
             ('CUSTOM', "Custom", "The custom range from Settings"),
         ],
         default='AROUND_CURSOR',
-        update=_on_path_setting_changed,
+        update=_on_path_window_changed,
     )  # type: ignore[assignment]
     paths_before: bpy.props.IntProperty(
         name="Before", description="Frames drawn before the playhead",
-        default=12, min=0, max=500, update=_on_path_setting_changed,
+        default=12, min=0, max=500, update=_on_path_window_changed,
     )  # type: ignore[assignment]
     paths_after: bpy.props.IntProperty(
         name="After", description="Frames drawn after the playhead",
-        default=12, min=0, max=500, update=_on_path_setting_changed,
+        default=12, min=0, max=500, update=_on_path_window_changed,
     )  # type: ignore[assignment]
     paths_step: bpy.props.IntProperty(
         name="Every", description="Sample every Nth frame along the paths",
-        default=1, min=1, max=24, update=_on_path_setting_changed,
+        default=1, min=1, max=24, update=_on_path_window_changed,
     )  # type: ignore[assignment]
     paths_style: bpy.props.EnumProperty(
         name="Style",
