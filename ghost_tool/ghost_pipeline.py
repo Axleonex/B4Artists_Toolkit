@@ -243,7 +243,8 @@ class GhostPipeline:
         # Publish only after evaluation succeeds.
         if clear_existing:
             cache.invalidate_all()
-        store.replace_all(ghosts if clear_existing else store.all_ghosts + ghosts)
+        fresh, owned = _defer_to_path_markers(context.scene, ghosts)
+        store.replace_all(fresh + owned if clear_existing else store.all_ghosts + fresh)
 
         # Update cache metadata
         cache.last_frame = context.scene.frame_current
@@ -319,7 +320,8 @@ class GhostPipeline:
             final_ghosts = all_ghosts
             if clear_existing:
                 cache.invalidate_all()
-            store.replace_all(all_ghosts if clear_existing else store.all_ghosts + all_ghosts)
+            fresh, owned = _defer_to_path_markers(context.scene, all_ghosts)
+            store.replace_all(fresh + owned if clear_existing else store.all_ghosts + fresh)
             tag_viewport_redraw(context)
 
         finally:
@@ -357,9 +359,7 @@ class GhostPipeline:
         settings = scene.ghost_tool
 
         # Only run if any live mode is enabled
-        live_points = settings.live_point_ghosts
-        live_mesh = settings.live_mesh_ghosts
-        if not live_points and not live_mesh:
+        if not _any_live(settings):
             return False
 
         # Keep the store stable while a modal drag holds ghost references.
@@ -427,6 +427,15 @@ class GhostPipeline:
             settings: GhostToolSceneSettings.
             settings_hash: Pre-computed hash of current settings.
         """
+        if settings.paths_enabled:
+            try:
+                from . import motion_paths
+                motion_paths.refresh_paths(context)
+                if settings.paths_show_markers:
+                    motion_paths.sync_markers(context)   # keep markers on the moving window
+            except Exception as exc:
+                warn(f"Motion paths refresh error: {exc}")
+
         obj = context.active_object
         if not obj:
             return
@@ -507,7 +516,8 @@ class GhostPipeline:
             context, obj, armature, bones, channels,
             settings.subdivision_level, frame_range, mode, settings
         )
-        store.replace_all(ghosts)
+        fresh, owned = _defer_to_path_markers(context.scene, ghosts)
+        store.replace_all(fresh + owned)
 
     def _update_mesh_ghosts_live(
         self,
@@ -649,6 +659,22 @@ class GhostPipeline:
 # Settings hash — detect when properties change
 # ---------------------------------------------------------------------------
 
+def _any_live(settings) -> bool:
+    return bool(settings.live_point_ghosts or settings.live_mesh_ghosts or settings.paths_enabled)
+
+
+def _defer_to_path_markers(scene, ghosts: list) -> tuple[list, list]:
+    """(generated ghosts not already covered by a path marker, the path markers).
+
+    Markers on Paths live in the same store; a rebuild keeps them, and a generated ghost
+    on the same object/bone/channel/frame defers to the path marker instead of doubling it."""
+    from . import motion_paths
+    owned = motion_paths.owned_markers(scene)
+    taken = {(g.object_name, g.bone_name, g.channel, g.frame) for g in owned}
+    fresh = [g for g in ghosts if (g.object_name, g.bone_name, g.channel, g.frame) not in taken]
+    return fresh, owned
+
+
 # WARNING: When adding new settings properties to GhostToolSceneSettings,
 # you MUST add them here too, or cache invalidation will silently break.
 def compute_settings_hash(settings: bpy.types.PropertyGroup) -> str:
@@ -687,6 +713,12 @@ def compute_settings_hash(settings: bpy.types.PropertyGroup) -> str:
         settings.mesh_ghost_frame_mode,
         settings.mesh_ghost_keyframe_skip,
         settings.mesh_ghost_keyframe_skip_custom,
+        settings.paths_enabled,
+        settings.paths_follow_selection,
+        settings.paths_range_mode,
+        settings.paths_before,
+        settings.paths_after,
+        settings.paths_step,
     )
 
     # Use a fast hash — we don't need cryptographic strength
@@ -740,9 +772,7 @@ def _deferred_live_update() -> Optional[float]:
         if not settings.is_active:
             return None
 
-        live_points = settings.live_point_ghosts
-        live_mesh = settings.live_mesh_ghosts
-        if not live_points and not live_mesh:
+        if not _any_live(settings):
             return None
 
         if settings.live_freeze:
@@ -940,9 +970,7 @@ def _on_frame_change_pipeline(scene: bpy.types.Scene, depsgraph=None) -> None:
         return
 
     # Only schedule if any live mode is enabled
-    live_points = settings.live_point_ghosts
-    live_mesh = settings.live_mesh_ghosts
-    if not live_points and not live_mesh:
+    if not _any_live(settings):
         return
 
     if settings.live_freeze:
@@ -961,7 +989,7 @@ def _on_playback_post(scene: bpy.types.Scene, *_args) -> None:
     settings = scene.ghost_tool
     if not settings.is_active or settings.live_freeze:
         return
-    if not settings.live_point_ghosts and not settings.live_mesh_ghosts:
+    if not _any_live(settings):
         return
     GhostPipeline.get(scene).mark_dirty()
     _schedule_deferred_update()
@@ -991,9 +1019,7 @@ def _on_depsgraph_update_pipeline(scene: bpy.types.Scene, depsgraph=None) -> Non
         return
 
     # Only check depsgraph updates if any live mode is enabled
-    live_points = settings.live_point_ghosts
-    live_mesh = settings.live_mesh_ghosts
-    if not live_points and not live_mesh:
+    if not _any_live(settings):
         return
 
     if depsgraph is None:
@@ -1015,6 +1041,14 @@ def _on_depsgraph_update_pipeline(scene: bpy.types.Scene, depsgraph=None) -> Non
     pipeline = GhostPipeline.get(scene)
 
     # Check if any animation data was updated (Action or Object with animation)
+    # Motion paths need every changed ID, so this pass never stops early.
+    for update in depsgraph.updates:
+        if hasattr(update, 'id') and update.id is not None:
+            try:
+                from . import motion_paths
+                motion_paths.mark_dirty_for_id(getattr(update.id, 'original', update.id))
+            except Exception:
+                pass
     for update in depsgraph.updates:
         if hasattr(update, 'id') and update.id is not None:
             # If an Action or Object was updated, mark dirty and schedule regeneration
@@ -1094,6 +1128,8 @@ def _on_file_load(_unused):
     GhostCache.clear_all_instances()
     GhostStore.clear_all_instances()
     SessionState.clear_all_instances()
+    from . import motion_paths
+    motion_paths.reset_for_new_file()
     from .snapshot import SnapshotStore
     from .ghost_data import DiffReference
     from .fcurve_utils import invalidate_keyframe_cache, clear_frame_cache

@@ -769,6 +769,59 @@ def _on_mesh_ghost_setting_changed(self, context):
 # Blender PropertyGroup — lightweight scene-level settings
 # ---------------------------------------------------------------------------
 
+def _on_path_setting_changed(self, context):
+    """Range/toggle changed: drop the path cache and schedule the re-sample.
+
+    Sampling calls frame_set, which an update callback must not do, so the
+    pipeline's deferred timer runs it on the next idle tick."""
+    try:
+        from .motion_paths import clear_cache
+        from .ghost_pipeline import GhostPipeline, _schedule_deferred_update
+        clear_cache()
+        GhostPipeline.get(context.scene).mark_dirty()
+        _schedule_deferred_update()
+        tag_viewport_redraw(context)
+    except Exception as exc:
+        warn(f"Motion paths: could not reset cache: {exc}")
+
+
+def _on_paths_show_markers_changed(self, context):
+    """Generating markers samples frames, so it runs on the next idle tick, not here."""
+    try:
+        from .motion_paths import request_marker_sync
+        request_marker_sync()
+    except Exception as exc:
+        warn(f"Motion paths markers: {exc}")
+
+
+class GhostPathEntry(bpy.types.PropertyGroup):
+    """One pinned motion path: an object, or a bone of an armature."""
+
+    object_name: bpy.props.StringProperty(name="Object", description="Object this path follows")  # type: ignore[assignment]
+    bone_name: bpy.props.StringProperty(
+        name="Bone", description="Bone this path follows; empty follows the object origin", default="",
+    )  # type: ignore[assignment]
+    visible: bpy.props.BoolProperty(name="Visible", description="Draw this path", default=True)  # type: ignore[assignment]
+    color: bpy.props.FloatVectorProperty(
+        name="Color", description="Colour of this path",
+        subtype='COLOR', size=3, min=0.0, max=1.0, default=(0.96, 0.71, 0.0),
+    )  # type: ignore[assignment]
+    thickness: bpy.props.IntProperty(
+        name="Thickness", description="Line width of this path in pixels", default=2, min=1, max=6,
+    )  # type: ignore[assignment]
+    anchor: bpy.props.EnumProperty(
+        name="Anchor",
+        description="Which point of the bone the path traces",
+        update=_on_path_setting_changed,
+        items=[('HEAD', "Head", "Bone head / object origin"), ('TAIL', "Tail", "Bone tail")],
+        default='HEAD',
+    )  # type: ignore[assignment]
+
+    @property
+    def label(self) -> str:
+        return f"{self.object_name} › {self.bone_name}" if self.bone_name else self.object_name
+
+
 class GhostToolSceneSettings(bpy.types.PropertyGroup):
     """Scene-level settings stored as a Blender PropertyGroup.
 
@@ -1052,6 +1105,65 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         ),
         default="",
         options={'HIDDEN'},
+    )  # type: ignore[assignment]
+
+    # ── Motion Paths ────────────────────────────────────────────────────
+    motion_paths: bpy.props.CollectionProperty(type=GhostPathEntry)  # type: ignore[assignment]
+    motion_paths_index: bpy.props.IntProperty(default=-1)  # type: ignore[assignment]
+
+    paths_enabled: bpy.props.BoolProperty(
+        name="Motion Paths",
+        description="Draw motion paths for the pinned bones and objects",
+        default=False,
+        update=_on_path_setting_changed,
+    )  # type: ignore[assignment]
+    paths_follow_selection: bpy.props.BoolProperty(
+        name="Follow Selection",
+        description="Also draw a grey path for whatever is selected right now",
+        default=False,
+        update=_on_path_setting_changed,
+    )  # type: ignore[assignment]
+    paths_show_markers: bpy.props.BoolProperty(
+        name="Markers on Paths",
+        description="Generate draggable ghost markers on the pinned paths. Head paths show location keys; "
+                    "Tail paths also show rotation keys",
+        default=False,
+        update=_on_paths_show_markers_changed,
+    )  # type: ignore[assignment]
+    paths_show_key_dots: bpy.props.BoolProperty(
+        name="Key Dots", description="Mark keyframes on each path", default=True,
+    )  # type: ignore[assignment]
+    paths_show_frame_numbers: bpy.props.BoolProperty(
+        name="Frame Numbers", description="Label each sampled frame", default=False,
+    )  # type: ignore[assignment]
+    paths_range_mode: bpy.props.EnumProperty(
+        name="Range",
+        description="Which frames every motion path covers",
+        items=[
+            ('AROUND_CURSOR', "Around Playhead", "Frames before and after the playhead"),
+            ('SCENE', "Scene", "The scene frame range"),
+            ('CUSTOM', "Custom", "The custom range from Settings"),
+        ],
+        default='AROUND_CURSOR',
+        update=_on_path_setting_changed,
+    )  # type: ignore[assignment]
+    paths_before: bpy.props.IntProperty(
+        name="Before", description="Frames drawn before the playhead",
+        default=12, min=0, max=500, update=_on_path_setting_changed,
+    )  # type: ignore[assignment]
+    paths_after: bpy.props.IntProperty(
+        name="After", description="Frames drawn after the playhead",
+        default=12, min=0, max=500, update=_on_path_setting_changed,
+    )  # type: ignore[assignment]
+    paths_step: bpy.props.IntProperty(
+        name="Every", description="Sample every Nth frame along the paths",
+        default=1, min=1, max=24, update=_on_path_setting_changed,
+    )  # type: ignore[assignment]
+    paths_style: bpy.props.EnumProperty(
+        name="Style",
+        description="How the path line is coloured",
+        items=[('SOLID', "Solid", "One colour"), ('SPEED', "Speed", "Blue slow, red fast"), ('FADE', "Fade", "Fade with distance from the playhead")],
+        default='SOLID',
     )  # type: ignore[assignment]
 
     # ── Ghost Mode & Range ──────────────────────────────────────────────
@@ -2089,6 +2201,8 @@ def generate_ghosts_at_keyframes(
     bones: list[str],
     channels: list[str],
     frame_range: Optional[tuple[int, int]] = None,
+    anchor: Optional[str] = None,
+    frames: Optional[set[float]] = None,
 ) -> list[Ghost]:
     """Generate ghosts at keyframe positions only.
 
@@ -2100,6 +2214,9 @@ def generate_ghosts_at_keyframes(
         bones: Pose bone names.
         channels: Channel identifiers.
         frame_range: Optional frame range.
+        anchor: 'HEAD' or 'TAIL' places every marker on that bone point (a motion
+            path's anchor); None keeps the per-channel choice (rotation -> tail).
+        frames: Optional set of frames; keys on other frames are skipped.
 
     Returns:
         list[Ghost]: Ghosts at keyframe positions.
@@ -2127,11 +2244,13 @@ def generate_ghosts_at_keyframes(
             for frame in keyframes:
                 if frame_range is not None and (frame < frame_range[0] or frame > frame_range[1]):
                     continue
+                if frames is not None and float(frame) not in frames:
+                    continue
 
                 local_value = fcurve.evaluate(frame)
+                tail = is_rotation_channel(channel) if anchor is None else anchor == 'TAIL'
                 world_pos = _get_world_position_cached(
-                    depsgraph, scene, target_obj, bone_name, frame, position_cache,
-                    tail=is_rotation_channel(channel),
+                    depsgraph, scene, target_obj, bone_name, frame, position_cache, tail=tail,
                 )
 
                 ghost = Ghost(
@@ -2366,6 +2485,7 @@ def _is_class_registered(cls) -> bool:
 
 
 CLASSES: tuple[type, ...] = (
+    GhostPathEntry,
     GhostToolSceneSettings,
     GHOST_OT_initialize,
 )

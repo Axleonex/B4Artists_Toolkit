@@ -106,7 +106,8 @@ class GhostHeaderUI(unittest.TestCase):
         self.assertIn(ui_panel._draw_viewport_header_menu, draws)
         self.assertTrue(hasattr(bpy.ops.ghost_tool, "open_window"))
         self.assertEqual([s[1] for s in ui_panel.GHOST_SECTIONS],
-                         ["Show Ghosts", "Onion Skin", "Edit Motion", "Compare", "Physics", "Look", "Settings"])
+                         ["Show Ghosts", "Onion Skin", "Motion Paths", "Edit Motion", "Compare", "Physics",
+                          "Look", "Settings"])
 
     # -------------------------------------------------------------- rotation markers
     def test_rotation_only_rig_gets_markers_on_bone_tails(self):

@@ -14,7 +14,7 @@ unregister functions are called in the correct dependency order.
 bl_info = {
     "name": "Ghost Tool",
     "author": "GoingGhost",
-    "version": (3, 4, 1),
+    "version": (3, 5, 0),
     "blender": (4, 0, 0),
     "location": "View3D > Header > Ghost Tool",
     "description": "Ghost keyframe visualization and manipulation for Bforartists. v3.4 moves Ghost Tool into the viewport header, follows rotation keys, and onion-skins whole characters.",
@@ -101,6 +101,7 @@ def _import_modules(*, reload_modules: bool = True):
     from . import preferences
     from . import api
     from . import mesh_ghosts
+    from . import motion_paths
 
     if _modules_loaded and reload_modules:
         importlib.reload(utils)
@@ -118,6 +119,7 @@ def _import_modules(*, reload_modules: bool = True):
         importlib.reload(selection_operators)
         importlib.reload(diff_mode)
         importlib.reload(mesh_ghosts)
+        importlib.reload(motion_paths)
         importlib.reload(viewport_draw)
         importlib.reload(ui_panel)
         importlib.reload(preferences)
@@ -141,6 +143,7 @@ def _import_modules(*, reload_modules: bool = True):
         "selection_operators": selection_operators,
         "diff_mode": diff_mode,
         "mesh_ghosts": mesh_ghosts,
+        "motion_paths": motion_paths,
         "viewport_draw": viewport_draw,
         "ui_panel": ui_panel,
         "preferences": preferences,
@@ -163,6 +166,7 @@ _REGISTER_ORDER = [
     "selection_operators",
     "diff_mode",          # Must come before viewport_draw (draw_diff_overlay is called from there)
     "mesh_ghosts",
+    "motion_paths",
     "viewport_draw",
     "ui_panel",
     "preferences",

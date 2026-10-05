@@ -111,6 +111,13 @@ _HELP_TOPICS = {
         "Restore a snapshot to return to its captured curve state, toggle its overlay for comparison, "
         "or delete snapshots that are no longer useful.",
     ),
+    "motion_paths": (
+        "Motion Paths",
+        "Pin a path to any bone or object and watch it follow the playhead.",
+        "Add pins the selected bones (Pose mode) or objects. Follow adds a grey path for "
+        "whatever is selected. Paths sample the bone itself, so they work with markers off; "
+        "turn Markers on to drag keys along a path. One range and style apply to all paths.",
+    ),
 }
 
 
@@ -474,10 +481,57 @@ def _draw_settings(layout, context) -> None:
     row.operator("ghost_tool.import_ghosts", text="Import", icon='IMPORT')
 
 
+class GHOST_UL_paths(bpy.types.UIList):
+    bl_idname = "GHOST_UL_paths"
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        from .motion_paths import entry_is_missing
+        row = layout.row(align=True)
+        op = row.operator("ghost_tool.paths_toggle_visible", text="", emboss=False,
+                          icon='HIDE_OFF' if item.visible else 'HIDE_ON')
+        op.action, op.index = 'ONE', index
+        swatch = row.operator("ghost_tool.paths_set_color", text="", icon='COLOR', emboss=False)
+        swatch.index = index
+        missing = entry_is_missing(item)
+        sub = row.row(); sub.enabled = not missing
+        sub.label(text=item.label + ("  (missing)" if missing else ""))
+        rm = row.operator("ghost_tool.paths_remove", text="", icon='X', emboss=False)
+        rm.index = index
+
+
+def _draw_motion_paths(layout, context) -> None:
+    settings = context.scene.ghost_tool
+    row = layout.row(align=True)
+    row.scale_y = 1.2
+    row.operator("ghost_tool.paths_add_selected", text="Add Path for Selected", icon='ADD')
+    row = layout.row(align=True)
+    row.label(text=f"Motion paths · {len(settings.motion_paths)}")
+    row.operator("ghost_tool.paths_toggle_visible", text="All on").action = 'ALL_ON'
+    row.operator("ghost_tool.paths_toggle_visible", text="All off").action = 'ALL_OFF'
+    row.operator("ghost_tool.paths_clear", text="", icon='TRASH')
+    layout.template_list("GHOST_UL_paths", "", settings, "motion_paths", settings, "motion_paths_index", rows=4, maxrows=8)
+    col = layout.column(align=True)
+    col.label(text="Range")
+    col.prop(settings, "paths_range_mode", text="")
+    if settings.paths_range_mode == 'AROUND_CURSOR':
+        row = col.row(align=True)
+        row.prop(settings, "paths_before", text="Before")
+        row.prop(settings, "paths_after", text="After")
+    col.prop(settings, "paths_step", text="Every")
+    col = layout.column(align=True)
+    col.label(text="Style")
+    col.prop(settings, "paths_style", expand=True)
+    row = layout.row(align=True)
+    row.prop(settings, "paths_show_markers", text="Markers", toggle=True)
+    row.prop(settings, "paths_show_key_dots", text="Key dots", toggle=True)
+    row.prop(settings, "paths_show_frame_numbers", text="Frame #", toggle=True)
+
+
 #: (key, label, icon, draw function, help topic, open by default)
 GHOST_SECTIONS: tuple = (
     ("show", "Show Ghosts", 'GHOST_ENABLED', _draw_show_ghosts, "marker_placement", True),
     ("onion", "Onion Skin", 'MESH_DATA', _draw_onion_skin, "onion_skin", False),
+    ("paths", "Motion Paths", 'CURVE_PATH', _draw_motion_paths, "motion_paths", False),
     ("edit", "Edit Motion", 'ORIENTATION_CURSOR', _draw_edit_motion, "marker_tools", False),
     ("compare", "Compare", 'ARROW_LEFTRIGHT', _draw_compare, "snapshots", False),
     ("physics", "Physics", 'FORCE_FORCE', _draw_physics, "marker_tools", False),
@@ -525,6 +579,17 @@ def draw_ghost_tool(layout, context, prefix: str) -> None:
         except Exception as exc:
             warn(f"Ghost Tool: could not draw {label}: {exc}")
             body.label(text="This section could not draw", icon='ERROR')
+
+
+class GHOST_PT_paths_popover(bpy.types.Panel):
+    bl_idname = "GHOST_PT_paths_popover"
+    bl_label = "Motion Paths"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 14
+
+    def draw(self, context):
+        _draw_motion_paths(self.layout, context)
 
 
 class GHOST_PT_header_menu(bpy.types.Panel):
@@ -641,6 +706,17 @@ class GHOST_OT_floating_toolbar(bpy.types.Operator):
 # ║  SECTION 5 — TIMELINE / DOPESHEET HEADER EXTENSION                    ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 
+def _draw_paths_segment(row, settings) -> None:
+    row.separator(factor=0.5)
+    row.prop(settings, "paths_enabled", text="Paths", icon='CURVE_PATH', toggle=True)
+    row.operator("ghost_tool.paths_add_selected", text="Add", icon='BONE_DATA')
+    row.prop(settings, "paths_follow_selection", text="Follow", icon='RESTRICT_SELECT_OFF', toggle=True)
+    row.popover(panel="GHOST_PT_paths_popover", text="", icon='DOWNARROW_HLT')
+    from .motion_paths import last_refresh_ms
+    if last_refresh_ms() > 200.0:
+        row.label(text="slow", icon='ERROR')
+
+
 def _draw_timeline_header_extension(self, context: bpy.types.Context) -> None:
     """Append a compact ghost toggle strip to the Timeline/Dopesheet header.
 
@@ -700,6 +776,7 @@ def _draw_timeline_header_extension(self, context: bpy.types.Context) -> None:
         row.separator(factor=0.5)
         icon_mesh = 'MOD_MESHDEFORM' if settings.show_mesh_ghosts else 'MESH_DATA'
         row.prop(settings, "show_mesh_ghosts", text="", icon=icon_mesh, toggle=True)
+        _draw_paths_segment(row, settings)
 
         # Ghost count
         if len(store) > 0:
@@ -708,6 +785,20 @@ def _draw_timeline_header_extension(self, context: bpy.types.Context) -> None:
     # Pop-out button (opens floating toolbar for full controls)
     row.separator(factor=0.5)
     row.operator("ghost_tool.floating_toolbar", text="", icon='WINDOW')
+
+
+def _draw_graph_header_extension(self, context: bpy.types.Context) -> None:
+    """Ghost toggle plus the motion-path segment in the Graph Editor header."""
+    scene = context.scene
+    if not hasattr(scene, 'ghost_tool'):
+        return
+    settings = scene.ghost_tool
+    layout = self.layout
+    layout.separator_spacer()
+    row = layout.row(align=True)
+    row.prop(settings, "is_active", text="", icon='GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED', toggle=True)
+    if settings.is_active:
+        _draw_paths_segment(row, settings)
 
 
 # ╔══════════════════════════════════════════════════════════════════════════╗
@@ -733,6 +824,8 @@ def _draw_viewport_header_menu(self, context: bpy.types.Context) -> None:
 CLASSES: tuple[type, ...] = (
     GhostToolEasingSettings,
     GHOST_OT_show_help_popup,
+    GHOST_UL_paths,
+    GHOST_PT_paths_popover,
     GHOST_PT_header_menu,
     GHOST_PT_window,
     GHOST_OT_open_window,
@@ -761,6 +854,15 @@ def register() -> None:
         )
     except Exception as exc:
         warn(f"Could not append to Dopesheet header: {exc}")
+
+    # Graph Editor header: ghost toggle + motion-path segment
+    try:
+        bpy.types.GRAPH_HT_header.append(_draw_graph_header_extension)
+        _header_appends.append(
+            (bpy.types.GRAPH_HT_header, _draw_graph_header_extension)
+        )
+    except Exception as exc:
+        warn(f"Could not append to Graph Editor header: {exc}")
 
     # 3D Viewport header: toggle + "Ghost Tool" dropdown after the Pose menu
     try:
