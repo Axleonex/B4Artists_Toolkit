@@ -187,5 +187,9 @@ def _on_undo_redo(scene: bpy.types.Scene, *args) -> None:
     # Clear sorted keyframe cache (keyframe edits may have been undone)
     invalidate_keyframe_cache()
     clear_frame_cache()
+
+    # Undo can move any motion path and no depsgraph update says which: re-sample them all
+    from .motion_paths import clear_cache
+    clear_cache()
     from .ghost_pipeline import _schedule_deferred_update
     _schedule_deferred_update()

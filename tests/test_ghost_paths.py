@@ -649,6 +649,39 @@ class GhostPaths(unittest.TestCase):
         self.assertLess((mp._cache[(child.name, "", 13.0)] - child.matrix_world.translation).length, 1e-5)
         self.scene.frame_set(10)
 
+    def test_ghost_tools_off_drops_path_cache(self):
+        # Gap 2026-10-05: keys edited while Ghost Tools was off are never marked dirty,
+        # so turning it back on drew the old path.
+        cube = _cube()
+        e = self.settings.motion_paths.add(); e.object_name = cube.name
+        mp.refresh_paths(bpy.context)
+        self.settings.is_active = False
+        self.assertEqual(mp._cache, {})
+        self.assertEqual(len(self.settings.motion_paths), 1)   # the list stays
+        cube.location.x = 10.0
+        cube.keyframe_insert("location", frame=20)
+        self.settings.is_active = True
+        self.assertEqual(mp.refresh_paths(bpy.context), 7)
+        self.scene.frame_set(13)
+        self.assertLess((mp._cache[(cube.name, "", 13.0)] - cube.matrix_world.translation).length, 1e-5)
+        self.scene.frame_set(10)
+
+    def test_undo_redo_drops_path_cache(self):
+        # Gap 2026-10-05: undoing a key edit left the edited path cached.
+        from ghost_tool import ghost_pipeline as gp
+        from ghost_tool.session_state import _on_undo_redo
+        self.assertIn(_on_undo_redo, bpy.app.handlers.undo_post)
+        self.assertIn(_on_undo_redo, bpy.app.handlers.redo_post)
+        cube = _cube()
+        e = self.settings.motion_paths.add(); e.object_name = cube.name
+        self.assertEqual(mp.refresh_paths(bpy.context), 7)
+        _on_undo_redo(self.scene)
+        self.assertEqual(mp._cache, {})
+        self.assertEqual(mp.refresh_paths(bpy.context), 7)
+        if bpy.app.timers.is_registered(gp._deferred_live_update):
+            bpy.app.timers.unregister(gp._deferred_live_update)
+        gp._deferred_update_pending = False
+
     def test_file_load_forgets_marker_ownership(self):
         # Review round 5: owned uids survived a file load and could match unrelated ghosts.
         from ghost_tool import ghost_pipeline as gp

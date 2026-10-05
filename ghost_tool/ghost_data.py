@@ -671,6 +671,13 @@ def _on_ghost_feature_enabled(self, context):
             store.clear()
         except Exception as exc:
             warn(f"Failed to clear ghost store: {exc}")
+        # Key edits made while off are never marked dirty: drop the path cache so
+        # turning back on re-samples. The pinned list stays.
+        try:
+            from .motion_paths import clear_cache
+            clear_cache()
+        except Exception as exc:
+            warn(f"Failed to clear motion path cache: {exc}")
         # Also disable onion skin so it's clean for next enable
         if settings.show_mesh_ghosts:
             settings["show_mesh_ghosts"] = False
