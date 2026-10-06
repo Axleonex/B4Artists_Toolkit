@@ -19,9 +19,9 @@ import bpy
 import gpu
 from bpy_extras import view3d_utils
 from gpu_extras.batch import batch_for_shader
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
-from .motion_channels import LOCATION_CHANNELS, MOTION_CHANNELS, channel_family
+from .motion_channels import LOCATION_CHANNELS, MOTION_CHANNELS, channel_family, rest_channel_matrix
 from .utils import debug, get_fcurves_from_action, get_scene_id, log, scene_sampling, tag_viewport_redraw, warn
 
 PALETTE: tuple[tuple[float, float, float], ...] = (
@@ -41,6 +41,8 @@ _dirty: set[PathKey] = set()
 # Cache keys a refresh tried and could not sample (a vertex absent at that frame): drawn as a gap,
 # never re-requested until the path is dirtied or leaves the window.
 _gaps: set[tuple[str, str, int, float]] = set()
+# (*PathKey, key frame) -> (left, right) world handle points, or None when that key has no location handle.
+_handles: dict[tuple[str, str, int, float], Optional[tuple[Vector, Vector]]] = {}
 _draw_handler = None
 _draw_handler_2d = None
 _last_refresh_ms: float = 0.0
@@ -66,6 +68,7 @@ class PathTarget:
 def clear_cache() -> None:
     _cache.clear()
     _gaps.clear()
+    _handles.clear()
     _dirty.clear()
     _anchors.clear()
 
@@ -274,6 +277,8 @@ def forget(key) -> None:
     for stale in [c for c in _cache if c[:3] == key]:
         del _cache[stale]
     _gaps.difference_update([g for g in _gaps if g[:3] == key])
+    for stale in [h for h in _handles if h[:3] == key]:
+        del _handles[stale]
     _anchors.pop(key, None)
 
 
@@ -353,33 +358,44 @@ def refresh_paths(context: bpy.types.Context) -> int:
     for stale in [c for c in _cache if c not in wanted]:
         del _cache[stale]
     _gaps.intersection_update(wanted)
+    for stale in [h for h in _handles if h not in wanted]:
+        del _handles[stale]
     for t in targets:
         if t.key in _dirty:
             for f in t.frames:
                 _cache.pop((*t.key, f), None)
                 _gaps.discard((*t.key, f))
+                _handles.pop((*t.key, f), None)
     _dirty.clear()   # a dirty key that is no longer a target lost its samples with the wanted set
     missing: dict[float, list[PathTarget]] = {}
     for t in targets:
         for f in t.frames:
             if (*t.key, f) not in _cache and (*t.key, f) not in _gaps:
                 missing.setdefault(f, []).append(t)
-    if not missing:
+    handle_needs: dict[float, list[PathTarget]] = {}
+    if settings.paths_show_handles:
+        for t in targets:
+            for f in _handle_frames(t):
+                if (*t.key, f) not in _handles:
+                    handle_needs.setdefault(f, []).append(t)
+    if not missing and not handle_needs:
         _last_refresh_ms = 0.0
         return 0
     count = 0
     t0 = time.perf_counter()
     with scene_sampling(scene):
-        for f in sorted(missing):
+        for f in sorted(set(missing) | set(handle_needs)):
             scene.frame_set(int(f), subframe=f - int(f))
             depsgraph = context.evaluated_depsgraph_get()
-            for t in missing[f]:
+            for t in missing.get(f, ()):
                 point = _sample(depsgraph, t.obj, t.key[1], t.anchor, t.key[2])
                 if point is None:
                     _gaps.add((*t.key, f))
                 else:
                     _cache[(*t.key, f)] = point
                 count += 1
+            for t in handle_needs.get(f, ()):
+                _handles[(*t.key, f)] = key_handles(t, f, depsgraph)
     _last_refresh_ms = (time.perf_counter() - t0) * 1000.0
     debug(f"Motion paths: sampled {count} positions in {_last_refresh_ms:.1f} ms")
     return count
@@ -421,6 +437,70 @@ def key_frames(target: PathTarget) -> list[float]:
         if fc.data_path in paths:
             frames.update(float(k.co.x) for k in fc.keyframe_points)
     return sorted(frames)
+
+
+def handle_eligible(target: PathTarget) -> bool:
+    """Handles exist for a path the location curves move directly: an object origin or a bone head. A tail
+    has no location curve of its own, a vertex has none, and a connected bone ignores its location."""
+    if target.key[2] >= 0 or target.anchor == 'TAIL':
+        return False
+    if target.key[1]:
+        pb = target.obj.pose.bones.get(target.key[1]) if target.obj.pose else None
+        return pb is not None and not pb.bone.use_connect
+    return True
+
+
+def _handle_frames(target: PathTarget) -> list[float]:
+    if not handle_eligible(target):
+        return []
+    frames = set(target.frames)
+    return [f for f in key_frames(target) if f in frames]
+
+
+def key_handles(target: PathTarget, frame: float, depsgraph=None) -> Optional[tuple[Vector, Vector]]:
+    """(left, right) world points of the location handles of the key at ``frame``, or None.
+
+    Built through the same local -> world map as the key value itself: the channel values of a key on
+    location X/Y/Z are replaced by that curve's handle values (a curve without a key at this frame
+    contributes its evaluated value). Object: parent world @ parent inverse @ (location + delta).
+    Bone head: armature world @ rest_channel_matrix(bone, posed parent) @ location. The scene must be
+    at ``frame`` (refresh_paths calls it while sampling). Constraints are not applied."""
+    if not handle_eligible(target):
+        return None
+    obj = target.obj
+    ad = obj.animation_data
+    if not ad or not ad.action:
+        return None
+    depsgraph = depsgraph or bpy.context.evaluated_depsgraph_get()
+    ev = obj.evaluated_get(depsgraph)
+    if target.key[1]:
+        pb = ev.pose.bones[target.key[1]]
+        data_path = f'pose.bones["{bpy.utils.escape_identifier(target.key[1])}"].location'
+        current, offset = pb.location, Vector()
+        to_world = ev.matrix_world @ rest_channel_matrix(pb, pb.parent.matrix if pb.parent else None)
+    else:
+        data_path = "location"
+        current, offset = ev.location, Vector(ev.delta_location)
+        to_world = (ev.parent.matrix_world @ ev.matrix_parent_inverse) if ev.parent else Matrix.Identity(4)
+    curves = {fc.array_index: fc for fc in get_fcurves_from_action(ad.action, obj) if fc.data_path == data_path}
+    left, right, keyed = [], [], False
+    for axis in range(3):
+        fc = curves.get(axis)
+        key = next((k for k in fc.keyframe_points if abs(k.co.x - frame) < 1e-4), None) if fc else None
+        if key is not None:
+            left.append(key.handle_left.y)
+            right.append(key.handle_right.y)
+            keyed = True
+        else:
+            value = fc.evaluate(frame) if fc else current[axis]
+            left.append(value)
+            right.append(value)
+    if not keyed:
+        return None
+    return to_world @ (Vector(left) + offset), to_world @ (Vector(right) + offset)
+
+
+HANDLE_DOT_SIZE = 4.0
 
 
 def path_segments(context, target: PathTarget, frames=None) -> list[tuple[Vector, Vector, tuple]]:
@@ -553,6 +633,22 @@ def draw_motion_paths() -> None:
                     gpu.state.point_size_set(float(target.dot_size))
                     batch = batch_for_shader(shader, 'POINTS', {"pos": dots})
                     shader.bind(); shader.uniform_float("color", KEY_DOT_COLOR); batch.draw(shader)
+            if settings.paths_show_handles and target.pinned:
+                lines, ends = [], []
+                for f in _handle_frames(target):
+                    handle, point = _handles.get((*target.key, f)), _cache.get((*target.key, f))
+                    if handle is None or point is None:
+                        continue
+                    lines += [point, handle[0], point, handle[1]]
+                    ends += list(handle)
+                if lines:
+                    color = (*target.color, 0.6)
+                    gpu.state.line_width_set(1.0)
+                    batch = batch_for_shader(shader, 'LINES', {"pos": lines})
+                    shader.bind(); shader.uniform_float("color", color); batch.draw(shader)
+                    gpu.state.point_size_set(HANDLE_DOT_SIZE)
+                    batch = batch_for_shader(shader, 'POINTS', {"pos": ends})
+                    shader.bind(); shader.uniform_float("color", color); batch.draw(shader)
     finally:
         gpu.state.line_width_set(1.0)
         gpu.state.point_size_set(1.0)
@@ -689,8 +785,10 @@ def request_missing_samples(context) -> bool:
     if not settings.paths_enabled:
         return False
     stale = get_scene_id(scene) != _cache_scene
-    if not stale and all((*t.key, f) in _cache or (*t.key, f) in _gaps
-                         for t in all_targets(context) for f in t.frames):
+    targets = all_targets(context)
+    if (not stale and all((*t.key, f) in _cache or (*t.key, f) in _gaps for t in targets for f in t.frames)
+            and (not settings.paths_show_handles
+                 or all((*t.key, f) in _handles for t in targets for f in _handle_frames(t)))):
         return False
     from .ghost_pipeline import GhostPipeline, _schedule_deferred_update
     GhostPipeline.get(scene).mark_dirty()

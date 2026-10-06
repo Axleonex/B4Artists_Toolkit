@@ -42,6 +42,113 @@ class GhostPathHandles(unittest.TestCase):
         self.settings.paths_show_handles = False
         self._drop_deferred_timer()
 
+    # ── F1: handle geometry ──────────────────────────────────────────────
+
+    def _pin(self, obj, bone=""):
+        e = self.settings.motion_paths.add()
+        e.object_name, e.bone_name = obj.name, bone
+        return e
+
+    def _location_curves(self, obj, bone=""):
+        path = f'pose.bones["{bone}"].location' if bone else "location"
+        return {fc.array_index: fc for fc in ghost_tool.utils.get_fcurves_from_action(obj.animation_data.action, obj)
+                if fc.data_path == path}
+
+    def _world_with_key_moved_to_handle(self, obj, bone, frame, side):
+        """Independent check: put the key's value on its handle, evaluate the real position at ``frame``."""
+        curves = self._location_curves(obj, bone)
+        saved = []
+        for fc in curves.values():
+            key = next(k for k in fc.keyframe_points if abs(k.co.x - frame) < 1e-4)
+            saved.append((key, key.co.y, tuple(key.handle_left), tuple(key.handle_right)))
+            key.co.y = (key.handle_left if side == 0 else key.handle_right).y
+        self.scene.frame_set(int(frame))
+        ev = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        world = (ev.matrix_world @ ev.pose.bones[bone].head) if bone else ev.matrix_world.translation.copy()
+        for key, y, left, right in saved:
+            key.co.y = y
+            key.handle_left, key.handle_right = left, right
+        return world
+
+    def test_object_handle_points_follow_the_location_curves(self):
+        cube = _cube()   # location X keys 0 at 1 and 4 at 20 (Bezier)
+        self._pin(cube)
+        self.settings.paths_range_mode = 'SCENE'
+        target = mp.pinned_targets(self.scene)[0]
+        self.scene.frame_set(20)
+        left, right = mp.key_handles(target, 20.0)
+        x = self._location_curves(cube)[0]
+        key = next(k for k in x.keyframe_points if k.co.x == 20.0)
+        self.assertAlmostEqual(left.x, key.handle_left.y, places=5)
+        self.assertAlmostEqual(right.x, key.handle_right.y, places=5)
+        self.assertAlmostEqual(left.y, cube.location.y, places=5)   # an unkeyed axis keeps its value
+        for side, point in ((0, left), (1, right)):
+            expect = self._world_with_key_moved_to_handle(cube, "", 20.0, side)
+            self.assertLess((point - expect).length, 1e-4)
+        self.scene.frame_set(10)
+        self._drop_deferred_timer()
+
+    def test_bone_head_handle_points_match_the_posed_rig(self):
+        rig = _rig()
+        bpy.ops.object.mode_set(mode='POSE')
+        lower = rig.pose.bones["lower"]
+        for frame, y in ((1, 0.0), (10, 0.5), (20, 0.8)):   # rising: auto-clamped handles are flat at a peak
+            lower.location = (0.2, y, 0.0)
+            lower.keyframe_insert("location", frame=frame)
+        bpy.ops.object.mode_set(mode='OBJECT')
+        self._pin(rig, "lower")
+        target = mp.pinned_targets(self.scene)[0]
+        self.scene.frame_set(10)
+        left, right = mp.key_handles(target, 10.0)
+        self.assertGreater((left - right).length, 1e-3)
+        for side, point in ((0, left), (1, right)):
+            expect = self._world_with_key_moved_to_handle(rig, "lower", 10.0, side)
+            self.assertLess((point - expect).length, 1e-4)
+        self.scene.frame_set(10)
+        self._drop_deferred_timer()
+
+    def test_no_handles_for_tails_vertices_connected_bones_or_unkeyed_frames(self):
+        rig = _rig(); cube = _cube()
+        tail = self._pin(rig, "lower"); tail.anchor = 'TAIL'
+        vertex = self._pin(cube); vertex.vertex_index = 0
+        self.scene.frame_set(10)
+        for target in mp.pinned_targets(self.scene):
+            self.assertIsNone(mp.key_handles(target, 10.0), target.key)
+        self.settings.motion_paths.clear()
+        self._pin(cube)
+        self.assertIsNone(mp.key_handles(mp.pinned_targets(self.scene)[0], 10.0))   # no key at 10
+        bpy.context.view_layer.objects.active = rig
+        bpy.ops.object.mode_set(mode='EDIT')
+        rig.data.edit_bones["lower"].use_connect = True
+        bpy.ops.object.mode_set(mode='OBJECT')
+        self.settings.motion_paths.clear()
+        self._pin(rig, "lower")
+        self.assertFalse(mp.handle_eligible(mp.pinned_targets(self.scene)[0]))   # a connected bone ignores location
+        self._drop_deferred_timer()
+
+    def test_refresh_samples_handles_only_when_shown(self):
+        cube = _cube()
+        self._pin(cube)
+        self.settings.paths_range_mode = 'SCENE'
+        mp.refresh_paths(bpy.context)
+        self.assertEqual(mp._handles, {})                       # off: nothing extra sampled
+        with patch.object(ghost_tool.ghost_data, "_schedule_path_refresh"):
+            self.settings.paths_show_handles = True
+        mp.refresh_paths(bpy.context)
+        self.assertEqual(set(mp._handles), {C(cube.name, "", 1.0), C(cube.name, "", 20.0)})
+        self.assertIsNotNone(mp._handles[C(cube.name, "", 20.0)])
+        self.assertFalse(mp.request_missing_samples(bpy.context))
+        self.assertEqual(mp.refresh_paths(bpy.context), 0)      # nothing re-sampled
+        mp.forget(K(cube.name))
+        self.assertEqual(mp._handles, {})
+        mp.mark_dirty(K(cube.name))
+        mp.refresh_paths(bpy.context)
+        self.assertEqual(len(mp._handles), 2)
+        with patch.object(ghost_tool.ghost_data, "_schedule_path_refresh"):
+            self.settings.paths_show_handles = False
+        self.scene.frame_set(10)
+        self._drop_deferred_timer()
+
 
 if __name__ == "__main__":
     result = unittest.TextTestRunner(verbosity=2).run(
