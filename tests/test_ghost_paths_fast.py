@@ -274,14 +274,15 @@ class FastSampler(unittest.TestCase):
         # Fast sampling pays only where stepping is slow: auto mode measures before it switches.
         settings = self._paths_on()
         settings.paths_range_mode, settings.paths_before, settings.paths_after = 'AROUND_CURSOR', 3, 3
+        bpy.context.scene.frame_end = 60                            # the playhead walks past frame 20
         rig = _rig()
         self._pin(rig, "lower")
         scene = bpy.context.scene
         scene.frame_set(10)
         mp._step_ms_per_frame = None
         self.assertGreater(self._count_frame_changes(lambda: mp.refresh_paths(bpy.context)), 0)   # unmeasured: step
-        self.assertIsNotNone(mp._step_ms_per_frame)
-        mp._step_ms_per_frame = mp.FAST_STEP_MS_PER_FRAME / 10      # a light scene
+        # Review a1abef3d: the real measurement, not an override (this rig measures ~0.2 ms per frame).
+        self.assertLess(mp._step_ms_per_frame, mp.FAST_STEP_MS_PER_FRAME)
         scene.frame_set(14)                                         # the window gains frames 14-17
         self.assertGreater(self._count_frame_changes(lambda: mp.refresh_paths(bpy.context)), 0)
         self.assertNotIn((rig.name, "lower", -1), mp._fast_keys)
@@ -294,6 +295,15 @@ class FastSampler(unittest.TestCase):
         scene.frame_set(18)                                         # new frames 18-21
         self.assertEqual(self._count_frame_changes(lambda: mp.refresh_paths(bpy.context)), 0)   # measured slow: fast
         self.assertIn((rig.name, "lower", -1), mp._fast_keys)
+        # Review a1abef3d: the heavy object goes; once the measurement expires the scene is measured again.
+        bpy.data.objects.remove(heavy)
+        mp._step_measured_at -= mp.FAST_REMEASURE_S + 1.0
+        scene.frame_set(22)                                         # new frames 22-25
+        self.assertGreater(self._count_frame_changes(lambda: mp.refresh_paths(bpy.context)), 0)   # re-measured
+        self.assertLess(mp._step_ms_per_frame, mp.FAST_STEP_MS_PER_FRAME)
+        scene.frame_set(26)
+        self.assertGreater(self._count_frame_changes(lambda: mp.refresh_paths(bpy.context)), 0)   # stepping again
+        bpy.context.scene.frame_end = 20
         settings.paths_enabled = False
 
 if __name__ == "__main__":

@@ -506,6 +506,10 @@ asked for Round E without the E0 gate. Decisions and findings:
   `FAST_STEP_MS_PER_FRAME` (0.5 ms) or more per frame. Light rigs keep stepping (gate back to ~4 ms);
   a heavy scene steps once, measures, and then samples new frames with no `frame_set` (85 vs 3.5 ms).
   `FAST_AUTO = False` forces fast whenever eligible (the tests use it to compare samplers).
+- Review `a1abef3d`: a scene measured slow never measured again, so deleting the heavy object left a
+  light rig on the fast sampler. A measurement now expires after `FAST_REMEASURE_S` (10 s); the next
+  refresh steps and measures again (one stepped refresh per 10 s in a heavy scene). The light-scene test
+  checks the real measurement instead of overriding it.
 - Tests: `tests/test_ghost_paths_fast.py` (10), all compared against Blender's frame stepping within 1e-4;
   the auto test checks that a light scene keeps stepping and a heavy one switches after one measurement.
 - Not checked headless (owner's 3.8.0 checklist): a real heavy production rig scrubbing without the

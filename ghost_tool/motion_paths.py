@@ -56,6 +56,10 @@ FAST_SAMPLING = True
 FAST_AUTO = True
 FAST_STEP_MS_PER_FRAME = 0.5   # measured stepping cost at or above which auto mode switches to fast
 _step_ms_per_frame: Optional[float] = None   # last measured cost of one stepped frame in the cache's scene
+_step_measured_at = 0.0   # perf_counter time of that measurement
+# A measurement expires: a scene measured slow is re-measured (one stepped refresh) after this long, so
+# deleting the heavy object or hiding its modifiers brings the light rig back to stepping (review a1abef3d).
+FAST_REMEASURE_S = 10.0
 _draw_handler = None
 _draw_handler_2d = None
 _last_refresh_ms: float = 0.0
@@ -360,14 +364,16 @@ def refresh_paths(context: bpy.types.Context) -> int:
     if not settings.paths_enabled:
         _last_refresh_ms = 0.0
         return 0
-    global _step_ms_per_frame
+    global _step_ms_per_frame, _step_measured_at
     if get_scene_id(scene) != _cache_scene:
         clear_cache()   # positions sampled in another scene may differ (drivers, constraints)
         _cache_scene = get_scene_id(scene)
         _step_ms_per_frame = None   # another scene steps at its own cost
     targets = all_targets(context)
     from .path_fast_sampler import fast_eligible, sample_fast
-    use_fast = FAST_SAMPLING and (not FAST_AUTO or (_step_ms_per_frame or 0.0) >= FAST_STEP_MS_PER_FRAME)
+    measured_slow = (_step_ms_per_frame is not None and _step_ms_per_frame >= FAST_STEP_MS_PER_FRAME
+                     and time.perf_counter() - _step_measured_at < FAST_REMEASURE_S)
+    use_fast = FAST_SAMPLING and (not FAST_AUTO or measured_slow)
     fast = {t.key for t in targets
             if use_fast and fast_eligible(t.obj, t.key[1], t.key[2], scene=scene)}
     for t in targets:
@@ -437,6 +443,7 @@ def refresh_paths(context: bpy.types.Context) -> int:
                 _handles[(*t.key, f)] = key_handles(t, f, depsgraph)
     if stepped:
         _step_ms_per_frame = (time.perf_counter() - t_step) * 1000.0 / len(stepped)
+        _step_measured_at = time.perf_counter()
     _last_refresh_ms = (time.perf_counter() - t0) * 1000.0
     debug(f"Motion paths: sampled {count} positions in {_last_refresh_ms:.1f} ms")
     return count
