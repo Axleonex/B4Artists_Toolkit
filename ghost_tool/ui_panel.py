@@ -117,7 +117,10 @@ _HELP_TOPICS = {
         "Add pins the selected bones (Pose mode) or objects. Follow adds a grey path for "
         "whatever is selected. Paths sample the bone itself, so they work with markers off; "
         "turn Markers on to drag keys along a path. A bone path traces its head or its tail: "
-        "click H/T in the list to switch. One range and style apply to all paths.",
+        "click H/T in the list to switch. The cube button hides a path behind geometry. "
+        "Split colours a path differently before the playhead; Glow marks the path selected "
+        "in the list. Range and style apply to all paths; a path can take its own range "
+        "in its settings (the colour swatch).",
     ),
 }
 
@@ -510,6 +513,9 @@ class GHOST_UL_paths(bpy.types.UIList):
             anchor = flip.operator("ghost_tool.paths_set_color", text="T" if item.anchor == 'TAIL' else "H",
                                    emboss=False)
             anchor.index, anchor.anchor = index, 'HEAD' if item.anchor == 'TAIL' else 'TAIL'
+        front = row.operator("ghost_tool.paths_toggle_front", text="", emboss=False,
+                             icon='XRAY' if item.in_front else 'MESH_CUBE')
+        front.action, front.index = 'ONE', index
         rm = row.operator("ghost_tool.paths_remove", text="", icon='X', emboss=False)
         rm.index = index
 
@@ -533,6 +539,9 @@ def _draw_motion_paths(layout, context) -> None:
     row.operator("ghost_tool.paths_toggle_visible", text="All on").action = 'ALL_ON'
     row.operator("ghost_tool.paths_toggle_visible", text="All off").action = 'ALL_OFF'
     row.operator("ghost_tool.paths_clear", text="", icon='TRASH')
+    row = layout.row(align=True)
+    row.operator("ghost_tool.paths_toggle_front", text="All in front", icon='XRAY').action = 'ALL_ON'
+    row.operator("ghost_tool.paths_toggle_front", text="All behind", icon='MESH_CUBE').action = 'ALL_OFF'
     layout.template_list("GHOST_UL_paths", "", settings, "motion_paths", settings, "motion_paths_index", rows=4, maxrows=8)
     col = layout.column(align=True)
     col.label(text="Range")
@@ -550,6 +559,7 @@ def _draw_motion_paths(layout, context) -> None:
     row.prop(settings, "paths_show_markers", text="Markers", toggle=True)
     row.prop(settings, "paths_show_key_dots", text="Key dots", toggle=True)
     row.prop(settings, "paths_show_frame_numbers", text="Frame #", toggle=True)
+    row.prop(settings, "paths_active_glow", text="Glow", toggle=True)
 
 
 #: (key, label, icon, draw function, help topic, open by default)
