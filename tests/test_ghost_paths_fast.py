@@ -210,7 +210,7 @@ class FastSampler(unittest.TestCase):
         handler = lambda scene, *_: changes.append(scene.frame_current)   # noqa: E731
         bpy.app.handlers.frame_change_pre.append(handler)
         try:
-            with patch.object(mp, "FAST_SAMPLING", True):
+            with patch.object(mp, "FAST_SAMPLING", True), patch.object(mp, "FAST_AUTO", False):
                 self.assertEqual(mp.refresh_paths(bpy.context), 3 * 20)
         finally:
             bpy.app.handlers.frame_change_pre.remove(handler)
@@ -224,7 +224,7 @@ class FastSampler(unittest.TestCase):
         settings = self._paths_on()
         rig = _rig()
         self._pin(rig, "lower")
-        with patch.object(mp, "FAST_SAMPLING", True):
+        with patch.object(mp, "FAST_SAMPLING", True), patch.object(mp, "FAST_AUTO", False):
             mp.refresh_paths(bpy.context)
             key = (rig.name, "lower", -1)
             self.assertIn(key, mp._fast_keys)
@@ -250,7 +250,7 @@ class FastSampler(unittest.TestCase):
         timings = {}
         for fast in (False, True):
             mp.clear_cache()
-            with patch.object(mp, "FAST_SAMPLING", fast):
+            with patch.object(mp, "FAST_SAMPLING", fast), patch.object(mp, "FAST_AUTO", False):
                 t0 = time.perf_counter()
                 self.assertEqual(mp.refresh_paths(bpy.context), 2 * 50)
                 timings[fast] = (time.perf_counter() - t0) * 1000.0
@@ -258,6 +258,42 @@ class FastSampler(unittest.TestCase):
               flush=True)
         self.assertLess(timings[True], timings[False])
         bpy.context.scene.frame_end = 20
+        settings.paths_enabled = False
+
+    def _count_frame_changes(self, fn):
+        changes = []
+        handler = lambda scene, *_: changes.append(scene.frame_current)   # noqa: E731
+        bpy.app.handlers.frame_change_pre.append(handler)
+        try:
+            fn()
+        finally:
+            bpy.app.handlers.frame_change_pre.remove(handler)
+        return len(changes)
+
+    def test_auto_mode_keeps_stepping_light_scenes_and_switches_heavy_ones(self):
+        # Fast sampling pays only where stepping is slow: auto mode measures before it switches.
+        settings = self._paths_on()
+        settings.paths_range_mode, settings.paths_before, settings.paths_after = 'AROUND_CURSOR', 3, 3
+        rig = _rig()
+        self._pin(rig, "lower")
+        scene = bpy.context.scene
+        scene.frame_set(10)
+        mp._step_ms_per_frame = None
+        self.assertGreater(self._count_frame_changes(lambda: mp.refresh_paths(bpy.context)), 0)   # unmeasured: step
+        self.assertIsNotNone(mp._step_ms_per_frame)
+        mp._step_ms_per_frame = mp.FAST_STEP_MS_PER_FRAME / 10      # a light scene
+        scene.frame_set(14)                                         # the window gains frames 14-17
+        self.assertGreater(self._count_frame_changes(lambda: mp.refresh_paths(bpy.context)), 0)
+        self.assertNotIn((rig.name, "lower", -1), mp._fast_keys)
+        heavy = _cube("Heavy")
+        heavy.modifiers.new("Sub", 'SUBSURF').levels = 5
+        heavy.modifiers.new("Wave", 'WAVE')                         # new geometry every frame
+        mp.clear_cache(); mp._step_ms_per_frame = None
+        mp.refresh_paths(bpy.context)                               # steps once and measures
+        self.assertGreaterEqual(mp._step_ms_per_frame, mp.FAST_STEP_MS_PER_FRAME)
+        scene.frame_set(18)                                         # new frames 18-21
+        self.assertEqual(self._count_frame_changes(lambda: mp.refresh_paths(bpy.context)), 0)   # measured slow: fast
+        self.assertIn((rig.name, "lower", -1), mp._fast_keys)
         settings.paths_enabled = False
 
 if __name__ == "__main__":

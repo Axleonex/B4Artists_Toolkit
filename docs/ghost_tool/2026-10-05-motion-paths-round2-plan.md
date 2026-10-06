@@ -497,9 +497,19 @@ asked for Round E without the E0 gate. Decisions and findings:
   evaluated geometry.
 - Turning it on exposed that three path tests read the scene after a refresh and relied on frame stepping
   re-evaluating it at the playhead (two anchor tests, one Time Remapping test). The fast result was right
-  (checked against the frame-10 pose); the tests read a stale pose. `FAST_SAMPLING` stays off in this part
-  and the next part switches it on with those tests evaluating the frame themselves.
-- Tests: `tests/test_ghost_paths_fast.py` (9), all compared against Blender's frame stepping within 1e-4.
+  (checked against the frame-10 pose); the tests read a stale pose. Part 3 (`9755d5eb`) switched
+  `FAST_SAMPLING` on and those two anchor tests now `frame_set` the playhead themselves (the Time
+  Remapping one passes because remapped scenes step).
+- Switching it on unconditionally slowed the light fixture rig's 500-sample gate from ~5 to ~20 ms.
+  Part 4 adds `FAST_AUTO`: a refresh measures the cost of each stepped frame (`_step_ms_per_frame`,
+  reset when the cache's scene changes) and uses the fast sampler only once stepping costs
+  `FAST_STEP_MS_PER_FRAME` (0.5 ms) or more per frame. Light rigs keep stepping (gate back to ~4 ms);
+  a heavy scene steps once, measures, and then samples new frames with no `frame_set` (85 vs 3.5 ms).
+  `FAST_AUTO = False` forces fast whenever eligible (the tests use it to compare samplers).
+- Tests: `tests/test_ghost_paths_fast.py` (10), all compared against Blender's frame stepping within 1e-4;
+  the auto test checks that a light scene keeps stepping and a heavy one switches after one measurement.
+- Not checked headless (owner's 3.8.0 checklist): a real heavy production rig scrubbing without the
+  slow warning; a Copy Location constraint added to a pinned bone makes its path step again.
 
 ### Task E2: release 3.8.0 (owner-gated). Checklist: the heavy rig from E0
 scrubs without the slow warning; add a Copy Location constraint to a pinned bone
