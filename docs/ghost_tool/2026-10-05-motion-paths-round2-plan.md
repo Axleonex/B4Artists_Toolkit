@@ -352,8 +352,14 @@ parts).** Decisions and findings while executing:
   Glow off removes it (pixel diff only around the selected path); a per-path scene range keeps
   frames 1–30 while the global window is 6–24; folder open/closed, indent, checkboxes; Apply to
   Checked recolours a checked folder's two paths. Found: at `bl_ui_units_x = 14` the popover cut
-  names to "Rig › ..." and "Apply to C…"; now 18 (test `test_popover_is_wide_enough_for_checkbox_rows`).
+  names to "Rig › ..." and "Apply to C…"; now 18. The width evidence is the re-captured
+  `11_folders_open_checked_row.png` (same folder), which shows "Motion paths · 3",
+  "Apply to Checked", "Rig › upper" and "Rig › lower" in full. Text width cannot be measured
+  headless, so `test_popover_is_wide_enough_for_checkbox_rows` only guards against the width
+  going back below 18 (review `b47d4c88`).
   Not captured: scrubbing feel and the Path Settings dialog (Own Range fields appear on tick).
+- Review `b47d4c88`, advisory: Add Folder unchecked every folder, also a checked folder it took
+  no path from. It now unchecks only the folders its moved paths came from.
 - Not checked headless (owner's 3.6.0 checklist): the folder row look, the indent of a path in a
   folder, renaming a folder in the list, the Checked ▾ and Move to submenus.
 

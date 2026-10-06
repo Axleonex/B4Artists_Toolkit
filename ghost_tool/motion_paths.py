@@ -783,13 +783,14 @@ class GHOST_OT_paths_add_folder(bpy.types.Operator):
             key = uuid.uuid4().hex[:8]
         folder = paths.add()
         folder.is_folder, folder.object_name, folder.folder_key = True, name, key
-        moved = 0
+        moved, emptied = 0, set()
         for index in checked_paths(settings):
+            emptied.add(paths[index].folder)
             paths[index].folder, paths[index].checked = key, False
             moved += 1
         for entry in paths:
-            if entry.is_folder and entry.checked:
-                entry.checked = False   # its paths moved; a checked empty folder would act on nothing
+            if entry.is_folder and entry.folder_key in emptied:
+                entry.checked = False   # its paths moved out; left checked it would act on nothing
         settings.motion_paths_index = len(paths) - 1
         tag_viewport_redraw(context)
         self.report({'INFO'}, f"Added {name}" + (f" with {moved} path(s)" if moved else ""))

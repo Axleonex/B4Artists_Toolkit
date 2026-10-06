@@ -310,11 +310,13 @@ class GhostPathFolders(unittest.TestCase):
         # Review d766142a: the emptied source folder stayed checked, so a second Add Folder moved nothing.
         old = self._folder("Old", "k1")
         self._path("A", folder="k1")
-        old.checked = True
+        empty = self._folder("Empty", "k2")
+        old.checked = empty.checked = True
         bpy.ops.ghost_tool.paths_add_folder()
-        new = self.settings.motion_paths[2]
+        new = self.settings.motion_paths[3]
         self.assertEqual((self.settings.motion_paths[1].folder, old.checked, new.checked),
                          (new.folder_key, False, False))
+        self.assertTrue(empty.checked)   # review b47d4c88: no path moved out of it, so it stays checked
         self.assertEqual(mp.checked_paths(self.settings), [])
 
     def test_popover_is_wide_enough_for_checkbox_rows(self):
