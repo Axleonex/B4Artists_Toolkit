@@ -366,6 +366,21 @@ class GhostRegression(unittest.TestCase):
         self.assertGreater(delay, 0)
         self.assertEqual(register.call_count, 0)
 
+    def test_path_colour_before_follows_colour_until_set(self):
+        # Review F1 (Round B): a path saved before 3.6 has no colour-before; Split must
+        # dim its own colour, not a fixed gold.
+        paths = self.settings.motion_paths
+        e = paths.add()
+        try:
+            e.color = (0.31, 0.76, 0.97)
+            for before, colour in zip(e.color_before, e.color):
+                self.assertAlmostEqual(before, colour * 0.55, places=5)
+            e.color_before = (0.1, 0.2, 0.3)
+            e.color = (1.0, 1.0, 1.0)   # a chosen colour-before stays put
+            self.assertEqual([round(c, 5) for c in e.color_before], [0.1, 0.2, 0.3])
+        finally:
+            paths.remove(len(paths) - 1)
+
 if __name__ == '__main__':
     result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(GhostRegression))
     print('GHOST_REGRESSION_RESULT: ' + ('PASS' if result.wasSuccessful() else 'FAIL'), flush=True)

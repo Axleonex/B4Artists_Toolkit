@@ -823,6 +823,17 @@ def _on_paths_show_markers_changed(self, context):
         warn(f"Motion paths markers: {exc}")
 
 
+def _get_path_color_before(self):
+    # Until set, the before-colour is this path's own colour at 55 %, so paths saved
+    # before 3.6 (no stored value) draw Split in their own colour, not the gold default.
+    stored = self.get("color_before_value")
+    return tuple(stored) if stored is not None else tuple(c * 0.55 for c in self.color)
+
+
+def _set_path_color_before(self, value):
+    self["color_before_value"] = tuple(value)
+
+
 class GhostPathEntry(bpy.types.PropertyGroup):
     """One pinned motion path: an object, or a bone of an armature."""
 
@@ -847,7 +858,8 @@ class GhostPathEntry(bpy.types.PropertyGroup):
     )  # type: ignore[assignment]
     color_before: bpy.props.FloatVectorProperty(
         name="Colour Before", description="Colour of this path before the playhead when the style is Split",
-        subtype='COLOR', size=3, min=0.0, max=1.0, default=(0.528, 0.3905, 0.0),   # the default colour × 0.55
+        subtype='COLOR', size=3, min=0.0, max=1.0,
+        get=_get_path_color_before, set=_set_path_color_before,   # get/set, not get_transform: Blender 4.x too
     )  # type: ignore[assignment]
     dot_size: bpy.props.IntProperty(
         name="Dot Size", description="Size of this path's key dots in pixels", default=6, min=1, max=12,

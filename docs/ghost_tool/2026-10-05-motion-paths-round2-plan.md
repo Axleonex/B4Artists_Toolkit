@@ -252,6 +252,21 @@ row's icon; the glow follows the list selection and Glow off removes it; a path 
 its own wider range keeps its extra frames and frame numbers; the dialog shows the Own
 Range fields as soon as the box is ticked.
 
+**Done 2026-10-05 (Round B evidence review, branch `work/ghost-tool-paths-round-b-reviewed`).**
+Round B was re-applied in three routed parts so the change review saw it. Findings:
+- Part 1 (run `6eb8b9dc`), F1, advisory: `color_before` had a fixed gold default
+  (gold × 0.55) while §8.2 says "default = color × 0.55". Add Selected already set it per
+  path, but a path saved before 3.6 has no stored value and drew Split in dim gold
+  whatever its colour. Fix: `color_before` is a get/set property. Until set it reads as
+  the path's own colour × 0.55 (and follows colour changes); once set (the dialog in
+  Split style, Add Selected) the stored value stays. get/set rather than
+  `get_transform`, because `get_transform` does not exist before Blender 5.0 and
+  `ghost_tool` declares 4.0. Test `test_path_colour_before_follows_colour_until_set`
+  (regressions 21; correctness 47, since it reruns the regression cases).
+- Part 2 (run `e1877198`), advisory: the in-front and glow tests check the draw logic
+  (`_depth_mode`, `_passes_for`), not the pixels. No change: headless Bforartists cannot
+  render GPU drawing, and both are on the owner's 3.6.0 checklist above.
+
 ---
 
 ## Round C — organise (→ 3.6.0)
