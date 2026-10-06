@@ -20,6 +20,12 @@ try:
     HAVE_BPY = True
 except ImportError:
     HAVE_BPY = False
+# Ghost Tool registers its operators only in Bforartists (standard Blender gets a preferences notice).
+IN_BFORARTISTS = False
+if HAVE_BPY:
+    sys.path.insert(0, str(ROOT))
+    import ghost_tool as _gt
+    IN_BFORARTISTS = _gt._is_bforartists()
 
 
 def _line(x0, x1, n=11, y=0.0, z=0.0):
@@ -195,7 +201,7 @@ class AnnotationStrokes(unittest.TestCase):
 
 
 
-@unittest.skipUnless(HAVE_BPY, "needs Bforartists")
+@unittest.skipUnless(IN_BFORARTISTS, "the operator registers only in Bforartists")
 class DrawToKeysOperator(unittest.TestCase):
     """Task G3: the operator keys location at each crossing."""
 
@@ -344,9 +350,10 @@ class DrawToKeysOperator(unittest.TestCase):
         e.object_name = cube.name
         self.mp.refresh_paths(bpy.context)
         self._path_with_dashes()
+        self._stroke([(5.0, 5.0, 0.0)])                     # a dot Draw to Keys does not read
         bpy.ops.ghost_tool.paths_draw_to_keys(use_current_frame=False, start_frame=1, frame_step=4,
                                               clear_annotations_after=True)
-        self.assertEqual(len(self.frame.strokes), 0)
+        self.assertEqual([len(s.points) for s in self.frame.strokes], [1])   # review 07547b99: the dot stays
         self.assertLess((self.mp._cache[(cube.name, "", -1, 5.0)] - mathutils_vec(7, 0, 0)).length, 1e-5)
         self.scene.ghost_tool.paths_enabled = False
 

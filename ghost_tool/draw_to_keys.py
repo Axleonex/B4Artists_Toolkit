@@ -49,24 +49,29 @@ def annotation_strokes(scene) -> tuple[list[list[Vector]], int]:
         if stroke.display_mode != '3DSPACE':
             refused += 1
             continue
-        points = [Vector(p.co) for p in stroke.points]
-        if len(points) >= 2:
-            strokes.append(points)
+        if _usable(stroke):
+            strokes.append([Vector(p.co) for p in stroke.points])
     return strokes, refused
 
 
+def _usable(stroke) -> bool:
+    """A stroke Draw to Keys reads: in 3D space and at least two points."""
+    return stroke.display_mode == '3DSPACE' and len(stroke.points) >= 2
+
+
 def clear_annotation_frame(scene) -> int:
-    """Remove the strokes Draw to Keys read (the active layer's frame at the playhead). Returns how many."""
+    """Remove the strokes Draw to Keys read (the active layer's frame at the playhead), and only those: a dot
+    or any stroke it skipped stays (review 07547b99). Returns how many were removed."""
     annotation = getattr(scene, "annotation", None)
     if annotation is None or not 0 <= annotation.layers.active_index < len(annotation.layers):
         return 0
     frame = _frame_at(annotation.layers[annotation.layers.active_index], scene.frame_current)
     if frame is None:
         return 0
-    strokes = list(frame.strokes)
-    for stroke in strokes:
+    used = [stroke for stroke in frame.strokes if _usable(stroke)]
+    for stroke in used:
         frame.strokes.remove(stroke)
-    return len(strokes)
+    return len(used)
 
 
 def _target(context):
