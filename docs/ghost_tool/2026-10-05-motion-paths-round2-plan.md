@@ -632,6 +632,32 @@ Properties: `axes` (enum flag X/Y/Z, default all), `use_current_frame`,
    new motion shows immediately.
 **Commit:** `Ghost Tool draw to keys: operator`.
 
+**Done 2026-10-06 (G3 and the G1–G2 review fixes).** Decisions and findings:
+- Crossing rule, after three reviews (`85372dd9`, `976236d6`, `291dde18`): a dash's crossing is the path
+  leg whose tolerance zone (within `tolerance × path length`) the dash enters first, walking from the
+  dash's first point; it is reported at that leg's closest approach. The entry is exact: the distance
+  from a point moving along a dash segment to a fixed leg is convex, so a bisection between the dash start
+  and the leg's closest approach finds it. The earlier rules (closest distance; closest-approach position)
+  are re-implemented in a test that shows each picks a different leg on its own geometry. One rule for
+  every leg: a review example that compared one leg's zone entry with another's exact crossing mixed two
+  rules. Before the first annotation frame nothing is read.
+- G3: `GHOST_OT_paths_draw_to_keys` keys location on the chosen axes at Start, Start + Step, ... with the
+  chosen interpolation, for the active object or pose bone. World points become channel values through
+  `motion_paths.location_world_map` (split out of `handle_transform`, so handles, the handle drag and Draw
+  to Keys share one map), read at each key's frame so an animated parent counts. Optional `stroke_value`
+  (distance along the path) and Clear Strokes. Refuses fewer than two crossings, any View-placed stroke
+  and connected bones. Dialog, one undo step, the playhead is restored, pinned paths re-sample.
+  The Bezier/Linear/Constant choice sets each new key's interpolation; Preferences leaves Blender's.
+- Reviews `07547b99` and `ec38136d`: Clear Strokes removes only the strokes it read (3D, two or more
+  points) and never a hidden layer's (one `_active_layer_frame` lookup for reading and clearing); the
+  operator tests skip outside Bforartists.
+- UI: "Draw to Keys…" in Edit Motion and at the bottom of the paths popover; the Motion Paths help text
+  covers folders, Apply to Checked, Handles and Draw to Keys.
+- Tests: `tests/test_ghost_draw_to_keys.py` (22; the 9 math cases also run under plain Python). Keyed
+  positions are checked against Blender's own evaluation (object; bone under a rotated, animated parent).
+- Not checkable headless (owner's 4.1.0 checklist): drawing with the Annotate tool in each placement, the
+  dialog, and the visible difference between Bezier and Constant.
+
 ### Task G4: release 4.1.0 (owner-gated). Checklist: draw a path and three dashes
 on a plane, run Draw to Keys on a bone, scrub: the bone visits each crossing at
 Start, Start+Step, Start+2·Step; Bezier vs Constant visibly differ; `stroke_value`

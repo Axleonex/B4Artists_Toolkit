@@ -32,16 +32,22 @@ def _frame_at(layer, frame_current: int):
     return held[-1] if held else None
 
 
-def annotation_strokes(scene) -> tuple[list[list[Vector]], int]:
-    """(3D strokes of the active annotation layer at the playhead, number of strokes refused for not being
-    in 3D space). Hidden layers and strokes with fewer than two points are skipped."""
+def _active_layer_frame(scene):
+    """The active annotation layer's frame at the playhead, or None (no annotation, hidden layer, or before
+    its first frame). Reading and clearing both go through here, so they always see the same strokes."""
     annotation = getattr(scene, "annotation", None)
     layer: Optional[bpy.types.AnnotationLayer] = None
     if annotation is not None and 0 <= annotation.layers.active_index < len(annotation.layers):
         layer = annotation.layers[annotation.layers.active_index]
     if layer is None or layer.annotation_hide:
-        return [], 0
-    frame = _frame_at(layer, scene.frame_current)
+        return None
+    return _frame_at(layer, scene.frame_current)
+
+
+def annotation_strokes(scene) -> tuple[list[list[Vector]], int]:
+    """(3D strokes of the active annotation layer at the playhead, number of strokes refused for not being
+    in 3D space). Hidden layers and strokes with fewer than two points are skipped."""
+    frame = _active_layer_frame(scene)
     if frame is None:
         return [], 0
     strokes, refused = [], 0
@@ -62,10 +68,7 @@ def _usable(stroke) -> bool:
 def clear_annotation_frame(scene) -> int:
     """Remove the strokes Draw to Keys read (the active layer's frame at the playhead), and only those: a dot
     or any stroke it skipped stays (review 07547b99). Returns how many were removed."""
-    annotation = getattr(scene, "annotation", None)
-    if annotation is None or not 0 <= annotation.layers.active_index < len(annotation.layers):
-        return 0
-    frame = _frame_at(annotation.layers[annotation.layers.active_index], scene.frame_current)
+    frame = _active_layer_frame(scene)   # a hidden layer is never read, so it is never cleared (review ec38136d)
     if frame is None:
         return 0
     used = [stroke for stroke in frame.strokes if _usable(stroke)]

@@ -343,6 +343,25 @@ class DrawToKeysOperator(unittest.TestCase):
         self.assertEqual(bpy.ops.ghost_tool.paths_draw_to_keys(), {'CANCELLED'})
         bpy.ops.object.mode_set(mode='OBJECT')
 
+    def test_clear_skips_a_hidden_layer(self):
+        # Review ec38136d: reading skipped a hidden layer but clearing did not.
+        from ghost_tool import draw_to_keys
+        self._path_with_dashes()
+        self.scene.annotation.layers[0].annotation_hide = True
+        self.assertEqual(draw_to_keys.clear_annotation_frame(self.scene), 0)
+        self.assertEqual(len(self.frame.strokes), 3)
+
+    def test_buttons_in_edit_motion_and_the_paths_popover(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from test_ghost_paths_folders import _Layout, _valid_icons
+        from ghost_tool import ui_panel
+        for draw in (ui_panel._draw_edit_motion, ui_panel._draw_motion_paths):
+            layout = _Layout()
+            draw(layout, bpy.context)
+            ops = [c for c in layout.calls if c[1] == "ghost_tool.paths_draw_to_keys"]
+            self.assertEqual(len(ops), 1, draw.__name__)
+            self.assertIn(ops[0][3], _valid_icons())
+
     def test_clears_strokes_and_refreshes_pinned_paths(self):
         cube = self._cube()
         self.scene.ghost_tool.paths_enabled = True

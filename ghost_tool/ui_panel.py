@@ -120,7 +120,10 @@ _HELP_TOPICS = {
         "click H/T in the list to switch. The cube button hides a path behind geometry. "
         "Split colours a path differently before the playhead; Glow marks the path selected "
         "in the list. Range and style apply to all paths; a path can take its own range "
-        "in its settings (the colour swatch).",
+        "in its settings (the colour swatch). Folders and checkboxes organise the list; Apply to "
+        "Checked copies the selected path's look. Handles shows each key's Bezier handles: Shift+G or "
+        "click an end to drag it (Alt keeps the pair aligned). Draw to Keys turns Annotate strokes into "
+        "location keys: the longest stroke is the path, each crossing dash a key.",
     ),
 }
 
@@ -342,6 +345,9 @@ def _draw_edit_motion(layout, context) -> None:
             row = col.row(align=True)
             row.prop(easing, "custom_right_x", text="R.X")
             row.prop(easing, "custom_right_y", text="R.Y")
+
+    row = layout.row()
+    row.operator("ghost_tool.paths_draw_to_keys", text="Draw to Keys…", icon='GREASEPENCIL')
 
     col = layout.column(align=True)
     col.label(text=f"Pinned markers: {len(store.get_pinned())}")
@@ -623,6 +629,7 @@ def _draw_motion_paths(layout, context) -> None:
     row.prop(settings, "paths_show_frame_numbers", text="Frame #", toggle=True)
     row.prop(settings, "paths_active_glow", text="Glow", toggle=True)
     row.prop(settings, "paths_show_handles", text="Handles", toggle=True)
+    layout.operator("ghost_tool.paths_draw_to_keys", text="Draw to Keys…", icon='GREASEPENCIL')
 
 
 #: (key, label, icon, draw function, help topic, open by default)
