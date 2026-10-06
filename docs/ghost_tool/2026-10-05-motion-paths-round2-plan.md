@@ -307,6 +307,37 @@ action; `REMOVE` also drops cache keys and re-syncs markers; `MOVE` to a missing
 folder name cancels with a report. Popover: `Checked ▾` menu (`GHOST_MT_paths_checked`).
 **Commit:** `Ghost Tool paths: batch actions on checked rows`.
 
+**Done 2026-10-05 (C1–C3, branch `work/ghost-tool-paths-round-c` from `2630bcd`, two routed
+parts).** Decisions and findings while executing:
+- Folder identity: a folder row keeps a fixed `folder_key` (8 hex chars) and its paths store that
+  key in `folder`, not the folder's name as §8.2 wrote. The list renames a folder inline
+  (`row.prop(item, "object_name")`), and a name reference would drop its paths on rename.
+  A path whose folder is gone is a top-level path.
+- C2 decision: `checked` is a plain saved property, like Blender's own selection. No load-time
+  clearing.
+- Add Folder moves the checked paths into the new folder (and unchecks them); with none checked
+  it adds an empty folder. Folder names are "Folder", "Folder 2", ….
+- "Move to folder…" is a submenu of the Checked menu (Top Level plus each folder), not a dialog.
+  The Checked menu also has "Apply to Checked with Range".
+- Apply to Checked copies colour, thickness, dot size and in front, the anchor only between bone
+  paths (an object origin has no tail), and the colour-before *choice*: a source that follows
+  its colour leaves the targets following theirs.
+- The list order and filtering live in `motion_paths.list_rows`; `GHOST_UL_paths.filter_items`
+  turns them into Blender's flags and new positions. The header count shows paths, not folders.
+- Review C1 (run `8c2a6333`), F1: with Follow on, a pinned path hidden by its eye or its folder
+  came back as a grey Follow path when selected. Follow is for unpinned selections (§2 tests),
+  so `all_targets` now passes every pinned key. This also fixes eye-hidden paths from 3.5.
+  F2: the checked Remove test only checked that sync ran; it now reads the marker store
+  (review `e5217051` pointed out that `owned_markers` filters by ownership and cannot see a leak).
+- Tests: `tests/test_ghost_paths_folders.py` (13), run without re-running `test_ghost_paths`.
+  The UI tests draw into a recording layout and check every icon name against
+  `UILayout.operator`'s icon enum, because a wrong icon only fails when Blender draws.
+- Drawing the folder name with `prop(item, "object_name")` made `test_tooltip_coverage` require
+  hover text on every property named `object_name`; two in `anim_assist/core/properties.py` had
+  none. Fixed in a separate routed run, because that file was not declared in part 2.
+- Not checked headless (owner's 3.6.0 checklist): the folder row look, the indent of a path in a
+  folder, renaming a folder in the list, the Checked ▾ and Move to submenus.
+
 ### Task C4: release 3.6.0 (owner-gated)
 Manual checklist: Split style flips colour at the playhead while scrubbing;
 dot size and in-front toggles visible; the glow follows the list selection;

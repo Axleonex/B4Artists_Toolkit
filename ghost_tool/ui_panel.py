@@ -495,9 +495,34 @@ def _row_icon(entry, is_active: bool) -> str:
 class GHOST_UL_paths(bpy.types.UIList):
     bl_idname = "GHOST_UL_paths"
 
+    def filter_items(self, context, data, propname):
+        """List order and visibility come from motion_paths.list_rows: top-level paths, then each
+        folder with its paths; a collapsed folder's paths are filtered out."""
+        from .motion_paths import list_rows
+        count = len(getattr(data, propname))
+        flags, order = [0] * count, [0] * count
+        for position, (index, shown) in enumerate(list_rows(data)):
+            flags[index] = self.bitflag_filter_item if shown else 0
+            order[index] = position   # Blender wants each item's new position, indexed by the item
+        return flags, order
+
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        from .motion_paths import active_entry_index, entry_is_missing
+        from .motion_paths import active_entry_index, entry_is_missing, folder_rows
         row = layout.row(align=True)
+        row.prop(item, "checked", text="")
+        if item.is_folder:
+            fold = row.operator("ghost_tool.paths_toggle_folder", text="", emboss=False,
+                                icon='RIGHTARROW' if item.collapsed else 'DOWNARROW_HLT')
+            fold.index = index
+            op = row.operator("ghost_tool.paths_toggle_visible", text="", emboss=False,
+                              icon='HIDE_OFF' if item.visible else 'HIDE_ON')
+            op.action, op.index = 'ONE', index
+            row.prop(item, "object_name", text="", emboss=False, icon='FILE_FOLDER')
+            rm = row.operator("ghost_tool.paths_remove", text="", icon='X', emboss=False)
+            rm.index = index
+            return
+        if item.folder and item.folder in folder_rows(data):
+            row.label(text="", icon='BLANK1')   # indent: this path is in the folder above it
         op = row.operator("ghost_tool.paths_toggle_visible", text="", emboss=False,
                           icon='HIDE_OFF' if item.visible else 'HIDE_ON')
         op.action, op.index = 'ONE', index
@@ -520,6 +545,37 @@ class GHOST_UL_paths(bpy.types.UIList):
         rm.index = index
 
 
+class GHOST_MT_paths_checked(bpy.types.Menu):
+    bl_idname = "GHOST_MT_paths_checked"
+    bl_label = "Checked"
+    bl_description = "Actions on the checked rows of the motion path list"
+
+    def draw(self, context):
+        layout = self.layout
+        for action, label, icon in (('SHOW', "Show", 'HIDE_OFF'), ('HIDE', "Hide", 'HIDE_ON'),
+                                    ('RESET_RANGE', "Reset Range", 'LOOP_BACK'), ('REMOVE', "Remove", 'X')):
+            layout.operator("ghost_tool.paths_checked_action", text=label, icon=icon).action = action
+        layout.menu("GHOST_MT_paths_move_to", icon='FILE_FOLDER')
+        layout.separator()
+        layout.operator("ghost_tool.paths_apply_to_checked", text="Apply to Checked with Range",
+                        icon='PASTEDOWN').include_range = True
+
+
+class GHOST_MT_paths_move_to(bpy.types.Menu):
+    bl_idname = "GHOST_MT_paths_move_to"
+    bl_label = "Move to Folder"
+    bl_description = "Move the checked paths into a folder, or to the top level"
+
+    def draw(self, context):
+        layout = self.layout
+        op = layout.operator("ghost_tool.paths_checked_action", text="Top Level", icon='TRIA_UP')
+        op.action, op.folder = 'MOVE', ""
+        for entry in context.scene.ghost_tool.motion_paths:
+            if entry.is_folder:
+                op = layout.operator("ghost_tool.paths_checked_action", text=entry.object_name, icon='FILE_FOLDER')
+                op.action, op.folder = 'MOVE', entry.folder_key
+
+
 def _range_props(settings) -> tuple[str, ...]:
     """The frame fields the chosen range mode needs."""
     if settings.paths_range_mode == 'AROUND_CURSOR':
@@ -535,13 +591,17 @@ def _draw_motion_paths(layout, context) -> None:
     row.scale_y = 1.2
     row.operator("ghost_tool.paths_add_selected", text="Add Path for Selected", icon='ADD')
     row = layout.row(align=True)
-    row.label(text=f"Motion paths · {len(settings.motion_paths)}")
+    row.label(text=f"Motion paths · {sum(1 for e in settings.motion_paths if not e.is_folder)}")
     row.operator("ghost_tool.paths_toggle_visible", text="All on").action = 'ALL_ON'
     row.operator("ghost_tool.paths_toggle_visible", text="All off").action = 'ALL_OFF'
     row.operator("ghost_tool.paths_clear", text="", icon='TRASH')
     row = layout.row(align=True)
     row.operator("ghost_tool.paths_toggle_front", text="All in front", icon='XRAY').action = 'ALL_ON'
     row.operator("ghost_tool.paths_toggle_front", text="All behind", icon='MESH_CUBE').action = 'ALL_OFF'
+    row = layout.row(align=True)
+    row.operator("ghost_tool.paths_add_folder", text="Add Folder", icon='NEWFOLDER')
+    row.operator("ghost_tool.paths_apply_to_checked", text="Apply to Checked", icon='PASTEDOWN')
+    row.menu("GHOST_MT_paths_checked", text="Checked")
     layout.template_list("GHOST_UL_paths", "", settings, "motion_paths", settings, "motion_paths_index", rows=4, maxrows=8)
     col = layout.column(align=True)
     col.label(text="Range")
@@ -866,6 +926,8 @@ CLASSES: tuple[type, ...] = (
     GhostToolEasingSettings,
     GHOST_OT_show_help_popup,
     GHOST_UL_paths,
+    GHOST_MT_paths_checked,
+    GHOST_MT_paths_move_to,
     GHOST_PT_paths_popover,
     GHOST_PT_header_menu,
     GHOST_PT_window,
