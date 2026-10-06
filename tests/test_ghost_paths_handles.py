@@ -88,6 +88,45 @@ class GhostPathHandles(unittest.TestCase):
         self.scene.frame_set(10)
         self._drop_deferred_timer()
 
+    def test_object_handles_under_a_parent_with_delta_location(self):
+        # Review 47b90d36: exercise the parent, parent-inverse and delta terms of the object transform.
+        from mathutils import Matrix
+        cube = _cube()
+        bpy.ops.object.empty_add(location=(1.0, 2.0, 0.5))
+        parent = bpy.context.object
+        parent.rotation_euler = (0.0, 0.3, 0.7)
+        cube.parent = parent
+        cube.matrix_parent_inverse = Matrix.Translation((0.5, -0.25, 0.0)) @ Matrix.Rotation(0.4, 4, 'X')
+        cube.delta_location = (0.0, 0.3, 1.0)
+        self._pin(cube)
+        target = mp.pinned_targets(self.scene)[0]
+        self.scene.frame_set(20)
+        left, right = mp.key_handles(target, 20.0)
+        for side, point in ((0, left), (1, right)):
+            expect = self._world_with_key_moved_to_handle(cube, "", 20.0, side)
+            self.assertLess((point - expect).length, 1e-4)
+        self.scene.frame_set(10)
+        self._drop_deferred_timer()
+
+    def test_one_frame_path_still_draws_dots_and_handles(self):
+        # Review 47b90d36: the draw skipped a path with no line segment before its dots and handles.
+        cube = _cube()
+        e = self._pin(cube)
+        e.use_own_range, e.own_range_mode, e.own_start, e.own_end = True, 'CUSTOM', 20, 20
+        with patch.object(ghost_tool.ghost_data, "_schedule_path_refresh"):
+            self.settings.paths_show_handles = True
+        self.settings.paths_show_key_dots = True
+        mp.refresh_paths(bpy.context)
+        target = mp.pinned_targets(self.scene)[0]
+        self.assertEqual(target.frames, (20.0,))
+        segs, dots, lines, ends = mp.draw_parts(bpy.context, target)
+        self.assertEqual((len(segs), len(dots), len(lines), len(ends)), (0, 1, 4, 2))
+        self.assertEqual(lines[0], mp._cache[C(cube.name, "", 20.0)])   # handle lines start at the key dot
+        with patch.object(ghost_tool.ghost_data, "_schedule_path_refresh"):
+            self.settings.paths_show_handles = False
+        self.assertEqual(mp.draw_parts(bpy.context, target)[2:], ([], []))
+        self._drop_deferred_timer()
+
     def test_bone_head_handle_points_match_the_posed_rig(self):
         rig = _rig()
         bpy.ops.object.mode_set(mode='POSE')

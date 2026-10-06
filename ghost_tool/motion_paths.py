@@ -594,6 +594,26 @@ def _passes_for(target: PathTarget, is_list_active: bool, glow_on: bool) -> list
     return [(0, None)]
 
 
+def draw_parts(context, target: PathTarget) -> tuple[list, list[Vector], list[Vector], list[Vector]]:
+    """What one path draws: (line segments, key dots, handle line vertices, handle end points).
+    A path without a segment (a one-frame window) still shows its key dots and handles."""
+    settings = context.scene.ghost_tool
+    segs = path_segments(context, target)
+    dots: list[Vector] = []
+    if settings.paths_show_key_dots:
+        dots = [_cache[(*target.key, f)] for f in key_frames(target) if (*target.key, f) in _cache]
+    lines: list[Vector] = []
+    ends: list[Vector] = []
+    if settings.paths_show_handles and target.pinned:
+        for f in _handle_frames(target):
+            handle, point = _handles.get((*target.key, f)), _cache.get((*target.key, f))
+            if handle is None or point is None:
+                continue
+            lines += [point, handle[0], point, handle[1]]
+            ends += list(handle)
+    return segs, dots, lines, ends
+
+
 def draw_motion_paths() -> None:
     context = bpy.context
     scene = context.scene
@@ -610,13 +630,13 @@ def draw_motion_paths() -> None:
     gpu.state.blend_set('ALPHA')
     try:
         for target in all_targets(context):
-            segs = path_segments(context, target)
-            if not segs:
+            segs, dots, lines, ends = draw_parts(context, target)
+            if not (segs or dots or lines):
                 continue
             gpu.state.depth_test_set(_depth_mode(target))
             width = target.thickness + (1 if target.key == active else 0)
             is_list_active = target.pinned and target.key == list_active
-            for extra, alpha in _passes_for(target, is_list_active, settings.paths_active_glow):
+            for extra, alpha in _passes_for(target, is_list_active, settings.paths_active_glow) if segs else ():
                 gpu.state.line_width_set(float(width + extra))
                 buckets: dict[tuple, list[Vector]] = {}
                 for p0, p1, color in segs:
@@ -626,29 +646,18 @@ def draw_motion_paths() -> None:
                 for color, verts in buckets.items():
                     batch = batch_for_shader(shader, 'LINES', {"pos": verts})
                     shader.bind(); shader.uniform_float("color", color); batch.draw(shader)
-            if settings.paths_show_key_dots:
-                dots = [_cache[(*target.key, f)] for f in key_frames(target)
-                        if (*target.key, f) in _cache]
-                if dots:
-                    gpu.state.point_size_set(float(target.dot_size))
-                    batch = batch_for_shader(shader, 'POINTS', {"pos": dots})
-                    shader.bind(); shader.uniform_float("color", KEY_DOT_COLOR); batch.draw(shader)
-            if settings.paths_show_handles and target.pinned:
-                lines, ends = [], []
-                for f in _handle_frames(target):
-                    handle, point = _handles.get((*target.key, f)), _cache.get((*target.key, f))
-                    if handle is None or point is None:
-                        continue
-                    lines += [point, handle[0], point, handle[1]]
-                    ends += list(handle)
-                if lines:
-                    color = (*target.color, 0.6)
-                    gpu.state.line_width_set(1.0)
-                    batch = batch_for_shader(shader, 'LINES', {"pos": lines})
-                    shader.bind(); shader.uniform_float("color", color); batch.draw(shader)
-                    gpu.state.point_size_set(HANDLE_DOT_SIZE)
-                    batch = batch_for_shader(shader, 'POINTS', {"pos": ends})
-                    shader.bind(); shader.uniform_float("color", color); batch.draw(shader)
+            if dots:
+                gpu.state.point_size_set(float(target.dot_size))
+                batch = batch_for_shader(shader, 'POINTS', {"pos": dots})
+                shader.bind(); shader.uniform_float("color", KEY_DOT_COLOR); batch.draw(shader)
+            if lines:
+                color = (*target.color, 0.6)
+                gpu.state.line_width_set(1.0)
+                batch = batch_for_shader(shader, 'LINES', {"pos": lines})
+                shader.bind(); shader.uniform_float("color", color); batch.draw(shader)
+                gpu.state.point_size_set(HANDLE_DOT_SIZE)
+                batch = batch_for_shader(shader, 'POINTS', {"pos": ends})
+                shader.bind(); shader.uniform_float("color", color); batch.draw(shader)
     finally:
         gpu.state.line_width_set(1.0)
         gpu.state.point_size_set(1.0)
