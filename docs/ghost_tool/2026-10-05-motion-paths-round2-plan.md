@@ -123,7 +123,27 @@ edit shows the new path. **Ask "Confirm merge update?" before merging to main.**
 
 ---
 
+## Owner decisions, 2026-10-05 (asked for Round B, which approves design §8)
+
+- **B3:** keep the per-path "in front" toggle (cube icon on each list row) **and** add
+  popover buttons "All in front" / "All behind", like All on / All off. The default keeps
+  today's look (see the B3 outcome below).
+- **G1:** Draw to Keys reads annotation strokes exactly as the Draw to Keys extension
+  does (Annotate tool; longest stroke = path, crossing dashes = keys). The "fall back to a
+  Grease Pencil object" branch is dropped.
+- **E0:** answered "No": the owner's rigs do not trip the slow warning. Round E (fast
+  sampling, 3.8.0) is skipped. It can be reopened if a rig ever shows the warning.
+- **X1:** closed. Motion Path Pro's "reference line", "timeline visualization",
+  "handle setup" and "editable path with rotation" are listed under "Future update" on its
+  Superhive page and in its extension version history; nothing released to copy. Its
+  released features map to Ghost Tool: edit in the 3D view = Markers on Paths; rotation =
+  Tail-path rotation markers; control handles = Round F; paths list = pinned list + Round C.
+- **Release line-up:** 3.5.1 (cache fixes + Round A), 3.6.0 (B + C), 3.7.0 (D vertex
+  paths), 4.0.0 (F handles), 4.1.0 (G Draw to Keys).
+
 ## Round B — look (→ 3.6.0 with Round C)
+
+Branch `work/ghost-tool-paths-round-b` from `work/ghost-tool-paths-gaps` (`65ec0cf`).
 
 ### Task B1: Split style (before/after colours)
 **Files:** `ghost_data.py` (`color_before` on the entry, `'SPLIT'` in `paths_style`),
@@ -146,15 +166,19 @@ gains `dot_size`); dialog field. Test: `pinned_targets` carries `dot_size`; the
 dialog helper lists `dot_size`. **Commit:** `Ghost Tool paths: dot size per path`.
 
 ### Task B3: draw in front, per path
-**Probe first:** in Bforartists, pin a path that passes behind a cube. If the line
-shows through the cube, today's handler has no depth test (`draw_motion_paths`
-never calls `depth_test_set`) and "in front" is the current look.
-- Probe says *shows through* → property `in_front` default **True**; when False,
-  wrap that path's draw in `gpu.state.depth_test_set('LESS_EQUAL')` … `'NONE'`.
-- Probe says *hidden* → default **False**; when True, set `depth_test_set('NONE')`.
-Record the outcome in the commit message. Test: `_depth_mode(target)` returns
-`'NONE'` / `'LESS_EQUAL'` for the two settings. List row gets the cube icon toggle
-(`'XRAY'`) via `paths_toggle_front(index)`.
+**Probe (resolved from source, not by eye):** Blender 5.1's
+`drw_callbacks_post_scene` (`source/blender/draw/intern/draw_context.cc`, branch
+`blender-v5.1-release`) calls `GPU_depth_test(GPU_DEPTH_NONE)` and `GPU_apply_state()`
+right before `ED_region_draw_cb_draw(..., REGION_DRAW_POST_VIEW)`, and binds
+`overlay_fb`, whose depth attachment is the viewport depth texture
+(`gpu_viewport.cc`). So today's paths draw through geometry, and a depth test of
+`LESS_EQUAL` does hide them behind it.
+- Property `in_front` default **True** (today's look); when False, that path draws with
+  `gpu.state.depth_test_set('LESS_EQUAL')`; the handler restores `'NONE'` at the end.
+Test: `_depth_mode(target)` returns `'NONE'` / `'LESS_EQUAL'` for the two settings.
+List row gets the cube icon toggle (`'XRAY'` in front, `'MESH_CUBE'` behind) via
+`paths_toggle_front(action='ONE', index)`; the popover gets "All in front" / "All behind"
+(`action='ALL_ON'` / `'ALL_OFF'`).
 **Commit:** `Ghost Tool paths: draw in front per path`.
 
 ### Task B4: glow on the list's active entry
@@ -163,6 +187,25 @@ when `target.key` is the key of `motion_paths[motion_paths_index]`, draw the
 segments once with width `thickness + 4` and alpha 0.25 before the normal pass.
 Test: `_passes_for(target, is_list_active, glow_on)` returns 2 passes with the
 wide one first, 1 otherwise. **Commit:** `Ghost Tool paths: active entry glow`.
+
+**Done 2026-10-05 (B1–B4, one commit).** Findings while executing:
+- B1: the planned test was inconsistent: with Every = 1 the playhead (frame 10) is a
+  sample, so no segment straddles it and the path keeps 6 segments. The test now checks
+  that case (3 before, 3 after) and Every = 2 (samples 7, 9, 11, 13: the 9–11 segment
+  is split, 4 segments). The split point is interpolated on the drawn straight segment,
+  not taken from the cache: with Every > 1 the cache has no sample at the playhead, and a
+  cached point off the straight line would put a kink in the path only in Split style.
+- B1/B2: Colour Before (style Split only) and Dot Size are in the Path Settings dialog;
+  `dialog_props(entry)` lists them, so the "write only what the caller set" rule from A1
+  covers them.
+- B3: outcome above (default in front, from Blender 5.1 source). The handler now resets
+  depth test and point size at the end.
+- B4: Glow is a toggle in the popover's Markers / Key dots / Frame # row. Only pinned
+  paths glow; a Follow path with the same key does not exist (Follow skips pinned keys).
+- Not checked headless (owner's 3.6.0 checklist): every GPU draw (Split colours while
+  scrubbing, dot size, a path behind a cube hidden when the cube button is off, the glow
+  under the list-selected path), and the list row (cube icon swaps XRAY / MESH_CUBE),
+  the "All in front" / "All behind" row, and the dialog fields.
 
 ### Task B5: per-path range override
 **Files:** `ghost_data.py` (entry: `use_own_range`, `own_range_mode`, `own_before`,
@@ -181,6 +224,33 @@ wide one first, 1 otherwise. **Commit:** `Ghost Tool paths: active entry glow`.
 4. `_on_path_setting_changed` also fires on the new entry properties.
 5. Checked ▾ menu item "Reset range" (Task C3) clears `use_own_range`.
 **Commit:** `Ghost Tool paths: per-path range`.
+
+**Done 2026-10-05 (B5).** Findings while executing:
+- Step 4 changed: the entry's range properties use `_on_path_window_changed` (keeps the
+  cache), not `_on_path_setting_changed` (clears it). Since A5 only `paths_enabled` clears
+  the whole cache; one path's range change samples only the frames new to that path.
+- `PathTarget.frames` is filled by `pinned_targets` (own range or the shared global one,
+  computed once per call) and `follow_targets` (global). `refresh_paths`, `path_segments`
+  (frames now optional, default `target.frames`), `draw_motion_paths`,
+  `draw_frame_numbers`, `sync_markers` and `request_missing_samples` all read it.
+  `sync_markers` groups bones by (object, anchor, frames), so each window gets its own
+  marker job.
+- Dialog: Own Range block (mode, Before/After or Start/End, Every). Added
+  `own_range_seed`: a path without its own range opens the dialog with the global
+  values, so ticking Own Range changes nothing until a field is edited (otherwise the
+  entry defaults 12 / 12 would jump in).
+- Perf gate with 10 overrides on: 500 samples in ~5 ms (limit 50).
+- Not checked headless: the dialog layout (fields appear when Own Range is ticked),
+  and the drawn paths/frame numbers following each path's own window.
+
+**Round B results (2026-10-05):** paths 71 OK (64 + 7), header 16, correctness 46,
+regressions 20, tooltip coverage OK, smoke exit 0. Owner's 3.6.0 checklist additions
+from Round B (all GPU or list drawing, none checkable headless): Split flips colour at
+the playhead while scrubbing (also with Every 2); dot size visibly changes per path; the
+cube button hides one path behind a cube and "All in front" / "All behind" flip every
+row's icon; the glow follows the list selection and Glow off removes it; a path with
+its own wider range keeps its extra frames and frame numbers; the dialog shows the Own
+Range fields as soon as the box is ticked.
 
 ---
 
@@ -267,7 +337,11 @@ deforming (armature-modified) mesh vertex; a Subdivision modifier greys it.
 
 ---
 
-## Round E — fast sampling (→ 3.8.0, gated)
+## Round E — fast sampling (SKIPPED 2026-10-05)
+
+> The owner answered the E0 gate "No": rigs do not trip the slow warning. Round E is
+> not scheduled and has no release. The tasks stay below so it can be reopened if a
+> rig ever shows the warning.
 
 ### Task E0: gate
 Open the owner's heaviest production rig in Bforartists, pin 20 bones, Around
@@ -352,14 +426,17 @@ Alt keeps the pair aligned; Esc restores.
 ## Round G — Draw to Keys (→ 4.1.0)
 
 ### Task G1: probe the annotation API
+Owner decision 2026-10-05: read annotation strokes exactly as the Draw to Keys
+extension does (Annotate tool; the longest stroke is the path, crossing dashes are
+the keys). There is no Grease Pencil object fallback.
 In Bforartists 5.1.2, draw an annotation with Placement = Surface on a plane,
 then in the Python console: `type(bpy.context.scene.grease_pencil)` and
 `bpy.context.scene.grease_pencil.layers.active.frames[0].strokes[0].points[0].co`.
 Record which type (legacy `GreasePencil` annotation or GPv3) and the point
-coordinate space. The rest of the round reads strokes through one helper
-`annotation_strokes(scene) -> list[list[Vector]]` so the rest of the code does
-not care which it is. If annotations are not reachable from Python at all, stop
-and report; the owner decides whether to read a Grease Pencil object instead.
+coordinate space, and check it against how the Draw to Keys extension reads its
+strokes. The rest of the round reads strokes through one helper
+`annotation_strokes(scene) -> list[list[Vector]]`. If annotations are not reachable
+from Python at all, stop and report to the owner.
 
 ### Task G2: crossings → frames (pure math, no bpy)
 **Files:** new `ghost_tool/draw_to_keys.py`, `tests/test_ghost_draw_to_keys.py`
@@ -411,6 +488,11 @@ appears in the object's custom properties when enabled.
 
 ## Round X — investigate Motion Path Pro's "reference line" and "timeline visualisation"
 
+> **Closed 2026-10-05.** The four features are listed under "Future update" on Motion
+> Path Pro's Superhive page and in its extension version history: nothing released to
+> copy. Its released features already map to Ghost Tool (see the owner decisions above
+> Round B). The original task stays below for the record.
+
 ### Task X1 (owner performs the download)
 The extension is GPL and free on extensions.blender.org, but downloading and
 installing a third-party add-on is the owner's call. Owner installs Real-Time
@@ -428,10 +510,10 @@ before that.
 A1–A5 → A6 (3.5.1)
 B1 B2 B3 B4 (independent) → B5 → C1 → C2 → C3 → C4 (3.6.0)
 D1 → D2 → D3 (3.7.0)
-E0 gate → E1 → E2 (3.8.0)   (may be skipped by the gate)
+E0 gate answered "No" → Round E skipped (no 3.8.0)
 F1 → F2 → F3 (4.0.0)
 G1 probe → G2 → G3 → G4 (4.1.0)
-X1 any time, owner-driven
+X1 closed
 ```
-Rounds D–G are independent of each other and can be reordered by the owner.
+Rounds D, F and G are independent of each other and can be reordered by the owner.
 Each round's branch is rebased on `main` after the previous release merges.

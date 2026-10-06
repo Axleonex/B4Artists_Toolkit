@@ -754,6 +754,8 @@ class GhostPaths(unittest.TestCase):
             rig = _rig(name=f"Rig{i}")
             for bone in ("upper", "lower"):
                 e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, bone
+                if bone == "upper":   # B5: ten paths read their own range (same 25 frames)
+                    e.use_own_range, e.own_before, e.own_after = True, 12, 12
         self.settings.paths_before = self.settings.paths_after = 12
         # Median of three: one busy moment cannot fail a correct build, and one lucky run cannot
         # pass a slow one (review rounds 2 and 3).
@@ -891,6 +893,152 @@ class GhostPaths(unittest.TestCase):
         self.assertEqual(mp.refresh_paths(bpy.context), 2)
         self.settings.paths_step = 2   # frames 7, 9, ..., 15: all already cached
         self.assertEqual(mp.refresh_paths(bpy.context), 0)
+        self._drop_deferred_timer()
+
+    # --- Round B: look ---
+
+    def test_split_style_colours_before_and_after_playhead(self):
+        # B1: Split draws the stretch before the playhead in the entry's colour_before.
+        rig = _rig()
+        e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "lower"
+        e.color, e.color_before = (1.0, 0.0, 0.0), (0.0, 0.0, 1.0)
+        self.settings.paths_style = 'SPLIT'
+        mp.refresh_paths(bpy.context)
+        target = mp.pinned_targets(self.scene)[0]
+        segs = mp.path_segments(bpy.context, target, mp.desired_frames(self.settings, self.scene))
+        self.assertEqual(len(segs), 6)   # the playhead is a sample: no segment straddles it
+        self.assertEqual([tuple(c[:3]) for _p0, _p1, c in segs], [(0.0, 0.0, 1.0)] * 3 + [(1.0, 0.0, 0.0)] * 3)
+        self.settings.paths_step = 2     # samples 7, 9, 11, 13: the 9-11 segment straddles 10
+        mp.refresh_paths(bpy.context)
+        segs = mp.path_segments(bpy.context, target, mp.desired_frames(self.settings, self.scene))
+        self.assertEqual(len(segs), 4)
+        p9, p11 = mp._cache[(rig.name, "lower", 9.0)], mp._cache[(rig.name, "lower", 11.0)]
+        self.assertLess((segs[1][1] - p9.lerp(p11, 0.5)).length, 1e-6)   # split on the drawn line
+        self.assertEqual(segs[1][1], segs[2][0])
+        self.assertEqual([tuple(c[:3]) for _p0, _p1, c in segs], [(0.0, 0.0, 1.0)] * 2 + [(1.0, 0.0, 0.0)] * 2)
+        self.settings.paths_style = 'SOLID'
+        self.assertEqual(len(mp.path_segments(bpy.context, target, mp.desired_frames(self.settings, self.scene))), 3)
+        self._drop_deferred_timer()
+
+    def test_add_selected_sets_darker_colour_before(self):
+        # B1: a new path's before-colour is its colour at 55 %.
+        rig = _rig()
+        self.select_bones(rig, "upper")
+        bpy.ops.ghost_tool.paths_add_selected()
+        e = self.settings.motion_paths[0]
+        for before, after in zip(e.color_before, e.color):
+            self.assertAlmostEqual(before, after * 0.55, places=5)
+        self.assertNotIn("color_before", mp.dialog_props(e))
+        self.settings.paths_style = 'SPLIT'
+        self.assertIn("color_before", mp.dialog_props(e))   # only Split uses it
+        bpy.ops.object.mode_set(mode='OBJECT')
+        self._drop_deferred_timer()
+
+    def test_dot_size_per_path(self):
+        # B2: each path carries its own key-dot size.
+        rig = _rig()
+        e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "lower"
+        self.assertEqual(e.dot_size, 6)
+        e.dot_size = 9
+        self.assertEqual(mp.pinned_targets(self.scene)[0].dot_size, 9)
+        self.assertIn("dot_size", mp.dialog_props(e))
+        e.color = (0.1, 0.2, 0.3)
+        self.assertEqual(bpy.ops.ghost_tool.paths_set_color(index=0, dot_size=3), {'FINISHED'})
+        self.assertEqual(e.dot_size, 3)
+        self.assertEqual(tuple(round(c, 3) for c in e.color), (0.1, 0.2, 0.3))
+        self.settings.paths_follow_selection = True
+        self.select_bones(rig, "upper")
+        follow = [t for t in mp.all_targets(bpy.context) if not t.pinned]
+        self.assertEqual([t.dot_size for t in follow], [6])
+        bpy.ops.object.mode_set(mode='OBJECT')
+        self._drop_deferred_timer()
+
+    def test_in_front_per_path_and_all_buttons(self):
+        # B3: POST_VIEW callbacks run with no depth test (Blender 5.1 drw_callbacks_post_scene),
+        # so "in front" is today's look and the default; "behind" turns the depth test on.
+        rig = _rig()
+        for bone in ("upper", "lower"):
+            e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, bone
+        paths = self.settings.motion_paths
+        self.assertTrue(all(e.in_front for e in paths))
+        self.assertEqual(mp._depth_mode(mp.pinned_targets(self.scene)[0]), 'NONE')
+        self.assertEqual(bpy.ops.ghost_tool.paths_toggle_front(action='ONE', index=1), {'FINISHED'})
+        self.assertEqual([e.in_front for e in paths], [True, False])
+        self.assertEqual([mp._depth_mode(t) for t in mp.pinned_targets(self.scene)], ['NONE', 'LESS_EQUAL'])
+        bpy.ops.ghost_tool.paths_toggle_front(action='ALL_OFF')
+        self.assertEqual([e.in_front for e in paths], [False, False])
+        bpy.ops.ghost_tool.paths_toggle_front(action='ALL_ON')
+        self.assertEqual([e.in_front for e in paths], [True, True])
+        self.assertEqual(bpy.ops.ghost_tool.paths_toggle_front(action='ONE', index=5), {'CANCELLED'})
+
+    def test_glow_pass_for_list_active_entry(self):
+        # B4: the list's active entry draws a wide faint pass first, under its line.
+        rig = _rig()
+        for bone in ("upper", "lower"):
+            e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, bone
+        self.settings.motion_paths_index = 1
+        self.assertTrue(self.settings.paths_active_glow)
+        self.assertEqual(mp.list_active_key(self.settings), (rig.name, "lower"))
+        upper, lower = mp.pinned_targets(self.scene)
+        self.assertEqual(mp._passes_for(lower, True, True), [(4, 0.25), (0, None)])
+        self.assertEqual(mp._passes_for(lower, True, False), [(0, None)])
+        self.assertEqual(mp._passes_for(upper, False, True), [(0, None)])
+        self.settings.motion_paths_index = -1
+        self.assertIsNone(mp.list_active_key(self.settings))
+
+    def test_entry_range_override(self):
+        # B5: a path may override the global range; the cache keeps what each path needs.
+        rig = _rig()
+        a = self.settings.motion_paths.add(); a.object_name, a.bone_name = rig.name, "upper"
+        b = self.settings.motion_paths.add(); b.object_name, b.bone_name = rig.name, "lower"
+        b.use_own_range, b.own_before, b.own_after = True, 1, 1
+        self.assertEqual(mp.desired_frames(self.settings, self.scene, b), [9.0, 10.0, 11.0])
+        self.assertEqual(mp.desired_frames(self.settings, self.scene, a), mp.desired_frames(self.settings, self.scene))
+        ta, tb = mp.pinned_targets(self.scene)
+        self.assertEqual(tb.frames, (9.0, 10.0, 11.0))
+        self.assertEqual(len(ta.frames), 7)
+        self.assertEqual(mp.refresh_paths(bpy.context), 7 + 3)
+        self.assertIn((rig.name, "upper", 7.0), mp._cache)
+        self.assertNotIn((rig.name, "lower", 7.0), mp._cache)
+        self.assertEqual(len(mp.path_segments(bpy.context, tb)), 2)   # its own frames by default
+        self.assertFalse(mp.request_missing_samples(bpy.context))
+        b.own_before = 6   # wider than the global window: frames 4..11, five of them new
+        self.assertTrue(mp.request_missing_samples(bpy.context))
+        self.assertEqual(mp.refresh_paths(bpy.context), 5)
+        self.assertIn((rig.name, "lower", 4.0), mp._cache)
+        self.assertNotIn((rig.name, "upper", 4.0), mp._cache)
+        b.own_range_mode, b.own_step = 'SCENE', 5
+        self.assertEqual(mp.pinned_targets(self.scene)[1].frames, (1.0, 6.0, 11.0, 16.0))
+        b.own_range_mode, b.own_start, b.own_end, b.own_step = 'CUSTOM', 2, 4, 1
+        self.assertEqual(mp.pinned_targets(self.scene)[1].frames, (2.0, 3.0, 4.0))
+        b.use_own_range = False
+        self.assertEqual(mp.pinned_targets(self.scene)[1].frames, ta.frames)
+        self._drop_deferred_timer()
+
+    def test_entry_range_override_moves_markers_and_dialog(self):
+        # B5: markers sit on each path's own window; the dialog edits the override.
+        rig = _rig()
+        a = self.settings.motion_paths.add(); a.object_name, a.bone_name = rig.name, "upper"
+        b = self.settings.motion_paths.add(); b.object_name, b.bone_name = rig.name, "lower"
+        b.use_own_range, b.own_before, b.own_after = True, 10, 3   # frames 0..13: keys 1 and 10
+        self.assertGreater(self._markers_on(), 0)
+        store = gd.GhostStore.get(self.scene)
+        self.assertEqual({g.frame for g in store if g.bone_name == "upper"}, {10.0})
+        self.assertEqual({g.frame for g in store if g.bone_name == "lower"}, {1.0, 10.0})
+        self._assert_markers_on_path(rig, "lower")
+        for name in ("use_own_range", "own_range_mode", "own_before", "own_after", "own_step"):
+            self.assertIn(name, mp.dialog_props(a))
+        # The dialog seeds a path without its own range from the global one (3 / 3 here).
+        seed = mp.own_range_seed(self.settings, a)
+        self.assertEqual((seed["own_range_mode"], seed["own_before"], seed["own_after"], seed["own_step"]),
+                         ('AROUND_CURSOR', 3, 3, 1))
+        self.assertEqual(mp.own_range_seed(self.settings, b), {})   # an own range is kept as it is
+        self.assertEqual(bpy.ops.ghost_tool.paths_set_color(index=0, use_own_range=True, own_before=3, own_after=1),
+                         {'FINISHED'})
+        self.assertTrue(a.use_own_range)
+        self.assertEqual(mp.pinned_targets(self.scene)[0].frames, (7.0, 8.0, 9.0, 10.0, 11.0))
+        self.assertEqual(mp.own_range_props('CUSTOM'), ("own_start", "own_end"))
+        self.assertEqual(mp.own_range_props('SCENE'), ())
         self._drop_deferred_timer()
 
     def test_z_save_reload_keeps_list_and_rebuilds_cache(self):

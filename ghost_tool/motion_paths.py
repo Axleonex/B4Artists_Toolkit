@@ -52,6 +52,10 @@ class PathTarget:
     color: tuple[float, float, float]
     thickness: int
     pinned: bool
+    color_before: tuple[float, float, float] = FOLLOW_COLOR   # style SPLIT: the stretch before the playhead
+    dot_size: int = 6
+    in_front: bool = True
+    frames: tuple[float, ...] = ()   # the frames this path covers: its own range or the global one
 
 
 def clear_cache() -> None:
@@ -60,17 +64,45 @@ def clear_cache() -> None:
     _anchors.clear()
 
 
-def desired_frames(settings, scene: bpy.types.Scene) -> list[float]:
-    mode = settings.paths_range_mode
+RANGE_PROPS = ("use_own_range", "own_range_mode", "own_before", "own_after", "own_step", "own_start", "own_end")
+
+
+def desired_frames(settings, scene: bpy.types.Scene, entry=None) -> list[float]:
+    """Frames of the global range, or of ``entry``'s own range when it overrides it."""
+    if entry is not None and entry.use_own_range:
+        mode, before, after, step = entry.own_range_mode, entry.own_before, entry.own_after, entry.own_step
+        custom = (entry.own_start, entry.own_end)
+    else:
+        mode, before, after, step = (settings.paths_range_mode, settings.paths_before,
+                                     settings.paths_after, settings.paths_step)
+        custom = (settings.custom_range_start, settings.custom_range_end)
     if mode == 'SCENE':
         start, end = scene.frame_start, scene.frame_end
     elif mode == 'CUSTOM':
-        start, end = settings.custom_range_start, settings.custom_range_end
+        start, end = custom
     else:
-        start = scene.frame_current - settings.paths_before
-        end = scene.frame_current + settings.paths_after
-    step = max(1, settings.paths_step)
-    return [float(f) for f in range(int(start), int(end) + 1, step)]
+        start = scene.frame_current - before
+        end = scene.frame_current + after
+    return [float(f) for f in range(int(start), int(end) + 1, max(1, step))]
+
+
+def own_range_seed(settings, entry) -> dict:
+    """Range fields the settings dialog starts from: a path without its own range starts
+    from the global range, so ticking Own Range changes nothing until a field is edited."""
+    if entry.use_own_range:
+        return {}
+    return {"own_range_mode": settings.paths_range_mode, "own_before": settings.paths_before,
+            "own_after": settings.paths_after, "own_step": settings.paths_step,
+            "own_start": settings.custom_range_start, "own_end": settings.custom_range_end}
+
+
+def own_range_props(mode: str) -> tuple[str, ...]:
+    """The frame fields a path's own range mode needs, as the popover's global fields."""
+    if mode == 'AROUND_CURSOR':
+        return ("own_before", "own_after")
+    if mode == 'CUSTOM':
+        return ("own_start", "own_end")
+    return ()
 
 
 def _resolve(scene: bpy.types.Scene, object_name: str, bone_name: str) -> Optional[bpy.types.Object]:
@@ -87,15 +119,20 @@ def entry_is_missing(entry) -> bool:
 
 
 def pinned_targets(scene: bpy.types.Scene) -> list[PathTarget]:
+    settings = scene.ghost_tool
+    shared = tuple(desired_frames(settings, scene))
     targets: list[PathTarget] = []
-    for entry in scene.ghost_tool.motion_paths:
+    for entry in settings.motion_paths:
         if not entry.visible:
             continue
         obj = _resolve(scene, entry.object_name, entry.bone_name)
         if obj is None:
             continue
+        frames = tuple(desired_frames(settings, scene, entry)) if entry.use_own_range else shared
         targets.append(PathTarget((entry.object_name, entry.bone_name), obj, entry.anchor,
-                                  tuple(entry.color), entry.thickness, True))
+                                  tuple(entry.color), entry.thickness, True,
+                                  color_before=tuple(entry.color_before), dot_size=entry.dot_size,
+                                  in_front=entry.in_front, frames=frames))
     return targets
 
 
@@ -122,13 +159,14 @@ def follow_targets(context: bpy.types.Context, pinned_keys: set[PathKey]) -> lis
     settings = context.scene.ghost_tool
     if not settings.paths_follow_selection:
         return []
+    frames = tuple(desired_frames(settings, context.scene))
     seen: set[PathKey] = set(pinned_keys)
     targets: list[PathTarget] = []
     for key, obj in selected_keys(context):
         if key in seen:
             continue
         seen.add(key)
-        targets.append(PathTarget(key, obj, 'HEAD', FOLLOW_COLOR, 1, False))
+        targets.append(PathTarget(key, obj, 'HEAD', FOLLOW_COLOR, 1, False, frames=frames))
     return targets
 
 
@@ -219,17 +257,18 @@ def refresh_paths(context: bpy.types.Context) -> int:
         if _anchors.get(t.key, t.anchor) != t.anchor:
             _dirty.add(t.key)   # HEAD <-> TAIL: the cached positions belong to the other point
         _anchors[t.key] = t.anchor
-    frames = desired_frames(settings, scene)
-    wanted = {(t.key[0], t.key[1], f) for t in targets for f in frames}
+    # Each path keeps the frames of its own window, so a wider per-path range keeps its extras.
+    wanted = {(t.key[0], t.key[1], f) for t in targets for f in t.frames}
     for stale in [c for c in _cache if c not in wanted]:
         del _cache[stale]
-    for key in _dirty:
-        for f in frames:
-            _cache.pop((key[0], key[1], f), None)
-    _dirty.clear()
+    for t in targets:
+        if t.key in _dirty:
+            for f in t.frames:
+                _cache.pop((t.key[0], t.key[1], f), None)
+    _dirty.clear()   # a dirty key that is no longer a target lost its samples with the wanted set
     missing: dict[float, list[PathTarget]] = {}
     for t in targets:
-        for f in frames:
+        for f in t.frames:
             if (t.key[0], t.key[1], f) not in _cache:
                 missing.setdefault(f, []).append(t)
     if not missing:
@@ -273,7 +312,9 @@ def key_frames(target: PathTarget) -> list[float]:
     return sorted(frames)
 
 
-def path_segments(context, target: PathTarget, frames: list[float]) -> list[tuple[Vector, Vector, tuple]]:
+def path_segments(context, target: PathTarget, frames=None) -> list[tuple[Vector, Vector, tuple]]:
+    """Coloured line segments of one path over ``frames`` (default: the path's own frames)."""
+    frames = target.frames if frames is None else frames
     settings = context.scene.ghost_tool
     current = float(context.scene.frame_current)
     pts = [(f, _cache.get((target.key[0], target.key[1], f))) for f in frames]
@@ -287,7 +328,15 @@ def path_segments(context, target: PathTarget, frames: list[float]) -> list[tupl
     longest = max(lengths) or 1.0
     segs = []
     for i, ((f0, p0), (f1, p1)) in enumerate(zip(pts, pts[1:])):
-        if style == 'SPEED':
+        if style == 'SPLIT':
+            before, after = (*target.color_before, 0.9), (r, g, b, 0.9)
+            if f0 < current < f1:
+                # Split on the drawn straight line, so the colour change sits exactly on the path.
+                mid = p0.lerp(p1, (current - f0) / (f1 - f0))
+                segs += [(p0, mid, before), (mid, p1, after)]
+                continue
+            color = before if (f0 + f1) * 0.5 < current else after
+        elif style == 'SPEED':
             t = lengths[i] / longest
             color = (SLOW_RGB[0] + (FAST_RGB[0] - SLOW_RGB[0]) * t,
                      SLOW_RGB[1] + (FAST_RGB[1] - SLOW_RGB[1]) * t,
@@ -319,8 +368,37 @@ def active_entry_index(context) -> int:
 
 
 def dialog_props(entry) -> tuple[str, ...]:
-    """Properties the path settings dialog shows; an object origin has no tail."""
-    return ("color", "thickness", "anchor") if entry.bone_name else ("color", "thickness")
+    """Properties the path settings dialog shows: the before-colour only for style Split,
+    the anchor only for bones (an object origin has no tail)."""
+    names = ["color"]
+    if entry.id_data.ghost_tool.paths_style == 'SPLIT':   # id_data: the owning scene
+        names.append("color_before")
+    names += ["thickness", "dot_size"]
+    if entry.bone_name:
+        names.append("anchor")
+    return tuple(names) + RANGE_PROPS
+
+
+def list_active_key(settings) -> Optional[PathKey]:
+    """Key of the path selected in the list, or None."""
+    paths = settings.motion_paths
+    if 0 <= settings.motion_paths_index < len(paths):
+        entry = paths[settings.motion_paths_index]
+        return (entry.object_name, entry.bone_name)
+    return None
+
+
+def _depth_mode(target: PathTarget) -> str:
+    """Draw handlers run with no depth test, so 'in front' needs none; 'behind' turns it on."""
+    return 'NONE' if target.in_front else 'LESS_EQUAL'
+
+
+def _passes_for(target: PathTarget, is_list_active: bool, glow_on: bool) -> list[tuple[int, Optional[float]]]:
+    """(extra width, alpha or None for the segment's own) per line pass, drawn in order:
+    the list's active entry gets a wide faint glow under its line."""
+    if is_list_active and glow_on:
+        return [(4, 0.25), (0, None)]
+    return [(0, None)]
 
 
 def draw_motion_paths() -> None:
@@ -333,32 +411,39 @@ def draw_motion_paths() -> None:
         return
     if request_missing_samples(context) and get_scene_id(scene) != _cache_scene:
         return   # cache belongs to another scene; the scheduled refresh replaces it
-    frames = desired_frames(settings, scene)
     active = _active_key(context)
+    list_active = list_active_key(settings)
     shader = gpu.shader.from_builtin('UNIFORM_COLOR')
     gpu.state.blend_set('ALPHA')
     try:
         for target in all_targets(context):
-            segs = path_segments(context, target, frames)
+            segs = path_segments(context, target)
             if not segs:
                 continue
-            width = float(target.thickness + (1 if target.key == active else 0))
-            gpu.state.line_width_set(width)
-            buckets: dict[tuple, list[Vector]] = {}
-            for p0, p1, color in segs:
-                buckets.setdefault(tuple(round(c, 2) for c in color), []).extend((p0, p1))
-            for color, verts in buckets.items():
-                batch = batch_for_shader(shader, 'LINES', {"pos": verts})
-                shader.bind(); shader.uniform_float("color", color); batch.draw(shader)
+            gpu.state.depth_test_set(_depth_mode(target))
+            width = target.thickness + (1 if target.key == active else 0)
+            is_list_active = target.pinned and target.key == list_active
+            for extra, alpha in _passes_for(target, is_list_active, settings.paths_active_glow):
+                gpu.state.line_width_set(float(width + extra))
+                buckets: dict[tuple, list[Vector]] = {}
+                for p0, p1, color in segs:
+                    if alpha is not None:
+                        color = (*color[:3], alpha)
+                    buckets.setdefault(tuple(round(c, 2) for c in color), []).extend((p0, p1))
+                for color, verts in buckets.items():
+                    batch = batch_for_shader(shader, 'LINES', {"pos": verts})
+                    shader.bind(); shader.uniform_float("color", color); batch.draw(shader)
             if settings.paths_show_key_dots:
                 dots = [_cache[(target.key[0], target.key[1], f)] for f in key_frames(target)
                         if (target.key[0], target.key[1], f) in _cache]
                 if dots:
-                    gpu.state.point_size_set(6.0)
+                    gpu.state.point_size_set(float(target.dot_size))
                     batch = batch_for_shader(shader, 'POINTS', {"pos": dots})
                     shader.bind(); shader.uniform_float("color", KEY_DOT_COLOR); batch.draw(shader)
     finally:
         gpu.state.line_width_set(1.0)
+        gpu.state.point_size_set(1.0)
+        gpu.state.depth_test_set('NONE')   # the state the handler was called with
         gpu.state.blend_set('NONE')
 
 
@@ -378,9 +463,8 @@ def draw_frame_numbers() -> None:
     font = 0
     blf.size(font, 11)
     blf.color(font, 0.9, 0.9, 0.9, 0.9)
-    frames = desired_frames(settings, scene)
     for target in all_targets(context):
-        for f in frames:
+        for f in target.frames:
             pos = _cache.get((target.key[0], target.key[1], f))
             if pos is None:
                 continue
@@ -420,24 +504,25 @@ def sync_markers(context) -> int:
     # becomes a path marker (owned), the same way Generate defers to path markers on a rebuild.
     others = {(g.object_name, g.bone_name, g.channel, g.frame): g for g in store if g.uid not in current}
     wanted: set[str] = set()
-    bones_by_job: dict[tuple[str, str], list[str]] = {}
-    object_paths: list[str] = []
+    # One job per object, anchor and window: paths with their own range get their own window.
+    # A path with an empty window wants no markers; the reconcile below still removes old ones.
+    bones_by_job: dict[tuple[str, str, tuple[float, ...]], list[str]] = {}
+    object_paths: list[tuple[str, tuple[float, ...]]] = []
     for t in pinned_targets(scene):
+        if not t.frames:
+            continue
         if t.key[1]:
-            bones_by_job.setdefault((t.key[0], t.anchor), []).append(t.key[1])
+            bones_by_job.setdefault((t.key[0], t.anchor, t.frames), []).append(t.key[1])
         else:
-            object_paths.append(t.key[0])
+            object_paths.append((t.key[0], t.frames))
     jobs = [(name, bones, bpy.data.objects[name], anchor,
-             MOTION_CHANNELS if anchor == 'TAIL' else LOCATION_CHANNELS)
-            for (name, anchor), bones in bones_by_job.items()]
-    jobs += [(name, [], None, None, MOTION_CHANNELS) for name in object_paths]
-    frames = desired_frames(settings, scene)
-    if not frames:
-        jobs = []   # empty window: no markers wanted; the reconcile below still removes old ones
-    window = (int(frames[0]), int(frames[-1])) if frames else None   # keys on the drawn stretch
-    sampled = set(frames)   # with Every > 1 a key between samples has no point on the path
+             MOTION_CHANNELS if anchor == 'TAIL' else LOCATION_CHANNELS, frames)
+            for (name, anchor, frames), bones in bones_by_job.items()]
+    jobs += [(name, [], None, None, MOTION_CHANNELS, frames) for name, frames in object_paths]
     moved = relevelled = False
-    for object_name, bones, armature, anchor, channels in jobs:
+    for object_name, bones, armature, anchor, channels, frames in jobs:
+        window = (int(frames[0]), int(frames[-1]))   # keys on the drawn stretch
+        sampled = set(frames)   # with Every > 1 a key between samples has no point on the path
         ghosts = generate_ghosts_at_keyframes(bpy.data.objects[object_name], armature, bones, channels,
                                               frame_range=window, anchor=anchor, frames=sampled)
         for g in ghosts:
@@ -490,10 +575,9 @@ def request_missing_samples(context) -> bool:
     settings = scene.ghost_tool
     if not settings.paths_enabled:
         return False
-    frames = desired_frames(settings, scene)
     stale = get_scene_id(scene) != _cache_scene
     if not stale and all((t.key[0], t.key[1], f) in _cache
-                         for t in all_targets(context) for f in frames):
+                         for t in all_targets(context) for f in t.frames):
         return False
     from .ghost_pipeline import GhostPipeline, _schedule_deferred_update
     GhostPipeline.get(scene).mark_dirty()
@@ -548,6 +632,7 @@ class GHOST_OT_paths_add_selected(bpy.types.Operator):
             entry = settings.motion_paths.add()
             entry.object_name, entry.bone_name = object_name, bone_name
             entry.color = _next_color(settings)
+            entry.color_before = tuple(c * 0.55 for c in entry.color)
             existing.add((object_name, bone_name))
             added += 1
         settings["paths_enabled"] = True
@@ -618,17 +703,49 @@ class GHOST_OT_paths_toggle_visible(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class GHOST_OT_paths_toggle_front(bpy.types.Operator):
+    bl_idname = "ghost_tool.paths_toggle_front"
+    bl_label = "Path In Front"
+    bl_description = "Draw one motion path, or all of them, in front of the scene or hidden behind geometry"
+    bl_options = {'REGISTER', 'UNDO'}
+    action: bpy.props.EnumProperty(
+        items=[('ONE', "One", "Flip this path"), ('ALL_ON', "All in front", "Every path draws in front"),
+               ('ALL_OFF', "All behind", "Every path hides behind geometry")],
+        default='ONE',
+    )  # type: ignore[assignment]
+    index: bpy.props.IntProperty(default=-1)  # type: ignore[assignment]
+
+    def execute(self, context):
+        paths = context.scene.ghost_tool.motion_paths
+        if self.action == 'ONE':
+            if not 0 <= self.index < len(paths):
+                return {'CANCELLED'}
+            paths[self.index].in_front = not paths[self.index].in_front
+        else:
+            for entry in paths:
+                entry.in_front = self.action == 'ALL_ON'
+        tag_viewport_redraw(context)
+        return {'FINISHED'}
+
+
 class GHOST_OT_paths_set_color(bpy.types.Operator):
     bl_idname = "ghost_tool.paths_set_color"
     bl_label = "Path Settings"
-    bl_description = "Change the colour, thickness and traced point of this motion path"
+    bl_description = "Change the colours, thickness, dot size, traced point and own frame range of this motion path"
     bl_options = {'REGISTER', 'UNDO'}
     index: bpy.props.IntProperty(default=-1)  # type: ignore[assignment]
     color: bpy.props.FloatVectorProperty(
         name="Colour", description="Colour of this path", subtype='COLOR', size=3, min=0.0, max=1.0,
     )  # type: ignore[assignment]
+    color_before: bpy.props.FloatVectorProperty(
+        name="Colour Before", description="Colour of this path before the playhead (style Split)",
+        subtype='COLOR', size=3, min=0.0, max=1.0,
+    )  # type: ignore[assignment]
     thickness: bpy.props.IntProperty(
         name="Thickness", description="Line width of this path in pixels", min=1, max=6, default=2,
+    )  # type: ignore[assignment]
+    dot_size: bpy.props.IntProperty(
+        name="Dot Size", description="Size of this path's key dots in pixels", min=1, max=12, default=6,
     )  # type: ignore[assignment]
     anchor: bpy.props.EnumProperty(
         name="Trace",
@@ -636,20 +753,64 @@ class GHOST_OT_paths_set_color(bpy.types.Operator):
         items=[('HEAD', "Head", "Trace the bone head"), ('TAIL', "Tail", "Trace the bone tail")],
         default='HEAD',
     )  # type: ignore[assignment]
+    use_own_range: bpy.props.BoolProperty(
+        name="Own Range", description="Give this path its own frame range instead of the global one",
+    )  # type: ignore[assignment]
+    own_range_mode: bpy.props.EnumProperty(
+        name="Range",
+        description="Which frames this path covers",
+        items=[
+            ('AROUND_CURSOR', "Around Playhead", "Frames before and after the playhead"),
+            ('SCENE', "Scene", "The scene frame range"),
+            ('CUSTOM', "Custom", "This path's own start and end frames"),
+        ],
+        default='AROUND_CURSOR',
+    )  # type: ignore[assignment]
+    own_before: bpy.props.IntProperty(
+        name="Before", description="Frames this path draws before the playhead", min=0, max=500, default=12,
+    )  # type: ignore[assignment]
+    own_after: bpy.props.IntProperty(
+        name="After", description="Frames this path draws after the playhead", min=0, max=500, default=12,
+    )  # type: ignore[assignment]
+    own_step: bpy.props.IntProperty(
+        name="Every", description="Sample every Nth frame along this path", min=1, max=24, default=1,
+    )  # type: ignore[assignment]
+    own_start: bpy.props.IntProperty(
+        name="Start", description="First frame of this path's custom range", default=1,
+    )  # type: ignore[assignment]
+    own_end: bpy.props.IntProperty(
+        name="End", description="Last frame of this path's custom range", default=250,
+    )  # type: ignore[assignment]
 
     def invoke(self, context, event):
         paths = context.scene.ghost_tool.motion_paths
         if not 0 <= self.index < len(paths):   # -1 would silently pick the last path
             return {'CANCELLED'}
         entry = paths[self.index]
-        self.color, self.thickness, self.anchor = tuple(entry.color), entry.thickness, entry.anchor
-        return context.window_manager.invoke_props_dialog(self, width=220)
+        for name in dialog_props(entry):
+            setattr(self, name, getattr(entry, name))
+        for name, value in own_range_seed(context.scene.ghost_tool, entry).items():
+            setattr(self, name, value)
+        return context.window_manager.invoke_props_dialog(self, width=260)
 
     def draw(self, context):
         paths = context.scene.ghost_tool.motion_paths
-        if 0 <= self.index < len(paths):
-            for name in dialog_props(paths[self.index]):
-                self.layout.prop(self, name, expand=name == "anchor")
+        if not 0 <= self.index < len(paths):
+            return
+        layout = self.layout
+        for name in dialog_props(paths[self.index]):
+            if name not in RANGE_PROPS:
+                layout.prop(self, name, expand=name == "anchor")
+        col = layout.column(align=True)
+        col.prop(self, "use_own_range")
+        if self.use_own_range:   # the dialog's value: the fields appear as soon as it is ticked
+            col.prop(self, "own_range_mode", text="")
+            fields = own_range_props(self.own_range_mode)
+            if fields:
+                row = col.row(align=True)
+                for name in fields:
+                    row.prop(self, name)
+            col.prop(self, "own_step")
 
     def execute(self, context):
         paths = context.scene.ghost_tool.motion_paths
@@ -672,6 +833,7 @@ CLASSES: tuple[type, ...] = (
     GHOST_OT_paths_remove,
     GHOST_OT_paths_clear,
     GHOST_OT_paths_toggle_visible,
+    GHOST_OT_paths_toggle_front,
     GHOST_OT_paths_set_color,
 )
 
