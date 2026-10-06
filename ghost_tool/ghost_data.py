@@ -1291,6 +1291,12 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
     paths_active_glow: bpy.props.BoolProperty(
         name="Glow", description="Draw a wide faint glow under the path selected in the list", default=True,
     )  # type: ignore[assignment]
+    # Design §8 decision 14 (reverses §4): Bezier handles of the location keys, drawn at each key dot.
+    # Off by default; turning it on samples the handle points, so it refreshes like a window change.
+    paths_show_handles: bpy.props.BoolProperty(
+        name="Handles", description="Show the Bezier handles of each key's location curves at its key dot",
+        default=False, update=_on_path_window_changed,
+    )  # type: ignore[assignment]
 
     # ── Ghost Mode & Range ──────────────────────────────────────────────
     # How ghost frames are selected (subdivision vs frame-step vs

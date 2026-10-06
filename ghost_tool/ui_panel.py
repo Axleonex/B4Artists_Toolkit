@@ -622,6 +622,7 @@ def _draw_motion_paths(layout, context) -> None:
     row.prop(settings, "paths_show_key_dots", text="Key dots", toggle=True)
     row.prop(settings, "paths_show_frame_numbers", text="Frame #", toggle=True)
     row.prop(settings, "paths_active_glow", text="Glow", toggle=True)
+    row.prop(settings, "paths_show_handles", text="Handles", toggle=True)
 
 
 #: (key, label, icon, draw function, help topic, open by default)
