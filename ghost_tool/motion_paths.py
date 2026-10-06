@@ -457,6 +457,28 @@ def _handle_frames(target: PathTarget) -> list[float]:
     return [f for f in key_frames(target) if f in frames]
 
 
+def handle_transform(target: PathTarget, depsgraph=None):
+    """(location data path, to_world, offset, current location) for a handle-eligible target, or None:
+    world point = to_world @ (location values + offset). Object: parent world @ parent inverse, offset =
+    delta location. Bone head: armature world @ rest_channel_matrix(bone, posed parent), no offset. Read at
+    the scene's current frame; key_handles and the handle drag both use it, so a drag inverts exactly the
+    map the drawn handles come from."""
+    if not handle_eligible(target):
+        return None
+    obj = target.obj
+    if not obj.animation_data or not obj.animation_data.action:
+        return None
+    depsgraph = depsgraph or bpy.context.evaluated_depsgraph_get()
+    ev = obj.evaluated_get(depsgraph)
+    if target.key[1]:
+        pb = ev.pose.bones[target.key[1]]
+        data_path = f'pose.bones["{bpy.utils.escape_identifier(target.key[1])}"].location'
+        to_world = ev.matrix_world @ rest_channel_matrix(pb, pb.parent.matrix if pb.parent else None)
+        return data_path, to_world, Vector(), Vector(pb.location)
+    to_world = (ev.parent.matrix_world @ ev.matrix_parent_inverse) if ev.parent else Matrix.Identity(4)
+    return "location", to_world, Vector(ev.delta_location), Vector(ev.location)
+
+
 def key_handles(target: PathTarget, frame: float, depsgraph=None) -> Optional[tuple[Vector, Vector]]:
     """(left, right) world points of the location handles of the key at ``frame``, or None.
 
@@ -465,23 +487,12 @@ def key_handles(target: PathTarget, frame: float, depsgraph=None) -> Optional[tu
     contributes its evaluated value). Object: parent world @ parent inverse @ (location + delta).
     Bone head: armature world @ rest_channel_matrix(bone, posed parent) @ location. The scene must be
     at ``frame`` (refresh_paths calls it while sampling). Constraints are not applied."""
-    if not handle_eligible(target):
+    transform = handle_transform(target, depsgraph)
+    if transform is None:
         return None
+    data_path, to_world, offset, current = transform
     obj = target.obj
     ad = obj.animation_data
-    if not ad or not ad.action:
-        return None
-    depsgraph = depsgraph or bpy.context.evaluated_depsgraph_get()
-    ev = obj.evaluated_get(depsgraph)
-    if target.key[1]:
-        pb = ev.pose.bones[target.key[1]]
-        data_path = f'pose.bones["{bpy.utils.escape_identifier(target.key[1])}"].location'
-        current, offset = pb.location, Vector()
-        to_world = ev.matrix_world @ rest_channel_matrix(pb, pb.parent.matrix if pb.parent else None)
-    else:
-        data_path = "location"
-        current, offset = ev.location, Vector(ev.delta_location)
-        to_world = (ev.parent.matrix_world @ ev.matrix_parent_inverse) if ev.parent else Matrix.Identity(4)
     curves = {fc.array_index: fc for fc in get_fcurves_from_action(ad.action, obj) if fc.data_path == data_path}
     left, right, keyed = [], [], False
     for axis in range(3):

@@ -189,6 +189,103 @@ class GhostPathHandles(unittest.TestCase):
         self._drop_deferred_timer()
 
 
+    # ── F2: dragging a handle ────────────────────────────────────────────
+
+    def _x_curve(self, cube):
+        return self._location_curves(cube)[0]
+
+    def test_set_handle_values_keeps_time(self):
+        from ghost_tool.fcurve_utils import set_handle_values
+        cube = _cube()
+        fc = self._x_curve(cube)
+        key = next(k for k in fc.keyframe_points if k.co.x == 20.0)
+        co, left, right_x = tuple(key.co), tuple(key.handle_left), key.handle_right.x
+        self.assertTrue(set_handle_values(fc, 20.0, 'RIGHT', 7.5))
+        self.assertEqual((key.handle_right.x, key.handle_right.y), (right_x, 7.5))
+        self.assertEqual(key.handle_right_type, 'FREE')
+        self.assertEqual((tuple(key.co), tuple(key.handle_left)), (co, left))   # key and other handle untouched
+        self.assertFalse(set_handle_values(fc, 13.0, 'LEFT', 1.0))           # no key at 13
+        with self.assertRaises(ValueError):
+            set_handle_values(fc, 20.0, 'UP', 1.0)
+
+    def test_aligned_moves_opposite_handle(self):
+        from ghost_tool.fcurve_utils import set_handle_values
+        cube = _cube()
+        fc = self._x_curve(cube)
+        key = next(k for k in fc.keyframe_points if k.co.x == 20.0)
+        left_x = key.handle_left.x
+        set_handle_values(fc, 20.0, 'RIGHT', key.co.y + 2.0, aligned=True)
+        self.assertEqual((key.handle_left_type, key.handle_right_type), ('ALIGNED', 'ALIGNED'))
+        self.assertAlmostEqual(key.handle_left.x, left_x, places=5)          # its time stays
+        slope_right = (key.handle_right.y - key.co.y) / (key.handle_right.x - key.co.x)
+        slope_left = (key.handle_left.y - key.co.y) / (key.handle_left.x - key.co.x)
+        self.assertAlmostEqual(slope_left, slope_right, places=5)            # collinear through the key
+
+    def test_handle_drag_solve_moves_the_handle_end_not_the_key(self):
+        from mathutils import Matrix, Vector
+        from ghost_tool.fcurve_utils import set_handle_values
+        from ghost_tool.path_handle_drag import solve_handle_values
+        cube = _cube()
+        bpy.ops.object.empty_add(location=(1.0, 2.0, 0.5))
+        parent = bpy.context.object
+        parent.rotation_euler = (0.0, 0.3, 0.7)
+        cube.parent = parent
+        cube.matrix_parent_inverse = Matrix.Translation((0.5, -0.25, 0.0))
+        cube.delta_location = (0.0, 0.3, 1.0)
+        self._pin(cube)
+        target = mp.pinned_targets(self.scene)[0]
+        self.scene.frame_set(20)
+        transform = mp.handle_transform(target)
+        _path, to_world, offset, _current = transform
+        fc = self._x_curve(cube)
+        key = next(k for k in fc.keyframe_points if k.co.x == 20.0)
+        co = tuple(key.co)
+        _left, right = mp.key_handles(target, 20.0)
+        wanted = to_world @ (to_world.inverted() @ right - offset + Vector((0.5, 0.0, 0.0)) + offset)
+        values = solve_handle_values(transform, wanted, [0])
+        self.assertEqual(set(values), {0})
+        set_handle_values(fc, 20.0, 'RIGHT', values[0])
+        self.assertLess((mp.key_handles(target, 20.0)[1] - wanted).length, 1e-4)
+        self.assertEqual(tuple(key.co), co)   # the key's time and value stay
+        self.scene.frame_set(10)
+        self._drop_deferred_timer()
+
+    def test_handle_under_cursor_picks_the_nearest_end_within_8_px(self):
+        from types import SimpleNamespace
+        from mathutils import Matrix, Vector
+        from ghost_tool.path_handle_drag import handle_under_cursor
+        cube = _cube()
+        self._pin(cube)
+        self.settings.paths_range_mode = 'SCENE'
+        with patch.object(ghost_tool.ghost_data, "_schedule_path_refresh"):
+            self.settings.paths_show_handles = True
+        mp.refresh_paths(bpy.context)
+        target = mp.pinned_targets(self.scene)[0]
+        # Identity view: world (x, y) lands on pixel (500 + 500x, 500 + 500y) in a 1000 px region.
+        mp._handles[C(cube.name, "", 20.0)] = (Vector((-0.1, 0.0, 0.0)), Vector((0.1, 0.0, 0.0)))
+        mp._handles[C(cube.name, "", 1.0)] = None
+        region = SimpleNamespace(width=1000, height=1000)
+        rv3d = SimpleNamespace(perspective_matrix=Matrix.Identity(4))
+        pick = handle_under_cursor(bpy.context, region, rv3d, 553.0, 500.0)
+        self.assertEqual((pick[0].key, pick[1], pick[2]), (target.key, 20.0, 'RIGHT'))
+        self.assertEqual(handle_under_cursor(bpy.context, region, rv3d, 445.0, 503.0)[2], 'LEFT')
+        self.assertIsNone(handle_under_cursor(bpy.context, region, rv3d, 560.0, 500.0))   # 10 px away
+        with patch.object(ghost_tool.ghost_data, "_schedule_path_refresh"):
+            self.settings.paths_show_handles = False
+        self._drop_deferred_timer()
+
+    def test_handle_drag_registered_ahead_of_the_marker_drag(self):
+        self.assertEqual(bpy.ops.ghost_tool.path_handle_drag.get_rna_type().identifier.lower(),
+                         "ghost_tool_ot_path_handle_drag")
+        kc = bpy.context.window_manager.keyconfigs.addon
+        if kc is None:
+            self.skipTest("no add-on keyconfig in background mode")
+        for name in ("Pose", "Object Mode"):
+            ids = [kmi.idname for kmi in kc.keymaps[name].keymap_items]
+            self.assertIn("ghost_tool.path_handle_drag", ids)
+            self.assertLess(ids.index("ghost_tool.path_handle_drag"), ids.index("ghost_tool.drag_ghost"))
+
+
 if __name__ == "__main__":
     result = unittest.TextTestRunner(verbosity=2).run(
         unittest.defaultTestLoader.loadTestsFromTestCase(GhostPathHandles))

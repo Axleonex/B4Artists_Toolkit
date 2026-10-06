@@ -102,6 +102,7 @@ def _import_modules(*, reload_modules: bool = True):
     from . import api
     from . import mesh_ghosts
     from . import motion_paths
+    from . import path_handle_drag
 
     if _modules_loaded and reload_modules:
         importlib.reload(utils)
@@ -120,6 +121,7 @@ def _import_modules(*, reload_modules: bool = True):
         importlib.reload(diff_mode)
         importlib.reload(mesh_ghosts)
         importlib.reload(motion_paths)
+        importlib.reload(path_handle_drag)
         importlib.reload(viewport_draw)
         importlib.reload(ui_panel)
         importlib.reload(preferences)
@@ -144,6 +146,7 @@ def _import_modules(*, reload_modules: bool = True):
         "diff_mode": diff_mode,
         "mesh_ghosts": mesh_ghosts,
         "motion_paths": motion_paths,
+        "path_handle_drag": path_handle_drag,
         "viewport_draw": viewport_draw,
         "ui_panel": ui_panel,
         "preferences": preferences,
@@ -167,6 +170,7 @@ _REGISTER_ORDER = [
     "diff_mode",          # Must come before viewport_draw (draw_diff_overlay is called from there)
     "mesh_ghosts",
     "motion_paths",
+    "path_handle_drag",   # before preferences: its Shift+G item must precede the marker drag's
     "viewport_draw",
     "ui_panel",
     "preferences",
