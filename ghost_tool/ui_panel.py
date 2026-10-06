@@ -681,7 +681,7 @@ class GHOST_PT_paths_popover(bpy.types.Panel):
     bl_label = "Motion Paths"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
-    bl_ui_units_x = 14
+    bl_ui_units_x = 18   # 3.6 rows carry a checkbox and an indent; at 14 names were cut to "Rig › ..."
 
     def draw(self, context):
         _draw_motion_paths(self.layout, context)

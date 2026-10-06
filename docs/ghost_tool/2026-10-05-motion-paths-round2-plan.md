@@ -329,7 +329,7 @@ parts).** Decisions and findings while executing:
   so `all_targets` now passes every pinned key. This also fixes eye-hidden paths from 3.5.
   F2: the checked Remove test only checked that sync ran; it now reads the marker store
   (review `e5217051` pointed out that `owned_markers` filters by ownership and cannot see a leak).
-- Tests: `tests/test_ghost_paths_folders.py` (14), run without re-running `test_ghost_paths`.
+- Tests: `tests/test_ghost_paths_folders.py` (16), run without re-running `test_ghost_paths`.
   The UI tests draw into a recording layout and check every icon name against
   `UILayout.operator`'s icon enum, because a wrong icon only fails when Blender draws.
 - Drawing the folder name with `prop(item, "object_name")` made `test_tooltip_coverage` require
@@ -340,6 +340,20 @@ parts).** Decisions and findings while executing:
   (`checked_paths`: Apply to Checked, Reset Range, Move, Add Folder). Show, Hide and Remove act on
   rows, so a checked folder shows, hides or is removed as a whole (its paths move to the top
   level). Test `test_checked_folder_stands_for_its_paths`.
+- Review `d766142a`, advisory: Add Folder moved a checked folder's paths but left that folder
+  checked and empty, so a second Add Folder moved nothing. Add Folder now unchecks the folders it
+  emptied. Test `test_add_folder_unchecks_the_folder_it_emptied`.
+- **3.6.0 checklist, captured 2026-10-06** in Bforartists 5.1.2 (GUI, add-on loaded from the
+  worktree, script and 13 screenshots in `G:\LapArt\output\ghost-tool-3.6.0-eyecheck\`).
+  Passed: Split flips at the playhead (pixel colours: after (54,151,254), before (61,95,140);
+  with Every 2 one clean change between samples); a path with no stored colour-before draws a
+  dim version of its own colour, not gold; dot size 3 vs 12 px; a path behind a wall is hidden
+  with in front off and drawn over it with in front on; the glow follows the list selection and
+  Glow off removes it (pixel diff only around the selected path); a per-path scene range keeps
+  frames 1–30 while the global window is 6–24; folder open/closed, indent, checkboxes; Apply to
+  Checked recolours a checked folder's two paths. Found: at `bl_ui_units_x = 14` the popover cut
+  names to "Rig › ..." and "Apply to C…"; now 18 (test `test_popover_is_wide_enough_for_checkbox_rows`).
+  Not captured: scrubbing feel and the Path Settings dialog (Own Range fields appear on tick).
 - Not checked headless (owner's 3.6.0 checklist): the folder row look, the indent of a path in a
   folder, renaming a folder in the list, the Checked ▾ and Move to submenus.
 

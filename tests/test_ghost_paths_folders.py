@@ -306,6 +306,22 @@ class GhostPathFolders(unittest.TestCase):
         self.assertEqual(mp.checked_paths(self.settings), [])   # it left the checked folder
         self._drop_deferred_timer()
 
+    def test_add_folder_unchecks_the_folder_it_emptied(self):
+        # Review d766142a: the emptied source folder stayed checked, so a second Add Folder moved nothing.
+        old = self._folder("Old", "k1")
+        self._path("A", folder="k1")
+        old.checked = True
+        bpy.ops.ghost_tool.paths_add_folder()
+        new = self.settings.motion_paths[2]
+        self.assertEqual((self.settings.motion_paths[1].folder, old.checked, new.checked),
+                         (new.folder_key, False, False))
+        self.assertEqual(mp.checked_paths(self.settings), [])
+
+    def test_popover_is_wide_enough_for_checkbox_rows(self):
+        # Screenshot check 2026-10-06: at 14 units the checkbox and indent cut names to "Rig › ...".
+        from ghost_tool.ui_panel import GHOST_PT_paths_popover
+        self.assertGreaterEqual(GHOST_PT_paths_popover.bl_ui_units_x, 18)
+
     def test_checked_remove_drops_cache_and_markers(self):
         rig = _rig()
         self._path(rig.name, "upper").checked = True
