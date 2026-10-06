@@ -54,6 +54,16 @@ class CrossingMath(unittest.TestCase):
         found = dm.crossings(_line(0, 10), [wiggle], 0.02)
         self.assertEqual([round(t, 6) for t, _p in found], [0.4])
 
+    def test_one_dash_segment_across_both_legs_takes_the_leg_it_meets_first(self):
+        # Review 85372dd9: the closest leg was chosen, not the first one along the dash.
+        u_path = [(0.0, 0.0, 0.0), (0.0, 2.0, 0.0), (2.0, 2.0, 0.0), (2.0, 0.0, 0.0)]   # length 6
+        dash = [(3.0, 1.0, 0.0), (-1.0, 1.0, 0.0)]                                     # right leg first
+        (t, point), = dm.crossings(u_path, [dash], 0.02)
+        self.assertEqual(tuple(round(c, 6) for c in point), (2.0, 1.0, 0.0))
+        self.assertAlmostEqual(t, 5.0 / 6.0, places=6)
+        (t, point), = dm.crossings(u_path, [list(reversed(dash))], 0.02)   # drawn the other way: left leg
+        self.assertEqual(tuple(round(c, 6) for c in point), (0.0, 1.0, 0.0))
+
     def test_crossings_in_3d_on_a_bent_path(self):
         path = [(0.0, 0.0, 0.0), (4.0, 0.0, 0.0), (4.0, 0.0, 6.0)]          # length 10, bent upward
         skew = [(4.05, -1.0, 3.0), (4.05, 1.0, 3.0)]                       # passes 0.05 from the vertical leg
@@ -110,6 +120,9 @@ class AnnotationStrokes(unittest.TestCase):
         self.assertAlmostEqual(dm.polyline_length(strokes[0]), 10.0, places=5)
         self.scene.frame_set(5)
         self.assertEqual(len(self.dk.annotation_strokes(self.scene)[0]), 1)   # frame 1 still holds at 5
+        self.layer.frames.remove(early)
+        self.scene.frame_set(5)
+        self.assertEqual(self.dk.annotation_strokes(self.scene), ([], 0))   # review 85372dd9: nothing before 10
 
     def test_refuses_screen_locked_strokes_and_skips_hidden_layers(self):
         frame = self.layer.frames.new(1)

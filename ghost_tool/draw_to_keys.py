@@ -18,15 +18,16 @@ from mathutils import Vector
 
 
 def _frame_at(layer, frame_current: int):
-    """The annotation frame shown at ``frame_current``: the last one at or before it (frames hold), else the
-    first. ``layer.active_frame`` is the same thing when the UI has evaluated it; it is None headless."""
+    """The annotation frame shown at ``frame_current``: the last one at or before it (frames hold), or None
+    before the first frame (nothing is drawn there yet). ``layer.active_frame`` is the same thing when the UI
+    has evaluated it; it is None headless."""
     if layer.active_frame is not None:
         return layer.active_frame
     frames = sorted(layer.frames, key=lambda fr: fr.frame_number)
     if not frames:
         return None
     held = [fr for fr in frames if fr.frame_number <= frame_current]
-    return held[-1] if held else frames[0]
+    return held[-1] if held else None
 
 
 def annotation_strokes(scene) -> tuple[list[list[Vector]], int]:

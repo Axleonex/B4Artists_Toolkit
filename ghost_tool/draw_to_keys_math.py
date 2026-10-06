@@ -86,13 +86,15 @@ def dash_crossing(path: Sequence[Sequence[float]], dash: Sequence[Sequence[float
     for i in range(len(path) - 1):
         cumulative.append(cumulative[-1] + _length(_sub(path[i + 1], path[i])))
     for j in range(len(dash) - 1):
+        # Within one dash segment the first crossing is the one the dash reaches first (smallest position
+        # along the dash), not the closest one: a single stroke across both legs of a U meets the near leg first.
         best = None
         for i in range(len(path) - 1):
-            s, _t, distance = closest_points_between_segments(path[i], path[i + 1], dash[j], dash[j + 1])
-            if distance <= max_distance and (best is None or distance < best[0]):
-                best = (distance, i, s)
+            s, t, distance = closest_points_between_segments(path[i], path[i + 1], dash[j], dash[j + 1])
+            if distance <= max_distance and (best is None or (t, distance) < best[0]):
+                best = ((t, distance), i, s)
         if best is not None:
-            _distance, i, s = best
+            _order, i, s = best
             point = _add(path[i], _scale(_sub(path[i + 1], path[i]), s))
             return cumulative[i] + s * (cumulative[i + 1] - cumulative[i]), point
     return None
