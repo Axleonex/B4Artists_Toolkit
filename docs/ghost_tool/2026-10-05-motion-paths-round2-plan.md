@@ -403,6 +403,27 @@ unchanged in meaning).
 6. UI: kind icon `'VERTEXSEL'`, label `Object · v123`.
 **Commit:** `Ghost Tool paths: vertex paths`.
 
+**Done 2026-10-06 (D1–D2, branch `work/ghost-tool-paths-round-d` from `aefa1ca`, three routed parts).**
+Decisions and findings while executing:
+- Part 1 (`45cd3457`): `vertex_index` on the entry (-1 = none, clamped); the label reads
+  `Object · v123`. Review: the save/load test read the active scene; it now reads the saved scene
+  by name.
+- Part 2 (`2be23ce9`): `PathKey = (object, bone, vertex)`, cache keys `(*key, frame)`, built by
+  `entry_key`; tests use `K()` / `C()` helpers. `forget()` still takes an `(object, bone)` pair as
+  vertex -1, the form `ghost_data`'s Head/Tail callback passes, so `ghost_data.py` did not change.
+  Review: the key test never checked the vertex path's own cache key; it now does.
+- Part 3 (`b1d2370a`): `_sample` reads the evaluated mesh (`ev.data.vertices[i].co`, so armature,
+  shape keys and other deformers apply); `_vertex_usable` marks the path missing when the evaluated
+  vertex count differs from the mesh's (a Subdivision modifier) or the index is out of range.
+  Add Selected in Edit Mode reads `bmesh.from_edit_mesh` selections, at most 50 vertices per click
+  with a warning. Additions not in the plan: Follow ignores Edit Mode selections (thousands of
+  vertices would each get a path); deformer objects (any modifier `.object`) count as
+  dependencies, and Mesh / shape-key Key / shape-key Action updates dirty the vertex paths of
+  their objects. Key dots: the object's location keys plus shape-key `value` keys. No markers
+  on vertex paths. Row icon `VERTEXSEL`.
+- Tests: `tests/test_ghost_paths_vertex.py` (10), including an armature-deformed vertex that
+  matches the evaluated mesh at frame 13.
+
 ### Task D3: release 3.7.0 (owner-gated). Checklist: a vertex path follows a
 deforming (armature-modified) mesh vertex; a Subdivision modifier greys it.
 

@@ -489,6 +489,8 @@ def _row_icon(entry, is_active: bool) -> str:
     """Kind icon of a path row; the active bone's or object's row gets a dot instead."""
     if is_active:
         return 'RADIOBUT_ON'
+    if entry.vertex_index >= 0:
+        return 'VERTEXSEL'
     return 'BONE_DATA' if entry.bone_name else 'OBJECT_DATA'
 
 

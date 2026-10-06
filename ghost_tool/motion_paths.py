@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 import blf
+import bmesh
 import bpy
 import gpu
 from bpy_extras import view3d_utils
@@ -106,13 +107,28 @@ def own_range_props(mode: str) -> tuple[str, ...]:
     return ()
 
 
-def _resolve(scene: bpy.types.Scene, object_name: str, bone_name: str) -> Optional[bpy.types.Object]:
+def _resolve(scene: bpy.types.Scene, object_name: str, bone_name: str,
+             vertex_index: int = -1) -> Optional[bpy.types.Object]:
     obj = scene.objects.get(object_name)   # an object unlinked from this scene has no path here
     if obj is None:
         return None
+    if vertex_index >= 0:
+        return obj if _vertex_usable(obj, vertex_index) else None
     if bone_name and (obj.type != 'ARMATURE' or bone_name not in obj.pose.bones):
         return None
     return obj
+
+
+def _vertex_usable(obj: bpy.types.Object, index: int) -> bool:
+    """A vertex path needs a mesh whose evaluated vertex count matches its own: a modifier that
+    changes topology (Subdivision) renumbers the vertices, so the index no longer names one."""
+    if obj.type != 'MESH' or index >= len(obj.data.vertices):
+        return False
+    try:
+        ev = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        return len(ev.data.vertices) == len(obj.data.vertices)
+    except Exception:
+        return False
 
 
 def entry_key(entry) -> PathKey:
@@ -122,7 +138,7 @@ def entry_key(entry) -> PathKey:
 def entry_is_missing(entry) -> bool:
     if entry.is_folder:
         return False
-    return _resolve(entry.id_data, entry.object_name, entry.bone_name) is None   # id_data: the owning scene
+    return _resolve(entry.id_data, *entry_key(entry)) is None   # id_data: the owning scene
 
 
 def folder_rows(settings) -> dict:
@@ -167,7 +183,7 @@ def pinned_targets(scene: bpy.types.Scene) -> list[PathTarget]:
     for entry in settings.motion_paths:
         if entry.is_folder or not entry_shown(entry, folders):
             continue
-        obj = _resolve(scene, entry.object_name, entry.bone_name)
+        obj = _resolve(scene, *entry_key(entry))
         if obj is None:
             continue
         frames = tuple(desired_frames(settings, scene, entry)) if entry.use_own_range else shared
@@ -179,8 +195,15 @@ def pinned_targets(scene: bpy.types.Scene) -> list[PathTarget]:
 
 
 def selected_keys(context: bpy.types.Context) -> list[tuple[PathKey, bpy.types.Object]]:
-    """(key, object) for the selection: pose bones in Pose mode, else objects."""
+    """(key, object) for the selection: pose bones in Pose mode, mesh vertices in Edit Mode, else objects."""
     result: list[tuple[PathKey, bpy.types.Object]] = []
+    if context.mode == 'EDIT_MESH':
+        for obj in getattr(context, 'objects_in_mode', None) or []:
+            if obj.type == 'MESH':
+                bm = bmesh.from_edit_mesh(obj.data)   # edit-mode indices are the mesh's indices
+                bm.verts.ensure_lookup_table()
+                result += [((obj.name, "", v.index), obj) for v in bm.verts if v.select]
+        return result
     if context.mode == 'POSE':
         for pb in getattr(context, 'selected_pose_bones', None) or []:
             result.append(((pb.id_data.name, pb.name, -1), pb.id_data))
@@ -205,7 +228,7 @@ def follow_targets(context: bpy.types.Context, pinned_keys: set[PathKey]) -> lis
     seen: set[PathKey] = set(pinned_keys)
     targets: list[PathTarget] = []
     for key, obj in selected_keys(context):
-        if key in seen:
+        if key in seen or key[2] >= 0:   # Follow is for bones and objects: an Edit Mode selection can be thousands
             continue
         seen.add(key)
         targets.append(PathTarget(key, obj, 'HEAD', FOLLOW_COLOR, 1, False, frames=frames))
@@ -219,8 +242,13 @@ def all_targets(context: bpy.types.Context) -> list[PathTarget]:
     return pinned + follow_targets(context, pinned_keys)
 
 
-def _sample(depsgraph, obj: bpy.types.Object, bone_name: str, anchor: str) -> Vector:
+def _sample(depsgraph, obj: bpy.types.Object, bone_name: str, anchor: str, vertex_index: int = -1) -> Vector:
     ev = obj.evaluated_get(depsgraph)
+    if vertex_index >= 0:
+        verts = ev.data.vertices   # the evaluated mesh: armature, shape keys and other deformers applied
+        if vertex_index < len(verts):
+            return (ev.matrix_world @ verts[vertex_index].co).copy()
+        return ev.matrix_world.translation.copy()
     if bone_name:
         pb = ev.pose.bones[bone_name]
         local = pb.tail if anchor == 'TAIL' else pb.head
@@ -249,6 +277,9 @@ def _dependencies(obj: bpy.types.Object) -> set[str]:
     while stack:
         o = stack.pop()
         refs = [o.parent] + [getattr(c, 'target', None) for c in o.constraints]
+        # Deformers (Armature, Hook, Lattice...) move a vertex path's vertices.
+        refs += [m.object for m in getattr(o, 'modifiers', ())
+                 if isinstance(getattr(m, 'object', None), bpy.types.Object)]
         if o.type == 'ARMATURE' and o.pose is not None:
             refs += [getattr(c, 'target', None) for pb in o.pose.bones for c in pb.constraints]
         for ref in refs:
@@ -265,7 +296,12 @@ def mark_dirty_for_id(block) -> None:
         changed = {block.name}
     elif isinstance(block, bpy.types.Action):
         changed = {obj.name for obj in bpy.data.objects
-                   if obj.animation_data and obj.animation_data.action == block}
+                   if (obj.animation_data and obj.animation_data.action == block)
+                   or _shape_key_action(obj) == block}
+    elif isinstance(block, (bpy.types.Key, bpy.types.Mesh)):
+        # Shape-key or mesh edits move a vertex path's vertex, never an origin or a bone.
+        changed = {obj.name for obj in bpy.data.objects
+                   if obj.data is block or getattr(obj.data, 'shape_keys', None) is block}
     else:
         return
     if not changed:
@@ -327,7 +363,7 @@ def refresh_paths(context: bpy.types.Context) -> int:
             scene.frame_set(int(f), subframe=f - int(f))
             depsgraph = context.evaluated_depsgraph_get()
             for t in missing[f]:
-                _cache[(*t.key, f)] = _sample(depsgraph, t.obj, t.key[1], t.anchor)
+                _cache[(*t.key, f)] = _sample(depsgraph, t.obj, t.key[1], t.anchor, t.key[2])
                 count += 1
     _last_refresh_ms = (time.perf_counter() - t0) * 1000.0
     debug(f"Motion paths: sampled {count} positions in {_last_refresh_ms:.1f} ms")
@@ -338,20 +374,34 @@ def last_refresh_ms() -> float:
     return _last_refresh_ms
 
 
+def _shape_key_action(obj) -> Optional[bpy.types.Action]:
+    keys = getattr(getattr(obj, 'data', None), 'shape_keys', None)
+    ad = getattr(keys, 'animation_data', None)
+    return ad.action if ad else None
+
+
 def key_frames(target: PathTarget) -> list[float]:
     """Frames with a keyframe on channels that move this target."""
     obj = target.obj
     ad = obj.animation_data
+    frames: set[float] = set()
+    if target.key[2] >= 0:
+        # A vertex moves with its object and with its shape keys (deformer keys belong to other objects).
+        action = _shape_key_action(obj)
+        for fc in get_fcurves_from_action(action, None) if action else ():
+            if fc.data_path.startswith("key_blocks[") and fc.data_path.endswith(".value"):
+                frames.update(float(k.co.x) for k in fc.keyframe_points)
     if not ad or not ad.action:
-        return []
-    if target.key[1]:
+        return sorted(frames)
+    if target.key[2] >= 0:
+        paths = set(ORIGIN_PATHS)
+    elif target.key[1]:
         # Same channels as the path's markers: a head moves only by location, a tail also by rotation.
         bone = f'pose.bones["{bpy.utils.escape_identifier(target.key[1])}"].'
         channels = MOTION_CHANNELS if target.anchor == 'TAIL' else LOCATION_CHANNELS
         paths = {bone + channel_family(c) for c in channels}
     else:
         paths = set(ORIGIN_PATHS)
-    frames: set[float] = set()
     for fc in get_fcurves_from_action(ad.action, obj):
         if fc.data_path in paths:
             frames.update(float(k.co.x) for k in fc.keyframe_points)
@@ -555,7 +605,7 @@ def sync_markers(context) -> int:
     bones_by_job: dict[tuple[str, str, tuple[float, ...]], list[str]] = {}
     object_paths: list[tuple[str, tuple[float, ...]]] = []
     for t in pinned_targets(scene):
-        if not t.frames:
+        if not t.frames or t.key[2] >= 0:   # a vertex has no key of its own to drag
             continue
         if t.key[1]:
             bones_by_job.setdefault((t.key[0], t.anchor, t.frames), []).append(t.key[1])
@@ -651,6 +701,9 @@ def _sync_markers_if_shown(context) -> None:
         sync_markers(context)
 
 
+VERTEX_ADD_LIMIT = 50   # design §8 decision 12
+
+
 def _next_color(settings) -> tuple[float, float, float]:
     return PALETTE[sum(1 for e in settings.motion_paths if not e.is_folder) % len(PALETTE)]
 
@@ -720,23 +773,31 @@ def apply_to_checked(settings, include_range: bool) -> int:
 class GHOST_OT_paths_add_selected(bpy.types.Operator):
     bl_idname = "ghost_tool.paths_add_selected"
     bl_label = "Add Path for Selected"
-    bl_description = "Pin a motion path for each selected bone (Pose mode) or object"
+    bl_description = ("Pin a motion path for each selected bone (Pose mode), vertex (Edit Mode, "
+                      "up to 50 per click) or object")
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
         if selected_keys(context):
             return True
-        cls.poll_message_set("Select bones or objects first")
+        cls.poll_message_set("Select bones, objects or (in Edit Mode) vertices first")
         return False
 
     def execute(self, context):
         settings = context.scene.ghost_tool
         existing = {entry_key(e) for e in settings.motion_paths if not e.is_folder}
-        added = 0
-        for key, _obj in selected_keys(context):
+        added = vertices = 0
+        wanted = [key for key, _obj in selected_keys(context) if key not in existing]
+        skipped = 0
+        for key in wanted:
             if key in existing:
                 continue
+            if key[2] >= 0:
+                if vertices >= VERTEX_ADD_LIMIT:   # every vertex path re-samples each frame window
+                    skipped += 1
+                    continue
+                vertices += 1
             entry = settings.motion_paths.add()
             entry.object_name, entry.bone_name, entry.vertex_index = key
             entry.color = _next_color(settings)
@@ -748,7 +809,11 @@ class GHOST_OT_paths_add_selected(bpy.types.Operator):
         refresh_paths(context)  # draw the new paths now, not on the next frame change
         _sync_markers_if_shown(context)
         tag_viewport_redraw(context)
-        self.report({'INFO'}, f"Pinned {added} motion path(s)")
+        if skipped:
+            self.report({'WARNING'}, f"Pinned {added} motion path(s); {skipped} more selected vertices skipped "
+                                     f"(at most {VERTEX_ADD_LIMIT} per click)")
+        else:
+            self.report({'INFO'}, f"Pinned {added} motion path(s)")
         return {'FINISHED'}
 
 
