@@ -210,7 +210,9 @@ def follow_targets(context: bpy.types.Context, pinned_keys: set[PathKey]) -> lis
 
 def all_targets(context: bpy.types.Context) -> list[PathTarget]:
     pinned = pinned_targets(context.scene)
-    return pinned + follow_targets(context, {t.key for t in pinned})
+    # Follow is for unpinned selections: a pinned path hidden by its eye or its folder stays hidden.
+    pinned_keys = {(e.object_name, e.bone_name) for e in context.scene.ghost_tool.motion_paths if not e.is_folder}
+    return pinned + follow_targets(context, pinned_keys)
 
 
 def _sample(depsgraph, obj: bpy.types.Object, bone_name: str, anchor: str) -> Vector:

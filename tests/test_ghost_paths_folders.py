@@ -62,6 +62,22 @@ class GhostPathFolders(unittest.TestCase):
         self.settings.motion_paths[0].visible = True
         self.assertEqual(len(mp.pinned_targets(self.scene)), 2)
 
+    def test_hidden_pinned_path_does_not_return_as_follow_path(self):
+        # Review C1 F1: Follow is for unpinned selections (design §2 tests: "unpinned selected bone draws grey").
+        rig = _rig()
+        self._folder("Arms", "k1").visible = False
+        self._path(rig.name, "lower", folder="k1")
+        self._path(rig.name, "upper").visible = False
+        self.settings.paths_follow_selection = True
+        self.select_bones(rig, "upper", "lower")
+        self.assertEqual(mp.all_targets(bpy.context), [])
+        self.select_bones(rig, "lower")
+        self.settings.motion_paths.clear()   # unpinned now: Follow draws it grey
+        self.assertEqual([(t.key, t.pinned) for t in mp.all_targets(bpy.context)], [((rig.name, "lower"), False)])
+        bpy.ops.object.mode_set(mode='OBJECT')
+        self.settings.paths_follow_selection = False
+        self._drop_deferred_timer()
+
     def test_folder_is_never_a_path(self):
         cube = _cube()
         folder = self._folder(cube.name, "k1")   # a folder may share an object's name
@@ -158,15 +174,17 @@ class GhostPathFolders(unittest.TestCase):
         self.assertEqual((a.folder, b.folder), ("", ""))
         self._drop_deferred_timer()
 
-    def test_checked_remove_drops_cache_and_resyncs_markers(self):
+    def test_checked_remove_drops_cache_and_markers(self):
         rig = _rig()
         self._path(rig.name, "upper").checked = True
         self._path(rig.name, "lower")
         mp.refresh_paths(bpy.context)
         self.settings.paths_show_markers = True
-        with patch.object(mp, "sync_markers") as sync:
-            bpy.ops.ghost_tool.paths_checked_action(action='REMOVE')
-        sync.assert_called_once()
+        mp.sync_markers(bpy.context)
+        self.assertEqual({g.bone_name for g in mp.owned_markers(self.scene)}, {"upper", "lower"})
+        bpy.ops.ghost_tool.paths_checked_action(action='REMOVE')
+        # Review C1 F2: the removed path's markers are gone, not only "sync ran".
+        self.assertEqual({g.bone_name for g in mp.owned_markers(self.scene)}, {"lower"})
         self.assertEqual([e.bone_name for e in self.settings.motion_paths], ["lower"])
         self.assertFalse(any(k[:2] == (rig.name, "upper") for k in mp._cache))
         self.assertTrue(any(k[:2] == (rig.name, "lower") for k in mp._cache))
