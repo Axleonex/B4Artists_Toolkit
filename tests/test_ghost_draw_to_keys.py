@@ -194,9 +194,170 @@ class AnnotationStrokes(unittest.TestCase):
         self.assertEqual(self.dk.annotation_strokes(self.scene), ([], 0))
 
 
+
+@unittest.skipUnless(HAVE_BPY, "needs Bforartists")
+class DrawToKeysOperator(unittest.TestCase):
+    """Task G3: the operator keys location at each crossing."""
+
+    @classmethod
+    def setUpClass(cls):
+        sys.path.insert(0, str(ROOT))
+        from unittest.mock import patch
+        import ghost_tool
+        cls.ghost_tool = ghost_tool
+        with patch.object(ghost_tool, "_clear_pycache"):
+            ghost_tool.register()
+        from ghost_tool import motion_paths
+        cls.mp = motion_paths
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.ghost_tool.unregister()
+
+    def setUp(self):
+        self.scene = bpy.context.scene
+        if bpy.context.object is not None and bpy.context.object.mode != 'OBJECT':
+            bpy.ops.object.mode_set(mode='OBJECT')
+        for obj in list(bpy.data.objects):
+            bpy.data.objects.remove(obj)
+        for action in list(bpy.data.actions):
+            bpy.data.actions.remove(action)
+        for note in list(bpy.data.annotations):
+            bpy.data.annotations.remove(note)
+        self.scene.frame_start, self.scene.frame_end = 1, 30
+        self.scene.frame_set(1)
+        settings = self.scene.ghost_tool
+        settings.live_point_ghosts = settings.live_mesh_ghosts = False
+        settings.paths_enabled = False
+        settings.motion_paths.clear()
+        self.mp.clear_cache()
+        note = bpy.data.annotations.new("Notes")
+        self.scene.annotation = note
+        self.frame = note.layers.new("Note", set_active=True).frames.new(1)
+
+    def _stroke(self, points, mode='3DSPACE'):
+        stroke = self.frame.strokes.new()
+        stroke.display_mode = mode
+        stroke.points.add(len(points))
+        for p, co in zip(stroke.points, points):
+            p.co = co
+
+    def _path_with_dashes(self, xs=(7.0, 3.0)):
+        self._stroke(_line(0, 10))
+        for x in xs:
+            self._stroke(_vertical(x))
+
+    def _cube(self):
+        bpy.ops.mesh.primitive_cube_add()
+        return bpy.context.object
+
+    def _location(self, obj, frame):
+        self.scene.frame_set(frame)
+        ev = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        return ev.matrix_world.translation.copy()
+
+    def test_object_keys_at_each_crossing(self):
+        cube = self._cube()
+        self._path_with_dashes()
+        self.assertTrue(bpy.ops.ghost_tool.paths_draw_to_keys.poll())
+        result = bpy.ops.ghost_tool.paths_draw_to_keys(use_current_frame=False, start_frame=1, frame_step=4,
+                                                        interpolation='LINEAR')
+        self.assertEqual(result, {'FINISHED'})
+        self.assertEqual(self.scene.frame_current, 1)   # keying samples other frames and puts the playhead back
+        self.assertLess((self._location(cube, 1) - mathutils_vec(3, 0, 0)).length, 1e-5)   # first along the path
+        self.assertLess((self._location(cube, 5) - mathutils_vec(7, 0, 0)).length, 1e-5)
+        self.assertLess((self._location(cube, 3) - mathutils_vec(5, 0, 0)).length, 1e-5)   # linear in between
+
+    def test_axes_interpolation_and_stroke_value(self):
+        cube = self._cube()
+        cube.location = (0.0, 5.0, 0.0)
+        self._path_with_dashes()
+        bpy.ops.ghost_tool.paths_draw_to_keys(axes={'X'}, use_current_frame=True, frame_step=10,
+                                              interpolation='CONSTANT', write_stroke_value=True)
+        from ghost_tool.utils import get_fcurves_from_action
+        curves = {(fc.data_path, fc.array_index): fc for fc in get_fcurves_from_action(cube.animation_data.action, cube)}
+        self.assertEqual(set(curves), {("location", 0), ('["stroke_value"]', 0)})   # only X, plus the value
+        self.assertEqual([k.co.x for k in curves[("location", 0)].keyframe_points], [1.0, 11.0])
+        self.assertTrue(all(k.interpolation == 'CONSTANT' for k in curves[("location", 0)].keyframe_points))
+        self.assertEqual([round(k.co.y, 5) for k in curves[('["stroke_value"]', 0)].keyframe_points], [3.0, 7.0])
+        self.assertAlmostEqual(self._location(cube, 1).y, 5.0, places=5)   # Y untouched
+
+    def test_bone_head_lands_on_each_crossing_under_a_rotated_parent(self):
+        data = bpy.data.armatures.new("Rig")
+        rig = bpy.data.objects.new("Rig", data)
+        self.scene.collection.objects.link(rig)
+        bpy.context.view_layer.objects.active = rig
+        rig.select_set(True)
+        bpy.ops.object.mode_set(mode='EDIT')
+        upper = data.edit_bones.new("upper"); upper.head, upper.tail = (0, 0, 0), (0, 0, 1)
+        lower = data.edit_bones.new("lower"); lower.head, lower.tail = (0, 0, 1), (0, 0, 2)
+        lower.parent = upper
+        bpy.ops.object.mode_set(mode='POSE')
+        pb = rig.pose.bones["upper"]
+        pb.rotation_mode = 'XYZ'
+        for frame, angle in ((1, 0.0), (9, 0.6)):
+            pb.rotation_euler = (angle, 0.0, 0.3)
+            pb.keyframe_insert("rotation_euler", frame=frame)
+        rig.data.bones.active = rig.data.bones["lower"]
+        self._stroke([(0.0, -1.0, 1.0), (0.0, 1.0, 1.0), (0.0, 1.0, 3.0)])   # path, length 4
+        self._stroke([(-1.0, -0.5, 1.0), (1.0, -0.5, 1.0)])                   # crosses at (0, -0.5, 1)
+        self._stroke([(-1.0, 1.0, 2.0), (1.0, 1.0, 2.0)])                     # crosses at (0, 1, 2)
+        result = bpy.ops.ghost_tool.paths_draw_to_keys(use_current_frame=False, start_frame=1, frame_step=8)
+        self.assertEqual(result, {'FINISHED'})
+        for frame, expect in ((1, (0.0, -0.5, 1.0)), (9, (0.0, 1.0, 2.0))):
+            self.scene.frame_set(frame)
+            ev = rig.evaluated_get(bpy.context.evaluated_depsgraph_get())
+            head = ev.matrix_world @ ev.pose.bones["lower"].head
+            self.assertLess((head - mathutils_vec(*expect)).length, 1e-4, frame)
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+    def test_refusals(self):
+        cube = self._cube()
+        self.assertFalse(bpy.ops.ghost_tool.paths_draw_to_keys.poll())   # no strokes yet
+        self._stroke(_line(0, 10))
+        self._stroke(_vertical(5))
+        self.assertEqual(bpy.ops.ghost_tool.paths_draw_to_keys(), {'CANCELLED'})   # one crossing
+        self._stroke(_vertical(8), mode='2DSPACE')
+        self._stroke(_vertical(2))
+        self.assertEqual(bpy.ops.ghost_tool.paths_draw_to_keys(), {'CANCELLED'})   # a View stroke
+        self.assertIsNone(cube.animation_data)
+
+    def test_connected_bone_is_refused(self):
+        data = bpy.data.armatures.new("Rig")
+        rig = bpy.data.objects.new("Rig", data)
+        self.scene.collection.objects.link(rig)
+        bpy.context.view_layer.objects.active = rig
+        bpy.ops.object.mode_set(mode='EDIT')
+        upper = data.edit_bones.new("upper"); upper.head, upper.tail = (0, 0, 0), (0, 0, 1)
+        lower = data.edit_bones.new("lower"); lower.head, lower.tail = (0, 0, 1), (0, 0, 2)
+        lower.parent, lower.use_connect = upper, True
+        bpy.ops.object.mode_set(mode='POSE')
+        rig.data.bones.active = rig.data.bones["lower"]
+        self._path_with_dashes()
+        self.assertEqual(bpy.ops.ghost_tool.paths_draw_to_keys(), {'CANCELLED'})
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+    def test_clears_strokes_and_refreshes_pinned_paths(self):
+        cube = self._cube()
+        self.scene.ghost_tool.paths_enabled = True
+        e = self.scene.ghost_tool.motion_paths.add()
+        e.object_name = cube.name
+        self.mp.refresh_paths(bpy.context)
+        self._path_with_dashes()
+        bpy.ops.ghost_tool.paths_draw_to_keys(use_current_frame=False, start_frame=1, frame_step=4,
+                                              clear_annotations_after=True)
+        self.assertEqual(len(self.frame.strokes), 0)
+        self.assertLess((self.mp._cache[(cube.name, "", -1, 5.0)] - mathutils_vec(7, 0, 0)).length, 1e-5)
+        self.scene.ghost_tool.paths_enabled = False
+
+
+def mathutils_vec(x, y, z):
+    from mathutils import Vector
+    return Vector((x, y, z))
+
 if __name__ == "__main__":
     suite = unittest.TestSuite()
-    for case in (CrossingMath, AnnotationStrokes):
+    for case in (CrossingMath, AnnotationStrokes, DrawToKeysOperator):
         suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(case))
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     print("GHOST_DRAW_TO_KEYS_RESULT: " + ("PASS" if result.wasSuccessful() else "FAIL"), flush=True)

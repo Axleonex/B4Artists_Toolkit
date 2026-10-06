@@ -103,6 +103,8 @@ def _import_modules(*, reload_modules: bool = True):
     from . import mesh_ghosts
     from . import motion_paths
     from . import path_handle_drag
+    from . import draw_to_keys_math
+    from . import draw_to_keys
 
     if _modules_loaded and reload_modules:
         importlib.reload(utils)
@@ -122,6 +124,8 @@ def _import_modules(*, reload_modules: bool = True):
         importlib.reload(mesh_ghosts)
         importlib.reload(motion_paths)
         importlib.reload(path_handle_drag)
+        importlib.reload(draw_to_keys_math)
+        importlib.reload(draw_to_keys)
         importlib.reload(viewport_draw)
         importlib.reload(ui_panel)
         importlib.reload(preferences)
@@ -147,6 +151,7 @@ def _import_modules(*, reload_modules: bool = True):
         "mesh_ghosts": mesh_ghosts,
         "motion_paths": motion_paths,
         "path_handle_drag": path_handle_drag,
+        "draw_to_keys": draw_to_keys,
         "viewport_draw": viewport_draw,
         "ui_panel": ui_panel,
         "preferences": preferences,
@@ -171,6 +176,7 @@ _REGISTER_ORDER = [
     "mesh_ghosts",
     "motion_paths",
     "path_handle_drag",   # before preferences: its Shift+G item must precede the marker drag's
+    "draw_to_keys",
     "viewport_draw",
     "ui_panel",
     "preferences",

@@ -468,11 +468,18 @@ def handle_transform(target: PathTarget, depsgraph=None):
     obj = target.obj
     if not obj.animation_data or not obj.animation_data.action:
         return None
+    return location_world_map(obj, target.key[1], depsgraph)
+
+
+def location_world_map(obj: bpy.types.Object, bone_name: str = "", depsgraph=None):
+    """(location data path, to_world, offset, current location): world point = to_world @ (location + offset)
+    for an object origin or a bone head, at the scene's current frame. Shared by the handle drawing and drag
+    and by Draw to Keys, which inverts it to key a world point. Constraints are not applied."""
     depsgraph = depsgraph or bpy.context.evaluated_depsgraph_get()
     ev = obj.evaluated_get(depsgraph)
-    if target.key[1]:
-        pb = ev.pose.bones[target.key[1]]
-        data_path = f'pose.bones["{bpy.utils.escape_identifier(target.key[1])}"].location'
+    if bone_name:
+        pb = ev.pose.bones[bone_name]
+        data_path = f'pose.bones["{bpy.utils.escape_identifier(bone_name)}"].location'
         to_world = ev.matrix_world @ rest_channel_matrix(pb, pb.parent.matrix if pb.parent else None)
         return data_path, to_world, Vector(), Vector(pb.location)
     to_world = (ev.parent.matrix_world @ ev.matrix_parent_inverse) if ev.parent else Matrix.Identity(4)
