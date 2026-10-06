@@ -588,6 +588,25 @@ from Python at all, stop and report to the owner.
    approach, reported as arclength `t ∈ [0, 1]` and the 3D point.
 **Commit:** `Ghost Tool draw to keys: crossing math`.
 
+**Done 2026-10-06 (G1–G2, branch `work/ghost-tool-paths-round-g` from `cfd1512`).** Findings:
+- G1 probe outcome (Bforartists 5.1.2, Blender 5.2 alpha base). The probe line above is out of date:
+  the scene has no `grease_pencil`. Annotations are `bpy.types.Annotation` in `bpy.data.annotations`;
+  the scene's is `scene.annotation`. Active layer: `layers[layers.active_index]` (`layers.active_note`
+  is only its name, a string). `layer.frames[i].strokes[j].points[k].co`; `layer.active_frame` is None
+  headless, so the reader takes the last frame at or before the playhead. `stroke.display_mode` is
+  `3DSPACE` / `2DSPACE` ("locked to the camera view") / `2DIMAGE`: Surface and 3D Cursor strokes are
+  world-space `3DSPACE`; a View-placed stroke in the 3D viewport is screen-locked, has no depth and is
+  refused. Strokes are writable from Python (`frames.new`, `strokes.new`, `points.add`), so tests build
+  them directly. Placement setting: `tool_settings.annotation_stroke_placement_view3d` (CURSOR, VIEW,
+  SURFACE). The Draw to Keys extension's source was not available offline; the closest public
+  description ("Draw to Animate": draw a path with the Annotate tool, crossings become keys) matches
+  design §8 decision 15, which this round follows.
+- G2: the math is `ghost_tool/draw_to_keys_math.py` (no bpy, so `tests/test_ghost_draw_to_keys.py` runs
+  its math cases under plain Python too). Closest approach is segment–segment (Ericson); a dash counts
+  once, at its first segment within `tolerance × path length`; ties for the longest stroke keep the
+  first. `ghost_tool/draw_to_keys.py` holds the bpy reader `annotation_strokes(scene)`.
+- Not checkable headless: that a View-placed stroke really is stored `2DSPACE` (drawing needs a viewport).
+
 ### Task G3: the operator
 **Files:** `ghost_tool/draw_to_keys.py` (`GHOST_OT_paths_draw_to_keys`),
 `ui_panel.py` (Edit Motion section button; path popover bottom row), help topic.
