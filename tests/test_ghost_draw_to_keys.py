@@ -88,6 +88,30 @@ class CrossingMath(unittest.TestCase):
         self.assertAlmostEqual(dm.dash_crossing(level, [(1.0, 1.0, 0.0), (3.0, 1.0, 0.0)], 0.2)[1][0], 2.0, places=6)
         self.assertAlmostEqual(dm.dash_crossing(level, [(3.0, 1.0, 0.0), (1.0, 1.0, 0.0)], 0.2)[1][0], 2.05, places=6)
 
+    @staticmethod
+    def _earlier_rule(path, dash, r, key):
+        """The x of the leg an earlier rule picked for a one-segment dash: key(s, t, distance) orders legs."""
+        best = None
+        for i in range(len(path) - 1):
+            s, t, d = dm.closest_points_between_segments(path[i], path[i + 1], dash[0], dash[1])
+            if d <= r and (best is None or key(s, t, d) < best[0]):
+                best = (key(s, t, d), path[i][0])
+        return best[1]
+
+    def test_entry_order_differs_from_both_earlier_rules(self):
+        # Review 291dde18: geometries where the earlier rules give a different leg than zone entry.
+        dash, r = [(3.0, 1.0, 0.0), (1.0, 1.0, 0.0)], 0.2
+        # 1) Closest-approach position disagrees: A (x 2.1, on the dash's height) is entered at x 2.3, B
+        #    (x 2.15, 0.19 above) at x ~ 2.212, but B's closest point comes first along the dash.
+        case1 = [(2.1, 2.0, 0.0), (2.1, -2.0, 0.0), (2.15, -2.0, 0.19), (2.15, 2.0, 0.19)]
+        self.assertEqual(self._earlier_rule(case1, dash, r, lambda s, t, d: (t, d)), 2.15)
+        self.assertAlmostEqual(dm.dash_crossing(case1, dash, r)[1][0], 2.1, places=6)
+        # 2) Closest distance disagrees: A (x 2.25, 0.15 above) is entered at x ~ 2.382, B (x 2.0, exact)
+        #    at x 2.2, but B is the closer leg.
+        case2 = [(2.25, 2.0, 0.15), (2.25, -2.0, 0.15), (2.0, -2.0, 0.0), (2.0, 2.0, 0.0)]
+        self.assertEqual(self._earlier_rule(case2, dash, r, lambda s, t, d: d), 2.0)
+        self.assertAlmostEqual(dm.dash_crossing(case2, dash, r)[1][0], 2.25, places=6)
+
     def test_zone_entry_is_exact(self):
         a, b = (0.0, -5.0, 0.0), (0.0, 5.0, 0.0)             # a vertical leg at x = 0
         u = dm._zone_entry(a, b, (-4.0, 0.0, 0.0), (4.0, 0.0, 0.0), 0.5, 1.0)
