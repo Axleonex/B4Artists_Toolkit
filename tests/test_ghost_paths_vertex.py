@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from test_ghost_paths import C, GhostPaths, K, _cube, _rig, bpy, ghost_tool, mp  # noqa: E402,F401
+from test_ghost_paths import C, GhostPaths, K, _cube, _rig, bpy, gd, ghost_tool, mp  # noqa: E402,F401
 
 
 class GhostPathVertices(unittest.TestCase):
@@ -108,6 +108,45 @@ class GhostPathVertices(unittest.TestCase):
         e.vertex_index = 999
         self.assertTrue(mp.entry_is_missing(e))
 
+    def test_vertex_absent_at_a_frame_leaves_a_gap(self):
+        # Review b1d2370a: topology that changes over time must not put the object origin into the path.
+        cube = _cube()
+        sub = cube.modifiers.new("Sub", 'SUBSURF')
+        for frame, on in ((1, False), (12, True)):
+            sub.show_viewport = on
+            sub.keyframe_insert("show_viewport", frame=frame)
+        self.scene.frame_set(10)   # topology matches here, so the path is not missing
+        self._vertex_path(cube, 0)
+        self.assertEqual(len(mp.pinned_targets(self.scene)), 1)
+        self.assertEqual(mp.refresh_paths(bpy.context), 7)
+        for f in (12.0, 13.0):
+            self.assertNotIn(C(cube.name, "", f, v=0), mp._cache)
+            self.assertIn(C(cube.name, "", f, v=0), mp._gaps)
+        self.assertIn(C(cube.name, "", 11.0, v=0), mp._cache)
+        self.assertEqual(mp.refresh_paths(bpy.context), 0)      # gaps are not re-sampled every refresh
+        self.assertFalse(mp.request_missing_samples(bpy.context))
+        mp.forget(K(cube.name, v=0))
+        self.assertFalse(any(g[:3] == K(cube.name, v=0) for g in mp._gaps))
+        self._drop_deferred_timer()
+
+    def test_add_selected_pins_a_vertex_added_in_edit_mode(self):
+        # Review b1d2370a: a new BMesh vertex has index -1 until renumbered.
+        import bmesh
+        bpy.ops.mesh.primitive_plane_add()
+        plane = bpy.context.object
+        bpy.ops.object.mode_set(mode='EDIT')
+        bm = bmesh.from_edit_mesh(plane.data)
+        for v in bm.verts:
+            v.select = False
+        new = bm.verts.new((3.0, 3.0, 0.0))
+        new.select = True
+        bmesh.update_edit_mesh(plane.data)
+        bpy.ops.ghost_tool.paths_add_selected()
+        self.assertEqual([e.vertex_index for e in self.settings.motion_paths], [4])   # the plane's 4 + the new one
+        bpy.ops.object.mode_set(mode='OBJECT')
+        self.assertFalse(mp.entry_is_missing(self.settings.motion_paths[0]))
+        self._drop_deferred_timer()
+
     def test_add_selected_in_edit_mode_adds_vertices(self):
         import bmesh
         bpy.ops.mesh.primitive_grid_add(x_subdivisions=10, y_subdivisions=10)
@@ -139,7 +178,8 @@ class GhostPathVertices(unittest.TestCase):
         mp.refresh_paths(bpy.context)
         self.settings.paths_show_markers = True
         mp.sync_markers(bpy.context)
-        self.assertEqual(mp.owned_markers(self.scene), [])
+        # Review b1d2370a: the store itself, not owned_markers (which filters by ownership and hides leaks).
+        self.assertEqual(list(gd.GhostStore.get(self.scene)), [])
         self.settings.paths_show_markers = False
         self._drop_deferred_timer()
 

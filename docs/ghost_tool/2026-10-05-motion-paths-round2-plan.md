@@ -421,8 +421,14 @@ Decisions and findings while executing:
   dependencies, and Mesh / shape-key Key / shape-key Action updates dirty the vertex paths of
   their objects. Key dots: the object's location keys plus shape-key `value` keys. No markers
   on vertex paths. Row icon `VERTEXSEL`.
-- Tests: `tests/test_ghost_paths_vertex.py` (10), including an armature-deformed vertex that
+- Tests: `tests/test_ghost_paths_vertex.py` (12), including an armature-deformed vertex that
   matches the evaluated mesh at frame 13.
+- Review `b1d2370a` (3 advisory, all fixed in `23449ef1`): (1) topology can change per frame (an
+  animated modifier), and `_sample` then returned the object origin; it now returns None, the
+  frame becomes a gap (`_gaps`), and gaps are not re-requested until the path is dirtied, forgotten
+  or leaves the window. (2) A vertex added in Edit Mode has index -1 until renumbered;
+  `selected_keys` calls `bm.verts.index_update()`. (3) The no-markers test now reads the marker
+  store. Both behaviour tests fail on `5ba22db`.
 
 ### Task D3: release 3.7.0 (owner-gated). Checklist: a vertex path follows a
 deforming (armature-modified) mesh vertex; a Subdivision modifier greys it.

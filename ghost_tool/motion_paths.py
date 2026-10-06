@@ -38,6 +38,9 @@ ORIGIN_PATHS = ("location", "delta_location")   # the object channels that move 
 
 _cache: dict[tuple[str, str, int, float], Vector] = {}   # (*PathKey, frame)
 _dirty: set[PathKey] = set()
+# Cache keys a refresh tried and could not sample (a vertex absent at that frame): drawn as a gap,
+# never re-requested until the path is dirtied or leaves the window.
+_gaps: set[tuple[str, str, int, float]] = set()
 _draw_handler = None
 _draw_handler_2d = None
 _last_refresh_ms: float = 0.0
@@ -62,6 +65,7 @@ class PathTarget:
 
 def clear_cache() -> None:
     _cache.clear()
+    _gaps.clear()
     _dirty.clear()
     _anchors.clear()
 
@@ -200,8 +204,8 @@ def selected_keys(context: bpy.types.Context) -> list[tuple[PathKey, bpy.types.O
     if context.mode == 'EDIT_MESH':
         for obj in getattr(context, 'objects_in_mode', None) or []:
             if obj.type == 'MESH':
-                bm = bmesh.from_edit_mesh(obj.data)   # edit-mode indices are the mesh's indices
-                bm.verts.ensure_lookup_table()
+                bm = bmesh.from_edit_mesh(obj.data)
+                bm.verts.index_update()   # vertices added in Edit Mode carry stale or -1 indices until renumbered
                 result += [((obj.name, "", v.index), obj) for v in bm.verts if v.select]
         return result
     if context.mode == 'POSE':
@@ -242,13 +246,16 @@ def all_targets(context: bpy.types.Context) -> list[PathTarget]:
     return pinned + follow_targets(context, pinned_keys)
 
 
-def _sample(depsgraph, obj: bpy.types.Object, bone_name: str, anchor: str, vertex_index: int = -1) -> Vector:
+def _sample(depsgraph, obj: bpy.types.Object, bone_name: str, anchor: str,
+            vertex_index: int = -1) -> Optional[Vector]:
     ev = obj.evaluated_get(depsgraph)
     if vertex_index >= 0:
         verts = ev.data.vertices   # the evaluated mesh: armature, shape keys and other deformers applied
-        if vertex_index < len(verts):
-            return (ev.matrix_world @ verts[vertex_index].co).copy()
-        return ev.matrix_world.translation.copy()
+        # Topology can change per frame (an animated modifier): then the index names no vertex here,
+        # and the path gets a gap, not a point at the object origin.
+        if len(verts) != len(obj.data.vertices) or vertex_index >= len(verts):
+            return None
+        return (ev.matrix_world @ verts[vertex_index].co).copy()
     if bone_name:
         pb = ev.pose.bones[bone_name]
         local = pb.tail if anchor == 'TAIL' else pb.head
@@ -266,6 +273,7 @@ def forget(key) -> None:
     key = tuple(key) if len(key) == 3 else (*key, -1)
     for stale in [c for c in _cache if c[:3] == key]:
         del _cache[stale]
+    _gaps.difference_update([g for g in _gaps if g[:3] == key])
     _anchors.pop(key, None)
 
 
@@ -343,15 +351,17 @@ def refresh_paths(context: bpy.types.Context) -> int:
     wanted = {(*t.key, f) for t in targets for f in t.frames}
     for stale in [c for c in _cache if c not in wanted]:
         del _cache[stale]
+    _gaps.intersection_update(wanted)
     for t in targets:
         if t.key in _dirty:
             for f in t.frames:
                 _cache.pop((*t.key, f), None)
+                _gaps.discard((*t.key, f))
     _dirty.clear()   # a dirty key that is no longer a target lost its samples with the wanted set
     missing: dict[float, list[PathTarget]] = {}
     for t in targets:
         for f in t.frames:
-            if (*t.key, f) not in _cache:
+            if (*t.key, f) not in _cache and (*t.key, f) not in _gaps:
                 missing.setdefault(f, []).append(t)
     if not missing:
         _last_refresh_ms = 0.0
@@ -363,7 +373,11 @@ def refresh_paths(context: bpy.types.Context) -> int:
             scene.frame_set(int(f), subframe=f - int(f))
             depsgraph = context.evaluated_depsgraph_get()
             for t in missing[f]:
-                _cache[(*t.key, f)] = _sample(depsgraph, t.obj, t.key[1], t.anchor, t.key[2])
+                point = _sample(depsgraph, t.obj, t.key[1], t.anchor, t.key[2])
+                if point is None:
+                    _gaps.add((*t.key, f))
+                else:
+                    _cache[(*t.key, f)] = point
                 count += 1
     _last_refresh_ms = (time.perf_counter() - t0) * 1000.0
     debug(f"Motion paths: sampled {count} positions in {_last_refresh_ms:.1f} ms")
@@ -672,7 +686,7 @@ def request_missing_samples(context) -> bool:
     if not settings.paths_enabled:
         return False
     stale = get_scene_id(scene) != _cache_scene
-    if not stale and all((*t.key, f) in _cache
+    if not stale and all((*t.key, f) in _cache or (*t.key, f) in _gaps
                          for t in all_targets(context) for f in t.frames):
         return False
     from .ghost_pipeline import GhostPipeline, _schedule_deferred_update
