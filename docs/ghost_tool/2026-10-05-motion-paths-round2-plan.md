@@ -429,6 +429,12 @@ Decisions and findings while executing:
   or leaves the window. (2) A vertex added in Edit Mode has index -1 until renumbered;
   `selected_keys` calls `bm.verts.index_update()`. (3) The no-markers test now reads the marker
   store. Both behaviour tests fail on `5ba22db`.
+- Review `23449ef1` (2 findings, all three reviewers, fixed in `891c4152`): `path_segments` dropped
+  missing frames and then joined what was left, so a gap (or a frame not yet sampled) was bridged
+  by a straight line; it now joins only neighbouring frames that both have a point. `_cache_keys`
+  read only `_cache`, so a path made only of gaps could never be dirtied; gap keys now count.
+  Tests: the gap test puts the gap in the middle (frame 12) and checks the drawn segments; an
+  all-gap path is dirtied by a mesh update and re-sampled. Both fail on `b608c94`. Vertex tests: 13.
 
 ### Task D3: release 3.7.0 (owner-gated). Checklist: a vertex path follows a
 deforming (armature-modified) mesh vertex; a Subdivision modifier greys it.

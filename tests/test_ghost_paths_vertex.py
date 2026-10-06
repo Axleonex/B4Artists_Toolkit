@@ -112,20 +112,42 @@ class GhostPathVertices(unittest.TestCase):
         # Review b1d2370a: topology that changes over time must not put the object origin into the path.
         cube = _cube()
         sub = cube.modifiers.new("Sub", 'SUBSURF')
-        for frame, on in ((1, False), (12, True)):
+        for frame, on in ((1, False), (12, True), (13, False)):   # the vertex is renumbered at frame 12 only
             sub.show_viewport = on
             sub.keyframe_insert("show_viewport", frame=frame)
         self.scene.frame_set(10)   # topology matches here, so the path is not missing
         self._vertex_path(cube, 0)
         self.assertEqual(len(mp.pinned_targets(self.scene)), 1)
         self.assertEqual(mp.refresh_paths(bpy.context), 7)
-        for f in (12.0, 13.0):
-            self.assertNotIn(C(cube.name, "", f, v=0), mp._cache)
-            self.assertIn(C(cube.name, "", f, v=0), mp._gaps)
+        self.assertNotIn(C(cube.name, "", 12.0, v=0), mp._cache)
+        self.assertEqual({g for g in mp._gaps if g[:3] == K(cube.name, v=0)}, {C(cube.name, "", 12.0, v=0)})
         self.assertIn(C(cube.name, "", 11.0, v=0), mp._cache)
+        self.assertIn(C(cube.name, "", 13.0, v=0), mp._cache)
         self.assertEqual(mp.refresh_paths(bpy.context), 0)      # gaps are not re-sampled every refresh
         self.assertFalse(mp.request_missing_samples(bpy.context))
+        # Review 23449ef1: the drawn line stops at the gap.
+        target = mp.pinned_targets(self.scene)[0]
+        segs = mp.path_segments(bpy.context, target)
+        self.assertEqual(len(segs), 4)   # 7-8, 8-9, 9-10, 10-11; nothing joins 11 to 13 across the gap
+        self.assertEqual(segs[-1][1], mp._cache[C(cube.name, "", 11.0, v=0)])
         mp.forget(K(cube.name, v=0))
+        self.assertFalse(any(g[:3] == K(cube.name, v=0) for g in mp._gaps))
+        self._drop_deferred_timer()
+
+    def test_path_of_only_gaps_recovers_after_a_mesh_update(self):
+        # Review 23449ef1: _cache_keys read only _cache, so a path whose every sampled frame was a gap
+        # could never be dirtied again. (A refresh always samples the current frame, where the path
+        # resolved, so the all-gap state is set up directly.)
+        cube = _cube()
+        self._vertex_path(cube, 0)
+        mp.clear_cache()
+        mp._gaps.update(C(cube.name, "", float(f), v=0) for f in range(7, 14))
+        self.assertIn(K(cube.name, v=0), mp._cache_keys())
+        mp._dirty.clear()
+        mp.mark_dirty_for_id(cube.data)
+        self.assertIn(K(cube.name, v=0), mp._dirty)
+        self.assertEqual(mp.refresh_paths(bpy.context), 7)   # the dirty path is sampled again, gaps dropped
+        self.assertIn(C(cube.name, "", 10.0, v=0), mp._cache)
         self.assertFalse(any(g[:3] == K(cube.name, v=0) for g in mp._gaps))
         self._drop_deferred_timer()
 

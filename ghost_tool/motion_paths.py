@@ -325,7 +325,8 @@ def mark_dirty_for_id(block) -> None:
 
 
 def _cache_keys() -> set[PathKey]:
-    return {c[:3] for c in _cache}
+    # Gaps count: a path made only of gaps must still be dirtied when its mesh or deformer changes.
+    return {c[:3] for c in _cache} | {g[:3] for g in _gaps}
 
 
 def refresh_paths(context: bpy.types.Context) -> int:
@@ -428,16 +429,18 @@ def path_segments(context, target: PathTarget, frames=None) -> list[tuple[Vector
     settings = context.scene.ghost_tool
     current = float(context.scene.frame_current)
     pts = [(f, _cache.get((*target.key, f))) for f in frames]
-    pts = [(f, p) for f, p in pts if p is not None]
-    if len(pts) < 2:
+    # Only neighbouring frames join: a gap (a vertex absent at that frame) or a frame not yet sampled
+    # breaks the line instead of being bridged by a straight segment.
+    pairs = [(a, b) for a, b in zip(pts, pts[1:]) if a[1] is not None and b[1] is not None]
+    if not pairs:
         return []
     r, g, b = target.color
     style = settings.paths_style
     span = max(frames[-1] - frames[0], 1.0)
-    lengths = [(pts[i + 1][1] - pts[i][1]).length for i in range(len(pts) - 1)]
+    lengths = [(p1 - p0).length for (_f0, p0), (_f1, p1) in pairs]
     longest = max(lengths) or 1.0
     segs = []
-    for i, ((f0, p0), (f1, p1)) in enumerate(zip(pts, pts[1:])):
+    for i, ((f0, p0), (f1, p1)) in enumerate(pairs):
         if style == 'SPLIT':
             before, after = (*target.color_before, 0.9), (r, g, b, 0.9)
             if f0 < current < f1:
