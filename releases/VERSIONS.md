@@ -5,7 +5,7 @@ The current build of each add-on. **Install these.**
 | Tool | Version | File | Bytes | sha256 (first 12) |
 |---|---|---|---|---|
 | Anim Assist | **12.1.0** | `b4_anim_assist_v12.1.0.zip` | 557,834 | `ee4ea5f1f517` |
-| Ghost Tool | **3.6.0** | `b4_ghost_tool_v3.6.0.zip` | 172,350 | `ab82b78d7a4a` |
+| Ghost Tool | **4.0.0** | `b4_ghost_tool_v4.0.0.zip` | 190,285 | `d133230b7672` |
 | BoneCraft BFA (optional) | **8.9.9** | `BoneCraft-BFA-8.9.9.zip` | 797,293 | `689378dff20a` |
 
 Each zip is byte-identical to the matching source folder in this repository
@@ -17,7 +17,7 @@ BoneCraft BFA ships as a packaged zip only; the add-on folder inside it is `bone
 Read the version from **inside** the add-on, never from the filename:
 
 ```bash
-python -c "import zipfile,re,sys; z=zipfile.ZipFile(sys.argv[1]); print([re.search(r'\"version\"\s*:\s*\(([^)]*)\)', z.read(n).decode('utf-8','ignore')).group(1) for n in z.namelist() if n.endswith('__init__.py') and n.count('/')==1])" b4_ghost_tool_v3.6.0.zip
+python -c "import zipfile,re,sys; z=zipfile.ZipFile(sys.argv[1]); print([re.search(r'\"version\"\s*:\s*\(([^)]*)\)', z.read(n).decode('utf-8','ignore')).group(1) for n in z.namelist() if n.endswith('__init__.py') and n.count('/')==1])" b4_ghost_tool_v4.0.0.zip
 ```
 
 In Bforartists: **Edit → Preferences → Add-ons**, expand the add-on, read the

@@ -726,15 +726,30 @@ before that.
 
 ---
 
+## Release 4.0.0 (2026-10-06)
+
+Owner decision: Rounds D, F, G and E were built stacked on one branch
+(`work/ghost-tool-paths-round-e` contains the other three), so they ship together as **4.0.0**
+instead of the separate 3.7.0 / 3.8.0 / 4.0.0 / 4.1.0 releases in Tasks D3, E2, F3 and G4. The owner
+accepted the headless-tested build without the manual checklists; those checklists stay above for a
+later check in the real viewport.
+- Release files: version `(4, 0, 0)` (`bl_info` description unchanged); README version and download
+  rows (`ghost-v4.0.0`); `releases/VERSIONS.md`; `releases/b4_ghost_tool_v4.0.0.zip` replaces
+  `b4_ghost_tool_v3.6.0.zip`. The zip is built from the committed `ghost_tool/` blobs (LF, sorted,
+  fixed date, deflate; the same recipe rebuilds the 3.6.0 zip byte for byte): 26 files, 190,285 bytes,
+  sha256 `d133230b7672...`.
+
+---
+
 ## Order and dependencies
 
 ```
 A1–A5 → A6 (3.5.1)
 B1 B2 B3 B4 (independent) → B5 → C1 → C2 → C3 → C4 (3.6.0)
-D1 → D2 → D3 (3.7.0)
-E0 gate answered "No" → Round E skipped (no 3.8.0)
-F1 → F2 → F3 (4.0.0)
-G1 probe → G2 → G3 → G4 (4.1.0)
+D1 → D2 → D3 ┐
+F1 → F2 → F3 ├ stacked D → F → G → E, released together as 4.0.0 (2026-10-06)
+G1 probe → G2 → G3 → G4 │
+E0 reopened → E1 ┘
 X1 closed
 ```
 Rounds D, F and G are independent of each other and can be reordered by the owner.

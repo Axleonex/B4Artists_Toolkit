@@ -3,8 +3,9 @@
 Date: 2026-10-05. Target release: Ghost Tool 3.5.0 (Bforartists only).
 Status: §1–7 shipped as 3.5.0 (commit `35e7ebe`); the two cache bugs in §5
 (Ghost Tools off, undo) were fixed on `work/ghost-tool-paths-gaps` (`228a946`).
-§8 is the round-2 scope the owner asked for on 2026-10-05, pending owner
-approval; its plan is `2026-10-05-motion-paths-round2-plan.md`.
+§8 is the round-2 scope the owner asked for and approved on 2026-10-05; it shipped as
+3.6.0 (Rounds A–C) and 4.0.0 (Rounds D, F, G, E; see §8.6). Its plan is
+`2026-10-05-motion-paths-round2-plan.md`.
 
 ## 1. What this is
 
@@ -253,10 +254,10 @@ Release line-up set by the owner on 2026-10-05:
 |---|---|---|
 | 3.5.1 | A | cache fixes + finish §1–7 |
 | 3.6.0 | B, C | Split style, dot size, in front, glow, per-path range; folders, checkboxes, batch operators |
-| 3.7.0 | D | vertex paths |
-| 4.0.0 | F | handles on paths |
-| 4.1.0 | G | Draw to Keys |
-| — | E | skipped (E0 gate answered "No"); can be reopened |
+| 4.0.0 | D, F, G, E | vertex paths, handles on paths, Draw to Keys, automatic fast sampling |
 | — | X | closed: nothing released to copy (decision 16) |
+
+Owner decision 2026-10-06: the stacked Rounds D, F, G and E ship together as 4.0.0 (planned as 3.7.0,
+4.0.0, 4.1.0 and, once E was reopened, 3.8.0).
 
 Each release follows the 3.5.0 recipe (§7). `bl_info` description unchanged.
