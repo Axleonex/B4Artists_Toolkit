@@ -42,7 +42,7 @@ _log = get_logger(__name__)
 class AA_BoneMetadataItem(bpy.types.PropertyGroup):
     """One record of tool metadata keyed by object + bone name."""
 
-    object_name: StringProperty(name="Object", default="")  # type: ignore[valid-type]
+    object_name: StringProperty(name="Object", description="Object associated with this metadata record", default="")  # type: ignore[valid-type]
     bone_name: StringProperty(name="Bone", description="Bone associated with this metadata record", default="")  # type: ignore[valid-type]
     metadata_json: StringProperty(name="Data", default="{}")  # type: ignore[valid-type]
 
@@ -69,7 +69,7 @@ class AA_KeyMetaItem(bpy.types.PropertyGroup):
     the scene so it persists with the .blend.
     """
 
-    object_name: StringProperty(name="Object", default="")  # type: ignore[valid-type]
+    object_name: StringProperty(name="Object", description="Object whose animation this record belongs to", default="")  # type: ignore[valid-type]
     data_path: StringProperty(name="Data Path", default="")  # type: ignore[valid-type]
     array_index: IntProperty(name="Array Index", default=0)  # type: ignore[valid-type]
     frame: FloatProperty(name="Frame", default=0.0)  # type: ignore[valid-type]

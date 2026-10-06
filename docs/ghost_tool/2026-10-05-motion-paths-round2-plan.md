@@ -329,12 +329,17 @@ parts).** Decisions and findings while executing:
   so `all_targets` now passes every pinned key. This also fixes eye-hidden paths from 3.5.
   F2: the checked Remove test only checked that sync ran; it now reads the marker store
   (review `e5217051` pointed out that `owned_markers` filters by ownership and cannot see a leak).
-- Tests: `tests/test_ghost_paths_folders.py` (13), run without re-running `test_ghost_paths`.
+- Tests: `tests/test_ghost_paths_folders.py` (14), run without re-running `test_ghost_paths`.
   The UI tests draw into a recording layout and check every icon name against
   `UILayout.operator`'s icon enum, because a wrong icon only fails when Blender draws.
 - Drawing the folder name with `prop(item, "object_name")` made `test_tooltip_coverage` require
   hover text on every property named `object_name`; two in `anim_assist/core/properties.py` had
-  none. Fixed in a separate routed run, because that file was not declared in part 2.
+  none. Fixed in a separate routed run (`d766142a`), because that file was not declared in part 2.
+- Review C2 (run `27ec4c4e`), F1: a folder row has a checkbox (design §8.3) but path actions
+  ignored a checked folder. Now a checked folder stands for its paths in the path actions
+  (`checked_paths`: Apply to Checked, Reset Range, Move, Add Folder). Show, Hide and Remove act on
+  rows, so a checked folder shows, hides or is removed as a whole (its paths move to the top
+  level). Test `test_checked_folder_stands_for_its_paths`.
 - Not checked headless (owner's 3.6.0 checklist): the folder row look, the indent of a path in a
   folder, renaming a folder in the list, the Checked ▾ and Move to submenus.
 

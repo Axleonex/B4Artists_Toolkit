@@ -282,6 +282,30 @@ class GhostPathFolders(unittest.TestCase):
         self.assertEqual((a.folder, b.folder), ("", ""))
         self._drop_deferred_timer()
 
+    def test_checked_folder_stands_for_its_paths(self):
+        # Review C2 F1: a folder's checkbox did nothing for path actions.
+        rig = _rig()
+        source = self._path(rig.name, "upper")
+        source.thickness = 5
+        folder = self._folder("Arms", "k1")
+        child = self._path(rig.name, "lower", folder="k1")
+        other = self._folder("Legs", "k2")
+        folder.checked = True
+        self.settings.motion_paths_index = 0
+        self.assertEqual(mp.checked_paths(self.settings), [2])
+        self.assertTrue(bpy.ops.ghost_tool.paths_apply_to_checked.poll())
+        bpy.ops.ghost_tool.paths_apply_to_checked()
+        self.assertEqual(child.thickness, 5)
+        child.use_own_range = True
+        bpy.ops.ghost_tool.paths_checked_action(action='RESET_RANGE')
+        self.assertFalse(child.use_own_range)
+        bpy.ops.ghost_tool.paths_checked_action(action='HIDE')   # rows: the folder hides, its path keeps its eye
+        self.assertEqual((folder.visible, child.visible), (False, True))
+        bpy.ops.ghost_tool.paths_checked_action(action='MOVE', folder=other.folder_key)
+        self.assertEqual(child.folder, "k2")
+        self.assertEqual(mp.checked_paths(self.settings), [])   # it left the checked folder
+        self._drop_deferred_timer()
+
     def test_checked_remove_drops_cache_and_markers(self):
         rig = _rig()
         self._path(rig.name, "upper").checked = True

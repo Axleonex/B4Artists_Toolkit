@@ -675,6 +675,14 @@ def remove_rows(context, indexes) -> int:
 APPLY_PROPS = ("color", "thickness", "dot_size", "in_front")
 
 
+def checked_paths(settings) -> list[int]:
+    """Indexes of the paths that path actions (Apply, Reset Range, Move, Add Folder) act on:
+    checked paths, and every path of a checked folder."""
+    checked_folders = {key for key, f in folder_rows(settings).items() if f.checked}
+    return [i for i, e in enumerate(settings.motion_paths)
+            if not e.is_folder and (e.checked or e.folder in checked_folders)]
+
+
 def apply_to_checked(settings, include_range: bool) -> int:
     """Copy the list's active path's look (and its range override when asked) to every other
     checked path. Folders are never written to. Returns how many paths changed."""
@@ -686,9 +694,10 @@ def apply_to_checked(settings, include_range: bool) -> int:
         return 0
     names = APPLY_PROPS + (RANGE_PROPS if include_range else ())
     count = 0
-    for index, entry in enumerate(paths):
-        if entry.is_folder or not entry.checked or index == settings.motion_paths_index:
+    for index in checked_paths(settings):
+        if index == settings.motion_paths_index:
             continue
+        entry = paths[index]
         for name in names:
             setattr(entry, name, getattr(source, name))
         # Colour-before: copy the stored choice, or none, so a following path keeps following.
@@ -775,10 +784,9 @@ class GHOST_OT_paths_add_folder(bpy.types.Operator):
         folder = paths.add()
         folder.is_folder, folder.object_name, folder.folder_key = True, name, key
         moved = 0
-        for entry in paths:
-            if entry.checked and not entry.is_folder:
-                entry.folder, entry.checked = key, False
-                moved += 1
+        for index in checked_paths(settings):
+            paths[index].folder, paths[index].checked = key, False
+            moved += 1
         settings.motion_paths_index = len(paths) - 1
         tag_viewport_redraw(context)
         self.report({'INFO'}, f"Added {name}" + (f" with {moved} path(s)" if moved else ""))
@@ -817,7 +825,7 @@ class GHOST_OT_paths_apply_to_checked(bpy.types.Operator):
         if not 0 <= settings.motion_paths_index < len(paths) or paths[settings.motion_paths_index].is_folder:
             cls.poll_message_set("Select a path in the list to copy from")
             return False
-        if not any(e.checked and not e.is_folder for i, e in enumerate(paths) if i != settings.motion_paths_index):
+        if not any(i != settings.motion_paths_index for i in checked_paths(settings)):
             cls.poll_message_set("Check the paths to copy to")
             return False
         return True
@@ -865,15 +873,15 @@ class GHOST_OT_paths_checked_action(bpy.types.Operator):
         if self.action == 'MOVE' and self.folder and self.folder not in folder_rows(settings):
             self.report({'WARNING'}, "That folder no longer exists")
             return {'CANCELLED'}
-        for i in checked:
-            entry = paths[i]
-            if self.action in {'SHOW', 'HIDE'}:
-                entry.visible = self.action == 'SHOW'
-            elif not entry.is_folder:   # folders have no range and do not nest
+        if self.action in {'SHOW', 'HIDE'}:   # rows: a checked folder shows or hides as a whole
+            for i in checked:
+                paths[i].visible = self.action == 'SHOW'
+        else:   # paths: a checked folder stands for its paths (folders have no range and do not nest)
+            for i in checked_paths(settings):
                 if self.action == 'RESET_RANGE':
-                    entry.use_own_range = False
+                    paths[i].use_own_range = False
                 else:
-                    entry.folder = self.folder
+                    paths[i].folder = self.folder
         _sync_markers_if_shown(context)
         tag_viewport_redraw(context)
         return {'FINISHED'}
