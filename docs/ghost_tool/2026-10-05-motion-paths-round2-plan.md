@@ -476,6 +476,31 @@ dispatch), tests.
    ones never call `frame_set`; the perf test prints both timings.
 **Commit:** `Ghost Tool paths: fast sampler with stepped fallback`.
 
+**Reopened and done 2026-10-06 (E1, branch `work/ghost-tool-paths-round-e` from `f8b5010`).** The owner
+asked for Round E without the E0 gate. Decisions and findings:
+- `ghost_tool/path_fast_sampler.py`: `fast_eligible` and `sample_fast` (object origin; bone head/tail up the
+  chain; every rotation mode; location, rotation, scale and keyed delta location). Eligibility is strict;
+  everything not modelled steps: constraints, drivers, NLA, Add/Multiply action blending, an animated,
+  constrained or bone parent, delta rotation/scale (neutral and not keyed), bones that do not inherit
+  rotation and full scale or use relative parent / non-local location, vertex paths, and Time Remapping
+  (`frame_map_old != frame_map_new`: curves run at remapped time). Blender 5 creates actions in Combine;
+  with no NLA underneath Combine equals Replace, so it is accepted. A connected bone ignores its location.
+- Review `52c23eca` (HIGH advisory): a keyed delta location was read at its current value for every
+  frame; it is now evaluated from its curves, and keyed delta rotation/scale is ineligible.
+- `refresh_paths` samples eligible targets in one batch per path without `frame_set`, records them in
+  `_fast_keys`, and re-steps a key that is no longer eligible (a constraint added without a depsgraph
+  event). Handles and ineligible targets still step. `FAST_SAMPLING` is the switch.
+- Measured (`test_fast_refresh_timing`, 100 samples): a light scene steps as fast as the fast sampler
+  (2.6 vs 3.4 ms; 4.0 vs 4.8 ms for 500 cube samples), which is why the E0 rigs never tripped the slow
+  warning. A heavy mesh whose geometry changes every frame (Subdivision 5 + Wave) costs stepping 68.9 ms,
+  the fast sampler 4.0 ms. Moving a heavy object alone does not slow stepping: Blender keeps its
+  evaluated geometry.
+- Turning it on exposed that three path tests read the scene after a refresh and relied on frame stepping
+  re-evaluating it at the playhead (two anchor tests, one Time Remapping test). The fast result was right
+  (checked against the frame-10 pose); the tests read a stale pose. `FAST_SAMPLING` stays off in this part
+  and the next part switches it on with those tests evaluating the frame themselves.
+- Tests: `tests/test_ghost_paths_fast.py` (9), all compared against Blender's frame stepping within 1e-4.
+
 ### Task E2: release 3.8.0 (owner-gated). Checklist: the heavy rig from E0
 scrubs without the slow warning; add a Copy Location constraint to a pinned bone
 and confirm its path still matches the bone (fallback took over).

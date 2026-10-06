@@ -43,6 +43,12 @@ _dirty: set[PathKey] = set()
 _gaps: set[tuple[str, str, int, float]] = set()
 # (*PathKey, key frame) -> (left, right) world handle points, or None when that key has no location handle.
 _handles: dict[tuple[str, str, int, float], Optional[tuple[Vector, Vector]]] = {}
+# Round E: keys whose cached samples came from the fast sampler. A key that stops being fast-eligible
+# (a constraint added, a parent animated) is re-stepped even if no depsgraph update dirtied it.
+_fast_keys: set = set()
+# Off until the path tests that read the scene's state after a refresh stop relying on frame stepping
+# re-evaluating it (Round E part 3 switches it on). Off: always step frames.
+FAST_SAMPLING = False
 _draw_handler = None
 _draw_handler_2d = None
 _last_refresh_ms: float = 0.0
@@ -69,6 +75,7 @@ def clear_cache() -> None:
     _cache.clear()
     _gaps.clear()
     _handles.clear()
+    _fast_keys.clear()
     _dirty.clear()
     _anchors.clear()
 
@@ -279,6 +286,7 @@ def forget(key) -> None:
     _gaps.difference_update([g for g in _gaps if g[:3] == key])
     for stale in [h for h in _handles if h[:3] == key]:
         del _handles[stale]
+    _fast_keys.discard(key)
     _anchors.pop(key, None)
 
 
@@ -349,10 +357,16 @@ def refresh_paths(context: bpy.types.Context) -> int:
         clear_cache()   # positions sampled in another scene may differ (drivers, constraints)
         _cache_scene = get_scene_id(scene)
     targets = all_targets(context)
+    from .path_fast_sampler import fast_eligible, sample_fast
+    fast = {t.key for t in targets
+            if FAST_SAMPLING and fast_eligible(t.obj, t.key[1], t.key[2], scene=scene)}
     for t in targets:
         if _anchors.get(t.key, t.anchor) != t.anchor:
             _dirty.add(t.key)   # HEAD <-> TAIL: the cached positions belong to the other point
         _anchors[t.key] = t.anchor
+        if t.key in _fast_keys and t.key not in fast:
+            _dirty.add(t.key)   # sampled fast but no longer eligible: re-step every frame
+            _fast_keys.discard(t.key)
     # Each path keeps the frames of its own window, so a wider per-path range keeps its extras.
     wanted = {(*t.key, f) for t in targets for f in t.frames}
     for stale in [c for c in _cache if c not in wanted]:
@@ -368,21 +382,34 @@ def refresh_paths(context: bpy.types.Context) -> int:
                 _handles.pop((*t.key, f), None)
     _dirty.clear()   # a dirty key that is no longer a target lost its samples with the wanted set
     missing: dict[float, list[PathTarget]] = {}
+    fast_missing: dict = {}
     for t in targets:
         for f in t.frames:
             if (*t.key, f) not in _cache and (*t.key, f) not in _gaps:
-                missing.setdefault(f, []).append(t)
+                if t.key in fast:
+                    fast_missing.setdefault(t.key, (t, []))[1].append(f)
+                else:
+                    missing.setdefault(f, []).append(t)
     handle_needs: dict[float, list[PathTarget]] = {}
     if settings.paths_show_handles:
         for t in targets:
             for f in _handle_frames(t):
                 if (*t.key, f) not in _handles:
                     handle_needs.setdefault(f, []).append(t)
-    if not missing and not handle_needs:
+    if not missing and not handle_needs and not fast_missing:
         _last_refresh_ms = 0.0
         return 0
     count = 0
     t0 = time.perf_counter()
+    for key, (t, frames) in fast_missing.items():   # no frame_set: positions straight from the curves
+        for f, point in zip(frames, sample_fast(t.obj, t.key[1], t.anchor, frames)):
+            _cache[(*key, f)] = point
+        _fast_keys.add(key)
+        count += len(frames)
+    if not missing and not handle_needs:
+        _last_refresh_ms = (time.perf_counter() - t0) * 1000.0
+        debug(f"Motion paths: fast-sampled {count} positions in {_last_refresh_ms:.1f} ms")
+        return count
     with scene_sampling(scene):
         for f in sorted(set(missing) | set(handle_needs)):
             scene.frame_set(int(f), subframe=f - int(f))

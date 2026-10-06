@@ -45,7 +45,17 @@ def _static(obj) -> bool:
     return obj.parent is None or (obj.parent_type == 'OBJECT' and _static(obj.parent))
 
 
+def _keyed_paths(obj) -> set[str]:
+    ad = obj.animation_data
+    action = ad.action if ad else None
+    return {fc.data_path for fc in get_fcurves_from_action(action, obj)} if action else set()
+
+
 def _deltas_neutral(obj) -> bool:
+    """Delta rotation and scale are not modelled: they must be neutral and not keyed (a keyed delta changes
+    over time even when its current value is neutral). Delta location is modelled, keyed or not."""
+    if _keyed_paths(obj) & {"delta_scale", "delta_rotation_euler", "delta_rotation_quaternion"}:
+        return False
     if tuple(obj.delta_scale) != (1.0, 1.0, 1.0):
         return False
     if obj.rotation_mode == 'QUATERNION':
@@ -67,9 +77,14 @@ def _bone_chain_plain(pose_bone) -> bool:
     return True
 
 
-def fast_eligible(obj, bone_name: str = "", vertex_index: int = -1) -> bool:
-    """True only when sample_fast provably equals stepping the frames for this target."""
-    if obj is None or vertex_index >= 0:
+def time_is_plain(scene) -> bool:
+    """Curves are evaluated at the scene frame only without Time Remapping (frame_map_old == frame_map_new)."""
+    return scene is None or scene.render.frame_map_old == scene.render.frame_map_new
+
+
+def fast_eligible(obj, bone_name: str = "", vertex_index: int = -1, scene=None) -> bool:
+    """True only when sample_fast provably equals stepping the frames for this target (in ``scene``)."""
+    if obj is None or vertex_index >= 0 or not time_is_plain(scene):
         return False
     if len(obj.constraints) or not _animation_is_plain(obj) or not _deltas_neutral(obj):
         return False
@@ -123,7 +138,9 @@ def _basis(curves: _Curves, prefix: str, holder, frame: float, location_offset=N
 
 
 def _object_world(obj, curves: _Curves, frame: float) -> Matrix:
-    basis = _basis(curves, "", obj, frame, location_offset=Vector(obj.delta_location))
+    # Delta location may be keyed: evaluate it at the frame like location (review 52c23eca).
+    delta = Vector([curves.value("delta_location", i, frame, obj.delta_location[i]) for i in range(3)])
+    basis = _basis(curves, "", obj, frame, location_offset=delta)
     if obj.parent is None:
         return basis
     return obj.parent.matrix_world @ obj.matrix_parent_inverse @ basis   # the parent is static (eligibility)

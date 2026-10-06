@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from test_ghost_paths import _clear_scene, _cube, _rig, bpy, ghost_tool  # noqa: E402
+from test_ghost_paths import _clear_scene, _cube, _rig, bpy, ghost_tool, mp  # noqa: E402
 from ghost_tool import path_fast_sampler as fs  # noqa: E402
 
 FRAMES = [float(f) for f in range(1, 21)] + [4.5, 12.25]   # subframes too
@@ -166,6 +166,99 @@ class FastSampler(unittest.TestCase):
         self.assertIsNone(fs.first_ineligibility(rig, "lower"))
         del fc
 
+
+    def test_keyed_delta_location_and_refusals_for_keyed_deltas_and_time_remapping(self):
+        # Review 52c23eca: a keyed delta location was read at its current value for every frame.
+        cube = _cube()
+        for frame, dz in ((1, 0.0), (20, 3.0)):
+            cube.delta_location = (0.0, 0.0, dz)
+            cube.keyframe_insert("delta_location", frame=frame)
+        self.assertMatchesStepping(cube)
+        scale = _cube("Scaled")
+        scale.keyframe_insert("delta_scale", frame=1)            # keyed, even though neutral now
+        self.assertFalse(fs.fast_eligible(scale))
+        scene = bpy.context.scene
+        scene.render.frame_map_old, scene.render.frame_map_new = 100, 50
+        self.assertFalse(fs.fast_eligible(cube, scene=scene))    # curves run at remapped time
+        scene.render.frame_map_old = scene.render.frame_map_new = 100
+        self.assertTrue(fs.fast_eligible(cube, scene=scene))
+
+    # ── refresh integration (FAST_SAMPLING switched on here; Round E part 3 makes it the default) ──
+
+    def _paths_on(self):
+        settings = bpy.context.scene.ghost_tool
+        settings.paths_enabled, settings.paths_follow_selection = True, False
+        settings.paths_range_mode, settings.paths_step = 'SCENE', 1
+        settings.motion_paths.clear()
+        mp.clear_cache()
+        return settings
+
+    def _pin(self, obj, bone=""):
+        e = bpy.context.scene.ghost_tool.motion_paths.add()
+        e.object_name, e.bone_name = obj.name, bone
+        return e
+
+    def test_refresh_samples_eligible_paths_without_changing_frame(self):
+        settings = self._paths_on()
+        rig = _rig(); cube = _cube()
+        self._pin(rig, "lower"); self._pin(rig, "upper").anchor = 'TAIL'; self._pin(cube)
+        with patch.object(mp, "FAST_SAMPLING", False):
+            mp.refresh_paths(bpy.context)
+        stepped = dict(mp._cache)
+        mp.clear_cache()
+        changes = []
+        handler = lambda scene, *_: changes.append(scene.frame_current)   # noqa: E731
+        bpy.app.handlers.frame_change_pre.append(handler)
+        try:
+            with patch.object(mp, "FAST_SAMPLING", True):
+                self.assertEqual(mp.refresh_paths(bpy.context), 3 * 20)
+        finally:
+            bpy.app.handlers.frame_change_pre.remove(handler)
+        self.assertEqual(changes, [])                                   # no frame_set at all
+        self.assertEqual(set(mp._cache), set(stepped))
+        self.assertLess(max((mp._cache[k] - stepped[k]).length for k in stepped), 1e-4)
+        self.assertEqual(mp._fast_keys, {(rig.name, "lower", -1), (rig.name, "upper", -1), (cube.name, "", -1)})
+        settings.paths_enabled = False
+
+    def test_cache_records_sampler_and_re_steps_a_key_that_lost_eligibility(self):
+        settings = self._paths_on()
+        rig = _rig()
+        self._pin(rig, "lower")
+        with patch.object(mp, "FAST_SAMPLING", True):
+            mp.refresh_paths(bpy.context)
+            key = (rig.name, "lower", -1)
+            self.assertIn(key, mp._fast_keys)
+            c = rig.pose.bones["lower"].constraints.new('COPY_LOCATION')   # no depsgraph event in between
+            c.target = _cube("Target")
+            self.assertEqual(mp.refresh_paths(bpy.context), 20)            # every frame re-stepped
+        self.assertNotIn(key, mp._fast_keys)
+        stepped = _stepped(rig, "lower", 'HEAD', [10.0])[0]
+        self.assertLess((mp._cache[(*key, 10.0)] - stepped).length, 1e-4)
+        settings.paths_enabled = False
+
+    def test_fast_refresh_timing(self):
+        # Frame stepping evaluates the whole scene per frame; the fast sampler reads only the pinned curves.
+        # A light scene steps cheaply (the fast path can be slower there); a heavy one is where it pays.
+        import time
+        settings = self._paths_on()
+        bpy.context.scene.frame_end = 50
+        rig = _rig()
+        self._pin(rig, "lower"); self._pin(rig, "upper")
+        heavy = _cube("Heavy")
+        heavy.modifiers.new("Sub", 'SUBSURF').levels = 5
+        heavy.modifiers.new("Wave", 'WAVE')                              # time-dependent: new geometry each frame
+        timings = {}
+        for fast in (False, True):
+            mp.clear_cache()
+            with patch.object(mp, "FAST_SAMPLING", fast):
+                t0 = time.perf_counter()
+                self.assertEqual(mp.refresh_paths(bpy.context), 2 * 50)
+                timings[fast] = (time.perf_counter() - t0) * 1000.0
+        print(f"FAST_PERF heavy_scene samples=100 stepped_ms={timings[False]:.1f} fast_ms={timings[True]:.1f}",
+              flush=True)
+        self.assertLess(timings[True], timings[False])
+        bpy.context.scene.frame_end = 20
+        settings.paths_enabled = False
 
 if __name__ == "__main__":
     result = unittest.TextTestRunner(verbosity=2).run(
