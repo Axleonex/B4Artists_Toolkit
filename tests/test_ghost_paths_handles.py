@@ -323,6 +323,18 @@ class GhostPathHandles(unittest.TestCase):
             self.settings.paths_show_handles = False
         self._drop_deferred_timer()
 
+    def test_alt_before_any_move_aligns_the_handles(self):
+        # Review 27d92547: Alt right after the drag started changed the status only.
+        cube, target, drag, Vector = self._drag_setup()
+        key = next(k for k in self._x_curve(cube).keyframe_points if k.co.x == 20.0)
+        self.assertTrue(drag.toggle_aligned())
+        self.assertEqual((key.handle_left_type, key.handle_right_type), ('ALIGNED', 'ALIGNED'))
+        self.assertLess((mp._handles[C(cube.name, "", 20.0)][1] - drag.depth).length, 1e-4)   # the end did not jump
+        drag.cancel()
+        with patch.object(ghost_tool.ghost_data, "_schedule_path_refresh"):
+            self.settings.paths_show_handles = False
+        self._drop_deferred_timer()
+
     def test_handle_drag_confirm_resamples_paths_that_follow_the_object(self):
         # Review bf07774d: confirming re-sampled only the dragged path; a pinned child kept old positions.
         cube, target, drag, Vector = self._drag_setup('LEFT')   # the left handle of key 20 shapes frames 1-20

@@ -521,6 +521,36 @@ and confirm its path still matches the bone (fallback took over).
    prefers the handle end when both are within 8 px.
 **Commit:** `Ghost Tool paths: drag handles`.
 
+**Done 2026-10-06 (F1–F2, branch `work/ghost-tool-paths-round-f` from `9f859e2`).** Decisions and findings:
+- Part 1 (`paths_show_handles` + Handles toggle): its first review (`6817ec37`) was refused before
+  dispatch, ~415 KB per reviewer request over the 393216 S3 limit (a request carries whole files plus
+  diffs, ~2.6x the declared bytes). The owner raised S3/S4 to 512 KiB (hermes `bb8b4ea`); the identical
+  re-route `8722d428` passed and `resolve_review_block` cleared the hold. Since then runs declare
+  under ~140 KB, and `ghost_data.py` (108 KB) goes alone.
+- F1: `handle_transform(target)` gives the location data path and the local → world map
+  (object: parent world @ parent inverse, offset = delta location; bone head: armature world @
+  `rest_channel_matrix(bone, posed parent)`); `key_handles` and the drag both use it. An axis without a
+  key at the frame contributes its evaluated value. Handles are sampled during refresh at key frames in
+  the window (scene at that frame), stored in `_handles` (None = no location key there), cleared with
+  the path. No handles for tails, vertex paths and connected bones (they ignore location). Tests check
+  handle points against Blender's own evaluation with the key moved onto its handle (object, object
+  under a rotated parent with parent inverse and delta, posed bone).
+- F1 review `47b90d36`: a one-frame path drew nothing (the loop skipped paths without segments before
+  dots and handles); `draw_parts` now builds segments, dots and handles separately.
+- F2: `path_handle_drag.py`. Shift+G or a click within 8 px of a handle end starts the drag; elsewhere
+  the operator returns PASS_THROUGH so the marker drag (Shift+G) and selection keep working. Its keymap
+  items register before `preferences` adds the marker drag's, which is how "picking prefers the handle
+  end" is met. `fcurve_utils.set_handle_values` changes values only (times stay); Aligned keeps the pair
+  collinear through the key, Free after Aligned unlinks both. The drag state is a `HandleDrag` class
+  (tests drive it); the modal only feeds mouse, Alt, confirm and cancel.
+- F2 reviews: `bf07774d` (Free after Aligned left one handle Aligned; confirm re-sampled only the
+  dragged path, now every path that follows the object; Alt keeps the plan's toggle and the status bar
+  shows Aligned on/off), `27d92547` (Alt before the first mouse move only changed the status; it now
+  re-applies at the end's place).
+- Not checkable headless (owner's 4.0.0 checklist): the undo step after confirming a drag (the undo
+  stack needs a window), the drawn handles, the 8 px pick in a real viewport, Alt during a drag.
+- Tests: `tests/test_ghost_paths_handles.py` (16).
+
 ### Task F3: release 4.0.0 (owner-gated). Checklist: drag a handle, the path
 between keys bends and the Graph Editor shows the handle moved in value only;
 Alt keeps the pair aligned; Esc restores.

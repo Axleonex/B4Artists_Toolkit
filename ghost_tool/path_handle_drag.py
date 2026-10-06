@@ -95,8 +95,8 @@ class HandleDrag:
 
     def toggle_aligned(self) -> bool:
         self.aligned = not self.aligned
-        if self._last is not None:
-            self.move_to(self._last)
+        # Re-apply at the end's current place, also before any mouse move, so the mode shown is the one saved.
+        self.move_to(self._last if self._last is not None else self.depth)
         return self.aligned
 
     def handle_points(self) -> tuple[Vector, Vector]:
