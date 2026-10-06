@@ -808,7 +808,7 @@ def _on_path_anchor_changed(self, context):
 
 
 def _on_path_window_changed(self, context):
-    """Range, step, follow or anchor changed: cached positions stay valid (they are
+    """Range, step or follow changed, globally or for one path: cached positions stay valid (they are
     keyed by frame; refresh_paths re-samples an anchor change), so only the frames
     that entered the window are sampled."""
     _schedule_path_refresh(context, clear=False)
@@ -844,6 +844,54 @@ class GhostPathEntry(bpy.types.PropertyGroup):
         update=_on_path_anchor_changed,
         items=[('HEAD', "Head", "Bone head / object origin"), ('TAIL', "Tail", "Bone tail")],
         default='HEAD',
+    )  # type: ignore[assignment]
+    color_before: bpy.props.FloatVectorProperty(
+        name="Colour Before", description="Colour of this path before the playhead when the style is Split",
+        subtype='COLOR', size=3, min=0.0, max=1.0, default=(0.528, 0.3905, 0.0),   # the default colour × 0.55
+    )  # type: ignore[assignment]
+    dot_size: bpy.props.IntProperty(
+        name="Dot Size", description="Size of this path's key dots in pixels", default=6, min=1, max=12,
+    )  # type: ignore[assignment]
+    in_front: bpy.props.BoolProperty(
+        name="In Front", description="Draw this path through the scene; off hides it behind geometry",
+        default=True,   # draw handlers run with no depth test, so paths always drew in front
+    )  # type: ignore[assignment]
+    # Range override: off follows the global range, so files from before 3.6 draw as they did.
+    # A change keeps the cache, like the global range fields: only frames new to the path are sampled.
+    use_own_range: bpy.props.BoolProperty(
+        name="Own Range", description="Give this path its own frame range instead of the global one",
+        default=False, update=_on_path_window_changed,
+    )  # type: ignore[assignment]
+    own_range_mode: bpy.props.EnumProperty(
+        name="Range",
+        description="Which frames this path covers",
+        items=[
+            ('AROUND_CURSOR', "Around Playhead", "Frames before and after the playhead"),
+            ('SCENE', "Scene", "The scene frame range"),
+            ('CUSTOM', "Custom", "This path's own start and end frames"),
+        ],
+        default='AROUND_CURSOR',
+        update=_on_path_window_changed,
+    )  # type: ignore[assignment]
+    own_before: bpy.props.IntProperty(
+        name="Before", description="Frames this path draws before the playhead",
+        default=12, min=0, max=500, update=_on_path_window_changed,
+    )  # type: ignore[assignment]
+    own_after: bpy.props.IntProperty(
+        name="After", description="Frames this path draws after the playhead",
+        default=12, min=0, max=500, update=_on_path_window_changed,
+    )  # type: ignore[assignment]
+    own_step: bpy.props.IntProperty(
+        name="Every", description="Sample every Nth frame along this path",
+        default=1, min=1, max=24, update=_on_path_window_changed,
+    )  # type: ignore[assignment]
+    own_start: bpy.props.IntProperty(
+        name="Start", description="First frame of this path's custom range",
+        default=1, update=_on_path_window_changed,
+    )  # type: ignore[assignment]
+    own_end: bpy.props.IntProperty(
+        name="End", description="Last frame of this path's custom range",
+        default=250, update=_on_path_window_changed,
     )  # type: ignore[assignment]
 
     @property
@@ -1191,8 +1239,13 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
     paths_style: bpy.props.EnumProperty(
         name="Style",
         description="How the path line is coloured",
-        items=[('SOLID', "Solid", "One colour"), ('SPEED', "Speed", "Blue slow, red fast"), ('FADE', "Fade", "Fade with distance from the playhead")],
+        items=[('SOLID', "Solid", "One colour"), ('SPEED', "Speed", "Blue slow, red fast"),
+               ('FADE', "Fade", "Fade with distance from the playhead"),
+               ('SPLIT', "Split", "Each path's before-colour up to the playhead, its colour after it")],
         default='SOLID',
+    )  # type: ignore[assignment]
+    paths_active_glow: bpy.props.BoolProperty(
+        name="Glow", description="Draw a wide faint glow under the path selected in the list", default=True,
     )  # type: ignore[assignment]
 
     # ── Ghost Mode & Range ──────────────────────────────────────────────

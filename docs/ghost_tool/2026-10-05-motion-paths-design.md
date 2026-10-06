@@ -173,14 +173,14 @@ motion paths in the toolkit.
 | 6 | Per-path range | **Reverses §4.** Each entry may override the global range, Before/After/Every and mode. Default: follow the global settings, so nothing changes for existing files. |
 | 7 | Organising many paths | Folders as rows in the same list (an entry with `is_folder`), a checkbox per row, and operators that act on checked rows. One list, no second collection. |
 | 8 | Before/after colour | A fourth style, `SPLIT`: the entry's `color_before` up to the playhead, `color` after it. |
-| 9 | Draw in front | Per entry. The default keeps today's look; see the probe in plan Task B3 — today's handler sets no depth test, so paths probably already draw through geometry. |
+| 9 | Draw in front | Per entry (cube button on each row) plus popover buttons "All in front" / "All behind" (owner, 2026-10-05). Default **in front**, today's look: Blender 5.1 runs POST_VIEW draw callbacks with no depth test (plan Task B3 outcome); "behind" draws that path with depth test `LESS_EQUAL`. |
 | 10 | Dot size | Per entry, default 6 px; in the colour dialog and in Apply to Checked. |
 | 11 | Active glow | The entry selected in the list draws a wide, faint pass under its line. The 1 px thicker active-bone line from §3 stays. |
 | 12 | Vertex paths | A third target kind. `PathKey` gains `vertex_index` (-1 for none). Added from Edit Mode with Add Selected; capped at 50 vertices per click with a report. |
-| 13 | Fast sampling | Only when it provably matches frame stepping: object or bone whose chain has no constraints, drivers or animated parent object. Everything else keeps `frame_set`. Shipped only if a real rig trips the slow warning (plan Task E0 gate). |
+| 13 | Fast sampling | Only when it provably matches frame stepping: object or bone whose chain has no constraints, drivers or animated parent object. Everything else keeps `frame_set`. Shipped only if a real rig trips the slow warning (plan Task E0 gate). **Skipped 2026-10-05:** the owner answered the gate "No"; can be reopened if a rig shows the warning. |
 | 14 | Handles on paths | **Reverses §4 ("path handles beyond ghost markers").** With Handles on, each key dot shows its in/out Bezier handles as world points built from the location curves' handle values; dragging one writes the handle values, time stays. |
-| 15 | Draw to Keys | A new operator, `ghost_tool.paths_draw_to_keys`: the longest stroke on the active annotation layer is the path, every other stroke is a timing dash; each crossing becomes a location key on the chosen axes at Start + n × Step, with the chosen interpolation; optional `stroke_value` custom property keyed with the distance along the path. |
-| 16 | Reference line, timeline visualisation (Motion Path Pro) | Not specified anywhere we can read. Owner-gated investigation (plan Task X1) before any design. |
+| 15 | Draw to Keys | A new operator, `ghost_tool.paths_draw_to_keys`, reading annotation strokes exactly as the Draw to Keys extension does (Annotate tool; no Grease Pencil object fallback, owner 2026-10-05): the longest stroke on the active annotation layer is the path, every other stroke is a timing dash; each crossing becomes a location key on the chosen axes at Start + n × Step, with the chosen interpolation; optional `stroke_value` custom property keyed with the distance along the path. |
+| 16 | Reference line, timeline visualisation (Motion Path Pro) | **Closed 2026-10-05.** These, "handle setup" and "editable path with rotation" are listed under "Future update" on Motion Path Pro's Superhive page and extension version history: nothing released to copy. Its released features map to Ghost Tool: edit in the 3D view = Markers on Paths; rotation = Tail-path rotation markers; control handles = decision 14 (Round F); paths list = pinned list + Round C. |
 
 Rejected: a second path system for vertices (one cache, one draw handler, one
 list); a global dot size only (QuickPath users expect per path); fast sampling
@@ -230,7 +230,8 @@ Draw to Keys operator properties (not saved): axes (X/Y/Z set), start_frame,
 - Handles: handle world points use the handle *values* of location X/Y/Z at the
   key; the time component is untouched by a drag. A drag sets handle types to
   FREE; Alt keeps the opposite handle aligned (ALIGNED).
-- Draw to Keys reads annotation strokes in 3D (Surface or 3D Cursor placement).
+- Draw to Keys reads annotation strokes in 3D (Surface or 3D Cursor placement), the same
+  strokes the Draw to Keys extension reads; there is no Grease Pencil object fallback.
   View-placed strokes are refused with a report. Keys go through the same
   world → channel solve the marker drag uses, so parented bones work.
 - Fast sampling: eligibility is decided per target each refresh; a cache entry
@@ -246,16 +247,16 @@ unchanged; the 500-sample perf gate stays under 50 ms with per-path ranges on.
 
 ### 8.6 Rollout
 
-Proposed releases (the owner may merge adjacent rounds):
+Release line-up set by the owner on 2026-10-05:
 
 | Release | Rounds | Content |
 |---|---|---|
-| 3.5.1 | A | cache fixes (done) + finish §1–7 |
+| 3.5.1 | A | cache fixes + finish §1–7 |
 | 3.6.0 | B, C | Split style, dot size, in front, glow, per-path range; folders, checkboxes, batch operators |
 | 3.7.0 | D | vertex paths |
-| 3.8.0 | E | fast sampling with fallback (only if the E0 gate says it is needed) |
 | 4.0.0 | F | handles on paths |
 | 4.1.0 | G | Draw to Keys |
-| — | X | investigate Motion Path Pro's reference line / timeline; design after |
+| — | E | skipped (E0 gate answered "No"); can be reopened |
+| — | X | closed: nothing released to copy (decision 16) |
 
 Each release follows the 3.5.0 recipe (§7). `bl_info` description unchanged.
