@@ -298,8 +298,10 @@ class FastSampler(unittest.TestCase):
         # Review a1abef3d: the heavy object goes; once the measurement expires the scene is measured again.
         bpy.data.objects.remove(heavy)
         mp._step_measured_at -= mp.FAST_REMEASURE_S + 1.0
-        scene.frame_set(22)                                         # new frames 22-25
-        self.assertGreater(self._count_frame_changes(lambda: mp.refresh_paths(bpy.context)), 0)   # re-measured
+        scene.frame_set(22)                                         # new frames 22-25 (19-21 cached)
+        counts = []
+        self.assertGreater(self._count_frame_changes(lambda: counts.append(mp.refresh_paths(bpy.context))), 0)
+        self.assertEqual(counts, [4])   # review 898f536d: re-measuring steps only the new frames, not all 7
         self.assertLess(mp._step_ms_per_frame, mp.FAST_STEP_MS_PER_FRAME)
         scene.frame_set(26)
         self.assertGreater(self._count_frame_changes(lambda: mp.refresh_paths(bpy.context)), 0)   # stepping again

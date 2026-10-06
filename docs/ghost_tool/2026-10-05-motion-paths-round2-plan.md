@@ -510,6 +510,10 @@ asked for Round E without the E0 gate. Decisions and findings:
   light rig on the fast sampler. A measurement now expires after `FAST_REMEASURE_S` (10 s); the next
   refresh steps and measures again (one stepped refresh per 10 s in a heavy scene). The light-scene test
   checks the real measurement instead of overriding it.
+- Review `898f536d`: an expired measurement made every fast-sampled path count as "no longer eligible",
+  so its whole window was re-stepped every 10 s. Eligibility and mode are now separate: a still-eligible
+  path keeps its (correct) fast samples and re-measuring steps only the new frames (4, not 7, in the
+  test); only a real loss of eligibility re-steps a path in full.
 - Tests: `tests/test_ghost_paths_fast.py` (10), all compared against Blender's frame stepping within 1e-4;
   the auto test checks that a light scene keeps stepping and a heavy one switches after one measurement.
 - Not checked headless (owner's 3.8.0 checklist): a real heavy production rig scrubbing without the

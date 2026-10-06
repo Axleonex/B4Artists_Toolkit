@@ -374,13 +374,16 @@ def refresh_paths(context: bpy.types.Context) -> int:
     measured_slow = (_step_ms_per_frame is not None and _step_ms_per_frame >= FAST_STEP_MS_PER_FRAME
                      and time.perf_counter() - _step_measured_at < FAST_REMEASURE_S)
     use_fast = FAST_SAMPLING and (not FAST_AUTO or measured_slow)
-    fast = {t.key for t in targets
-            if use_fast and fast_eligible(t.obj, t.key[1], t.key[2], scene=scene)}
+    # Eligibility and mode are separate: a fast-sampled path that is still eligible keeps its samples
+    # (they are right) when auto mode steps again to re-measure; only a path that lost eligibility is
+    # re-stepped in full (review 898f536d).
+    eligible = {t.key for t in targets if FAST_SAMPLING and fast_eligible(t.obj, t.key[1], t.key[2], scene=scene)}
+    fast = eligible if use_fast else set()
     for t in targets:
         if _anchors.get(t.key, t.anchor) != t.anchor:
             _dirty.add(t.key)   # HEAD <-> TAIL: the cached positions belong to the other point
         _anchors[t.key] = t.anchor
-        if t.key in _fast_keys and t.key not in fast:
+        if t.key in _fast_keys and t.key not in eligible:
             _dirty.add(t.key)   # sampled fast but no longer eligible: re-step every frame
             _fast_keys.discard(t.key)
     # Each path keeps the frames of its own window, so a wider per-path range keeps its extras.
