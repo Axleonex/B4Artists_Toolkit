@@ -19,10 +19,8 @@ from mathutils import Vector
 
 def _frame_at(layer, frame_current: int):
     """The annotation frame shown at ``frame_current``: the last one at or before it (frames hold), or None
-    before the first frame (nothing is drawn there yet). ``layer.active_frame`` is the same thing when the UI
-    has evaluated it; it is None headless."""
-    if layer.active_frame is not None:
-        return layer.active_frame
+    before the first frame (nothing is drawn there yet). Always computed from the frame list:
+    ``layer.active_frame`` is None headless and is not checked against the playhead (review 976236d6)."""
     frames = sorted(layer.frames, key=lambda fr: fr.frame_number)
     if not frames:
         return None

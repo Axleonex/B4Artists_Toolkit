@@ -64,6 +64,35 @@ class CrossingMath(unittest.TestCase):
         (t, point), = dm.crossings(u_path, [list(reversed(dash))], 0.02)   # drawn the other way: left leg
         self.assertEqual(tuple(round(c, 6) for c in point), (0.0, 1.0, 0.0))
 
+    def test_the_leg_whose_zone_the_dash_enters_first_wins(self):
+        # Review 976236d6: closest-approach order is not entry order. The dash starts inside the first leg's
+        # 0.2 tolerance zone (closest at its far end) and only later meets the vertical leg exactly.
+        path = [(0.0, 0.0, 0.0), (10.0, 0.0, 0.0), (5.0, 1.0, 0.0), (5.0, -1.0, 0.0)]
+        dash = [(0.0, 0.1, 0.0), (10.0, 0.0, 0.0)]
+        hit = dm.dash_crossing(path, [dash][0], 0.2)
+        self.assertLess(hit[0], 10.0 + 1e-9)                 # on the first leg (arclength <= 10)
+        hit = dm.dash_crossing(path, list(reversed(dash)), 0.2)
+        self.assertLess(hit[0], 10.0 + 1e-9)                 # from the other end it is on the first leg anyway
+        # One rule for every leg: the zone each is entered at. The raised leg (x = 2, 0.19 above the dash) is
+        # entered at x ~ 2.062; the leg at x = 2.05 lies at the dash's height, so its 0.2 zone starts at
+        # x = 2.25 and the dash (walking from x = 3) is inside it first. Comparing one leg's zone entry with
+        # the other's exact crossing (2.062 vs 2.05) would mix two rules.
+        legs = [(2.0, 2.0, 0.19), (2.0, -2.0, 0.19), (2.05, -2.0, 0.0), (2.05, 2.0, 0.0)]
+        hit = dm.dash_crossing(legs, [(3.0, 1.0, 0.0), (1.0, 1.0, 0.0)], 0.2)
+        self.assertAlmostEqual(hit[1][0], 2.05, places=6)
+        # From x = 1 too: that zone (x 1.85-2.25) holds the raised leg's narrower one (x ~ 1.94-2.06).
+        hit = dm.dash_crossing(legs, [(1.0, 1.0, 0.0), (3.0, 1.0, 0.0)], 0.2)
+        self.assertAlmostEqual(hit[1][0], 2.05, places=6)
+        # Lift the second leg to the same 0.19 offset: now the zones are equal and the nearer one wins.
+        level = [(2.0, 2.0, 0.19), (2.0, -2.0, 0.19), (2.05, -2.0, 0.19), (2.05, 2.0, 0.19)]
+        self.assertAlmostEqual(dm.dash_crossing(level, [(1.0, 1.0, 0.0), (3.0, 1.0, 0.0)], 0.2)[1][0], 2.0, places=6)
+        self.assertAlmostEqual(dm.dash_crossing(level, [(3.0, 1.0, 0.0), (1.0, 1.0, 0.0)], 0.2)[1][0], 2.05, places=6)
+
+    def test_zone_entry_is_exact(self):
+        a, b = (0.0, -5.0, 0.0), (0.0, 5.0, 0.0)             # a vertical leg at x = 0
+        u = dm._zone_entry(a, b, (-4.0, 0.0, 0.0), (4.0, 0.0, 0.0), 0.5, 1.0)
+        self.assertAlmostEqual(u, 3.0 / 8.0, places=9)       # x = -1: one unit away
+
     def test_crossings_in_3d_on_a_bent_path(self):
         path = [(0.0, 0.0, 0.0), (4.0, 0.0, 0.0), (4.0, 0.0, 6.0)]          # length 10, bent upward
         skew = [(4.05, -1.0, 3.0), (4.05, 1.0, 3.0)]                       # passes 0.05 from the vertical leg
@@ -123,6 +152,7 @@ class AnnotationStrokes(unittest.TestCase):
         self.layer.frames.remove(early)
         self.scene.frame_set(5)
         self.assertEqual(self.dk.annotation_strokes(self.scene), ([], 0))   # review 85372dd9: nothing before 10
+        self.assertIsNone(self.dk._frame_at(self.layer, 5))
 
     def test_refuses_screen_locked_strokes_and_skips_hidden_layers(self):
         frame = self.layer.frames.new(1)

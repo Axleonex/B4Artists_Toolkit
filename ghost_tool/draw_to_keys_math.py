@@ -78,21 +78,52 @@ def closest_points_between_segments(p1, q1, p2, q2) -> tuple[float, float, float
     return s, t, _length(_sub(c1, c2))
 
 
+def point_segment_distance(p, a, b) -> float:
+    ab = _sub(b, a)
+    denom = _dot(ab, ab)
+    s = _clamp01(_dot(_sub(p, a), ab) / denom) if denom > 1e-12 else 0.0
+    return _length(_sub(p, _add(a, _scale(ab, s))))
+
+
+def _zone_entry(a, b, p, q, t_closest: float, max_distance: float) -> float:
+    """Smallest u in [0, t_closest] where the dash point p + u (q - p) is within ``max_distance`` of segment
+    a-b. The distance from a point moving on a line to a segment is convex in u, and it is within the
+    tolerance at t_closest, so it only falls on [0, t_closest]: bisection finds the entry exactly."""
+    def inside(u):
+        return point_segment_distance(_add(p, _scale(_sub(q, p), u)), a, b) <= max_distance
+    if inside(0.0):
+        return 0.0
+    lo, hi = 0.0, t_closest
+    for _ in range(60):
+        mid = 0.5 * (lo + hi)
+        if inside(mid):
+            hi = mid
+        else:
+            lo = mid
+    return hi
+
+
 def dash_crossing(path: Sequence[Sequence[float]], dash: Sequence[Sequence[float]],
                   max_distance: float) -> Optional[tuple[float, Point]]:
-    """(arclength along the path, path point) where ``dash`` first comes within ``max_distance`` of the path,
-    walking the dash from its first point (a dash that wiggles across twice counts once), or None."""
+    """(arclength along the path, path point) of the path leg ``dash`` reaches first, or None.
+
+    Walking the dash from its first point, the crossing belongs to the path segment whose tolerance zone
+    (within ``max_distance``) the dash enters first; it is reported at that segment's closest approach.
+    A dash that wiggles across twice counts once."""
     cumulative = [0.0]
     for i in range(len(path) - 1):
         cumulative.append(cumulative[-1] + _length(_sub(path[i + 1], path[i])))
     for j in range(len(dash) - 1):
-        # Within one dash segment the first crossing is the one the dash reaches first (smallest position
-        # along the dash), not the closest one: a single stroke across both legs of a U meets the near leg first.
+        # Order by where the dash enters each leg's tolerance zone, not by its closest approach: a dash can be
+        # inside one leg's zone before it reaches another leg's closer point (review 976236d6).
         best = None
         for i in range(len(path) - 1):
             s, t, distance = closest_points_between_segments(path[i], path[i + 1], dash[j], dash[j + 1])
-            if distance <= max_distance and (best is None or (t, distance) < best[0]):
-                best = ((t, distance), i, s)
+            if distance > max_distance:
+                continue
+            entry = _zone_entry(path[i], path[i + 1], dash[j], dash[j + 1], t, max_distance)
+            if best is None or (entry, distance) < best[0]:
+                best = ((entry, distance), i, s)
         if best is not None:
             _order, i, s = best
             point = _add(path[i], _scale(_sub(path[i + 1], path[i]), s))
