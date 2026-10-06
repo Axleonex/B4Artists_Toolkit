@@ -835,9 +835,29 @@ def _set_path_color_before(self, value):
 
 
 class GhostPathEntry(bpy.types.PropertyGroup):
-    """One pinned motion path: an object, or a bone of an armature."""
+    """One pinned motion path: an object, or a bone of an armature. A folder row is an entry too
+    (is_folder): it stores its name in object_name and its paths point at its folder_key."""
 
-    object_name: bpy.props.StringProperty(name="Object", description="Object this path follows")  # type: ignore[assignment]
+    object_name: bpy.props.StringProperty(
+        name="Object", description="Object this path follows; on a folder row, the folder's name",
+    )  # type: ignore[assignment]
+    is_folder: bpy.props.BoolProperty(
+        name="Folder", description="This row is a folder that groups paths, not a path", default=False,
+    )  # type: ignore[assignment]
+    # Paths point at a folder by key, not by name, so renaming a folder keeps its paths in it.
+    folder_key: bpy.props.StringProperty(
+        name="Folder Key", description="Fixed identity of this folder row; its paths store it in Folder", default="",
+    )  # type: ignore[assignment]
+    folder: bpy.props.StringProperty(
+        name="In Folder", description="Key of the folder this path is in; empty is the top level", default="",
+    )  # type: ignore[assignment]
+    collapsed: bpy.props.BoolProperty(
+        name="Collapsed", description="Hide this folder's paths in the list", default=False,
+    )  # type: ignore[assignment]
+    # Saved with the file, like Blender's own selection: a checked set survives a save.
+    checked: bpy.props.BoolProperty(
+        name="Checked", description="Include this row in Apply to Checked and the Checked menu actions", default=False,
+    )  # type: ignore[assignment]
     bone_name: bpy.props.StringProperty(
         name="Bone", description="Bone this path follows; empty follows the object origin", default="",
     )  # type: ignore[assignment]
@@ -908,7 +928,9 @@ class GhostPathEntry(bpy.types.PropertyGroup):
 
     @property
     def label(self) -> str:
-        return f"{self.object_name} › {self.bone_name}" if self.bone_name else self.object_name
+        if self.bone_name and not self.is_folder:
+            return f"{self.object_name} › {self.bone_name}"
+        return self.object_name
 
 
 class GhostToolSceneSettings(bpy.types.PropertyGroup):

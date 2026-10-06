@@ -9,6 +9,7 @@ for the current selection.  Drawing is a separate POST_VIEW handler.
 from __future__ import annotations
 
 import time
+import uuid
 from dataclasses import dataclass
 from typing import Optional
 
@@ -115,15 +116,52 @@ def _resolve(scene: bpy.types.Scene, object_name: str, bone_name: str) -> Option
 
 
 def entry_is_missing(entry) -> bool:
+    if entry.is_folder:
+        return False
     return _resolve(entry.id_data, entry.object_name, entry.bone_name) is None   # id_data: the owning scene
+
+
+def folder_rows(settings) -> dict:
+    """Folder rows by key."""
+    return {e.folder_key: e for e in settings.motion_paths if e.is_folder}
+
+
+def entry_shown(entry, folders: dict) -> bool:
+    """A path draws when it and its folder are visible. A path whose folder is gone is a top-level path."""
+    if not entry.visible:
+        return False
+    parent = folders.get(entry.folder) if entry.folder else None
+    return parent is None or parent.visible
+
+
+def list_rows(settings) -> list[tuple[int, bool]]:
+    """(index, shown) in list order: top-level paths, then each folder followed by its paths.
+    A collapsed folder hides its paths."""
+    paths = settings.motion_paths
+    folders = folder_rows(settings)
+    children: dict[str, list[int]] = {}
+    rows: list[tuple[int, bool]] = []
+    for index, entry in enumerate(paths):
+        if entry.is_folder:
+            continue
+        if entry.folder in folders:
+            children.setdefault(entry.folder, []).append(index)
+        else:
+            rows.append((index, True))
+    for index, entry in enumerate(paths):
+        if entry.is_folder:
+            rows.append((index, True))
+            rows += [(child, not entry.collapsed) for child in children.get(entry.folder_key, [])]
+    return rows
 
 
 def pinned_targets(scene: bpy.types.Scene) -> list[PathTarget]:
     settings = scene.ghost_tool
     shared = tuple(desired_frames(settings, scene))
+    folders = folder_rows(settings)
     targets: list[PathTarget] = []
     for entry in settings.motion_paths:
-        if not entry.visible:
+        if entry.is_folder or not entry_shown(entry, folders):
             continue
         obj = _resolve(scene, entry.object_name, entry.bone_name)
         if obj is None:
@@ -362,7 +400,7 @@ def active_entry_index(context) -> int:
     """Index of the pinned path that follows the active bone or object, or -1."""
     key = _active_key(context)
     for index, entry in enumerate(context.scene.ghost_tool.motion_paths):
-        if (entry.object_name, entry.bone_name) == key:
+        if not entry.is_folder and (entry.object_name, entry.bone_name) == key:   # a folder may share an object's name
             return index
     return -1
 
@@ -384,7 +422,7 @@ def list_active_key(settings) -> Optional[PathKey]:
     paths = settings.motion_paths
     if 0 <= settings.motion_paths_index < len(paths):
         entry = paths[settings.motion_paths_index]
-        return (entry.object_name, entry.bone_name)
+        return None if entry.is_folder else (entry.object_name, entry.bone_name)
     return None
 
 
@@ -606,7 +644,60 @@ def _sync_markers_if_shown(context) -> None:
 
 
 def _next_color(settings) -> tuple[float, float, float]:
-    return PALETTE[len(settings.motion_paths) % len(PALETTE)]
+    return PALETTE[sum(1 for e in settings.motion_paths if not e.is_folder) % len(PALETTE)]
+
+
+def remove_rows(context, indexes) -> int:
+    """Remove list rows. A removed folder's paths move to the top level first, so removing a
+    folder never removes paths. Returns how many rows went."""
+    settings = context.scene.ghost_tool
+    paths = settings.motion_paths
+    doomed = sorted({i for i in indexes if 0 <= i < len(paths)}, reverse=True)
+    gone_folders = {paths[i].folder_key for i in doomed if paths[i].is_folder}
+    for entry in paths:
+        if entry.folder in gone_folders:
+            entry.folder = ""
+    for i in doomed:   # highest first, so the lower indexes stay valid
+        entry = paths[i]
+        key = None if entry.is_folder else (entry.object_name, entry.bone_name)
+        paths.remove(i)
+        if key is not None and key not in {(e.object_name, e.bone_name) for e in paths if not e.is_folder}:
+            forget(key)
+    if doomed:
+        settings.motion_paths_index = min(settings.motion_paths_index, len(paths) - 1)
+        _sync_markers_if_shown(context)
+        tag_viewport_redraw(context)
+    return len(doomed)
+
+
+APPLY_PROPS = ("color", "thickness", "dot_size", "in_front")
+
+
+def apply_to_checked(settings, include_range: bool) -> int:
+    """Copy the list's active path's look (and its range override when asked) to every other
+    checked path. Folders are never written to. Returns how many paths changed."""
+    paths = settings.motion_paths
+    if not 0 <= settings.motion_paths_index < len(paths):
+        return 0
+    source = paths[settings.motion_paths_index]
+    if source.is_folder:
+        return 0
+    names = APPLY_PROPS + (RANGE_PROPS if include_range else ())
+    count = 0
+    for index, entry in enumerate(paths):
+        if entry.is_folder or not entry.checked or index == settings.motion_paths_index:
+            continue
+        for name in names:
+            setattr(entry, name, getattr(source, name))
+        # Colour-before: copy the stored choice, or none, so a following path keeps following.
+        if "color_before_value" in source:
+            entry.color_before = source.color_before
+        elif "color_before_value" in entry:
+            del entry["color_before_value"]
+        if source.bone_name and entry.bone_name and entry.anchor != source.anchor:
+            entry.anchor = source.anchor   # an object origin has no tail; same anchor would re-sample
+        count += 1
+    return count
 
 
 class GHOST_OT_paths_add_selected(bpy.types.Operator):
@@ -624,7 +715,7 @@ class GHOST_OT_paths_add_selected(bpy.types.Operator):
 
     def execute(self, context):
         settings = context.scene.ghost_tool
-        existing = {(e.object_name, e.bone_name) for e in settings.motion_paths}
+        existing = {(e.object_name, e.bone_name) for e in settings.motion_paths if not e.is_folder}
         added = 0
         for (object_name, bone_name), _obj in selected_keys(context):
             if (object_name, bone_name) in existing:
@@ -647,7 +738,7 @@ class GHOST_OT_paths_add_selected(bpy.types.Operator):
 class GHOST_OT_paths_remove(bpy.types.Operator):
     bl_idname = "ghost_tool.paths_remove"
     bl_label = "Remove Path"
-    bl_description = "Unpin this motion path"
+    bl_description = "Unpin this motion path; removing a folder moves its paths to the top level"
     bl_options = {'REGISTER', 'UNDO'}
     index: bpy.props.IntProperty(default=-1)  # type: ignore[assignment]
 
@@ -656,11 +747,131 @@ class GHOST_OT_paths_remove(bpy.types.Operator):
         idx = self.index if self.index >= 0 else settings.motion_paths_index
         if not 0 <= idx < len(settings.motion_paths):
             return {'CANCELLED'}
-        entry = settings.motion_paths[idx]
-        key = (entry.object_name, entry.bone_name)
-        settings.motion_paths.remove(idx)
-        forget(key)
+        remove_rows(context, [idx])
         settings.motion_paths_index = min(idx, len(settings.motion_paths) - 1)
+        return {'FINISHED'}
+
+
+class GHOST_OT_paths_add_folder(bpy.types.Operator):
+    bl_idname = "ghost_tool.paths_add_folder"
+    bl_label = "Add Folder"
+    bl_description = "Add a folder row to group motion paths; checked paths move into it"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        settings = context.scene.ghost_tool
+        paths = settings.motion_paths
+        names = {e.object_name for e in paths if e.is_folder}
+        name, n = "Folder", 1
+        while name in names:
+            n += 1
+            name = f"Folder {n}"
+        keys = {e.folder_key for e in paths if e.is_folder}
+        key = uuid.uuid4().hex[:8]
+        while key in keys:
+            key = uuid.uuid4().hex[:8]
+        folder = paths.add()
+        folder.is_folder, folder.object_name, folder.folder_key = True, name, key
+        moved = 0
+        for entry in paths:
+            if entry.checked and not entry.is_folder:
+                entry.folder, entry.checked = key, False
+                moved += 1
+        settings.motion_paths_index = len(paths) - 1
+        tag_viewport_redraw(context)
+        self.report({'INFO'}, f"Added {name}" + (f" with {moved} path(s)" if moved else ""))
+        return {'FINISHED'}
+
+
+class GHOST_OT_paths_toggle_folder(bpy.types.Operator):
+    bl_idname = "ghost_tool.paths_toggle_folder"
+    bl_label = "Open or Close Folder"
+    bl_description = "Show or hide this folder's paths in the list"
+    bl_options = {'REGISTER', 'UNDO'}
+    index: bpy.props.IntProperty(default=-1)  # type: ignore[assignment]
+
+    def execute(self, context):
+        paths = context.scene.ghost_tool.motion_paths
+        if not 0 <= self.index < len(paths) or not paths[self.index].is_folder:
+            return {'CANCELLED'}
+        paths[self.index].collapsed = not paths[self.index].collapsed
+        return {'FINISHED'}
+
+
+class GHOST_OT_paths_apply_to_checked(bpy.types.Operator):
+    bl_idname = "ghost_tool.paths_apply_to_checked"
+    bl_label = "Apply to Checked"
+    bl_description = ("Copy the selected path's colours, thickness, dot size, in front and traced point "
+                      "to every checked path")
+    bl_options = {'REGISTER', 'UNDO'}
+    include_range: bpy.props.BoolProperty(
+        name="Include Range", description="Also copy the selected path's own frame range", default=False,
+    )  # type: ignore[assignment]
+
+    @classmethod
+    def poll(cls, context):
+        settings = context.scene.ghost_tool
+        paths = settings.motion_paths
+        if not 0 <= settings.motion_paths_index < len(paths) or paths[settings.motion_paths_index].is_folder:
+            cls.poll_message_set("Select a path in the list to copy from")
+            return False
+        if not any(e.checked and not e.is_folder for i, e in enumerate(paths) if i != settings.motion_paths_index):
+            cls.poll_message_set("Check the paths to copy to")
+            return False
+        return True
+
+    def execute(self, context):
+        count = apply_to_checked(context.scene.ghost_tool, self.include_range)
+        _sync_markers_if_shown(context)
+        tag_viewport_redraw(context)
+        self.report({'INFO'}, f"Applied to {count} path(s)")
+        return {'FINISHED'}
+
+
+class GHOST_OT_paths_checked_action(bpy.types.Operator):
+    bl_idname = "ghost_tool.paths_checked_action"
+    bl_label = "Checked Paths"
+    bl_description = "Show, hide, remove, reset the range of, or move the checked rows"
+    bl_options = {'REGISTER', 'UNDO'}
+    action: bpy.props.EnumProperty(
+        name="Action",
+        description="What to do with the checked rows",
+        items=[
+            ('SHOW', "Show", "Show the checked rows"),
+            ('HIDE', "Hide", "Hide the checked rows"),
+            ('REMOVE', "Remove", "Remove the checked rows; a removed folder's paths move to the top level"),
+            ('RESET_RANGE', "Reset Range", "Checked paths follow the global range again"),
+            ('MOVE', "Move to Folder", "Move the checked paths into a folder, or to the top level"),
+        ],
+        default='SHOW',
+    )  # type: ignore[assignment]
+    folder: bpy.props.StringProperty(
+        name="Folder", description="Key of the folder to move into; empty moves to the top level", default="",
+    )  # type: ignore[assignment]
+
+    def execute(self, context):
+        settings = context.scene.ghost_tool
+        paths = settings.motion_paths
+        checked = [i for i, e in enumerate(paths) if e.checked]
+        if not checked:
+            self.report({'WARNING'}, "No rows are checked")
+            return {'CANCELLED'}
+        if self.action == 'REMOVE':
+            count = remove_rows(context, checked)
+            self.report({'INFO'}, f"Removed {count} row(s)")
+            return {'FINISHED'}
+        if self.action == 'MOVE' and self.folder and self.folder not in folder_rows(settings):
+            self.report({'WARNING'}, "That folder no longer exists")
+            return {'CANCELLED'}
+        for i in checked:
+            entry = paths[i]
+            if self.action in {'SHOW', 'HIDE'}:
+                entry.visible = self.action == 'SHOW'
+            elif not entry.is_folder:   # folders have no range and do not nest
+                if self.action == 'RESET_RANGE':
+                    entry.use_own_range = False
+                else:
+                    entry.folder = self.folder
         _sync_markers_if_shown(context)
         tag_viewport_redraw(context)
         return {'FINISHED'}
@@ -784,7 +995,7 @@ class GHOST_OT_paths_set_color(bpy.types.Operator):
 
     def invoke(self, context, event):
         paths = context.scene.ghost_tool.motion_paths
-        if not 0 <= self.index < len(paths):   # -1 would silently pick the last path
+        if not 0 <= self.index < len(paths) or paths[self.index].is_folder:   # -1 would silently pick the last path
             return {'CANCELLED'}
         entry = paths[self.index]
         for name in dialog_props(entry):
@@ -831,6 +1042,10 @@ class GHOST_OT_paths_set_color(bpy.types.Operator):
 CLASSES: tuple[type, ...] = (
     GHOST_OT_paths_add_selected,
     GHOST_OT_paths_remove,
+    GHOST_OT_paths_add_folder,
+    GHOST_OT_paths_toggle_folder,
+    GHOST_OT_paths_apply_to_checked,
+    GHOST_OT_paths_checked_action,
     GHOST_OT_paths_clear,
     GHOST_OT_paths_toggle_visible,
     GHOST_OT_paths_toggle_front,
