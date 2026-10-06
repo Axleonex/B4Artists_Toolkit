@@ -23,12 +23,7 @@ Always delete `ghost_tool/__pycache__` after a run (`rm -rf ghost_tool/__pycache
 
 **Objective:** Bind change evidence before any file changes (LapArt rule: route with declared paths first).
 
-**Step 1:** Run the router once, declaring every file this plan touches:
-```bash
-cd /g/LapArt/hermes-agent-self-evolution && "G:/LapArt/.hermes/hermes-agent/venv/Scripts/python.exe" scripts/prime-code-execute.py --harness claude-code --workspace "G:/LapArt/Projects/B4Artists_Toolkit" --project B4Artists_Toolkit --task "Ghost Tool 3.5.0 motion paths" --task-tier standard \
-  --declared-path ghost_tool/motion_paths.py --declared-path ghost_tool/ghost_data.py --declared-path ghost_tool/ghost_pipeline.py --declared-path ghost_tool/ui_panel.py --declared-path ghost_tool/__init__.py --declared-path tests/test_ghost_paths.py --declared-path README.md --declared-path releases/VERSIONS.md
-```
-Expected: JSON with `"decision_record": {"authorized": true, ...}` and a `fallback_receipt_path`. Read `actual_lane`; on this Windows host it falls back to native continuation. Do not edit anything before this prints.
+**Step 1:** Record the change before editing, declaring every file this plan touches: `ghost_tool/motion_paths.py`, `ghost_tool/ghost_data.py`, `ghost_tool/ghost_pipeline.py`, `ghost_tool/ui_panel.py`, `ghost_tool/__init__.py`, `tests/test_ghost_paths.py`, `README.md`, `releases/VERSIONS.md`. Do not edit anything before that is done.
 
 ---
 
