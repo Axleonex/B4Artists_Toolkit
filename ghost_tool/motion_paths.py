@@ -46,9 +46,9 @@ _handles: dict[tuple[str, str, int, float], Optional[tuple[Vector, Vector]]] = {
 # Round E: keys whose cached samples came from the fast sampler. A key that stops being fast-eligible
 # (a constraint added, a parent animated) is re-stepped even if no depsgraph update dirtied it.
 _fast_keys: set = set()
-# Off until the path tests that read the scene's state after a refresh stop relying on frame stepping
-# re-evaluating it (Round E part 3 switches it on). Off: always step frames.
-FAST_SAMPLING = False
+# On: eligible paths are read straight from their curves. A refresh then no longer leaves the scene
+# re-evaluated at the playhead as a side effect of stepping. Off: always step frames.
+FAST_SAMPLING = True
 _draw_handler = None
 _draw_handler_2d = None
 _last_refresh_ms: float = 0.0

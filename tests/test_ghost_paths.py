@@ -261,6 +261,7 @@ class GhostPaths(unittest.TestCase):
         e.anchor = 'TAIL'                                    # update callback drops the cache
         self.assertTrue(mp.request_missing_samples(bpy.context))
         mp.refresh_paths(bpy.context)
+        self.scene.frame_set(10)   # fast sampling leaves the scene as it was: evaluate the playhead's pose here
         tail = rig.matrix_world @ rig.evaluated_get(bpy.context.evaluated_depsgraph_get()).pose.bones["lower"].tail
         self.assertGreater((mp._cache[C(rig.name, "lower", 10.0)] - head).length, 1e-4)
         self.assertLess((mp._cache[C(rig.name, "lower", 10.0)] - tail).length, 1e-4)
@@ -386,6 +387,7 @@ class GhostPaths(unittest.TestCase):
         self.assertEqual(mp.refresh_paths(bpy.context), 7)
         e.anchor = 'TAIL'
         self.assertEqual(mp.refresh_paths(bpy.context), 7)
+        self.scene.frame_set(10)   # fast sampling leaves the scene as it was: evaluate the playhead's pose here
         dg = bpy.context.evaluated_depsgraph_get()
         ev = rig.evaluated_get(dg)
         tail = ev.matrix_world @ ev.pose.bones["lower"].tail
