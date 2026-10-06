@@ -201,11 +201,15 @@ def _cache_keys() -> set[PathKey]:
 
 
 def refresh_paths(context: bpy.types.Context) -> int:
-    """Sample what the window needs and the cache lacks. Returns samples taken."""
-    global _cache_scene
+    """Sample what the window needs and the cache lacks. Returns samples taken.
+
+    The timing behind the slow warning always describes this refresh: one that
+    samples nothing costs nothing, so the warning clears."""
+    global _cache_scene, _last_refresh_ms
     scene = context.scene
     settings = scene.ghost_tool
     if not settings.paths_enabled:
+        _last_refresh_ms = 0.0
         return 0
     if get_scene_id(scene) != _cache_scene:
         clear_cache()   # positions sampled in another scene may differ (drivers, constraints)
@@ -229,8 +233,8 @@ def refresh_paths(context: bpy.types.Context) -> int:
             if (t.key[0], t.key[1], f) not in _cache:
                 missing.setdefault(f, []).append(t)
     if not missing:
+        _last_refresh_ms = 0.0
         return 0
-    global _last_refresh_ms
     count = 0
     t0 = time.perf_counter()
     with scene_sampling(scene):

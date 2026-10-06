@@ -824,6 +824,20 @@ class GhostPaths(unittest.TestCase):
         self.assertEqual(ui_panel._slow_label(199.0), "")
         self.assertEqual(ui_panel._slow_label(201.0), "paths are slow — reduce range")
 
+    def test_slow_warning_clears_when_refresh_needs_no_samples(self):
+        # Review eadfb96d F1: a zero-sample refresh returned before updating the timing,
+        # so the warning stayed after reducing the range to cached frames.
+        rig = _rig()
+        e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "upper"
+        mp.refresh_paths(bpy.context)
+        mp._last_refresh_ms = 500.0                      # a slow refresh happened
+        self.assertEqual(mp.refresh_paths(bpy.context), 0)
+        self.assertEqual(mp.last_refresh_ms(), 0.0)
+        mp._last_refresh_ms = 500.0
+        self.settings["paths_enabled"] = False           # no callback: test the refresh alone
+        self.assertEqual(mp.refresh_paths(bpy.context), 0)
+        self.assertEqual(mp.last_refresh_ms(), 0.0)
+
     def test_rename_marks_missing_and_rename_back_restores(self):
         # A5 / design §6.
         rig = _rig()
