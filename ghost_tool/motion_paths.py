@@ -32,10 +32,10 @@ SLOW_RGB = (0.2, 0.4, 1.0)
 FAST_RGB = (1.0, 0.3, 0.1)
 KEY_DOT_COLOR = (1.0, 1.0, 1.0, 0.95)
 
-PathKey = tuple[str, str]  # (object_name, bone_name); bone_name "" = object origin
+PathKey = tuple[str, str, int]  # (object_name, bone_name, vertex_index); "" / -1 = object origin
 ORIGIN_PATHS = ("location", "delta_location")   # the object channels that move its origin
 
-_cache: dict[tuple[str, str, float], Vector] = {}
+_cache: dict[tuple[str, str, int, float], Vector] = {}   # (*PathKey, frame)
 _dirty: set[PathKey] = set()
 _draw_handler = None
 _draw_handler_2d = None
@@ -115,6 +115,10 @@ def _resolve(scene: bpy.types.Scene, object_name: str, bone_name: str) -> Option
     return obj
 
 
+def entry_key(entry) -> PathKey:
+    return (entry.object_name, entry.bone_name, entry.vertex_index)
+
+
 def entry_is_missing(entry) -> bool:
     if entry.is_folder:
         return False
@@ -167,7 +171,7 @@ def pinned_targets(scene: bpy.types.Scene) -> list[PathTarget]:
         if obj is None:
             continue
         frames = tuple(desired_frames(settings, scene, entry)) if entry.use_own_range else shared
-        targets.append(PathTarget((entry.object_name, entry.bone_name), obj, entry.anchor,
+        targets.append(PathTarget(entry_key(entry), obj, entry.anchor,
                                   tuple(entry.color), entry.thickness, True,
                                   color_before=tuple(entry.color_before), dot_size=entry.dot_size,
                                   in_front=entry.in_front, frames=frames))
@@ -179,7 +183,7 @@ def selected_keys(context: bpy.types.Context) -> list[tuple[PathKey, bpy.types.O
     result: list[tuple[PathKey, bpy.types.Object]] = []
     if context.mode == 'POSE':
         for pb in getattr(context, 'selected_pose_bones', None) or []:
-            result.append(((pb.id_data.name, pb.name), pb.id_data))
+            result.append(((pb.id_data.name, pb.name, -1), pb.id_data))
         return result
     for obj in getattr(context, 'selected_objects', None) or []:
         if obj.get("ghost_tool_mesh_ghost"):
@@ -187,9 +191,9 @@ def selected_keys(context: bpy.types.Context) -> list[tuple[PathKey, bpy.types.O
         if obj.type == 'ARMATURE':
             roots = [b for b in obj.pose.bones if b.parent is None]
             if roots:
-                result.append(((obj.name, roots[0].name), obj))
+                result.append(((obj.name, roots[0].name, -1), obj))
                 continue
-        result.append(((obj.name, ""), obj))
+        result.append(((obj.name, "", -1), obj))
     return result
 
 
@@ -211,7 +215,7 @@ def follow_targets(context: bpy.types.Context, pinned_keys: set[PathKey]) -> lis
 def all_targets(context: bpy.types.Context) -> list[PathTarget]:
     pinned = pinned_targets(context.scene)
     # Follow is for unpinned selections: a pinned path hidden by its eye or its folder stays hidden.
-    pinned_keys = {(e.object_name, e.bone_name) for e in context.scene.ghost_tool.motion_paths if not e.is_folder}
+    pinned_keys = {entry_key(e) for e in context.scene.ghost_tool.motion_paths if not e.is_folder}
     return pinned + follow_targets(context, pinned_keys)
 
 
@@ -228,9 +232,11 @@ def mark_dirty(key: PathKey) -> None:
     _dirty.add(key)
 
 
-def forget(key: PathKey) -> None:
-    """Drop one path's cached positions, so a draw sees it as unsampled and asks for a refresh."""
-    for stale in [c for c in _cache if (c[0], c[1]) == key]:
+def forget(key) -> None:
+    """Drop one path's cached positions, so a draw sees it as unsampled and asks for a refresh.
+    An (object, bone) pair means vertex -1: the Head/Tail callback passes one, and only bones have a tail."""
+    key = tuple(key) if len(key) == 3 else (*key, -1)
+    for stale in [c for c in _cache if c[:3] == key]:
         del _cache[stale]
     _anchors.pop(key, None)
 
@@ -275,7 +281,7 @@ def mark_dirty_for_id(block) -> None:
 
 
 def _cache_keys() -> set[PathKey]:
-    return {(o, b) for (o, b, _f) in _cache}
+    return {c[:3] for c in _cache}
 
 
 def refresh_paths(context: bpy.types.Context) -> int:
@@ -298,18 +304,18 @@ def refresh_paths(context: bpy.types.Context) -> int:
             _dirty.add(t.key)   # HEAD <-> TAIL: the cached positions belong to the other point
         _anchors[t.key] = t.anchor
     # Each path keeps the frames of its own window, so a wider per-path range keeps its extras.
-    wanted = {(t.key[0], t.key[1], f) for t in targets for f in t.frames}
+    wanted = {(*t.key, f) for t in targets for f in t.frames}
     for stale in [c for c in _cache if c not in wanted]:
         del _cache[stale]
     for t in targets:
         if t.key in _dirty:
             for f in t.frames:
-                _cache.pop((t.key[0], t.key[1], f), None)
+                _cache.pop((*t.key, f), None)
     _dirty.clear()   # a dirty key that is no longer a target lost its samples with the wanted set
     missing: dict[float, list[PathTarget]] = {}
     for t in targets:
         for f in t.frames:
-            if (t.key[0], t.key[1], f) not in _cache:
+            if (*t.key, f) not in _cache:
                 missing.setdefault(f, []).append(t)
     if not missing:
         _last_refresh_ms = 0.0
@@ -321,7 +327,7 @@ def refresh_paths(context: bpy.types.Context) -> int:
             scene.frame_set(int(f), subframe=f - int(f))
             depsgraph = context.evaluated_depsgraph_get()
             for t in missing[f]:
-                _cache[(t.key[0], t.key[1], f)] = _sample(depsgraph, t.obj, t.key[1], t.anchor)
+                _cache[(*t.key, f)] = _sample(depsgraph, t.obj, t.key[1], t.anchor)
                 count += 1
     _last_refresh_ms = (time.perf_counter() - t0) * 1000.0
     debug(f"Motion paths: sampled {count} positions in {_last_refresh_ms:.1f} ms")
@@ -357,7 +363,7 @@ def path_segments(context, target: PathTarget, frames=None) -> list[tuple[Vector
     frames = target.frames if frames is None else frames
     settings = context.scene.ghost_tool
     current = float(context.scene.frame_current)
-    pts = [(f, _cache.get((target.key[0], target.key[1], f))) for f in frames]
+    pts = [(f, _cache.get((*target.key, f))) for f in frames]
     pts = [(f, p) for f, p in pts if p is not None]
     if len(pts) < 2:
         return []
@@ -393,16 +399,16 @@ def path_segments(context, target: PathTarget, frames=None) -> list[tuple[Vector
 def _active_key(context) -> Optional[PathKey]:
     pb = getattr(context, 'active_pose_bone', None)
     if pb is not None:
-        return (pb.id_data.name, pb.name)
+        return (pb.id_data.name, pb.name, -1)
     obj = getattr(context, 'active_object', None)
-    return (obj.name, "") if obj is not None else None
+    return (obj.name, "", -1) if obj is not None else None
 
 
 def active_entry_index(context) -> int:
     """Index of the pinned path that follows the active bone or object, or -1."""
     key = _active_key(context)
     for index, entry in enumerate(context.scene.ghost_tool.motion_paths):
-        if not entry.is_folder and (entry.object_name, entry.bone_name) == key:   # a folder may share an object's name
+        if not entry.is_folder and entry_key(entry) == key:   # a folder may share an object's name
             return index
     return -1
 
@@ -424,7 +430,7 @@ def list_active_key(settings) -> Optional[PathKey]:
     paths = settings.motion_paths
     if 0 <= settings.motion_paths_index < len(paths):
         entry = paths[settings.motion_paths_index]
-        return None if entry.is_folder else (entry.object_name, entry.bone_name)
+        return None if entry.is_folder else entry_key(entry)
     return None
 
 
@@ -474,8 +480,8 @@ def draw_motion_paths() -> None:
                     batch = batch_for_shader(shader, 'LINES', {"pos": verts})
                     shader.bind(); shader.uniform_float("color", color); batch.draw(shader)
             if settings.paths_show_key_dots:
-                dots = [_cache[(target.key[0], target.key[1], f)] for f in key_frames(target)
-                        if (target.key[0], target.key[1], f) in _cache]
+                dots = [_cache[(*target.key, f)] for f in key_frames(target)
+                        if (*target.key, f) in _cache]
                 if dots:
                     gpu.state.point_size_set(float(target.dot_size))
                     batch = batch_for_shader(shader, 'POINTS', {"pos": dots})
@@ -505,7 +511,7 @@ def draw_frame_numbers() -> None:
     blf.color(font, 0.9, 0.9, 0.9, 0.9)
     for target in all_targets(context):
         for f in target.frames:
-            pos = _cache.get((target.key[0], target.key[1], f))
+            pos = _cache.get((*target.key, f))
             if pos is None:
                 continue
             p2 = view3d_utils.location_3d_to_region_2d(region, rv3d, pos)
@@ -616,7 +622,7 @@ def request_missing_samples(context) -> bool:
     if not settings.paths_enabled:
         return False
     stale = get_scene_id(scene) != _cache_scene
-    if not stale and all((t.key[0], t.key[1], f) in _cache
+    if not stale and all((*t.key, f) in _cache
                          for t in all_targets(context) for f in t.frames):
         return False
     from .ghost_pipeline import GhostPipeline, _schedule_deferred_update
@@ -661,9 +667,9 @@ def remove_rows(context, indexes) -> int:
             entry.folder = ""
     for i in doomed:   # highest first, so the lower indexes stay valid
         entry = paths[i]
-        key = None if entry.is_folder else (entry.object_name, entry.bone_name)
+        key = None if entry.is_folder else entry_key(entry)
         paths.remove(i)
-        if key is not None and key not in {(e.object_name, e.bone_name) for e in paths if not e.is_folder}:
+        if key is not None and key not in {entry_key(e) for e in paths if not e.is_folder}:
             forget(key)
     if doomed:
         settings.motion_paths_index = min(settings.motion_paths_index, len(paths) - 1)
@@ -726,16 +732,16 @@ class GHOST_OT_paths_add_selected(bpy.types.Operator):
 
     def execute(self, context):
         settings = context.scene.ghost_tool
-        existing = {(e.object_name, e.bone_name) for e in settings.motion_paths if not e.is_folder}
+        existing = {entry_key(e) for e in settings.motion_paths if not e.is_folder}
         added = 0
-        for (object_name, bone_name), _obj in selected_keys(context):
-            if (object_name, bone_name) in existing:
+        for key, _obj in selected_keys(context):
+            if key in existing:
                 continue
             entry = settings.motion_paths.add()
-            entry.object_name, entry.bone_name = object_name, bone_name
+            entry.object_name, entry.bone_name, entry.vertex_index = key
             entry.color = _next_color(settings)
             entry.color_before = tuple(c * 0.55 for c in entry.color)
-            existing.add((object_name, bone_name))
+            existing.add(key)
             added += 1
         settings["paths_enabled"] = True
         settings.motion_paths_index = len(settings.motion_paths) - 1

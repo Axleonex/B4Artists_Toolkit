@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from test_ghost_paths import GhostPaths, _cube, _rig, bpy, gd, ghost_tool, mp  # noqa: E402
+from test_ghost_paths import C, GhostPaths, K, _cube, _rig, bpy, gd, ghost_tool, mp  # noqa: E402
 
 
 class _Layout:
@@ -166,7 +166,7 @@ class GhostPathFolders(unittest.TestCase):
         self._folder("Arms", "k1").visible = False
         self._path(rig.name, "lower", folder="k1")
         self._path(rig.name, "upper")
-        self.assertEqual([t.key for t in mp.pinned_targets(self.scene)], [(rig.name, "upper")])
+        self.assertEqual([t.key for t in mp.pinned_targets(self.scene)], [K(rig.name, "upper")])
         self.settings.motion_paths[0].visible = True
         self.assertEqual(len(mp.pinned_targets(self.scene)), 2)
 
@@ -181,7 +181,7 @@ class GhostPathFolders(unittest.TestCase):
         self.assertEqual(mp.all_targets(bpy.context), [])
         self.select_bones(rig, "lower")
         self.settings.motion_paths.clear()   # unpinned now: Follow draws it grey
-        self.assertEqual([(t.key, t.pinned) for t in mp.all_targets(bpy.context)], [((rig.name, "lower"), False)])
+        self.assertEqual([(t.key, t.pinned) for t in mp.all_targets(bpy.context)], [(K(rig.name, "lower"), False)])
         bpy.ops.object.mode_set(mode='OBJECT')
         self.settings.paths_follow_selection = False
         self._drop_deferred_timer()
@@ -205,7 +205,7 @@ class GhostPathFolders(unittest.TestCase):
         bpy.ops.ghost_tool.paths_remove(index=0)
         self.assertEqual([(e.bone_name, e.folder, e.is_folder) for e in self.settings.motion_paths],
                          [("lower", "", False)])
-        self.assertIn((rig.name, "lower", 10.0), mp._cache)   # the path kept its samples
+        self.assertIn(C(rig.name, "lower", 10.0), mp._cache)   # the path kept its samples
         self._drop_deferred_timer()
 
     def test_add_folder_takes_checked_paths(self):
@@ -337,8 +337,8 @@ class GhostPathFolders(unittest.TestCase):
         # the owned set (owned_markers filters the store by ownership, so it cannot see a leak).
         self.assertEqual({g.bone_name for g in gd.GhostStore.get(self.scene)}, {"lower"})
         self.assertEqual([e.bone_name for e in self.settings.motion_paths], ["lower"])
-        self.assertFalse(any(k[:2] == (rig.name, "upper") for k in mp._cache))
-        self.assertTrue(any(k[:2] == (rig.name, "lower") for k in mp._cache))
+        self.assertFalse(any(k[:3] == K(rig.name, "upper") for k in mp._cache))
+        self.assertTrue(any(k[:3] == K(rig.name, "lower") for k in mp._cache))
         self.assertEqual(bpy.ops.ghost_tool.paths_checked_action(action='REMOVE'), {'CANCELLED'})   # none checked
         self.settings.paths_show_markers = False
         self._drop_deferred_timer()

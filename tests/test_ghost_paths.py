@@ -21,6 +21,16 @@ from ghost_tool import motion_paths as mp  # noqa: E402
 from ghost_tool.utils import get_scene_id  # noqa: E402
 
 
+def K(object_name, bone="", v=-1):
+    """A path key: (object, bone, vertex); "" and -1 follow the object origin."""
+    return (object_name, bone, v)
+
+
+def C(object_name, bone, frame, v=-1):
+    """A cache key: the path key plus the frame."""
+    return (object_name, bone, v, frame)
+
+
 def _clear_scene():
     for obj in list(bpy.data.objects):
         bpy.data.objects.remove(obj)
@@ -122,7 +132,7 @@ class GhostPaths(unittest.TestCase):
         e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "lower"
         m = self.settings.motion_paths.add(); m.object_name, m.bone_name = rig.name, "nope"
         targets = mp.pinned_targets(self.scene)
-        self.assertEqual([(t.key, t.obj) for t in targets], [((rig.name, "lower"), rig)])
+        self.assertEqual([(t.key, t.obj) for t in targets], [(K(rig.name, "lower"), rig)])
         self.assertTrue(mp.entry_is_missing(m))
         self.assertFalse(mp.entry_is_missing(e))
 
@@ -132,15 +142,15 @@ class GhostPaths(unittest.TestCase):
         self.settings.paths_follow_selection = True
         self.select_bones(rig, "upper", "lower")
         keys = {t.key for t in mp.follow_targets(bpy.context, pinned_keys=set())}
-        self.assertEqual(keys, {(rig.name, "upper"), (rig.name, "lower")})
+        self.assertEqual(keys, {K(rig.name, "upper"), K(rig.name, "lower")})
         self.assertTrue(all(t.color == mp.FOLLOW_COLOR and not t.pinned for t in mp.follow_targets(bpy.context, pinned_keys=set())))
         # a pinned bone is not duplicated
-        self.assertEqual({t.key for t in mp.follow_targets(bpy.context, pinned_keys={(rig.name, "upper")})}, {(rig.name, "lower")})
+        self.assertEqual({t.key for t in mp.follow_targets(bpy.context, pinned_keys={K(rig.name, "upper")})}, {K(rig.name, "lower")})
         bpy.ops.object.mode_set(mode='OBJECT')
         for obj in bpy.data.objects:
             obj.select_set(obj is cube)
         bpy.context.view_layer.objects.active = cube
-        self.assertEqual({t.key for t in mp.follow_targets(bpy.context, pinned_keys=set())}, {(cube.name, "")})
+        self.assertEqual({t.key for t in mp.follow_targets(bpy.context, pinned_keys=set())}, {K(cube.name)})
         self.settings.paths_follow_selection = False
         self.assertEqual(mp.follow_targets(bpy.context, pinned_keys=set()), [])
 
@@ -154,7 +164,7 @@ class GhostPaths(unittest.TestCase):
         self.scene.frame_set(8)
         dg = bpy.context.evaluated_depsgraph_get()
         expect = rig.evaluated_get(dg).matrix_world @ rig.evaluated_get(dg).pose.bones["lower"].head
-        self.assertLess((mp._cache[(rig.name, "lower", 8.0)] - expect).length, 1e-5)
+        self.assertLess((mp._cache[C(rig.name, "lower", 8.0)] - expect).length, 1e-5)
         self.scene.frame_set(10)
 
     def test_refresh_is_incremental(self):
@@ -164,14 +174,14 @@ class GhostPaths(unittest.TestCase):
         self.assertEqual(mp.refresh_paths(bpy.context), 0)
         self.scene.frame_set(11)
         self.assertEqual(mp.refresh_paths(bpy.context), 1)   # only frame 14 is new
-        self.assertNotIn((rig.name, "upper", 7.0), mp._cache)  # frame 7 left the window
+        self.assertNotIn(C(rig.name, "upper", 7.0), mp._cache)  # frame 7 left the window
 
     def test_object_path_uses_origin(self):
         cube = _cube()
         e = self.settings.motion_paths.add(); e.object_name = cube.name
         mp.refresh_paths(bpy.context)
         self.scene.frame_set(13)
-        self.assertLess((mp._cache[(cube.name, "", 13.0)] - cube.matrix_world.translation).length, 1e-5)
+        self.assertLess((mp._cache[C(cube.name, "", 13.0)] - cube.matrix_world.translation).length, 1e-5)
         self.scene.frame_set(10)
 
     def test_key_edit_dirties_only_that_object(self):
@@ -247,13 +257,13 @@ class GhostPaths(unittest.TestCase):
         rig = _rig()
         e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "lower"
         mp.refresh_paths(bpy.context)
-        head = mp._cache[(rig.name, "lower", 10.0)].copy()
+        head = mp._cache[C(rig.name, "lower", 10.0)].copy()
         e.anchor = 'TAIL'                                    # update callback drops the cache
         self.assertTrue(mp.request_missing_samples(bpy.context))
         mp.refresh_paths(bpy.context)
         tail = rig.matrix_world @ rig.evaluated_get(bpy.context.evaluated_depsgraph_get()).pose.bones["lower"].tail
-        self.assertGreater((mp._cache[(rig.name, "lower", 10.0)] - head).length, 1e-4)
-        self.assertLess((mp._cache[(rig.name, "lower", 10.0)] - tail).length, 1e-4)
+        self.assertGreater((mp._cache[C(rig.name, "lower", 10.0)] - head).length, 1e-4)
+        self.assertLess((mp._cache[C(rig.name, "lower", 10.0)] - tail).length, 1e-4)
 
     def test_object_key_frames_only_on_origin_channels(self):
         cube = _cube()                                    # location keys on 1 and 20
@@ -265,7 +275,7 @@ class GhostPaths(unittest.TestCase):
     def test_pinned_targets_skip_objects_outside_scene(self):
         cube = _cube()
         e = self.settings.motion_paths.add(); e.object_name, e.bone_name = cube.name, ""
-        self.assertEqual([t.key for t in mp.pinned_targets(self.scene)], [(cube.name, "")])
+        self.assertEqual([t.key for t in mp.pinned_targets(self.scene)], [K(cube.name)])
         for collection in list(cube.users_collection):   # review 9a: still in bpy.data, not in the scene
             collection.objects.unlink(cube)
         self.assertIn(cube.name, bpy.data.objects)
@@ -291,7 +301,7 @@ class GhostPaths(unittest.TestCase):
         e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, "upper"
         bpy.context.view_layer.objects.active = None
         gp.GhostPipeline.get(self.scene)._run_live_update(bpy.context, self.settings, "h")
-        self.assertIn((rig.name, "upper", 10.0), mp._cache)
+        self.assertIn(C(rig.name, "upper", 10.0), mp._cache)
         self.assertTrue(gp._any_live(self.settings))
         self.settings.paths_enabled = False
         self.assertFalse(gp._any_live(self.settings))
@@ -379,7 +389,7 @@ class GhostPaths(unittest.TestCase):
         dg = bpy.context.evaluated_depsgraph_get()
         ev = rig.evaluated_get(dg)
         tail = ev.matrix_world @ ev.pose.bones["lower"].tail
-        self.assertLess((mp._cache[(rig.name, "lower", 10.0)] - tail).length, 1e-5)
+        self.assertLess((mp._cache[C(rig.name, "lower", 10.0)] - tail).length, 1e-5)
 
     def test_marker_ownership_is_per_scene(self):
         # Review round 2: a module-wide uid set let scene B forget scene A's markers.
@@ -447,7 +457,7 @@ class GhostPaths(unittest.TestCase):
         cube = _cube()
         e = self.settings.motion_paths.add(); e.object_name = cube.name
         self.assertEqual(mp.refresh_paths(bpy.context), 7)
-        here = mp._cache[(cube.name, "", 10.0)].copy()
+        here = mp._cache[C(cube.name, "", 10.0)].copy()
         other = bpy.data.scenes.new("PathsOther")
         try:
             other.collection.objects.link(cube)
@@ -466,11 +476,11 @@ class GhostPaths(unittest.TestCase):
             self.assertGreater((expected - here).length, 0.5)   # the scenes really differ
             fake = SimpleNamespace(scene=other, evaluated_depsgraph_get=other_depsgraph)
             self.assertEqual(mp.refresh_paths(fake), 7)
-            self.assertLess((mp._cache[(cube.name, "", 10.0)] - expected).length, 1e-5)
+            self.assertLess((mp._cache[C(cube.name, "", 10.0)] - expected).length, 1e-5)
         finally:
             bpy.data.scenes.remove(other)
         self.assertEqual(mp.refresh_paths(bpy.context), 7)
-        self.assertLess((mp._cache[(cube.name, "", 10.0)] - here).length, 1e-5)
+        self.assertLess((mp._cache[C(cube.name, "", 10.0)] - here).length, 1e-5)
 
     def test_marker_resync_keeps_pin_and_selection(self):
         # Review round 4: re-syncing on every refresh replaced markers and lost pin/selection.
@@ -540,7 +550,7 @@ class GhostPaths(unittest.TestCase):
         markers = [g for g in gd.GhostStore.get(self.scene) if g.bone_name == bone]
         self.assertTrue(markers)
         for g in markers:
-            sample = mp._cache.get((rig.name, bone, g.frame))
+            sample = mp._cache.get(C(rig.name, bone, g.frame))
             self.assertIsNotNone(sample, f"{g.channel} marker at unsampled frame {g.frame}")
             self.assertLess((Vector(g.world_position) - sample).length, 1e-5, f"{g.channel} @ {g.frame}")
         return markers
@@ -646,7 +656,7 @@ class GhostPaths(unittest.TestCase):
         mp.mark_dirty_for_id(parent.animation_data.action)
         self.assertEqual(mp.refresh_paths(bpy.context), 7)
         self.scene.frame_set(13)
-        self.assertLess((mp._cache[(child.name, "", 13.0)] - child.matrix_world.translation).length, 1e-5)
+        self.assertLess((mp._cache[C(child.name, "", 13.0)] - child.matrix_world.translation).length, 1e-5)
         self.scene.frame_set(10)
 
     def test_ghost_tools_off_drops_path_cache(self):
@@ -663,7 +673,7 @@ class GhostPaths(unittest.TestCase):
         self.settings.is_active = True
         self.assertEqual(mp.refresh_paths(bpy.context), 7)
         self.scene.frame_set(13)
-        self.assertLess((mp._cache[(cube.name, "", 13.0)] - cube.matrix_world.translation).length, 1e-5)
+        self.assertLess((mp._cache[C(cube.name, "", 13.0)] - cube.matrix_world.translation).length, 1e-5)
         self.scene.frame_set(10)
 
     def test_undo_redo_drops_path_cache(self):
@@ -704,7 +714,7 @@ class GhostPaths(unittest.TestCase):
         gp._last_depsgraph_check = 0.0
         fake = SimpleNamespace(updates=[SimpleNamespace(id=rig_a), SimpleNamespace(id=rig_b)])
         gp._on_depsgraph_update_pipeline(self.scene, fake)
-        self.assertEqual(mp._dirty, {(rig_a.name, "upper"), (rig_b.name, "upper")})
+        self.assertEqual(mp._dirty, {K(rig_a.name, "upper"), K(rig_b.name, "upper")})
         if bpy.app.timers.is_registered(gp._deferred_live_update):
             bpy.app.timers.unregister(gp._deferred_live_update)
         gp._deferred_update_pending = False
@@ -722,7 +732,7 @@ class GhostPaths(unittest.TestCase):
         self.select_bones(rig, "upper")
         mp.clear_cache()
         bpy.ops.ghost_tool.paths_add_selected()
-        self.assertIn((rig.name, "upper", 10.0), mp._cache)
+        self.assertIn(C(rig.name, "upper", 10.0), mp._cache)
         self.assertEqual(self.scene.frame_current, 10)
 
     def test_path_setting_change_schedules_refresh(self):
@@ -849,7 +859,7 @@ class GhostPaths(unittest.TestCase):
         self.assertTrue(mp.entry_is_missing(e))
         self.assertEqual(mp.pinned_targets(self.scene), [])
         mp.refresh_paths(bpy.context)
-        self.assertNotIn((rig.name, "lower", 10.0), mp._cache)
+        self.assertNotIn(C(rig.name, "lower", 10.0), mp._cache)
         rig.data.bones["foo"].name = "lower"
         self.assertFalse(mp.entry_is_missing(e))
         self.assertEqual(mp.refresh_paths(bpy.context), 7)
@@ -877,10 +887,10 @@ class GhostPaths(unittest.TestCase):
         self.settings.paths_follow_selection = True
         self.select_bones(rig, "upper", "lower")
         self.assertEqual({(t.key, t.pinned) for t in mp.all_targets(bpy.context)},
-                         {((rig.name, "upper"), True), ((rig.name, "lower"), False)})
+                         {(K(rig.name, "upper"), True), (K(rig.name, "lower"), False)})
         for pb in rig.pose.bones:
             pb.select = False
-        self.assertEqual([(t.key, t.pinned) for t in mp.all_targets(bpy.context)], [((rig.name, "upper"), True)])
+        self.assertEqual([(t.key, t.pinned) for t in mp.all_targets(bpy.context)], [(K(rig.name, "upper"), True)])
         bpy.ops.object.mode_set(mode='OBJECT')
         self._drop_deferred_timer()
 
@@ -912,7 +922,7 @@ class GhostPaths(unittest.TestCase):
         mp.refresh_paths(bpy.context)
         segs = mp.path_segments(bpy.context, target, mp.desired_frames(self.settings, self.scene))
         self.assertEqual(len(segs), 4)
-        p9, p11 = mp._cache[(rig.name, "lower", 9.0)], mp._cache[(rig.name, "lower", 11.0)]
+        p9, p11 = mp._cache[C(rig.name, "lower", 9.0)], mp._cache[C(rig.name, "lower", 11.0)]
         self.assertLess((segs[1][1] - p9.lerp(p11, 0.5)).length, 1e-6)   # split on the drawn line
         self.assertEqual(segs[1][1], segs[2][0])
         self.assertEqual([tuple(c[:3]) for _p0, _p1, c in segs], [(0.0, 0.0, 1.0)] * 2 + [(1.0, 0.0, 0.0)] * 2)
@@ -978,7 +988,7 @@ class GhostPaths(unittest.TestCase):
             e = self.settings.motion_paths.add(); e.object_name, e.bone_name = rig.name, bone
         self.settings.motion_paths_index = 1
         self.assertTrue(self.settings.paths_active_glow)
-        self.assertEqual(mp.list_active_key(self.settings), (rig.name, "lower"))
+        self.assertEqual(mp.list_active_key(self.settings), K(rig.name, "lower"))
         upper, lower = mp.pinned_targets(self.scene)
         self.assertEqual(mp._passes_for(lower, True, True), [(4, 0.25), (0, None)])
         self.assertEqual(mp._passes_for(lower, True, False), [(0, None)])
@@ -998,15 +1008,15 @@ class GhostPaths(unittest.TestCase):
         self.assertEqual(tb.frames, (9.0, 10.0, 11.0))
         self.assertEqual(len(ta.frames), 7)
         self.assertEqual(mp.refresh_paths(bpy.context), 7 + 3)
-        self.assertIn((rig.name, "upper", 7.0), mp._cache)
-        self.assertNotIn((rig.name, "lower", 7.0), mp._cache)
+        self.assertIn(C(rig.name, "upper", 7.0), mp._cache)
+        self.assertNotIn(C(rig.name, "lower", 7.0), mp._cache)
         self.assertEqual(len(mp.path_segments(bpy.context, tb)), 2)   # its own frames by default
         self.assertFalse(mp.request_missing_samples(bpy.context))
         b.own_before = 6   # wider than the global window: frames 4..11, five of them new
         self.assertTrue(mp.request_missing_samples(bpy.context))
         self.assertEqual(mp.refresh_paths(bpy.context), 5)
-        self.assertIn((rig.name, "lower", 4.0), mp._cache)
-        self.assertNotIn((rig.name, "upper", 4.0), mp._cache)
+        self.assertIn(C(rig.name, "lower", 4.0), mp._cache)
+        self.assertNotIn(C(rig.name, "upper", 4.0), mp._cache)
         b.own_range_mode, b.own_step = 'SCENE', 5
         self.assertEqual(mp.pinned_targets(self.scene)[1].frames, (1.0, 6.0, 11.0, 16.0))
         b.own_range_mode, b.own_start, b.own_end, b.own_step = 'CUSTOM', 2, 4, 1
