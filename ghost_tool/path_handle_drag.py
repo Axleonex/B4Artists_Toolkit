@@ -62,6 +62,70 @@ def solve_handle_values(transform, world_point: Vector, axes) -> dict[int, float
     return {axis: local[axis] for axis in axes}
 
 
+class HandleDrag:
+    """One handle drag without the modal plumbing, so tests can drive it.
+
+    The transform is read at the key's frame (not the playhead's), the curves keyed there are snapshot,
+    and every move writes handle values only."""
+
+    def __init__(self, scene, target: mp.PathTarget, frame: float, side: str):
+        self.target, self.frame, self.side = target, frame, side
+        self.aligned = False
+        self.cache_key = (*target.key, frame)
+        self.original_handles = mp._handles.get(self.cache_key)
+        with scene_sampling(scene):
+            scene.frame_set(int(frame), subframe=frame - int(frame))
+            self.transform = mp.handle_transform(target, bpy.context.evaluated_depsgraph_get())
+        self.curves = keyed_curves(target, self.transform[0], frame) if self.transform else {}
+        self.ok = bool(self.transform and self.curves and self.original_handles)
+        if not self.ok:
+            return
+        self.snapshots = {axis: snapshot_fcurve(fc) for axis, fc in self.curves.items()}
+        self.depth = self.original_handles[0 if side == 'LEFT' else 1].copy()
+        # An unkeyed axis keeps the value the drawn handle had (its curve's value at the key frame).
+        unkeyed = solve_handle_values(self.transform, self.original_handles[0], range(3))
+        self._unkeyed = [unkeyed.get(axis, 0.0) for axis in range(3)]
+        self._last = None
+
+    def move_to(self, world_point: Vector) -> None:
+        self._last = world_point.copy()
+        for axis, value in solve_handle_values(self.transform, world_point, self.curves).items():
+            set_handle_values(self.curves[axis], self.frame, self.side, value, aligned=self.aligned)
+        mp._handles[self.cache_key] = self.handle_points()
+
+    def toggle_aligned(self) -> bool:
+        self.aligned = not self.aligned
+        if self._last is not None:
+            self.move_to(self._last)
+        return self.aligned
+
+    def handle_points(self) -> tuple[Vector, Vector]:
+        _data_path, to_world, offset, _current = self.transform
+        left, right = [], []
+        for axis in range(3):
+            fc = self.curves.get(axis)
+            key = next((k for k in fc.keyframe_points if abs(k.co.x - self.frame) < 1e-4), None) if fc else None
+            left.append(key.handle_left.y if key else self._unkeyed[axis])
+            right.append(key.handle_right.y if key else self._unkeyed[axis])
+        return to_world @ (Vector(left) + offset), to_world @ (Vector(right) + offset)
+
+    def cancel(self) -> None:
+        for axis, fc in self.curves.items():
+            restore_fcurve(fc, self.snapshots[axis])
+        mp._handles[self.cache_key] = self.original_handles
+
+    def confirm(self, context) -> None:
+        # The curve between the keys changed: re-sample this path and every path that follows the object
+        # (a pinned child, a constraint user), as a key edit in the Graph Editor would.
+        mp.mark_dirty_for_id(self.target.obj)
+        mp.refresh_paths(context)
+
+
+def _status(drag: HandleDrag) -> str:
+    return (f"Drag handle · Aligned: {'on' if drag.aligned else 'off'} (Alt toggles) · "
+            "Click: confirm · Esc/Right-click: cancel")
+
+
 class GHOST_OT_path_handle_drag(bpy.types.Operator):
     """Drag a Bezier handle shown on a motion path: the handle's value changes, its time and the key stay.
     Alt toggles Aligned (the opposite handle turns with it); Esc or right-click restores."""
@@ -81,60 +145,30 @@ class GHOST_OT_path_handle_drag(bpy.types.Operator):
                                    event.mouse_region_x, event.mouse_region_y)
         if pick is None:
             return {'PASS_THROUGH'}   # the marker drag or selection gets the event
-        self._target, self._frame, self._side = pick
-        with scene_sampling(context.scene):   # the transform at the key's frame, not the playhead's
-            context.scene.frame_set(int(self._frame), subframe=self._frame - int(self._frame))
-            self._transform = mp.handle_transform(self._target, context.evaluated_depsgraph_get())
-        if self._transform is None:
+        self._drag = HandleDrag(context.scene, *pick)
+        if not self._drag.ok:
             return {'PASS_THROUGH'}
-        self._curves = keyed_curves(self._target, self._transform[0], self._frame)
-        if not self._curves:
-            return {'PASS_THROUGH'}
-        self._snapshots = {axis: snapshot_fcurve(fc) for axis, fc in self._curves.items()}
-        self._cache_key = (*self._target.key, self._frame)
-        self._original_handles = mp._handles.get(self._cache_key)
-        self._depth = self._original_handles[0 if self._side == 'LEFT' else 1].copy()
-        # An unkeyed axis keeps the value the drawn handle had (its curve's value at the key frame).
-        unkeyed = solve_handle_values(self._transform, self._original_handles[0], range(3))
-        self._unkeyed = [unkeyed.get(axis, 0.0) for axis in range(3)]
-        self._aligned = False
         self._via_click = event.type == 'LEFTMOUSE'
         context.window_manager.modal_handler_add(self)
-        context.workspace.status_text_set("Drag handle · Alt: aligned · Click: confirm · Esc/Right-click: cancel")
+        context.workspace.status_text_set(_status(self._drag))
         return {'RUNNING_MODAL'}
 
-    def _apply(self, context, x, y):
-        world = view3d_utils.region_2d_to_location_3d(context.region, context.region_data, (x, y), self._depth)
-        for axis, value in solve_handle_values(self._transform, world, self._curves).items():
-            set_handle_values(self._curves[axis], self._frame, self._side, value, aligned=self._aligned)
-        mp._handles[self._cache_key] = self._handle_points()
-        tag_viewport_redraw(context)
-
-    def _handle_points(self):
-        _data_path, to_world, offset, _current = self._transform
-        left, right = [], []
-        for axis in range(3):
-            fc = self._curves.get(axis)
-            key = next((k for k in fc.keyframe_points if abs(k.co.x - self._frame) < 1e-4), None) if fc else None
-            left.append(key.handle_left.y if key else self._unkeyed[axis])
-            right.append(key.handle_right.y if key else self._unkeyed[axis])
-        return to_world @ (Vector(left) + offset), to_world @ (Vector(right) + offset)
-
     def modal(self, context, event):
+        drag = self._drag
         if event.type == 'MOUSEMOVE':
-            self._apply(context, event.mouse_region_x, event.mouse_region_y)
+            drag.move_to(view3d_utils.region_2d_to_location_3d(
+                context.region, context.region_data, (event.mouse_region_x, event.mouse_region_y), drag.depth))
+            tag_viewport_redraw(context)
         elif event.type in {'LEFT_ALT', 'RIGHT_ALT'} and event.value == 'PRESS':
-            self._aligned = not self._aligned
-            self._apply(context, event.mouse_region_x, event.mouse_region_y)
+            drag.toggle_aligned()
+            context.workspace.status_text_set(_status(drag))
+            tag_viewport_redraw(context)
         elif event.type == 'LEFTMOUSE' and event.value == ('RELEASE' if self._via_click else 'PRESS'):
+            drag.confirm(context)
             self._finish(context)
-            mp.mark_dirty(self._target.key)   # the curve between the keys changed: re-sample this path
-            mp.refresh_paths(context)
             return {'FINISHED'}
         elif event.type in {'RIGHTMOUSE', 'ESC'} and event.value == 'PRESS':
-            for axis, fc in self._curves.items():
-                restore_fcurve(fc, self._snapshots[axis])
-            mp._handles[self._cache_key] = self._original_handles
+            drag.cancel()
             self._finish(context)
             return {'CANCELLED'}
         return {'RUNNING_MODAL'}

@@ -274,6 +274,81 @@ class GhostPathHandles(unittest.TestCase):
             self.settings.paths_show_handles = False
         self._drop_deferred_timer()
 
+    def test_free_after_aligned_unlinks_both_handles(self):
+        # Review bf07774d: switching back to Free left the opposite handle Aligned.
+        from ghost_tool.fcurve_utils import set_handle_values
+        cube = _cube()
+        fc = self._x_curve(cube)
+        key = next(k for k in fc.keyframe_points if k.co.x == 20.0)
+        set_handle_values(fc, 20.0, 'RIGHT', key.co.y + 2.0, aligned=True)
+        left = tuple(key.handle_left)
+        set_handle_values(fc, 20.0, 'RIGHT', key.co.y + 1.0)
+        self.assertEqual((key.handle_left_type, key.handle_right_type), ('FREE', 'FREE'))
+        self.assertEqual(tuple(key.handle_left), left)   # the other handle keeps its position
+
+    def _drag_setup(self, side='RIGHT'):
+        from mathutils import Vector
+        from ghost_tool.path_handle_drag import HandleDrag
+        cube = _cube()
+        self._pin(cube)
+        self.settings.paths_range_mode = 'SCENE'
+        with patch.object(ghost_tool.ghost_data, "_schedule_path_refresh"):
+            self.settings.paths_show_handles = True
+        mp.refresh_paths(bpy.context)
+        target = mp.pinned_targets(self.scene)[0]
+        drag = HandleDrag(self.scene, target, 20.0, side)
+        self.assertTrue(drag.ok)
+        self.assertEqual(self.scene.frame_current, 10)   # reading the transform at 20 restored the playhead
+        return cube, target, drag, Vector
+
+    def test_handle_drag_moves_toggles_and_cancels(self):
+        # Review bf07774d: drive the drag itself (move, Alt, cancel), not only its helpers.
+        from ghost_tool.fcurve_utils import snapshot_fcurve
+        cube, target, drag, Vector = self._drag_setup()
+        fc = self._x_curve(cube)
+        before = snapshot_fcurve(fc)
+        wanted = drag.original_handles[1] + Vector((0.5, 0.0, 0.0))
+        drag.move_to(wanted)
+        self.assertLess((mp._handles[C(cube.name, "", 20.0)][1] - wanted).length, 1e-4)   # drawn end follows
+        key = next(k for k in fc.keyframe_points if k.co.x == 20.0)
+        self.assertEqual(key.handle_right_type, 'FREE')
+        self.assertTrue(drag.toggle_aligned())                                # Alt: the pair turns Aligned
+        self.assertEqual((key.handle_left_type, key.handle_right_type), ('ALIGNED', 'ALIGNED'))
+        self.assertFalse(drag.toggle_aligned())                               # Alt again: Free
+        self.assertEqual((key.handle_left_type, key.handle_right_type), ('FREE', 'FREE'))
+        drag.cancel()                                                         # Esc / right-click
+        self.assertEqual(snapshot_fcurve(fc), before)
+        self.assertEqual(mp._handles[C(cube.name, "", 20.0)], drag.original_handles)
+        with patch.object(ghost_tool.ghost_data, "_schedule_path_refresh"):
+            self.settings.paths_show_handles = False
+        self._drop_deferred_timer()
+
+    def test_handle_drag_confirm_resamples_paths_that_follow_the_object(self):
+        # Review bf07774d: confirming re-sampled only the dragged path; a pinned child kept old positions.
+        cube, target, drag, Vector = self._drag_setup('LEFT')   # the left handle of key 20 shapes frames 1-20
+        bpy.ops.object.empty_add(location=(0.0, 1.0, 0.0))
+        child = bpy.context.object
+        child.parent = cube
+        self._pin(child)
+        mp.refresh_paths(bpy.context)
+        old_child = mp._cache[C(child.name, "", 15.0)].copy()
+        drag.move_to(drag.original_handles[0] + Vector((-3.0, 0.0, 0.0)))   # bends the curve before frame 20
+        drag.confirm(bpy.context)
+        self.scene.frame_set(15)
+        fresh = child.matrix_world.translation.copy()
+        self.scene.frame_set(10)
+        self.assertGreater((fresh - old_child).length, 1e-3)                  # the drag moved the child at 15
+        self.assertLess((mp._cache[C(child.name, "", 15.0)] - fresh).length, 1e-5)
+        self.scene.frame_set(15)
+        cube_fresh = cube.matrix_world.translation.copy()
+        self.scene.frame_set(10)
+        self.assertLess((mp._cache[C(cube.name, "", 15.0)] - cube_fresh).length, 1e-5)   # and the dragged path
+        from ghost_tool.path_handle_drag import GHOST_OT_path_handle_drag
+        self.assertIn('UNDO', GHOST_OT_path_handle_drag.bl_options)   # one undo step on confirm
+        with patch.object(ghost_tool.ghost_data, "_schedule_path_refresh"):
+            self.settings.paths_show_handles = False
+        self._drop_deferred_timer()
+
     def test_handle_drag_registered_ahead_of_the_marker_drag(self):
         self.assertEqual(bpy.ops.ghost_tool.path_handle_drag.get_rna_type().identifier.lower(),
                          "ghost_tool_ot_path_handle_drag")

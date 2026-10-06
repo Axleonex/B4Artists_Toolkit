@@ -675,8 +675,9 @@ def set_handle_values(fcurve: bpy.types.FCurve, frame: float, side: str, value: 
                       aligned: bool = False) -> bool:
     """Set the value of one handle of the key at ``frame``; its time stays, and so does the key.
 
-    FREE: the other handle is untouched. ALIGNED: both handles become Aligned and the other one turns to
-    stay collinear through the key, its time unchanged too. Returns False when there is no key at ``frame``.
+    FREE: the other handle keeps its position; if it was Aligned it becomes Free too, so the pair is
+    unlinked (Free after Aligned). ALIGNED: both handles become Aligned and the other one turns to stay
+    collinear through the key, its time unchanged too. Returns False when there is no key at ``frame``.
     Handle types are set before the values, and the curve is not recalculated afterwards, because an
     Aligned recalculation keeps the other handle's length and would move its time."""
     if side not in ('LEFT', 'RIGHT'):
@@ -686,10 +687,15 @@ def set_handle_values(fcurve: bpy.types.FCurve, frame: float, side: str, value: 
         return False
     if aligned:
         key.handle_left_type = key.handle_right_type = 'ALIGNED'
-    elif side == 'LEFT':
-        key.handle_left_type = 'FREE'
     else:
-        key.handle_right_type = 'FREE'
+        if side == 'LEFT':
+            key.handle_left_type = 'FREE'
+            if key.handle_right_type == 'ALIGNED':
+                key.handle_right_type = 'FREE'
+        else:
+            key.handle_right_type = 'FREE'
+            if key.handle_left_type == 'ALIGNED':
+                key.handle_left_type = 'FREE'
     handle_x = (key.handle_left if side == 'LEFT' else key.handle_right).x
     other = key.handle_right if side == 'LEFT' else key.handle_left
     other_value = other.y
