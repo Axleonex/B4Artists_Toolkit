@@ -23,7 +23,9 @@ Always delete `ghost_tool/__pycache__` after a run (`rm -rf ghost_tool/__pycache
 
 **Objective:** Bind change evidence before any file changes (LapArt rule: route with declared paths first).
 
-**Step 1:** Record the change before editing, declaring every file this plan touches: `ghost_tool/motion_paths.py`, `ghost_tool/ghost_data.py`, `ghost_tool/ghost_pipeline.py`, `ghost_tool/ui_panel.py`, `ghost_tool/__init__.py`, `tests/test_ghost_paths.py`, `README.md`, `releases/VERSIONS.md`. Do not edit anything before that is done.
+**Step 1:** Route the change through the project's change-evidence router, declaring every file this plan touches in this repository: `ghost_tool/motion_paths.py`, `ghost_tool/ghost_data.py`, `ghost_tool/ghost_pipeline.py`, `ghost_tool/ui_panel.py`, `ghost_tool/__init__.py`, `tests/test_ghost_paths.py`, `README.md`, `releases/VERSIONS.md`, and for the release (Task 17) `releases/b4_ghost_tool_v3.5.0.zip` and `releases/b4_ghost_tool_v3.4.1.zip`. The VERSIONS.md outside this repository (Task 17 step 5) is routed in its own run.
+
+Expected: a decision record with `"authorized": true` and a fallback receipt path; read `actual_lane`, not only the recommended lane. Do not edit anything before the router prints this.
 
 ---
 
