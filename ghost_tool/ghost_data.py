@@ -858,6 +858,12 @@ class GhostPathEntry(bpy.types.PropertyGroup):
     checked: bpy.props.BoolProperty(
         name="Checked", description="Include this row in Apply to Checked and the Checked menu actions", default=False,
     )  # type: ignore[assignment]
+    # A third target kind (design §8 decision 12): a mesh vertex. -1 follows the object origin or a bone,
+    # so files from before 3.7 load unchanged.
+    vertex_index: bpy.props.IntProperty(
+        name="Vertex", description="Mesh vertex this path follows; -1 follows the object origin or the bone",
+        default=-1, min=-1,
+    )  # type: ignore[assignment]
     bone_name: bpy.props.StringProperty(
         name="Bone", description="Bone this path follows; empty follows the object origin", default="",
     )  # type: ignore[assignment]
@@ -928,7 +934,11 @@ class GhostPathEntry(bpy.types.PropertyGroup):
 
     @property
     def label(self) -> str:
-        if self.bone_name and not self.is_folder:
+        if self.is_folder:
+            return self.object_name
+        if self.vertex_index >= 0:
+            return f"{self.object_name} · v{self.vertex_index}"
+        if self.bone_name:
             return f"{self.object_name} › {self.bone_name}"
         return self.object_name
 
