@@ -5,7 +5,7 @@ Three animation add-ons for **Bforartists** (the Blender fork), plus an optional
 | Tool | Version | What it does |
 |---|---|---|
 | **Anim Assist** | 12.1.0 | A production animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Inspired by Maya's AnimBot. |
-| **Ghost Tool** | 3.5.0 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. |
+| **Ghost Tool** | 3.6.0 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. |
 | **B4Artists Machine Learning** | 1.0.0 | **Experimental; Not Tested:** Local, procedural posing and motion for humanoid and quadruped rigs, in a guided five-step panel (Setup, Pose, Motion, Review, Polish): pose with draggable targets, generate the in-betweens between key poses, keep or discard the result, then add contacts, cleanup and secondary motion. Key poses show as markers in the Timeline and Dope Sheet. Everything runs on your machine — nothing is uploaded. |
 
 ### Optional add-on: BoneCraft BFA (rigging)
@@ -27,7 +27,7 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.1.0 | [b4_anim_assist_v12.1.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.0/b4_anim_assist_v12.1.0.zip) |
-| Ghost Tool 3.5.0 | [b4_ghost_tool_v3.5.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v3.5.0/b4_ghost_tool_v3.5.0.zip) |
+| Ghost Tool 3.6.0 | [b4_ghost_tool_v3.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v3.6.0/b4_ghost_tool_v3.6.0.zip) |
 | B4Artists Machine Learning 1.0.0 | [b4artists_ml_v1.0.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ml-v1.0.0/b4artists_ml_v1.0.0.zip) |
 | BoneCraft BFA 8.9.9 (optional) | [BoneCraft-BFA-8.9.9.zip](releases/BoneCraft-BFA-8.9.9.zip) |
 
