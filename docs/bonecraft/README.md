@@ -4,8 +4,8 @@ BoneCraft rigs a humanoid character so you can animate it with Anim Assist,
 and Ghost Tool. It is optional: the animation tools work on any
 rig, and BoneCraft does not need them.
 
-- **Version:** 9.1.2
-- **Download:** [`releases/BoneCraft-BFA-9.1.2.zip`](../../releases/BoneCraft-BFA-9.1.2.zip)
+- **Version:** 9.2.0
+- **Download:** [`releases/BoneCraft-BFA-9.2.0.zip`](../../releases/BoneCraft-BFA-9.2.0.zip)
 - **Requires:** Bforartists (it refuses to run on standard Blender)
 
 ## BoneCraft and BoneForge
@@ -64,12 +64,21 @@ not both).
 
 ### Premade rigs shelf
 
-In Object Mode the **BoneCraft Rigs** asset shelf (bottom of the viewport) holds
-BoneCraft's Basic Humanoid. Drag it onto your character, then in **Rig Builder →
-Quick Rig** pick the mesh and click **Fit Dropped Rig** (tick Fit to Mesh and/or
-Auto-Weight first). Rigify's rigs stay as Quick Rig buttons. BoneCraft adds a
-"BoneCraft Rigs" entry to your asset libraries while enabled and removes only
-that entry when disabled.
+In Object Mode the **BoneCraft Rigs** shelf starts with all nine bundled starters visible.
+Use the catalog selector to filter Humans, Quadrupeds or Other Animals. The viewport header's
+**Starter Rigs** switch returns to the regular asset shelf and saves your choice. The catalog
+button, or **Add → Armature → Starter Rig Catalog**, opens the same thumbnail chooser.
+
+Basic Humanoid needs no Rigify. The other thumbnails stay visible while Rigify is off:
+selecting or dropping one offers **Enable Rigify & Add Rig** or Cancel. Accepting enables
+the installed Rigify and adds that starter. Cancellation or a missing preset adds nothing.
+A single **Enable Rigify** button is also available in the viewport header.
+
+Click a thumbnail to add a rig, or drag into the viewport. A selected mesh is fitted by
+default; weighting and control generation start off and can be changed in Adjust Last
+Operation. Without a mesh, select the added rig, pick the mesh in Quick Rig and click
+**Fit Dropped Rig**. Inspect joint placement before weighting or generating controls.
+These starters are skeletons/metarigs, not finished animator control rigs.
 
 If the Properties editor is very narrow, Rig Builder switches to a compact layout
 with short labels; drag it wider for the full layout.
@@ -84,7 +93,9 @@ from ordinary bones and constraints.
 
 ## What was checked
 
-- The current 9.1.2 source passed the full Bforartists 5.2.0 headless suite, including the Crescent Rose parts and rig reload checks. See the [current verification](../releases/2026-10-11/VERIFICATION.md).
+- The 9.2.0 starter catalog passes targeted Bforartists 5.2.0 host checks and native click, drag, dependency cancellation, activation and undo/redo checks. See the [release notes](releases/9.2.0/RELEASE-NOTES.md).
+
+- The earlier 9.1.2 source passed the full Bforartists 5.2.0 headless suite, including the Crescent Rose parts and rig reload checks. See the [current verification](../releases/2026-10-11/VERIFICATION.md).
 
 - A 12-step hand check in the viewport (detection, markers, control rig,
   picker, IK/FK switching, wrist twist, elbow/knee bends, face, shoulders,
