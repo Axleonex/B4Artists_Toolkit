@@ -1,6 +1,6 @@
 # Ghost Tool 4.2.5 display location
 
-Date: 2026-10-12. Status: implemented and committed locally; push/publication requires owner confirmation.
+Date: 2026-10-12. Status: owner confirmed merge update on 2026-10-12; integration verified for push. GitHub Release publication remains pending.
 Design: [approved design](design.md). Execution: [implementation plan](plan.md).
 
 ## Behavior
@@ -16,8 +16,8 @@ Edit > Preferences > Add-ons > Ghost Tool now has **Display Location** before He
 Switching immediately reveals the chosen side region, enables native shelf tabs when needed,
 selects Ghost Tool after layout, and redraws ordinary viewports. Existing native panels remain
 available. Save preferences normally to persist the choice. Side regions are not forcibly
-closed when switching back to the header. Shared controls, target folds, separate-window access
-and settings-editor access are present in all three homes. Dedicated Ghost Tool/settings windows
+closed when switching back to the header. Shared controls and target folds are present in all three homes. The concurrently merged
+4.2.4 cleanup keeps legacy window-launch and Settings Editor buttons removed from all homes. Dedicated Ghost Tool/settings windows
 are excluded from ordinary homes to avoid duplicate controls.
 
 Missing preferences default to the header. On an unsupported host, a saved left-shelf choice
@@ -37,18 +37,19 @@ match source bytes and its internal version is `(4, 2, 5)`.
 | Suite | Passed / run |
 |---|---:|
 | Display location | 11 / 11 |
+| Council UI and gesture regressions | 12 / 12 |
 | Compare target UI | 6 / 6 |
 | Marker target UI | 6 / 6 |
 | Afterimage UI | 9 / 9 |
 | Header UI | 16 / 16 |
 | Authoring | 20 / 20 |
 | Snapshot targets and identity | 16 / 16 |
-| Total | 84 / 84 |
+| Total | 96 / 96 |
 
 Host: Blender 5.1.2, build `ec6e62d40fa9`, with only the Bforartists registration gate overridden
 in the test runner. Tests cover enum labels/default/save behavior, missing/invalid preferences,
 exclusive home polls, unsupported-left fallback, region reveal/redraw, category selection,
-stale callback cancellation, shared controls/folds and clean registration lifecycle. Supported
+stale callback cancellation, shared controls/folds, absent legacy launch buttons and clean registration lifecycle. Supported
 left-shelf polls/reveal use stand-ins; actual TOOLS registration and rendering require Bforartists.
 The afterimage registration assertion now checks exact host-dependent identities: three native
 shelf classes on supported hosts, zero on stock Blender. This replaces the former unconditional
@@ -67,8 +68,8 @@ Local evidence: `C:/Users/AtonLotus/AppData/Local/Temp/ghost425-location-header.
 
 ## Package and remaining host check
 
-Archive: `releases/b4_ghost_tool_v4.2.5.zip`, 216,217 bytes.
-SHA256: `2fc2ab0dc1c97acfe36c76e77298ea6226123666097602666241ddb8713dad85`.
+Archive: `releases/b4_ghost_tool_v4.2.5.zip`, 216,002 bytes.
+SHA256: `5cfb8cee78051dc2242b68dd14f88ec17fad7a6ffdf058b6cea3deaed0db05d5`.
 The historical 4.2.2 and 4.2.3 ZIP hashes remain unchanged. This updates the unpublished 4.2.5
 candidate; no GitHub release was created or changed.
 
@@ -84,3 +85,12 @@ Code Router recommended/actual T3_PRIME_OMP, policy fingerprint
 `29fa965cada3128ffe57b5d85d3b9f8e5d749d780954ea14ba5f45dcca1ad8b8`.
 Windows preflight reports RUNTIME_UNAVAILABLE because its OMP worker requires Unix sockets;
 the static policy permits native continuation within the approved scope.
+
+## Integration with concurrent main updates
+
+Before push, main advanced to `481871b`, including BoneCraft 9.2.0 and Ghost Tool 4.2.4.
+The merge preserves all BoneCraft source/artifacts unchanged and retains the 4.2.4 removal
+of legacy launch buttons in all three homes. Its Council UI/gesture suite adds twelve passing
+checks. The final package passes all 96 checks. The 4.2.4 ZIP remains byte-identical with SHA256
+`1c32458cb0faaaeb562bc3577c24e7680acdcce759cf67826ac1fd052826e9bb`.
+A durable [package receipt](package-receipt.json) records the final archive and suite counts.

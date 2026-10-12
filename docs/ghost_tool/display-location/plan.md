@@ -33,3 +33,11 @@ Enable the add-on in an isolated temporary user-config directory, save SIDEBAR p
 Rebuild only `releases/b4_ghost_tool_v4.2.5.zip` from the exact 29 source modules. Verify byte equality and version, then rerun the focused suites from its extracted installation. Update `README.md`, `docs/ghost_tool/README.md`, `releases/VERSIONS.md`, and `docs/ghost_tool/compare-targets/verification.md`; add `docs/ghost_tool/display-location/verification.md`. Preserve historical release bytes.
 
 Commit the plan and implementation locally on `codex/ghost-tool-authoring-pause`. Show a before/after table and request the owner's exact merge confirmation before pushing.
+
+## Integration note — 2026-10-12
+
+The approved location feature is complete. Main concurrently received the 4.2.4 interface
+cleanup: its removal of separate-window/prototype Settings Editor buttons is preserved in all
+homes, superseding this earlier plan's shared launch footer. Legacy operators stay registered
+for compatibility. BoneCraft 9.2.0 changes and historical 4.2.4 artifacts are preserved.
+The final package and checks are recorded in [verification](verification.md).

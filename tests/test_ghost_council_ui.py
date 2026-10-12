@@ -61,14 +61,14 @@ class CouncilUI(unittest.TestCase):
         for name in ('custom_left_x','custom_left_y','custom_right_x','custom_right_y'):
             self.assertEqual(getattr(applied, name), getattr(self.scene.ghost_tool_easing, name))
 
-    def test_named_handle_action_and_prototype_entry(self):
+    def test_named_handle_action_without_prototype_entry(self):
         from ghost_tool.ui_panel import _draw_motion_paths
         from test_ghost_paths_folders import _Layout
         layout = _Layout()
         _draw_motion_paths(layout, bpy.context)
         operators = [c for c in layout.calls if c[0] == 'op']
         self.assertTrue(any('ghost_tool.path_handle_drag' in c for c in operators))
-        self.assertTrue(any('ghost_tool.open_settings_editor' in c for c in operators))
+        self.assertFalse(any('ghost_tool.open_settings_editor' in c for c in operators))
         prop = bpy.ops.ghost_tool.path_handle_drag.get_rna_type().properties['wait_for_click']
         self.assertTrue(prop.is_hidden)
 

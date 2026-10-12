@@ -70,3 +70,11 @@ The only verification limit is the currently unavailable native Bforartists host
 
 Design preparation route: recommended/actual T1_NATIVE; policy fingerprint
 `29fa965cada3128ffe57b5d85d3b9f8e5d749d780954ea14ba5f45dcca1ad8b8`.
+
+## Integration note — 2026-10-12
+
+The approved location feature is complete. Main concurrently received the 4.2.4 interface
+cleanup: its removal of separate-window/prototype Settings Editor buttons is preserved in all
+homes, superseding this earlier plan's shared launch footer. Legacy operators stay registered
+for compatibility. BoneCraft 9.2.0 changes and historical 4.2.4 artifacts are preserved.
+The final package and checks are recorded in [verification](verification.md).

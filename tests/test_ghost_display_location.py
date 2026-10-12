@@ -79,15 +79,15 @@ class DisplayLocation(unittest.TestCase):
             ui._draw_viewport_header_menu(NS(layout=layout), context_for(location))
             self.assertEqual(entries, ['GHOST_PT_header_menu'] if location == 'HEADER' else [])
 
-    def test_all_homes_use_shared_drawer_distinct_folds_and_footer(self):
+    def test_all_homes_share_drawer_and_keep_legacy_launch_buttons_removed(self):
         prefixes = []
         for cls in (ui.GHOST_PT_header_menu, ui.GHOST_PT_sidebar, ui.GHOST_PT_tool_shelf):
             layout = Layout()
             with patch.object(ui, 'draw_ghost_tool') as draw:
                 cls.draw(NS(layout=layout), bpy.context)
                 prefixes.append(draw.call_args.args[2])
-            self.assertIn('ghost_tool.open_window', [c[1] for c in layout.calls if c[0] == 'op'])
-            self.assertIn('ghost_tool.open_settings_editor', [c[1] for c in layout.calls if c[0] == 'op'])
+            self.assertNotIn('ghost_tool.open_window', [c[1] for c in layout.calls if c[0] == 'op'])
+            self.assertNotIn('ghost_tool.open_settings_editor', [c[1] for c in layout.calls if c[0] == 'op'])
         self.assertEqual(len(set(prefixes)), 3)
 
     def test_full_controls_and_target_folds_survive_every_home(self):
@@ -119,6 +119,8 @@ class DisplayLocation(unittest.TestCase):
                 self.assertIn('ghost_marker_targets', folds)
                 self.assertIn(f'ghost_snapshot_targets_{snap.uid}', folds)
                 self.assertIn('ghost_tool.take_snapshot', [c[1] for c in layout.calls if c[0] == 'op'])
+                self.assertNotIn('ghost_tool.open_settings_editor',
+                                 [c[1] for c in layout.calls if c[0] == 'op'])
         finally:
             SnapshotStore.get(bpy.context.scene).delete_snapshot(snap.uid)
 

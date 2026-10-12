@@ -410,6 +410,11 @@ class BoneForgePreferences(bpy.types.AddonPreferences):
         default="",
         options={'HIDDEN'},
     )
+    show_starter_shelf: BoolProperty(
+        name="Starter Rigs",
+        description="Show BoneCraft's complete starter rig catalog in the asset shelf; turn off to return to the regular asset shelf",
+        default=True,
+    )
 
     def draw(self, context):
         from boneforge.i18n import T

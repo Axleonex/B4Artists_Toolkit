@@ -1,0 +1,57 @@
+{
+  "version": "4.2.5",
+  "bytes": 216002,
+  "sha256": "5cfb8cee78051dc2242b68dd14f88ec17fad7a6ffdf058b6cea3deaed0db05d5",
+  "source_modules": 29,
+  "source_bytes_match": true,
+  "results": [
+    {
+      "suite": "test_ghost_council_ui.py",
+      "tests": 12,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_display_location.py",
+      "tests": 11,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_compare_targets_ui.py",
+      "tests": 6,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_marker_targets_ui.py",
+      "tests": 6,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_afterimage_ui.py",
+      "tests": 9,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_header_ui.py",
+      "tests": 16,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_authoring.py",
+      "tests": 20,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_snapshot_targets.py",
+      "tests": 16,
+      "exit_code": 0,
+      "status": "PASS"
+    }
+  ]
+}

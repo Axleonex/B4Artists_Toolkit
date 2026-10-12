@@ -836,3 +836,23 @@ STRINGS: dict[str, str] = {
     "Validate Rig": "Validar rig",
     "Health Check": "Verificação de saúde",
 }
+
+# Starter rig catalog
+STRINGS.update({
+    "Starter Rigs": "Esqueletos iniciais",
+    "Rigify is off": "Rigify est? desativado",
+    "Enable Rigify & Add Rig": "Ativar Rigify e adicionar esqueleto",
+    "Selected starter:": "Esqueleto selecionado:",
+    "This starter requires Rigify.": "Este esqueleto requer Rigify.",
+    "Enable the installed Rigify and add this rig.": "Ative o Rigify instalado e adicione este esqueleto.",
+    "Nothing is added if you cancel.": "Nada ser? adicionado se cancelar.",
+    "Choose a BoneCraft starter rig": "Escolha um esqueleto inicial do BoneCraft",
+    "Could not enable Rigify. Install or enable it in Preferences > Add-ons, then choose this starter again.": "N?o foi poss?vel ativar o Rigify. Instale ou ative em Prefer?ncias > Complementos e escolha este esqueleto novamente.",
+    "This starter is not provided by your installed Rigify version. No rig was added.": "Sua vers?o do Rigify n?o inclui este esqueleto. Nenhum esqueleto foi adicionado.",
+    "Open a 3D Viewport to add this starter rig": "Abra uma vista 3D para adicionar este esqueleto",
+    "The chosen mesh is no longer in this view layer": "A malha escolhida n?o est? mais nesta camada de vista",
+    "Starter added. Choose a mesh in Quick Rig, then use Fit Dropped Rig.": "Esqueleto adicionado. Escolha uma malha em Quick Rig e use Fit Dropped Rig.",
+    "Drop in the viewport to add the starter; Esc cancels": "Solte na vista para adicionar o esqueleto; Esc cancela",
+    "Starter Rig Catalog": "Cat?logo de esqueletos iniciais",
+    "Add Starter Rig": "Adicionar esqueleto inicial"
+})
