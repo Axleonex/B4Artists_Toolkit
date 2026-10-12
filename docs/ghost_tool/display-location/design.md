@@ -1,6 +1,6 @@
 # Ghost Tool display location
 
-Date: 2026-10-12. Status: proposal awaiting design approval.
+Date: 2026-10-12. Status: approved by the user on 2026-10-12.
 Target build: current unpublished 4.2.5 candidate, including the completed Compare folds.
 
 ## User behavior
