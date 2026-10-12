@@ -61,7 +61,13 @@ def main():
     sources = sorted((ROOT / 'ghost_tool').glob('*.py'))
     for source in sources:
         ast.parse(source.read_text(encoding='utf-8'))
-    candidate = OUTPUT / 'b4_ghost_tool_v4.2.5-toolbar-candidate.zip'
+    module = ast.parse((ROOT / 'ghost_tool/__init__.py').read_text(encoding='utf-8'))
+    info = next(ast.literal_eval(node.value) for node in module.body
+                if isinstance(node, ast.Assign) and any(
+                    isinstance(target, ast.Name) and target.id == 'bl_info'
+                    for target in node.targets))
+    version = '.'.join(map(str, info['version']))
+    candidate = OUTPUT / f'b4_ghost_tool_v{version}-toolbar-candidate.zip'
     with zipfile.ZipFile(candidate, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
         for source in sources:
             archive.write(source, 'ghost_tool/' + source.name)
@@ -122,6 +128,7 @@ def main():
     receipt = dict(status='PASS' if all(r['status'] == 'PASS' for r in results) else 'FAIL',
         candidate=candidate.name, sha256=hashlib.sha256(candidate.read_bytes()).hexdigest(),
         source_modules=len(sources), extracted_bytes_match=True, results=results,
+        source_version=version,
         host='Blender 5.1.2 stand-in; registration gate patched only',
         bforartists_validation='NOT VERIFIED', published=False)
     receipt_name = 'native-receipt.json' if args.native_only else 'receipt.json'

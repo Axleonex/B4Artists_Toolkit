@@ -1,17 +1,19 @@
-# Ghost Tool 4.2.5 documentation
+# Ghost Tool 4.2.6 documentation
 
-The approved [toolbar source update](toolbar/README.md) adds **Top Toolbar** as a fourth location, with persistent actions, shared feature popovers and Hide/Show Toolbar recovery. Cached-marker and cached-skin checkboxes change display without regeneration. This update has an unpublished local candidate; the existing 4.2.5 test ZIP below predates it. The version remains 4.2.5 pending a release decision.
+Ghost Tool 4.2.6 adds the persistent **Top Toolbar**, shared feature popovers, Hide/Show Toolbar recovery and display-only cached marker/skin checkboxes. Top Header remains the default; Right Sidebar (N) and Left Tool Shelf (T) are also available. Existing saved preferences and independent target folds are retained.
 
-The 4.2.5 repository test build adds a persistent Display Location preference: Top Header (default), Right Sidebar (N), or Left Tool Shelf (T). It folds Compare's capture targets and each saved reference's snapshot targets independently, with compact summaries and snapshot actions always visible. It retains 4.2.4's removal of legacy window-launch buttons, 4.2.3's Marker Targets fold and 4.2.2's default-off live updates and authoring pause. Bforartists production-rig and native left-shelf validation remain pending.
+The exact package passes 178 checks/cases in a Blender 5.1.2 stand-in. Native Bforartists toolbar geometry, Tool Shelf integration and production-rig validation remain pending. This repository build has not been published as a new GitHub Release.
 
-[4.2.2 guide](GhostTool_User_Manual.md) | [4.2.2 PDF](GhostTool_User_Manual.pdf) | [4.2.5 display location and checks](display-location/verification.md) | [4.2.5 Compare folds and checks](compare-targets/verification.md) | [4.2.3 marker fold](marker-targets/verification.md)
+[4.2.6 user guide](GhostTool_User_Manual.md) | [4.2.6 PDF](GhostTool_User_Manual.pdf) | [Toolbar guide](toolbar/README.md) | [4.2.6 release notes](releases/4.2.6/RELEASE-NOTES.md) | [Package receipt](releases/4.2.6/package-receipt.json)
 
-The 4.2.2 guides cover the shared tools. The newer reports describe display placement and target folds. Detailed tool help remains available inside the add-on.
+The guides describe the current interface. Detailed tool help remains available inside the add-on.
 
 Choose **Display Location** in Edit > Preferences > Add-ons > Ghost Tool. Switching reveals the selected side region and chooses its Ghost Tool tab when supported. Save preferences normally to retain the choice. Other native panels stay available. A left-shelf choice on a host without Bforartists shelf tabs keeps header access and shows an explanation in preferences.
 
-Download the [4.2.5 test ZIP](../../releases/b4_ghost_tool_v4.2.5.zip?raw=1), or the published [4.2.2 prerelease ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.2/b4_ghost_tool_v4.2.2.zip). The 4.2.5 build has not been published on GitHub Releases.
+Download the [4.2.6 test ZIP](../../releases/b4_ghost_tool_v4.2.6.zip?raw=1). Restart Bforartists after installation. Live updates default off; existing scenes retain their saved choices.
 
 The earlier 3.3.0 PDF is retained under [archive/](archive/) for historical reference. It does not describe the current interface.
 
 See the [release index](../../releases/VERSIONS.md) for the current download, verification and publication status.
+
+Earlier downloads and reports retain their original versions and checksums. The [published 4.2.2 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2), [4.2.5 display-location report](display-location/verification.md), [4.2.5 Compare report](compare-targets/verification.md), and [original toolbar verification](toolbar/verification.md) describe those specific builds.

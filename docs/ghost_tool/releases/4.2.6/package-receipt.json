@@ -1,0 +1,308 @@
+{
+  "status": "PASS",
+  "candidate": "b4_ghost_tool_v4.2.6-toolbar-candidate.zip",
+  "sha256": "e195239e6ae86d36c6deedc963c59c76c0eac68986f4f8e3452cd1da941d9630",
+  "source_modules": 29,
+  "extracted_bytes_match": true,
+  "results": [
+    {
+      "suite": "test_ghost_display_location",
+      "tests": 17,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_toolbar_ui",
+      "tests": 7,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_cached_display",
+      "tests": 8,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_marker_targets_ui",
+      "tests": 6,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_compare_targets_ui",
+      "tests": 6,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_afterimage_ui",
+      "tests": 9,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_header_ui",
+      "tests": 16,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_council_ui",
+      "tests": 12,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_authoring",
+      "tests": 20,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_snapshot_targets",
+      "tests": 16,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "native-1920-scale-1.0",
+      "tests": 14,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Toolbar preference reveals native row",
+          "Native header append registered once",
+          "Live options remain disabled",
+          "Native viewport reaches the requested layout tier",
+          "Opening options does not change the frame",
+          "Target action reports unavailable without selection",
+          "Hide leaves the native row visible",
+          "Show recovers a manually hidden native row",
+          "Hide/show preserves marker identity",
+          "Hide/show preserves skin identity",
+          "Main-header recovery remains available",
+          "Leaving toolbar preserves native region choice",
+          "Unregister removes native append",
+          "Reload appends exactly once"
+        ],
+        "geometry": {
+          "window_width": 1920,
+          "area_width": 1920,
+          "header_width": 1920,
+          "scale": 1.0,
+          "tier": "FULL"
+        },
+        "host": "5.1.2"
+      }
+    },
+    {
+      "suite": "native-1700-scale-1.0",
+      "tests": 14,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Toolbar preference reveals native row",
+          "Native header append registered once",
+          "Live options remain disabled",
+          "Native viewport reaches the requested layout tier",
+          "Opening options does not change the frame",
+          "Target action reports unavailable without selection",
+          "Hide leaves the native row visible",
+          "Show recovers a manually hidden native row",
+          "Hide/show preserves marker identity",
+          "Hide/show preserves skin identity",
+          "Main-header recovery remains available",
+          "Leaving toolbar preserves native region choice",
+          "Unregister removes native append",
+          "Reload appends exactly once"
+        ],
+        "geometry": {
+          "window_width": 1700,
+          "area_width": 1393,
+          "header_width": 1393,
+          "scale": 1.0,
+          "tier": "COMPACT"
+        },
+        "host": "5.1.2"
+      }
+    },
+    {
+      "suite": "native-1100-scale-1.0",
+      "tests": 14,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Toolbar preference reveals native row",
+          "Native header append registered once",
+          "Live options remain disabled",
+          "Native viewport reaches the requested layout tier",
+          "Opening options does not change the frame",
+          "Target action reports unavailable without selection",
+          "Hide leaves the native row visible",
+          "Show recovers a manually hidden native row",
+          "Hide/show preserves marker identity",
+          "Hide/show preserves skin identity",
+          "Main-header recovery remains available",
+          "Leaving toolbar preserves native region choice",
+          "Unregister removes native append",
+          "Reload appends exactly once"
+        ],
+        "geometry": {
+          "window_width": 1100,
+          "area_width": 900,
+          "header_width": 900,
+          "scale": 1.0,
+          "tier": "MINIMAL"
+        },
+        "host": "5.1.2"
+      }
+    },
+    {
+      "suite": "native-1920-scale-1.5",
+      "tests": 14,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Toolbar preference reveals native row",
+          "Native header append registered once",
+          "Live options remain disabled",
+          "Native viewport reaches the requested layout tier",
+          "Opening options does not change the frame",
+          "Target action reports unavailable without selection",
+          "Hide leaves the native row visible",
+          "Show recovers a manually hidden native row",
+          "Hide/show preserves marker identity",
+          "Hide/show preserves skin identity",
+          "Main-header recovery remains available",
+          "Leaving toolbar preserves native region choice",
+          "Unregister removes native append",
+          "Reload appends exactly once"
+        ],
+        "geometry": {
+          "window_width": 1920,
+          "area_width": 1920,
+          "header_width": 1920,
+          "scale": 1.5,
+          "tier": "COMPACT"
+        },
+        "host": "5.1.2"
+      }
+    },
+    {
+      "suite": "native-authoring",
+      "tests": 5,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "host": "5.1.2",
+        "status": "PASS",
+        "cases": [
+          {
+            "mode": "OBJECT",
+            "live": false,
+            "cancel": false,
+            "status": "PASS",
+            "native_operator": "TRANSFORM_OT_translate",
+            "auto_key": true,
+            "held_ticks": 3,
+            "refreshes_after_finish": 1
+          },
+          {
+            "mode": "OBJECT",
+            "live": true,
+            "cancel": false,
+            "status": "PASS",
+            "native_operator": "TRANSFORM_OT_translate",
+            "auto_key": true,
+            "held_ticks": 3,
+            "refreshes_after_finish": 1
+          },
+          {
+            "mode": "POSE",
+            "live": false,
+            "cancel": false,
+            "status": "PASS",
+            "native_operator": "TRANSFORM_OT_translate",
+            "auto_key": true,
+            "held_ticks": 3,
+            "refreshes_after_finish": 1
+          },
+          {
+            "mode": "POSE",
+            "live": true,
+            "cancel": false,
+            "status": "PASS",
+            "native_operator": "TRANSFORM_OT_translate",
+            "auto_key": true,
+            "held_ticks": 3,
+            "refreshes_after_finish": 1
+          },
+          {
+            "mode": "OBJECT",
+            "live": false,
+            "cancel": true,
+            "status": "PASS",
+            "native_operator": "TRANSFORM_OT_translate",
+            "auto_key": true,
+            "held_ticks": 3,
+            "refreshes_after_finish": 1
+          }
+        ]
+      }
+    }
+  ],
+  "source_version": "4.2.6",
+  "host": "Blender 5.1.2 stand-in; registration gate patched only",
+  "bforartists_validation": "NOT VERIFIED",
+  "published": false,
+  "version": "4.2.6",
+  "artifact": "releases/b4_ghost_tool_v4.2.6.zip",
+  "bytes": 219281,
+  "source_bytes_match": true,
+  "source_manifest": {
+    "__init__.py": "5d982956a4db0987d14ab95f38bb6777437beba863f2d3279a204878208cc128",
+    "api.py": "1de83ca8b563bcd03ae05a4a16adf8b31c76b7a257eb136220b9926de743898a",
+    "diff_mode.py": "f8439fce15da8475b93563070d76cd0789d5dddef00574b83f77ae57edc17966",
+    "draw_to_keys.py": "8d1422a9334ad6b2dbd1272024a80ddbe31bd4e7162138c7715fdb0d7ecb68e3",
+    "draw_to_keys_math.py": "eb2d0be5f455859f54d9c1651b15a17cea5b6e1907d7664c04e20138448e6084",
+    "easing_presets.py": "f8644da32ad619bf648739f168d0eaad791c9f52e92cab193661ba730680e257",
+    "export_import.py": "be0aa66295f830d25d7bb971c07569132f029865f443528494f331a4974e77cc",
+    "fcurve_utils.py": "cc379ff5b89b3696657329904c4120ff374ccdb0160497553eb0c86dbb28e3b6",
+    "ghost_cache.py": "e728bfa32e2d14cfcd525b64e3f420e941bc9bb720eb0b28bd2d9bacc0d79f39",
+    "ghost_data.py": "5cf59a7b758edff8a189f0a012bdcdfbbb2c4ff108c6448d2888f0862e446b4d",
+    "ghost_pipeline.py": "24122f070cc55684bcb80b0447d49181ec3e885f2326104dc86e2009eca2ba44",
+    "mesh_ghosts.py": "521bab6c7bddf3e638c192dad922583b9d5fab520639b1aadb48975ffd39d35f",
+    "modal_operator.py": "6cb2952ff5b2135a9961cd511d9baff284466ac0b0d69f2b71f9894b7f52cb19",
+    "motion_channels.py": "69053e9bcb49576b145418153e7dda02bb8d3fd2ba81c5d36085e08d6e2af190",
+    "motion_paths.py": "5710908fe9512e7b45a02e1a8b33f42a4c58d2a22fd192aa9d3ffa5bd00739d7",
+    "path_fast_sampler.py": "e0275f56838bb7e82e32d1027c67e34bbd25a4fccf5b33aa4a12e4d9493632fd",
+    "path_handle_drag.py": "e86f7fb9862d8417ab2c7abf309969fc5732971d20db463acd17abf4de7e10ec",
+    "physics_archetypes.py": "7dbf69ef8caea3226f98e21a2d0b498ef304bb333baf75af45bf03cabbc07e3d",
+    "physics_suggest.py": "487cd63e34eff7fe16066c6549d182a30c773c7df8b57e07fdccfe9246d74ef5",
+    "preferences.py": "7a6de35e9636a85838a479ad1afdaced8ca9565fe5522676fe500493608d1a11",
+    "selection_operators.py": "facbf44f3366790f1d082189beb4ce031a7fe32d26e3d8e613f25fa8cb742998",
+    "session_state.py": "bd98c1aa30382fe5357749fa4a3e06710a2850e62d8b619129e1f74cd4146b07",
+    "settings_editor.py": "11c2b9efbd1689b1de52ce7a1d283825deda8f67a867d1c1c1bc689842af44cd",
+    "snapshot.py": "e0cb0bc5ed0896273d0d9799e52ae43d53abd2b8a84b5f20feeea29ee4f73ab6",
+    "snapshot_storage.py": "061c16926ce8ed82f63ea001d34a52c326db5e12db2656fd36cdabc164947660",
+    "target_binding.py": "8be5467cf10ec649bd220dbe4f7708e2dd46eba9dc59149e2c6900219cdcf6fb",
+    "ui_panel.py": "ca6d4afabc6e1bfc0a3fcabac91675112a923f66fe332866d379a3ef4e171d47",
+    "utils.py": "7fe35ccf95b0ec6abad19c7fca07aab2423e6cd4bbaac7051a8cd3b39b1fa265",
+    "viewport_draw.py": "9062d8c839f55ff36c7cc346c1dad70fa50ff9d806c40c695c8035759e48d867"
+  },
+  "pdf": {
+    "title": "Ghost Tool 4.2.6 user guide",
+    "pages": 3,
+    "sha256": "e035a4c684a85f5be196b1b9e4b668ea5a5dcf36cee70e7f63abd987a25588ca"
+  },
+  "vendor_branding_found": false
+}
