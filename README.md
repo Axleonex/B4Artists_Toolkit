@@ -13,7 +13,7 @@ BoneCraft is the **advanced version of [BoneForge](https://github.com/Axleonex/B
 
 | Tool | Version | What it does |
 |---|---|---|
-| **BoneCraft** | 9.1.2 | Auto-rigging for humanoid characters (VRoid/VRM and similar): a Rig Builder wizard that finds the joints on the mesh, generates a skeleton and skin weights, then builds an animator control rig: IK/FK arms and legs with no-pop switching, a Control Picker, twist bones, joint corrective shapes, skirt/dress bones, and face controls (eye aim, blinks, jaw with lip follow). Also retargets walk/run clips and exports to VRChat, Unity and Unreal, with an optional T-pose export. Manual: [bonecraft/docs](bonecraft/docs/README.md). |
+| **BoneCraft** | 9.2.0 | Auto-rigging for humanoid characters (VRoid/VRM and similar): a Rig Builder wizard that finds the joints on the mesh, generates a skeleton and skin weights, then builds an animator control rig: IK/FK arms and legs with no-pop switching, a Control Picker, twist bones, joint corrective shapes, skirt/dress bones, and face controls (eye aim, blinks, jaw with lip follow). Also retargets walk/run clips and exports to VRChat, Unity and Unreal, with an optional T-pose export. Manual: [bonecraft/docs](bonecraft/docs/README.md). |
 
 See [`docs/bonecraft/`](docs/bonecraft/) for a short guide.
 
@@ -27,9 +27,9 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 |---|---|
 | Anim Assist 12.1.3 | [b4_anim_assist_v12.1.3.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.3/b4_anim_assist_v12.1.3.zip) |
 | Ghost Tool 4.2.4 (test build) | [b4_ghost_tool_v4.2.4.zip](releases/b4_ghost_tool_v4.2.4.zip?raw=1) |
-| BoneCraft 9.1.2 (optional) | [BoneCraft-BFA-9.1.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.1.2/BoneCraft-BFA-9.1.2.zip) |
+| BoneCraft 9.2.0 (optional) | [BoneCraft-BFA-9.2.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.0/BoneCraft-BFA-9.2.0.zip) |
 
-Anim Assist 12.1.3 and BoneCraft 9.1.2 are published releases and pass their recorded host checks. Ghost Tool 4.2.4 is a repository test build that removes the Open in Separate Window and Settings Editor buttons. It retains the independent Marker Targets fold, default-off live updates and gesture pause. Bforartists rig and UI validation remain pending.
+Anim Assist 12.1.3 passes its recorded host checks. BoneCraft 9.2.0 adds the complete starter catalog and passes the targeted host and native viewport checks recorded in its [release notes](docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md). Ghost Tool 4.2.4 is a repository test build that removes the Open in Separate Window and Settings Editor buttons. It retains the independent Marker Targets fold, default-off live updates and gesture pause. Bforartists rig and UI validation remain pending.
 
 See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The published [Ghost Tool 4.2.2 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2) remains available on GitHub Releases.
 
@@ -57,7 +57,7 @@ The unpacked, readable source for each tool is in this repository so you can rea
 
 - [`anim_assist/`](anim_assist/) — Anim Assist source (`core/`, `operators/`, `ui/`, `tests/`)
 - [`ghost_tool/`](ghost_tool/) — Ghost Tool source
-- [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.1.2 source
+- [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.2.0 source
 
 The source folders and the downloadable zips contain the same code; the zips are just packaged for one-click install.
 
@@ -67,7 +67,7 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - [`docs/anim_assist/`](docs/anim_assist/) — Anim Assist 12.1.3 guide (Markdown and PDF)
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool guides and [4.2.4 UI notes](docs/ghost_tool/releases/4.2.4/VERIFICATION.md)
-- [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.1.2 English manual and translation status
+- [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.0 English manual and translation status
 
 ## Requirements
 
@@ -79,6 +79,8 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - Ghost Tool 4.2.2 passes **230 background checks across nine suites** and **five native auto-key cases** on a Blender 5.1.2 stand-in. See the [4.2.2 verification report](docs/ghost_tool/authoring-pause/verification.md). These include actual native object/pose moves with live updates off and on, plus cancellation; Bforartists production-rig validation remains pending.
 - Ghost Tool 4.2.4 passes **54 focused checks** on the Blender stand-in, including header UI, gesture regressions, all six target-fold checks and all 20 authoring regressions. See the [4.2.4 verification report](docs/ghost_tool/releases/4.2.4/VERIFICATION.md). Native Bforartists UI validation remains pending.
+
+- BoneCraft 9.2.0 adds nine visible starter thumbnails, category filters, a shelf switch and dependency-aware Rigify activation. Native click/drop, cancellation and undo/redo pass on Bforartists 5.2.0; see the [starter catalog evidence](docs/bonecraft/starter-shelf-implementation/README.md).
 
 ## License
 
