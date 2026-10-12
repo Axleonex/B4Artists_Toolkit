@@ -2,7 +2,7 @@
 
 Ghost Tool 4.2.6 adds the persistent **Top Toolbar**, shared feature popovers, Hide/Show Toolbar recovery and display-only cached marker/skin checkboxes. Top Header remains the default; Right Sidebar (N) and Left Tool Shelf (T) are also available. Existing saved preferences and independent target folds are retained.
 
-The exact package passes 178 checks/cases in a Blender 5.1.2 stand-in. Native Bforartists toolbar geometry, Tool Shelf integration and production-rig validation remain pending. This repository build has not been published as a new GitHub Release.
+The exact package passes 178 checks/cases in a Blender 5.1.2 stand-in. Native Bforartists toolbar geometry, Tool Shelf integration and production-rig validation remain pending. The matching ZIP and PDF are published in the [4.2.6 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6).
 
 [4.2.6 user guide](GhostTool_User_Manual.md) | [4.2.6 PDF](GhostTool_User_Manual.pdf) | [Toolbar guide](toolbar/README.md) | [4.2.6 release notes](releases/4.2.6/RELEASE-NOTES.md) | [Package receipt](releases/4.2.6/package-receipt.json)
 
@@ -10,7 +10,7 @@ The guides describe the current interface. Detailed tool help remains available 
 
 Choose **Display Location** in Edit > Preferences > Add-ons > Ghost Tool. Switching reveals the selected side region and chooses its Ghost Tool tab when supported. Save preferences normally to retain the choice. Other native panels stay available. A left-shelf choice on a host without Bforartists shelf tabs keeps header access and shows an explanation in preferences.
 
-Download the [4.2.6 test ZIP](../../releases/b4_ghost_tool_v4.2.6.zip?raw=1). Restart Bforartists after installation. Live updates default off; existing scenes retain their saved choices.
+Download the [4.2.6 prerelease ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip). Restart Bforartists after installation. Live updates default off; existing scenes retain their saved choices.
 
 The earlier 3.3.0 PDF is retained under [archive/](archive/) for historical reference. It does not describe the current interface.
 

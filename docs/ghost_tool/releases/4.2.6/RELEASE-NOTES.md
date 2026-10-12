@@ -13,4 +13,4 @@ Install [b4_ghost_tool_v4.2.6.zip](../../../../releases/b4_ghost_tool_v4.2.6.zip
 
 The exact package passes **178 checks/cases** in Blender 5.1.2: 117 background checks, 56 native toolbar checks and five native auto-key cases. See [package receipt](package-receipt.json). Only the host registration gate is patched in the test installation. Native Bforartists geometry, Tool Shelf behavior and production-rig validation remain pending.
 
-This build is available from the repository. No new GitHub Release has been published. The original [toolbar design and rule audit](../../toolbar/verification.md) describe implementation decisions; their initial 4.2.5 test evidence is retained as history.
+This build and its matching PDF guide are available from the [4.2.6 GitHub prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6). The repository ZIP is byte-identical to the release asset. The original [toolbar design and rule audit](../../toolbar/verification.md) describe implementation decisions; their initial 4.2.5 test evidence is retained as history.
