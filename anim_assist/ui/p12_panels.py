@@ -93,7 +93,7 @@ class ANIMASSIST_PT_p12_lipsync_v3d(PanelAnatomyMixin, View3DSidebarPanel):
             layout.label(text="Lipsync system unavailable", icon="ERROR")
             return
 
-        layout.prop(p12, "enabled", text="Enable Lipsync", icon="OUTLINER_DATA_SPEAKER")
+        layout.prop(p12, "enabled", text="Enable Lipsync", toggle=False)
         if not p12.enabled:
             layout.label(text="Lipsync system disabled", icon="INFO")
             return
@@ -116,6 +116,9 @@ class ANIMASSIST_PT_p12_lipsync_v3d(PanelAnatomyMixin, View3DSidebarPanel):
         op_refresh = col.operator("animassist.p12_refresh_audio_hash", text="", icon="FILE_REFRESH")
         op_refresh.layer_name = active_layer_name
 
+        if not p12.layer_links:
+            layout.label(text="Add a lipsync layer with +", icon="INFO")
+
         if 0 <= p12.active_link_index < len(p12.layer_links):
             link = p12.layer_links[p12.active_link_index]
             box = layout.box()
@@ -123,12 +126,14 @@ class ANIMASSIST_PT_p12_lipsync_v3d(PanelAnatomyMixin, View3DSidebarPanel):
             header.label(text=link.layer_name)
             mode_icon = "DRIVER" if link.mode == "PREVIEW" else "RENDER_ANIMATION"
             mode_btn = header.operator("animassist.p12_toggle_mode",
-                                       text=("PREVIEW" if link.mode == "PREVIEW" else "SHIPPED"),
+                                       text=("Live Preview" if link.mode == "PREVIEW" else "Baked"),
                                        icon=mode_icon)
             mode_btn.layer_name = link.layer_name
 
             box.prop(link, "audio_path", text="Audio")
-            if link.audio_path and not au.is_supported_audio(link.audio_path):
+            if not link.audio_path:
+                box.label(text="Choose a WAV file", icon="INFO")
+            elif not au.is_supported_audio(link.audio_path):
                 box.label(text="Choose a .wav audio file", icon="ERROR")
 
             # Audio-in-dope-sheet callout (mythologist dissent)

@@ -1,0 +1,13 @@
+Crescent Rose (3D model)
+Author:  amandangm
+Source:  https://sketchfab.com/3d-models/crescent-rose-dcb6bfbb3b824c01a182fa131fe35824
+Licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
+         https://creativecommons.org/licenses/by/4.0/
+
+Changes made for this repository (2026-10): the FBX was imported into Bforartists, scaled to scene
+units, separated into 15 part objects, its textures downscaled to 1024x1024 and packed, and a
+BoneCraft Mechanisms rig added (CrescentRose_Mechanisms.blend). The files are redistributed under
+the same licence with this attribution.
+
+Crescent Rose is a design of Rooster Teeth Productions (RWBY). This is a fan-made tutorial asset,
+not affiliated with or endorsed by Rooster Teeth.

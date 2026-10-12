@@ -14,10 +14,10 @@ unregister functions are called in the correct dependency order.
 bl_info = {
     "name": "Ghost Tool",
     "author": "GoingGhost",
-    "version": (4, 0, 0),
+    "version": (4, 2, 0),
     "blender": (4, 0, 0),
     "location": "View3D > Header > Ghost Tool",
-    "description": "Ghost keyframe visualization and manipulation for Bforartists. v3.4 moves Ghost Tool into the viewport header, follows rotation keys, and onion-skins whole characters.",
+    "description": "Ghost animation tools for Bforartists with scoped snapshots, independent variants, saved references and undoable restoration.",
     "category": "Animation",
     "doc_url": "",
     "tracker_url": "",
@@ -89,6 +89,8 @@ def _import_modules(*, reload_modules: bool = True):
     from . import ghost_pipeline
     from . import fcurve_utils
     from . import easing_presets
+    from . import target_binding
+    from . import snapshot_storage
     from . import snapshot
     from . import physics_archetypes   # pure math, zero bpy — no classes to register
     from . import physics_suggest
@@ -105,6 +107,7 @@ def _import_modules(*, reload_modules: bool = True):
     from . import path_handle_drag
     from . import draw_to_keys_math
     from . import draw_to_keys
+    from . import settings_editor
 
     if _modules_loaded and reload_modules:
         importlib.reload(utils)
@@ -114,6 +117,8 @@ def _import_modules(*, reload_modules: bool = True):
         importlib.reload(ghost_pipeline)
         importlib.reload(fcurve_utils)
         importlib.reload(easing_presets)
+        importlib.reload(target_binding)
+        importlib.reload(snapshot_storage)
         importlib.reload(snapshot)
         importlib.reload(physics_archetypes)
         importlib.reload(physics_suggest)
@@ -126,6 +131,7 @@ def _import_modules(*, reload_modules: bool = True):
         importlib.reload(path_handle_drag)
         importlib.reload(draw_to_keys_math)
         importlib.reload(draw_to_keys)
+        importlib.reload(settings_editor)
         importlib.reload(viewport_draw)
         importlib.reload(ui_panel)
         importlib.reload(preferences)
@@ -141,6 +147,7 @@ def _import_modules(*, reload_modules: bool = True):
         "ghost_pipeline": ghost_pipeline,
         "fcurve_utils": fcurve_utils,
         "easing_presets": easing_presets,
+        "snapshot_storage": snapshot_storage,
         "snapshot": snapshot,
         "physics_archetypes": physics_archetypes,
         "physics_suggest": physics_suggest,
@@ -152,6 +159,7 @@ def _import_modules(*, reload_modules: bool = True):
         "motion_paths": motion_paths,
         "path_handle_drag": path_handle_drag,
         "draw_to_keys": draw_to_keys,
+        "settings_editor": settings_editor,
         "viewport_draw": viewport_draw,
         "ui_panel": ui_panel,
         "preferences": preferences,
@@ -165,8 +173,10 @@ def _import_modules(*, reload_modules: bool = True):
 
 _REGISTER_ORDER = [
     "ghost_data",
+    "session_state",
     "ghost_pipeline",
     "easing_presets",
+    "snapshot_storage",
     "snapshot",
     "physics_suggest",
     "export_import",
@@ -179,6 +189,7 @@ _REGISTER_ORDER = [
     "draw_to_keys",
     "viewport_draw",
     "ui_panel",
+    "settings_editor",
     "preferences",
 ]
 
@@ -230,6 +241,7 @@ def _unregister_supported() -> None:
 
     utils.log("Unregistering addon...")
     errors = []
+    modules["session_state"].SessionState.cancel_active()
 
     for module_name in reversed(_REGISTER_ORDER):
         module = modules.get(module_name)

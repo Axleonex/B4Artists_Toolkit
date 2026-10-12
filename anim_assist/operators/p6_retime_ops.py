@@ -45,15 +45,23 @@ def _tag_redraw(context: bpy.types.Context) -> None:
         area.tag_redraw()
 
 
-def _p6_base_poll(context: bpy.types.Context) -> bool:
+def _p6_base_poll(context: bpy.types.Context, cls=None) -> bool:
     """Base poll: need a scene with an active object that has an action."""
     if not hasattr(context, "scene") or context.scene is None:
+        if cls is not None:
+            cls.poll_message_set("Open a scene to use retiming tools")
         return False
     obj = getattr(context, "active_object", None)
     if obj is None:
+        if cls is not None:
+            cls.poll_message_set("Select an animated object to retime its keys")
         return False
     adata = getattr(obj, "animation_data", None)
-    return adata is not None and getattr(adata, "action", None) is not None
+    if adata is None or getattr(adata, "action", None) is None:
+        if cls is not None:
+            cls.poll_message_set("Add keyframes to the active object before retiming")
+        return False
+    return True
 
 
 # Module-level timing snapshot (last backup before a retime op).
@@ -100,7 +108,7 @@ class AA_OT_p6_scale_keys(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _p6_base_poll(context)
+        return _p6_base_poll(context, cls)
 
     def execute(self, context):
         p6 = get_p6(context)
@@ -113,6 +121,10 @@ class AA_OT_p6_scale_keys(bpy.types.Operator):
             self.report({"WARNING"}, "No action on active object")
             return {"CANCELLED"}
 
+        # Blender skips invoke in background execution. Resolve an unset
+        # option here so menu, Search and script routes share the same default.
+        if not self.properties.is_property_set("scale_factor"):
+            self.scale_factor = p6.scale_factor
         factor = self.scale_factor
         all_frames = rm.collect_key_frames(fcurves)
         pivot = rm.resolve_pivot(
@@ -137,9 +149,6 @@ class AA_OT_p6_scale_keys(bpy.types.Operator):
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        p6 = get_p6(context)
-        if p6 is not None:
-            self.scale_factor = p6.scale_factor
         return self.execute(context)
 
 
@@ -167,7 +176,7 @@ class AA_OT_p6_offset_keys(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _p6_base_poll(context)
+        return _p6_base_poll(context, cls)
 
     def execute(self, context):
         p6 = get_p6(context)
@@ -186,6 +195,8 @@ class AA_OT_p6_offset_keys(bpy.types.Operator):
             range_filter = (lo, hi)
 
         _store_backup(fcurves, obj_name)
+        if not self.properties.is_property_set("offset_frames"):
+            self.offset_frames = p6.offset_frames
         rm.apply_offset(fcurves, self.offset_frames, frame_range=range_filter)
 
         _tag_redraw(context)
@@ -194,9 +205,6 @@ class AA_OT_p6_offset_keys(bpy.types.Operator):
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        p6 = get_p6(context)
-        if p6 is not None:
-            self.offset_frames = p6.offset_frames
         return self.execute(context)
 
 
@@ -252,7 +260,7 @@ class AA_OT_p6_time_warp(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _p6_base_poll(context)
+        return _p6_base_poll(context, cls)
 
     def execute(self, context):
         p6 = get_p6(context)
@@ -302,7 +310,7 @@ class AA_OT_p6_reverse_keys(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _p6_base_poll(context)
+        return _p6_base_poll(context, cls)
 
     def execute(self, context):
         p6 = get_p6(context)
@@ -338,7 +346,7 @@ class AA_OT_p6_bake_timing(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _p6_base_poll(context)
+        return _p6_base_poll(context, cls)
 
     def execute(self, context):
         fcurves, obj_name = _get_fcurves(context)
@@ -368,7 +376,12 @@ class AA_OT_p6_reset_timing(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _p6_base_poll(context) and _last_backup is not None
+        if not _p6_base_poll(context, cls):
+            return False
+        if _last_backup is None:
+            cls.poll_message_set("Run a retiming operation before resetting its timing")
+            return False
+        return True
 
     def execute(self, context):
         if _last_backup is None:
@@ -407,10 +420,13 @@ class AA_OT_p6_match_timing(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _p6_base_poll(context):
+        if not _p6_base_poll(context, cls):
             return False
         selected = getattr(context, "selected_objects", []) or []
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a source and a target object to match timing")
+            return False
+        return True
 
     def execute(self, context):
         selected = list(getattr(context, "selected_objects", []) or [])

@@ -9,7 +9,6 @@ Handle offsets are expressed as fractions of the segment width (in frames)
 and segment height (in value units), making them resolution-independent.
 """
 
-from __future__ import annotations
 
 from typing import Optional
 
@@ -255,6 +254,11 @@ class GHOST_OT_apply_easing(bpy.types.Operator):
         default="EASE_IN_OUT",
     )  # type: ignore[assignment]
 
+    custom_left_x: bpy.props.FloatProperty(name="Left X", description="Outgoing handle time as a fraction of the key interval", default=0.33, min=0, max=1)
+    custom_left_y: bpy.props.FloatProperty(name="Left Y", description="Outgoing handle value as a fraction of the change between keys", default=0, min=-2, max=2)
+    custom_right_x: bpy.props.FloatProperty(name="Right X", description="Incoming handle time offset as a fraction of the key interval", default=-0.33, min=-1, max=0)
+    custom_right_y: bpy.props.FloatProperty(name="Right Y", description="Incoming handle value offset as a fraction of the change between keys", default=0, min=-2, max=2)
+
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
         """Require an active object with animation data.
@@ -266,7 +270,15 @@ class GHOST_OT_apply_easing(bpy.types.Operator):
             bool: True if preset application can proceed.
         """
         obj = context.active_object
-        return obj is not None and obj.animation_data is not None
+        if obj is None or obj.animation_data is None or obj.animation_data.action is None:
+            cls.poll_message_set("Select an object with an animation action")
+            return False
+        from .ghost_data import GhostStore
+        if not any(g.parent_frame_a != g.parent_frame_b for g in GhostStore.get(context.scene)):
+            cls.poll_message_set("Generate inbetween markers between two keys first")
+            return False
+        from .session_state import SessionState
+        return SessionState.poll_available(cls)
 
     def execute(self, context: bpy.types.Context) -> set[str]:
         """Apply the selected easing preset.
@@ -322,7 +334,9 @@ class GHOST_OT_apply_easing(bpy.types.Operator):
                 continue
 
             success = apply_preset_to_range(
-                fcurve, ghost.parent_frame_a, ghost.parent_frame_b, self.preset
+                fcurve, ghost.parent_frame_a, ghost.parent_frame_b, self.preset,
+                (self.custom_left_x, self.custom_left_y),
+                (self.custom_right_x, self.custom_right_y),
             )
             if success:
                 applied_count += 1

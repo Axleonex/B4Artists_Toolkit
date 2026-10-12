@@ -11,7 +11,7 @@ import bpy
 from bpy.props import StringProperty, IntProperty, EnumProperty
 from bpy.types import Operator
 
-from ..core.p10_properties import get_p10
+from ..core.p10_properties import get_p10, recents_newest_first, sort_recents
 from ..core.logging import get_logger
 from ..core.helpers import report_failure
 
@@ -33,7 +33,7 @@ class AA_OT_p10_toggle_shelf_mode(Operator):
 
             # Cycle through modes: 0 (COMPACT) -> 1 (EXPANDED) -> 2 (FAVORITES) -> 0
             modes = ['COMPACT', 'EXPANDED', 'FAVORITES']
-            current_index = list(p10.bl_rna.properties['shelf_mode'].enum_items.keys()).index(p10.shelf_mode)
+            current_index = modes.index(p10.shelf_mode)
             next_index = (current_index + 1) % len(modes)
             p10.shelf_mode = modes[next_index]
 
@@ -139,25 +139,81 @@ class AA_OT_p10_remove_favorite(Operator):
             return {'CANCELLED'}
 
 
+# Blender keeps references to strings returned by dynamic EnumProperty
+# callbacks. Retain the items and their metadata for the popup's lifetime.
+_tool_enum_snapshot = None
+_tool_enum_items = []
+
+
 def _get_tool_items(self, context):
     """Enum callback to populate tool choices from registry."""
+    global _tool_enum_snapshot, _tool_enum_items
     try:
         from ..core.p10_tool_registry import all_tools
 
-        tools = all_tools()
+        tools = tuple(all_tools())
+        if tools == _tool_enum_snapshot:
+            return _tool_enum_items
         if not tools:
-            return [("NONE", "No tools available", "", 0)]
+            _tool_enum_snapshot = tools
+            _tool_enum_items = [(
+                "NONE", "Run First Run Setup to restore tools",
+                "Open Properties > Scene > Anim Assist > Setup", 0,
+            )]
+            return _tool_enum_items
 
         items = []
         for i, tool in enumerate(tools):
             icon = tool.icon if tool.icon != "NONE" else "NONE"
             items.append((tool.op_id, tool.label, tool.description, icon, i))
 
-        return items
+        _tool_enum_snapshot = tools
+        _tool_enum_items = items
+        return _tool_enum_items
 
     except Exception as e:
         _log.error(f"Error building tool enum items: {e}")
-        return [("NONE", "Error loading tools", "", 0)]
+        _tool_enum_snapshot = None
+        _tool_enum_items = [(
+            "NONE", "Tools could not load", "Run First Run Setup and try again", 0,
+        )]
+        return _tool_enum_items
+
+
+def _run_shelf_tool(operator, context, op_id):
+    """Open a real tool through the same invoke route as a panel button."""
+    from ..core.p10_tool_registry import get_tool
+
+    tool = get_tool(op_id)
+    if tool is None:
+        operator.report({'WARNING'}, "This tool is unavailable. Run First Run Setup, then choose a tool from Search")
+        return {'CANCELLED'}
+    parts = op_id.split(".")
+    if len(parts) != 2 or parts[0] != "animassist":
+        operator.report({'ERROR'}, "This is not an Anim Assist tool. Choose a tool from Search")
+        return {'CANCELLED'}
+    op_func = getattr(getattr(bpy.ops, parts[0]), parts[1])
+    op_func.get_rna_type()
+    # INVOKE respects tool-specific defaults, file pickers and modal setup.
+    # EXEC_DEFAULT bypassed these and could silently use different settings.
+    result = op_func("INVOKE_DEFAULT")
+    if 'CANCELLED' in result:
+        return {'CANCELLED'}
+    if 'FINISHED' in result:
+        # History is optional bookkeeping, not a reason to misreport a
+        # completed edit as cancelled. Clearing history must leave it empty.
+        if op_id != "animassist.p10_clear_recents" and get_p10(context) is not None:
+            try:
+                bpy.ops.animassist.p10_record_recent(op_id=op_id, label=tool.label)
+            except Exception:
+                _log.warning("Could not record completed tool %s", op_id, exc_info=True)
+        return {'FINISHED'}
+    if result.intersection({'RUNNING_MODAL', 'INTERFACE'}):
+        # The target owns its modal handler/dialog. Close only this wrapper;
+        # do not claim completion or add an uncompleted tool to Recents.
+        return {'FINISHED'}
+    operator.report({'WARNING'}, "The tool did not run. Open its panel and check the required selection")
+    return {'CANCELLED'}
 
 
 class AA_OT_p10_search_tools(Operator):
@@ -177,22 +233,7 @@ class AA_OT_p10_search_tools(Operator):
         try:
             if self.tool_enum and self.tool_enum != "NONE":
                 _log.info(f"Executing tool: {self.tool_enum}")
-                # Dispatch operator via bpy.ops getattr chain
-                parts = self.tool_enum.split(".")
-                if len(parts) != 2:
-                    self.report({'ERROR'}, f"'{self.tool_enum}' is not a valid tool. Pick a tool from the search list")
-                    return {'CANCELLED'}
-                category = getattr(bpy.ops, parts[0], None)
-                if category is None:
-                    self.report({'ERROR'}, f"Tool category '{parts[0]}' not found. Pick a tool from the shelf list")
-                    return {'CANCELLED'}
-                op_func = getattr(category, parts[1], None)
-                if op_func is None:
-                    self.report({'ERROR'}, f"Tool '{self.tool_enum}' is not available. Pick another tool from the search list")
-                    return {'CANCELLED'}
-                op_func("EXEC_DEFAULT")
-                self.report({'INFO'}, f"Executed: {self.tool_enum}")
-                return {'FINISHED'}
+                return _run_shelf_tool(self, context, self.tool_enum)
             else:
                 return {'CANCELLED'}
 
@@ -203,7 +244,13 @@ class AA_OT_p10_search_tools(Operator):
 
     def invoke(self, context, event):
         """Invoke with search popup"""
-        return context.window_manager.invoke_search_popup(self)
+        from ..core.p10_tool_registry import all_tools
+
+        if not all_tools():
+            self.report({'WARNING'}, "No tools available. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            return {'CANCELLED'}
+        context.window_manager.invoke_search_popup(self)
+        return {'FINISHED'}
 
 
 class AA_OT_p10_record_recent(Operator):
@@ -250,6 +297,11 @@ class AA_OT_p10_record_recent(Operator):
             recent_item.op_id = self.op_id
             recent_item.label = self.label or self.op_id
             recent_item.timestamp = time.time()
+            # CollectionProperty.add appends; Repeat Last reads index zero.
+            p10.recents.move(len(p10.recents) - 1, 0)
+            # Entries saved oldest-first by 12.1.0 and earlier are reordered
+            # by timestamp; equal timestamps keep the new entry first.
+            sort_recents(p10)
 
             # Trim to max_recents
             max_recents = getattr(p10, 'max_recents', 10)
@@ -283,32 +335,16 @@ class AA_OT_p10_repeat_last(Operator):
                 self.report({'WARNING'}, "No recent tools available")
                 return {'CANCELLED'}
 
-            # Get the most recent tool (first in list)
-            last_tool = p10.recents[0]
+            # Get the most recent tool (legacy files may be stored oldest-first)
+            last_tool = recents_newest_first(p10)[0]
             op_id = last_tool.op_id
-            label = last_tool.label
 
             if not op_id:
                 self.report({'ERROR'}, "That recent tool is no longer available. Clear Recents and use the tool again")
                 return {'CANCELLED'}
 
-            # Dispatch operator via bpy.ops getattr chain
             _log.info(f"Repeating last tool: {op_id}")
-            parts = op_id.split(".")
-            if len(parts) != 2:
-                report_failure(self, "Invalid operator ID", "Run First Run Setup from Properties > Scene > Anim Assist > Setup to rebuild the shelf", op_id)
-                return {'CANCELLED'}
-            category = getattr(bpy.ops, parts[0], None)
-            if category is None:
-                self.report({'ERROR'}, f"Tool category '{parts[0]}' not found. Pick a tool from the shelf list")
-                return {'CANCELLED'}
-            op_func = getattr(category, parts[1], None)
-            if op_func is None:
-                report_failure(self, "Operator not found", "Run First Run Setup from Properties > Scene > Anim Assist > Setup to rebuild the shelf", op_id)
-                return {'CANCELLED'}
-            op_func("EXEC_DEFAULT")
-            self.report({'INFO'}, f"Repeated: {label}")
-            return {'FINISHED'}
+            return _run_shelf_tool(self, context, op_id)
 
         except Exception as e:
             _log.error(f"Error repeating last tool: {e}")

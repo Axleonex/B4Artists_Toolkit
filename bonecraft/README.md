@@ -1,0 +1,59 @@
+# BoneCraft
+
+A rigging and avatar toolkit for **[Bforartists](https://www.bforartists.de/)** (the Blender fork). BoneCraft runs
+only in Bforartists: in standard Blender it does not load and shows a single "Get Bforartists" notice instead.
+
+| | |
+|---|---|
+| **Add-on** | BoneCraft |
+| **Version** | 9.1.2 |
+| **Host** | Bforartists (tested on 5.2) — not standard Blender |
+| **Category** | Rigging / Animation |
+| **License** | GPL v2.0 or later |
+
+> This tool was built with heavy AI assistance and is under active bug-fixing. If you hit an issue, a screenshot
+> or a note about what you were doing helps a lot.
+
+## What it does
+
+BoneCraft is organized into tool packages you can switch on and off (Preferences → Add-ons → BoneCraft → Tools):
+
+- **Rig Builder** — Quick Rig, the Auto-Rig Wizard (joint detection from the mesh, a control rig with IK/FK,
+  face rig, correctives, skirt and clothing bones), Mannequin, and a Basic Humanoid asset you can drop from the
+  asset shelf.
+- **Mechanisms** — rigs for props and machines: hinges, slides, telescopes, pistons, gear links, follow and
+  sequences, built with guided steps.
+- **Rig UI and animation** — bone-collection panel, bookmarks, pose library, graph tools, corrective shape keys,
+  animation layers, the Control Picker and the animator control layer.
+- **Weights and deform** — weight mirror, transfer and table, deform-bone control, delta mush, proximity wrap.
+- **Advanced rigging** — rig validator, space switching, spline IK, ribbons, chain dynamics, set driven keys.
+- **Retargeting and export** — retargeting with source maps and per-bone tweaks; validated export profiles for
+  Unreal, Unity, VRChat, Godot and generic FBX / glTF.
+- **VRChat, VRM and MMD** — the CATS tools (Fix Model, visemes, eye tracking, atlas), clothing merge, hair
+  PhysBones, performance ranking, the VRM and MMD bridges.
+
+Switching a package off unregisters its classes, so it costs nothing until you switch it back on.
+
+## Install
+
+1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([`BoneCraft-BFA-9.1.2.zip`](../releases/BoneCraft-BFA-9.1.2.zip) in the repository's `releases/` folder).
+2. Tick its checkbox.
+3. In the 3D Viewport, the **BoneCraft** and **Rig Builder** tabs are on the left Tool Shelf (press **T**) and the
+   **CATS** tab is on the right sidebar (press **N**). Each tab's side can be changed in the add-on's preferences
+   (**Tabs**). Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools and Import / Export are also in the Properties
+   editor's Scene tab while **Tabs → Scene Properties → Show** is on (the default).
+
+## Manual
+
+The current English manual and six translated editions: [docs/README.md](docs/README.md). The translations have 9.1.2 release notes, but their usage chapters are not yet synchronized with the current English interface guide.
+
+Example file: [examples/crescent-rose](examples/crescent-rose/README.md) — Crescent Rose rigged with Mechanisms, built step by step in the manual's chapter 12.
+
+## Browse the source
+
+The readable source is in [`boneforge/`](boneforge/) (the add-on's package name is still `boneforge`, so saved
+preferences carry over).
+
+## License
+
+Released under the **GNU General Public License v2.0 or later** — see [`LICENSE`](LICENSE).

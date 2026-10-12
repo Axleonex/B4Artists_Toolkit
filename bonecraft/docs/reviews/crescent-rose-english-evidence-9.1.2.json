@@ -1,0 +1,562 @@
+{
+  "version": "9.1.2",
+  "completed": "2026-10-11",
+  "language": "en",
+  "owner_confirmation_pending": true,
+  "package_sha256": "9901bdb98da47384522b5137df58e8722f7d4f8c6e20cf1d835630c6bbaafa63",
+  "assets": [
+    {
+      "path": "bonecraft/examples/crescent-rose/CrescentRose_parts.blend",
+      "sha256": "974047c5188f29fc81095d570bbbd9ff96c46fc7f245004875d6a4ec5e54c6e4",
+      "bytes": 10852729
+    },
+    {
+      "path": "bonecraft/examples/crescent-rose/CrescentRose_Mechanisms.blend",
+      "sha256": "53edda796a82df93bd904f22d75a5e2f7d546aff88041f6cb6e4e1d372177598",
+      "bytes": 10882491
+    },
+    {
+      "path": "bonecraft/docs/manual/en/12-crescent-rose.md",
+      "sha256": "8369a0378ad11b3473329116ccba4ff585781a5e9af07dfadf390e3306df490b",
+      "bytes": 37782
+    },
+    {
+      "path": "bonecraft/docs/manual/en/index.md",
+      "sha256": "a167a0926566a411cfcdda433a8d78254ca8ed010c8a5d768f32ae3da52d63e3",
+      "bytes": 1978
+    },
+    {
+      "path": "bonecraft/docs/manual/en/10-reference.md",
+      "sha256": "d28d6d983027327752f52188bd2a84605076e5fa3fdf5b4892c8c82fb02f376c",
+      "bytes": 10520
+    }
+  ],
+  "images": [
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/01-open-file.png",
+      "sha256": "8d3428201c93b25706e1bc6b7b98a8ddb750c9201936e2c9fb01c33ba0b46ae6",
+      "bytes": 135949,
+      "width": 1015,
+      "height": 815,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/01-open-file.raw.jpg",
+      "raw_sha256": "09d5136ea93a16bfa2a067724e50c63ac3b89721ad2b55a809995043a36bd635"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/02-the-parts.png",
+      "sha256": "e46b25e3f9e128882e04686071398764aea0d79f955946ae8f67f0243ef73601",
+      "bytes": 283208,
+      "width": 630,
+      "height": 660,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/02-the-parts.raw.jpg",
+      "raw_sha256": "09d5136ea93a16bfa2a067724e50c63ac3b89721ad2b55a809995043a36bd635"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/03-mechanisms-section.png",
+      "sha256": "bfb87378959bd298e16e8913d86f51e7bce9cdb0aad42f20cf93fc946c1d8bdf",
+      "bytes": 222272,
+      "width": 616,
+      "height": 756,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/03-mechanisms-section.raw.jpg",
+      "raw_sha256": "e56a54aa48a62e1ad76b91ceee3b4a28264bd46fb73ff6383d198b062b5d1468"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/04-add-parts.png",
+      "sha256": "449aabdc81eb2af328e721b680c966360e8641efc1682417e9b34549fdef99fc",
+      "bytes": 160213,
+      "width": 1100,
+      "height": 775,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/04-add-parts.raw.jpg",
+      "raw_sha256": "b4be8a8699df5ccda3f852fe13aa3f257b0bca69c826bd530f2dc5d16d362c2a"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/05-rides-on.png",
+      "sha256": "9532f2074a0d027c22663ecc2e0dd96be1c61b00e067707d13031818e1596969",
+      "bytes": 136406,
+      "width": 650,
+      "height": 510,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/05-rides-on.raw.jpg",
+      "raw_sha256": "0492b95f9caa23c625e9862a55afe24434a0c108e5439e4282bfa47442fdb821"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/06-edit-pivot-button.png",
+      "sha256": "ea8d71b13ee872e914da36f576745a4402bb5fec773ba0574ba4739763addea7",
+      "bytes": 98147,
+      "width": 650,
+      "height": 387,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/05-rides-on.raw.jpg",
+      "raw_sha256": "0492b95f9caa23c625e9862a55afe24434a0c108e5439e4282bfa47442fdb821"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/06-edit-pivot.png",
+      "sha256": "045e60352c82e24f50155599e1d21458cefd0481c8361c42274855dd5ab06d53",
+      "bytes": 154135,
+      "width": 1100,
+      "height": 775,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/06-edit-pivot.raw.jpg",
+      "raw_sha256": "c26e55d8c939fd32f507336cf3067598b51322088232aa618d8bdcf4da6cfbd2"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/07-head-hinge.png",
+      "sha256": "90cf3c0d0e8aebeaa2ae8c9a2d887da15488fcd582e75790bb254eca146ec15d",
+      "bytes": 170968,
+      "width": 650,
+      "height": 448,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/07-head-hinge.raw.jpg",
+      "raw_sha256": "f55ec242313cd9846169b323e79042a18c10bcab6d458d432916b2fd4d53331f"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/08-head-hinge-click.png",
+      "sha256": "827dc322291d34ea6543c52ef873759dd31f43e37a4d1162135e3a106c1e85c9",
+      "bytes": 256546,
+      "width": 975,
+      "height": 498,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/08-head-hinge-click.raw.jpg",
+      "raw_sha256": "a28abe9561b9013883d13d5cbef48af32826c8757414743dce6bfd71da1901fd"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/09-head-hinge-axis.png",
+      "sha256": "d9ac6f959decd1365799635a43cefff80984d4d80511166194942b5e66d63f13",
+      "bytes": 153674,
+      "width": 1000,
+      "height": 775,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/09-head-hinge-axis.raw.jpg",
+      "raw_sha256": "18f1a0626293014833d278b0230d60e2e5910a067f64844929bc97ffd154ce16"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/10-head-hinge-limits.png",
+      "sha256": "e9527f66156aab019897cf3ad8b96a7a45640105ab4dac4191f06ce2ca5e3d6f",
+      "bytes": 141988,
+      "width": 573,
+      "height": 495,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/10-head-hinge-limits.raw.jpg",
+      "raw_sha256": "71abf18d357cea167af2d42ea5f33b522582ab8c73b9b691a3e9a78a283d09b2"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/11-test-head.png",
+      "sha256": "d75ef80358fcec951d011227fa189a2bbbfc8db642ed9741135bd0ede1771e65",
+      "bytes": 108168,
+      "width": 650,
+      "height": 246,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/11-test-head.raw.jpg",
+      "raw_sha256": "056eabd6ad918c062e79734a45abc8589c731016a4f2d554da61701401b54b0d"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/12-blade-hinges.png",
+      "sha256": "8c55868e3f4a429a970f4408b3ba7360677097fdc032789246c034754b6f0a52",
+      "bytes": 179603,
+      "width": 574,
+      "height": 510,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/12-blade-hinges.raw.jpg",
+      "raw_sha256": "c7fb707d0402b88bc3cb3760e36029c1d2e2e4f7b32ef75613ab4ec4267544e8"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/13-blade-chain.png",
+      "sha256": "2c8a469f07c00bd678630f9ee49d8f5dc3512e3f137f0ab1b072de0de728da27",
+      "bytes": 273799,
+      "width": 1110,
+      "height": 540,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/13-blade-chain.raw.jpg",
+      "raw_sha256": "652198c1f914252277b306525a76dfa8f01c4421c95e8815fbe5e3f371b0f139"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/14-plate-hinges.png",
+      "sha256": "fe2c4f58bb6960be2f684646672402eeb0cfa32eccaceb953e86a6caff8b3ed5",
+      "bytes": 189604,
+      "width": 574,
+      "height": 524,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/14-plate-hinges.raw.jpg",
+      "raw_sha256": "527e0eb4016ab5aff08337a7eef1be1013cd55fabbda9a86d867dbe1a3c33b7c"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/15-follow.png",
+      "sha256": "b4aac2ee978dba620bb839af53409ac1c9dfdca1c30f6bf95a3c92cc0e363312",
+      "bytes": 141004,
+      "width": 550,
+      "height": 1054,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/15-follow-front-pick.raw.jpg",
+      "raw_sha256": "a0e2cdf81995bb5cc0c731de9a9f9879e845508be059f0e1689cb6371de1c1e6"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/16-follow-ranges.png",
+      "sha256": "7535de994b06ef935081c8ec8c28ba500c29301233681ba7994c0eb850217397",
+      "bytes": 183542,
+      "width": 574,
+      "height": 634,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/16-follow-ranges.raw.jpg",
+      "raw_sha256": "263f917802478f13f128307f4842c50a9842d16e3a10135366716b74884799c9"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/17-piston.png",
+      "sha256": "689a9190fb03e8957650dca2430ce88d95325385fe56ec656a6eb66a2e7e9fd1",
+      "bytes": 279343,
+      "width": 1057,
+      "height": 405,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/17-piston.raw.jpg",
+      "raw_sha256": "294b2cc90e82d09c82c2835519d2b3f1a7465e03857068a8d643d22e2bb3fcb8"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/18-piston-parts.png",
+      "sha256": "942faec4319dea0730dc6767c2d353254205bded43aa1b89198688818982d0be",
+      "bytes": 173494,
+      "width": 490,
+      "height": 1074,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/18-piston-pick.raw.jpg",
+      "raw_sha256": "7f59de73a7887b7de0514e4f8e250505370aea85cab05a7961955f3a897d30ab"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/18-piston-settings.png",
+      "sha256": "ff626283994834e841dd1dde16e060bb6c839e45a7e380f8623a7eff04bf0574",
+      "bytes": 163810,
+      "width": 576,
+      "height": 469,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/18-piston-settings.raw.jpg",
+      "raw_sha256": "f77c7cf27d77927e841c3f31fd95574b9456953e2ef1c8d6e656c360d824e3af"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/19-grip-hinge.png",
+      "sha256": "4d96c7ce121fbf1fe5806266a2f616c03f93834ec594197089945b23070d7de0",
+      "bytes": 171579,
+      "width": 576,
+      "height": 526,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/19-grip-hinge.raw.jpg",
+      "raw_sha256": "6ea45396effb8ead7ff32b4cfffe8c1c4dd27953be65cde6088a5dafabd7fe20"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/19-rear-hinge.png",
+      "sha256": "c04b31347e2b94bbf40efc77750333a47a9423be3b741cd9282f0757806c5909",
+      "bytes": 142128,
+      "width": 650,
+      "height": 401,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/19-rear-hinge-corrected.raw.jpg",
+      "raw_sha256": "7b9507129700178bbff4245c8bed1951204e07d53dbe94ba829823b7d74decbc"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/20-bolt-slide.png",
+      "sha256": "be26dea3aa90363bad8a70a88c68442c17adbec681181bfb3bc8e8c423b93b6d",
+      "bytes": 171821,
+      "width": 576,
+      "height": 526,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/20-bolt-slide.raw.jpg",
+      "raw_sha256": "32bfeffce604252666e200b9945348ea826da6c513aa92fed3c341dd10b5d376"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/20-slides.png",
+      "sha256": "69721d905cd0b2631e4e89ace755fd299c2b08714862e3ac937c2c63273df07a",
+      "bytes": 175222,
+      "width": 576,
+      "height": 526,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/20-magazine-slide.raw.jpg",
+      "raw_sha256": "6b49f3bb078eee8c0231405cde99e78bb4a16e3158d36a8277cdd438994e71a4"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/21-pole-slide.png",
+      "sha256": "3c80139eb27e538fbb92cec8667be62395828b4b15872358423a923d39ba93a2",
+      "bytes": 170687,
+      "width": 576,
+      "height": 526,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/21-pole-slide.raw.jpg",
+      "raw_sha256": "80caea890b97cc53c147b50748c716eb0ca78e29f6f6d9c6f4f2c1fa588f7b3f"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/22-telescope-pick.png",
+      "sha256": "e78e3228ad17b69655fb797088a6aa8717f94b65e1ceb49e5d6ce5d8aa5f2f74",
+      "bytes": 231116,
+      "width": 720,
+      "height": 777,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/22-telescope-pick.raw.jpg",
+      "raw_sha256": "735746ec3cd49d1ebff8dd76bf4d0c4e950ed5caf4f14205369d6fb43fd10e89"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/22-telescope.png",
+      "sha256": "f85fb747a264403405ccb08aec2be3382eebef7cffb42790846df0f767b7c161",
+      "bytes": 234559,
+      "width": 576,
+      "height": 782,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/22-telescope.raw.jpg",
+      "raw_sha256": "7667e809729306434fd696582afeb5443d7631b12042e32ac5d2c71effea9f8e"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/23-add-sequence.png",
+      "sha256": "306b6f4f47a89d93a1e0d76adf635a840bcc302aeaa224cc5404f41d33a1b74d",
+      "bytes": 115307,
+      "width": 650,
+      "height": 348,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/23-add-sequence.raw.jpg",
+      "raw_sha256": "9b275f02e7d52c0595b76b3e3766a303526b8d6ad9885863e0cb872a1f445a44"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/24-capture-step.png",
+      "sha256": "6b1461f064cb2970f49ebdd7888f4652cc621735d71abb2a36f8cf8f709a16ed",
+      "bytes": 104395,
+      "width": 650,
+      "height": 355,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/24-move-slider.raw.jpg",
+      "raw_sha256": "e6da3040e476a3f3cd6806e93937d8d4c29ac8672bd159c19aab6bf1511c00f8"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/24-record-step.png",
+      "sha256": "fce6945fb16a596915f06359da957bd06105fb11e238bbdb5acfc0408e67f3ad",
+      "bytes": 112348,
+      "width": 650,
+      "height": 372,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/24-record-step.raw.jpg",
+      "raw_sha256": "201c473e6bd4a84d7e23b636b3b9e7154e60a195c0cf1f1516d7b462dce00c88"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/25-cancel-capture.png",
+      "sha256": "0943da6650b30e4a206c617447421125a1e245dd6a6ca5c506c9f620dcd5ee12",
+      "bytes": 47252,
+      "width": 810,
+      "height": 154,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/28-go-to-form.raw.jpg",
+      "raw_sha256": "f5bfeffdc179b7d2567889d846dbb0e9c25a19928a59809d20a3784ecc2236bc"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/25-compact-steps.png",
+      "sha256": "c55f282b151a96aa701803e3ed65650135e685c3d3348ac890fdc0324cfe342f",
+      "bytes": 159178,
+      "width": 520,
+      "height": 578,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/25-compact-steps.raw.jpg",
+      "raw_sha256": "1f0deef57c6f18c1f4466e89fdb176ea6a2b6628dc3683003337222d8e294f52"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/25-sequence-steps.png",
+      "sha256": "61ec563485ff1a1a6a5d946c442e510ff57059631fa0e1b2862ea947a41026ba",
+      "bytes": 218493,
+      "width": 520,
+      "height": 819,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/25-sequence-steps.raw.jpg",
+      "raw_sha256": "1b171346b3bc4eff92b46c817e093c6e178ac1e2b5bd088c8c84f4f8a024c411"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/26-sequence-test.png",
+      "sha256": "4f538c20bfcfc54aa63e52f7a81f243316870186db9c20726ed1b53203e1427c",
+      "bytes": 165423,
+      "width": 1100,
+      "height": 775,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/26-sequence-test.raw.jpg",
+      "raw_sha256": "17ced8fbdb022e18b1908036b04a1564c22ada5ea6b1116daef44c4c2c5524cd"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/27-save-form.png",
+      "sha256": "5e956e8b1ce5c3bbfdfb1cd2d67b4aa4c8fff10095b95136acee1b9d8314c646",
+      "bytes": 170435,
+      "width": 573,
+      "height": 710,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/27-save-form.raw.jpg",
+      "raw_sha256": "4d566f26fe74860b6f0e498faef7a458555c886647bef1a04765cc63fb28fead"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/28-go-to-form.png",
+      "sha256": "e6c74378756bc8c3c0bf56c1af794260ae234c4420bce2c8cc52eb065aca575b",
+      "bytes": 180345,
+      "width": 573,
+      "height": 722,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/28-go-to-form.raw.jpg",
+      "raw_sha256": "f5bfeffdc179b7d2567889d846dbb0e9c25a19928a59809d20a3784ecc2236bc"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/29-result-rifle.png",
+      "sha256": "d1b0c836eb3de4b5ad9952e70118ec7b260b45255695c7120b14bd36802f1f78",
+      "bytes": 133841,
+      "width": 1060,
+      "height": 733,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/29-result-rifle.raw.jpg",
+      "raw_sha256": "f5bfeffdc179b7d2567889d846dbb0e9c25a19928a59809d20a3784ecc2236bc"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/30-result-compact.png",
+      "sha256": "f4cae0f52ebb14c102a79ba7cae094b89c788371c2e0d07fe75e5cff306d184b",
+      "bytes": 132258,
+      "width": 1060,
+      "height": 733,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/30-result-compact.raw.jpg",
+      "raw_sha256": "7cfb9a88104f0a03b625842daaa3ce1f0da60ca01f2cf57e1a96b27d4204cb0c"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-01-import-fbx.png",
+      "sha256": "5414afcaae107c8d45699d7256289394be0f48f93e42fb630885f314762dc71e",
+      "bytes": 247944,
+      "width": 1000,
+      "height": 688,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-01-import-options.raw.jpg",
+      "raw_sha256": "298c12f8a4156c5f53cbbcd264ffbee1917d30359f00582ec300078337e55f70"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-02-scale.png",
+      "sha256": "b1ee157421253aa0b2ad2772c14551130f1416e4700575ac3c0fabe033ffea03",
+      "bytes": 239210,
+      "width": 980,
+      "height": 755,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-02-scale.raw.jpg",
+      "raw_sha256": "426d839ea04ad78cc1a29ac1c0268fdb71a9f8aef33a86bd28dd0fc0e7b20642"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-02-unparent-command.png",
+      "sha256": "0a25f02b05838e9a7b3e048b07a162e7569ac2d2a9426d12bb5736406c860c7c",
+      "bytes": 106935,
+      "width": 1050,
+      "height": 192,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-02-clear-keep-transform.raw.jpg",
+      "raw_sha256": "ce73019c3733eb7dc5ab6411c33d2b29630b490bf82d38c76829d8d655fbf79f"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-03-materials.png",
+      "sha256": "bd2264e0dce0cb9ac2f2c474748e3c3eb07767d84768b9f6ce0732a9b8e787fb",
+      "bytes": 178888,
+      "width": 1145,
+      "height": 650,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-03-materials-nodes.raw.jpg",
+      "raw_sha256": "6891fd2f137cfece704337aef745168f268440a4cac094e075286ae6f0bba0c4"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-03-shaded.png",
+      "sha256": "2240b2044e9492702cb2e1655f605252d345b1c69f65ee5622dc6d4849cd0a34",
+      "bytes": 184682,
+      "width": 780,
+      "height": 745,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-03-materials.raw.jpg",
+      "raw_sha256": "827d6e8390c271817e6d797e28e4296325c2c9286548ac200f480f2f434f255f"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-04-separate-command.png",
+      "sha256": "e5d01cd586bad2ff5f341d143c0012b3352b832d63107053b88367a83f155dda",
+      "bytes": 193937,
+      "width": 1154,
+      "height": 276,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-04-separate-command.raw.jpg",
+      "raw_sha256": "93cbad91b3e8dc55d00e3f1567c25c8f349972d27dc837bc1f30eb61d1b81cf1"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-04-separate.png",
+      "sha256": "80da66713805e602f54c412b54d52e032c97d99b23ae882e63cf1ba56cda2db1",
+      "bytes": 181754,
+      "width": 1400,
+      "height": 566,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-04-separate.raw.jpg",
+      "raw_sha256": "3ae418b305000e6ad1db7f4dec70494c0023b0bddee44e692f4b888b6fe308fe"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-05-blade1.png",
+      "sha256": "86021b67e87461ba5d9bd43383be7e2fd797f33adec17a9554bdff28d8463435",
+      "bytes": 266322,
+      "width": 1250,
+      "height": 360,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-05-blade1-selected.raw.jpg",
+      "raw_sha256": "0ea029f81f4ac364b84472778f6c6c15a0a560e326ac15d507e6b3c2066e2a04"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-05-group-parts.png",
+      "sha256": "04622215ae9c8bb7d656211451094ce9418a74b6bd51b5118c4e859e78c36fa4",
+      "bytes": 185499,
+      "width": 1318,
+      "height": 770,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-05-group-parts.raw.jpg",
+      "raw_sha256": "668a6120537b3bf0c1edd0851a5aeb8750441dac924cf2e9245958a394338975"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-05-join-command.png",
+      "sha256": "82cd8544d81bc605599a63b344bb02bdb4e97295a9aaa3103578ebbfca9f6d16",
+      "bytes": 155559,
+      "width": 454,
+      "height": 500,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-06-origin-command.raw.jpg",
+      "raw_sha256": "9d6fa330026ffb446818fcba2a7da018766ef492e4f18deae6e33b0fe013788d"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-06-origin-command.png",
+      "sha256": "01d0583924c260b8ce1194b98321abf2ee8ee6b3268cbbbcfe71893604338889",
+      "bytes": 276700,
+      "width": 966,
+      "height": 362,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-06-origin-command.raw.jpg",
+      "raw_sha256": "9d6fa330026ffb446818fcba2a7da018766ef492e4f18deae6e33b0fe013788d"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-06-origins.png",
+      "sha256": "8c194b9a4b7e82627d10a3a30435b9a8ff5f8ed5fc29c761825b9e2591abca72",
+      "bytes": 211073,
+      "width": 965,
+      "height": 465,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-06-origins.raw.jpg",
+      "raw_sha256": "3408ec8293944829eb5cb9b445ca66384615be6a01160ddd967654e8ac482284"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-07-pack-textures.png",
+      "sha256": "0b5417b7d31674b9437a8847e5603d472251828417221cf70389a5671df09eb8",
+      "bytes": 306480,
+      "width": 750,
+      "height": 596,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-07-pack-image.raw.jpg",
+      "raw_sha256": "02d751964361fc1653f83b39d1f625ed382956ad58f299abc0a57bc39fa88415"
+    },
+    {
+      "path": "bonecraft/docs/manual/images/crescent-rose/en/prep-08-save-parts.png",
+      "sha256": "15ac1c63f665e5da9ba013935a5f5f6cf29aebbfd9a28cbcff5532ef6e6c06df",
+      "bytes": 196302,
+      "width": 1400,
+      "height": 642,
+      "raw": "G:/LapArt/output/crescent-rose-captures/9.1.2/en/prep-08-save-parts.raw.jpg",
+      "raw_sha256": "5d94a014ce1599db98f93e7f5c7e97ab0bc2a529a445cb34e100658750226798"
+    }
+  ],
+  "records": {
+    "parts": 15,
+    "mechanisms": 14,
+    "sequences": 2,
+    "forms": 3
+  },
+  "checks": {
+    "host": "PASS",
+    "individual_controls": "PASS: 24 half/full-travel samples, linked plates and strut, restoration",
+    "manual": "PASS test_manual (en), all English assertions retained",
+    "non_english_annotations": "unchanged",
+    "pdf": {
+      "pages": 107,
+      "tutorial_start": 58,
+      "overflow": [],
+      "page_info": null
+    },
+    "annotation_coverage": {
+      "steps": 38,
+      "images": 52,
+      "annotated_images": 52,
+      "numbered_callouts": 121,
+      "caption_keys_match": true,
+      "non_english_unchanged": true
+    },
+    "page_numbering": {
+      "pages": 107,
+      "footer_count": 107,
+      "format": "Page X of 107",
+      "position": "bottom-center",
+      "body_text_unchanged": true,
+      "image_placement_unchanged": true,
+      "link_counts_unchanged": true,
+      "overlaps": []
+    }
+  },
+  "review_artifacts": [
+    {
+      "path": "G:/LapArt/output/bonecraft-manual/9.1.2-en-review/BoneCraft_Manual_en.html",
+      "sha256": "8fc8842a9542ef10ab8fac548ece379a82bd894296c93a783c4183e7474a7e11",
+      "bytes": 221278
+    },
+    {
+      "path": "G:/LapArt/output/bonecraft-manual/9.1.2-en-review/BoneCraft_Manual_en.pdf",
+      "sha256": "32b215b101f626d22d2030f49957d87838d64ae4de01465e239c6c19eded21eb",
+      "bytes": 13593506
+    },
+    {
+      "path": "G:/LapArt/output/bonecraft-manual/9.1.2-en-review/page-number-check.json",
+      "sha256": "81c8abdd85e7535fd295946c809b1d64a36ed9021d49c3258f8f4c9cebf8e9e7",
+      "bytes": 20772
+    }
+  ],
+  "annotation_spec": {
+    "path": "bonecraft/docs/manual/images/crescent-rose/circles.json",
+    "sha256": "edbfa489e9ef17e3722d6da24f060ed23719f2007cf7e162d63a9a92db3cec59",
+    "bytes": 36999
+  }
+}

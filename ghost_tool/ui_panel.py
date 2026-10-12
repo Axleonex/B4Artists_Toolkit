@@ -210,13 +210,64 @@ def _row_label(layout, text: str, icon: str = 'NONE') -> None:
     row.label(text=text, icon=icon)
 
 
+def _wrapped_label(layout, context, text: str, icon: str = 'NONE') -> None:
+    """Keep the full target readable in narrow native panels and popovers."""
+    region = getattr(context, 'region', None)
+    width = getattr(region, 'width', 300) or 300
+    # Native popovers retain the invoking viewport's WINDOW context, so
+    # region.width is not their content width. Keep that route readable
+    # at the smallest supported 12-unit review popover.
+    if getattr(region, 'type', None) == 'WINDOW':
+        width = min(width, 280)
+    scale = getattr(getattr(getattr(context, 'preferences', None), 'view', None), 'ui_scale', 1.0)
+    columns = max(16, min(64, int(width / (7.0 * scale)) - 8))
+    for index, line in enumerate(textwrap.wrap(text, width=columns, break_long_words=True,
+                                               break_on_hyphens=False) or ['']):
+        layout.label(text=line, icon=icon if index == 0 else 'NONE')
+
+
+def _options_fold(layout, key):
+    try:
+        header, body = layout.panel(key, default_closed=True)
+    except (AttributeError, TypeError, ValueError):
+        return layout.column()
+    header.label(text="Options")
+    return body
+
+
+def _marker_target_text(context):
+    obj = context.active_object
+    if obj is None:
+        return "Target: select an animated object or pose bones"
+    bones = []
+    if obj.type == 'ARMATURE' and obj.pose:
+        bones = [b.name for b in (getattr(context, 'selected_pose_bones', None) or [])]
+        if not bones:
+            bones = [b.name for b in obj.pose.bones if getattr(b.bone, 'select', False)]
+        if not bones:
+            bones = [b.name for b in obj.pose.bones]
+    suffix = " / " + ", ".join(bones) if bones else ""
+    return "Markers: " + obj.name + suffix
+
+
+def _snapshot_target_text(snapshot):
+    objects = ", ".join(sorted(snapshot.object_names)) or "No captured objects"
+    bones = ", ".join(sorted(snapshot.bone_names))
+    return "Targets: " + objects + (" / Bones: " + bones if bones else "")
+
+
 def _draw_show_ghosts(layout, context) -> None:
     settings = context.scene.ghost_tool
+    _wrapped_label(layout, context, _marker_target_text(context))
     row = layout.row(align=True)
     row.scale_y = 1.3
     row.operator("ghost_tool.generate_ghosts", text="Show Markers", icon='GHOST_ENABLED')
     row.operator("ghost_tool.clear_ghosts", text="", icon='TRASH')
     _row_label(layout, "Location + rotation keys")
+
+    layout = _options_fold(layout, 'ghost_marker_sampling_options')
+    if layout is None:
+        return
 
     col = layout.column(align=True)
     col.label(text="Frames")
@@ -307,6 +358,12 @@ def _draw_edit_motion(layout, context) -> None:
     settings = scene.ghost_tool
     store = GhostStore.get(scene)
 
+    selected = store.get_selected()
+    if selected:
+        _wrapped_label(layout, context, "Selected markers: " + ", ".join(sorted({g.object_name for g in selected})))
+    else:
+        _wrapped_label(layout, context, "Drag target: the marker you pick in this viewport")
+
     row = layout.row()
     row.scale_y = 1.4
     row.operator("ghost_tool.drag_ghost", text="Drag Marker  (Shift G)", icon='ORIENTATION_CURSOR')
@@ -338,6 +395,8 @@ def _draw_edit_motion(layout, context) -> None:
         col.prop(easing, "active_preset", text="")
         op = col.operator("ghost_tool.apply_easing", text="Apply Easing", icon='IPO_EASE_IN_OUT')
         op.preset = easing.active_preset
+        for name in ("custom_left_x", "custom_left_y", "custom_right_x", "custom_right_y"):
+            setattr(op, name, getattr(easing, name))
         if easing.active_preset == "CUSTOM":
             row = col.row(align=True)
             row.prop(easing, "custom_left_x", text="L.X")
@@ -362,25 +421,50 @@ def _draw_compare(layout, context) -> None:
     snapshots = SnapshotStore.get(scene).get_all()
 
     col = layout.column(align=True)
-    col.label(text=f"Snapshots ({len(snapshots)})")
-    col.operator("ghost_tool.take_snapshot", text="Take Snapshot", icon='CAMERA_DATA')
+    col.label(text=f"Saved snapshots ({len(snapshots)}/10)")
+    from .target_binding import capture_label
+    col.prop(scene, 'ghost_snapshot_scope', text='Scope')
+    _wrapped_label(col, context, capture_label(context))
+    col.operator("ghost_tool.take_snapshot", text="Save Snapshot", icon='CAMERA_DATA')
+    _wrapped_label(col, context, 'Saved with this blend file. Export JSON to transfer references.')
+    store = SnapshotStore.get(scene)
+    if store.storage_error:
+        _wrapped_label(col, context, store.storage_error, icon='ERROR')
+    if len(snapshots) >= 10:
+        _wrapped_label(col, context, 'Capacity reached. Delete unwanted references before saving another.', icon='INFO')
     if not snapshots:
         _row_label(col, "Save a state before big edits")
     for snap in snapshots:
-        row = col.row(align=True)
-        op = row.operator("ghost_tool.toggle_snapshot", text="",
+        card = col.box()
+        _wrapped_label(card, context, snap.name)
+        if snap.parent_uid:
+            _wrapped_label(card, context, 'Variant of: ' + snap.origin.get('name', 'Original reference'))
+        reason = SnapshotStore.binding_reason(snap, scene)
+        target_text = ('Targets: ' + ', '.join(sorted({b.summary() for b in snap.bindings}))) if snap.bindings and not reason else _snapshot_target_text(snap)
+        _wrapped_label(card, context, target_text)
+        if reason:
+            _wrapped_label(card, context, reason, icon='ERROR')
+            target_name = context.active_object.name if context.active_object else '(select a target)'
+            _wrapped_label(card, context, 'Bind to: ' + target_name)
+            card.operator('ghost_tool.bind_snapshot', text='Bind to Active Target').snapshot_uid = snap.uid
+        missing = sorted(name for name in snap.object_names if scene.objects.get(name) is None)
+        if missing and reason:
+            _wrapped_label(card, context, "Unavailable: " + ", ".join(missing), icon='ERROR')
+        _wrapped_label(card, context, "Restore: complete captured curves" if snap.curve_data else "Restore: legacy sampled values")
+        row = card.row(align=True)
+        op = row.operator("ghost_tool.toggle_snapshot", text="Hide" if snap.is_visible else "Show",
                           icon='HIDE_OFF' if snap.is_visible else 'HIDE_ON')
+        # One named action per row also remains readable in narrow panels.
         op.snapshot_uid = snap.uid
-        row.label(text=f"{snap.name}  ({len(snap.ghost_data)})")
-        op = row.operator("ghost_tool.restore_snapshot", text="", icon='LOOP_BACK')
+        op = card.row().operator("ghost_tool.restore_snapshot", text="Restore", icon='LOOP_BACK')
         op.snapshot_uid = snap.uid
-        op = row.operator("ghost_tool.delete_snapshot", text="", icon='X')
+        card.row().operator('ghost_tool.save_variant', text='Save Variant').parent_uid = snap.uid
+        op = card.row().operator("ghost_tool.delete_snapshot", text="Delete", icon='TRASH')
         op.snapshot_uid = snap.uid
 
     col = layout.column(align=True)
     col.label(text="Compare to a pose")
-    col.prop(settings, "show_diff_overlay", text="Colour Bones by Change", toggle=True,
-             icon='HIDE_OFF' if settings.show_diff_overlay else 'HIDE_ON')
+    col.prop(settings, "show_diff_overlay", text="Colour Bones by Change")
     row = col.row(align=True)
     row.operator("ghost_tool.pin_diff_reference", text="Set Reference", icon='PINNED')
     row.operator("ghost_tool.unpin_diff_reference", text="", icon='X')
@@ -630,6 +714,8 @@ def _draw_motion_paths(layout, context) -> None:
     row.prop(settings, "paths_active_glow", text="Glow", toggle=True)
     row.prop(settings, "paths_show_handles", text="Handles", toggle=True)
     layout.operator("ghost_tool.paths_draw_to_keys", text="Draw to Keys…", icon='GREASEPENCIL')
+    layout.operator("ghost_tool.path_handle_drag", text="Drag Path Handle").wait_for_click = True
+    layout.operator("ghost_tool.open_settings_editor", text="Path Settings (Prototype)").section = 'paths'
 
 
 #: (key, label, icon, draw function, help topic, open by default)
@@ -677,6 +763,8 @@ def draw_ghost_tool(layout, context, prefix: str) -> None:
         header, body = layout.panel(f"ghost_tool_{prefix}_{key}", default_closed=not is_open)
         header.label(text=label, icon=icon)
         _draw_help_icon(header, context, topic)
+        if key in {'paths', 'edit', 'look', 'settings'}:
+            header.operator("ghost_tool.open_settings_editor", text="Settings…").section = key
         if body is None:
             continue
         try:
@@ -711,6 +799,7 @@ class GHOST_PT_header_menu(bpy.types.Panel):
         layout = self.layout
         layout.separator()
         layout.operator("ghost_tool.open_window", icon='WINDOW')
+        layout.operator("ghost_tool.open_settings_editor", text="Settings Editor (Prototype)")
 
 
 # Windows opened by "Open in Separate Window" (their sidebars show Ghost Tool).
@@ -732,11 +821,18 @@ class GHOST_PT_window(bpy.types.Panel):
         return window is not None and window.as_pointer() in _ghost_windows
 
     def draw_header(self, context: bpy.types.Context) -> None:
+        from .settings_editor import is_editor
+        if is_editor(context):
+            return
         if hasattr(context.scene, 'ghost_tool'):
             self.layout.prop(context.scene.ghost_tool, "is_active", text="", icon='GHOST_ENABLED')
 
     def draw(self, context: bpy.types.Context) -> None:
-        draw_ghost_tool(self.layout, context, "window")
+        from .settings_editor import is_editor, draw_editor
+        if is_editor(context):
+            draw_editor(self.layout, context)
+        else:
+            draw_ghost_tool(self.layout, context, "window")
 
 
 class GHOST_OT_open_window(bpy.types.Operator):
@@ -752,7 +848,11 @@ class GHOST_OT_open_window(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        return context.window is not None and context.screen is not None
+        if context.window is None or context.screen is None:
+            cls.poll_message_set("Open a 3D Viewport window first")
+            return False
+        from .session_state import SessionState
+        return SessionState.poll_available(cls)
 
     def execute(self, context: bpy.types.Context) -> set[str]:
         area = context.area if context.area and context.area.type == 'VIEW_3D' else next(
@@ -776,8 +876,15 @@ class GHOST_OT_open_window(bpy.types.Operator):
         if view is not None:
             view.spaces.active.show_region_ui = True
 
+            window_pointer, area_pointer = window.as_pointer(), view.as_pointer()
+
             def _select_tab():
-                ui = next((r for r in view.regions if r.type == 'UI'), None)
+                live_window = next((w for w in bpy.context.window_manager.windows
+                                    if w.as_pointer() == window_pointer), None)
+                live_view = next((a for a in live_window.screen.areas if a.as_pointer() == area_pointer), None) if live_window else None
+                if live_view is None:
+                    return None
+                ui = next((r for r in live_view.regions if r.type == 'UI'), None)
                 try:
                     if ui is not None:
                         ui.active_panel_category = "Ghost Tool"
@@ -932,6 +1039,67 @@ def _draw_viewport_header_menu(self, context: bpy.types.Context) -> None:
 # Registration
 # ---------------------------------------------------------------------------
 
+def _draw_native_actions(layout, context):
+    entries = (
+        ("ghost_tool.generate_ghosts", "Show Markers", 'GHOST_ENABLED'),
+        ("ghost_tool.drag_ghost", "Drag Marker", 'ORIENTATION_CURSOR'),
+        ("ghost_tool.take_snapshot", "Save Snapshot", 'CAMERA_DATA'),
+        ("ghost_tool.open_settings_editor", "Settings Editor", 'SETTINGS'),
+    )
+    try:
+        from bl_ui.space_toolsystem_common import toolsystem_column_count
+        columns = toolsystem_column_count(context.region)
+    except (ImportError, AttributeError, TypeError):
+        columns = 4
+    col = layout.column(align=True)
+    col.scale_y = 2
+    if columns == 4:
+        for idname, label, icon in entries:
+            col.operator(idname, text=label, icon=icon)
+    else:
+        columns = max(1, columns)
+        for start in range(0, len(entries), columns):
+            row = col.row(align=True)
+            row.alignment = 'LEFT'
+            row.scale_x = 2
+            for idname, label, icon in entries[start:start + columns]:
+                row.operator(idname, text="", icon=icon)
+
+
+class GHOST_PT_shelf_object(bpy.types.Panel):
+    bl_label = "Ghost Tool"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Object"
+    bl_options = {'HIDE_BG'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode == 'OBJECT' and bool(getattr(context.space_data, 'show_toolshelf_tabs', False))
+
+    def draw(self, context):
+        _draw_native_actions(self.layout, context)
+
+
+class GHOST_PT_shelf_pose(bpy.types.Panel):
+    bl_label = "Ghost Tool"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Pose"
+    bl_context = "posemode"
+    bl_options = {'HIDE_BG'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode == 'POSE' and bool(getattr(context.space_data, 'show_toolshelf_tabs', False))
+
+    def draw(self, context):
+        _draw_native_actions(self.layout, context)
+
+
+_shelf_registered = []
+
+
 CLASSES: tuple[type, ...] = (
     GhostToolEasingSettings,
     GHOST_OT_show_help_popup,
@@ -953,6 +1121,11 @@ def register() -> None:
     """Register all UI classes and header extensions."""
     for cls in CLASSES:
         bpy.utils.register_class(cls)
+
+    if 'show_toolshelf_tabs' in bpy.types.SpaceView3D.bl_rna.properties:
+        for cls in (GHOST_PT_shelf_object, GHOST_PT_shelf_pose):
+            bpy.utils.register_class(cls)
+            _shelf_registered.append(cls)
 
     bpy.types.Scene.ghost_tool_easing = bpy.props.PointerProperty(
         type=GhostToolEasingSettings,
@@ -998,6 +1171,10 @@ def unregister() -> None:
         except Exception as exc:
             warn(f"Warning removing header append: {exc}")
     _header_appends.clear()
+
+    for cls in reversed(_shelf_registered):
+        bpy.utils.unregister_class(cls)
+    _shelf_registered.clear()
 
     if hasattr(bpy.types.Scene, 'ghost_tool_easing'):
         del bpy.types.Scene.ghost_tool_easing

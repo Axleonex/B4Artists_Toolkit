@@ -1,0 +1,1816 @@
+{
+  "en": {
+    "01-open-file": {
+      "crop": [
+        420,
+        65,
+        1435,
+        880
+      ],
+      "width": 1015,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            1385,
+            90
+          ],
+          "radius": 12,
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            426,
+            136,
+            556,
+            155
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Click Material Preview. 2: Press Numpad 3 until the view says Right Orthographic; press Home to frame the weapon."
+    },
+    "02-the-parts": {
+      "crop": [
+        1603,
+        105,
+        1918,
+        435
+      ],
+      "width": 630,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1633,
+            123,
+            1782,
+            182
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1633,
+            224,
+            1782,
+            382
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            1633,
+            382,
+            1782,
+            424
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Identify the three blade segments. 2: Match the body, head and pole names to the table. 3: Keep StrutBase and StrutRod as separate objects."
+    },
+    "03-mechanisms-section": {
+      "crop": [
+        5,
+        125,
+        435,
+        653
+      ],
+      "width": 616,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            5,
+            279,
+            23,
+            345
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "center": [
+            43,
+            226
+          ],
+          "radius": 12,
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            38,
+            288,
+            395,
+            310
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Click the BoneCraft tab. 2: Expand Mechanisms. 3: Find Add Parts from Selection; select the meshes before using it."
+    },
+    "04-add-parts": {
+      "crop": [
+        20,
+        105,
+        1120,
+        880
+      ],
+      "width": 1100,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            816,
+            404
+          ],
+          "radius": 155,
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            37,
+            288,
+            399,
+            307
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Hover the viewport and press A to select the 15 meshes. 2: Click Add Parts from Selection."
+    },
+    "05-rides-on": {
+      "crop": [
+        30,
+        240,
+        435,
+        558
+      ],
+      "width": 650,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            47,
+            385,
+            332,
+            405
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            37,
+            488,
+            397,
+            510
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Select Blade1 in the Parts list. 2: Open Rides on and choose HeadMount. Repeat using the parent table."
+    },
+    "06-edit-pivot": {
+      "crop": [
+        20,
+        105,
+        1120,
+        880
+      ],
+      "width": 1100,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            858,
+            242
+          ],
+          "radius": 26,
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            40,
+            797,
+            220,
+            819
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Move the pivot marker to the blade joint with Ctrl+W. 2: Click Apply Pivot to keep that location."
+    },
+    "07-head-hinge": {
+      "crop": [
+        30,
+        215,
+        435,
+        494
+      ],
+      "width": 650,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            37,
+            340,
+            214,
+            361
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            41,
+            362,
+            133,
+            385
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Open Add Joint. 2: Click Hinge. The guided build now waits for a part."
+    },
+    "08-head-hinge-click": {
+      "crop": [
+        420,
+        103,
+        1070,
+        435
+      ],
+      "width": 975,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            900,
+            259
+          ],
+          "radius": 15,
+          "badge": 1
+        }
+      ],
+      "action_key": "1: Click the rear black block of HeadMount, behind the red outer plate. Check the guide names HeadMount."
+    },
+    "09-head-hinge-axis": {
+      "crop": [
+        420,
+        88,
+        1210,
+        700
+      ],
+      "width": 1000,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            576,
+            107,
+            1020,
+            128
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "center": [
+            841,
+            287
+          ],
+          "radius": 58,
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Follow the axis prompt: press X, then Enter. 2: Watch the head rotate around its pivot before confirming."
+    },
+    "10-head-hinge-limits": {
+      "crop": [
+        30,
+        270,
+        435,
+        620
+      ],
+      "width": 573,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            42,
+            397,
+            315,
+            416
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            136,
+            543,
+            398,
+            563
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            136,
+            565,
+            398,
+            584
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Select HeadMount Hinge. 2: Set Min to 0. 3: Set Max to 120; double-click the number, type, and press Enter."
+    },
+    "11-test-head": {
+      "crop": [
+        30,
+        270,
+        435,
+        423
+      ],
+      "width": 650,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            340,
+            405
+          ],
+          "radius": 13,
+          "badge": 1
+        }
+      ],
+      "action_key": "1: Click the small play triangle on the HeadMount Hinge row. Watch the sweep and return."
+    },
+    "12-blade-hinges": {
+      "crop": [
+        30,
+        260,
+        435,
+        620
+      ],
+      "width": 574,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            43,
+            422,
+            309,
+            480
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            138,
+            565,
+            398,
+            585
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Create and select each blade hinge: Blade1, Blade2, BladeTip. 2: Set Max to 120 for each; use X as its axis."
+    },
+    "13-blade-chain": {
+      "crop": [
+        30,
+        125,
+        1140,
+        665
+      ],
+      "width": 1110,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            39,
+            491,
+            400,
+            552
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "center": [
+            856,
+            333
+          ],
+          "radius": 74,
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Enter 60 in each of the three blade sliders. 2: Check the chain curls together. Return all three sliders to 0."
+    },
+    "14-plate-hinges": {
+      "crop": [
+        30,
+        270,
+        435,
+        640
+      ],
+      "width": 574,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            44,
+            461,
+            309,
+            500
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            135,
+            585,
+            398,
+            604
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Make both PlateR and PlateL hinges; use the opposite side view to reach PlateL. 2: Set each Max to 30."
+    },
+    "15-follow": {
+      "crop": [
+        615,
+        103,
+        1010,
+        860
+      ],
+      "width": 550,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            714,
+            325
+          ],
+          "radius": 22,
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "center": [
+            887,
+            325
+          ],
+          "radius": 22,
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Click PlateL first, the leading part. 2: Click PlateR second, the following part. Press Enter."
+    },
+    "16-follow-ranges": {
+      "crop": [
+        30,
+        270,
+        435,
+        717
+      ],
+      "width": 574,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            132,
+            518,
+            398,
+            542
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            40,
+            559,
+            398,
+            600
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            40,
+            619,
+            398,
+            660
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Name the link PlateR Follow. 2: Check Source Range is 0 to 30. 3: Check Target Range is 0 to 30."
+    },
+    "17-piston": {
+      "crop": [
+        25,
+        320,
+        730,
+        590
+      ],
+      "width": 1057,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            222,
+            359,
+            398,
+            382
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            224,
+            382,
+            325,
+            405
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Open Add Link after framing StrutRod. 2: Choose Piston; the guide asks for the cylinder first."
+    },
+    "18-piston-parts": {
+      "crop": [
+        625,
+        103,
+        975,
+        870
+      ],
+      "width": 490,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            784,
+            399
+          ],
+          "radius": 14,
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "center": [
+            819,
+            488
+          ],
+          "radius": 15,
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Click the exposed red StrutBase first. 2: Click the black StrutRod sleeve second. Press Enter."
+    },
+    "18-piston-settings": {
+      "crop": [
+        30,
+        270,
+        435,
+        600
+      ],
+      "width": 576,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            133,
+            510,
+            398,
+            534
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "center": [
+            50,
+            551
+          ],
+          "radius": 11,
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Rename the link Head Strut. 2: Leave Stretch unchecked; then test HeadMount Hinge and restore 0."
+    },
+    "19-grip-hinge": {
+      "crop": [
+        30,
+        270,
+        435,
+        640
+      ],
+      "width": 576,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            43,
+            481,
+            311,
+            500
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            138,
+            539,
+            398,
+            562
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            138,
+            585,
+            398,
+            606
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Select Grip Hinge. 2: Keep Axis X at 1, Y and Z at 0. 3: Set Max to 90; keep Min at 0."
+    },
+    "19-rear-hinge": {
+      "crop": [
+        30,
+        380,
+        435,
+        630
+      ],
+      "width": 650,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            43,
+            395,
+            304,
+            417
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            133,
+            539,
+            230,
+            563
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            138,
+            585,
+            398,
+            606
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Select RearSpike Hinge. 2: Set Axis X to -1. 3: Set Max to 90; keep Min at 0."
+    },
+    "20-slides": {
+      "crop": [
+        30,
+        270,
+        435,
+        640
+      ],
+      "width": 576,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            43,
+            481,
+            309,
+            500
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            310,
+            539,
+            398,
+            562
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            138,
+            585,
+            398,
+            605
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Select Magazine Slide after Add Joint > Slide. 2: Use the Z axis (Z = 1, X = Y = 0). 3: Set Max to 0.04; keep Min at 0."
+    },
+    "20-bolt-slide": {
+      "crop": [
+        30,
+        270,
+        435,
+        640
+      ],
+      "width": 576,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            43,
+            481,
+            309,
+            500
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            310,
+            539,
+            398,
+            562
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            138,
+            585,
+            398,
+            605
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Select Bolt Slide after Add Joint > Slide. 2: Use the Z axis (Z = 1, X = Y = 0). 3: Set Max to 0.06; keep Min at 0."
+    },
+    "21-pole-slide": {
+      "crop": [
+        30,
+        270,
+        435,
+        640
+      ],
+      "width": 576,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            43,
+            481,
+            309,
+            500
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            310,
+            539,
+            398,
+            562
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            138,
+            585,
+            398,
+            605
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Select Pole Slide after Add Joint > Slide. 2: Use the Z axis (Z = 1, X = Y = 0). 3: Set Max to 0.6; keep Min at 0."
+    },
+    "22-telescope": {
+      "crop": [
+        30,
+        270,
+        435,
+        820
+      ],
+      "width": 576,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            43,
+            480,
+            310,
+            501
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            313,
+            539,
+            398,
+            560
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            138,
+            560,
+            398,
+            583
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Select Pole Telescope. 2: Check Z is its axis. 3: Enter Length 0.2; test the control and restore zero."
+    },
+    "22-telescope-pick": {
+      "crop": [
+        420,
+        103,
+        1140,
+        880
+      ],
+      "width": 720,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            881,
+            690
+          ],
+          "radius": 26,
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "center": [
+            881,
+            794
+          ],
+          "radius": 25,
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Click Pole as the base. 2: Click ButtSpike as its segment. Press Enter, then Z, then Enter."
+    },
+    "23-add-sequence": {
+      "crop": [
+        30,
+        294,
+        435,
+        511
+      ],
+      "width": 650,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            37,
+            397,
+            395,
+            420
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            45,
+            428,
+            327,
+            448
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Click Add Sequence. 2: Double-click the new name and type Scythe to Rifle. Press Enter."
+    },
+    "24-capture-step": {
+      "crop": [
+        30,
+        489,
+        435,
+        710
+      ],
+      "width": 650,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            37,
+            509,
+            201,
+            529
+          ],
+          "badge": 1
+        }
+      ],
+      "action_key": "1: Click Move Slider to End once. The button changes to Record Step 1."
+    },
+    "24-record-step": {
+      "crop": [
+        30,
+        525,
+        435,
+        757
+      ],
+      "width": 650,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            37,
+            715,
+            399,
+            755
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            37,
+            544,
+            201,
+            565
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Enter Blade2 = 120 and BladeTip = 70. 2: Click Record Step 1; both targets are stored and the joint sliders reset."
+    },
+    "25-sequence-steps": {
+      "crop": [
+        30,
+        180,
+        435,
+        818
+      ],
+      "width": 520,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            42,
+            296,
+            217,
+            325
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            222,
+            296,
+            398,
+            325
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            42,
+            326,
+            217,
+            355
+          ],
+          "badge": 3
+        },
+        {
+          "shape": "box",
+          "box": [
+            222,
+            326,
+            398,
+            355
+          ],
+          "badge": 4
+        }
+      ],
+      "action_key": "1: Target is the recorded joint value. 2: Choose Ease In Out. 3: Enter Start. 4: Enter End. Repeat these fields for all six entries using the shown values."
+    },
+    "25-compact-steps": {
+      "crop": [
+        30,
+        425,
+        435,
+        875
+      ],
+      "width": 520,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            44,
+            546,
+            399,
+            597
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            44,
+            727,
+            399,
+            778
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Grip and RearSpike use Target 90, Start 0, End 0.5. 2: Magazine and Bolt use 0.04 / 0.06, Start 0.5, End 1. Keep Ease In Out."
+    },
+    "26-sequence-test": {
+      "crop": [
+        20,
+        105,
+        1120,
+        880
+      ],
+      "width": 1100,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            203,
+            248,
+            363,
+            271
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "center": [
+            809,
+            302
+          ],
+          "radius": 81,
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Click Test beside the recording button. 2: Watch the fold and return. Test Compact with Scythe to Rifle at 100%."
+    },
+    "27-save-form": {
+      "crop": [
+        30,
+        320,
+        435,
+        822
+      ],
+      "width": 573,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            38,
+            629,
+            398,
+            670
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            38,
+            685,
+            398,
+            708
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            45,
+            717,
+            326,
+            738
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Start with both sequences and every joint at 0. 2: Click Save Form. 3: Double-click the new list entry and name it Scythe; repeat for Rifle and Compact."
+    },
+    "28-go-to-form": {
+      "crop": [
+        30,
+        353,
+        435,
+        863
+      ],
+      "width": 573,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            45,
+            773,
+            324,
+            794
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            39,
+            832,
+            211,
+            852
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Select the saved form. 2: Click Go to Form. Go and Key also inserts animation keys."
+    },
+    "29-result-rifle": {
+      "crop": [
+        20,
+        135,
+        1080,
+        868
+      ],
+      "width": 1060,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            45,
+            773,
+            326,
+            793
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            39,
+            832,
+            211,
+            852
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            40,
+            666,
+            398,
+            708
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Select Rifle. 2: Click Go to Form. 3: Check the sequence percentages against the pictured pose."
+    },
+    "30-result-compact": {
+      "crop": [
+        20,
+        135,
+        1080,
+        868
+      ],
+      "width": 1060,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            45,
+            793,
+            326,
+            813
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            39,
+            832,
+            211,
+            852
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            40,
+            666,
+            398,
+            708
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Select Compact. 2: Click Go to Form. 3: Check the sequence percentages against the pictured pose."
+    },
+    "prep-01-import-fbx": {
+      "crop": [
+        240,
+        65,
+        1058,
+        628
+      ],
+      "width": 1000,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            250,
+            144,
+            437,
+            164
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            923,
+            345,
+            1035,
+            370
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            790,
+            599,
+            915,
+            621
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Select CrescentRose.fbx. 2: Keep Scale at 1.00. 3: Click Import FBX; use the Legacy importer."
+    },
+    "prep-02-scale": {
+      "crop": [
+        600,
+        125,
+        1580,
+        880
+      ],
+      "width": 980,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1350,
+            260,
+            1530,
+            330
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1350,
+            388,
+            1530,
+            459
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: After scaling the three meshes together by 6.25, apply Rotation & Scale; Rotation must read 0. 2: Scale must read 1 on all axes."
+    },
+    "prep-03-materials": {
+      "crop": [
+        80,
+        145,
+        1225,
+        795
+      ],
+      "width": 1145,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            591,
+            188
+          ],
+          "radius": 13,
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            473,
+            297,
+            578,
+            318
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            472,
+            526,
+            579,
+            547
+          ],
+          "badge": 3
+        },
+        {
+          "shape": "box",
+          "box": [
+            674,
+            591,
+            788,
+            728
+          ],
+          "badge": 4
+        }
+      ],
+      "action_key": "1: Connect BaseColor Color to BSDF Base Color. 2: Keep BaseColor on sRGB. 3: Set all data maps to Non-Color. 4: Connect Normal image > Normal Map > BSDF Normal, using Tangent Space."
+    },
+    "prep-03-shaded": {
+      "crop": [
+        420,
+        125,
+        1200,
+        870
+      ],
+      "width": 780,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            775,
+            268
+          ],
+          "radius": 59,
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "center": [
+            875,
+            495
+          ],
+          "radius": 58,
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Check the blade material. 2: Check the red/black body materials in Material Preview; no pink missing textures."
+    },
+    "prep-04-separate": {
+      "crop": [
+        0,
+        105,
+        1918,
+        880
+      ],
+      "width": 1400,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            8,
+            200,
+            113,
+            219
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1640,
+            123,
+            1800,
+            415
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Check the object total is 37 after separation. 2: Use the Outliner to select pieces by shape and location; suffixes can vary."
+    },
+    "prep-05-group-parts": {
+      "crop": [
+        600,
+        105,
+        1918,
+        875
+      ],
+      "width": 1318,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1639,
+            125,
+            1800,
+            422
+          ],
+          "badge": 1
+        }
+      ],
+      "action_key": "1: Rename every joined group in the Outliner to match the 15 names in the table."
+    },
+    "prep-05-blade1": {
+      "crop": [
+        600,
+        105,
+        1850,
+        465
+      ],
+      "width": 1250,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            726,
+            247,
+            831,
+            302
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1640,
+            282,
+            1783,
+            326
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Select the two metal Blade1 plates on opposite sides. 2: Verify both objects are selected, then use Join and rename the result Blade1."
+    },
+    "prep-06-origins": {
+      "crop": [
+        615,
+        125,
+        1580,
+        590
+      ],
+      "width": 965,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            779,
+            275
+          ],
+          "radius": 20,
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1349,
+            253,
+            1530,
+            331
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            1349,
+            388,
+            1530,
+            456
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: The orange origin is now centred on the mesh. 2: Confirm Rotation 0. 3: Confirm Scale 1. Mechanism pivots are moved later."
+    },
+    "prep-07-pack-textures": {
+      "crop": [
+        1080,
+        78,
+        1580,
+        475
+      ],
+      "width": 750,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1130,
+            389,
+            1304,
+            413
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1388,
+            334,
+            1550,
+            357
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            1130,
+            437,
+            1304,
+            462
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Choose Image > Resize and enter 1024 for width and height. 2: Check the resulting 1024 x 1024 dimensions. 3: Choose Pack. Repeat for all 12 used maps."
+    },
+    "prep-08-save-parts": {
+      "crop": [
+        0,
+        0,
+        1918,
+        880
+      ],
+      "width": 1400,
+      "marks": [
+        {
+          "shape": "circle",
+          "center": [
+            20,
+            36
+          ],
+          "radius": 13,
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1639,
+            125,
+            1790,
+            425
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "circle",
+          "center": [
+            778,
+            271
+          ],
+          "radius": 60,
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Open File for Save As, then Open to reload your working copy. 2: Confirm the 15 named meshes survived. 3: Check the materials; the title bar identifies the reopened file."
+    },
+    "prep-02-unparent-command": {
+      "crop": [
+        705,
+        758,
+        1230,
+        854
+      ],
+      "width": 1050,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            728,
+            776,
+            1194,
+            800
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            728,
+            808,
+            1194,
+            831
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Press F3 and search Clear Parent Keep Transform. 2: Choose Clear and Keep Transformation. Repeat for all three meshes before removing the root."
+    },
+    "prep-04-separate-command": {
+      "crop": [
+        15,
+        72,
+        592,
+        210
+      ],
+      "width": 1154,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            29,
+            79,
+            121,
+            100
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            82,
+            157,
+            547,
+            181
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Switch to Edit Mode and select all geometry. 2: Press F3, search Separate Loose, and choose By Loose Parts."
+    },
+    "prep-05-join-command": {
+      "crop": [
+        372,
+        63,
+        599,
+        313
+      ],
+      "width": 454,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            384,
+            78,
+            433,
+            100
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            390,
+            269,
+            556,
+            291
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Open Object after selecting only the pieces of one group. 2: Choose Join (Ctrl+J). This menu crop identifies the command; use the two-piece selection shown above."
+    },
+    "prep-06-origin-command": {
+      "crop": [
+        369,
+        60,
+        852,
+        241
+      ],
+      "width": 966,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            384,
+            78,
+            433,
+            100
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            389,
+            122,
+            557,
+            143
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            591,
+            142,
+            815,
+            164
+          ],
+          "badge": 3
+        }
+      ],
+      "action_key": "1: Open Object. 2: Hover Set Origin. 3: Choose Origin to Geometry; set Bounds Center in the operation options."
+    },
+    "06-edit-pivot-button": {
+      "crop": [
+        29,
+        333,
+        435,
+        575
+      ],
+      "width": 650,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            44,
+            385,
+            329,
+            405
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            40,
+            536,
+            393,
+            559
+          ],
+          "badge": 2
+        }
+      ],
+      "action_key": "1: Select Blade1 in Parts. 2: Click Edit Pivot; then move and apply the marker as shown next."
+    },
+    "25-cancel-capture": {
+      "crop": [
+        30,
+        207,
+        435,
+        284
+      ],
+      "width": 810,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            223,
+            246,
+            390,
+            268
+          ],
+          "badge": 1
+        }
+      ],
+      "action_key": "1: After finishing a sequence, click Cancel in this capture banner to end recording. This keeps the entries and returns the sequence to zero."
+    }
+  }
+}

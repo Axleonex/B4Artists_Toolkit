@@ -139,9 +139,13 @@ def _run(
 def _poll_animated(cls, context: bpy.types.Context) -> bool:
     obj = getattr(context, "active_object", None)
     if obj is None:
+        cls.poll_message_set("Select an animated object to insert a breakdown")
         return False
     adata = getattr(obj, "animation_data", None)
-    return adata is not None and adata.action is not None
+    if adata is None or adata.action is None:
+        cls.poll_message_set("Add keyframes to the active object before inserting a breakdown")
+        return False
+    return True
 
 
 # ---------------------------------------------------------------------------

@@ -19,6 +19,7 @@ Public API:
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 
 from .logging import get_logger
 
@@ -26,6 +27,7 @@ __all__ = [
     "ToolEntry",
     "register_tool",
     "register_tools",
+    "seed_registered_tools",
     "get_tool",
     "get_tools_by_phase",
     "get_tools_by_tag",
@@ -46,7 +48,7 @@ class ToolEntry:
 
     op_id: str                              # e.g. "animassist.breakdown_current_frame"
     label: str                              # e.g. "Breakdown"
-    phase: int                              # 1-10
+    phase: int                              # 1-12
     category: str                           # e.g. "Breakdown", "Mirror"
     icon: str = "NONE"                      # Blender icon name
     tags: tuple[str, ...] = ()              # free-form search tags
@@ -73,6 +75,57 @@ def register_tools(entries: list[ToolEntry] | tuple[ToolEntry, ...]) -> None:
     """Batch-register multiple tool entries."""
     for entry in entries:
         register_tool(entry)
+
+
+def seed_registered_tools() -> int:
+    """Populate discovery from this add-on's registered, public operators.
+
+    Run after class/help registration and when repairing setup. Registration
+    is keyed by operator ID, so repeated setup does not duplicate tools or
+    reset favorites, recents or other scene settings.
+    """
+    import bpy
+
+    from ..operators import CLASSES
+    from .help_registry import get_help
+
+    entries = []
+    # Dispatch wrappers must not offer themselves as executable search items.
+    wrappers = {"animassist.p10_search_tools", "animassist.p10_repeat_last"}
+    for cls in CLASSES:
+        if not issubclass(cls, bpy.types.Operator):
+            continue
+        op_id = getattr(cls, "bl_idname", "")
+        if (not op_id.startswith("animassist.") or op_id in wrappers
+                or "INTERNAL" in getattr(cls, "bl_options", set())):
+            continue
+        category, name = op_id.split(".", 1)
+        # bpy.ops creates proxies even for nonexistent identifiers; RNA
+        # resolution proves that the target is actually registered.
+        rna = getattr(getattr(bpy.ops, category), name).get_rna_type()
+        help_entry = get_help(f"op.{op_id}")
+        phase_match = re.search(r"\.p(\d+)_", cls.__module__)
+        phase = int(phase_match.group(1)) if phase_match else 1
+        if help_entry and help_entry.phase.startswith("phase"):
+            phase = int(help_entry.phase[5:])
+        is_modal = callable(getattr(cls, "modal", None))
+        entries.append(ToolEntry(
+            op_id=op_id,
+            label=rna.name,
+            phase=phase,
+            category=help_entry.category if help_entry else "Animation",
+            description=rna.description,
+            is_modal=is_modal,
+            supports_batch=not is_modal and callable(getattr(cls, "execute", None)),
+        ))
+    if not entries:
+        raise RuntimeError("No registered Anim Assist tools were found")
+    register_tools(entries)
+    # Previous demo setup inserted identifiers that never had operators.
+    for index in range(1, 4):
+        _registry.pop(f"animassist.demo_tool_{index}", None)
+    _log.info("Registered %d tools for discovery", len(entries))
+    return len(entries)
 
 
 def get_tool(op_id: str) -> ToolEntry | None:

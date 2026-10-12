@@ -10,10 +10,17 @@ from ..core import p8_match_math as mm
 _log = get_logger(__name__)
 
 
-def _match_poll(context):
+def _match_poll(context, cls=None):
     """At least one selected object with an active object."""
-    return (context.active_object is not None and
-            context.mode in {'OBJECT', 'POSE'})
+    if context.active_object is None:
+        if cls is not None:
+            cls.poll_message_set("Select an object or pose bone to use matching tools")
+        return False
+    if context.mode not in {'OBJECT', 'POSE'}:
+        if cls is not None:
+            cls.poll_message_set("Switch to Object Mode or Pose Mode to match transforms")
+        return False
+    return True
 
 
 def _build_channel_filter(p8):
@@ -61,7 +68,7 @@ class AA_OT_p8_match_to_world(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _match_poll(context)
+        return _match_poll(context, cls)
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -97,7 +104,12 @@ class AA_OT_p8_match_to_parent(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         obj = context.active_object
-        return _match_poll(context) and obj and obj.parent
+        if not _match_poll(context, cls):
+            return False
+        if obj.parent is None:
+            cls.poll_message_set("Select an object with a parent to match its parent's transform")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -133,10 +145,13 @@ class AA_OT_p8_match_to_target(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -179,10 +194,13 @@ class AA_OT_p8_match_selected_to_active(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -224,7 +242,7 @@ class AA_OT_p8_visual_match(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _match_poll(context)
+        return _match_poll(context, cls)
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -259,10 +277,13 @@ class AA_OT_p8_match_location(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -304,10 +325,13 @@ class AA_OT_p8_match_rotation(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -349,10 +373,13 @@ class AA_OT_p8_match_scale(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -394,10 +421,13 @@ class AA_OT_p8_match_trs(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -439,10 +469,13 @@ class AA_OT_p8_match_axis_filtered(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -484,10 +517,13 @@ class AA_OT_p8_match_with_offset(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -529,10 +565,13 @@ class AA_OT_p8_match_without_offset(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -574,10 +613,13 @@ class AA_OT_p8_match_visual_matrix(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)
@@ -619,10 +661,13 @@ class AA_OT_p8_match_local_matrix(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if not _match_poll(context):
+        if not _match_poll(context, cls):
             return False
         selected = context.selected_objects
-        return len(selected) >= 2
+        if len(selected) < 2:
+            cls.poll_message_set("Select a target, then the object to match")
+            return False
+        return True
 
     def execute(self, context):
         p8 = get_p8(context)

@@ -1,42 +1,24 @@
-# Releases index
+# Release versions
 
-The current build of each add-on. **Install these.**
+Latest repository builds. GitHub release publication is a separate step.
 
-| Tool | Version | File | Bytes | sha256 (first 12) |
-|---|---|---|---|---|
-| Anim Assist | **12.1.0** | `b4_anim_assist_v12.1.0.zip` | 557,834 | `ee4ea5f1f517` |
-| Ghost Tool | **4.0.0** | `b4_ghost_tool_v4.0.0.zip` | 190,285 | `d133230b7672` |
-| BoneCraft BFA (optional) | **8.9.9** | `BoneCraft-BFA-8.9.9.zip` | 797,293 | `689378dff20a` |
+| Tool | Version | Archive | Bytes | SHA256 prefix | Status |
+|---|---|---|---:|---|---|
+| Anim Assist | 12.1.3 | [b4_anim_assist_v12.1.3.zip](b4_anim_assist_v12.1.3.zip) | 556,067 | `b30547b2afac` | Actual Bforartists regression checks pass; unpublished |
+| Ghost Tool | 4.2.0 r4 | [ghost_tool-afterimage-candidate-r4.zip](ghost_tool-afterimage-candidate-r4.zip) | 211,131 | `443abacb14e2` | Actual Bforartists checks pass; owner usability acceptance pending; unpublished candidate |
+| BoneCraft | 9.1.2 | [BoneCraft-BFA-9.1.2.zip](BoneCraft-BFA-9.1.2.zip) | 1,019,015 | `9901bdb98da4` | Full host suite passes; no GitHub Release published |
 
-Each zip is byte-identical to the matching source folder in this repository
-(`anim_assist/`, `ghost_tool/`) — the zip is only the packaged form.
-BoneCraft BFA ships as a packaged zip only; the add-on folder inside it is `boneforge/`.
+Anim Assist uses the package root `B4_anim_assist`; Ghost Tool uses `ghost_tool`; BoneCraft uses `boneforge`.
 
-## How to tell which build you have
+## Checks and notes
 
-Read the version from **inside** the add-on, never from the filename:
+- [All three builds: verification and full hashes](../docs/releases/2026-10-11/VERIFICATION.md).
+- [Anim Assist 12.1.3 release notes](../docs/anim_assist/releases/12.1.3/RELEASE-NOTES.md).
+- [Ghost Tool r4 release notes](../docs/ghost_tool/afterimage-release/RELEASE-NOTES.md) and [owner checklist](../docs/ghost_tool/afterimage-release/UAT.md).
+- [BoneCraft 9.1.2 release notes](../docs/bonecraft/releases/9.1.2/RELEASE-NOTES.md).
 
-```bash
-python -c "import zipfile,re,sys; z=zipfile.ZipFile(sys.argv[1]); print([re.search(r'\"version\"\s*:\s*\(([^)]*)\)', z.read(n).decode('utf-8','ignore')).group(1) for n in z.namelist() if n.endswith('__init__.py') and n.count('/')==1])" b4_ghost_tool_v4.0.0.zip
-```
+Published builds remain Anim Assist 12.1.0 and Ghost Tool 4.0.0 on the [GitHub Releases page](https://github.com/Axleonex/B4Artists_Toolkit/releases). Old published ZIPs are retained; local experimental and superseded candidate ZIPs are not part of the publishing update.
 
-In Bforartists: **Edit → Preferences → Add-ons**, expand the add-on, read the
-version shown there.
+## Identify a build
 
-## Why older zips are not in this folder
-
-Earlier Ghost Tool builds were published with a **build counter** in the
-filename rather than the real version, so filename order contradicted release
-order. For example the file once published as `b4_ghost_tool_v7.zip` actually
-contained version **3.3.0**, and sorted *after* `b4_ghost_tool_v3.3.3.zip` in a
-directory listing — so the newest-looking file was the oldest code.
-
-To remove that trap, superseded zips are no longer kept in this folder. They
-remain available two ways:
-
-- **Git history** — every removed zip is still retrievable:
-  `git log --diff-filter=D --name-only -- releases/`
-- **Releases page** — every release, with its notes and zip, is on the repository's
-  [Releases page](../../../releases); each is also tagged.
-
-All future releases are named with their real version.
+Read the add-on version in Preferences > Add-ons or in the ZIP's top-level `__init__.py` `bl_info` field. Candidate revisions share the 4.2.0 version, so use the filename and full checksum to distinguish r4 from earlier revisions. The oldest Ghost archives used build counters in filenames; filenames alone are not reliable evidence of their internal version.

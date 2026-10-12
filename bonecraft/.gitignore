@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Blender / Bforartists
+*.blend1
+*.blend2
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# LLM / internal references - NEVER publish to GitHub (keep these LOCAL only)
+*LLM*
+*llm*
+*_LLM_Reference.md
+CLAUDE.md
+AGENTS.md
+.cursorrules
+.cursor/
+.aider*
+copilot-instructions.md
+# Internal dev / AI-agent handoffs & review prompts — keep LOCAL, never publish
+HANDOFF.md
+PASSOVER.md
+CODEX_REVIEW_PROMPT.md
+*_REVIEW_PROMPT.md
+*REVIEW_PROMPT*
+
+# BoneForge BFA — hygiene blocklist (forbidden strings; never commit)
+scripts/name_scan.txt
+# Generated sample assets
+tests/assets/*.blend
+tests/assets/*.blend1
+
+# Stray nested dirs from a sandbox cp quirk (cannot unlink on this mount).
+# Excluded from the repo; delete locally on Windows with: rmdir /s /q
+boneforge/autorig/components/components/
+tests/tests/
+scripts/scripts/

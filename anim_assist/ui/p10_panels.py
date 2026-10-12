@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import bpy
 
-from ..core.p10_properties import get_p10
+from ..core.p10_properties import get_p10, recents_newest_first
 from ..ui import ui_helpers as uh
 from ..ui.panel_anatomy import PanelAnatomyMixin
 from ..ui.editor_placement import (
@@ -91,10 +91,11 @@ class ANIMASSIST_PT_p10_shelf(PanelAnatomyMixin, DopeSheetSidebarPanel):
                 layout.label(text="No favorites yet", icon="BLANK1")
         else:
             # Show recent tools (up to 5 most recent)
-            recent_count = min(5, len(p10.recents))
+            ordered_recents = recents_newest_first(p10)
+            recent_count = min(5, len(ordered_recents))
             if recent_count > 0:
                 for i in range(recent_count):
-                    recent = p10.recents[i]
+                    recent = ordered_recents[i]
                     row = layout.row(align=True)
                     uh.explained_op(
                         row, context,
@@ -670,10 +671,11 @@ class ANIMASSIST_PT_p10_shelf_v3d(PanelAnatomyMixin, View3DSidebarPanel):
         uh.section_header(layout, "Quick Shelf", icon="ASSET_MANAGER")
 
         # Show recent tools (up to 5 most recent)
-        recent_count = min(5, len(p10.recents))
+        ordered_recents = recents_newest_first(p10)
+        recent_count = min(5, len(ordered_recents))
         if recent_count > 0:
             for i in range(recent_count):
-                recent = p10.recents[i]
+                recent = ordered_recents[i]
                 uh.explained_op(
                     layout, context,
                     recent.op_id,
