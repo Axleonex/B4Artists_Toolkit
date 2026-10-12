@@ -206,7 +206,8 @@ class GHOST_OT_paths_draw_to_keys(bpy.types.Operator):
         length = dm.polyline_length(path)
         axes = [i for i, name in enumerate("XYZ") if name in self.axes]
         holder = obj.pose.bones[bone] if bone else obj
-        with scene_sampling(scene):
+        # This operation writes animation, so return to the newly keyed pose.
+        with scene_sampling(scene, preserve_pose=False):
             for (t, point), frame in zip(hits, frames):
                 scene.frame_set(int(frame))   # the parent's pose at this key's frame
                 data_path, to_world, offset, _current = mp.location_world_map(obj, bone)

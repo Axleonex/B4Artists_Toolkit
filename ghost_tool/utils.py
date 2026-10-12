@@ -661,20 +661,93 @@ def is_sampling() -> bool:
     return _SAMPLING_DEPTH > 0
 
 
+def is_native_transform_active(context) -> bool:
+    """Idle timers still run during native transforms; sampling must wait."""
+    manager = getattr(context, 'window_manager', None)
+    for window in getattr(manager, 'windows', ()):
+        for operator in getattr(window, 'modal_operators', ()):
+            if operator.bl_idname.startswith('TRANSFORM_OT_'):
+                return True
+    return False
+
+
+_POSE_PROPERTIES = (
+    'location', 'rotation_mode', 'rotation_euler', 'rotation_quaternion',
+    'rotation_axis_angle', 'scale',
+)
+_DELTA_PROPERTIES = (
+    'delta_location', 'delta_rotation_euler', 'delta_rotation_quaternion', 'delta_scale',
+)
+
+
+def _capture_authoring_pose(scene):
+    """Save original RNA inputs, never evaluated constraint/driver matrices.
+
+    frame_set re-evaluates keyed channels even when the playhead returns to
+    the same frame. Keep unkeyed edits on every rig, including deselected
+    controls and shape keys, so the next key insertion gets the user's pose.
+    """
+    state = []
+    for obj in scene.objects:
+        if obj.get('ghost_tool_mesh_ghost'):
+            continue
+        holders = [(obj, _POSE_PROPERTIES + _DELTA_PROPERTIES)]
+        if obj.pose:
+            holders.extend((bone, _POSE_PROPERTIES) for bone in obj.pose.bones)
+        for holder, properties in holders:
+            for name in properties:
+                value = getattr(holder, name)
+                state.append((holder, name, False,
+                              value if isinstance(value, str) else tuple(value)))
+            for name, value in holder.items():
+                if isinstance(value, (bool, int, float)):
+                    state.append((holder, name, True, value))
+        keys = getattr(obj.data, 'shape_keys', None)
+        if keys:
+            state.extend((key, 'value', False, key.value) for key in keys.key_blocks)
+    return state
+
+
+def _restore_authoring_pose(state, scene):
+    changed = False
+    for holder, name, custom, value in state:
+        try:
+            current = holder[name] if custom else getattr(holder, name)
+            if isinstance(value, tuple):
+                current = tuple(current)
+            if current == value:
+                continue
+            if custom:
+                holder[name] = value
+            else:
+                setattr(holder, name, value)
+            changed = True
+        except ReferenceError:
+            # A callback may remove an object while frames are sampled.
+            continue
+    if changed:
+        for layer in scene.view_layers:
+            layer.update()
+
+
 @contextmanager
-def scene_sampling(scene):
+def scene_sampling(scene, *, preserve_pose=True):
     global _SAMPLING_DEPTH
     from . import ghost_data
     if ghost_data._IN_DRAW_HANDLER:
         raise RuntimeError("Scene sampling is forbidden inside a draw handler")
     frame, subframe = scene.frame_current, scene.frame_subframe
+    pose = _capture_authoring_pose(scene) if preserve_pose else []
     _SAMPLING_DEPTH += 1
     try:
         yield
     finally:
         try:
-            if (scene.frame_current, scene.frame_subframe) != (frame, subframe):
-                scene.frame_set(frame, subframe=subframe)
+            try:
+                if (scene.frame_current, scene.frame_subframe) != (frame, subframe):
+                    scene.frame_set(frame, subframe=subframe)
+            finally:
+                _restore_authoring_pose(pose, scene)
         finally:
             _SAMPLING_DEPTH -= 1
 

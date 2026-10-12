@@ -49,7 +49,7 @@ from .ghost_data import (
 )
 from .ghost_cache import GhostCache
 from .session_state import SessionState
-from .utils import is_sampling, log, warn, debug, get_scene_id, tag_viewport_redraw
+from .utils import is_sampling, is_native_transform_active, log, warn, debug, get_scene_id, tag_viewport_redraw
 
 # ---------------------------------------------------------------------------
 # Bake state flags — read by the 2D draw handler for HUD and preview
@@ -363,7 +363,7 @@ class GhostPipeline:
             return False
 
         # Keep the store stable while a modal drag holds ghost references.
-        if SessionState.get(scene).drag_active:
+        if SessionState.get(scene).drag_active or is_native_transform_active(context):
             return False
 
         # Check freeze
@@ -778,7 +778,7 @@ def _deferred_live_update() -> Optional[float]:
         if settings.live_freeze:
             return None
 
-        if SessionState.get(scene).drag_active:
+        if SessionState.get(scene).drag_active or is_native_transform_active(context):
             _deferred_update_pending = True
             return 0.05
 
@@ -873,7 +873,7 @@ def _forced_mesh_regen_callback() -> Optional[float]:
         if not settings.is_active or not settings.show_mesh_ghosts:
             return None
 
-        if SessionState.get(scene).drag_active:
+        if SessionState.get(scene).drag_active or is_native_transform_active(context):
             _forced_mesh_regen_pending = True
             return 0.05
 

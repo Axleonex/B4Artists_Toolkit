@@ -1,0 +1,153 @@
+{
+  "version": "4.2.1",
+  "artifact": "releases/b4_ghost_tool_v4.2.1.zip",
+  "sha256": "dc5e374a8d7ed7ea2e0805bfc0bc616bad6741d825e3889099430bf773aae375",
+  "bytes": 212103,
+  "source_modules": 29,
+  "source_bytes_match": true,
+  "installed_hashes": {
+    "ghost_tool/__init__.py": "79a63d0a5bbfe8eca41a5fd7304071407c7fa860c64bc15ffe02005168243c60",
+    "ghost_tool/api.py": "1de83ca8b563bcd03ae05a4a16adf8b31c76b7a257eb136220b9926de743898a",
+    "ghost_tool/diff_mode.py": "f8439fce15da8475b93563070d76cd0789d5dddef00574b83f77ae57edc17966",
+    "ghost_tool/draw_to_keys.py": "8d1422a9334ad6b2dbd1272024a80ddbe31bd4e7162138c7715fdb0d7ecb68e3",
+    "ghost_tool/draw_to_keys_math.py": "eb2d0be5f455859f54d9c1651b15a17cea5b6e1907d7664c04e20138448e6084",
+    "ghost_tool/easing_presets.py": "f8644da32ad619bf648739f168d0eaad791c9f52e92cab193661ba730680e257",
+    "ghost_tool/export_import.py": "be0aa66295f830d25d7bb971c07569132f029865f443528494f331a4974e77cc",
+    "ghost_tool/fcurve_utils.py": "cc379ff5b89b3696657329904c4120ff374ccdb0160497553eb0c86dbb28e3b6",
+    "ghost_tool/ghost_cache.py": "e728bfa32e2d14cfcd525b64e3f420e941bc9bb720eb0b28bd2d9bacc0d79f39",
+    "ghost_tool/ghost_data.py": "beefc19aadd5656f6f7b2f60d4a38e7a6f9696de9f8e6f8132ba5a6ced25c5c9",
+    "ghost_tool/ghost_pipeline.py": "b98d2d81b8a56fed678cdbc83a3ce9073c6d20d5126641ab278e2395a18ddf1c",
+    "ghost_tool/mesh_ghosts.py": "139bb04deb3acd2be23e97b71237cc3432f474b6db1fcf2d4750175865ea9e37",
+    "ghost_tool/modal_operator.py": "a36e457c0cf5bac3a3044485cf73f0650d33479c67afb9f1eedb84fd68af4b8a",
+    "ghost_tool/motion_channels.py": "69053e9bcb49576b145418153e7dda02bb8d3fd2ba81c5d36085e08d6e2af190",
+    "ghost_tool/motion_paths.py": "5710908fe9512e7b45a02e1a8b33f42a4c58d2a22fd192aa9d3ffa5bd00739d7",
+    "ghost_tool/path_fast_sampler.py": "e0275f56838bb7e82e32d1027c67e34bbd25a4fccf5b33aa4a12e4d9493632fd",
+    "ghost_tool/path_handle_drag.py": "e86f7fb9862d8417ab2c7abf309969fc5732971d20db463acd17abf4de7e10ec",
+    "ghost_tool/physics_archetypes.py": "7dbf69ef8caea3226f98e21a2d0b498ef304bb333baf75af45bf03cabbc07e3d",
+    "ghost_tool/physics_suggest.py": "487cd63e34eff7fe16066c6549d182a30c773c7df8b57e07fdccfe9246d74ef5",
+    "ghost_tool/preferences.py": "dd1d94eb3aa28bee53de50ef730d87ba760eeac28cc4490a539ed79f6dcee90c",
+    "ghost_tool/selection_operators.py": "85aae15fcfb75937c4d2e8ab5acd5ef952df8689f6eb5a14f8240880a2c4da46",
+    "ghost_tool/session_state.py": "bd98c1aa30382fe5357749fa4a3e06710a2850e62d8b619129e1f74cd4146b07",
+    "ghost_tool/settings_editor.py": "11c2b9efbd1689b1de52ce7a1d283825deda8f67a867d1c1c1bc689842af44cd",
+    "ghost_tool/snapshot.py": "e0cb0bc5ed0896273d0d9799e52ae43d53abd2b8a84b5f20feeea29ee4f73ab6",
+    "ghost_tool/snapshot_storage.py": "061c16926ce8ed82f63ea001d34a52c326db5e12db2656fd36cdabc164947660",
+    "ghost_tool/target_binding.py": "5d98da91021e6889bcf020672e0c3e8f937d912b4ff60811a846370c230bcbaa",
+    "ghost_tool/ui_panel.py": "8714779b7fa46625b5bc8ee9927c907348e98c9ee09a4a332a3c72186d19a4c3",
+    "ghost_tool/utils.py": "9425d41973377198db90e13782759af8a0be11a2a0607441a5453f25e068fad3",
+    "ghost_tool/viewport_draw.py": "d688847ee25f17debab55b3b303af0c2a5cd5ad641f774fb9d173c1a9533a5d6"
+  },
+  "changed_from_420": [
+    "ghost_tool/__init__.py",
+    "ghost_tool/draw_to_keys.py",
+    "ghost_tool/easing_presets.py",
+    "ghost_tool/ghost_pipeline.py",
+    "ghost_tool/motion_paths.py",
+    "ghost_tool/selection_operators.py",
+    "ghost_tool/utils.py"
+  ],
+  "tests": [
+    {
+      "test": "test_ghost_authoring.py",
+      "exit_code": 0,
+      "tests": 13,
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "test": "test_ghost_regressions.py",
+      "exit_code": 0,
+      "tests": 21,
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "test": "test_ghost_correctness.py",
+      "exit_code": 0,
+      "tests": 47,
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "test": "test_ghost_paths.py",
+      "exit_code": 0,
+      "tests": 71,
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "test": "test_ghost_paths_fast.py",
+      "exit_code": 0,
+      "tests": 10,
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "test": "test_ghost_paths_handles.py",
+      "exit_code": 0,
+      "tests": 16,
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "test": "test_ghost_paths_vertex.py",
+      "exit_code": 0,
+      "tests": 13,
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "test": "test_ghost_draw_to_keys.py",
+      "exit_code": 1,
+      "tests": 22,
+      "status": "UNCHANGED_HOST_LIMITATION",
+      "failures": [
+        "test_reads_the_frame_held_at_the_playhead (__main__.AnnotationStrokes.test_reads_the_frame_held_at_the_playhead)",
+        "test_refuses_screen_locked_strokes_and_skips_hidden_layers (__main__.AnnotationStrokes.test_refuses_screen_locked_strokes_and_skips_hidden_layers)",
+        "test_axes_interpolation_and_stroke_value (__main__.DrawToKeysOperator.test_axes_interpolation_and_stroke_value)",
+        "test_bone_head_lands_on_each_crossing_under_a_rotated_parent (__main__.DrawToKeysOperator.test_bone_head_lands_on_each_crossing_under_a_rotated_parent)",
+        "test_clear_skips_a_hidden_layer (__main__.DrawToKeysOperator.test_clear_skips_a_hidden_layer)",
+        "test_clears_strokes_and_refreshes_pinned_paths (__main__.DrawToKeysOperator.test_clears_strokes_and_refreshes_pinned_paths)",
+        "test_connected_bone_is_refused (__main__.DrawToKeysOperator.test_connected_bone_is_refused)",
+        "test_object_keys_at_each_crossing (__main__.DrawToKeysOperator.test_object_keys_at_each_crossing)",
+        "test_refusals (__main__.DrawToKeysOperator.test_refusals)"
+      ],
+      "baseline_failures": [
+        "test_reads_the_frame_held_at_the_playhead (__main__.AnnotationStrokes.test_reads_the_frame_held_at_the_playhead)",
+        "test_refuses_screen_locked_strokes_and_skips_hidden_layers (__main__.AnnotationStrokes.test_refuses_screen_locked_strokes_and_skips_hidden_layers)",
+        "test_axes_interpolation_and_stroke_value (__main__.DrawToKeysOperator.test_axes_interpolation_and_stroke_value)",
+        "test_bone_head_lands_on_each_crossing_under_a_rotated_parent (__main__.DrawToKeysOperator.test_bone_head_lands_on_each_crossing_under_a_rotated_parent)",
+        "test_clear_skips_a_hidden_layer (__main__.DrawToKeysOperator.test_clear_skips_a_hidden_layer)",
+        "test_clears_strokes_and_refreshes_pinned_paths (__main__.DrawToKeysOperator.test_clears_strokes_and_refreshes_pinned_paths)",
+        "test_connected_bone_is_refused (__main__.DrawToKeysOperator.test_connected_bone_is_refused)",
+        "test_object_keys_at_each_crossing (__main__.DrawToKeysOperator.test_object_keys_at_each_crossing)",
+        "test_refusals (__main__.DrawToKeysOperator.test_refusals)"
+      ],
+      "baseline_exit_code": 1
+    },
+    {
+      "test": "test_ghost_snapshot_targets.py",
+      "exit_code": 0,
+      "tests": 16,
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "test": "test_ghost_snapshot_persistence.py",
+      "exit_code": 1,
+      "tests": 10,
+      "status": "UNCHANGED_HOST_LIMITATION",
+      "failures": [
+        "test_fresh_process_roundtrip_payload_identity_and_lineage (__main__.SnapshotPersistence.test_fresh_process_roundtrip_payload_identity_and_lineage)"
+      ],
+      "baseline_failures": [
+        "test_fresh_process_roundtrip_payload_identity_and_lineage (__main__.SnapshotPersistence.test_fresh_process_roundtrip_payload_identity_and_lineage)"
+      ],
+      "baseline_exit_code": 1
+    }
+  ],
+  "status": "AUTHORING_PASS_WITH_HOST_LIMITATIONS",
+  "host": "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+  "host_role": "Blender 5.1.2 stand-in; Bforartists host gate patched in tests only",
+  "native_bforartists_usability": "PENDING",
+  "published": false
+}

@@ -22,7 +22,7 @@ from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector
 
 from .motion_channels import LOCATION_CHANNELS, MOTION_CHANNELS, channel_family, rest_channel_matrix
-from .utils import debug, get_fcurves_from_action, get_scene_id, log, scene_sampling, tag_viewport_redraw, warn
+from .utils import debug, get_fcurves_from_action, get_scene_id, is_native_transform_active, log, scene_sampling, tag_viewport_redraw, warn
 
 PALETTE: tuple[tuple[float, float, float], ...] = (
     (0.96, 0.71, 0.00), (0.31, 0.76, 0.97), (0.51, 0.78, 0.52), (0.90, 0.45, 0.45),
@@ -874,9 +874,11 @@ def request_missing_samples(context) -> bool:
     return True
 
 
-def _deferred_marker_sync() -> None:
+def _deferred_marker_sync() -> Optional[float]:
     """Timer body: marker generation calls frame_set, which a property update callback must not."""
     try:
+        if is_native_transform_active(bpy.context):
+            return 0.05
         sync_markers(bpy.context)
     except Exception as exc:
         warn(f"Motion paths markers: {exc}")
