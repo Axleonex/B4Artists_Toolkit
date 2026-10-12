@@ -263,7 +263,7 @@
   "source_version": "4.2.6",
   "host": "Blender 5.1.2 stand-in; registration gate patched only",
   "bforartists_validation": "NOT VERIFIED",
-  "published": false,
+  "published": true,
   "version": "4.2.6",
   "artifact": "releases/b4_ghost_tool_v4.2.6.zip",
   "bytes": 219281,
@@ -304,5 +304,12 @@
     "pages": 3,
     "sha256": "e035a4c684a85f5be196b1b9e4b668ea5a5dcf36cee70e7f63abd987a25588ca"
   },
-  "vendor_branding_found": false
+  "vendor_branding_found": false,
+  "publication": {
+    "html_url": "https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6",
+    "tag_name": "ghost-v4.2.6",
+    "target_commitish": "01faed2bd5be0df8607882c0149858fa339564ec",
+    "published_at": "2026-10-12T11:38:31Z",
+    "prerelease": true
+  }
 }
