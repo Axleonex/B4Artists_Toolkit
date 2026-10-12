@@ -235,18 +235,25 @@ def _options_fold(layout, key):
     return body
 
 
-def _marker_target_text(context):
+def _marker_target_bones(context):
     obj = context.active_object
-    if obj is None:
-        return "Target: select an animated object or pose bones"
     bones = []
-    if obj.type == 'ARMATURE' and obj.pose:
+    if obj is not None and obj.type == 'ARMATURE' and obj.pose:
         bones = [b.name for b in (getattr(context, 'selected_pose_bones', None) or [])]
         if not bones:
             bones = [b.name for b in obj.pose.bones if getattr(b.bone, 'select', False)]
         if not bones:
             bones = [b.name for b in obj.pose.bones]
-    suffix = " / " + ", ".join(bones) if bones else ""
+    return bones
+
+
+def _marker_target_text(context, *, compact=False):
+    obj = context.active_object
+    if obj is None:
+        return "Target: select an animated object or pose bones"
+    bones = _marker_target_bones(context)
+    detail = f"{len(bones)} {'bone' if len(bones) == 1 else 'bones'}" if compact else ", ".join(bones)
+    suffix = " / " + detail if bones else ""
     return "Markers: " + obj.name + suffix
 
 
@@ -258,12 +265,18 @@ def _snapshot_target_text(snapshot):
 
 def _draw_show_ghosts(layout, context) -> None:
     settings = context.scene.ghost_tool
-    _wrapped_label(layout, context, _marker_target_text(context))
+    _wrapped_label(layout, context, _marker_target_text(context, compact=True))
     row = layout.row(align=True)
     row.scale_y = 1.3
     row.operator("ghost_tool.generate_ghosts", text="Show Markers", icon='GHOST_ENABLED')
     row.operator("ghost_tool.clear_ghosts", text="", icon='TRASH')
     _row_label(layout, "Location + rotation keys")
+
+    if _marker_target_bones(context):
+        header, targets = layout.panel('ghost_marker_targets', default_closed=True)
+        header.label(text="Marker Targets")
+        if targets is not None:
+            _wrapped_label(targets, context, _marker_target_text(context))
 
     layout = _options_fold(layout, 'ghost_marker_sampling_options')
     if layout is None:

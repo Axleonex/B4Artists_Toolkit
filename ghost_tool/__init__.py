@@ -14,7 +14,7 @@ unregister functions are called in the correct dependency order.
 bl_info = {
     "name": "Ghost Tool",
     "author": "GoingGhost",
-    "version": (4, 2, 2),
+    "version": (4, 2, 3),
     "blender": (4, 0, 0),
     "location": "View3D > Header > Ghost Tool",
     "description": "Ghost animation tools for Bforartists with scoped snapshots, independent variants, saved references and undoable restoration.",
