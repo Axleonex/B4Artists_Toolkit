@@ -1,6 +1,6 @@
 # Ghost Tool 4.2.1 authoring repair
 
-Date: 2026-10-11. Status: local unpublished test build; Bforartists viewport acceptance pending.
+Verification date: 2026-10-11. Publication: [4.2.1 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.1), 2026-10-12; Bforartists viewport acceptance pending.
 
 The reported symptom was jitter and inability to author a new keyframe with Ghost Tool enabled.
 Direct repository inspection found that object depsgraph changes schedule live frame sampling.
