@@ -5,7 +5,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 | Tool | Version | What it does |
 |---|---|---|
 | **Anim Assist** | 12.1.3 | A production animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Inspired by Maya's AnimBot. |
-| **Ghost Tool** | 4.2.0 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. |
+| **Ghost Tool** | 4.2.1 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Preserves unkeyed poses during live refresh. |
 
 ### Optional add-on: BoneCraft (rigging)
 
@@ -26,18 +26,20 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.1.3 | [b4_anim_assist_v12.1.3.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.3/b4_anim_assist_v12.1.3.zip) |
-| Ghost Tool 4.2.0 | [b4_ghost_tool_v4.2.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.0/b4_ghost_tool_v4.2.0.zip) |
+| Ghost Tool 4.2.1 (test build) | [b4_ghost_tool_v4.2.1.zip](releases/b4_ghost_tool_v4.2.1.zip?raw=1) |
 | BoneCraft 9.1.2 (optional) | [BoneCraft-BFA-9.1.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.1.2/BoneCraft-BFA-9.1.2.zip) |
 
-Anim Assist 12.1.3 and BoneCraft 9.1.2 are published releases and pass their recorded host checks. Ghost Tool 4.2.0 is a published prerelease: its automated checks pass, but final owner usability acceptance remains pending.
+Anim Assist 12.1.3 and BoneCraft 9.1.2 are published releases and pass their recorded host checks. Ghost Tool 4.2.1 is a repository test build that fixes live refresh resetting a pose before you insert a new keyframe. All 13 focused authoring checks pass on a Blender stand-in; Bforartists viewport validation remains pending.
 
-See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The [GitHub Releases page](https://github.com/Axleonex/B4Artists_Toolkit/releases) provides these three downloads and earlier published versions.
+See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The [GitHub Releases page](https://github.com/Axleonex/B4Artists_Toolkit/releases) provides the published releases, including the earlier [Ghost Tool 4.2.0 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.0).
 
 ## Install
 
 1. In Bforartists, open **Edit -> Preferences -> Add-ons -> Install from Disk...**
 2. Pick the `.zip` you downloaded.
 3. Enable the add-on by ticking its checkbox.
+
+   When updating Ghost Tool from 4.2.0 to 4.2.1, restart Bforartists after installation, then test posing and inserting a new key with live ghosts enabled.
 4. Find the add-on:
    - **Anim Assist** lives in three places, each organised for its editor, and each starts with an **Anim Assist** label:
      - **Graph Editor** sidebar (press **N**), **Anim Assist** tab, organised by what you do to curves: Select, Shape Curves, Retime, Clean Up, Pose & Rig, Quick Shelf.
@@ -64,7 +66,7 @@ The source folders and the downloadable zips contain the same code; the zips are
 Human-readable manuals are in [`docs/`](docs/):
 
 - [`docs/anim_assist/`](docs/anim_assist/) — Anim Assist 12.1.3 guide (Markdown and PDF)
-- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.0 guide (Markdown and PDF)
+- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.1 guide (Markdown and PDF)
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.1.2 English manual and translation status
 
 ## Requirements
@@ -72,7 +74,8 @@ Human-readable manuals are in [`docs/`](docs/):
 - Anim Assist, Ghost Tool and BoneCraft require Bforartists.
 
 - **Bforartists 4.2+** (Anim Assist) / **Bforartists 4.x** (Ghost Tool). None of these add-ons are compatible with standard Blender.
-- Current Anim Assist, Ghost Tool r4 and BoneCraft checks passed on **Bforartists 5.2.0**, with Blender runtime 5.3.0 Alpha, build `0a1ca45552db`. See the [verification summary](docs/releases/2026-10-11/VERIFICATION.md) for scope and limits. This run does not verify other host builds.
+- Anim Assist 12.1.3, Ghost Tool 4.2.0 r4 and BoneCraft 9.1.2 checks passed on **Bforartists 5.2.0**, with Blender runtime 5.3.0 Alpha, build `0a1ca45552db`. See the [verification summary](docs/releases/2026-10-11/VERIFICATION.md) for scope and limits.
+- Ghost Tool 4.2.1 has 229 passing checks on a **Blender 5.1.2 stand-in**, including 13 authoring regressions. Ten supplemental cases fail the same way on 4.2.0 because of stand-in host limitations. See the [4.2.1 verification report](docs/ghost_tool/authoring-fix/verification.md). Bforartists viewport validation is pending.
 
 ## License
 

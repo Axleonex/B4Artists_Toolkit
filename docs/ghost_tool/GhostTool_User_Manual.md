@@ -1,14 +1,20 @@
-# Ghost Tool 4.2.0 user guide
+# Ghost Tool 4.2.1 user guide
 
-Current local candidate: 4.2.0. The package receipt records internal build revision r4. Automated release checks pass. Final owner usability acceptance remains pending, so this build remains a review candidate. Ghost Tool 4.0.0 is the published stable release.
+Current repository test build: 4.2.1. It fixes live refresh resetting an unkeyed pose while you author a new keyframe. All 13 focused authoring checks pass on a Blender stand-in; Bforartists viewport validation remains pending. The earlier 4.2.0 prerelease remains on GitHub Releases.
 
 ## Install and find Ghost Tool
 
-Download `releases/b4_ghost_tool_v4.2.0.zip`. In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`.
+Download the [4.2.1 ZIP](../../releases/b4_ghost_tool_v4.2.1.zip?raw=1). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating from 4.2.0, restart Bforartists after installation.
 
 The main entry is the 3D Viewport header: the ghost toggle and Ghost Tool menu next to Pose. The menu groups display, editing, comparison and settings controls. Open in Separate Window keeps the controls available in a separate window.
 
-This is a Bforartists add-on. The exact candidate was verified on Bforartists 5.2.0, with Blender runtime 5.3.0 Alpha, build `0a1ca45552db`. Other host builds were not verified by this run.
+This is a Bforartists add-on. Version 4.2.1 was checked using Blender 5.1.2 as an animation-evaluation stand-in. Its Bforartists viewport validation is pending. The earlier 4.2.0 build passed its recorded checks on Bforartists 5.2.0, with Blender runtime 5.3.0 Alpha, build `0a1ca45552db`.
+
+## Author new keyframes with live ghosts
+
+Leave Ghost Tool and live ghosts enabled, move or rotate your object or pose control, confirm the transform, then insert a key. Live sampling preserves your unkeyed transform values and waits during native move, rotate and scale operations. The ghost display refreshes after the operation finishes.
+
+After installing 4.2.1, test a new pose on your rig, wait for a ghost refresh, and insert the key. Seek away and return to confirm it saved correctly. Repeat with auto-key enabled and with mesh ghosts or a pinned motion path visible. Record any jitter or lost pose in the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues).
 
 ## Show and inspect motion
 
@@ -24,7 +30,7 @@ Easing presets change the motion between keys. Custom easing uses the four confi
 
 Escape cancels a drag or preview and restores the original curves and marker positions. A lost target, file/history change or add-on shutdown also cancels the active gesture against surviving original curves. Inspect the result and use Undo/Redo to verify recovery in your scene.
 
-Version r4 removes persistent curve tags that previously blocked adding a Cycles modifier. Old tags from r1-r3 are removed on file load or when the add-on is enabled.
+Version 4.2.1 includes the 4.2.0 r4 repair for persistent curve tags that previously blocked adding a Cycles modifier. Old tags from r1-r3 are removed on file load or when the add-on is enabled.
 
 ## Save snapshots and variants
 
@@ -60,4 +66,6 @@ For final review, test marker discovery, handle dragging and Escape, snapshot vi
 
 ## Release verification
 
-The exact r4 ZIP passed 320 checks across 17 suites on the recorded Bforartists host. These include Draw to Keys, target handling, JSON transfer, snapshot persistence, variants, lifecycle and compatibility. Pointer feel and final owner acceptance remain pending. See `afterimage-release/VERIFICATION-r4.md` and `afterimage-release/UAT.md`.
+The exact 4.2.1 ZIP passed all 13 focused authoring checks. Across ten suites, 229 checks passed on a Blender 5.1.2 stand-in. Ten supplemental cases fail the same way on the 4.2.0 ZIP: nine depend on annotation APIs unavailable in this stand-in, and one fresh-process case encounters the Bforartists-only registration gate. See [4.2.1 repair verification](authoring-fix/verification.md) and its [package receipt](authoring-fix/package-receipt.json).
+
+The earlier 4.2.0 r4 ZIP passed 320 checks across 17 suites on its recorded Bforartists host. Those results describe that build, not the 4.2.1 repair. See [4.2.0 verification](afterimage-release/VERIFICATION-r4.md) and the [owner checklist](afterimage-release/UAT.md). Bforartists viewport validation and final owner acceptance of 4.2.1 remain pending.
