@@ -25,13 +25,13 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.1.3 | [b4_anim_assist_v12.1.3.zip](releases/b4_anim_assist_v12.1.3.zip) |
-| Ghost Tool 4.2.0 | [b4_ghost_tool_v4.2.0.zip](releases/b4_ghost_tool_v4.2.0.zip) |
-| BoneCraft 9.1.2 (optional) | [BoneCraft-BFA-9.1.2.zip](releases/BoneCraft-BFA-9.1.2.zip) |
+| Anim Assist 12.1.3 | [b4_anim_assist_v12.1.3.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.3/b4_anim_assist_v12.1.3.zip) |
+| Ghost Tool 4.2.0 | [b4_ghost_tool_v4.2.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.0/b4_ghost_tool_v4.2.0.zip) |
+| BoneCraft 9.1.2 (optional) | [BoneCraft-BFA-9.1.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.1.2/BoneCraft-BFA-9.1.2.zip) |
 
-These repository downloads are the latest local builds. Anim Assist 12.1.3 and BoneCraft 9.1.2 pass their recorded host checks. Ghost Tool 4.2.0 also passes automated checks, but final owner usability acceptance remains pending. Publishing the source does not accept that candidate.
+Anim Assist 12.1.3 and BoneCraft 9.1.2 are published releases and pass their recorded host checks. Ghost Tool 4.2.0 is a published prerelease: its automated checks pass, but final owner usability acceptance remains pending.
 
-See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The [GitHub Releases page](https://github.com/Axleonex/B4Artists_Toolkit/releases) still provides the published Anim Assist 12.1.0 and Ghost Tool 4.0.0 builds until new releases are created.
+See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The [GitHub Releases page](https://github.com/Axleonex/B4Artists_Toolkit/releases) provides these three downloads and earlier published versions.
 
 ## Install
 
