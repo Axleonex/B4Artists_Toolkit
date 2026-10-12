@@ -807,3 +807,23 @@ STRINGS: dict[str, str] = {
     "Avatar Tools needs an armature or a mesh selected.": "Avatar Tools needs an armature or a mesh selected.",
     "VRChat Tools needs an armature or a mesh selected.": "VRChat Tools needs an armature or a mesh selected.",
 }
+
+# Starter rig catalog
+STRINGS.update({
+    "Starter Rigs": "Starter Rigs",
+    "Rigify is off": "Rigify is off",
+    "Enable Rigify & Add Rig": "Enable Rigify & Add Rig",
+    "Selected starter:": "Selected starter:",
+    "This starter requires Rigify.": "This starter requires Rigify.",
+    "Enable the installed Rigify and add this rig.": "Enable the installed Rigify and add this rig.",
+    "Nothing is added if you cancel.": "Nothing is added if you cancel.",
+    "Choose a BoneCraft starter rig": "Choose a BoneCraft starter rig",
+    "Could not enable Rigify. Install or enable it in Preferences > Add-ons, then choose this starter again.": "Could not enable Rigify. Install or enable it in Preferences > Add-ons, then choose this starter again.",
+    "This starter is not provided by your installed Rigify version. No rig was added.": "This starter is not provided by your installed Rigify version. No rig was added.",
+    "Open a 3D Viewport to add this starter rig": "Open a 3D Viewport to add this starter rig",
+    "The chosen mesh is no longer in this view layer": "The chosen mesh is no longer in this view layer",
+    "Starter added. Choose a mesh in Quick Rig, then use Fit Dropped Rig.": "Starter added. Choose a mesh in Quick Rig, then use Fit Dropped Rig.",
+    "Drop in the viewport to add the starter; Esc cancels": "Drop in the viewport to add the starter; Esc cancels",
+    "Starter Rig Catalog": "Starter Rig Catalog",
+    "Add Starter Rig": "Add Starter Rig"
+})

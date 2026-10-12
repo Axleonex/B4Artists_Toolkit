@@ -1,6 +1,6 @@
 # Ghost Tool 4.2.5 documentation
 
-The 4.2.5 repository test build adds a persistent Display Location preference: Top Header (default), Right Sidebar (N), or Left Tool Shelf (T). It folds Compare's capture targets and each saved reference's snapshot targets independently, with compact summaries and snapshot actions always visible. It retains 4.2.3's Marker Targets fold and 4.2.2's default-off live updates and authoring pause. Bforartists production-rig and native left-shelf validation remain pending.
+The 4.2.5 repository test build adds a persistent Display Location preference: Top Header (default), Right Sidebar (N), or Left Tool Shelf (T). It folds Compare's capture targets and each saved reference's snapshot targets independently, with compact summaries and snapshot actions always visible. It retains 4.2.4's removal of legacy window-launch buttons, 4.2.3's Marker Targets fold and 4.2.2's default-off live updates and authoring pause. Bforartists production-rig and native left-shelf validation remain pending.
 
 [4.2.2 guide](GhostTool_User_Manual.md) | [4.2.2 PDF](GhostTool_User_Manual.pdf) | [4.2.5 display location and checks](display-location/verification.md) | [4.2.5 Compare folds and checks](compare-targets/verification.md) | [4.2.3 marker fold](marker-targets/verification.md)
 

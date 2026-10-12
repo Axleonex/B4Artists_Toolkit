@@ -26,7 +26,7 @@ Before the fix, five of six focused checks fail (four assertions and the missing
 API); only the empty-capture recovery case passes. After the fix, all six pass.
 
 The exact 4.2.5 ZIP was extracted to an isolated install. All 29 Python modules match working
-source byte for byte. Its internal version is `(4, 2, 5)`; 4.2.4 was skipped as requested.
+source byte for byte. Its internal version is `(4, 2, 5)`; the concurrently merged 4.2.4 interface cleanup is retained.
 
 | Suite | Passed / run |
 |---|---:|
@@ -37,8 +37,9 @@ source byte for byte. Its internal version is `(4, 2, 5)`; 4.2.4 was skipped as 
 | Snapshot targets and identity | 16 / 16 |
 | Afterimage UI | 9 / 9 |
 | Display location | 11 / 11 |
+| Council UI and gesture regressions | 12 / 12 |
 
-Current candidate: 84 of 84 checks pass on Blender 5.1.2, build `ec6e62d40fa9`, with only the
+Current candidate: 96 of 96 checks pass on Blender 5.1.2, build `ec6e62d40fa9`, with only the
 Bforartists registration gate patched. The first Compare-only candidate passed 72/73: the
 remaining assertion expected two native shelf classes even on a host without shelf support.
 The approved display-location change adds a third native class; the updated assertion checks
@@ -63,8 +64,8 @@ focused checks. Expanded full names wrap at 220 px (R12); new fold headers have 
 Existing section header icons and operator homes remain the add-on convention. No operators,
 snapshot binding authority, animation settings or stored reference contents were changed.
 
-Current archive, including display placement: `releases/b4_ghost_tool_v4.2.5.zip`, 216,217 bytes.
-SHA256: `2fc2ab0dc1c97acfe36c76e77298ea6226123666097602666241ddb8713dad85`.
+Current archive, including display placement: `releases/b4_ghost_tool_v4.2.5.zip`, 216,002 bytes.
+SHA256: `5cfb8cee78051dc2242b68dd14f88ec17fad7a6ffdf058b6cea3deaed0db05d5`.
 
 Owner check: install 4.2.5 and restart Bforartists. Select many pose bones, show markers, then
 open Compare. Capture Targets should start closed; Save Snapshot stays visible. Save two
