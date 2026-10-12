@@ -1,6 +1,7 @@
 # Ghost Tool 4.2.4
 
-Date: 2026-10-12. Local candidate; merge and publication await owner confirmation.
+Date: 2026-10-12. Owner confirmed merge update; merged into main as `d6b8480`.
+The repository ZIP is available. GitHub Release publication remains pending.
 
 ## Change
 
