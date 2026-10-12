@@ -6,7 +6,7 @@ only in Bforartists: in standard Blender it does not load and shows a single "Ge
 | | |
 |---|---|
 | **Add-on** | BoneCraft |
-| **Version** | 9.1.2 |
+| **Version** | 9.2.0 |
 | **Host** | Bforartists (tested on 5.2) — not standard Blender |
 | **Category** | Rigging / Animation |
 | **License** | GPL v2.0 or later |
@@ -19,8 +19,8 @@ only in Bforartists: in standard Blender it does not load and shows a single "Ge
 BoneCraft is organized into tool packages you can switch on and off (Preferences → Add-ons → BoneCraft → Tools):
 
 - **Rig Builder** — Quick Rig, the Auto-Rig Wizard (joint detection from the mesh, a control rig with IK/FK,
-  face rig, correctives, skirt and clothing bones), Mannequin, and a Basic Humanoid asset you can drop from the
-  asset shelf.
+  face rig, correctives, skirt and clothing bones), Mannequin, and a nine-starter thumbnail catalog. Basic Humanoid
+  needs no Rigify; the other starters offer Enable Rigify & Add Rig when needed.
 - **Mechanisms** — rigs for props and machines: hinges, slides, telescopes, pistons, gear links, follow and
   sequences, built with guided steps.
 - **Rig UI and animation** — bone-collection panel, bookmarks, pose library, graph tools, corrective shape keys,
@@ -36,12 +36,14 @@ Switching a package off unregisters its classes, so it costs nothing until you s
 
 ## Install
 
-1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([`BoneCraft-BFA-9.1.2.zip`](../releases/BoneCraft-BFA-9.1.2.zip) in the repository's `releases/` folder).
+1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([`BoneCraft-BFA-9.2.0.zip`](../releases/BoneCraft-BFA-9.2.0.zip) in the repository's `releases/` folder).
 2. Tick its checkbox.
 3. In the 3D Viewport, the **BoneCraft** and **Rig Builder** tabs are on the left Tool Shelf (press **T**) and the
    **CATS** tab is on the right sidebar (press **N**). Each tab's side can be changed in the add-on's preferences
    (**Tabs**). Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools and Import / Export are also in the Properties
    editor's Scene tab while **Tabs → Scene Properties → Show** is on (the default).
+
+Release changes and checks: [BoneCraft 9.2.0 release notes](../docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md).
 
 ## Manual
 

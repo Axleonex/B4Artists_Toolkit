@@ -4,6 +4,13 @@
 
 Newest first.
 
+## 9.2.0 (October 2026)
+
+- **Complete starter catalog:** all nine bundled skeletons/metarigs appear as thumbnails from the start: Basic Humanoid, Simple Human, Full Human, Basic Quadruped, Cat, Horse, Wolf, Bird and Shark. The catalog selector groups Humans, Quadrupeds and Other Animals.
+- **Rigify when needed:** Basic Humanoid works independently. Rigify starters stay visible while Rigify is off; selecting one offers **Enable Rigify & Add Rig** or Cancel. Cancellation, activation failure or an unavailable preset adds no rig.
+- **Optional shelf:** the viewport header's **Starter Rigs** switch returns to the regular asset shelf. The choice persists in preferences. **Add → Armature → Starter Rig Catalog** opens the chooser as a popup.
+- **Click or drag:** click to add, or drop inside the viewport. Mesh fitting starts on; weighting and control generation start off and can be changed in Adjust Last Operation. Native click, drop, cancellation and undo/redo were checked in Bforartists 5.2.0.
+
 ## 9.1.2 (October 2026)
 
 - **Scene Properties switch:** Preferences > Tabs has a new Scene Properties row. Its Show button (blue while on) shows or hides all of BoneCraft's sections in Properties > Scene tab (Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools, Import / Export) without disabling the add-on. It starts on, and it leaves the viewport tabs and the Armature tab alone. See [Where things are](01-start.md#where-things-are).

@@ -77,7 +77,7 @@ unchanged.
 bl_info = {
     "name": "BoneCraft",
     "author": "BoneCraft Team",
-    "version": (9, 1, 2),
+    "version": (9, 2, 0),
     "blender": (4, 0, 0),
     "location": "3D Viewport > Tool Shelf / Sidebar > BoneCraft, Rig Builder, CATS",
     "description": (

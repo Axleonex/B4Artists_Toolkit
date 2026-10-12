@@ -1,0 +1,45 @@
+{
+  "version": "9.2.0",
+  "tag": "bonecraft-v9.2.0",
+  "package": "BoneCraft-BFA-9.2.0.zip",
+  "bytes": 1238057,
+  "sha256": "655ad55bfac32b461d66c915ba4ab8c85252779cf59a14a2af84b6e9f4429f77",
+  "files": 233,
+  "starter_count": 9,
+  "checks": {
+    "zip_crc": true,
+    "unique_entries": true,
+    "exact_source_inventory": true,
+    "all_files_match_source": true,
+    "version_matches_filename": true,
+    "no_caches_or_blend_backups": true,
+    "extracted_zip_host_suite": true,
+    "only_runtime_change_from_tested_catalog_is_version": true
+  },
+  "host": "Bforartists 5.2.0 / Blender 5.3.0 Alpha build 0a1ca45552db",
+  "native_ui_evidence": "docs/bonecraft/starter-shelf-implementation/verification.json",
+  "routing": {
+    "actual_lane": "T3_PRIME_OMP",
+    "policy_fingerprint": "29fa965cada3128ffe57b5d85d3b9f8e5d749d780954ea14ba5f45dcca1ad8b8",
+    "result": "native continuation after stalled router exceeded requested 120-second limit; no router source changes",
+    "escalation_count": 0
+  },
+  "publication_status": "prepared",
+  "host_suite": {
+    "exit_code": 0,
+    "modules": [
+      "test_starter_shelf_host",
+      "test_quick_rigs_asset_host",
+      "test_rig_assets_host",
+      "test_dropped_rig_host",
+      "test_ui_access_host"
+    ],
+    "package_loaded_version": [
+      9,
+      2,
+      0
+    ],
+    "completion_marker": "RELEASE ZIP HOST SUITE PASS",
+    "log_sha256": "710efc17b7dcc2b4f20389b1d77f104a528cae7b005c721f5ff39a61a694ea5c"
+  }
+}
