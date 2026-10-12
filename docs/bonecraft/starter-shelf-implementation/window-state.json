@@ -1,0 +1,62 @@
+[
+  {
+    "region": "ASSET_SHELF",
+    "shelf": "BF_AST_bonecraft_rigs",
+    "libraries": [
+      [
+        "User Library",
+        "C:\\Users\\Jonvilario\\Documents\\Bforartists\\Assets"
+      ],
+      [
+        "BoneCraft Rigs",
+        "\\\\100.114.2.71\\Gdrive\\LapArt\\Projects\\Blender_Addons\\B4Artists_Tools\\bonecraft\\boneforge\\assets"
+      ],
+      [
+        "Default Library",
+        "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\portable\\asset_libraries\\Default Library"
+      ],
+      [
+        "Geometry Nodes Library",
+        "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\portable\\asset_libraries\\Geometry Nodes Library"
+      ],
+      [
+        "Shader Nodes Library",
+        "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\portable\\asset_libraries\\Shader Nodes Library"
+      ],
+      [
+        "Compositor Nodes Library",
+        "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\portable\\asset_libraries\\Compositor Nodes Library"
+      ]
+    ]
+  },
+  {
+    "region": "ASSET_SHELF_HEADER",
+    "shelf": "BF_AST_bonecraft_rigs",
+    "libraries": [
+      [
+        "User Library",
+        "C:\\Users\\Jonvilario\\Documents\\Bforartists\\Assets"
+      ],
+      [
+        "BoneCraft Rigs",
+        "\\\\100.114.2.71\\Gdrive\\LapArt\\Projects\\Blender_Addons\\B4Artists_Tools\\bonecraft\\boneforge\\assets"
+      ],
+      [
+        "Default Library",
+        "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\portable\\asset_libraries\\Default Library"
+      ],
+      [
+        "Geometry Nodes Library",
+        "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\portable\\asset_libraries\\Geometry Nodes Library"
+      ],
+      [
+        "Shader Nodes Library",
+        "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\portable\\asset_libraries\\Shader Nodes Library"
+      ],
+      [
+        "Compositor Nodes Library",
+        "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\portable\\asset_libraries\\Compositor Nodes Library"
+      ]
+    ]
+  }
+]

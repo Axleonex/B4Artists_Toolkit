@@ -836,3 +836,23 @@ STRINGS: dict[str, str] = {
     "Validate Rig": "Validar rig",
     "Health Check": "Revisión de estado",
 }
+
+# Starter rig catalog
+STRINGS.update({
+    "Starter Rigs": "Rigs iniciales",
+    "Rigify is off": "Rigify est? desactivado",
+    "Enable Rigify & Add Rig": "Activar Rigify y a?adir rig",
+    "Selected starter:": "Rig seleccionado:",
+    "This starter requires Rigify.": "Este rig requiere Rigify.",
+    "Enable the installed Rigify and add this rig.": "Active el Rigify instalado y a?ada este rig.",
+    "Nothing is added if you cancel.": "Si cancela, no se a?ade nada.",
+    "Choose a BoneCraft starter rig": "Elija un rig inicial de BoneCraft",
+    "Could not enable Rigify. Install or enable it in Preferences > Add-ons, then choose this starter again.": "No se pudo activar Rigify. Inst?lelo o act?velo en Preferencias > Complementos y vuelva a elegir este rig.",
+    "This starter is not provided by your installed Rigify version. No rig was added.": "La versi?n instalada de Rigify no incluye este rig. No se a?adi? ning?n rig.",
+    "Open a 3D Viewport to add this starter rig": "Abra una vista 3D para a?adir este rig",
+    "The chosen mesh is no longer in this view layer": "La malla elegida ya no est? en est? capa de vista",
+    "Starter added. Choose a mesh in Quick Rig, then use Fit Dropped Rig.": "Rig a?adido. Elija una malla en Quick Rig y use Fit Dropped Rig.",
+    "Drop in the viewport to add the starter; Esc cancels": "Suelte en la vista para a?adir el rig; Esc cancela",
+    "Starter Rig Catalog": "Cat?logo de rigs iniciales",
+    "Add Starter Rig": "Anadir rig inicial"
+})
