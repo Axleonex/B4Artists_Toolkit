@@ -1,4 +1,4 @@
-# Ghost viewport toolbar
+# Ghost Tool 4.2.6 viewport toolbar
 
 The approved toolbar source update keeps Ghost actions in the native viewport **Tool Settings** row. Choose **Edit > Preferences > Add-ons > Ghost Tool > Display Location > Top Toolbar**. Your existing location preference is retained when upgrading; Top Header remains the default. Right Sidebar (N) and Left Tool Shelf (T) remain available.
 
@@ -26,4 +26,4 @@ Location and Ghost-control visibility apply across ordinary viewports. Save pref
 
 ## Source and release status
 
-The source version remains **4.2.5**. The existing repository 4.2.5 ZIP predates this toolbar; it has not been replaced. A local candidate is built under ignored `build/ghost-toolbar/` for review. No GitHub Release has been changed. See [verification](verification.md) for tested behavior and host limits.
+The current source and repository test ZIP are **4.2.6**. Download [b4_ghost_tool_v4.2.6.zip](../../../releases/b4_ghost_tool_v4.2.6.zip?raw=1). Its [package receipt](../releases/4.2.6/package-receipt.json) records the exact archive, source matching and 178 passing checks/cases. The existing 4.2.5 ZIP is retained as history and predates this toolbar. No new GitHub Release has been published. The [original toolbar verification](verification.md) belongs to the initial 4.2.5 source candidate; native Bforartists acceptance remains pending.

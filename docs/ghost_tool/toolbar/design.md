@@ -1,5 +1,7 @@
 # Ghost Tool viewport toolbar — approved design
 
+Design record: the approved implementation was initially merged with source version 4.2.5, then packaged as **4.2.6** at the owner's request. Original scope and baseline versions below remain historical. See the [current guide](README.md).
+
 Status: owner approved implementation on 2026-10-12. Full council selected C with M6, M1, M5, M2 and M4; add-on remains 4.2.5.
 
 ## User intent and evidence

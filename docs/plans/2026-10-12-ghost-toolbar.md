@@ -1,5 +1,7 @@
 # Ghost Toolbar Implementation Plan
 
+Historical implementation plan. The toolbar was merged as commit `9ee8840`; a later owner request advances its package, current guides and download references to **4.2.6**. See [4.2.6 release notes](../ghost_tool/releases/4.2.6/RELEASE-NOTES.md). Original implementation constraints below describe the approved scope at that time.
+
 > **For the executing agent:** Use the subagent-driven-development skill to implement this plan task-by-task. The owner approved implementation on 2026-10-12; no repeated design approval is needed.
 
 **Goal:** Add the approved persistent Ghost action strip to the native viewport Tool Settings row, with shared feature options and reliable hide/show recovery.

@@ -1,16 +1,26 @@
-# Ghost Tool 4.2.2 user guide
+# Ghost Tool 4.2.6 user guide
 
-This guide and its PDF describe the published 4.2.2 prerelease. For the newer approved source interface, see the [Ghost toolbar guide](toolbar/README.md), including display location, cached visibility and Hide/Show Toolbar. The 4.2.4 interface cleanup removed the older Separate Window and Prototype Settings Editor launch buttons described below.
+This guide and its PDF describe the current repository test build, including the persistent toolbar, cached visibility and independent target folds. See the [Ghost toolbar guide](toolbar/README.md) for placement and recovery details.
 
-Current prerelease: 4.2.2. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. All 230 background checks and five native auto-key cases pass on a Blender stand-in; Bforartists production-rig validation remains pending.
+Current repository version: 4.2.6. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. All 178 checks/cases pass on a Blender stand-in; native Bforartists validation remains pending.
 
 ## Install and find Ghost Tool
 
-Download the [4.2.2 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.2/b4_ghost_tool_v4.2.2.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
+Download the [4.2.6 ZIP](../../releases/b4_ghost_tool_v4.2.6.zip?raw=1). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
 
-The main entry is the 3D Viewport header: the ghost toggle and Ghost Tool menu next to Pose. The menu groups display, editing, comparison and settings controls. Open in Separate Window keeps the controls available in a separate window.
+The main entry is the Ghost Tool menu in the 3D Viewport header. In Edit > Preferences > Add-ons > Ghost Tool, choose Top Header, Top Toolbar, Right Sidebar (N), or Left Tool Shelf (T). Top Header remains the default. All locations share feature controls. Save preferences normally to retain your choice. Separate Window and Prototype Settings Editor launch controls have been removed.
 
-This is a Bforartists add-on. Version 4.2.2 was checked using Blender 5.1.2 as an animation-evaluation stand-in. Its Bforartists viewport validation is pending. The earlier 4.2.0 build passed its recorded checks on Bforartists 5.2.0, with Blender runtime 5.3.0 Alpha, build `0a1ca45552db`.
+This is a Bforartists add-on. Version 4.2.6 was checked using Blender 5.1.2 as a stand-in, with only the host registration gate patched. Native Bforartists toolbar geometry, Tool Shelf integration and production-rig validation are pending.
+
+## Use the persistent toolbar
+
+Choose Top Toolbar to keep Ghost actions in the native Tool Settings row beneath the main viewport header when headers are aligned at the top. Native tool and mode controls remain available. Wide layouts expose every feature; compact layouts place Compare, Physics, Look and Settings under More. Narrow layouts provide full access through Ghost in the same feature order.
+
+Show Markers and Show Onion Skin generate and display previews. Their adjacent arrows open Marker options and Onion Skin options without generating. Use Show cached markers or Show cached skin at the top of those options to change existing preview visibility without rebuilding. Hidden markers cannot be picked or box-selected. Clear All Ghosts removes both markers and onion skins.
+
+Hide Toolbar hides Ghost controls while keeping previews, targets, settings and the native row. Open Ghost Tool in the main header and choose Show Toolbar to recover it. That explicit action also reveals the native row if it was hidden through View controls. Leaving Top Toolbar preserves native region visibility.
+
+Marker Targets, Compare Capture Targets and each saved reference's Snapshot Targets fold independently. Expanding one list leaves the other tools accessible. Options remain available when no target is selected; generation actions explain their missing prerequisites.
 
 ## Author new keyframes with live ghosts
 
@@ -18,7 +28,7 @@ Leave Ghost Tool enabled and move, rotate or scale your object or pose control. 
 
 Live Update Markers controls whether markers follow timeline changes; Live Update Skin controls onion skins. Both default off, and Show Markers or Show Onion Skin preserves your choices. With these controls off, scrubbing shows the last refreshed snapshot. Finishing an animation edit still refreshes existing ghosts. Freeze pauses these automatic refreshes too.
 
-After installing 4.2.2, test a new pose on your rig, wait for a ghost refresh, and insert the key. Seek away and return to confirm it saved correctly. Repeat with auto-key enabled and with mesh ghosts or a pinned motion path visible. Record any jitter or lost pose in the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues).
+After installing 4.2.6, test a new pose on your rig, wait for a ghost refresh, and insert the key. Seek away and return to confirm it saved correctly. Repeat with auto-key enabled and with mesh ghosts or a pinned motion path visible. Record any jitter or lost pose in the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues).
 
 ## Show and inspect motion
 
@@ -34,7 +44,7 @@ Easing presets change the motion between keys. Custom easing uses the four confi
 
 Escape cancels a drag or preview and restores the original curves and marker positions. A lost target, file/history change or add-on shutdown also cancels the active gesture against surviving original curves. Inspect the result and use Undo/Redo to verify recovery in your scene.
 
-Version 4.2.2 includes the 4.2.0 r4 repair for persistent curve tags that previously blocked adding a Cycles modifier. Old tags from r1-r3 are removed on file load or when the add-on is enabled.
+The existing repair for persistent curve tags that blocked adding a Cycles modifier is retained. Old tags are removed on file load or when the add-on is enabled.
 
 ## Save snapshots and variants
 
@@ -64,12 +74,12 @@ JSON cannot prove original object identity. Imported and legacy references remai
 
 ## Settings and review
 
-Folded display options keep the primary actions accessible. The optional Settings Editor remains labeled Prototype. Check its target and existing values before adjustment. Restricted or missing targets should show an explanation rather than silently change another target.
+Folded display options keep the primary actions accessible. Settings are available through the chosen Ghost location and shared Settings popover. Check the target and existing values before adjustment. Restricted or missing targets should show an explanation rather than silently change another target.
 
 For final review, test marker discovery, handle dragging and Escape, snapshot visibility, variants, restore, Undo/Redo, save/reopen, long names and a narrow panel. Use both object and bone animation. Record the failed step if anything is unexpected.
 
 ## Release verification
 
-The exact 4.2.2 ZIP passed 230 background checks across nine suites, including 20 authoring regressions. Five native GUI cases use real move operators and auto-key: object and pose moves with live updates off and on, plus cancellation. Each holds the ghost snapshot for three timer ticks during movement, refreshes once afterward, and checks the keyed pose after seeking away and back. See [4.2.2 verification](authoring-pause/verification.md) and its [package receipt](authoring-pause/package-receipt.json).
+The exact 4.2.6 ZIP passed 117 background checks, 56 native toolbar checks and five native auto-key cases. Toolbar checks cover Object/Pose, full/compact/narrow/high-scale layouts, cache-preserving hide/show, missing targets and reload. Native move cases cover object and pose moves with live updates off and on, plus cancellation. They preserve the ghost snapshot during movement, refresh once after settlement and check the keyed pose after seeking away and back. See the [4.2.6 package receipt](releases/4.2.6/package-receipt.json) and [release notes](releases/4.2.6/RELEASE-NOTES.md).
 
-These checks use a Blender 5.1.2 stand-in with only the Bforartists registration gate patched. The broader earlier 4.2.1 run had ten host-limited failures. The earlier 4.2.0 r4 ZIP passed its recorded Bforartists checks. See the historical [4.2.1 report](authoring-fix/verification.md), [4.2.0 verification](afterimage-release/VERIFICATION-r4.md), and [owner checklist](afterimage-release/UAT.md). Bforartists production-rig validation and final owner acceptance of 4.2.2 remain pending.
+These checks use a Blender 5.1.2 stand-in. Full keyboard navigation, theme variants and production rigs in Bforartists remain unverified. The toolbar adds no new sampling scheduler or backend jitter repair. Historical builds and their original evidence remain listed in the [release index](../../releases/VERSIONS.md).
