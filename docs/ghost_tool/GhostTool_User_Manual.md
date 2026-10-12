@@ -1,8 +1,8 @@
 # Ghost Tool 4.2.6 user guide
 
-This guide and its PDF describe the current repository test build, including the persistent toolbar, cached visibility and independent target folds. See the [Ghost toolbar guide](toolbar/README.md) for placement and recovery details.
+This guide and its PDF describe the current release, including the persistent toolbar, cached visibility and independent target folds. See the [Ghost toolbar guide](toolbar/README.md) for placement and recovery details.
 
-Current repository version: 4.2.6. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. All 178 checks/cases pass on a Blender stand-in; native Bforartists validation remains pending.
+Current version: 4.2.6. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. All 178 checks/cases pass on a Blender stand-in; native Bforartists validation remains pending.
 
 ## Install and find Ghost Tool
 

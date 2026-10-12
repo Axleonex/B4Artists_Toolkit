@@ -302,7 +302,7 @@
   "pdf": {
     "title": "Ghost Tool 4.2.6 user guide",
     "pages": 3,
-    "sha256": "e035a4c684a85f5be196b1b9e4b668ea5a5dcf36cee70e7f63abd987a25588ca"
+    "sha256": "99cae3885072016198f1cd9b0450b107aac57f1d6f5a7edd6ad4a92b93d72aa8"
   },
   "vendor_branding_found": false,
   "publication": {
@@ -310,6 +310,7 @@
     "tag_name": "ghost-v4.2.6",
     "target_commitish": "01faed2bd5be0df8607882c0149858fa339564ec",
     "published_at": "2026-10-12T11:38:31Z",
-    "prerelease": true
+    "prerelease": false,
+    "latest": true
   }
 }

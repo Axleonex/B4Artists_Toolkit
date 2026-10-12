@@ -5,7 +5,7 @@ Current repository packages and their publication status.
 | Tool | Version | Archive | Bytes | SHA256 prefix | Status |
 |---|---|---|---:|---|---|
 | Anim Assist | 12.1.3 | [b4_anim_assist_v12.1.3.zip](b4_anim_assist_v12.1.3.zip) | 556,067 | `b30547b2afac` | Published release; actual Bforartists regression checks pass |
-| Ghost Tool | 4.2.6 | [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip) | 219,281 | `e195239e6ae8` | Published prerelease; persistent toolbar and cached visibility; 178 checks/cases pass in Blender stand-in; native Bforartists validation pending |
+| Ghost Tool | 4.2.6 | [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip) | 219,281 | `e195239e6ae8` | Published release; persistent toolbar and cached visibility; 178 checks/cases pass in Blender stand-in; native Bforartists validation pending |
 | Ghost Tool (4.2.5) | 4.2.5 | [b4_ghost_tool_v4.2.5.zip](b4_ghost_tool_v4.2.5.zip?raw=1) | 216,002 | `5cfb8cee7805` | Repository test build; display location preference and Compare folds; 96/96 focused stand-in checks pass; native Bforartists left Tool Shelf validation pending |
 | Ghost Tool (4.2.4) | 4.2.4 | [b4_ghost_tool_v4.2.4.zip](b4_ghost_tool_v4.2.4.zip?raw=1) | 214,194 | `1c32458cb0fa` | Merged repository build; 54 focused checks pass on Blender stand-in; GitHub Release publication and Bforartists UI validation pending |
 | Ghost Tool (4.2.3) | 4.2.3 | [b4_ghost_tool_v4.2.3.zip](b4_ghost_tool_v4.2.3.zip?raw=1) | 214,475 | `352864a728ba` | Earlier repository test build; 50 of 51 focused checks pass on Blender stand-in; one unchanged native Tool Shelf host failure; Bforartists UI validation pending |
@@ -32,7 +32,7 @@ Anim Assist uses the package root `B4_anim_assist`; Ghost Tool uses `ghost_tool`
 - [BoneCraft 9.2.0 release notes](../docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md) and [package checksum and verification](../docs/bonecraft/releases/9.2.0/package-receipt.json).
 - [BoneCraft 9.1.2 release notes](../docs/bonecraft/releases/9.1.2/RELEASE-NOTES.md).
 
-Published builds: [Anim Assist 12.1.3](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/v12.1.3), [Ghost Tool 4.2.6 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6) and [BoneCraft 9.2.0](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/bonecraft-v9.2.0). The Ghost Tool release includes the tested ZIP and updated PDF guide. Earlier [4.2.2](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2), [4.2.1](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.1) and [4.2.0](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.0) downloads remain available for comparison.
+Published builds: [Anim Assist 12.1.3](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/v12.1.3), [Ghost Tool 4.2.6 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6) and [BoneCraft 9.2.0](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/bonecraft-v9.2.0). The Ghost Tool release includes the tested ZIP and updated PDF guide. Earlier [4.2.2](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2), [4.2.1](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.1) and [4.2.0](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.0) downloads remain available for comparison.
 
 ## Identify a build
 
