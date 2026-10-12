@@ -1,4 +1,4 @@
-# Ghost Tool 4.2.0 r4 documentation
+# Ghost Tool 4.2.0 documentation
 
 Final owner usability acceptance is pending; this remains a review candidate.
 

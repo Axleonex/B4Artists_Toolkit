@@ -5,7 +5,7 @@ These are fresh runs of the latest local builds on Bforartists 5.2.0, Blender ru
 | Build | Input | Result |
 |---|---|---|
 | Anim Assist 12.1.3 | Exact install ZIP | 170 internal tests, 26 repair checks and 16 workflow checks pass; exit 0 |
-| Ghost Tool 4.2.0 r4 | Exact install ZIP | 320 checks across 17 suites pass; exit 0 |
+| Ghost Tool 4.2.0 | Exact install ZIP | 320 checks across 17 suites pass; exit 0 |
 | BoneCraft 9.1.2 | Current source | Full host suite passes: 19 ALL PASS and 35 PASS markers; exit 0. Crescent Rose parts and rig reload checks pass. |
 
 All archived Python files parse and all ZIP CRC checks pass. Anim Assist and Ghost Tool source match their packages. BoneCraft's only raw-byte difference is newline encoding in `boneforge/__init__.py`; source content is identical.

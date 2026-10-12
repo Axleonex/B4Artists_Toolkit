@@ -5,7 +5,7 @@ Three animation add-ons for **Bforartists** (the Blender fork), plus an optional
 | Tool | Version | What it does |
 |---|---|---|
 | **Anim Assist** | 12.1.3 | A production animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Inspired by Maya's AnimBot. |
-| **Ghost Tool** | 4.2.0 r4 (review candidate) | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. |
+| **Ghost Tool** | 4.2.0 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. |
 | **B4Artists Machine Learning** | 1.0.0 | **Experimental; Not Tested:** Local, procedural posing and motion for humanoid and quadruped rigs, in a guided five-step panel (Setup, Pose, Motion, Review, Polish): pose with draggable targets, generate the in-betweens between key poses, keep or discard the result, then add contacts, cleanup and secondary motion. Key poses show as markers in the Timeline and Dope Sheet. Everything runs on your machine — nothing is uploaded. |
 
 ### Optional add-on: BoneCraft (rigging)
@@ -27,11 +27,11 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.1.3 | [b4_anim_assist_v12.1.3.zip](releases/b4_anim_assist_v12.1.3.zip) |
-| Ghost Tool 4.2.0 r4 (review candidate) | [ghost_tool-afterimage-candidate-r4.zip](releases/ghost_tool-afterimage-candidate-r4.zip) |
+| Ghost Tool 4.2.0 | [b4_ghost_tool_v4.2.0.zip](releases/b4_ghost_tool_v4.2.0.zip) |
 | B4Artists Machine Learning 1.0.0 | [b4artists_ml_v1.0.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ml-v1.0.0/b4artists_ml_v1.0.0.zip) |
 | BoneCraft 9.1.2 (optional) | [BoneCraft-BFA-9.1.2.zip](releases/BoneCraft-BFA-9.1.2.zip) |
 
-These repository downloads are the latest local builds. Anim Assist 12.1.3 and BoneCraft 9.1.2 pass their recorded host checks. Ghost Tool r4 also passes automated checks, but final owner usability acceptance remains pending. Publishing the source does not accept that candidate.
+These repository downloads are the latest local builds. Anim Assist 12.1.3 and BoneCraft 9.1.2 pass their recorded host checks. Ghost Tool 4.2.0 also passes automated checks, but final owner usability acceptance remains pending. Publishing the source does not accept that candidate.
 
 See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The [GitHub Releases page](https://github.com/Axleonex/B4Artists_Toolkit/releases) still provides the published Anim Assist 12.1.0 and Ghost Tool 4.0.0 builds until new releases are created.
 
@@ -68,7 +68,7 @@ The source folders and the downloadable zips contain the same code; the zips are
 Human-readable manuals are in [`docs/`](docs/):
 
 - [`docs/anim_assist/`](docs/anim_assist/) — Anim Assist 12.1.3 guide (Markdown and PDF)
-- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.0 r4 guide (Markdown and PDF)
+- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.0 guide (Markdown and PDF)
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.1.2 English manual and translation status
 - [`docs/b4artists_ml/`](docs/b4artists_ml/) — B4Artists Machine Learning specifications, evidence and delivery records
 

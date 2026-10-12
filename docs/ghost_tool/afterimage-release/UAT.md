@@ -1,8 +1,8 @@
-# Ghost Tool 4.2.0 r4 hands-on check
+# Ghost Tool 4.2.0 hands-on check
 
 Status: automated checks pass; final owner usability acceptance is pending. Earlier prototype acceptance does not accept this exact r4 candidate.
 
-Install [the r4 ZIP](../../../releases/ghost_tool-afterimage-candidate-r4.zip) through Bforartists Preferences > Add-ons. Use a saved copy of a scene with an animated object and, for the bone checks, an animated armature. The recorded test host is Bforartists 5.2.0.
+Install [the 4.2.0 ZIP](../../../releases/b4_ghost_tool_v4.2.0.zip) through Bforartists Preferences > Add-ons. Use a saved copy of a scene with an animated object and, for the bone checks, an animated armature. The recorded test host is Bforartists 5.2.0.
 
 ## Review sequence
 

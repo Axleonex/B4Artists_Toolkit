@@ -1,4 +1,4 @@
-# Ghost Tool 4.2.0 r4 verification
+# Ghost Tool 4.2.0 verification
 
 The exact candidate ZIP passed 320 checks across 17 suites on Bforartists 5.2.0, Blender runtime 5.3.0 Alpha, build `0a1ca45552db`. Exit code: 0. Source and package match.
 

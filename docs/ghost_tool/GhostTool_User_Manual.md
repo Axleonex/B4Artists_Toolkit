@@ -1,10 +1,10 @@
-# Ghost Tool 4.2.0 r4 user guide
+# Ghost Tool 4.2.0 user guide
 
-Current local candidate: 4.2.0 revision r4. Automated release checks pass. Final owner usability acceptance remains pending, so this build remains a review candidate. Ghost Tool 4.0.0 is the published stable release.
+Current local candidate: 4.2.0. The package receipt records internal build revision r4. Automated release checks pass. Final owner usability acceptance remains pending, so this build remains a review candidate. Ghost Tool 4.0.0 is the published stable release.
 
 ## Install and find Ghost Tool
 
-Download `releases/ghost_tool-afterimage-candidate-r4.zip`. In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`.
+Download `releases/b4_ghost_tool_v4.2.0.zip`. In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`.
 
 The main entry is the 3D Viewport header: the ghost toggle and Ghost Tool menu next to Pose. The menu groups display, editing, comparison and settings controls. Open in Separate Window keeps the controls available in a separate window.
 
