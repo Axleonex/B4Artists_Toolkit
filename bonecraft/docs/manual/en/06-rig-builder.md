@@ -52,7 +52,11 @@ The Rig Builder makes a new rig for a character. It is in its own **Rig Builder*
 - Expand Troubleshooting for **Diagnose Quick Rig (print to console)**. With a non-metarig armature active it also shows **Inspect Active Rig Controls**
 - With a Rigify metarig active, Troubleshooting shows **Generate Control Rig (active metarig)** instead of Inspect Active Rig Controls; it generates the Rigify control rig
 
-**The BoneCraft Rigs asset library:** the Basic Humanoid is also an asset. Drag it from the asset shelf onto your character. With the dropped rig selected, Quick Rig shows "Dropped rig: fit it to a mesh": pick the **Mesh**, then click **Fit Dropped Rig**. Immediately afterwards, use **Fit Rig to Mesh** and **Parent + Auto-Weight Mesh** in Adjust Last Operation to choose fitting and weighting. A fresh operation defaults to fitting on and auto-weighting off.
+**The BoneCraft Rigs starter catalog:** the viewport asset shelf starts with all nine bundled starters visible, grouped into Humans, Quadrupeds and Other Animals. **Starter Rigs** in the viewport header switches between this collection and the regular Bforartists asset shelf. The adjacent catalog button, or **Add → Armature → Starter Rig Catalog**, opens the same collection as a popup. Your shelf choice is stored in BoneCraft's preferences.
+
+Basic Humanoid needs no Rigify. The other thumbnails are labelled **Rigify**. If Rigify is inactive, choosing or dropping one offers **Enable Rigify & Add Rig** and Cancel. Accepting enables the installed Rigify and continues with that starter; cancelling adds nothing. The viewport header also has a single **Enable Rigify** button. A missing dependency or a preset absent from your installed version produces an explanation without adding a substitute rig.
+
+Click a thumbnail to add a starter, or drag it into the viewport. With a mesh selected, the starter is fitted to that mesh; automatic weighting and control generation start off. Adjust them afterwards in **Adjust Last Operation**. With no mesh selected, select the new starter and pick the **Mesh** in Quick Rig, then click **Fit Dropped Rig**. Fitting scales and positions the skeleton; inspect and edit joint placement before generating controls or weighting. Dragging outside the viewport, pressing Esc, or right-clicking cancels without adding anything.
 
 **Where to find it:** Rig Builder → Quick Rig; Add → Armature → Quick Rig also adds the premade rigs
 

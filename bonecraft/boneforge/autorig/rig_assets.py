@@ -3,13 +3,83 @@
 No top-level ``bpy`` import, so the naming rules are unit-testable.
 """
 import os
+import json
 
 LIB_NAME = "BoneCraft Rigs"
 LIB_FALLBACK_NAME = "BoneCraft Rigs (BoneCraft)"
 CATALOG_ID = "3f6a0d2e-6b8e-4c1a-9a57-2f0c1b7d4e11"
 ASSET_TAG = "bonecraft_rig"
-ASSET_NAME = "BoneCraft Basic Humanoid"
+ASSET_NAME = "Basic Humanoid"
 SHELF_IDNAME = "BF_AST_bonecraft_rigs"
+_NATIVE_POLL_KEY = '_bonecraft_original_object_shelf_poll'
+_NATIVE_ASSET_POLL_KEY = '_bonecraft_original_object_asset_poll'
+
+
+def shelf_enabled():
+    prefs = _addon_prefs()
+    if prefs is not None:
+        return getattr(prefs, 'show_starter_shelf', True)
+    return _session_store().get('bonecraft_starter_shelf_enabled', True)
+
+
+def _native_object_poll(cls, context):
+    original = cls.__dict__[_NATIVE_POLL_KEY]
+    return original.__get__(None, cls)(context) and not shelf_enabled()
+
+
+def _native_asset_poll(cls, asset):
+    # Starter templates use our dependency-aware shelf, not the generic importer.
+    if any(t.name == ASSET_TAG for t in asset.metadata.tags):
+        return False
+    return cls.__dict__[_NATIVE_ASSET_POLL_KEY].__get__(None, cls)(asset)
+
+
+def route_native_shelf(enable):
+    """Temporarily let our shelf win Object Mode; restore the host callback exactly.
+
+    No host shelf is unregistered. The header switch immediately returns to the
+    original shelf, and disabling Rig Builder restores its original poll method.
+    """
+    import bpy
+    native = getattr(bpy.types, 'VIEW3D_AST_object', None)
+    if native is None:
+        return
+    if enable and not hasattr(native, _NATIVE_POLL_KEY):
+        setattr(native, _NATIVE_POLL_KEY, native.__dict__['poll'])
+        setattr(native, _NATIVE_ASSET_POLL_KEY, native.__dict__['asset_poll'])
+        native.poll = classmethod(_native_object_poll)
+        native.asset_poll = classmethod(_native_asset_poll)
+    elif not enable and hasattr(native, _NATIVE_POLL_KEY):
+        native.poll = native.__dict__[_NATIVE_POLL_KEY]
+        native.asset_poll = native.__dict__[_NATIVE_ASSET_POLL_KEY]
+        delattr(native, _NATIVE_POLL_KEY)
+        delattr(native, _NATIVE_ASSET_POLL_KEY)
+CATALOGS = {
+    "humans": (CATALOG_ID, "Humans"),
+    "quadrupeds": ("b1e5f700-d93b-4a57-851f-f639b9e64dd2", "Quadrupeds"),
+    "other": ("72b1e50f-fbbf-453f-aafa-eb405cb16df9", "Other Animals"),
+    "unknown": ("ac47a626-3eda-44f5-91d2-1c0f78884699", "Other"),
+}
+
+
+def starter_manifest():
+    """Bundled choices stay visible even when Rigify's operators are absent."""
+    with open(os.path.join(assets_dir(), "starter_rigs.json"), encoding="utf-8") as f:
+        return json.load(f)
+
+
+def starter_from_reference(relative_identifier):
+    """Resolve only our published assets, never an arbitrary operator from metadata."""
+    identifier = relative_identifier.replace("\\", "/")
+    if identifier.startswith("Object/"):
+        name = identifier[len("Object/"):]
+    elif "/Object/" in identifier:
+        name = identifier.rsplit("/Object/", 1)[1]
+    else:
+        return None
+    if name == "BoneCraft Basic Humanoid":
+        name = ASSET_NAME  # saved references to the original single-asset library
+    return next((r for r in starter_manifest() if r["asset_name"] == name), None)
 
 
 def assets_dir():
@@ -121,15 +191,28 @@ def _make_shelf():
         bl_idname = SHELF_IDNAME
         bl_space_type = 'VIEW_3D'
         bl_options = {'DEFAULT_VISIBLE'}
+        bl_activate_operator = "BONEFORGE_OT_add_starter_asset"
+        bl_drag_operator = "BONEFORGE_OT_drag_starter_asset"
+        bl_default_preview_size = 96
 
         @classmethod
         def poll(cls, context):
-            return context.mode == 'OBJECT'
+            return context.mode == 'OBJECT' and shelf_enabled()
 
         @classmethod
         def asset_poll(cls, asset):
             return (asset.id_type == 'OBJECT'
                     and any(t.name == ASSET_TAG for t in asset.metadata.tags))
+
+        @classmethod
+        def draw_context_menu(cls, context, asset, layout):
+            from boneforge.i18n import T
+            layout.operator_context = 'INVOKE_DEFAULT'
+            op = layout.operator("boneforge.add_starter_asset", text=T("Add Starter Rig"))
+            op.relative_asset_identifier = asset.full_path
+            from .quick_human import is_rigify_available
+            if not is_rigify_available():
+                layout.operator("boneforge.enable_rigify", text=T("Enable Rigify"))
 
     return BF_AST_bonecraft_rigs
 
@@ -137,16 +220,22 @@ def _make_shelf():
 def register():
     global _shelf_cls
     import bpy
+    from . import rig_asset_ops
+    rig_asset_ops.register()
     _shelf_cls = _make_shelf()
     bpy.utils.register_class(_shelf_cls)
     register_library()
+    route_native_shelf(True)
 
 
 def unregister():
     global _shelf_cls
     import bpy
+    from . import rig_asset_ops
+    route_native_shelf(False)
     unregister_library()
     live = getattr(bpy.types, SHELF_IDNAME, None)
     if live is not None:
         bpy.utils.unregister_class(live)
     _shelf_cls = None
+    rig_asset_ops.unregister()

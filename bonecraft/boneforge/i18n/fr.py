@@ -836,3 +836,23 @@ STRINGS: dict[str, str] = {
     "Validate Rig": "Valider le rig",
     "Health Check": "Bilan de santé",
 }
+
+# Starter rig catalog
+STRINGS.update({
+    "Starter Rigs": "Squelettes de d?part",
+    "Rigify is off": "Rigify est d?sactiv?",
+    "Enable Rigify & Add Rig": "Activer Rigify et ajouter le squelette",
+    "Selected starter:": "Squelette choisi :",
+    "This starter requires Rigify.": "Ce squelette n?cessite Rigify.",
+    "Enable the installed Rigify and add this rig.": "Activez Rigify install? et ajoutez ce squelette.",
+    "Nothing is added if you cancel.": "Annuler ne cr?e rien.",
+    "Choose a BoneCraft starter rig": "Choisissez un squelette de d?part BoneCraft",
+    "Could not enable Rigify. Install or enable it in Preferences > Add-ons, then choose this starter again.": "Impossible d'activer Rigify. Installez-le ou activez-le dans Pr?f?rences > Extensions, puis choisissez de nouveau ce squelette.",
+    "This starter is not provided by your installed Rigify version. No rig was added.": "Ce squelette n'est pas fourni par votre version de Rigify. Aucun squelette ajout?.",
+    "Open a 3D Viewport to add this starter rig": "Ouvrez une vue 3D pour ajouter ce squelette",
+    "The chosen mesh is no longer in this view layer": "Le maillage choisi n'est plus dans ce calque de vue",
+    "Starter added. Choose a mesh in Quick Rig, then use Fit Dropped Rig.": "Squelette ajout?. Choisissez un maillage dans Quick Rig, puis utilisez Fit Dropped Rig.",
+    "Drop in the viewport to add the starter; Esc cancels": "D?posez dans la vue pour ajouter le squelette ; ?chap annule",
+    "Starter Rig Catalog": "Catalogue des squelettes de d?part",
+    "Add Starter Rig": "Ajouter un squelette de d?part"
+})

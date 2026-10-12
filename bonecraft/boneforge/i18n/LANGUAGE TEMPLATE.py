@@ -322,3 +322,23 @@ STRINGS: dict[str, str] = {
     "2. Shift-click the base armature last (active)": "",
     "3. Click Merge Clothing": "",
 }
+
+# Starter rig catalog
+STRINGS.update({
+    "Starter Rigs": "",
+    "Rigify is off": "",
+    "Enable Rigify & Add Rig": "",
+    "Selected starter:": "",
+    "This starter requires Rigify.": "",
+    "Enable the installed Rigify and add this rig.": "",
+    "Nothing is added if you cancel.": "",
+    "Choose a BoneCraft starter rig": "",
+    "Could not enable Rigify. Install or enable it in Preferences > Add-ons, then choose this starter again.": "",
+    "This starter is not provided by your installed Rigify version. No rig was added.": "",
+    "Open a 3D Viewport to add this starter rig": "",
+    "The chosen mesh is no longer in this view layer": "",
+    "Starter added. Choose a mesh in Quick Rig, then use Fit Dropped Rig.": "",
+    "Drop in the viewport to add the starter; Esc cancels": "",
+    "Starter Rig Catalog": "",
+    "Add Starter Rig": ""
+})

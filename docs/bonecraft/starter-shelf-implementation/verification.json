@@ -1,0 +1,59 @@
+{
+  "host": "Bforartists 5.2.0 / Blender 5.3.0 Alpha",
+  "build": "0a1ca45552db",
+  "date": "2026-10-12",
+  "route": {
+    "actual_lane": "native continuation",
+    "reason": "DESKTOP_HOST_ADAPTER_QUALIFICATION_FAILED: network checkout is not a local drive",
+    "scope": [
+      "bonecraft",
+      "docs/bonecraft"
+    ]
+  },
+  "starter_count": 9,
+  "package": "bonecraft/releases/BoneCraft-BFA-9.1.2-starter-catalog-candidate.zip",
+  "package_sha256": "099295f3d80126a280993c5d322324d380cdb8fbe7160a01497c4203910814f0",
+  "completed_regressions": [
+    "asset library ownership and disable cleanup",
+    "complete bundled assets against installed Rigify discovery",
+    "Fit Dropped Rig errors, fitting and automatic weighting",
+    "existing Add-menu access"
+  ],
+  "ui_evidence": [
+    "shelf-window.png",
+    "shelf-popover.png",
+    "native-rigify-prompt.png",
+    "popup-cancel.json",
+    "native-click-undo-redo.json",
+    "native-rigify-accept.json",
+    "native-drag.json",
+    "native-drag-rigify-prompt.png"
+  ],
+  "native_drag": {
+    "dependency_prompt_before_insertion": true,
+    "cancel_adds_nothing": true,
+    "basic_drag_adds_19_bones_without_rigify": true,
+    "location": [
+      -0.07968616485595703,
+      -0.6514377593994141,
+      -0.3820977210998535
+    ]
+  },
+  "native_click_undo_redo": {
+    "native_thumbnail_click": true,
+    "undo": true,
+    "redo": true
+  },
+  "native_enable_and_add": {
+    "native_dependency_prompt": true,
+    "enable_and_add": true,
+    "selected_starter": "Full Human",
+    "rig_count": 2
+  },
+  "native_cancel": {
+    "rig_count": 0,
+    "rigify_active": false,
+    "cancel_verified": true
+  },
+  "status": "PASS"
+}
