@@ -4,7 +4,7 @@ Current repository packages and their publication status.
 
 | Tool | Version | Archive | Bytes | SHA256 prefix | Status |
 |---|---|---|---:|---|---|
-| Anim Assist | 12.5.0 | [b4_anim_assist_v12.5.0.zip](b4_anim_assist_v12.5.0.zip?raw=1) | 570,901 | `27fea6cfd596` | Repository candidate; Needs Review: native Redo and trail geometry findings; actual Bforartists and owner acceptance pending |
+| Anim Assist | 12.5.0 | [b4_anim_assist_v12.5.0.zip](b4_anim_assist_v12.5.0.zip?raw=1) | 570,901 | `27fea6cfd596` | Repository build; native Redo and trail geometry findings; actual Bforartists and owner acceptance pending |
 | Anim Assist (last published release) | 12.1.3 | [b4_anim_assist_v12.1.3.zip](b4_anim_assist_v12.1.3.zip) | 556,067 | `b30547b2afac` | Published release; actual Bforartists regression checks pass |
 | Ghost Tool | 4.2.6 | [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip) | 219,281 | `e195239e6ae8` | Published release; persistent toolbar and cached visibility; 178 checks/cases pass in Blender stand-in; native Bforartists validation pending |
 | Ghost Tool (4.2.5) | 4.2.5 | [b4_ghost_tool_v4.2.5.zip](b4_ghost_tool_v4.2.5.zip?raw=1) | 216,002 | `5cfb8cee7805` | Repository test build; display location preference and Compare folds; 96/96 focused stand-in checks pass; native Bforartists left Tool Shelf validation pending |

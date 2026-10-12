@@ -4,7 +4,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 
 | Tool | Version | What it does |
 |---|---|---|
-| **Anim Assist** | 12.5.0 (candidate) | An animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Seven inline Timeline toolbar families provide configurable direct buttons for 70 existing presets. Inspired by Maya's AnimBot. |
+| **Anim Assist** | 12.5.0 | An animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Seven inline Timeline toolbar families provide configurable direct buttons for 70 existing presets. Inspired by Maya's AnimBot. |
 | **Ghost Tool** | 4.2.6 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, header, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
 
 ### Optional add-on: BoneCraft (rigging)
@@ -25,12 +25,11 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.5.0 candidate | [b4_anim_assist_v12.5.0.zip](releases/b4_anim_assist_v12.5.0.zip?raw=1) |
-| Anim Assist 12.1.3 (last published release) | [b4_anim_assist_v12.1.3.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.3/b4_anim_assist_v12.1.3.zip) |
+| Anim Assist 12.5.0 | [b4_anim_assist_v12.5.0.zip](releases/b4_anim_assist_v12.5.0.zip?raw=1) |
 | Ghost Tool 4.2.6 | [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip) |
 | BoneCraft 9.2.0 (optional) | [BoneCraft-BFA-9.2.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.0/BoneCraft-BFA-9.2.0.zip) |
 
-Anim Assist 12.5.0 is **Needs Review**: its exact package, preferences and dispatch checks pass in a Blender stand-in, while native Redo fails and trail geometry has a position offset. Actual Bforartists and owner workflow acceptance remain pending. See the [usage screenshots](docs/anim_assist/releases/12.5.0/USAGE.md) and [qualification report](docs/anim_assist/releases/12.5.0/qualification.md). The last published Anim Assist release, 12.1.3, retains its recorded host checks.
+Anim Assist 12.5.0 adds configurable quick buttons above the Timeline. See the [usage screenshots](docs/anim_assist/releases/12.5.0/USAGE.md). Its package, preferences and dispatch checks pass in a Blender stand-in; native Redo and trail geometry have known issues. Actual Bforartists and owner workflow acceptance remain pending. Details are in the [qualification report](docs/anim_assist/releases/12.5.0/qualification.md).
 
 BoneCraft 9.2.0 adds the complete starter catalog and passes its [recorded host and native viewport checks](docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md). Ghost Tool 4.2.6 includes the persistent toolbar, shared feature options and cached visibility controls. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
 
@@ -71,7 +70,7 @@ The ZIPs package their recorded release source for one-click installation. The c
 
 Human-readable manuals are in [`docs/`](docs/):
 
-- [Anim Assist 12.5.0 toolbar guide](docs/anim_assist/releases/12.5.0/USAGE.md) — current candidate screenshots, configuration and Breakdown anchor explanation; [12.1.3 documentation](docs/anim_assist/) remains available for the last published release.
+- [Anim Assist 12.5.0 toolbar guide](docs/anim_assist/releases/12.5.0/USAGE.md) — screenshots, configuration and Breakdown anchor explanation; [suite manuals](docs/anim_assist/) cover the other animation tools.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.6 guide, PDF and toolbar notes
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.0 English manual and translation status
 
@@ -81,7 +80,7 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - **Bforartists 4.2+** (Anim Assist) / **Bforartists 4.x** (Ghost Tool). None of these add-ons are compatible with standard Blender.
 - Ghost Tool 4.2.6 passes **178 checks/cases** on a **Blender 5.1.2 stand-in**, including four native toolbar layouts and five native auto-key cases. See the [4.2.6 package receipt](docs/ghost_tool/releases/4.2.6/package-receipt.json). Native Bforartists validation remains pending. The older results below belong to their named builds.
-- Anim Assist 12.1.3, Ghost Tool 4.2.0 r4 and BoneCraft 9.1.2 checks passed on **Bforartists 5.2.0**, with Blender runtime 5.3.0 Alpha, build `0a1ca45552db`. See the [verification summary](docs/releases/2026-10-11/VERIFICATION.md) for scope and limits.
+- Historical Ghost Tool 4.2.0 r4 and BoneCraft 9.1.2 checks passed on **Bforartists 5.2.0**, with Blender runtime 5.3.0 Alpha, build `0a1ca45552db`. See the [verification summary](docs/releases/2026-10-11/VERIFICATION.md) for scope and limits.
 - Ghost Tool 4.2.1 has 229 passing checks on a **Blender 5.1.2 stand-in**, including 13 authoring regressions. Ten supplemental cases fail the same way on 4.2.0 because of stand-in host limitations. See the [4.2.1 verification report](docs/ghost_tool/authoring-fix/verification.md). Bforartists viewport validation is pending.
 
 - Ghost Tool 4.2.2 passes **230 background checks across nine suites** and **five native auto-key cases** on a Blender 5.1.2 stand-in. See the [4.2.2 verification report](docs/ghost_tool/authoring-pause/verification.md). These include actual native object/pose moves with live updates off and on, plus cancellation; Bforartists production-rig validation remains pending.
