@@ -726,7 +726,6 @@ def _draw_motion_paths(layout, context) -> None:
     row.prop(settings, "paths_show_handles", text="Handles", toggle=True)
     layout.operator("ghost_tool.paths_draw_to_keys", text="Draw to Keys…", icon='GREASEPENCIL')
     layout.operator("ghost_tool.path_handle_drag", text="Drag Path Handle").wait_for_click = True
-    layout.operator("ghost_tool.open_settings_editor", text="Path Settings (Prototype)").section = 'paths'
 
 
 #: (key, label, icon, draw function, help topic, open by default)
@@ -774,8 +773,6 @@ def draw_ghost_tool(layout, context, prefix: str) -> None:
         header, body = layout.panel(f"ghost_tool_{prefix}_{key}", default_closed=not is_open)
         header.label(text=label, icon=icon)
         _draw_help_icon(header, context, topic)
-        if key in {'paths', 'edit', 'look', 'settings'}:
-            header.operator("ghost_tool.open_settings_editor", text="Settings…").section = key
         if body is None:
             continue
         try:
@@ -807,10 +804,6 @@ class GHOST_PT_header_menu(bpy.types.Panel):
 
     def draw(self, context: bpy.types.Context) -> None:
         draw_ghost_tool(self.layout, context, "menu")
-        layout = self.layout
-        layout.separator()
-        layout.operator("ghost_tool.open_window", icon='WINDOW')
-        layout.operator("ghost_tool.open_settings_editor", text="Settings Editor (Prototype)")
 
 
 # Windows opened by "Open in Separate Window" (their sidebars show Ghost Tool).
@@ -1055,7 +1048,6 @@ def _draw_native_actions(layout, context):
         ("ghost_tool.generate_ghosts", "Show Markers", 'GHOST_ENABLED'),
         ("ghost_tool.drag_ghost", "Drag Marker", 'ORIENTATION_CURSOR'),
         ("ghost_tool.take_snapshot", "Save Snapshot", 'CAMERA_DATA'),
-        ("ghost_tool.open_settings_editor", "Settings Editor", 'SETTINGS'),
     )
     try:
         from bl_ui.space_toolsystem_common import toolsystem_column_count
