@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Anim Assist",
     "author": "Developer",
-    "version": (12, 1, 3),
+    "version": (12, 5, 0),
     "blender": (4, 2, 0),
     "location": "Properties > Scene > Anim Assist; Graph Editor and Dope Sheet > Sidebar > Anim Assist; editor header menus",
     "description": "Production animation workflow tools for Bforartists. v12 adds hybrid PREVIEW/SHIPPED lipsync layers with shape key support.",
@@ -62,7 +62,7 @@ from .core import p12_session as p12_session_mod
 from .core import p12_driver_engine as p12_driver_mod
 from .operators import p12_mode_ops as p12_mode_mod
 from .core import ui_state as ui_state_mod
-from .prefs import AA_AddonPreferences
+from .prefs import AA_AddonPreferences, prepare_timeline_quick_preferences
 from . import operators as ops_pkg
 from . import ui as ui_pkg
 
@@ -73,6 +73,7 @@ _registry: ClassRegistry | None = None
 def _build_registry() -> ClassRegistry:
     reg = ClassRegistry()
     reg.extend(prop_mod.CLASSES)
+    prepare_timeline_quick_preferences()
     reg.add(AA_AddonPreferences)
     reg.extend(ops_pkg.CLASSES)
     reg.extend(ui_pkg.CLASSES)

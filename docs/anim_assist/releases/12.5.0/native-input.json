@@ -1,0 +1,1748 @@
+{
+  "host": "Blender 5.1.2 stand-in",
+  "package_sha256": "27fea6cfd5962ba4d4bf93744bf0b705f28c05863d12f136accd06f04e8790ab",
+  "method": "Computer Use native mouse/keyboard; fixture data setup and read-only probes",
+  "checks": [
+    {
+      "check": "Native checkbox pins Push Previous without editing animation",
+      "pass": true,
+      "before": {
+        "pins": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "snapshot": {
+          "objects": {
+            "AA_Test": {
+              "loc": [
+                5,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        -0.6666666269302368,
+                        0
+                      ],
+                      [
+                        2.6666665077209473,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      11,
+                      10,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        9.333333015441895,
+                        10
+                      ],
+                      [
+                        14.333333015441895,
+                        10
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        17.66666603088379,
+                        0
+                      ],
+                      [
+                        24.33333396911621,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            },
+            "AA_Untouched": {
+              "loc": [
+                200,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      100,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        -5.666666507720947,
+                        100
+                      ],
+                      [
+                        7.666666507720947,
+                        100
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      200,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        14.333333969116211,
+                        200
+                      ],
+                      [
+                        27.66666603088379,
+                        200
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            }
+          },
+          "reference": 1,
+          "mask": [
+            false,
+            1,
+            250
+          ],
+          "overlay": false
+        },
+        "header_extent": [
+          0,
+          1917
+        ],
+        "areas": [
+          {
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 233,
+            "w": 1916,
+            "h": 742
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "x": 2,
+            "y": 23,
+            "w": 1916,
+            "h": 174
+          },
+          {
+            "type": "TEXT_EDITOR",
+            "x": 2,
+            "y": 200,
+            "w": 1916,
+            "h": 30
+          }
+        ]
+      },
+      "after": {
+        "pins": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "PUSH_PREV",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "snapshot": {
+          "objects": {
+            "AA_Test": {
+              "loc": [
+                5,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        -0.6666666269302368,
+                        0
+                      ],
+                      [
+                        2.6666665077209473,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      11,
+                      10,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        9.333333015441895,
+                        10
+                      ],
+                      [
+                        14.333333015441895,
+                        10
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        17.66666603088379,
+                        0
+                      ],
+                      [
+                        24.33333396911621,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            },
+            "AA_Untouched": {
+              "loc": [
+                200,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      100,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        -5.666666507720947,
+                        100
+                      ],
+                      [
+                        7.666666507720947,
+                        100
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      200,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        14.333333969116211,
+                        200
+                      ],
+                      [
+                        27.66666603088379,
+                        200
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            }
+          },
+          "reference": 1,
+          "mask": [
+            false,
+            1,
+            250
+          ],
+          "overlay": false
+        },
+        "header_extent": [
+          0,
+          1917
+        ],
+        "areas": [
+          {
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 233,
+            "w": 1916,
+            "h": 742
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "x": 2,
+            "y": 23,
+            "w": 1916,
+            "h": 174
+          },
+          {
+            "type": "TEXT_EDITOR",
+            "x": 2,
+            "y": 200,
+            "w": 1916,
+            "h": 30
+          }
+        ]
+      }
+    },
+    {
+      "check": "B50 native mouse insertion between bounding keys",
+      "before": {
+        "pins": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "snapshot": {
+          "objects": {
+            "AA_Test": {
+              "loc": [
+                5,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        -0.6666666269302368,
+                        0
+                      ],
+                      [
+                        2.6666665077209473,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      11,
+                      10,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        9.333333015441895,
+                        10
+                      ],
+                      [
+                        14.333333015441895,
+                        10
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        17.66666603088379,
+                        0
+                      ],
+                      [
+                        24.33333396911621,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            },
+            "AA_Untouched": {
+              "loc": [
+                115.625,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      100,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        -5.666666507720947,
+                        100
+                      ],
+                      [
+                        7.666666507720947,
+                        100
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      200,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        14.333333969116211,
+                        200
+                      ],
+                      [
+                        27.66666603088379,
+                        200
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            }
+          },
+          "reference": 1,
+          "mask": [
+            false,
+            1,
+            250
+          ],
+          "overlay": false
+        },
+        "header_extent": [
+          0,
+          1917
+        ],
+        "areas": [
+          {
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 233,
+            "w": 1916,
+            "h": 742
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "x": 2,
+            "y": 23,
+            "w": 1916,
+            "h": 174
+          },
+          {
+            "type": "TEXT_EDITOR",
+            "x": 2,
+            "y": 200,
+            "w": 1916,
+            "h": 30
+          }
+        ]
+      },
+      "after": {
+        "pins": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "snapshot": {
+          "objects": {
+            "AA_Test": {
+              "loc": [
+                5,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        -0.6666666269302368,
+                        0
+                      ],
+                      [
+                        2.6666665077209473,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      6,
+                      5,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        5,
+                        5
+                      ],
+                      [
+                        7,
+                        5
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      11,
+                      10,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        9.333333015441895,
+                        10
+                      ],
+                      [
+                        14.333333015441895,
+                        10
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        17.66666603088379,
+                        0
+                      ],
+                      [
+                        24.33333396911621,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            },
+            "AA_Untouched": {
+              "loc": [
+                115.625,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      100,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        -5.666666507720947,
+                        100
+                      ],
+                      [
+                        7.666666507720947,
+                        100
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      200,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        14.333333969116211,
+                        200
+                      ],
+                      [
+                        27.66666603088379,
+                        200
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            }
+          },
+          "reference": 1,
+          "mask": [
+            false,
+            1,
+            250
+          ],
+          "overlay": false
+        },
+        "header_extent": [
+          0,
+          1917
+        ],
+        "areas": [
+          {
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 233,
+            "w": 1916,
+            "h": 742
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "x": 2,
+            "y": 23,
+            "w": 1916,
+            "h": 174
+          },
+          {
+            "type": "TEXT_EDITOR",
+            "x": 2,
+            "y": 200,
+            "w": 1916,
+            "h": 30
+          }
+        ]
+      },
+      "pass": true
+    },
+    {
+      "check": "B50 native Undo and Redo",
+      "undo": {
+        "pins": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "snapshot": {
+          "objects": {
+            "AA_Test": {
+              "loc": [
+                5,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        -0.6666666269302368,
+                        0
+                      ],
+                      [
+                        2.6666665077209473,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      11,
+                      10,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        9.333333015441895,
+                        10
+                      ],
+                      [
+                        14.333333015441895,
+                        10
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        17.66666603088379,
+                        0
+                      ],
+                      [
+                        24.33333396911621,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            },
+            "AA_Untouched": {
+              "loc": [
+                115.625,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      100,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        -5.666666507720947,
+                        100
+                      ],
+                      [
+                        7.666666507720947,
+                        100
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      200,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        14.333333969116211,
+                        200
+                      ],
+                      [
+                        27.66666603088379,
+                        200
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            }
+          },
+          "reference": 1,
+          "mask": [
+            false,
+            1,
+            250
+          ],
+          "overlay": false
+        },
+        "header_extent": [
+          0,
+          1917
+        ],
+        "areas": [
+          {
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 233,
+            "w": 1916,
+            "h": 742
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "x": 2,
+            "y": 23,
+            "w": 1916,
+            "h": 174
+          },
+          {
+            "type": "TEXT_EDITOR",
+            "x": 2,
+            "y": 200,
+            "w": 1916,
+            "h": 30
+          }
+        ]
+      },
+      "redo": {
+        "pins": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "snapshot": {
+          "objects": {
+            "AA_Test": {
+              "loc": [
+                5,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        -0.6666666269302368,
+                        0
+                      ],
+                      [
+                        2.6666665077209473,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      11,
+                      10,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        9.333333015441895,
+                        10
+                      ],
+                      [
+                        14.333333015441895,
+                        10
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        17.66666603088379,
+                        0
+                      ],
+                      [
+                        24.33333396911621,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            },
+            "AA_Untouched": {
+              "loc": [
+                115.625,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      100,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        -5.666666507720947,
+                        100
+                      ],
+                      [
+                        7.666666507720947,
+                        100
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      200,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        14.333333969116211,
+                        200
+                      ],
+                      [
+                        27.66666603088379,
+                        200
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            }
+          },
+          "reference": 1,
+          "mask": [
+            false,
+            1,
+            250
+          ],
+          "overlay": false
+        },
+        "header_extent": [
+          0,
+          1917
+        ],
+        "areas": [
+          {
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 233,
+            "w": 1916,
+            "h": 742
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "x": 2,
+            "y": 23,
+            "w": 1916,
+            "h": 174
+          },
+          {
+            "type": "TEXT_EDITOR",
+            "x": 2,
+            "y": 200,
+            "w": 1916,
+            "h": 30
+          }
+        ]
+      },
+      "pass": false,
+      "undo_pass": true,
+      "redo_pass": false
+    },
+    {
+      "check": "Existing playhead key is the previous Breakdown anchor",
+      "before": {
+        "pins": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "snapshot": {
+          "objects": {
+            "AA_Test": {
+              "loc": [
+                5,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        -0.6666666269302368,
+                        0
+                      ],
+                      [
+                        2.6666665077209473,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      6,
+                      5,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        5,
+                        5
+                      ],
+                      [
+                        7,
+                        5
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      11,
+                      10,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        9.333333015441895,
+                        10
+                      ],
+                      [
+                        14.333333015441895,
+                        10
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        17.66666603088379,
+                        0
+                      ],
+                      [
+                        24.33333396911621,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            },
+            "AA_Untouched": {
+              "loc": [
+                115.625,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      100,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        -5.666666507720947,
+                        100
+                      ],
+                      [
+                        7.666666507720947,
+                        100
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      200,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        14.333333969116211,
+                        200
+                      ],
+                      [
+                        27.66666603088379,
+                        200
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            }
+          },
+          "reference": 1,
+          "mask": [
+            false,
+            1,
+            250
+          ],
+          "overlay": false
+        },
+        "header_extent": [
+          0,
+          1917
+        ],
+        "areas": [
+          {
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 233,
+            "w": 1916,
+            "h": 742
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "x": 2,
+            "y": 23,
+            "w": 1916,
+            "h": 174
+          },
+          {
+            "type": "TEXT_EDITOR",
+            "x": 2,
+            "y": 200,
+            "w": 1916,
+            "h": 30
+          }
+        ]
+      },
+      "after": {
+        "pins": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "snapshot": {
+          "objects": {
+            "AA_Test": {
+              "loc": [
+                7.5,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        -0.6666666269302368,
+                        0
+                      ],
+                      [
+                        2.6666665077209473,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      6,
+                      7.5,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        5,
+                        7.5
+                      ],
+                      [
+                        7,
+                        7.5
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      11,
+                      10,
+                      true,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        9.333333015441895,
+                        10
+                      ],
+                      [
+                        14.333333015441895,
+                        10
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      0,
+                      false,
+                      "KEYFRAME",
+                      "FREE",
+                      "FREE",
+                      [
+                        17.66666603088379,
+                        0
+                      ],
+                      [
+                        24.33333396911621,
+                        0
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            },
+            "AA_Untouched": {
+              "loc": [
+                115.625,
+                0,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "curves": [
+                [
+                  "location",
+                  0,
+                  [
+                    [
+                      1,
+                      100,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        -5.666666507720947,
+                        100
+                      ],
+                      [
+                        7.666666507720947,
+                        100
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ],
+                    [
+                      21,
+                      200,
+                      false,
+                      "KEYFRAME",
+                      "AUTO_CLAMPED",
+                      "AUTO_CLAMPED",
+                      [
+                        14.333333969116211,
+                        200
+                      ],
+                      [
+                        27.66666603088379,
+                        200
+                      ],
+                      true,
+                      true,
+                      "AUTO",
+                      0.800000011920929,
+                      1.7015800476074219,
+                      4.099999904632568
+                    ]
+                  ]
+                ]
+              ],
+              "constraints": []
+            }
+          },
+          "reference": 1,
+          "mask": [
+            false,
+            1,
+            250
+          ],
+          "overlay": false
+        },
+        "header_extent": [
+          0,
+          1917
+        ],
+        "areas": [
+          {
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 233,
+            "w": 1916,
+            "h": 742
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "x": 2,
+            "y": 23,
+            "w": 1916,
+            "h": 174
+          },
+          {
+            "type": "TEXT_EDITOR",
+            "x": 2,
+            "y": 200,
+            "w": 1916,
+            "h": 30
+          }
+        ]
+      },
+      "pass": true
+    }
+  ]
+}

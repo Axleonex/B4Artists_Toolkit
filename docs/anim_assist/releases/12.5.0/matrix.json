@@ -1,0 +1,1322 @@
+[
+  {
+    "host": "5.1.2",
+    "binary": "C:\\Users\\ATONLO~1\\AppData\\Local\\Temp\\claude\\G--LapArt-Projects-Blender-Addons-B4Artists-Tools\\b58a5638-010c-4c12-b56a-e305d70785f4\\scratchpad\\bforartists-proxy\\blender.exe",
+    "actual_bforartists": false,
+    "installed_package": "G:\\Temp\\AtonLotus\\aa125-exact\\scripts\\addons\\B4_anim_assist\\__init__.py",
+    "rows": [
+      {
+        "mode": "defaults",
+        "selected": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "initial_extent": [
+          0.0,
+          480.002
+        ],
+        "header_width": 479,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          850.0,
+          1330.002
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 4
+      },
+      {
+        "mode": "custom",
+        "selected": [
+          "OFFSET",
+          "PUSH_PREV",
+          "SWAP",
+          "TRAIL_DIAGNOSE"
+        ],
+        "initial_extent": [
+          0.0,
+          480.002
+        ],
+        "header_width": 479,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          548.0,
+          1028.002
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 3
+      },
+      {
+        "mode": "all70",
+        "selected": [
+          "ALIGN",
+          "ALL",
+          "AMPLIFY",
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_CLEANUP",
+          "BAKE_STEP",
+          "DISTRIBUTE_TIME",
+          "DRAG",
+          "EASE",
+          "ENDS",
+          "FRAME",
+          "GROW_BOTH",
+          "GROW_LEFT",
+          "GROW_RIGHT",
+          "HANDLE_ALIGNED",
+          "HANDLE_AUTO",
+          "HANDLE_CLAMPED",
+          "HANDLE_FREE",
+          "HANDLE_VECTOR",
+          "INBETWEEN",
+          "INBETWEENS",
+          "INSERT_TIME",
+          "MIRROR_ACTIVE",
+          "MIRROR_FRAME",
+          "MIRROR_RANGE",
+          "MIRROR_SELECTED",
+          "NEIGHBORS",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "OFFSET",
+          "OFFSET_ACTION",
+          "OFFSET_DRAG",
+          "OFFSET_MASK",
+          "OFFSET_SCENE_RANGE",
+          "OPPOSITE",
+          "PROXY_ORIENTATION",
+          "PROXY_PARENT",
+          "PROXY_TRANSLATION",
+          "PROXY_WORLD",
+          "PULL_NEXT",
+          "PULL_PREV",
+          "PUSH_NEXT",
+          "PUSH_PREV",
+          "RANGE",
+          "REDUCE",
+          "REFERENCE",
+          "REMOVE_TIME",
+          "REVERSE",
+          "RIPPLE",
+          "SCALE_DRAG",
+          "SELECT_BREAKDOWNS",
+          "SMART_BAKE",
+          "SMOOTH",
+          "SNAP",
+          "SWAP",
+          "T110",
+          "T120",
+          "T80",
+          "T90",
+          "TRAIL_DIAGNOSE",
+          "TRAIL_HIDE",
+          "TRAIL_REFRESH",
+          "TRAIL_SHOW",
+          "TYPE_BREAKDOWN",
+          "TYPE_EXTREME",
+          "TYPE_HOLD",
+          "TYPE_JITTER",
+          "TYPE_KEYFRAME"
+        ],
+        "initial_extent": [
+          0.0,
+          480.002
+        ],
+        "header_width": 479,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          10009.0,
+          10489.002
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 26
+      },
+      {
+        "mode": "empty",
+        "selected": [],
+        "initial_extent": [
+          0.0,
+          480.002
+        ],
+        "header_width": 479,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          9.0,
+          489.002
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      }
+    ],
+    "requested_logical_width": 480,
+    "requested_scale": 100,
+    "qualification": "PASS within four logical pixels"
+  },
+  {
+    "host": "5.1.2",
+    "binary": "C:\\Users\\ATONLO~1\\AppData\\Local\\Temp\\claude\\G--LapArt-Projects-Blender-Addons-B4Artists-Tools\\b58a5638-010c-4c12-b56a-e305d70785f4\\scratchpad\\bforartists-proxy\\blender.exe",
+    "actual_bforartists": false,
+    "installed_package": "G:\\Temp\\AtonLotus\\aa125-exact\\scripts\\addons\\B4_anim_assist\\__init__.py",
+    "rows": [
+      {
+        "mode": "defaults",
+        "selected": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "initial_extent": [
+          0.0,
+          715.001
+        ],
+        "header_width": 714,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          1252.0,
+          1967.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 3
+      },
+      {
+        "mode": "custom",
+        "selected": [
+          "OFFSET",
+          "PUSH_PREV",
+          "SWAP",
+          "TRAIL_DIAGNOSE"
+        ],
+        "initial_extent": [
+          0.0,
+          715.001
+        ],
+        "header_width": 714,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          792.0,
+          1507.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 3
+      },
+      {
+        "mode": "all70",
+        "selected": [
+          "ALIGN",
+          "ALL",
+          "AMPLIFY",
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_CLEANUP",
+          "BAKE_STEP",
+          "DISTRIBUTE_TIME",
+          "DRAG",
+          "EASE",
+          "ENDS",
+          "FRAME",
+          "GROW_BOTH",
+          "GROW_LEFT",
+          "GROW_RIGHT",
+          "HANDLE_ALIGNED",
+          "HANDLE_AUTO",
+          "HANDLE_CLAMPED",
+          "HANDLE_FREE",
+          "HANDLE_VECTOR",
+          "INBETWEEN",
+          "INBETWEENS",
+          "INSERT_TIME",
+          "MIRROR_ACTIVE",
+          "MIRROR_FRAME",
+          "MIRROR_RANGE",
+          "MIRROR_SELECTED",
+          "NEIGHBORS",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "OFFSET",
+          "OFFSET_ACTION",
+          "OFFSET_DRAG",
+          "OFFSET_MASK",
+          "OFFSET_SCENE_RANGE",
+          "OPPOSITE",
+          "PROXY_ORIENTATION",
+          "PROXY_PARENT",
+          "PROXY_TRANSLATION",
+          "PROXY_WORLD",
+          "PULL_NEXT",
+          "PULL_PREV",
+          "PUSH_NEXT",
+          "PUSH_PREV",
+          "RANGE",
+          "REDUCE",
+          "REFERENCE",
+          "REMOVE_TIME",
+          "REVERSE",
+          "RIPPLE",
+          "SCALE_DRAG",
+          "SELECT_BREAKDOWNS",
+          "SMART_BAKE",
+          "SMOOTH",
+          "SNAP",
+          "SWAP",
+          "T110",
+          "T120",
+          "T80",
+          "T90",
+          "TRAIL_DIAGNOSE",
+          "TRAIL_HIDE",
+          "TRAIL_REFRESH",
+          "TRAIL_SHOW",
+          "TYPE_BREAKDOWN",
+          "TYPE_EXTREME",
+          "TYPE_HOLD",
+          "TYPE_JITTER",
+          "TYPE_KEYFRAME"
+        ],
+        "initial_extent": [
+          0.0,
+          715.001
+        ],
+        "header_width": 714,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          14765.0,
+          15480.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 24
+      },
+      {
+        "mode": "empty",
+        "selected": [],
+        "initial_extent": [
+          0.0,
+          715.001
+        ],
+        "header_width": 714,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          5.0,
+          720.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      }
+    ],
+    "requested_logical_width": 480,
+    "requested_scale": 150,
+    "qualification": "PASS within four logical pixels"
+  },
+  {
+    "host": "5.1.2",
+    "binary": "C:\\Users\\ATONLO~1\\AppData\\Local\\Temp\\claude\\G--LapArt-Projects-Blender-Addons-B4Artists-Tools\\b58a5638-010c-4c12-b56a-e305d70785f4\\scratchpad\\bforartists-proxy\\blender.exe",
+    "actual_bforartists": false,
+    "installed_package": "G:\\Temp\\AtonLotus\\aa125-exact\\scripts\\addons\\B4_anim_assist\\__init__.py",
+    "rows": [
+      {
+        "mode": "defaults",
+        "selected": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "initial_extent": [
+          0.0,
+          797.001
+        ],
+        "header_width": 796,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          533.0,
+          1330.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "custom",
+        "selected": [
+          "OFFSET",
+          "PUSH_PREV",
+          "SWAP",
+          "TRAIL_DIAGNOSE"
+        ],
+        "initial_extent": [
+          0.0,
+          797.001
+        ],
+        "header_width": 796,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          231.0,
+          1028.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "all70",
+        "selected": [
+          "ALIGN",
+          "ALL",
+          "AMPLIFY",
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_CLEANUP",
+          "BAKE_STEP",
+          "DISTRIBUTE_TIME",
+          "DRAG",
+          "EASE",
+          "ENDS",
+          "FRAME",
+          "GROW_BOTH",
+          "GROW_LEFT",
+          "GROW_RIGHT",
+          "HANDLE_ALIGNED",
+          "HANDLE_AUTO",
+          "HANDLE_CLAMPED",
+          "HANDLE_FREE",
+          "HANDLE_VECTOR",
+          "INBETWEEN",
+          "INBETWEENS",
+          "INSERT_TIME",
+          "MIRROR_ACTIVE",
+          "MIRROR_FRAME",
+          "MIRROR_RANGE",
+          "MIRROR_SELECTED",
+          "NEIGHBORS",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "OFFSET",
+          "OFFSET_ACTION",
+          "OFFSET_DRAG",
+          "OFFSET_MASK",
+          "OFFSET_SCENE_RANGE",
+          "OPPOSITE",
+          "PROXY_ORIENTATION",
+          "PROXY_PARENT",
+          "PROXY_TRANSLATION",
+          "PROXY_WORLD",
+          "PULL_NEXT",
+          "PULL_PREV",
+          "PUSH_NEXT",
+          "PUSH_PREV",
+          "RANGE",
+          "REDUCE",
+          "REFERENCE",
+          "REMOVE_TIME",
+          "REVERSE",
+          "RIPPLE",
+          "SCALE_DRAG",
+          "SELECT_BREAKDOWNS",
+          "SMART_BAKE",
+          "SMOOTH",
+          "SNAP",
+          "SWAP",
+          "T110",
+          "T120",
+          "T80",
+          "T90",
+          "TRAIL_DIAGNOSE",
+          "TRAIL_HIDE",
+          "TRAIL_REFRESH",
+          "TRAIL_SHOW",
+          "TYPE_BREAKDOWN",
+          "TYPE_EXTREME",
+          "TYPE_HOLD",
+          "TYPE_JITTER",
+          "TYPE_KEYFRAME"
+        ],
+        "initial_extent": [
+          0.0,
+          797.001
+        ],
+        "header_width": 796,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          9692.0,
+          10489.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 15
+      },
+      {
+        "mode": "empty",
+        "selected": [],
+        "initial_extent": [
+          0.0,
+          797.001
+        ],
+        "header_width": 796,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          0.0,
+          797.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      }
+    ],
+    "requested_logical_width": 800,
+    "requested_scale": 100,
+    "qualification": "PASS within four logical pixels"
+  },
+  {
+    "host": "5.1.2",
+    "binary": "C:\\Users\\ATONLO~1\\AppData\\Local\\Temp\\claude\\G--LapArt-Projects-Blender-Addons-B4Artists-Tools\\b58a5638-010c-4c12-b56a-e305d70785f4\\scratchpad\\bforartists-proxy\\blender.exe",
+    "actual_bforartists": false,
+    "installed_package": "G:\\Temp\\AtonLotus\\aa125-exact\\scripts\\addons\\B4_anim_assist\\__init__.py",
+    "rows": [
+      {
+        "mode": "defaults",
+        "selected": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "initial_extent": [
+          0.0,
+          1195.001
+        ],
+        "header_width": 1194,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          772.0,
+          1967.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "custom",
+        "selected": [
+          "OFFSET",
+          "PUSH_PREV",
+          "SWAP",
+          "TRAIL_DIAGNOSE"
+        ],
+        "initial_extent": [
+          0.0,
+          1195.001
+        ],
+        "header_width": 1194,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          312.0,
+          1507.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "all70",
+        "selected": [
+          "ALIGN",
+          "ALL",
+          "AMPLIFY",
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_CLEANUP",
+          "BAKE_STEP",
+          "DISTRIBUTE_TIME",
+          "DRAG",
+          "EASE",
+          "ENDS",
+          "FRAME",
+          "GROW_BOTH",
+          "GROW_LEFT",
+          "GROW_RIGHT",
+          "HANDLE_ALIGNED",
+          "HANDLE_AUTO",
+          "HANDLE_CLAMPED",
+          "HANDLE_FREE",
+          "HANDLE_VECTOR",
+          "INBETWEEN",
+          "INBETWEENS",
+          "INSERT_TIME",
+          "MIRROR_ACTIVE",
+          "MIRROR_FRAME",
+          "MIRROR_RANGE",
+          "MIRROR_SELECTED",
+          "NEIGHBORS",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "OFFSET",
+          "OFFSET_ACTION",
+          "OFFSET_DRAG",
+          "OFFSET_MASK",
+          "OFFSET_SCENE_RANGE",
+          "OPPOSITE",
+          "PROXY_ORIENTATION",
+          "PROXY_PARENT",
+          "PROXY_TRANSLATION",
+          "PROXY_WORLD",
+          "PULL_NEXT",
+          "PULL_PREV",
+          "PUSH_NEXT",
+          "PUSH_PREV",
+          "RANGE",
+          "REDUCE",
+          "REFERENCE",
+          "REMOVE_TIME",
+          "REVERSE",
+          "RIPPLE",
+          "SCALE_DRAG",
+          "SELECT_BREAKDOWNS",
+          "SMART_BAKE",
+          "SMOOTH",
+          "SNAP",
+          "SWAP",
+          "T110",
+          "T120",
+          "T80",
+          "T90",
+          "TRAIL_DIAGNOSE",
+          "TRAIL_HIDE",
+          "TRAIL_REFRESH",
+          "TRAIL_SHOW",
+          "TYPE_BREAKDOWN",
+          "TYPE_EXTREME",
+          "TYPE_HOLD",
+          "TYPE_JITTER",
+          "TYPE_KEYFRAME"
+        ],
+        "initial_extent": [
+          0.0,
+          1195.001
+        ],
+        "header_width": 1194,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          14285.0,
+          15480.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 14
+      },
+      {
+        "mode": "empty",
+        "selected": [],
+        "initial_extent": [
+          0.0,
+          1195.001
+        ],
+        "header_width": 1194,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          0.0,
+          1195.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      }
+    ],
+    "requested_logical_width": 800,
+    "requested_scale": 150,
+    "qualification": "PASS within four logical pixels"
+  },
+  {
+    "host": "5.1.2",
+    "binary": "C:\\Users\\ATONLO~1\\AppData\\Local\\Temp\\claude\\G--LapArt-Projects-Blender-Addons-B4Artists-Tools\\b58a5638-010c-4c12-b56a-e305d70785f4\\scratchpad\\bforartists-proxy\\blender.exe",
+    "actual_bforartists": false,
+    "installed_package": "G:\\Temp\\AtonLotus\\aa125-exact\\scripts\\addons\\B4_anim_assist\\__init__.py",
+    "rows": [
+      {
+        "mode": "defaults",
+        "selected": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "initial_extent": [
+          0.0,
+          1277.001
+        ],
+        "header_width": 1276,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          53.0,
+          1330.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "custom",
+        "selected": [
+          "OFFSET",
+          "PUSH_PREV",
+          "SWAP",
+          "TRAIL_DIAGNOSE"
+        ],
+        "initial_extent": [
+          0.0,
+          1277.001
+        ],
+        "header_width": 1276,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          0.0,
+          1277.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "all70",
+        "selected": [
+          "ALIGN",
+          "ALL",
+          "AMPLIFY",
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_CLEANUP",
+          "BAKE_STEP",
+          "DISTRIBUTE_TIME",
+          "DRAG",
+          "EASE",
+          "ENDS",
+          "FRAME",
+          "GROW_BOTH",
+          "GROW_LEFT",
+          "GROW_RIGHT",
+          "HANDLE_ALIGNED",
+          "HANDLE_AUTO",
+          "HANDLE_CLAMPED",
+          "HANDLE_FREE",
+          "HANDLE_VECTOR",
+          "INBETWEEN",
+          "INBETWEENS",
+          "INSERT_TIME",
+          "MIRROR_ACTIVE",
+          "MIRROR_FRAME",
+          "MIRROR_RANGE",
+          "MIRROR_SELECTED",
+          "NEIGHBORS",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "OFFSET",
+          "OFFSET_ACTION",
+          "OFFSET_DRAG",
+          "OFFSET_MASK",
+          "OFFSET_SCENE_RANGE",
+          "OPPOSITE",
+          "PROXY_ORIENTATION",
+          "PROXY_PARENT",
+          "PROXY_TRANSLATION",
+          "PROXY_WORLD",
+          "PULL_NEXT",
+          "PULL_PREV",
+          "PUSH_NEXT",
+          "PUSH_PREV",
+          "RANGE",
+          "REDUCE",
+          "REFERENCE",
+          "REMOVE_TIME",
+          "REVERSE",
+          "RIPPLE",
+          "SCALE_DRAG",
+          "SELECT_BREAKDOWNS",
+          "SMART_BAKE",
+          "SMOOTH",
+          "SNAP",
+          "SWAP",
+          "T110",
+          "T120",
+          "T80",
+          "T90",
+          "TRAIL_DIAGNOSE",
+          "TRAIL_HIDE",
+          "TRAIL_REFRESH",
+          "TRAIL_SHOW",
+          "TYPE_BREAKDOWN",
+          "TYPE_EXTREME",
+          "TYPE_HOLD",
+          "TYPE_JITTER",
+          "TYPE_KEYFRAME"
+        ],
+        "initial_extent": [
+          0.0,
+          1277.001
+        ],
+        "header_width": 1276,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          9212.0,
+          10489.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 9
+      },
+      {
+        "mode": "empty",
+        "selected": [],
+        "initial_extent": [
+          0.0,
+          1277.001
+        ],
+        "header_width": 1276,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          0.0,
+          1277.001
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      }
+    ],
+    "requested_logical_width": 1280,
+    "requested_scale": 100,
+    "qualification": "PASS within four logical pixels"
+  },
+  {
+    "host": "5.1.2",
+    "binary": "C:\\Users\\ATONLO~1\\AppData\\Local\\Temp\\claude\\G--LapArt-Projects-Blender-Addons-B4Artists-Tools\\b58a5638-010c-4c12-b56a-e305d70785f4\\scratchpad\\bforartists-proxy\\blender.exe",
+    "actual_bforartists": false,
+    "installed_package": "G:\\Temp\\AtonLotus\\aa125-exact\\scripts\\addons\\B4_anim_assist\\__init__.py",
+    "rows": [
+      {
+        "mode": "defaults",
+        "selected": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "initial_extent": [
+          0.0,
+          1915.0
+        ],
+        "header_width": 1914,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          52.0,
+          1967.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "custom",
+        "selected": [
+          "OFFSET",
+          "PUSH_PREV",
+          "SWAP",
+          "TRAIL_DIAGNOSE"
+        ],
+        "initial_extent": [
+          0.0,
+          1915.0
+        ],
+        "header_width": 1914,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          0.0,
+          1915.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "all70",
+        "selected": [
+          "ALIGN",
+          "ALL",
+          "AMPLIFY",
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_CLEANUP",
+          "BAKE_STEP",
+          "DISTRIBUTE_TIME",
+          "DRAG",
+          "EASE",
+          "ENDS",
+          "FRAME",
+          "GROW_BOTH",
+          "GROW_LEFT",
+          "GROW_RIGHT",
+          "HANDLE_ALIGNED",
+          "HANDLE_AUTO",
+          "HANDLE_CLAMPED",
+          "HANDLE_FREE",
+          "HANDLE_VECTOR",
+          "INBETWEEN",
+          "INBETWEENS",
+          "INSERT_TIME",
+          "MIRROR_ACTIVE",
+          "MIRROR_FRAME",
+          "MIRROR_RANGE",
+          "MIRROR_SELECTED",
+          "NEIGHBORS",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "OFFSET",
+          "OFFSET_ACTION",
+          "OFFSET_DRAG",
+          "OFFSET_MASK",
+          "OFFSET_SCENE_RANGE",
+          "OPPOSITE",
+          "PROXY_ORIENTATION",
+          "PROXY_PARENT",
+          "PROXY_TRANSLATION",
+          "PROXY_WORLD",
+          "PULL_NEXT",
+          "PULL_PREV",
+          "PUSH_NEXT",
+          "PUSH_PREV",
+          "RANGE",
+          "REDUCE",
+          "REFERENCE",
+          "REMOVE_TIME",
+          "REVERSE",
+          "RIPPLE",
+          "SCALE_DRAG",
+          "SELECT_BREAKDOWNS",
+          "SMART_BAKE",
+          "SMOOTH",
+          "SNAP",
+          "SWAP",
+          "T110",
+          "T120",
+          "T80",
+          "T90",
+          "TRAIL_DIAGNOSE",
+          "TRAIL_HIDE",
+          "TRAIL_REFRESH",
+          "TRAIL_SHOW",
+          "TYPE_BREAKDOWN",
+          "TYPE_EXTREME",
+          "TYPE_HOLD",
+          "TYPE_JITTER",
+          "TYPE_KEYFRAME"
+        ],
+        "initial_extent": [
+          0.0,
+          1915.0
+        ],
+        "header_width": 1914,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          13565.0,
+          15480.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 9
+      },
+      {
+        "mode": "empty",
+        "selected": [],
+        "initial_extent": [
+          0.0,
+          1915.0
+        ],
+        "header_width": 1914,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          0.0,
+          1915.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      }
+    ],
+    "requested_logical_width": 1280,
+    "requested_scale": 150,
+    "qualification": "PASS within four logical pixels"
+  },
+  {
+    "host": "5.1.2",
+    "binary": "C:\\Users\\ATONLO~1\\AppData\\Local\\Temp\\claude\\G--LapArt-Projects-Blender-Addons-B4Artists-Tools\\b58a5638-010c-4c12-b56a-e305d70785f4\\scratchpad\\bforartists-proxy\\blender.exe",
+    "actual_bforartists": false,
+    "installed_package": "G:\\Temp\\AtonLotus\\aa125-exact\\scripts\\addons\\B4_anim_assist\\__init__.py",
+    "rows": [
+      {
+        "mode": "defaults",
+        "selected": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "initial_extent": [
+          0.0,
+          1917.0
+        ],
+        "header_width": 1916,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          0.0,
+          1917.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "custom",
+        "selected": [
+          "OFFSET",
+          "PUSH_PREV",
+          "SWAP",
+          "TRAIL_DIAGNOSE"
+        ],
+        "initial_extent": [
+          0.0,
+          1917.0
+        ],
+        "header_width": 1916,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          0.0,
+          1917.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "all70",
+        "selected": [
+          "ALIGN",
+          "ALL",
+          "AMPLIFY",
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_CLEANUP",
+          "BAKE_STEP",
+          "DISTRIBUTE_TIME",
+          "DRAG",
+          "EASE",
+          "ENDS",
+          "FRAME",
+          "GROW_BOTH",
+          "GROW_LEFT",
+          "GROW_RIGHT",
+          "HANDLE_ALIGNED",
+          "HANDLE_AUTO",
+          "HANDLE_CLAMPED",
+          "HANDLE_FREE",
+          "HANDLE_VECTOR",
+          "INBETWEEN",
+          "INBETWEENS",
+          "INSERT_TIME",
+          "MIRROR_ACTIVE",
+          "MIRROR_FRAME",
+          "MIRROR_RANGE",
+          "MIRROR_SELECTED",
+          "NEIGHBORS",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "OFFSET",
+          "OFFSET_ACTION",
+          "OFFSET_DRAG",
+          "OFFSET_MASK",
+          "OFFSET_SCENE_RANGE",
+          "OPPOSITE",
+          "PROXY_ORIENTATION",
+          "PROXY_PARENT",
+          "PROXY_TRANSLATION",
+          "PROXY_WORLD",
+          "PULL_NEXT",
+          "PULL_PREV",
+          "PUSH_NEXT",
+          "PUSH_PREV",
+          "RANGE",
+          "REDUCE",
+          "REFERENCE",
+          "REMOVE_TIME",
+          "REVERSE",
+          "RIPPLE",
+          "SCALE_DRAG",
+          "SELECT_BREAKDOWNS",
+          "SMART_BAKE",
+          "SMOOTH",
+          "SNAP",
+          "SWAP",
+          "T110",
+          "T120",
+          "T80",
+          "T90",
+          "TRAIL_DIAGNOSE",
+          "TRAIL_HIDE",
+          "TRAIL_REFRESH",
+          "TRAIL_SHOW",
+          "TYPE_BREAKDOWN",
+          "TYPE_EXTREME",
+          "TYPE_HOLD",
+          "TYPE_JITTER",
+          "TYPE_KEYFRAME"
+        ],
+        "initial_extent": [
+          0.0,
+          1917.0
+        ],
+        "header_width": 1916,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          8572.0,
+          10489.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 6
+      },
+      {
+        "mode": "empty",
+        "selected": [],
+        "initial_extent": [
+          0.0,
+          1917.0
+        ],
+        "header_width": 1916,
+        "ui_scale": 1.0,
+        "rightmost_extent": [
+          0.0,
+          1917.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      }
+    ],
+    "requested_logical_width": 1920,
+    "requested_scale": 100,
+    "qualification": "PASS within four logical pixels"
+  },
+  {
+    "host": "5.1.2",
+    "binary": "C:\\Users\\ATONLO~1\\AppData\\Local\\Temp\\claude\\G--LapArt-Projects-Blender-Addons-B4Artists-Tools\\b58a5638-010c-4c12-b56a-e305d70785f4\\scratchpad\\bforartists-proxy\\blender.exe",
+    "actual_bforartists": false,
+    "installed_package": "G:\\Temp\\AtonLotus\\aa125-exact\\scripts\\addons\\B4_anim_assist\\__init__.py",
+    "rows": [
+      {
+        "mode": "defaults",
+        "selected": [
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_STEP",
+          "DRAG",
+          "ENDS",
+          "MIRROR_SELECTED",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "RANGE",
+          "RIPPLE",
+          "SMOOTH",
+          "TRAIL_SHOW"
+        ],
+        "initial_extent": [
+          0.0,
+          1915.0
+        ],
+        "header_width": 1914,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          52.0,
+          1967.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "custom",
+        "selected": [
+          "OFFSET",
+          "PUSH_PREV",
+          "SWAP",
+          "TRAIL_DIAGNOSE"
+        ],
+        "initial_extent": [
+          0.0,
+          1915.0
+        ],
+        "header_width": 1914,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          0.0,
+          1915.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      },
+      {
+        "mode": "all70",
+        "selected": [
+          "ALIGN",
+          "ALL",
+          "AMPLIFY",
+          "B25",
+          "B50",
+          "B75",
+          "BAKE_CLEANUP",
+          "BAKE_STEP",
+          "DISTRIBUTE_TIME",
+          "DRAG",
+          "EASE",
+          "ENDS",
+          "FRAME",
+          "GROW_BOTH",
+          "GROW_LEFT",
+          "GROW_RIGHT",
+          "HANDLE_ALIGNED",
+          "HANDLE_AUTO",
+          "HANDLE_CLAMPED",
+          "HANDLE_FREE",
+          "HANDLE_VECTOR",
+          "INBETWEEN",
+          "INBETWEENS",
+          "INSERT_TIME",
+          "MIRROR_ACTIVE",
+          "MIRROR_FRAME",
+          "MIRROR_RANGE",
+          "MIRROR_SELECTED",
+          "NEIGHBORS",
+          "NUDGE_LEFT",
+          "NUDGE_RIGHT",
+          "OFFSET",
+          "OFFSET_ACTION",
+          "OFFSET_DRAG",
+          "OFFSET_MASK",
+          "OFFSET_SCENE_RANGE",
+          "OPPOSITE",
+          "PROXY_ORIENTATION",
+          "PROXY_PARENT",
+          "PROXY_TRANSLATION",
+          "PROXY_WORLD",
+          "PULL_NEXT",
+          "PULL_PREV",
+          "PUSH_NEXT",
+          "PUSH_PREV",
+          "RANGE",
+          "REDUCE",
+          "REFERENCE",
+          "REMOVE_TIME",
+          "REVERSE",
+          "RIPPLE",
+          "SCALE_DRAG",
+          "SELECT_BREAKDOWNS",
+          "SMART_BAKE",
+          "SMOOTH",
+          "SNAP",
+          "SWAP",
+          "T110",
+          "T120",
+          "T80",
+          "T90",
+          "TRAIL_DIAGNOSE",
+          "TRAIL_HIDE",
+          "TRAIL_REFRESH",
+          "TRAIL_SHOW",
+          "TYPE_BREAKDOWN",
+          "TYPE_EXTREME",
+          "TYPE_HOLD",
+          "TYPE_JITTER",
+          "TYPE_KEYFRAME"
+        ],
+        "initial_extent": [
+          0.0,
+          1915.0
+        ],
+        "header_width": 1914,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          13565.0,
+          15480.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 9
+      },
+      {
+        "mode": "empty",
+        "selected": [],
+        "initial_extent": [
+          0.0,
+          1915.0
+        ],
+        "header_width": 1914,
+        "ui_scale": 1.5,
+        "rightmost_extent": [
+          0.0,
+          1915.0
+        ],
+        "pan_gesture": "middle-mouse drag left over native header",
+        "pan_steps": 2
+      }
+    ],
+    "requested_logical_width": 1920,
+    "requested_scale": 150,
+    "qualification": "UNVERIFIED requested width; display limited"
+  }
+]

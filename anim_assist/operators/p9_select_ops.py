@@ -2,6 +2,7 @@ import bpy
 from ..core.p9_properties import get_p9
 from ..core import p9_pair_detect as det
 from ..core.logging import get_logger
+from ..core.bone_utils import set_pose_bone_selected
 
 
 log = get_logger(__name__)
@@ -70,7 +71,7 @@ class AA_OT_p9_select_opposite(bpy.types.Operator):
         bpy.ops.pose.select_all(action="DESELECT")
 
         # Select opposite
-        obj.data.bones[opposite_name].select = True
+        set_pose_bone_selected(obj.pose.bones[opposite_name], True)
         obj.data.bones.active = obj.data.bones[opposite_name]
 
         self.report({"INFO"}, f"Selected opposite: {opposite_name}")
@@ -104,7 +105,7 @@ class AA_OT_p9_add_opposite(bpy.types.Operator):
             opposite_name = _get_opposite_name(context, bone_name)
 
             if opposite_name and opposite_name in obj.data.bones:
-                obj.data.bones[opposite_name].select = True
+                set_pose_bone_selected(obj.pose.bones[opposite_name], True)
                 added_count += 1
 
         self.report({"INFO"}, f"Added {added_count} opposite bones to selection")
@@ -148,7 +149,7 @@ class AA_OT_p9_swap_selection(bpy.types.Operator):
 
         # Select all opposites
         for opposite_name in opposite_mapping.values():
-            obj.data.bones[opposite_name].select = True
+            set_pose_bone_selected(obj.pose.bones[opposite_name], True)
 
         # Set active to opposite of previous active
         if active_bone_name and active_bone_name in opposite_mapping:
