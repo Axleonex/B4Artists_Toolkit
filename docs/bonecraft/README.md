@@ -1,7 +1,7 @@
 # BoneCraft — optional rigging add-on
 
 BoneCraft rigs a humanoid character so you can animate it with Anim Assist,
-Ghost Tool and B4Artists ML. It is optional: the animation tools work on any
+and Ghost Tool. It is optional: the animation tools work on any
 rig, and BoneCraft does not need them.
 
 - **Version:** 9.1.2

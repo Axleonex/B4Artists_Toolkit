@@ -3,15 +3,15 @@
   "revision": "r4",
   "status": "BFORARTISTS_320_CHECKS_PASS_OWNER_UAT_PENDING",
   "artifact": "releases/b4_ghost_tool_v4.2.0.zip",
-  "bytes": 211131,
-  "sha256": "443abacb14e2154251dff4b6a98eb56ffb5bf9b0b3d1d88a0cce30c3a2bc79b3",
+  "bytes": 211099,
+  "sha256": "16a354dc92d694734f5aa76b788c7f926f0c1a24081f1b343e1a8312477cd181",
   "previous_sha256": "3ab3f019f7e2429ed56e5bffcec97f276b61f8893ec82d92cc06eb32600872c0",
   "source_modules": 29,
   "source_bytes_match": true,
   "source_hashes": {
     "ghost_tool/__init__.py": "3901944b96cf157b2c3e098e04c925f66d2f9415832e7cf96cc9a6c91648e987",
     "ghost_tool/api.py": "1de83ca8b563bcd03ae05a4a16adf8b31c76b7a257eb136220b9926de743898a",
-    "ghost_tool/diff_mode.py": "cbb13b9ca1e6fb84921e80c38fc17ff3a159fa09098de8128ac3944e6b97680b",
+    "ghost_tool/diff_mode.py": "f8439fce15da8475b93563070d76cd0789d5dddef00574b83f77ae57edc17966",
     "ghost_tool/draw_to_keys.py": "af527b0102021750b9bee03bf02659541adb10f9d3f1971b797cb04fefdaa444",
     "ghost_tool/draw_to_keys_math.py": "eb2d0be5f455859f54d9c1651b15a17cea5b6e1907d7664c04e20138448e6084",
     "ghost_tool/easing_presets.py": "bdbfff232055e50f030f5f765ece13a93b6108904ed89e5cffcfa8e411c7dc53",
@@ -53,5 +53,10 @@
     ]
   },
   "current_verification": "Actual Bforartists 5.2.0 / Blender 5.3.0 Alpha / build 0a1ca45552db; see current VERIFICATION markdown",
-  "public_release_name": "Ghost Tool 4.2.0"
+  "public_release_name": "Ghost Tool 4.2.0",
+  "publication_cleanup": {
+    "change": "Removed descriptive comment only; executable AST unchanged",
+    "original_tested_sha256": "443abacb14e2154251dff4b6a98eb56ffb5bf9b0b3d1d88a0cce30c3a2bc79b3",
+    "runtime_ast_unchanged": true
+  }
 }

@@ -5,7 +5,7 @@ Latest repository builds. GitHub release publication is a separate step.
 | Tool | Version | Archive | Bytes | SHA256 prefix | Status |
 |---|---|---|---:|---|---|
 | Anim Assist | 12.1.3 | [b4_anim_assist_v12.1.3.zip](b4_anim_assist_v12.1.3.zip) | 556,067 | `b30547b2afac` | Actual Bforartists regression checks pass; unpublished |
-| Ghost Tool | 4.2.0 | [b4_ghost_tool_v4.2.0.zip](b4_ghost_tool_v4.2.0.zip) | 211,131 | `443abacb14e2` | Actual Bforartists checks pass; owner usability acceptance pending; unpublished candidate |
+| Ghost Tool | 4.2.0 | [b4_ghost_tool_v4.2.0.zip](b4_ghost_tool_v4.2.0.zip) | 211,099 | `16a354dc92d6` | Actual Bforartists checks pass; owner usability acceptance pending; unpublished candidate |
 | BoneCraft | 9.1.2 | [BoneCraft-BFA-9.1.2.zip](BoneCraft-BFA-9.1.2.zip) | 1,019,015 | `9901bdb98da4` | Full host suite passes; no GitHub Release published |
 
 Anim Assist uses the package root `B4_anim_assist`; Ghost Tool uses `ghost_tool`; BoneCraft uses `boneforge`.
@@ -17,7 +17,7 @@ Anim Assist uses the package root `B4_anim_assist`; Ghost Tool uses `ghost_tool`
 - [Ghost Tool r4 release notes](../docs/ghost_tool/afterimage-release/RELEASE-NOTES.md) and [owner checklist](../docs/ghost_tool/afterimage-release/UAT.md).
 - [BoneCraft 9.1.2 release notes](../docs/bonecraft/releases/9.1.2/RELEASE-NOTES.md).
 
-Published builds remain Anim Assist 12.1.0 and Ghost Tool 4.0.0 on the [GitHub Releases page](https://github.com/Axleonex/B4Artists_Toolkit/releases). Old published ZIPs are retained; local experimental and superseded candidate ZIPs are not part of the publishing update.
+Published builds remain Anim Assist 12.1.0 and Ghost Tool 4.0.0 on the [GitHub Releases page](https://github.com/Axleonex/B4Artists_Toolkit/releases). Old published downloads remain on GitHub Releases. The repository retains the earlier Anim Assist ZIP; superseded Ghost ZIPs and experimental candidate archives are excluded.
 
 ## Identify a build
 

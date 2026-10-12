@@ -1,7 +1,7 @@
 # Ghost Tool 4.2.0 - unpublished review candidate
 
 Candidate: `releases/b4_ghost_tool_v4.2.0.zip` (revision r4, 2026-10-11).
-SHA-256: `443abacb14e2154251dff4b6a98eb56ffb5bf9b0b3d1d88a0cce30c3a2bc79b3` (211,131 bytes).
+SHA-256: `16a354dc92d694734f5aa76b788c7f926f0c1a24081f1b343e1a8312477cd181` (211,099 bytes).
 The add-on version string remains 4.2.0. See `package-receipt-r4.json`.
 
 ## Fixed in r4

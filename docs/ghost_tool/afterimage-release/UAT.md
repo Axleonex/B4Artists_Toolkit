@@ -17,4 +17,4 @@ Install [the 4.2.0 ZIP](../../../releases/b4_ghost_tool_v4.2.0.zip) through Bfor
 
 Record that this exact r4 candidate passes, or report the numbered step and what failed. The exact ZIP has already passed 320 automated checks across 17 suites on the real host; those checks do not replace this owner review.
 
-SHA256: `443abacb14e2154251dff4b6a98eb56ffb5bf9b0b3d1d88a0cce30c3a2bc79b3`.
+SHA256: `16a354dc92d694734f5aa76b788c7f926f0c1a24081f1b343e1a8312477cd181`.

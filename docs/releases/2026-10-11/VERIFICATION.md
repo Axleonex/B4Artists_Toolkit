@@ -13,7 +13,7 @@ All archived Python files parse and all ZIP CRC checks pass. Anim Assist and Gho
 ## Full SHA256 hashes
 
 - Anim Assist: `b30547b2afacbe1f56d0d8066ac7e607aeaa24297aa8612d9482272a37b493e1`.
-- Ghost Tool: `443abacb14e2154251dff4b6a98eb56ffb5bf9b0b3d1d88a0cce30c3a2bc79b3`.
+- Ghost Tool: `16a354dc92d694734f5aa76b788c7f926f0c1a24081f1b343e1a8312477cd181`.
 - BoneCraft: `9901bdb98da47384522b5137df58e8722f7d4f8c6e20cf1d835630c6bbaafa63`.
 
 ## Scope and limits

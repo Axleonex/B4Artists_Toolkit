@@ -18,8 +18,7 @@ Architecture
   diverges from the stored value, then desaturates the overlay and shows
   a warning via the Mode Label HUD.
 
-No AI/ML components are used anywhere in this module.  All diff logic is
-pure math: Euclidean distance, linear interpolation, hash comparison.
+All diff logic uses Euclidean distance, linear interpolation and hash comparison.
 """
 
 from __future__ import annotations
