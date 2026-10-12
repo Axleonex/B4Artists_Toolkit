@@ -19,19 +19,12 @@ _log = get_logger(__name__)
 
 def _prefs_available(context: bpy.types.Context) -> bool:
     """Return whether addon preferences are reachable."""
-    addons = getattr(getattr(context, "preferences", None), "addons", None)
-    if addons is None:
-        return False
-    addon = addons.get(constants.ADDON_PACKAGE)
-    return addon is not None and getattr(addon, "preferences", None) is not None
+    return _get_prefs(context) is not None
 
 
 def _get_prefs(context: bpy.types.Context):
-    addons = getattr(getattr(context, "preferences", None), "addons", None)
-    if addons is None:
-        return None
-    addon = addons.get(constants.ADDON_PACKAGE)
-    return getattr(addon, "preferences", None) if addon is not None else None
+    from ..prefs import get_prefs
+    return get_prefs(context)
 
 
 def _is_compatible_value(current_value: Any, new_value: Any) -> bool:
@@ -79,6 +72,11 @@ class AA_OT_export_settings(bpy.types.Operator, ExportHelper):
         data["debug_mode"] = prefs.debug_mode
         data["performance_mode"] = prefs.performance_mode
         data["diagnostics_visible"] = prefs.diagnostics_visible
+        from ..ui.timeline_catalog import ACTIONS, quick_property_name
+        for action in ACTIONS:
+            name = quick_property_name(action)
+            data[name] = getattr(prefs, name)
+        data["timeline_quick_family"] = prefs.timeline_quick_family
         data["_version"] = constants.ADDON_VERSION_STRING
 
         try:
@@ -131,10 +129,15 @@ class AA_OT_import_settings(bpy.types.Operator, ImportHelper):
             return {"CANCELLED"}
 
         applied = 0
+        from ..ui.timeline_catalog import GROUPS
+        families = {key for key, _label, _actions in GROUPS}
         for key, value in data.items():
             if key.startswith("_"):
                 continue
             if not hasattr(prefs, key):
+                continue
+            if key == "timeline_quick_family" and (not isinstance(value, str) or value not in families):
+                _log.warning("Skipping unknown quick family: %r", value)
                 continue
 
             current_value = getattr(prefs, key)

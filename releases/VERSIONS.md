@@ -4,7 +4,8 @@ Current repository packages and their publication status.
 
 | Tool | Version | Archive | Bytes | SHA256 prefix | Status |
 |---|---|---|---:|---|---|
-| Anim Assist | 12.1.3 | [b4_anim_assist_v12.1.3.zip](b4_anim_assist_v12.1.3.zip) | 556,067 | `b30547b2afac` | Published release; actual Bforartists regression checks pass |
+| Anim Assist | 12.5.0 | [b4_anim_assist_v12.5.0.zip](b4_anim_assist_v12.5.0.zip?raw=1) | 570,901 | `27fea6cfd596` | Repository candidate; Needs Review: native Redo and trail geometry findings; actual Bforartists and owner acceptance pending |
+| Anim Assist (last published release) | 12.1.3 | [b4_anim_assist_v12.1.3.zip](b4_anim_assist_v12.1.3.zip) | 556,067 | `b30547b2afac` | Published release; actual Bforartists regression checks pass |
 | Ghost Tool | 4.2.6 | [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip) | 219,281 | `e195239e6ae8` | Published release; persistent toolbar and cached visibility; 178 checks/cases pass in Blender stand-in; native Bforartists validation pending |
 | Ghost Tool (4.2.5) | 4.2.5 | [b4_ghost_tool_v4.2.5.zip](b4_ghost_tool_v4.2.5.zip?raw=1) | 216,002 | `5cfb8cee7805` | Repository test build; display location preference and Compare folds; 96/96 focused stand-in checks pass; native Bforartists left Tool Shelf validation pending |
 | Ghost Tool (4.2.4) | 4.2.4 | [b4_ghost_tool_v4.2.4.zip](b4_ghost_tool_v4.2.4.zip?raw=1) | 214,194 | `1c32458cb0fa` | Merged repository build; 54 focused checks pass on Blender stand-in; GitHub Release publication and Bforartists UI validation pending |
@@ -18,6 +19,7 @@ Anim Assist uses the package root `B4_anim_assist`; Ghost Tool uses `ghost_tool`
 
 ## Checks and notes
 
+- [Anim Assist 12.5.0 release notes](../docs/anim_assist/releases/12.5.0/RELEASE-NOTES.md), [usage screenshots](../docs/anim_assist/releases/12.5.0/USAGE.md), [qualification](../docs/anim_assist/releases/12.5.0/qualification.md) and [package receipt](../docs/anim_assist/releases/12.5.0/package-receipt.json). Full SHA256: `27fea6cfd5962ba4d4bf93744bf0b705f28c05863d12f136accd06f04e8790ab`. The source metadata and exact ZIP identify 12.5.0; the owner checkpoint remains open. The retained 12.4.0 archive is the local verification baseline.
 - [Ghost Tool 4.2.6 toolbar release notes](../docs/ghost_tool/releases/4.2.6/RELEASE-NOTES.md) and [package receipt](../docs/ghost_tool/releases/4.2.6/package-receipt.json).
 - [All three builds: verification and full hashes](../docs/releases/2026-10-11/VERIFICATION.md).
 - [Anim Assist 12.1.3 release notes](../docs/anim_assist/releases/12.1.3/RELEASE-NOTES.md).

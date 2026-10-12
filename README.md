@@ -4,7 +4,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 
 | Tool | Version | What it does |
 |---|---|---|
-| **Anim Assist** | 12.1.3 | A production animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Inspired by Maya's AnimBot. |
+| **Anim Assist** | 12.5.0 (candidate) | An animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Seven inline Timeline toolbar families provide configurable direct buttons for 70 existing presets. Inspired by Maya's AnimBot. |
 | **Ghost Tool** | 4.2.6 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, header, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
 
 ### Optional add-on: BoneCraft (rigging)
@@ -25,11 +25,14 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.1.3 | [b4_anim_assist_v12.1.3.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.3/b4_anim_assist_v12.1.3.zip) |
+| Anim Assist 12.5.0 candidate | [b4_anim_assist_v12.5.0.zip](releases/b4_anim_assist_v12.5.0.zip?raw=1) |
+| Anim Assist 12.1.3 (last published release) | [b4_anim_assist_v12.1.3.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.3/b4_anim_assist_v12.1.3.zip) |
 | Ghost Tool 4.2.6 | [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip) |
 | BoneCraft 9.2.0 (optional) | [BoneCraft-BFA-9.2.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.0/BoneCraft-BFA-9.2.0.zip) |
 
-Anim Assist 12.1.3 passes its recorded host checks. BoneCraft 9.2.0 adds the complete starter catalog and passes its [recorded host and native viewport checks](docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md). Ghost Tool 4.2.6 includes the persistent toolbar, shared feature options and cached visibility controls. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
+Anim Assist 12.5.0 is **Needs Review**: its exact package, preferences and dispatch checks pass in a Blender stand-in, while native Redo fails and trail geometry has a position offset. Actual Bforartists and owner workflow acceptance remain pending. See the [usage screenshots](docs/anim_assist/releases/12.5.0/USAGE.md) and [qualification report](docs/anim_assist/releases/12.5.0/qualification.md). The last published Anim Assist release, 12.1.3, retains its recorded host checks.
+
+BoneCraft 9.2.0 adds the complete starter catalog and passes its [recorded host and native viewport checks](docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md). Ghost Tool 4.2.6 includes the persistent toolbar, shared feature options and cached visibility controls. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
 
 See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The current [Ghost Tool 4.2.6 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6) includes the matching ZIP and PDF guide. Earlier releases remain available as history.
 
@@ -43,7 +46,8 @@ The [Ghost toolbar guide](docs/ghost_tool/toolbar/README.md) covers the current 
 
    When updating Ghost Tool to 4.2.6, restart Bforartists after installation. Marker Targets, Capture Targets and Snapshot Targets open their full lists independently of the other tools. Saved scenes retain their existing live-update choices: turn off Live Update Markers and Live Update Skin to keep snapshots while scrubbing. Test a move with auto-key enabled; ghosts should refresh after you finish moving.
 4. Find the add-on:
-   - **Anim Assist** lives in three places, each organised for its editor, and each starts with an **Anim Assist** label:
+   - **Anim Assist** provides a toolbar and panels organised for each editor:
+     - **Timeline toolbar** above the native playback/keyframe row: Tween, Curves, Timing, Keys, Pose, Bake and Motion. Click a visible quick button directly. Use Gear to choose any of 70 presets with native checkboxes; selections are shared by all Timeline strips and saved in add-on preferences. Middle-mouse drag over a narrow toolbar to pan. See the [illustrated guide](docs/anim_assist/releases/12.5.0/USAGE.md).
      - **Graph Editor** sidebar (press **N**), **Anim Assist** tab, organised by what you do to curves: Select, Shape Curves, Retime, Clean Up, Pose & Rig, Quick Shelf.
      - **Dope Sheet** sidebar (press **N**), **Anim Assist** tab, organised by animation stage: Block, Inbetween, Time, Mirror & Match, Keys & Channels, Shelf & Macros.
      - **Properties editor**, **Scene** tab, **Anim Assist** section (near the bottom), organised by scope: This Pose, Whole Animation, Rig, Face, then Setup, Settings and Help.
@@ -67,7 +71,7 @@ The ZIPs package their recorded release source for one-click installation. The c
 
 Human-readable manuals are in [`docs/`](docs/):
 
-- [`docs/anim_assist/`](docs/anim_assist/) — Anim Assist 12.1.3 guide (Markdown and PDF)
+- [Anim Assist 12.5.0 toolbar guide](docs/anim_assist/releases/12.5.0/USAGE.md) — current candidate screenshots, configuration and Breakdown anchor explanation; [12.1.3 documentation](docs/anim_assist/) remains available for the last published release.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.6 guide, PDF and toolbar notes
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.0 English manual and translation status
 

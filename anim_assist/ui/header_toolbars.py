@@ -30,6 +30,7 @@ appended functions for clean removal.
 from __future__ import annotations
 
 import bpy
+from . import timeline_strip
 
 # Track appended draw functions for clean unregister.
 _appended_header_draws: list[tuple[type, object]] = []
@@ -48,15 +49,37 @@ class ANIMASSIST_PT_header_toolbar_options(bpy.types.Panel):
 
     def draw(self, context: bpy.types.Context) -> None:
         """Draw toggle checkboxes for each toolbar category."""
+        from ..prefs import get_prefs
         props = context.scene.anim_assist
         layout = self.layout
+        prefs = get_prefs(context)
+        owned_strip = context.area is not None and timeline_strip.is_strip(context.area)
+        if prefs is not None:
+            if owned_strip:
+                layout.label(text="Timeline Placement")
+                layout.label(text="Add-on preference")
+            layout.prop(prefs, "timeline_toolbar_row")
+            layout.separator()
+        if owned_strip:
+            layout.label(text="Category Visibility / This Scene")
+            layout.label(text="Shared across editor headers")
+            for property_name, label in (
+                ("header_show_breakdown", "Tween"),
+                ("header_show_pushpull", "Curves"),
+                ("header_show_retime", "Timing"),
+                ("header_show_selection", "Keys"),
+                ("header_show_trajectory", "Motion"),
+                ("header_show_matching", "Pose"),
+            ):
+                layout.prop(props, property_name, text=label)
+            return
         layout.label(text="Show in Header:")
         layout.prop(props, "header_show_breakdown")
         layout.prop(props, "header_show_pushpull")
         layout.prop(props, "header_show_retime")
         layout.prop(props, "header_show_selection")
         layout.separator()
-        layout.label(text="Viewport Only:")
+        layout.label(text="Motion / Matching:")
         layout.prop(props, "header_show_trajectory")
         layout.prop(props, "header_show_matching")
 
@@ -138,6 +161,8 @@ def _draw_dopesheet_toolbar(self, context: bpy.types.Context) -> None:
     Each group respects the corresponding ``header_show_*`` scene property
     so the animator can hide categories to save header space.
     """
+    if timeline_strip.hides_native_shortcuts(context):
+        return
     props = context.scene.anim_assist
     layout = self.layout
 
@@ -298,10 +323,12 @@ def register() -> None:
     for header_class, draw_function in _append_pairs:
         header_class.append(draw_function)
         _appended_header_draws.append((header_class, draw_function))
+    timeline_strip.register()
 
 
 def unregister() -> None:
     """Remove all appended toolbar draw functions and unregister panels."""
+    timeline_strip.unregister()
     for header_class, draw_function in reversed(_appended_header_draws):
         header_class.remove(draw_function)
     _appended_header_draws.clear()
