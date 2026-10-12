@@ -1,5 +1,7 @@
 # Ghost Tool 4.2.2 user guide
 
+This guide and its PDF describe the published 4.2.2 prerelease. For the newer approved source interface, see the [Ghost toolbar guide](toolbar/README.md), including display location, cached visibility and Hide/Show Toolbar. The 4.2.4 interface cleanup removed the older Separate Window and Prototype Settings Editor launch buttons described below.
+
 Current prerelease: 4.2.2. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. All 230 background checks and five native auto-key cases pass on a Blender stand-in; Bforartists production-rig validation remains pending.
 
 ## Install and find Ghost Tool

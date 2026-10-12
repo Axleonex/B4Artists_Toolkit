@@ -717,18 +717,20 @@ def _draw_ghosts_3d_impl(context: bpy.types.Context, settings, scene: bpy.types.
         all_ghost_list = list(store)
         frame_range = store.frame_range
 
-        for batch, color in _get_marker_batches(
-            shader, store, all_ghost_list, settings, ghost_radius, bb_right, bb_up,
-            current_frame, frame_range,
-            (context.window.as_pointer(), region.as_pointer()),
-        ):
-            _draw_batch(shader, batch, color)
+        show_markers = settings.show_cached_markers
+        if show_markers:
+            for batch, color in _get_marker_batches(
+                shader, store, all_ghost_list, settings, ghost_radius, bb_right, bb_up,
+                current_frame, frame_range,
+                (context.window.as_pointer(), region.as_pointer()),
+            ):
+                _draw_batch(shader, batch, color)
 
         # --- Draw selected ghost highlights (SessionState is the single source of truth) ---
         session = SessionState.get(scene)
         all_selected = {g.uid: g for g in all_ghost_list if session.is_selected(g.uid)}
 
-        if all_selected:
+        if show_markers and all_selected:
             all_verts = []
             all_indices = []
             for ghost in all_selected.values():
@@ -749,7 +751,7 @@ def _draw_ghosts_3d_impl(context: bpy.types.Context, settings, scene: bpy.types.
                 _draw_batch(shader, batch, SELECTED_HIGHLIGHT_COLOR)
 
         # --- Draw hover highlight ring ---
-        if session.hovered_ghost_uid:
+        if show_markers and session.hovered_ghost_uid:
             hovered_ghost = store.get_by_uid(session.hovered_ghost_uid)
             if hovered_ghost:
                 hc = settings.hover_highlight_color
@@ -769,7 +771,7 @@ def _draw_ghosts_3d_impl(context: bpy.types.Context, settings, scene: bpy.types.
 
         # --- Draw keyframe markers (diamonds) ---
         show_kf_markers = settings.show_keyframe_markers
-        if show_kf_markers:
+        if show_markers and show_kf_markers:
             kmc = settings.keyframe_marker_color
             kf_marker_color = tuple(kmc) if len(kmc) == 4 else DEFAULT_KEYFRAME_MARKER_COLOR
 
@@ -816,7 +818,7 @@ def _draw_ghosts_3d_impl(context: bpy.types.Context, settings, scene: bpy.types.
         # world position, NOT from scene.frame_set() — draw handlers must never
         # call frame_set() as it triggers depsgraph re-evaluation during draw.
         show_bookends = settings.show_key_bookends
-        if show_bookends and all_ghost_list:
+        if show_markers and show_bookends and all_ghost_list:
             bookend_color = tuple(settings.key_bookend_color)
             if len(bookend_color) != 4:
                 bookend_color = (0.8, 0.8, 0.8, 0.5)
@@ -914,7 +916,7 @@ def _draw_ghosts_3d_impl(context: bpy.types.Context, settings, scene: bpy.types.
 
         # --- Draw pinned ghost indicators ---
         pinned_ghosts = store.get_pinned()
-        if pinned_ghosts:
+        if show_markers and pinned_ghosts:
             all_verts = []
             all_indices = []
             for ghost in pinned_ghosts:
@@ -1871,7 +1873,7 @@ def draw_ghosts_2d(context: bpy.types.Context) -> None:
             debug(f"Progress ring check error: {exc}")
 
         # --- Hover frame label ---
-        if not settings.show_hover_frame_label:
+        if not settings.show_cached_markers or not settings.show_hover_frame_label:
             return
 
         session = SessionState.get(scene)

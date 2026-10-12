@@ -125,6 +125,8 @@ def _find_ghost_under_cursor(
     Returns:
         Ghost or None: The closest ghost, or None if none are within range.
     """
+    if not context.scene.ghost_tool.show_cached_markers:
+        return None
     store = GhostStore.get(context.scene)
     best_ghost: Optional[Ghost] = None
     best_dist_sq = grab_radius * grab_radius
@@ -425,6 +427,9 @@ class GhostDragOperator(bpy.types.Operator):
             return False
         if not scene.ghost_tool.is_active:
             cls.poll_message_set("Turn on Ghost Tool first")
+            return False
+        if not scene.ghost_tool.show_cached_markers:
+            cls.poll_message_set("Show cached markers in Marker options first")
             return False
         store = GhostStore.get(scene)
         if not len(store):
@@ -1089,6 +1094,10 @@ class GHOST_OT_generate(bpy.types.Operator):
 
     bl_idname = "ghost_tool.generate_ghosts"
     bl_label = "Generate Ghosts"
+    bl_description = (
+        "Generate and show markers from animation keys. "
+        "Use Marker options > Show cached markers to hide or show existing markers"
+    )
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -1172,6 +1181,8 @@ class GHOST_OT_generate(bpy.types.Operator):
 
         # Display the snapshot without overriding the user's scrub setting.
         settings.is_active = True
+        if count > 0:
+            settings.show_cached_markers = True
 
         # Auto-start hover detection so highlight rings and frame labels work
         GHOST_OT_hover_detect.ensure_running(context)
@@ -1201,6 +1212,7 @@ class GHOST_OT_clear(bpy.types.Operator):
 
     bl_idname = "ghost_tool.clear_ghosts"
     bl_label = "Clear All Ghosts"
+    bl_description = "Remove cached markers and onion skins from the current scene"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context: bpy.types.Context) -> set[str]:

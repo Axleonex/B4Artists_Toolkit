@@ -121,6 +121,9 @@ class GHOST_OT_box_select(bpy.types.Operator):
         if not context.scene.ghost_tool.is_active:
             cls.poll_message_set("Turn on Ghost Tool first")
             return False
+        if not context.scene.ghost_tool.show_cached_markers:
+            cls.poll_message_set("Show cached markers in Marker options first")
+            return False
         if not len(GhostStore.get(context.scene)):
             cls.poll_message_set("Generate markers for an animated object first")
             return False
@@ -222,6 +225,8 @@ class GHOST_OT_box_select(bpy.types.Operator):
             context: The current Blender context.
             event: The release event.
         """
+        if not context.scene.ghost_tool.show_cached_markers:
+            return
         store = GhostStore.get(context.scene)
         session = SessionState.get(context.scene)
 

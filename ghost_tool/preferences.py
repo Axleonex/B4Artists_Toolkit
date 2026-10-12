@@ -25,6 +25,11 @@ def _update_display_location(self, context):
     update_display_location(context)
 
 
+def _update_toolbar_visibility(self, context):
+    from .ui_panel import update_toolbar_visibility
+    update_toolbar_visibility(context)
+
+
 # ---------------------------------------------------------------------------
 # Addon Preferences
 # ---------------------------------------------------------------------------
@@ -46,9 +51,17 @@ class GhostToolPreferences(bpy.types.AddonPreferences):
             ('HEADER', "Top Header", "Open Ghost Tool from the viewport header"),
             ('SIDEBAR', "Right Sidebar (N)", "Show Ghost Tool in the right sidebar"),
             ('TOOLS', "Left Tool Shelf (T)", "Show Ghost Tool in the Bforartists left Tool Shelf"),
+            ('TOOLBAR', "Top Toolbar", "Keep Ghost Tool in the viewport Tool Settings row"),
         ),
         default='HEADER',
         update=_update_display_location,
+    )  # type: ignore[assignment]
+
+    show_toolbar: bpy.props.BoolProperty(
+        name="Show Ghost Toolbar",
+        description="Show Ghost controls in the native Tool Settings row; hiding them keeps cached ghosts and settings",
+        default=True,
+        update=_update_toolbar_visibility,
     )  # type: ignore[assignment]
 
     show_extended_help: bpy.props.BoolProperty(
@@ -275,6 +288,8 @@ class GhostToolPreferences(bpy.types.AddonPreferences):
         layout = self.layout
 
         layout.prop(self, "display_location")
+        if self.display_location == 'TOOLBAR':
+            layout.prop(self, "show_toolbar")
         from .ui_panel import supports_tool_shelf
         if self.display_location == 'TOOLS' and not supports_tool_shelf():
             layout.label(text="Left Tool Shelf requires Bforartists; using Top Header.", icon='INFO')

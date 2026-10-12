@@ -725,6 +725,18 @@ def _on_show_mesh_ghosts_changed(self, context):
         warn(f"Failed to schedule onion skin rebuild: {exc}")
 
 
+def _on_cached_markers_changed(self, context):
+    """Change marker display without touching generated data or scheduling work."""
+    tag_viewport_redraw(context)
+
+
+def _on_cached_skin_changed(self, context):
+    """Hide/show the owning scene's cached skins without generating or deleting."""
+    from .mesh_ghosts import set_cached_skin_visibility
+    set_cached_skin_visibility(self.id_data, self.show_cached_skin)
+    tag_viewport_redraw(context)
+
+
 def _on_mesh_ghost_mode_changed(self, context):
     """Instantly switch all existing mesh ghosts between solid and wireframe."""
     try:
@@ -956,6 +968,20 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         description="Enable Ghost Tool visualization and controls in the viewport",
         default=True,
         update=_on_ghost_feature_enabled,
+    )  # type: ignore[assignment]
+
+    show_cached_markers: bpy.props.BoolProperty(
+        name="Show cached markers",
+        description="Show or hide existing cached markers without regenerating them",
+        default=True,
+        update=_on_cached_markers_changed,
+    )  # type: ignore[assignment]
+
+    show_cached_skin: bpy.props.BoolProperty(
+        name="Show cached skin",
+        description="Show or hide existing cached onion skins without regenerating them",
+        default=True,
+        update=_on_cached_skin_changed,
     )  # type: ignore[assignment]
 
     subdivision_level: bpy.props.IntProperty(

@@ -1,0 +1,275 @@
+{
+  "date": "2026-10-12",
+  "status": "PASS",
+  "total_checks_and_cases": 178,
+  "background_checks": 117,
+  "native_toolbar_checks": 56,
+  "native_authoring_cases": 5,
+  "candidate": "b4_ghost_tool_v4.2.5-toolbar-candidate.zip",
+  "sha256": "f1eb030b3f727f3c893480fd50f376c797153825f8384485043a79e8e2c34878",
+  "source_modules": 29,
+  "extracted_bytes_match": true,
+  "source_version": "4.2.5",
+  "published": false,
+  "released_archive_unchanged": true,
+  "released_archive_sha256": "5cfb8cee78051dc2242b68dd14f88ec17fad7a6ffdf058b6cea3deaed0db05d5",
+  "host": "Blender 5.1.2 stand-in; registration gate patched only",
+  "bforartists_validation": "NOT VERIFIED",
+  "provenance": "Fresh full verification against final source after clear-action label and tooltip correction.",
+  "results": [
+    {
+      "suite": "test_ghost_display_location",
+      "tests": 17,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_toolbar_ui",
+      "tests": 7,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_cached_display",
+      "tests": 8,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_marker_targets_ui",
+      "tests": 6,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_compare_targets_ui",
+      "tests": 6,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_afterimage_ui",
+      "tests": 9,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_header_ui",
+      "tests": 16,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_council_ui",
+      "tests": 12,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_authoring",
+      "tests": 20,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_snapshot_targets",
+      "tests": 16,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "native-1920-scale-1.0",
+      "tests": 14,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Toolbar preference reveals native row",
+          "Native header append registered once",
+          "Live options remain disabled",
+          "Native viewport reaches the requested layout tier",
+          "Opening options does not change the frame",
+          "Target action reports unavailable without selection",
+          "Hide leaves the native row visible",
+          "Show recovers a manually hidden native row",
+          "Hide/show preserves marker identity",
+          "Hide/show preserves skin identity",
+          "Main-header recovery remains available",
+          "Leaving toolbar preserves native region choice",
+          "Unregister removes native append",
+          "Reload appends exactly once"
+        ],
+        "geometry": {
+          "window_width": 1920,
+          "area_width": 1920,
+          "header_width": 1920,
+          "scale": 1.0,
+          "tier": "FULL"
+        },
+        "host": "5.1.2"
+      }
+    },
+    {
+      "suite": "native-1700-scale-1.0",
+      "tests": 14,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Toolbar preference reveals native row",
+          "Native header append registered once",
+          "Live options remain disabled",
+          "Native viewport reaches the requested layout tier",
+          "Opening options does not change the frame",
+          "Target action reports unavailable without selection",
+          "Hide leaves the native row visible",
+          "Show recovers a manually hidden native row",
+          "Hide/show preserves marker identity",
+          "Hide/show preserves skin identity",
+          "Main-header recovery remains available",
+          "Leaving toolbar preserves native region choice",
+          "Unregister removes native append",
+          "Reload appends exactly once"
+        ],
+        "geometry": {
+          "window_width": 1700,
+          "area_width": 1393,
+          "header_width": 1393,
+          "scale": 1.0,
+          "tier": "COMPACT"
+        },
+        "host": "5.1.2"
+      }
+    },
+    {
+      "suite": "native-1100-scale-1.0",
+      "tests": 14,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Toolbar preference reveals native row",
+          "Native header append registered once",
+          "Live options remain disabled",
+          "Native viewport reaches the requested layout tier",
+          "Opening options does not change the frame",
+          "Target action reports unavailable without selection",
+          "Hide leaves the native row visible",
+          "Show recovers a manually hidden native row",
+          "Hide/show preserves marker identity",
+          "Hide/show preserves skin identity",
+          "Main-header recovery remains available",
+          "Leaving toolbar preserves native region choice",
+          "Unregister removes native append",
+          "Reload appends exactly once"
+        ],
+        "geometry": {
+          "window_width": 1100,
+          "area_width": 900,
+          "header_width": 900,
+          "scale": 1.0,
+          "tier": "MINIMAL"
+        },
+        "host": "5.1.2"
+      }
+    },
+    {
+      "suite": "native-1920-scale-1.5",
+      "tests": 14,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Toolbar preference reveals native row",
+          "Native header append registered once",
+          "Live options remain disabled",
+          "Native viewport reaches the requested layout tier",
+          "Opening options does not change the frame",
+          "Target action reports unavailable without selection",
+          "Hide leaves the native row visible",
+          "Show recovers a manually hidden native row",
+          "Hide/show preserves marker identity",
+          "Hide/show preserves skin identity",
+          "Main-header recovery remains available",
+          "Leaving toolbar preserves native region choice",
+          "Unregister removes native append",
+          "Reload appends exactly once"
+        ],
+        "geometry": {
+          "window_width": 1920,
+          "area_width": 1920,
+          "header_width": 1920,
+          "scale": 1.5,
+          "tier": "COMPACT"
+        },
+        "host": "5.1.2"
+      }
+    },
+    {
+      "suite": "native-authoring",
+      "tests": 5,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "host": "5.1.2",
+        "status": "PASS",
+        "cases": [
+          {
+            "mode": "OBJECT",
+            "live": false,
+            "cancel": false,
+            "status": "PASS",
+            "native_operator": "TRANSFORM_OT_translate",
+            "auto_key": true,
+            "held_ticks": 3,
+            "refreshes_after_finish": 1
+          },
+          {
+            "mode": "OBJECT",
+            "live": true,
+            "cancel": false,
+            "status": "PASS",
+            "native_operator": "TRANSFORM_OT_translate",
+            "auto_key": true,
+            "held_ticks": 3,
+            "refreshes_after_finish": 1
+          },
+          {
+            "mode": "POSE",
+            "live": false,
+            "cancel": false,
+            "status": "PASS",
+            "native_operator": "TRANSFORM_OT_translate",
+            "auto_key": true,
+            "held_ticks": 3,
+            "refreshes_after_finish": 1
+          },
+          {
+            "mode": "POSE",
+            "live": true,
+            "cancel": false,
+            "status": "PASS",
+            "native_operator": "TRANSFORM_OT_translate",
+            "auto_key": true,
+            "held_ticks": 3,
+            "refreshes_after_finish": 1
+          },
+          {
+            "mode": "OBJECT",
+            "live": false,
+            "cancel": true,
+            "status": "PASS",
+            "native_operator": "TRANSFORM_OT_translate",
+            "auto_key": true,
+            "held_ticks": 3,
+            "refreshes_after_finish": 1
+          }
+        ]
+      }
+    }
+  ]
+}
