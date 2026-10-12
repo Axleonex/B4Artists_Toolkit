@@ -1,10 +1,9 @@
 """
-ui_panel.py — Ghost Tool UI: viewport header menu, separate window, floating
-toolbar, and the Timeline header strip.
+ui_panel.py — Ghost Tool native viewport homes and animation header strips.
 
 Preferences choose the full home: viewport header (default), right sidebar,
-or Bforartists left Tool Shelf. All homes share the same grouped layout,
-also used by the floating toolbar and separate Ghost Tool window.
+or Bforartists left Tool Shelf, plus the native Tool Settings row. Feature
+popovers and full homes share drawers so their settings stay consistent.
 """
 
 from __future__ import annotations
@@ -268,13 +267,17 @@ def _snapshot_target_text(snapshot, *, compact=False):
     return "Targets: " + objects + (" / Bones: " + bones if bones else "")
 
 
-def _draw_show_ghosts(layout, context) -> None:
+def _draw_show_ghosts(layout, context, *, options_only=False) -> None:
     settings = context.scene.ghost_tool
+    layout.prop(settings, "show_cached_markers", text="Show cached markers")
     _wrapped_label(layout, context, _marker_target_text(context, compact=True))
-    row = layout.row(align=True)
-    row.scale_y = 1.3
-    row.operator("ghost_tool.generate_ghosts", text="Show Markers", icon='GHOST_ENABLED')
-    row.operator("ghost_tool.clear_ghosts", text="", icon='TRASH')
+    if not options_only:
+        row = layout.row(align=True)
+        row.scale_y = 1.3
+        row.operator("ghost_tool.generate_ghosts", text="Show Markers", icon='GHOST_ENABLED')
+        row.operator("ghost_tool.clear_ghosts", text="", icon='TRASH')
+    else:
+        layout.operator("ghost_tool.clear_ghosts", text="Clear All Ghosts", icon='TRASH')
     _row_label(layout, "Location + rotation keys")
 
     if _marker_target_bones(context):
@@ -283,7 +286,11 @@ def _draw_show_ghosts(layout, context) -> None:
         if targets is not None:
             _wrapped_label(targets, context, _marker_target_text(context))
 
-    layout = _options_fold(layout, 'ghost_marker_sampling_options')
+    # The dedicated options drawer already provides the enclosing boundary;
+    # its settings need no extra closed "Options" fold. Target fold keys are
+    # shared with the full homes and retain independent state.
+    if not options_only:
+        layout = _options_fold(layout, 'ghost_marker_sampling_options')
     if layout is None:
         return
 
@@ -316,12 +323,16 @@ def _draw_show_ghosts(layout, context) -> None:
         row.prop(settings, "live_throttle_ms", text="Delay")
 
 
-def _draw_onion_skin(layout, context) -> None:
+def _draw_onion_skin(layout, context, *, options_only=False) -> None:
     settings = context.scene.ghost_tool
-    row = layout.row(align=True)
-    row.scale_y = 1.3
-    row.operator("ghost_tool.generate_mesh_ghosts", text="Show Onion Skin", icon='MESH_DATA')
-    row.operator("ghost_tool.clear_mesh_ghosts", text="", icon='TRASH')
+    layout.prop(settings, "show_cached_skin", text="Show cached skin")
+    if not options_only:
+        row = layout.row(align=True)
+        row.scale_y = 1.3
+        row.operator("ghost_tool.generate_mesh_ghosts", text="Show Onion Skin", icon='MESH_DATA')
+        row.operator("ghost_tool.clear_mesh_ghosts", text="", icon='TRASH')
+    else:
+        layout.operator("ghost_tool.clear_mesh_ghosts", text="Clear Onion Skin", icon='TRASH')
     from .mesh_ghosts import pinned_ghost_sources
     pinned = pinned_ghost_sources(context.scene)
     if pinned:
@@ -808,6 +819,156 @@ class GHOST_PT_paths_popover(bpy.types.Panel):
     def draw(self, context):
         _draw_motion_paths(self.layout, context)
 
+    @classmethod
+    def poll(cls, context):
+        return _feature_context(context)
+
+
+def _feature_context(context):
+    """Keep settings reachable when only a generation target is unavailable."""
+    from .settings_editor import is_editor
+    window = getattr(context, 'window', None)
+    return (hasattr(getattr(context, 'scene', None), 'ghost_tool')
+            and (window is None or window.as_pointer() not in _ghost_windows)
+            and not is_editor(context))
+
+
+class _GhostFeaturePopover:
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 18
+    section_key = ''
+
+    @classmethod
+    def poll(cls, context):
+        return _feature_context(context)
+
+    def draw(self, context):
+        for key, _label, _icon, draw, _topic, _open in GHOST_SECTIONS:
+            if key == self.section_key:
+                if key in {'show', 'onion'}:
+                    draw(self.layout, context, options_only=True)
+                else:
+                    draw(self.layout, context)
+                return
+
+
+class GHOST_PT_marker_options(_GhostFeaturePopover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_marker_options'
+    bl_label = 'Marker options'
+    bl_description = 'Marker options: show or hide cached markers and choose targets and sampling'
+    section_key = 'show'
+
+
+class GHOST_PT_skin_options(_GhostFeaturePopover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_skin_options'
+    bl_label = 'Onion Skin options'
+    bl_description = 'Onion Skin options: show or hide cached skin and choose sampling and appearance'
+    section_key = 'onion'
+
+
+class GHOST_PT_edit_popover(_GhostFeaturePopover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_edit_popover'
+    bl_label = 'Edit Motion'
+    section_key = 'edit'
+
+
+class GHOST_PT_compare_popover(_GhostFeaturePopover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_compare_popover'
+    bl_label = 'Compare'
+    section_key = 'compare'
+
+
+class GHOST_PT_physics_popover(_GhostFeaturePopover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_physics_popover'
+    bl_label = 'Physics'
+    section_key = 'physics'
+
+
+class GHOST_PT_look_popover(_GhostFeaturePopover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_look_popover'
+    bl_label = 'Look'
+    section_key = 'look'
+
+
+class GHOST_PT_settings_popover(_GhostFeaturePopover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_settings_popover'
+    bl_label = 'Settings'
+    section_key = 'settings'
+
+
+_FEATURE_PANELS = {
+    'show': 'GHOST_PT_marker_options', 'onion': 'GHOST_PT_skin_options',
+    'paths': 'GHOST_PT_paths_popover', 'edit': 'GHOST_PT_edit_popover',
+    'compare': 'GHOST_PT_compare_popover', 'physics': 'GHOST_PT_physics_popover',
+    'look': 'GHOST_PT_look_popover', 'settings': 'GHOST_PT_settings_popover',
+}
+
+
+def _draw_feature_destination(layout, key, label, icon):
+    layout.popover(panel=_FEATURE_PANELS[key], text=label, icon=icon)
+
+
+def _draw_generation_pair(layout, key, *, menu=False):
+    """Only the operator polls its target; the adjacent options stay enabled."""
+    row = layout.row(align=True)
+    marker = key == 'show'
+    row.operator('ghost_tool.generate_ghosts' if marker else 'ghost_tool.generate_mesh_ghosts',
+                 text='Show Markers' if marker else 'Show Onion Skin',
+                 icon='GHOST_ENABLED' if marker else 'MESH_DATA')
+    row.popover(panel=_FEATURE_PANELS[key],
+                text=('Marker options' if marker else 'Onion Skin options') if menu else '')
+
+
+def _draw_toolbar_menu(layout, context):
+    settings = context.scene.ghost_tool
+    layout.prop(settings, 'is_active', text='Turn On Ghosts' if not settings.is_active else 'Ghosts On',
+                toggle=True, icon='GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED')
+    for key, label, icon, _draw, _topic, _open in GHOST_SECTIONS:
+        if key in {'show', 'onion'}:
+            _draw_generation_pair(layout, key, menu=True)
+        else:
+            _draw_feature_destination(layout, key, label, icon)
+    layout.separator()
+    # A native View-menu hide is independent of our persistent preference.
+    # Offer direct recovery even when Ghost controls are logically enabled.
+    native_visible = getattr(getattr(context, 'space_data', None), 'show_region_tool_header', True)
+    show = not toolbar_visible(context) or not native_visible
+    layout.operator('ghost_tool.set_toolbar_visibility',
+                    text='Show Toolbar' if show else 'Hide Toolbar',
+                    icon='HIDE_OFF' if show else 'HIDE_ON').show = show
+
+
+class GHOST_PT_toolbar_menu(bpy.types.Panel):
+    bl_idname = 'GHOST_PT_toolbar_menu'
+    bl_label = 'Ghost'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 22
+
+    @classmethod
+    def poll(cls, context):
+        return _main_home(context, 'TOOLBAR')
+
+    def draw(self, context):
+        _draw_toolbar_menu(self.layout, context)
+
+
+class GHOST_PT_toolbar_more(bpy.types.Panel):
+    bl_idname = 'GHOST_PT_toolbar_more'
+    bl_label = 'More Ghost Tools'
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 14
+
+    @classmethod
+    def poll(cls, context):
+        return _feature_context(context)
+
+    def draw(self, context):
+        for key, label, icon, _draw, _topic, _open in GHOST_SECTIONS[4:]:
+            _draw_feature_destination(self.layout, key, label, icon)
+
 
 def supports_tool_shelf() -> bool:
     return 'show_toolshelf_tabs' in bpy.types.SpaceView3D.bl_rna.properties
@@ -818,11 +979,18 @@ def display_location(context) -> str:
     prefs = getattr(context, 'preferences', None)
     addon = getattr(prefs, 'addons', {}).get('ghost_tool')
     value = getattr(getattr(addon, 'preferences', None), 'display_location', 'HEADER')
-    if value not in {'HEADER', 'SIDEBAR', 'TOOLS'}:
+    if value not in {'HEADER', 'SIDEBAR', 'TOOLS', 'TOOLBAR'}:
         return 'HEADER'
     if value == 'TOOLS' and not supports_tool_shelf():
         return 'HEADER'
     return value
+
+
+def toolbar_visible(context) -> bool:
+    """The persistent Ghost control visibility, independent of native row visibility."""
+    prefs = getattr(context, 'preferences', None)
+    addon = getattr(prefs, 'addons', {}).get('ghost_tool')
+    return bool(getattr(getattr(addon, 'preferences', None), 'show_toolbar', True))
 
 
 def _main_home(context, location) -> bool:
@@ -840,6 +1008,18 @@ _pending_display_tabs: dict[tuple[int, int], tuple[str, int]] = {}
 
 def _display_windows():
     return bpy.context.window_manager.windows
+
+
+def _ordinary_viewports(context):
+    from .settings_editor import is_editor
+    from types import SimpleNamespace
+    manager = getattr(context, 'window_manager', None)
+    for window in getattr(manager, 'windows', ()):
+        if window.as_pointer() in _ghost_windows or is_editor(SimpleNamespace(window=window)):
+            continue
+        for area in window.screen.areas:
+            if area.type == 'VIEW_3D':
+                yield window, area
 
 
 def _select_display_tabs():
@@ -866,28 +1046,60 @@ def _select_display_tabs():
 
 def update_display_location(context) -> None:
     """Reveal the selected home in ordinary viewports and schedule tab selection."""
-    from .settings_editor import is_editor
-    from types import SimpleNamespace
     location = display_location(context)
     _pending_display_tabs.clear()
-    manager = getattr(context, 'window_manager', None)
-    for window in getattr(manager, 'windows', ()):
-        if window.as_pointer() in _ghost_windows or is_editor(SimpleNamespace(window=window)):
-            continue
-        for area in window.screen.areas:
-            if area.type != 'VIEW_3D':
-                continue
-            space = area.spaces.active
-            if location == 'SIDEBAR':
-                space.show_region_ui = True
-            elif location == 'TOOLS':
-                space.show_region_toolbar = True
-                space.show_toolshelf_tabs = True
-            area.tag_redraw()
-            if location != 'HEADER':
-                _pending_display_tabs[(window.as_pointer(), area.as_pointer())] = (location, 0)
+    for window, area in _ordinary_viewports(context):
+        space = area.spaces.active
+        if location == 'SIDEBAR':
+            space.show_region_ui = True
+        elif location == 'TOOLS':
+            space.show_region_toolbar = True
+            space.show_toolshelf_tabs = True
+        elif location == 'TOOLBAR' and toolbar_visible(context):
+            space.show_region_tool_header = True
+        area.tag_redraw()
+        if location in {'SIDEBAR', 'TOOLS'}:
+            _pending_display_tabs[(window.as_pointer(), area.as_pointer())] = (location, 0)
     if _pending_display_tabs and not bpy.app.timers.is_registered(_select_display_tabs):
         bpy.app.timers.register(_select_display_tabs, first_interval=0.05)
+
+
+def update_toolbar_visibility(context) -> None:
+    """Reveal the native row only on an explicit show preference/action."""
+    if display_location(context) == 'TOOLBAR' and toolbar_visible(context):
+        update_display_location(context)
+    else:
+        for _window, area in _ordinary_viewports(context):
+            area.tag_redraw()
+
+
+class GHOST_OT_set_toolbar_visibility(bpy.types.Operator):
+    bl_idname = "ghost_tool.set_toolbar_visibility"
+    bl_label = "Ghost Toolbar Visibility"
+    bl_description = "Show or hide Ghost toolbar controls while keeping cached ghosts and settings"
+
+    show: bpy.props.BoolProperty(default=True, options={'HIDDEN', 'SKIP_SAVE'})
+
+    @classmethod
+    def poll(cls, context):
+        prefs = getattr(context, 'preferences', None)
+        return getattr(prefs, 'addons', {}).get('ghost_tool') is not None
+
+    @classmethod
+    def description(cls, context, properties):
+        if properties.show:
+            return "Show Ghost controls and reveal the native Tool Settings row in ordinary viewports"
+        return "Hide Ghost toolbar controls; keep native Tool Settings, cached ghosts, targets and settings"
+
+    def execute(self, context):
+        prefs = context.preferences.addons['ghost_tool'].preferences
+        if self.show:
+            prefs.display_location = 'TOOLBAR'
+        prefs.show_toolbar = self.show
+        # Explicit Show also recovers a row hidden using View after the last
+        # preference update; assigning an unchanged RNA value is insufficient.
+        update_toolbar_visibility(context)
+        return {'FINISHED'}
 
 
 class GHOST_PT_header_menu(bpy.types.Panel):
@@ -900,11 +1112,14 @@ class GHOST_PT_header_menu(bpy.types.Panel):
     bl_ui_units_x = 14
 
     def draw(self, context: bpy.types.Context) -> None:
-        draw_ghost_tool(self.layout, context, "menu")
+        if display_location(context) == 'TOOLBAR':
+            _draw_toolbar_menu(self.layout, context)
+        else:
+            draw_ghost_tool(self.layout, context, "menu")
 
     @classmethod
     def poll(cls, context):
-        return _main_home(context, 'HEADER')
+        return _main_home(context, 'HEADER') or _main_home(context, 'TOOLBAR')
 
 
 class GHOST_PT_sidebar(bpy.types.Panel):
@@ -1166,13 +1381,70 @@ def _draw_graph_header_extension(self, context: bpy.types.Context) -> None:
 def _draw_viewport_header_menu(self, context: bpy.types.Context) -> None:
     """Ghost on/off toggle and the "Ghost Tool" dropdown, after the Pose menu."""
     scene = context.scene
-    if not _main_home(context, 'HEADER'):
+    if not (_main_home(context, 'HEADER') or _main_home(context, 'TOOLBAR')):
         return
     settings = scene.ghost_tool
     row = self.layout.row(align=True)
     row.prop(settings, "is_active", text="",
              icon='GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED', toggle=True)
     row.popover(panel="GHOST_PT_header_menu", text="Ghost Tool")
+
+
+# Appended native headers do not expose their preceding layout's occupied
+# width. These conservative viewport-width bands are an explicit fallback,
+# not a claim of exact remaining-space measurement. Native horizontal panning
+# remains available. UI scale normalizes pixels; each area retains its tier
+# within an options-arrow-width expansion margin to avoid boundary flicker.
+_TOOLBAR_FULL_WIDTH = 1800.0
+_TOOLBAR_COMPACT_WIDTH = 1150.0
+_TOOLBAR_EXPAND_MARGIN = 32.0
+_toolbar_tiers: dict[int, str] = {}
+
+
+def _toolbar_tier(context):
+    area = getattr(context, 'area', None)
+    pointer = area.as_pointer() if area is not None else 0
+    if getattr(context, 'mode', 'OBJECT') not in {'OBJECT', 'POSE'}:
+        _toolbar_tiers[pointer] = 'MINIMAL'
+        return 'MINIMAL'
+    width = getattr(getattr(context, 'region', None), 'width', 0)
+    if not width:
+        width = getattr(area, 'width', 0)
+    scale = getattr(getattr(getattr(context, 'preferences', None), 'view', None), 'ui_scale', 1.0)
+    width /= max(float(scale), 0.25)
+    previous = _toolbar_tiers.get(pointer)
+    full_at = _TOOLBAR_FULL_WIDTH + (_TOOLBAR_EXPAND_MARGIN if previous in {'COMPACT', 'MINIMAL'} else 0)
+    compact_at = _TOOLBAR_COMPACT_WIDTH + (_TOOLBAR_EXPAND_MARGIN if previous == 'MINIMAL' else 0)
+    tier = 'FULL' if width >= full_at else 'COMPACT' if width >= compact_at else 'MINIMAL'
+    _toolbar_tiers[pointer] = tier
+    if len(_toolbar_tiers) > 64:
+        live = {a.as_pointer() for w in bpy.context.window_manager.windows
+                for a in w.screen.areas if a.type == 'VIEW_3D'}
+        for stale in _toolbar_tiers.keys() - live:
+            _toolbar_tiers.pop(stale, None)
+    return tier
+
+
+def _draw_viewport_tool_header(self, context):
+    """Append Ghost controls without replacing native Tool Settings drawing."""
+    if not _main_home(context, 'TOOLBAR') or not toolbar_visible(context):
+        return
+    row = self.layout.row(align=True)
+    row.separator(factor=0.5)
+    row.popover(panel='GHOST_PT_toolbar_menu', text='Ghost', icon='GHOST_ENABLED')
+    tier = _toolbar_tier(context)
+    if tier == 'MINIMAL':
+        return
+    for key in ('show', 'onion'):
+        row.separator(factor=0.4)
+        _draw_generation_pair(row, key)
+    destinations = GHOST_SECTIONS[2:] if tier == 'FULL' else GHOST_SECTIONS[2:4]
+    for key, label, icon, _draw, _topic, _open in destinations:
+        row.separator(factor=0.4)
+        _draw_feature_destination(row, key, label, icon)
+    if tier == 'COMPACT':
+        row.separator(factor=0.4)
+        row.popover(panel='GHOST_PT_toolbar_more', text='More')
 
 
 # ---------------------------------------------------------------------------
@@ -1246,6 +1518,16 @@ CLASSES: tuple[type, ...] = (
     GHOST_MT_paths_checked,
     GHOST_MT_paths_move_to,
     GHOST_PT_paths_popover,
+    GHOST_PT_marker_options,
+    GHOST_PT_skin_options,
+    GHOST_PT_edit_popover,
+    GHOST_PT_compare_popover,
+    GHOST_PT_physics_popover,
+    GHOST_PT_look_popover,
+    GHOST_PT_settings_popover,
+    GHOST_PT_toolbar_menu,
+    GHOST_PT_toolbar_more,
+    GHOST_OT_set_toolbar_visibility,
     GHOST_PT_header_menu,
     GHOST_PT_sidebar,
     GHOST_PT_window,
@@ -1299,6 +1581,12 @@ def register() -> None:
     except Exception as exc:
         warn(f"Could not append to 3D Viewport header: {exc}")
 
+    try:
+        bpy.types.VIEW3D_HT_tool_header.append(_draw_viewport_tool_header)
+        _header_appends.append((bpy.types.VIEW3D_HT_tool_header, _draw_viewport_tool_header))
+    except Exception as exc:
+        warn(f"Could not append Ghost controls to native Tool Settings: {exc}")
+
     log("UI panels and header strips registered.")
 
 
@@ -1307,6 +1595,7 @@ def unregister() -> None:
     if bpy.app.timers.is_registered(_select_display_tabs):
         bpy.app.timers.unregister(_select_display_tabs)
     _pending_display_tabs.clear()
+    _toolbar_tiers.clear()
     # Remove header appends first
     for header_cls, func in _header_appends:
         try:

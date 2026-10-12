@@ -271,6 +271,7 @@ def _private_mesh_collection(scene):
     path = find_path(scene.collection)
     duplicate = bpy.data.collections.new(GHOST_MESH_COLLECTION)
     duplicate['ghost_tool_collection'] = True
+    duplicate.hide_viewport = not scene.ghost_tool.show_cached_skin
     for obj in collection.objects:
         if not obj.get(GHOST_TOOL_MESH_GHOST_KEY):
             duplicate.objects.link(obj)
@@ -313,6 +314,8 @@ def _get_or_create_collection(scene: bpy.types.Scene) -> bpy.types.Collection:
         coll["ghost_tool_collection"] = True
         scene.collection.children.link(coll)
 
+    coll.hide_viewport = not scene.ghost_tool.show_cached_skin
+
     # Mark collection as non-selectable / non-renderable by default
     # (user can override in the outliner if needed)
     try:
@@ -325,6 +328,13 @@ def _get_or_create_collection(scene: bpy.types.Scene) -> bpy.types.Collection:
         warn(f"Could not configure ghost collection layer: {exc}")
 
     return coll
+
+
+def set_cached_skin_visibility(scene: bpy.types.Scene, visible: bool) -> None:
+    """Change display on this scene's existing collection without rebuilding skins."""
+    coll = _private_mesh_collection(scene)
+    if coll is not None:
+        coll.hide_viewport = not visible
 
 
 def _find_layer_collection(root: bpy.types.LayerCollection, name: str) -> Optional[bpy.types.LayerCollection]:
@@ -1292,8 +1302,8 @@ class GHOST_OT_generate_mesh_ghosts(bpy.types.Operator):
     bl_idname = "ghost_tool.generate_mesh_ghosts"
     bl_label = "Generate Mesh Ghosts"
     bl_description = (
-        "Create transparent mesh duplicates at frames around the playhead "
-        "to visualize the character pose at different times"
+        "Generate and show onion skins at frames around the playhead. "
+        "Use Onion Skin options > Show cached skin to hide or show existing skins"
     )
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1355,6 +1365,8 @@ class GHOST_OT_generate_mesh_ghosts(bpy.types.Operator):
         if not settings.is_active:
             settings["is_active"] = True
         settings["show_mesh_ghosts"] = True
+        if count > 0:
+            settings.show_cached_skin = True
         from .ghost_pipeline import GhostPipeline
         GhostPipeline.get(scene).remember_edit_state(scene)
 

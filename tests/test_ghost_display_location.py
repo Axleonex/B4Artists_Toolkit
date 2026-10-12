@@ -13,10 +13,28 @@ from ghost_tool import ui_panel as ui, preferences
 from test_ghost_marker_targets_ui import Layout
 
 
-def context_for(location='HEADER', window=None):
+class HeaderLayout(Layout):
+    def row(self, **kwargs):
+        return HeaderLayout(self.calls, self.closed, self.path)
+
+    def popover(self, **kwargs):
+        self.calls.append(('popover', kwargs['panel'], kwargs, self.path))
+
+
+def context_for(location='HEADER', window=None, visible=True):
     return NS(scene=bpy.context.scene, window=window or bpy.context.window,
               space_data=NS(show_toolshelf_tabs=True),
-              preferences=NS(addons={'ghost_tool': NS(preferences=NS(display_location=location))}))
+              preferences=NS(addons={'ghost_tool': NS(preferences=NS(
+                  display_location=location, show_toolbar=visible))}))
+
+
+def viewport_fixture(pointer, *, visible=False):
+    redraws = []
+    space = NS(show_region_tool_header=visible, show_region_ui=False,
+               show_region_toolbar=False, show_toolshelf_tabs=False)
+    area = NS(type='VIEW_3D', spaces=NS(active=space), regions=[],
+              as_pointer=lambda: pointer, tag_redraw=lambda: redraws.append(True))
+    return area, space, redraws
 
 
 class DisplayLocation(unittest.TestCase):
@@ -39,8 +57,14 @@ class DisplayLocation(unittest.TestCase):
         self.assertEqual(prop.default, 'HEADER')
         self.assertEqual([(v.identifier, v.name) for v in prop.enum_items],
                          [('HEADER', 'Top Header'), ('SIDEBAR', 'Right Sidebar (N)'),
-                          ('TOOLS', 'Left Tool Shelf (T)')])
+                          ('TOOLS', 'Left Tool Shelf (T)'), ('TOOLBAR', 'Top Toolbar')])
         self.assertFalse(prop.is_skip_save)
+        visibility = preferences.GhostToolPreferences.bl_rna.properties['show_toolbar']
+        self.assertTrue(visibility.default)
+        self.assertFalse(visibility.is_skip_save)
+        action = bpy.ops.ghost_tool.set_toolbar_visibility.get_rna_type().properties['show']
+        self.assertTrue(action.is_hidden)
+        self.assertTrue(action.is_skip_save)
 
     def test_missing_preferences_and_invalid_value_use_header(self):
         for context in (NS(), NS(preferences=NS(addons={})), context_for('unknown')):
@@ -52,6 +76,7 @@ class DisplayLocation(unittest.TestCase):
             for location, expected in [('HEADER', 0), ('SIDEBAR', 1), ('TOOLS', 2)]:
                 self.assertEqual([p.poll(context_for(location)) for p in panels],
                                  [i == expected for i in range(3)])
+            self.assertEqual([p.poll(context_for('TOOLBAR')) for p in panels], [True, False, False])
 
     def test_unsupported_left_choice_retains_header_access(self):
         context = context_for('TOOLS')
@@ -72,12 +97,122 @@ class DisplayLocation(unittest.TestCase):
             self.assertFalse(ui.GHOST_PT_sidebar.poll(context))
 
     def test_header_entry_is_hidden_for_side_home(self):
-        for location in ('HEADER', 'SIDEBAR'):
+        for location in ('HEADER', 'TOOLBAR', 'SIDEBAR', 'TOOLS'):
             layout = NS(row=lambda **kw: NS(prop=lambda *a, **kw: None,
                            popover=lambda **kw: entries.append(kw['panel'])))
             entries = []
-            ui._draw_viewport_header_menu(NS(layout=layout), context_for(location))
-            self.assertEqual(entries, ['GHOST_PT_header_menu'] if location == 'HEADER' else [])
+            with patch.object(ui, 'supports_tool_shelf', return_value=True):
+                entries.clear()
+                ui._draw_viewport_header_menu(NS(layout=layout), context_for(location))
+            self.assertEqual(entries, ['GHOST_PT_header_menu'] if location in {'HEADER', 'TOOLBAR'} else [])
+
+    def test_toolbar_recovery_excludes_legacy_windows(self):
+        context = context_for('TOOLBAR')
+        ui._ghost_windows.add(context.window.as_pointer())
+        self.assertFalse(ui.GHOST_PT_header_menu.poll(context))
+        layout = HeaderLayout()
+        ui._draw_viewport_header_menu(NS(layout=layout), context)
+        self.assertFalse(layout.calls)
+        ui._ghost_windows.clear()
+        with patch('ghost_tool.settings_editor.is_editor', return_value=True):
+            self.assertFalse(ui.GHOST_PT_header_menu.poll(context))
+
+    def test_toolbar_choice_reveals_all_ordinary_viewports_without_tab_timer(self):
+        view_a, space_a, redraw_a = viewport_fixture(11)
+        view_b, space_b, redraw_b = viewport_fixture(12)
+        legacy_view, legacy_space, legacy_redraw = viewport_fixture(13)
+        editor_view, editor_space, editor_redraw = viewport_fixture(17)
+        window_a = NS(screen=NS(areas=[view_a]), as_pointer=lambda: 101)
+        window_b = NS(screen=NS(areas=[view_b]), as_pointer=lambda: 102)
+        legacy_window = NS(screen=NS(areas=[legacy_view]), as_pointer=lambda: 103)
+        editor_window = NS(screen=NS(areas=[editor_view]), as_pointer=lambda: 107)
+        ui._ghost_windows.add(103)
+        context = context_for('TOOLBAR', window_a)
+        context.window_manager = NS(windows=[window_a, window_b, legacy_window, editor_window])
+        with patch('ghost_tool.settings_editor.is_editor',
+                   side_effect=lambda ctx: ctx.window.as_pointer() == 107), \
+             patch.object(bpy.app.timers, 'register') as timer:
+            ui.update_display_location(context)
+        self.assertTrue(space_a.show_region_tool_header)
+        self.assertTrue(space_b.show_region_tool_header)
+        self.assertFalse(legacy_space.show_region_tool_header)
+        self.assertFalse(editor_space.show_region_tool_header)
+        self.assertTrue(redraw_a and redraw_b)
+        self.assertFalse(legacy_redraw)
+        self.assertFalse(editor_redraw)
+        self.assertFalse(ui._pending_display_tabs)
+        timer.assert_not_called()
+
+    def test_hidden_toolbar_and_draw_do_not_force_native_row(self):
+        view, space, redraws = viewport_fixture(14)
+        window = NS(screen=NS(areas=[view]), as_pointer=lambda: 104)
+        context = context_for('TOOLBAR', window, visible=False)
+        self.assertEqual(ui.display_location(context), 'TOOLBAR')
+        context.window_manager = NS(windows=[window])
+        with patch('ghost_tool.settings_editor.is_editor', return_value=False):
+            ui.update_display_location(context)
+        self.assertFalse(space.show_region_tool_header)
+        self.assertTrue(redraws)
+        context.preferences.addons['ghost_tool'].preferences.show_toolbar = True
+        ui._draw_viewport_header_menu(NS(layout=HeaderLayout()), context)
+        self.assertFalse(space.show_region_tool_header)
+        self.assertTrue(ui.GHOST_PT_header_menu.poll(context))
+
+    def test_explicit_show_recovers_hidden_row_even_when_preference_was_true(self):
+        view, space, _ = viewport_fixture(15)
+        window = NS(screen=NS(areas=[view]), as_pointer=lambda: 105)
+        context = context_for('TOOLBAR', window)
+        context.window_manager = NS(windows=[window])
+        with patch('ghost_tool.settings_editor.is_editor', return_value=False):
+            result = ui.GHOST_OT_set_toolbar_visibility.execute(NS(show=True), context)
+        self.assertEqual(result, {'FINISHED'})
+        self.assertTrue(space.show_region_tool_header)
+
+    def test_hide_preserves_native_row_cache_and_scene_settings(self):
+        from ghost_tool.ghost_data import GhostStore, Ghost
+        view, space, redraws = viewport_fixture(16, visible=True)
+        window = NS(screen=NS(areas=[view]), as_pointer=lambda: 106)
+        context = context_for('TOOLBAR', window)
+        context.window_manager = NS(windows=[window])
+        store = GhostStore.get(context.scene)
+        marker = Ghost(frame=23, object_name=bpy.context.active_object.name,
+                       channel='location.y', parent_frame_a=20, parent_frame_b=30)
+        store.add(marker)
+        settings = context.scene.ghost_tool
+        original = (settings.is_active, settings.show_level_1, settings.show_mesh_ghosts,
+                    settings.live_point_ghosts, settings.live_mesh_ghosts)
+        count = len(store)
+        with patch('ghost_tool.settings_editor.is_editor', return_value=False):
+            result = ui.GHOST_OT_set_toolbar_visibility.execute(NS(show=False), context)
+        self.assertEqual(result, {'FINISHED'})
+        self.assertFalse(context.preferences.addons['ghost_tool'].preferences.show_toolbar)
+        self.assertEqual(ui.display_location(context), 'TOOLBAR')
+        self.assertTrue(space.show_region_tool_header)
+        self.assertTrue(redraws)
+        self.assertEqual(len(store), count)
+        self.assertEqual(original, (settings.is_active, settings.show_level_1, settings.show_mesh_ghosts,
+                                  settings.live_point_ghosts, settings.live_mesh_ghosts))
+        context.preferences.addons['ghost_tool'].preferences.display_location = 'HEADER'
+        with patch('ghost_tool.settings_editor.is_editor', return_value=False):
+            ui.update_display_location(context)
+        self.assertTrue(space.show_region_tool_header)
+
+    def test_show_selects_toolbar_and_visibility_callback_only_reveals_its_home(self):
+        view, space, redraws = viewport_fixture(18)
+        window = NS(screen=NS(areas=[view]), as_pointer=lambda: 108)
+        context = context_for('SIDEBAR', window, visible=False)
+        context.window_manager = NS(windows=[window])
+        prefs = context.preferences.addons['ghost_tool'].preferences
+        with patch('ghost_tool.settings_editor.is_editor', return_value=False):
+            preferences._update_toolbar_visibility(prefs, context)
+            self.assertFalse(space.show_region_tool_header)
+            self.assertFalse(space.show_region_ui)
+            self.assertTrue(redraws)
+            result = ui.GHOST_OT_set_toolbar_visibility.execute(NS(show=True), context)
+        self.assertEqual(result, {'FINISHED'})
+        self.assertEqual(prefs.display_location, 'TOOLBAR')
+        self.assertTrue(prefs.show_toolbar)
+        self.assertTrue(space.show_region_tool_header)
 
     def test_all_homes_share_drawer_and_keep_legacy_launch_buttons_removed(self):
         prefixes = []

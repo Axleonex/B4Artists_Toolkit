@@ -5,7 +5,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 | Tool | Version | What it does |
 |---|---|---|
 | **Anim Assist** | 12.1.3 | A production animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Inspired by Maya's AnimBot. |
-| **Ghost Tool** | 4.2.5 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Choose a header, right sidebar or left Tool Shelf home in preferences. Marker and Compare target names fold independently. Keeps cached ghosts stable during native gestures, then refreshes after animation edits settle. Live marker and skin updates default off. |
+| **Ghost Tool** | 4.2.5 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Source now adds a persistent Top Toolbar beside the header, right sidebar and left Tool Shelf locations. Marker and Compare target names fold independently. Keeps cached ghosts stable during native gestures, then refreshes after animation edits settle. Live marker and skin updates default off. |
 
 ### Optional add-on: BoneCraft (rigging)
 
@@ -33,6 +33,8 @@ Anim Assist 12.1.3 passes its recorded host checks. BoneCraft 9.2.0 adds the com
 
 See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The published [Ghost Tool 4.2.2 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2) remains available on GitHub Releases.
 
+The [Ghost toolbar source update](docs/ghost_tool/toolbar/README.md) has a local candidate for review. The existing 4.2.5 download above predates the toolbar. Its archive and version have been retained until a release update is approved.
+
 ## Install
 
 1. In Bforartists, open **Edit -> Preferences -> Add-ons -> Install from Disk...**
@@ -47,7 +49,7 @@ See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The
      - **Properties editor**, **Scene** tab, **Anim Assist** section (near the bottom), organised by scope: This Pose, Whole Animation, Rig, Face, then Setup, Settings and Help.
 
      Each of those editors' headers also has an **Anim Assist** menu with the most-used tools. The menu can open the full panel, switch to the **Anim Assist workspace** (the Animation layout plus a Graph Editor, with every home open), or open the panel in a **separate window** you can move to a second monitor.
-   - **Ghost Tool** defaults to the **3D Viewport header** dropdown. In **Edit > Preferences > Add-ons > Ghost Tool**, set **Display Location** to **Top Header**, **Right Sidebar (N)** or **Left Tool Shelf (T)**. Switching reveals the chosen region and its Ghost Tool tab. All homes share the same controls and retain the 4.2.4 interface cleanup. Save preferences normally to retain your choice.
+   - **Ghost Tool** defaults to the **3D Viewport header** dropdown. In **Edit > Preferences > Add-ons > Ghost Tool**, choose **Top Header**, **Right Sidebar (N)** or **Left Tool Shelf (T)**. The toolbar source update adds **Top Toolbar**, which keeps actions in the native Tool Settings row. Its **Ghost** menu and the main-header **Ghost Tool** menu provide Hide/Show Toolbar. All locations share feature options. Save preferences normally to retain your choice.
    - **BoneCraft** (optional) adds the **BoneCraft** and **Rig Builder** tabs to the left Tool Shelf (press **T**) and the **CATS** tab to the right sidebar (press **N**); each tab's side can be changed in its preferences. Select your character's mesh and start the wizard on the **Rig Builder** tab.
 5. Anim Assist only: in **Properties > Scene > Anim Assist > Setup**, run **First Run Setup** once. It builds the Quick Shelf. The same section can add the Anim Assist workspace, and **Settings** turns on the optional **Anim Assist pie** shortcut (Shift Alt D, off by default).
 
@@ -59,7 +61,7 @@ The unpacked, readable source for each tool is in this repository so you can rea
 - [`ghost_tool/`](ghost_tool/) — Ghost Tool source
 - [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.2.0 source
 
-The source folders and the downloadable zips contain the same code; the zips are just packaged for one-click install.
+The ZIPs package their recorded release source for one-click installation. Ghost Tool's toolbar source update is newer than its existing downloadable 4.2.5 ZIP; see the toolbar guide and verification before testing it.
 
 ## Documentation
 
