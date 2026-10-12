@@ -5,7 +5,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 | Tool | Version | What it does |
 |---|---|---|
 | **Anim Assist** | 12.1.3 | A production animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Inspired by Maya's AnimBot. |
-| **Ghost Tool** | 4.2.3 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Marker target names fold independently. Keeps cached ghosts stable during native gestures, then refreshes after animation edits settle. Live marker and skin updates default off. |
+| **Ghost Tool** | 4.2.5 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Marker and Compare target names fold independently. Keeps cached ghosts stable during native gestures, then refreshes after animation edits settle. Live marker and skin updates default off. |
 
 ### Optional add-on: BoneCraft (rigging)
 
@@ -26,10 +26,10 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.1.3 | [b4_anim_assist_v12.1.3.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.3/b4_anim_assist_v12.1.3.zip) |
-| Ghost Tool 4.2.3 (test build) | [b4_ghost_tool_v4.2.3.zip](releases/b4_ghost_tool_v4.2.3.zip?raw=1) |
+| Ghost Tool 4.2.5 (test build) | [b4_ghost_tool_v4.2.5.zip](releases/b4_ghost_tool_v4.2.5.zip?raw=1) |
 | BoneCraft 9.1.2 (optional) | [BoneCraft-BFA-9.1.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.1.2/BoneCraft-BFA-9.1.2.zip) |
 
-Anim Assist 12.1.3 and BoneCraft 9.1.2 are published releases and pass their recorded host checks. Ghost Tool 4.2.3 is a repository test build: its Marker Targets fold keeps long bone lists out of the way of Show Markers and the other tools. It retains 4.2.2's default-off live updates and gesture pause. Bforartists rig and UI validation remain pending.
+Anim Assist 12.1.3 and BoneCraft 9.1.2 are published releases and pass their recorded host checks. Ghost Tool 4.2.5 is a repository test build: Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently, keeping actions accessible on large rigs. It retains 4.2.2's default-off live updates and gesture pause. Bforartists rig and UI validation remain pending.
 
 See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The published [Ghost Tool 4.2.2 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2) remains available on GitHub Releases.
 
@@ -39,7 +39,7 @@ See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The
 2. Pick the `.zip` you downloaded.
 3. Enable the add-on by ticking its checkbox.
 
-   When updating Ghost Tool to 4.2.3, restart Bforartists after installation. Marker Targets opens the full bone list independently of Options and the other tools. Saved scenes retain their existing live-update choices: turn off Live Update Markers and Live Update Skin to keep snapshots while scrubbing. Test a move with auto-key enabled; ghosts should refresh after you finish moving.
+   When updating Ghost Tool to 4.2.5, restart Bforartists after installation. Marker Targets, Capture Targets and Snapshot Targets open their full lists independently of the other tools. Saved scenes retain their existing live-update choices: turn off Live Update Markers and Live Update Skin to keep snapshots while scrubbing. Test a move with auto-key enabled; ghosts should refresh after you finish moving.
 4. Find the add-on:
    - **Anim Assist** lives in three places, each organised for its editor, and each starts with an **Anim Assist** label:
      - **Graph Editor** sidebar (press **N**), **Anim Assist** tab, organised by what you do to curves: Select, Shape Curves, Retime, Clean Up, Pose & Rig, Quick Shelf.
@@ -66,7 +66,7 @@ The source folders and the downloadable zips contain the same code; the zips are
 Human-readable manuals are in [`docs/`](docs/):
 
 - [`docs/anim_assist/`](docs/anim_assist/) — Anim Assist 12.1.3 guide (Markdown and PDF)
-- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool guides and 4.2.3 UI notes
+- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool guides and 4.2.5 UI notes
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.1.2 English manual and translation status
 
 ## Requirements
@@ -79,6 +79,7 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - Ghost Tool 4.2.2 passes **230 background checks across nine suites** and **five native auto-key cases** on a Blender 5.1.2 stand-in. See the [4.2.2 verification report](docs/ghost_tool/authoring-pause/verification.md). These include actual native object/pose moves with live updates off and on, plus cancellation; Bforartists production-rig validation remains pending.
 - Ghost Tool 4.2.3 passes **50 of 51 focused checks** on the Blender stand-in, including all six target-fold checks and all 20 authoring regressions. The remaining native Tool Shelf assertion fails identically on 4.2.2 because it requires Bforartists. See the [4.2.3 verification report](docs/ghost_tool/marker-targets/verification.md).
+- Ghost Tool 4.2.5 passes **72 of 73 focused checks** on the Blender stand-in, including all Compare/marker fold, header, authoring and snapshot-target checks. The same native Tool Shelf assertion remains host-limited. See the [4.2.5 verification report](docs/ghost_tool/compare-targets/verification.md).
 
 ## License
 

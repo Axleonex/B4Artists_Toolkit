@@ -257,7 +257,14 @@ def _marker_target_text(context, *, compact=False):
     return "Markers: " + obj.name + suffix
 
 
-def _snapshot_target_text(snapshot):
+def _snapshot_target_text(snapshot, *, compact=False):
+    if compact:
+        objects = len(snapshot.object_names)
+        bones = len(snapshot.bone_names)
+        text = f"Targets: {objects} {'object' if objects == 1 else 'objects'}"
+        if bones:
+            text += f", {bones} {'bone' if bones == 1 else 'bones'}"
+        return text
     objects = ", ".join(sorted(snapshot.object_names)) or "No captured objects"
     bones = ", ".join(sorted(snapshot.bone_names))
     return "Targets: " + objects + (" / Bones: " + bones if bones else "")
@@ -435,7 +442,9 @@ def _draw_compare(layout, context) -> None:
     col.label(text=f"Saved snapshots ({len(snapshots)}/10)")
     from .target_binding import capture_label
     col.prop(scene, 'ghost_snapshot_scope', text='Scope')
-    _wrapped_label(col, context, capture_label(context))
+    capture_summary = capture_label(context, compact=True)
+    capture_details = capture_label(context)
+    _wrapped_label(col, context, capture_summary)
     col.operator("ghost_tool.take_snapshot", text="Save Snapshot", icon='CAMERA_DATA')
     _wrapped_label(col, context, 'Saved with this blend file. Export JSON to transfer references.')
     store = SnapshotStore.get(scene)
@@ -445,22 +454,25 @@ def _draw_compare(layout, context) -> None:
         _wrapped_label(col, context, 'Capacity reached. Delete unwanted references before saving another.', icon='INFO')
     if not snapshots:
         _row_label(col, "Save a state before big edits")
+    if capture_details != capture_summary:
+        header, targets = layout.panel('ghost_capture_targets', default_closed=True)
+        header.label(text='Capture Targets')
+        if targets is not None:
+            _wrapped_label(targets, context, capture_details)
     for snap in snapshots:
-        card = col.box()
+        card = layout.box()
         _wrapped_label(card, context, snap.name)
         if snap.parent_uid:
             _wrapped_label(card, context, 'Variant of: ' + snap.origin.get('name', 'Original reference'))
         reason = SnapshotStore.binding_reason(snap, scene)
         target_text = ('Targets: ' + ', '.join(sorted({b.summary() for b in snap.bindings}))) if snap.bindings and not reason else _snapshot_target_text(snap)
-        _wrapped_label(card, context, target_text)
+        _wrapped_label(card, context, _snapshot_target_text(snap, compact=True))
         if reason:
             _wrapped_label(card, context, reason, icon='ERROR')
             target_name = context.active_object.name if context.active_object else '(select a target)'
             _wrapped_label(card, context, 'Bind to: ' + target_name)
             card.operator('ghost_tool.bind_snapshot', text='Bind to Active Target').snapshot_uid = snap.uid
         missing = sorted(name for name in snap.object_names if scene.objects.get(name) is None)
-        if missing and reason:
-            _wrapped_label(card, context, "Unavailable: " + ", ".join(missing), icon='ERROR')
         _wrapped_label(card, context, "Restore: complete captured curves" if snap.curve_data else "Restore: legacy sampled values")
         row = card.row(align=True)
         op = row.operator("ghost_tool.toggle_snapshot", text="Hide" if snap.is_visible else "Show",
@@ -472,6 +484,12 @@ def _draw_compare(layout, context) -> None:
         card.row().operator('ghost_tool.save_variant', text='Save Variant').parent_uid = snap.uid
         op = card.row().operator("ghost_tool.delete_snapshot", text="Delete", icon='TRASH')
         op.snapshot_uid = snap.uid
+        header, targets = layout.panel(f'ghost_snapshot_targets_{snap.uid}', default_closed=True)
+        header.label(text='Snapshot Targets')
+        if targets is not None:
+            _wrapped_label(targets, context, target_text)
+            if missing and reason:
+                _wrapped_label(targets, context, "Unavailable: " + ", ".join(missing), icon='ERROR')
 
     col = layout.column(align=True)
     col.label(text="Compare to a pose")

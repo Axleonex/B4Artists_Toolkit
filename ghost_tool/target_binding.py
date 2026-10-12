@@ -296,10 +296,17 @@ def selected_samples(context, mode='ACTIVE', *, assign=True):
     return [g for g in ghosts if g.object_name == obj.name and (bones is None or g.bone_name in bones)], path_uid
 
 
-def capture_label(context):
+def capture_label(context, *, compact=False):
     mode = getattr(context.scene, 'ghost_snapshot_scope', 'ACTIVE')
     try:
         samples, _ = selected_samples(context, mode, assign=False)
+        if compact and samples:
+            objects = {g.object_name for g in samples}
+            bones = {(g.object_name, g.bone_name) for g in samples if g.bone_name}
+            label = next(iter(objects)) if len(objects) == 1 else f'{len(objects)} objects'
+            if bones:
+                label += f" / {len(bones)} {'bone' if len(bones) == 1 else 'bones'}"
+            return 'Capture: ' + label
         names = sorted({g.object_name + (' / ' + g.bone_name if g.bone_name else '') for g in samples})
         return 'Capture: ' + (', '.join(names) if names else 'show markers for the chosen target first')
     except ValueError as exc:
