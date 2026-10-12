@@ -7,7 +7,7 @@ These manuals describe the published Anim Assist 12.1.3 and Ghost Tool 4.2.0 sou
 | [Anim Assist 12.1.3](../anim_assist/AnimAssist_User_Manual.md) / [PDF](../anim_assist/AnimAssist_User_Manual.pdf) | 144 | 426 | 474 | 531 | 0 |
 | [Ghost Tool 4.2.0](../ghost_tool/GhostTool_User_Manual.md) / [PDF](../ghost_tool/GhostTool_User_Manual.pdf) | 37 | 43 | 10 | 209 | 0 |
 
-Each manual combines artist workflows with a full source reference. The counts include source-defined internal commands, operator arguments, user settings, and stored-record fields; they are not counts of separate visible buttons.
+Each manual combines artist workflows with a full source reference. Every PDF page has a footer number, and every contents entry has a clickable chapter link and its printed PDF page number. The builder recalculates those page references until pagination is stable and saves the same references in the Markdown source. The counts include source-defined internal commands, operator arguments, user settings, and stored-record fields; they are not counts of separate visible buttons.
 
 An AST inventory of the shipped Python modules, excluding tests, was compared with the manuals. Every inventoried command ID, help-topic ID, and property definition is represented. Every command ID and help-topic ID also appears in the searchable PDFs. The [coverage manifest](coverage.json) records inventory entries and source/manual hashes. All PDF pages were rendered for visual review; checks also cover text bounds, empty pages, contents destinations, and metadata. Rebuild the PDFs with `python docs/build_current_guides.py` using ReportLab.
 

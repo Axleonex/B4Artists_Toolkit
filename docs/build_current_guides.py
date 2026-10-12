@@ -45,6 +45,7 @@ class ManualDocument(SimpleDocTemplate):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.heading_keys = {}
+        self.heading_pages = {}
 
     def afterFlowable(self, flowable):
         if not isinstance(flowable, Paragraph) or not flowable.style.name.startswith("Heading"):
@@ -55,12 +56,23 @@ class ManualDocument(SimpleDocTemplate):
         duplicate = self.heading_keys.get(slug, 0)
         self.heading_keys[slug] = duplicate + 1
         key = slug + (f"-{duplicate}" if duplicate else "")
+        self.heading_pages[key] = self.page
         self.canv.bookmarkPage(key)
         self.canv.addOutlineEntry(heading, key, level=max(0, level), closed=level > 0)
 
 
-def build(source):
+def number_contents(text, pages):
+    """Keep the editable contents links aligned with printed PDF pagination."""
+    def entry(match):
+        label, key = match.group(1), match.group(2)
+        return f"- [{label}](#{key}) (PDF page {pages.get(key, '?')})"
+    return re.sub(r"^- \[([^\]]+)\]\(#([^)]+)\)(?: \(PDF page [\d?]+\))?[ \t]*$",
+                  entry, text, flags=re.M)
+
+
+def build(source, pages=None):
     text = source.read_text(encoding="utf-8")
+    text = number_contents(text, pages or {})
     title = text.splitlines()[0].removeprefix("# ")
     styles = getSampleStyleSheet()
     font_root = Path("C:/Windows/Fonts")
@@ -119,9 +131,19 @@ def build(source):
                             topMargin=42, bottomMargin=48, title=title,
                             author="B4Artists Tools", subject="Complete feature and settings manual")
     doc.build(story, onFirstPage=footer, onLaterPages=footer)
-    print(output)
+    return doc.heading_pages
 
 
 if __name__ == "__main__":
     for guide in GUIDES:
-        build(guide)
+        pages = {}
+        for attempt in range(5):
+            updated = build(guide, pages)
+            if updated == pages:
+                guide.write_text(number_contents(guide.read_text(encoding="utf-8"), pages),
+                                 encoding="utf-8")
+                print(guide.with_suffix(".pdf"))
+                break
+            pages = updated
+        else:
+            raise RuntimeError(f"Contents pagination did not converge: {guide}")

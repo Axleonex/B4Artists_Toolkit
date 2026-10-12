@@ -1638,11 +1638,11 @@
       "anim_assist/ui/scope_ui.py": "abfef2e81d059b8d1099863a4ed646dab0f0e0147c6bfde84962bc73329aedbe",
       "anim_assist/ui/ui_helpers.py": "4eb713311f1b0726373685cb9da359f19f4f9563de050040d79364ca3b9a393b"
     },
-    "manual_sha256": "3ad585d71c30ee3dd45f630cfa74c9a4d57c859a19a2f84f7b62e04c828d534b",
+    "manual_sha256": "37c938eb618378f09b6907dd406707501e19a5d822163194d1da4b0036e4d892",
     "pdf": {
       "path": "docs/anim_assist/AnimAssist_User_Manual.pdf",
       "pages": 144,
-      "sha256": "f333b2cdd0f2551f4a18596a2b7f491e5fff76e2beae9449aaa7b7084a8f5591"
+      "sha256": "addf451d8c9d802d9d7f6ea17d8168036c8d5adfe9f0d99f1b831a489f850596"
     }
   },
   "ghost_tool": {
@@ -1955,11 +1955,11 @@
       "ghost_tool/utils.py": "8a08eac442b078f1fd4fe3c936ef12852ea27e5842ba274def0f93b97f53629f",
       "ghost_tool/viewport_draw.py": "d688847ee25f17debab55b3b303af0c2a5cd5ad641f774fb9d173c1a9533a5d6"
     },
-    "manual_sha256": "8f2f1aba49402630fe94efdd88eb45b09ac30d5e860a5b0350acbe4f8889ff3a",
+    "manual_sha256": "44885e9df9d7d382474fdeee4916f682cfa170d76b571515e023d74643fa3e1d",
     "pdf": {
       "path": "docs/ghost_tool/GhostTool_User_Manual.pdf",
       "pages": 37,
-      "sha256": "d91674041b40f675c1c47be9ce7397a9bd8ae32049844bff32d5142b0cd0f7aa"
+      "sha256": "5c92fd11b3a9a1550313faa5378c3712f42944d240895a6e45fe33885fbbb5b1"
     }
   }
 }
