@@ -26,12 +26,12 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.1.3 | [b4_anim_assist_v12.1.3.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.3/b4_anim_assist_v12.1.3.zip) |
-| Ghost Tool 4.2.6 (prerelease) | [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip) |
+| Ghost Tool 4.2.6 | [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip) |
 | BoneCraft 9.2.0 (optional) | [BoneCraft-BFA-9.2.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.0/BoneCraft-BFA-9.2.0.zip) |
 
-Anim Assist 12.1.3 passes its recorded host checks. BoneCraft 9.2.0 adds the complete starter catalog and passes its [recorded host and native viewport checks](docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md). Ghost Tool 4.2.6 is a prerelease with the persistent toolbar, shared feature options and cached visibility controls. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
+Anim Assist 12.1.3 passes its recorded host checks. BoneCraft 9.2.0 adds the complete starter catalog and passes its [recorded host and native viewport checks](docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md). Ghost Tool 4.2.6 includes the persistent toolbar, shared feature options and cached visibility controls. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
 
-See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The current [Ghost Tool 4.2.6 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6) includes the matching ZIP and PDF guide. Earlier releases remain available as history.
+See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The current [Ghost Tool 4.2.6 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6) includes the matching ZIP and PDF guide. Earlier releases remain available as history.
 
 The [Ghost toolbar guide](docs/ghost_tool/toolbar/README.md) covers the current 4.2.6 package. Earlier archives and their verification reports remain available as history.
 
