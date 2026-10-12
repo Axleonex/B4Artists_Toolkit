@@ -5,7 +5,7 @@ Two files:
 - `CrescentRose_parts.blend` — the weapon prepared as 15 part objects, ready for **Add Parts from Selection**. Start the tutorial here.
 - `CrescentRose_Mechanisms.blend` — the finished rig: eight hinges, three slides, a telescope, a piston and a follow, two Sequences (`Scythe to Rifle`, `Rifle to Compact`) and three Forms (`Scythe`, `Rifle`, `Compact`). Open it, select the armature "Mechanism Rig", and use **4. Controls** in the BoneCraft tab → Mechanisms.
 
-The English tutorial that builds it, with a screenshot for every step: [manual chapter 12](../../docs/manual/en/12-crescent-rose.md). The English walkthrough was replayed with BoneCraft 9.1.2 in Bforartists 5.2.0, including eight illustrated FBX preparation steps and 30 Mechanisms steps. Chinese, French, Japanese, Korean, Portuguese and Spanish tutorial editions are deferred until the completed English result is approved; see [docs/README.md](../../docs/README.md) for the existing manual editions.
+The English tutorial that builds it, with a screenshot for every step: [manual chapter 12](../../docs/manual/en/12-crescent-rose.md). The English walkthrough was replayed with BoneCraft 9.1.2 in Bforartists 5.2.0, including eight illustrated FBX preparation steps and 30 Mechanisms steps. Chinese, French, Japanese, Korean, Portuguese and Spanish editions now include this tutorial with translated text and captions, reusing the English screenshots. See [docs/README.md](../../docs/README.md) for all editions.
 
 Enable BoneCraft 9.1.2 for the Mechanisms controls. Both files contain 12 packed 1024 by 1024 textures. The prepared file is ordinary mesh data; the finished rig loads without enabling Auto Run Python Scripts.
 

@@ -1,116 +1,124 @@
 # Soluções rápidas e glossário
 
-[← Sumário](index.md)
+[← Conteúdo](index.md)
 
 ## Índice de soluções rápidas
 
-Use esta seção quando algo der errado e você precisar da resposta rápido.
+Use esta seção quando algo der errado e você precisar de uma resposta rápida.
 
-| Problema | Onde olhar |
+|Problema|Onde procurar|
 |---|---|
-| O envio falha — ossos não reconhecidos | [Guia 4](02-guides-a.md#guia-4-corrija-os-nomes-dos-ossos-do-seu-avatar) + [VRChat Naming Extras](08-vrchat.md#vrchat-naming-extras-extras-de-nomes-do-vrchat) |
-| Avatar em pose T / não acompanha o movimento | [Guia 5](02-guides-a.md#guia-5-mapeie-seu-avatar-para-o-sistema-corporal-do-vrchat) + [Configurar Ossos Humanóides](08-vrchat.md#configurar-ossos-humanóides) |
-| A malha se deforma de um jeito estranho / a pele estica | [Transferência de peso](05-rig-tools.md#transferência-de-peso) + [Espelho de Peso](05-rig-tools.md#espelho-de-peso), ou recalcule com o [Recálculo automático de pesos de ossos](05-rig-tools.md#recálculo-automático-de-pesos-de-ossos) |
-| Um lado do corpo tem pesos diferentes | [Espelho de Peso](05-rig-tools.md#espelho-de-peso) |
-| O cabelo atravessa a cabeça | [Guia 6, passo 5](02-guides-a.md#passo-5--adicionar-colisores-recomendado) — adicione colisores |
-| A física do cabelo não se mexe | [Guia 6](02-guides-a.md#guia-6-adicione-física-de-cabelo) — confira a detecção de cadeias e o preset de PhysBone |
-| A roupa atravessa o corpo | [Guia 7](02-guides-a.md#guia-7-anexe-roupas-que-se-movem-com-seu-corpo) — execute **Detectar colisões** |
-| A sincronia labial não funciona | [Guia 8](03-guides-b.md#guia-8-configure-a-sincronia-labial) + [VRChat Viseme Mapping](08-vrchat.md#vrchat-viseme-mapping-mapeamento-de-visemas-do-vrchat) |
-| O avatar tem desempenho Very Poor | [Guia 9](03-guides-b.md#guia-9-melhore-o-desempenho-do-seu-avatar) + [Verificar Desempenho](08-vrchat.md#verificar-desempenho) |
-| A importação de VRM falha | [Guia 2, passo 1](02-guides-a.md#passo-1--instalar-o-add-on-vrm) — instale o add-on VRM |
-| A importação de MMD falha | [Guia 3, passo 1](02-guides-a.md#passo-1--instalar-o-mmd_tools) — instale o mmd_tools |
-| O validador de rig mostra erros | [Validador de Rig](05-rig-tools.md#validador-de-rig) — execute a validação e siga as mensagens |
-| Os ossos sumiram / não dá para ver nenhum osso | [Coleções de ossos](05-rig-tools.md#coleções-de-ossos) → **Show All Collections** (mostrar todas as coleções) |
-| Não encontra os painéis do BoneCraft | BoneCraft e Rig Builder ficam na Tool Shelf da esquerda (pressione T), CATS na barra lateral da direita (pressione N) — veja [Onde fica cada coisa](01-start.md#onde-fica-cada-coisa) |
-| Uma aba está do lado errado | Preferências → Add-ons → BoneCraft → Tabs → Left (esquerda) ou Right (direita) |
-| Exportação bloqueada: ossos humanoides informados como ausentes embora existam | Execute **Mapear Tudo Automaticamente** e depois **Fix Humanoid Map** (corrigir mapa humanoide) na verificação da seção VRM / VRoid. Se um osso obrigatório realmente não existe, o rig precisa tê-lo primeiro: veja o [guia 5](02-guides-a.md#guia-5-mapeie-seu-avatar-para-o-sistema-corporal-do-vrchat) |
-| O FBX exportado mostra formas auxiliares ou tubos gigantes | Deixe **Helper Meshes** (malhas auxiliares) desativado, a menos que você precise de malhas de controle ou de formas personalizadas |
-| O Unity ou o Unreal importam materiais cinza | Exporte com **Embed Textures** (incorporar texturas) ativado e depois use as opções de importação/extração de materiais do Unity ou a importação de materiais FBX do Unreal |
-| Os pesos estão todos nos ossos errados | Execute de novo **Gerar rig** do assistente, use a [Transferência de peso](05-rig-tools.md#transferência-de-peso), ou **Smart Automatic Weights** (pesos automáticos inteligentes) na aba CATS |
-| Dois rigs precisam virar um | [Guia 11: junte dois rigs](03-guides-b.md#guia-11-junte-dois-rigs) |
-| Uma forma corretiva não liga | Confira o eixo do osso e o ângulo em [Shape keys corretivos](05-rig-tools.md#shape-keys-corretivos) |
-| A animação fica errada em outro rig | [Redirecionar](05-rig-tools.md#redirecionar) — confira o mapeamento de ossos |
-| Uma ferramenta do CATS avisa "Run Fix Model first" | Execute **Corrigir Modelo** — [O pipeline do CATS](04-cats-pipeline.md) |
-| A boca rasga ou se parte ao falar | **Corrigir Modelo** foi pulado — execute de novo a partir da fase 1 — [Guia 13, fase 1](03-guides-b.md#fase-1--corrigir-modelo) |
-| Os olhos do avatar ficam travados olhando para baixo no VRChat | O rastreamento ocular foi executado antes de **Corrigir Modelo** — execute de novo a partir de **Corrigir Modelo** — [CATS: Rastreamento Ocular](09-cats.md#rastreamento-ocular) |
-| Um shape key faz a malha explodir quando acionado | **Pose para Shape Key** foi executado antes de **Corrigir Modelo** — execute de novo a partir de **Corrigir Modelo** — [CATS: Pose e Shape Keys](09-cats.md#pose-e-shape-keys) |
-| O avatar aparece com o tamanho errado no VRChat | As transformações foram aplicadas antes de o pipeline terminar — reimporte do arquivo de origem e recomece em **Corrigir Modelo** |
-| Os nomes dos ossos estão em japonês / chinês / coreano | [CATS: Traduzir Nomes de Ossos](09-cats.md#traduzir-nomes-de-ossos) |
-| O avatar não tem sincronia labial nem shape keys de boca | [CATS: Visemas](09-cats.md#visemas) — gere 15 visemas a partir de 3 formas base |
-| Um mecanismo mostra "changed by hand" | [Mechanisms (mecanismos)](07-mechanisms.md) — use **Keep mine** (manter o meu) ou **Restaurar** |
+|Falha no upload — ossos não reconhecidos|[Guia 4](02-guides-a.md#guia-4-corrija-os-nomes-dos-ossos-do-seu-avatar) + [Extras de nomenclatura VRChat](08-vrchat.md#vrchat-naming-extras-extras-de-nomes-do-vrchat) |
+|Avatar em pose T/não rastreia movimento|[Guia 5](02-guides-a.md#guia-5-mapeie-seu-avatar-para-o-sistema-corporal-do-vrchat) + [Configurar ossos humanóides](08-vrchat.md#configurar-ossos-humanóides) |
+|Malha deformando-se estranhamente/estiramento da pele|[Transferência de peso](05-rig-tools.md#transferência-de-peso) + [Espelho de peso](05-rig-tools.md#espelho-de-peso) ou recalcular com [Recálculo automático do peso ósseo](05-rig-tools.md#recálculo-automático-de-pesos-de-ossos) |
+|Um lado do corpo tem pesos diferentes|[Espelho de peso](05-rig-tools.md#espelho-de-peso) |
+|Grampos de cabelo na cabeça|[Guia 6, Etapa 5](02-guides-a.md#passo-5--adicionar-colisores-recomendado) – adicionar colisores|
+|A física do cabelo não se move|[Guia 6](02-guides-a.md#guia-6-adicione-física-de-cabelo) – verifique a detecção de cadeia e a predefinição PhysBone|
+|Prendedores de roupas pelo corpo|[Guia 7](02-guides-a.md#guia-7-anexe-roupas-que-se-movem-com-seu-corpo) - execute **Detect Collisions** |
+|A sincronização labial não funciona|[Guia 8](03-guides-b.md#guia-8-configure-a-sincronia-labial) + [VRChat Mapeamento de Visema](08-vrchat.md#vrchat-viseme-mapping-mapeamento-de-visemas-do-vrchat) |
+|Avatar tem desempenho muito ruim|[Guia 9](03-guides-b.md#guia-9-melhore-o-desempenho-do-seu-avatar) + [Verifique o desempenho](08-vrchat.md#verificar-desempenho) |
+|Falha na importação de VRM |[Guia 2, Etapa 1](02-guides-a.md#passo-1--instalar-o-add-on-vrm) — instale o complemento VRM |
+|Falha na importação de MMD |[Guia 3, Etapa 1](02-guides-a.md#passo-1--instalar-o-mmd_tools) – instalar mmd_tools|
+|O validador de rig mostra erros|[Validador de plataforma](05-rig-tools.md#validador-de-rig) — execute a validação e siga as mensagens|
+|Ossos desapareceram / não consigo ver nenhum osso|[Coleções de Ossos](05-rig-tools.md#coleções-de-ossos) → **Show All Collections** |
+|Não consigo encontrar os painéis de BoneCraft |BoneCraft e Rig Builder estão na prateleira de ferramentas esquerda (pressione T), CATS na barra lateral direita (pressione N) - consulte [Onde as coisas estão](01-start.md#onde-fica-cada-coisa) |
+|Quero um exemplo completo de Mecanismos|[Tutorial: Crescent Rose](12-crescent-rose.md) — 8 etapas de preparação e 30 etapas de mecanismos com capturas de tela e o arquivo finalizado em `examples/crescent-rose/` |
+|Uma guia está do lado errado|Preferências → Complementos → BoneCraft → Guias → Esquerda ou Direita|
+|As seções de BoneCraft estão faltando em Propriedades → Cena|Preferências → Complementos → BoneCraft → Guias → Propriedades da cena → Mostrar; azul significa ligado. Verifique também os pacotes de ferramentas em Ferramentas|
+|Quero ocultar BoneCraft em Propriedades → Cena|Desative Propriedades da cena → Mostrar em Preferências → Guias. Ele deixa as guias da janela de visualização e a guia de dados da armadura sozinhas|
+|Uma ferramenta é executada antes que eu possa escolher suas opções|Na versão 9.1, ajuste suas opções imediatamente depois no painel Ajustar última operação da viewport, antes de executar outra operação|
+|Colocar marcadores de rig não coloca um marcador|Inicie o Auto-Rig Wizard, vá para uma etapa do marcador, use o Object Mode e clique na malha selecionada do assistente - consulte [Construtor de plataforma](06-rig-builder.md#assistente-auto-rig) |
+|O Build Mechanism não sabe quais peças usar|Adicione peças da seleção primeiro, selecione o rig do mecanismo ou uma de suas peças, escolha o tipo no cabeçalho da ferramenta e clique na primeira peça - consulte [Mecanismos](07-mechanisms.md#articulações-e-ligações-um-exemplo-de-cada) |
+|Exportação bloqueada: ossos humanóides dados como desaparecidos, embora existam|Execute **Auto-Map All** e, em seguida,**Fix Humanoid Map** no lint da seção VRM / VRoid. Se um osso necessário realmente não existir, o rig precisa dele primeiro: consulte [Guia 5](02-guides-a.md#guia-5-mapeie-seu-avatar-para-o-sistema-corporal-do-vrchat) |
+|FBX exportado mostra formas ou tubos auxiliares gigantes|Mantenha **Helper Meshes** desligado, a menos que você precise de controle ou malhas de formato personalizado|
+|Unity ou Unreal importa materiais cinzentos|Exporte com **Embed Textures** ativado e, em seguida, use as opções de importação/extração de material do Unity ou a importação de material FBX do Unreal|
+|Os pesos estão todos nos ossos errados|Execute novamente o assistente Generate Rig, use [Transferência de peso](05-rig-tools.md#transferência-de-peso) ou **Smart Automatic Weights** na guia CATS |
+|Duas rigs precisam ser uma|[Guia 11: Mesclar duas plataformas](03-guides-b.md#guia-11-junte-dois-rigs) |
+|Forma corretiva não liga|Verifique o eixo e o ângulo do osso em [Chaves de forma corretivas](05-rig-tools.md#shape-keys-corretivos) |
+|A animação parece errada em um rig diferente|[Redirecionar](05-rig-tools.md#redirecionar) — verifique o mapeamento ósseo|
+|Uma ferramenta CATS avisa "Execute o modelo de correção primeiro"|Executar modelo de correção — [O gasoduto CATS](04-cats-pipeline.md) |
+|A boca se rasga ou se divide ao falar|O modelo de correção foi ignorado — execute novamente a partir da Fase 1 — [Guia 13, Fase 1](03-guides-b.md#fase-1--corrigir-modelo) |
+|Os olhos do Avatar ficaram olhando para baixo em VRChat |O rastreamento ocular foi executado antes do modelo de correção - executado novamente a partir do modelo de correção - [CATS: rastreamento ocular](09-cats.md#rastreamento-ocular) |
+|Shape key faz a malha explodir quando acionada|Pose to Shape Key foi executado antes do modelo de correção - executado novamente a partir do modelo de correção - [CATS: Chaves de pose e forma](09-cats.md#pose-e-shape-keys) |
+|O avatar aparece no tamanho errado em VRChat |As transformações foram aplicadas antes da conclusão do pipeline – reimporte do arquivo de origem e reinicie do Fix Model|
+|Os nomes dos ossos são japoneses/chineses/coreanos|[CATS: Traduzir nomes de ossos](09-cats.md#traduzir-nomes-de-ossos) |
+|Avatar não tem sincronização labial nem teclas de formato de boca|[CATS: Visemas](09-cats.md#visemas) — gera 15 visemas a partir de 3 formatos de base|
+|Um mecanismo mostra "alterado manualmente"|[Mecanismos](07-mechanisms.md) — use **Keep mine** ou**Restore** |
 
 ## Glossário
 
-**Armadura (Armature):** a palavra do Bforartists para um esqueleto: um conjunto de ossos que pode receber poses e ser animado.
+**Ajustar última operação:** O painel da janela de visualização para alterar as opções da operação que você acabou de executar. Muitas ferramentas BoneCraft 9.1 são executadas primeiro e apresentam suas opções aqui; ajuste-os antes de executar outra operação.
 
-**Blend shape:** veja Shape key.
+**Armature:** Bforartists ' palavra para esqueleto: um conjunto de ossos que podem ser colocados e animados.
 
-**Osso (Bone):** um segmento de um esqueleto. Os ossos formam uma hierarquia (pai → filho) em que os ossos filhos seguem os pais.
+**Forma de mesclagem:** Consulte Chave de forma.
 
-**Coleção de ossos (Bone collection):** um grupo de ossos com nome. Você pode mostrar ou ocultar uma coleção inteira de uma vez.
+**Osso:** Um segmento de um esqueleto. Os ossos formam uma hierarquia (pai → filho) na qual os ossos filhos seguem seus pais.
 
-**CATS:** as ferramentas do CATS: preparação de modelos para o VRChat com um pipeline guiado (limpeza, visemas, rastreamento ocular, transformações). Elas ficam na aba CATS.
+**Coleção de ossos:** Um grupo nomeado de ossos. Você pode mostrar ou ocultar uma coleção inteira de uma só vez.
 
-**Pipeline do CATS (CATS pipeline):** a ordem em seis fases das ferramentas do CATS: Corrigir Modelo → Atlas de Materiais → Visemas → Rastreamento Ocular → Pose para Shape Key → Aplicar transformações. As ferramentas avisam quando uma fase anterior da qual dependem não foi feita.
+**CATS:** As ferramentas CATS: preparação de modelo para VRChat com um pipeline guiado (limpeza, visemas, rastreamento ocular, transformações). Eles estão na guia CATS.
 
-**Shape key corretivo (Corrective shape key):** um shape key que liga quando um osso atinge um ângulo, para corrigir a malha em poses extremas.
+**Tubulação CATS:** A ordem de seis fases das ferramentas CATS: Fix Model → Material Atlas → Visemes → Eye Tracking → Pose to Shape → Apply Transforms. As ferramentas avisam quando uma fase anterior da qual dependem não foi concluída.
 
-**Osso de deformação (Deform bone):** um osso que move a malha. Nem todo osso deforma; alguns são só controles.
+**Chave de forma corretiva:** uma chave de forma que é ativada quando um osso atinge um ângulo, para corrigir a malha em poses extremas.
 
-**Rastreamento ocular (Eye tracking):** a ferramenta do CATS que configura os ossos dos olhos (`LeftEye`, `RightEye`) e as restrições de rotação que o VRChat usa para mover os olhos.
+**Deformar osso:** Um osso que move a malha. Nem todo osso se deforma; alguns são apenas controles.
 
-**FBT (Full Body Tracking):** um recurso do VRChat que rastreia o corpo inteiro com hardware extra (como Vive Trackers), incluindo quadril e pés. **Corrigir FBT** ajusta o osso raiz para isso.
+**Rastreamento ocular:** a ferramenta CATS que configura os ossos oculares (`LeftEye`, `RightEye` ) e as restrições de rotação que VRChat usa para mover os olhos.
 
-**FBX:** um formato de arquivo que leva modelos 3D, esqueletos e animações entre programas. O formato padrão para o VRChat.
+**FBT (Full Body Tracking):** Um recurso VRChat que rastreia todo o seu corpo com hardware extra (como Vive Trackers), incluindo quadris e pés. Fix FBT ajusta o osso da raiz para isso.
 
-**Corrigir Modelo (Fix Model):** a limpeza do CATS: vértices duplicados, geometria solta e normais erradas. Sempre o primeiro passo do CATS.
+**FBX:** Um formato de arquivo que transporta modelos 3D, esqueletos e animações entre programas. O formato padrão para VRChat.
 
-**FK (cinemática direta, Forward Kinematics):** fazer a pose girando cada osso de uma cadeia por vez: ombro, depois cotovelo, depois pulso. Natural para poses amplas do corpo.
+**Modelo de correção:** A limpeza CATS: vértices duplicados, geometria solta e normais ruins. Sempre o primeiro passo CATS.
 
-**IK (cinemática inversa, Inverse Kinematics):** fazer a pose posicionando a ponta de uma cadeia (uma mão ou um pé); os ossos do meio acompanham. Natural para posicionar mãos e pés com precisão.
+**FK (Cinemática direta):** Posar girando cada osso de uma corrente por vez: ombro, depois cotovelo e depois punho. Natural para poses de corpo largo.
 
-**Humanoide (Humanoid):** o sistema de avatares do VRChat que mapeia os ossos para slots padrão do corpo, para que todo avatar use os mesmos controles de movimento.
+**IK (Cinemática Inversa):** Posar colocando a ponta de uma corrente (uma mão ou um pé); os ossos intermediários seguem. Natural para posicionamento preciso das mãos e dos pés.
 
-**Mecanismo (Mechanism):** um rig para um acessório ou uma peça de máquina: uma articulação (Hinge, Slide, Telescope) ou uma ligação (Piston, Gear Link, Follow), construída com ossos e restrições comuns. Veja [Mechanisms (mecanismos)](07-mechanisms.md).
+**Humanóide:** sistema de avatar de VRChat que mapeia ossos para slots corporais padrão, de modo que cada avatar usa os mesmos controles de movimento.
 
-**Malha (Mesh):** a superfície 3D que forma o corpo visível do seu avatar.
+**Mecanismo:** Um rig para um suporte ou peça de máquina: uma junta (dobradiça, corrediça, telescópio) ou um elo (pistão, elo de engrenagem, seguimento), construído a partir de ossos e restrições comuns. Consulte [Mecanismos](07-mechanisms.md).
 
-**MMD (MikuMikuDance):** um software gratuito de animação 3D popular no Japão e na comunidade de anime. Usa arquivos de modelo `.pmx` e arquivos de animação `.vmd`.
+**Malha:** a superfície 3D que compõe o corpo visível do seu avatar.
 
-**Morph target:** veja Shape key.
+**MMD (MikuMikuDance):** Software de animação 3D gratuito, popular no Japão e na comunidade de anime. Usa arquivos de modelo `.pmx` e arquivos de animação `.vmd`.
 
-**Registro de Operações (Operation Ledger):** a lista do CATS com cada operação que você executou, com a hora e o resultado.
+**Alvo de transformação:** Consulte Chave de forma.
 
-**PhysBone:** o componente do VRChat que faz os ossos balançarem, quicarem e colidirem. Usado em cabelo, caudas e acessórios pendurados.
+**Ledger de operações:** a lista CATS de todas as operações que você executou, com seu tempo e resultado.
 
-**Status do Pipeline (Pipeline Status):** a lista do CATS com as seis fases, com uma marca em cada fase concluída.
+**PhysBone:** Componente do VRChat que faz os ossos balançarem, saltarem e colidirem. Usado para cabelos, caudas e acessórios pendurados.
 
-**PMX:** o principal formato de modelo 3D do MikuMikuDance.
+**Status do pipeline:** A lista CATS das seis fases, com uma marca de seleção para cada fase concluída.
 
-**Modo Pose (Pose Mode):** o modo para fazer poses e animar ossos. Selecione a armadura e pressione Ctrl+Tab, ou use o menu suspenso de modos no canto superior esquerdo da viewport.
+**PMX:** Formato principal do modelo 3D do MikuMikuDance.
 
-**Rig / rigging:** construir um esqueleto dentro de um modelo 3D e ligar a malha a ele para que possa receber poses e ser animado.
+**Modo Pose:** O modo para posicionar e animar ossos. Selecione a armadura e pressione Ctrl+Tab ou use o menu suspenso de modo no canto superior esquerdo da janela de visualização.
 
-**Shape key:** uma versão salva de uma malha em uma posição deformada. Os shape keys se misturam em intensidades diferentes; eles movimentam expressões faciais, sincronia labial e mudanças de forma do corpo.
+**Rig / rigging:** Construir um esqueleto dentro de um modelo 3D e conectar a malha a ele para que possa ser posado e animado.
 
-**SDK (Software Development Kit):** no VRChat, o VRChat Creator Companion e suas ferramentas do Unity para enviar avatares.
+**Chave de forma:** uma versão salva de uma malha em uma posição deformada. As chaves de forma se misturam em diferentes intensidades; eles conduzem expressões faciais, sincronização labial e formas corporais.
 
-**Spline IK:** uma cadeia de ossos que segue uma curva. Usada em caudas, tentáculos, cabelos longos e colunas.
+**SDK (Kit de desenvolvimento de software):** Para VRChat, o VRChat Creator Companion e suas ferramentas Unity para upload de avatares.
 
-**Pose T (T-pose):** uma pose de referência: em pé, com os braços estendidos para os lados.
+**Spline IK:** Uma cadeia de ossos que segue uma curva. Usado para caudas, tentáculos, cabelos longos e espinhos.
 
-**Tool Shelf:** o painel do lado esquerdo da viewport 3D (pressione T), onde ficam por padrão as abas BoneCraft e Rig Builder.
+**T-pose:** Uma pose de referência: ficar em pé com os braços estendidos para os lados.
 
-**Vértice (Vertex):** um único ponto no espaço 3D. As malhas são feitas de muitos vértices ligados por arestas e faces.
+**Prateleira de ferramentas:** O painel no lado esquerdo da janela de visualização 3D (pressione T), onde as guias BoneCraft e Rig Builder estão por padrão.
 
-**Grupo de vértices (Vertex group):** um conjunto de vértices com nome; define quais vértices um osso move.
+**Vértice:** Um único ponto no espaço 3D. As malhas são feitas de muitos vértices unidos por arestas e faces.
 
-**Visema (Viseme):** uma forma de boca para um som da fala. O VRChat usa 15 visemas para a sincronia labial.
+**Grupo de vértices:** Um conjunto nomeado de vértices; ele define quais vértices um osso se move.
 
-**Peso / pintura de pesos (Weight / weight painting):** valores de 0.0 a 1.0 que dizem com que força cada osso move cada vértice. A pintura de pesos é o jeito visual de ajustá-los.
+**Visema:** formato de boca para um som de fala. VRChat usa 15 visemas para sincronização labial.
 
-**Assistente (Wizard):** o Assistente Auto-Rig do Construtor de Rig: posiciona marcadores na sua malha e constrói o rig a partir deles.
+**Pintura de peso/peso:** Valores de 0,0 a 1,0 que dizem a força com que cada osso move cada vértice. A pintura de peso é a forma visual de ajustá-los.
 
-**Osso de peso zero (Zero-weight bone):** um osso que não move nenhum vértice. Ele custa desempenho sem mudar a aparência do avatar; **Corrigir Modelo** e o otimizador de desempenho os removem.
+**Assistente:** O Assistente Auto-Rig do Rig Builder: coloca marcadores em sua malha e constrói o rig a partir deles.
+
+**Osso de peso zero:** Um osso que não move nenhum vértice. Custa desempenho sem alterar a aparência do avatar; Fix Model e o otimizador de desempenho os removem.
 
 Próximo: [Novidades](11-whats-new.md)

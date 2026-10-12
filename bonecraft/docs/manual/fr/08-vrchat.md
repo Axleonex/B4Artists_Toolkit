@@ -1,188 +1,194 @@
 # Outils VRChat
 
-[← Sommaire](index.md)
+[← Contenu](index.md)
 
 ## Outils VRChat
 
-Les outils VRChat sont dans l'onglet **CATS** de la barre latérale de droite (touche **N**), dans la section **VRChat**. Ses sous-sections suivent l'ordre dans lequel vous en avez besoin : configuration VRChat (extras de nommage et os humanoïdes), corps et physique (cheveux, vêtements, visèmes), puis performances et export. La même section est toujours dans l'onglet **Scène** de l'éditeur **Propriétés**.
+Les outils VRChat se trouvent dans l'onglet **CATS** dans la barre latérale droite (appuyez sur**N**), dans la section**Avatar Tools**. Ses sous-sections couvrent les os humanoïdes, la physique des cheveux, la cartographie et l'exportation des visèmes. La section distincte**VRChat Tools** située en dessous regroupe les utilitaires Performance, Clothing et Naming. La même section se trouve dans l'onglet**Properties** de l'éditeur**Scene** tandis que Préférences → Onglets → Propriétés de la scène → Afficher est activé. Ce commutateur ne masque pas l'onglet de la fenêtre CATS.
 
 ---
 
 ### Configurer les Os Humanoïdes
 
-Mappe les os de votre squelette sur les emplacements humanoïdes de VRChat et vérifie le mappage.
+Cartographie les os de votre squelette sur les emplacements humanoïdes du VRChat et vérifie la cartographie.
 
-Voir le [guide 5 : mapper votre avatar sur le système corporel de VRChat](02-guides-a.md#guide-5--mapper-votre-avatar-sur-le-système-corporel-de-vrchat).
+Voir [Guide 5 : Mappez votre avatar sur le système corporel de VRChat](02-guides-a.md#guide-5-mapper-votre-avatar-sur-le-système-corporel-de-vrchat).
 
 ---
 
 ### Ajouter la Physique des Cheveux
 
-Configure des chaînes PhysBone sur les cheveux, les oreilles, les queues et les accessoires, avec des colliders.
+Installe des chaînes PhysBone sur les cheveux, les oreilles, les queues et les accessoires, avec des collisionneurs.
 
-Voir le [guide 6 : ajouter la physique des cheveux](02-guides-a.md#guide-6--ajouter-la-physique-des-cheveux).
+Voir [Guide 6 : Ajouter la physique des cheveux](02-guides-a.md#guide-6-ajouter-la-physique-des-cheveux).
 
 ---
 
 ### Attacher les Vêtements
 
-Fusionne les vêtements sur le squelette de votre avatar et transfère leurs poids.
+**Où le trouver :** Onglet CATS → Outils VRChat → Vêtements
 
-Voir le [guide 7 : attacher des vêtements qui bougent avec votre corps](02-guides-a.md#guide-7--attacher-des-vêtements-qui-bougent-avec-votre-corps).
+Fusionne les vêtements sur le squelette de votre avatar et transfère son poids.
+
+Voir [Guide 7 : Attachez des vêtements qui bougent avec votre corps](02-guides-a.md#guide-7-attacher-des-vêtements-qui-bougent-avec-votre-corps).
 
 ---
 
 ### VRChat Naming Extras (extras de nommage VRChat)
 
-**Ce qu'il fait :** détecte le style de nommage de votre squelette et renomme les os en masse.
+**Où le trouver :** Onglet CATS → Outils VRChat → Dénomination
 
-Voir le [guide 4 : corriger les noms d'os de votre avatar](02-guides-a.md#guide-4--corriger-les-noms-dos-de-votre-avatar).
+**Ce qu'il fait :** Détecte le style de dénomination de votre squelette et renomme les os en masse.
 
-**Outils par lot :** **Rechercher et remplacer**, **Ajouter un préfixe**, **Supprimer le préfixe**, **Ajouter un suffixe**, **Supprimer le suffixe** et **Remplacement par Regex**
+Voir [Guider 4 : Corrigez les noms d'os de votre avatar](02-guides-a.md#guide-4-corriger-les-noms-dos-de-votre-avatar).
+
+**Outils par lots :** **Find and Replace**,**Add Prefix**,**Remove Prefix**,**Add Suffix**,**Remove Suffix** et**Regex Replace**
 
 ---
 
 ### VRChat Viseme Mapping (mappage des visèmes VRChat)
 
-**Ce qu'il fait :** mappe les clés de forme de votre maillage sur les 15 visèmes de synchronisation labiale de VRChat.
+**Ce qu'il fait :** Mappe les clés de forme de votre maillage sur les 15 visèmes de synchronisation labiale de VRChat.
 
-Voir le [guide 8 : configurer la synchronisation labiale](03-guides-b.md#guide-8--configurer-la-synchronisation-labiale). Pour créer des visèmes que votre avatar n'a pas encore, voir [Outils CATS : Visèmes](09-cats.md#visèmes).
+Voir [Guider 8 : Configurer la synchronisation labiale](03-guides-b.md#guide-8-configurer-la-synchronisation-labiale). Pour créer des visèmes que votre avatar ne possède pas encore, voir [CATS Outils : Visèmes](09-cats.md#visèmes).
 
-**Les 15 emplacements de visèmes de VRChat :** `sil`, `PP`, `FF`, `TH`, `DD`, `kk`, `CH`, `SS`, `nn`, `RR`, `aa`, `E`, `I`, `O`, `U`
+**15 emplacements pour visèmes de VRChat  :** `sil`, `PP`, `FF`, `TH`, `DD`, `kk`, `CH`, `SS`, `nn`, `RR`, `aa`, `E`, `I`, `O`, `U`
 
 ---
 
 ### Vérifier les Performances
 
-**Ce qu'il fait :** mesure le rang de performance VRChat de votre avatar et propose des corrections.
+**Où le trouver :** Onglet CATS → Outils VRChat → Performances
 
-Voir le [guide 9 : améliorer les performances de votre avatar](03-guides-b.md#guide-9--améliorer-les-performances-de-votre-avatar).
+**Ce qu'il fait :** Mesure le classement des performances VRChat de votre avatar et propose des correctifs.
 
-**Niveaux de performance (du meilleur au pire) :** Excellent → Good → Medium → Poor → Very Poor
+Voir [Guide 9 : Améliorez les performances de votre avatar](03-guides-b.md#guide-9-améliorer-les-performances-de-votre-avatar).
 
-**Outils :**
-- **Calculate Performance Rank** (calculer le rang de performance) — le rang actuel, détaillé par polygones, maillages skinnés, emplacements de matériaux, os, PhysBones et contacts
-- **Supprimer les Os de Poids Zéro**, **Fusionner les maillages de même matériau**, **Supprimer les Clés de Forme Non Utilisées** et **Supprimer les Groupes de Sommets Non Utilisés** — les corrections de l'optimiseur (**Mode Hypothétique** montre ce qu'elles changeraient)
-- Décimation VRChat — réduit le nombre de polygones selon un ratio (**Aperçu** d'abord, puis **Appliquer**), en préservant les clés de forme
+**Niveaux de performances (du meilleur au pire) :** Excellent → Bon → Moyen → Mauvais → Très mauvais
+
+**Outils :**
+- **Calculate Performance Rank** — le rang actuel, avec une répartition par polygones, maillages skinnés, emplacements de matériaux, os, PhysBones et contacts
+- **Remove Zero-Weight Bones**,**Merge Same-Material Meshes**,**Remove Unused Shape Keys** et**Remove Unused Vertex Groups** — les correctifs de l'optimiseur (**What-If Mode** montre ce qu'ils changeraient)
+- Décimation VRChat  : réduit le nombre de polygones selon un rapport (**Preview** d'abord, puis**Apply** ), garantissant ainsi la sécurité des clés de forme.
 
 ---
 
 ### Exporter vers VRChat
 
-**Ce qu'il fait :** exporte votre avatar terminé en FBX pour le SDK VRChat dans Unity. Les clés de forme (blend shapes) sont conservées, sauf si **Remove Shape Keys** est activé.
+**Ce qu'il fait :** Exporte votre avatar terminé en tant que FBX pour le SDK VRChat dans Unity. Les clés de forme (mélange de formes) sont conservées sauf si**Remove Shape Keys** est activé.
 
-**Paramètres :**
-- **Folder** (dossier) — où va l'export
+**Paramètres :**
+- **Folder** — où va l'exportation
 - **Avatar** — le nom du fichier exporté
-- **Sidecar** — écrit aussi un fichier de réglages `.bfvrc` pour l'importateur Unity de BoneCraft
-- **Merge Meshes** (fusionner les maillages) — joint les maillages de la copie d'export en un seul
-- **Separate Clothing** (vêtements séparés) — garde les vêtements en maillages séparés
-- **Remove Shape Keys** (supprimer les clés de forme) — applique les clés de forme à la base de la copie d'export
-- **Embed Textures** (intégrer les textures) — emballe les textures dans le FBX, pour qu'Unity les trouve
-- **Helper Meshes** (maillages d'aide) — inclut les maillages cachés ou d'aide ; laissez-le désactivé pour les avatars normaux
+- **Sidecar** — écrit également un fichier de paramètres `.bfvrc` pour l'importateur BoneCraft de Unity.
+- **Merge Meshes** — joint les maillages de la copie d'exportation en un seul
+- **Separate Clothing** — conserve les vêtements sous forme de mailles séparées
+- **Remove Shape Keys** — applique les clés de forme à la base de la copie d'exportation
+- **Embed Textures** — regroupe les textures dans le FBX, afin que Unity les trouve
+- **Helper Meshes** — inclut des maillages cachés ou auxiliaires ; laissez-le désactivé pour les avatars normaux
 
-**Boutons :** **Exporter vers VRChat (Unity)**, **Générer le sidecar**, **Copier le chemin de l'importateur** (le chemin du script d'import Unity de BoneCraft), et **Vérifier / Préserver MToon** pour les matériaux VRM. La section répète aussi l'état humanoïde avec **Auto-Map Humanoid** (mapper l'humanoïde automatiquement), **Normalize Names** (normaliser les noms) et **Valider**.
+**Boutons :** **Export to VRChat (Unity)**,**Generate Sidecar**,**Copy Importer Path** (le chemin du script d'importation Unity de BoneCraft ) et**Check / Preserve MToon** pour les matériaux VRM. La section répète également le statut humanoïde avec**Auto-Map Humanoid**,**Normalize Names** et**Validate**.
 
 ---
 
 ### Nettoyage
 
-Le nettoyage du maillage avant l'export se fait dans les outils CATS : **Corriger le modèle**, **Joindre les Maillages** et **Appliquer Toutes les Transformations**. Voir [Outils CATS](09-cats.md).
+Le nettoyage du maillage avant l'exportation réside dans les outils CATS  : **Fix Model**,**Join Meshes** et**Apply All Transforms**. Voir [CATS Outils](09-cats.md).
 
 ---
 
 ## Pont VRM
 
-Les outils VRM sont dans l'onglet **CATS** → **Importer / Exporter** → **VRM / VRoid**. Ils ont besoin de l'add-on VRM ; la section l'installe (**Installation Automatique depuis GitHub**, **Installer depuis .zip sur Disque…**, **Ouvrir la Page des Extensions**).
+Les outils VRM se trouvent dans l'onglet **CATS** →**Import / Export** →**VRM / VRoid**. Ils ont besoin du module complémentaire VRM; la section l'installe (**Auto-Install Latest from GitHub**,**Install from.zip on Disk…**,**Open Extensions Page** ).
 
 ---
 
 ### Import VRM et VRoid
 
-**Ce qu'il fait :** importe des avatars `.vrm` (VRoid Studio, Virtual Cast et d'autres avatars VRM) avec leurs matériaux, leur squelette et leurs clés de forme.
+**Ce qu'il fait :** Importe les avatars `.vrm` (VRoid Studio, Virtual Cast et autres avatars VRM ) avec leurs matériaux, squelettes et clés de forme.
 
-- **Importer VRM…** — un fichier `.vrm`
-- **Import VRoid (.vroid / .zip)…** (importer VRoid) — un téléchargement VRoid Hub (`.zip`). Un projet VRoid Studio (`.vroid`) affiche une carte qui explique comment l'exporter d'abord en VRM.
+- **Import VRM…** — un fichier `.vrm`
+- **Import VRoid (.vroid /.zip)…** — un téléchargement du hub VRoid (`.zip` ). Un projet VRoid Studio (`.vroid` ) affiche une carte qui explique comment l'exporter vers VRM en premier.
 
 ---
 
 ### VRM Export (export VRM)
 
-**Ce qu'il fait :** exporte votre personnage riggé en VRM, ou au format d'une application cible.
+**Ce qu'il fait :** Exporte votre personnage truqué au format VRM ou au format d'une application cible.
 
-**Paramètres :**
-- **Folder** et **File** (fichier) — l'emplacement et le nom ; l'extension suit la cible
-- **Cible** — VRM 1.0, VRM 0.x, VRChat FBX, VSeeFace, Warudo ou Resonite
-- **Scope** (portée) — l'armature active, ou chaque armature avec des données VRM
-- Skip lint (ignorer la vérification) — exporter sans la vérification de la cible ; à n'utiliser que si vous comprenez le risque signalé
+**Paramètres :**
+- **Folder** et**File** — où il va et son nom ; l'extension suit la cible
+- **Target** — VRM 1.0, VRM 0.x, VRChat FBX, VSeeFace, Warudo ou Resonite
+- **Scope** — l'armature active ou chaque armature avec les données VRM
+- Skip Lint – exportation sans vérification de la cible ; à utiliser uniquement lorsque vous comprenez le risque signalé
 
-Cliquez sur **Exporter…**.
+Cliquez sur **Export…**.
 
 ---
 
 ### VRM Lint (vérification VRM)
 
-**Ce qu'il fait :** vérifie l'armature par rapport à la cible choisie avant l'export : mappage humanoïde, métadonnées VRM, visèmes de la cible, et attentes de l'application cible.
+**Ce qu'il fait :** Vérifie l'armature par rapport à la cible choisie avant l'exportation : cartographie humanoïde, métadonnées VRM, visèmes de la cible et attentes de l'application cible.
 
-**Vérifier maintenant** lance la vérification sans rien modifier. Les erreurs bloquent l'export, sauf si vous ignorez la vérification ; les avertissements expliquent ce que l'application cible peut encore importer, mais avec un moins bon fonctionnement.
+**Lint Now** exécute le contrôle sans rien modifier. Les erreurs bloquent l'exportation, sauf si vous ignorez les peluches ; les avertissements expliquent ce que l'application cible peut encore importer mais fonctionner moins bien.
 
-Si la vérification dit que des os humanoïdes manquent alors qu'ils existent, cliquez sur **Fix Humanoid Map** (corriger la carte humanoïde) : BoneCraft détecte de nouveau les emplacements humanoïdes et enregistre le mappage, sans renommer aucun os.
+Si la charpie indique que des os humanoïdes sont manquants alors qu'ils existent, cliquez sur **Fix Humanoid Map**  : BoneCraft détecte à nouveau les emplacements humanoïdes et enregistre le mappage, sans renommer aucun os.
 
-**Aussi ici :** **Convertir SpringBones → PhysBones** (physique des cheveux VRoid vers VRChat) et **Cartographier les Visèmes VRoid**.
+**Aussi ici :** **Convert SpringBones → PhysBones** (physique des cheveux VRoid à VRChat ) et**Map VRoid Visemes**.
 
 ---
 
 ## MMD Bridge (pont MMD)
 
-Les outils MMD sont dans l'onglet **CATS** → **Importer / Exporter** → **MMD / PMX**. Ils ont besoin de l'add-on mmd_tools ; la section l'installe (**Installation Automatique depuis GitHub**, **Install from .zip on Disk...** (installer depuis un .zip sur le disque)).
+Les outils MMD se trouvent dans l'onglet **CATS** →**Import / Export** →**MMD / PMX**. Ils ont besoin du module complémentaire mmd_tools ; la section l'installe (**Auto-Install Latest from GitHub**,**Install from.zip on Disk...** ).
 
 ---
 
 ### MMD Import (import MMD)
 
-- **Import PMX / PMD...** (importer PMX / PMD) — modèles MMD
-- **Import VMD Motion...** (importer un mouvement VMD) — animations MMD
-- **Import VPD Pose...** (importer une pose VPD) — poses MMD
+- **Import PMX / PMD...** — Modèles MMD
+- **Import VMD Motion...** — Animations MMD
+- **Import VPD Pose...** — MMD pose
 
 ---
 
 ### MMD Export (export MMD)
 
-**Paramètres :** le **Folder**, puis pour chaque format un nom de fichier et une portée (le modèle actif, ou chaque modèle MMD de la scène) : **PMX File** et **PMX Scope**, **VMD File** et **VMD Scope**, **VPD File** et **VPD Scope**.
+**Paramètres :** le**Folder**, puis pour chaque format un nom de fichier et une étendue (le modèle actif, ou chaque modèle MMD de la scène):**PMX File** et**PMX Scope**,**VMD File** et**VMD Scope**,**VPD File** et**VPD Scope**.
 
-**Boutons :** **Export PMX...** (exporter PMX), **Export VMD Motion...** (exporter un mouvement VMD) et **Export VPD Pose...** (exporter une pose VPD)
+**Boutons :** **Export PMX...**,**Export VMD Motion...** et**Export VPD Pose...**
 
-**Aussi ici :** **Convert Bone Names -> Unity** (convertir les noms d'os pour Unity) et **Convert Physics -> PhysBones** (convertir la physique en PhysBones).
+**Aussi ici :** **Convert Bone Names -> Unity** et**Convert Physics -> PhysBones**.
 
 ---
 
 ## Game Export (export pour jeux)
 
-**Ce qu'il fait :** exporte pour les moteurs de jeu avec un profil validé : Unreal (humanoïde ou universel), humanoïde Unity, humanoïde Godot, et FBX ou GLB génériques. Chaque correction dont le profil a besoin est affichée et n'est appliquée que lorsque vous cliquez dessus, jamais en silence.
+**Ce qu'il fait :** Exportations pour les moteurs de jeu avec un profil validé : Unreal (humanoïde ou universel), humanoïde Unity, humanoïde Godot et FBX ou GLB générique. Chaque correctif dont le profil a besoin est affiché et appliqué uniquement lorsque vous cliquez dessus, jamais silencieusement.
 
-**Paramètres :** le **Profile** (profil), l'**Animation** à inclure, **Root Motion** (mouvement de la racine), **Interpolation**, et la **T-Pose** utilisée pour l'export (par défaut une T-pose pour l'humanoïde Unity et VRChat).
+**Paramètres :** le**Profile**, le**Animation** à inclure, le**Root Motion**, le**Interpolation** et le**T-Pose** utilisé pour l'exportation (par défaut, une pose en T pour l'humanoïde Unity et le VRChat ).
 
-**Boutons :**
-- **Check for Export** (vérifier pour l'export) — vérifie le rig par rapport au profil et liste les constats
-- **Apply Transforms (Fix)** (appliquer les transformations (correction)) — l'une des corrections explicites que la vérification peut proposer
-- **Export (Profile)** (exporter (profil)) — exporte avec le profil
+**Boutons :**
+- **Check for Export** — vérifie l'installation par rapport au profil et répertorie les résultats
+- **Apply Transforms (Fix)** — l'un des correctifs explicites que le contrôle peut offrir
+- **Export (Profile)** — exporte avec le profil
 
-**Où le trouver :** onglet **CATS** → **Importer / Exporter** → **Game Export**
+**Où le trouver :** Onglet**CATS** →**Import / Export** →**Game Export**
 
 ---
 
 ## Tableau des tâches
 
-**Ce qu'il fait :** un résumé du rig actuel : un score de santé, des gains rapides, et une liste des tâches trouvées par BoneCraft (os humanoïdes manquants, noms non résolus, visèmes manquants, avertissements du validateur de rig, etc.), regroupées par catégorie. **Ouvrir la vérification de santé** ouvre le détail ; **Actualiser le tableau des tâches** vérifie de nouveau.
+**Ce qu'il fait :** Un résumé de la rig actuelle : un score de santé, des gains rapides et une liste des tâches BoneCraft trouvées (os humanoïdes manquants, noms non résolus, visèmes manquants, avertissements du validateur de rig, etc.), regroupées par catégorie.**Open Health Check** ouvre les détails ;**Refresh Task Board** vérifie à nouveau.
 
-**Où le trouver :** onglet **BoneCraft** → **Vue d'ensemble** → **Tableau des tâches**
+**Où le trouver :** Onglet**BoneCraft** →**Overview** →**Task Board**
 
 ---
 
 ### Inspecteur d'Os
 
-**Ce qu'il fait :** montre en détail l'os sélectionné (son nom, son parent, ses contraintes, ses propriétés personnalisées et ses drivers) et permet de modifier des propriétés simples sans passer en Mode Édition.
+**Ce qu'il fait :** Affiche l'os sélectionné en détail (son nom, son parent, ses contraintes, ses propriétés personnalisées et ses pilotes) et vous permet de modifier des propriétés simples sans passer en mode édition.
 
-**Où le trouver :** onglet **BoneCraft** → **Révision** → **Inspecteur d'Os**
+**Où le trouver :** Onglet**BoneCraft** →**Review** →**Bone Inspector**
 
-Suite : [Outils CATS](09-cats.md)
+Suivant: [CATS Outils](09-cats.md)

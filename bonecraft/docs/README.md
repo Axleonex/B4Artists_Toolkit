@@ -14,7 +14,9 @@
 
 The translations are machine-translated from the English edition.
 
-The English instructions have been checked against BoneCraft 9.1.2's packaged interface code. Chapter 12 has now been replayed in the isolated 9.1.2 host, with 52 annotated images, eight FBX preparation steps, 30 Mechanisms steps and validated example files. The completed English tutorial awaits owner confirmation before translation work. See the [English interface audit](reviews/english-manual-interface-9.1.2.md). The other six editions have 9.1.2 release notes, but their usage chapters still need the 9.1 interface updates. Chapter 12 (Crescent Rose) is currently available only in English. Use the English edition for the current controls and workflows.
+The English source and all six translated editions cover the BoneCraft 9.1.2 interface. Each edition contains the illustrated Simple Human/mannequin/Auto-Rig/IK-FK workshop and the Crescent Rose Mechanisms tutorial. The translated instructions, captions and image descriptions reuse the same 92 English screenshots and numbered callouts; control names are retained in English to match those images. Each PDF has page numbers and chapter ranges calculated for its own language.
+
+The translations are machine-generated and reviewed for technical terminology, structure, links and preserved settings. They are not certified professional translations. See the [English interface audit](reviews/english-manual-interface-9.1.2.md) and [translation validation report](reviews/manual-translations-9.1.2-2026-10-12.md).
 
 ## PDFs
 
@@ -29,6 +31,8 @@ The PDFs are written to the folder named by `DEFAULT_OUT` in the script (`--out`
 in the repository.
 
 ## Examples
+
+`../examples/mannequin/` — the Simple Human preview and completed Auto-Rig/IK-FK training examples.
 
 `../examples/crescent-rose/` — Crescent Rose rigged with Mechanisms, and the files the manual's chapter 12 tutorial starts from.
 

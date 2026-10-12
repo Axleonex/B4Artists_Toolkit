@@ -1,205 +1,349 @@
 # Mechanisms (mecanismos)
 
-[← Sumário](index.md)
+[← Conteúdo](index.md)
 
 ## O que o Mechanisms faz
 
-O Mechanisms transforma peças hard-surface em um rig mecânico que funciona: dobradiças, deslizadores, telescópios, pistões, engrenagens, seguidores e transformações inteiras tocadas por um único controle deslizante. Ele constrói ossos e restrições comuns do Blender, então você pode ver e mudar tudo o que ele cria, e o rig funciona no Blender sem scripts. As engines de jogo recebem os ossos `DEF-`. A exportação para engines do movimento com bake dos mecanismos virá depois (veja Limites desta versão).
+Os mecanismos transformam peças de superfície dura em um rig mecânico funcional: dobradiças,
+slides, telescópios, pistões, engrenagens, seguidores e transformações inteiras jogadas
+por um controle deslizante. Ele constrói ossos e restrições Blender comuns, para que você possa ver
+e mude tudo o que ele faz, e o rig funciona em Blender sem scripts.
+Os motores recebem os ossos `DEF-`. Exportação de movimento de mecanismo cozido para motores
+vem depois (veja Limites desta versão).
 
-O BoneCraft fornece as ferramentas, não uma arma. As peças, quem traz é você.
+BoneCraft envia as ferramentas, não uma arma. Você traz as peças.
+
+Um exemplo completo e funcional, com uma captura de tela para cada etapa, é [Tutorial: Crescent Rose com mecanismos](12-crescent-rose.md).
 
 Palavras usadas nos painéis e nesta página:
 
-| Palavra | Significado |
+|Palavra|Significado|
 |---|---|
-| *Peça* (Part) | Um item que se move como um bloco sólido: um objeto, ou um pedaço solto de uma malha. Uma peça pode ir montada sobre outra peça. |
-| *Articulação* (Joint) | Como uma peça pode se mover: Hinge (gira), Slide (desliza), Telescope (estende segmentos encaixados). |
-| *Ligação* (Link) | O que move uma peça por você: Piston, Gear Link, Follow. |
-| *Alça* (Handle) | O osso que você arrasta na viewport. Cada articulação tem uma. O valor dela também é um controle deslizante no painel. |
-| *Sequência* (Sequence) | Uma transformação tocada por um único controle deslizante, feita de etapas. |
-| *Forma* (Form) | Um conjunto salvo de valores de alças e sequências, como "Stowed" (guardado) ou "Rifle" (fuzil). |
+|*Parte*|Uma peça que se move como um bloco sólido: um objeto ou um pedaço solto de uma malha. Uma parte pode andar em outra parte.|
+|*Conjunto*|Como uma peça pode se mover: Dobradiça (gira), Slide (move), Telescópio (estende segmentos aninhados).|
+|*Link*|O que move uma peça para você: Pistão, Gear Link, Follow.|
+|*Alça*|O osso que você arrasta na viewport. Cada junta tem uma. Seu valor também é um controle deslizante no painel.|
+|*Sequência*|Uma transformação executada por um controle deslizante, feito de etapas.|
+|*Formulário*|Um conjunto salvo de valores de alça e sequência, como "Stowed" ou "Rifle".|
 
 ## Onde fica
 
-- **Aba BoneCraft → Mechanisms** na viewport 3D. A aba BoneCraft fica na Tool Shelf da esquerda (pressione **T**), a menos que você a tenha movido para a barra lateral da direita (**N**) nas Preferências. Ela fica entre Skin e Revisão. Aparece quando uma malha está ativa (para começar um rig) ou quando uma armadura com mecanismos está ativa.
-- **Editor de Propriedades → aba Cena → Mechanisms**, logo depois do Construtor de Rig. Está sempre lá. Sem nada utilizável selecionado, mostra uma linha: "Select a mesh to start, or an armature with mechanisms." (selecione uma malha para começar, ou uma armadura com mecanismos). Desativar a aba BoneCraft da viewport não o remove. Só o interruptor da ferramenta `mechanisms` (**Preferências → Add-ons → BoneCraft → Ferramentas**) o remove, junto com a cópia da viewport. As seções da aba Cena começam recolhidas, então clique em **Mechanisms** para expandi-lo.
+- **BoneCraft tab → Mechanisms** na viewport 3D. A guia BoneCraft está ativada
+na prateleira de ferramentas esquerda (pressione **T**), a menos que você a tenha movido para a barra lateral direita
+(**N**) em Preferências. Fica entre Skin e Review. Mostra quando uma malha
+está ativo (para iniciar uma plataforma) ou quando uma armadura com mecanismos está ativa; caso contrário
+explica o que selecionar.
+- **Properties editor → Scene tab → Mechanisms**, logo após Rig Builder. É
+mostrado enquanto Preferências → Guias → Propriedades da cena → Mostrar está ativado. Sem nada
+utilizável selecionado mostra uma linha: "Selecione uma malha
+para começar, ou uma armadura com mecanismos." Alternando a guia da janela de visualização BoneCraft
+desligado não o remove. A opção Propriedades da cena oculta apenas a cópia da cena.
+A chave de ferramenta `mechanisms` (**Preferências → Complementos → BoneCraft → Ferramentas**)
+remove a ferramenta de todos os locais.
+As seções da guia Cena começam recolhidas, então clique em **Mechanisms** para expandi-la.
+- **Object menu → Mechanisms** fornece atalhos para adicionar peças, juntas e links,
+e para testar o movimento.
+- **Viewport toolbar → Build Mechanism** inicia uma junta guiada ou link a partir de um
+clique em uma peça, no Modo Objeto ou Modo Pose. Adicione as peças primeiro e depois selecione
+o equipamento do mecanismo ou uma de suas peças e escolha o tipo no cabeçalho da ferramenta.
 
-Dentro do Mechanisms há quatro subseções: **1. Parts** (peças), **2. Joints & Links** (articulações e ligações), **3. Sequences** (sequências) e **4. Controls** (controles). Elas aparecem assim que o rig tem peças. Antes disso você só vê **Add Parts from Selection** (adicionar peças da seleção).
+Dentro dos Mecanismos existem quatro subseções: **1. Parts**,**2. Articulações e
+Ligações**,**3. Sequências** e**4. Controles**. Eles aparecem assim que a rig
+peças. Antes disso você vê apenas **Add Parts from Selection**.
 
-Cada botão é um passo de desfazer. Se uma construção falhar, tudo o que ela mudou é desfeito e o painel mostra o motivo.
+Cada botão é uma etapa de desfazer. Se uma compilação falhar, tudo o que foi alterado será colocado
+volta e o painel mostra o motivo.
 
 ## Peças
 
-1. Selecione os objetos das peças (ou uma malha feita de pedaços soltos) no Modo Objeto.
+1. Selecione os objetos de peça (ou uma malha feita de peças soltas) no Modo de Objeto.
 2. Clique em **Add Parts from Selection**.
-   - Vários objetos: uma peça por objeto. Cada objeto fica com o osso da sua peça como pai e permanece onde está.
-   - Uma malha com pedaços soltos: uma peça por pedaço. Cada pedaço recebe um grupo de vértices para o seu osso e a malha recebe um modificador Armadura.
-   - Na primeira vez, o BoneCraft cria o rig (uma armadura) para você.
+ - Vários objetos: uma parte por objeto. Cada objeto é parente de sua parte
+osso e permanece onde está.
+ - Uma malha com peças soltas: uma parte por peça. Cada peça recebe um vértice
+grupo para seu osso e a malha recebe um modificador de Armadura.
+ - Na primeira vez, BoneCraft faz o equipamento (uma armadura) para você.
 3. Selecione uma peça na lista para editá-la.
 
-Para cada peça:
+Para cada parte:
 
-- **Rides on:** (montada em): escolha a peça com a qual esta se move. Uma peça filha segue a peça pai. "the rig" significa que ela vai montada na raiz do rig.
-- **Size** (tamanho) define o comprimento do osso, que define o tamanho da alça.
-- **Edit Pivot** (editar pivô) coloca um marcador na peça. Arraste-o até onde a peça deve girar ou deslizar e clique em **Apply Pivot** (aplicar pivô). Os ossos da peça vão para lá e o objeto fica no lugar.
-- **Apply Transforms** (aplicar transformações) aparece quando uma peça de objeto tem rotação ou escala não aplicada. Clique nele. Transformações não aplicadas inclinam os eixos.
-- O botão **X** remove a peça. Ele se recusa enquanto uma articulação, uma ligação ou outra peça a usar, e as nomeia.
-- **Merge for VRChat** (mesclar para VRChat; duas ou mais peças de objeto) une as peças de objeto em uma malha, com um grupo de vértices por objeto anterior e um modificador Armadura. Faça isso por último. As peças unidas viram pedaços soltos dessa malha. Ele remove cada grupo de vértices com o nome de um osso desta armadura (exceto o osso `DEF-` da própria peça), então mescle só peças que tenham rig apenas com o rig de mecanismos.
+- **Passeios:** escolha a parte com a qual este se move. Uma parte filha segue seu
+parte pai. "a plataforma" significa que ela fica na raiz da plataforma.
+- **Size** define o comprimento do osso, que define o tamanho do cabo.
+- **Edit Pivot** coloca um marcador na peça. Arraste-o para onde a peça deveria
+gire ou deslize e clique em **Apply Pivot**. Os ossos da peça se movem para lá
+e o objeto permanece no lugar.
+- **Apply Transforms** aparece quando uma parte do objeto tem rotação não aplicada ou
+escala. Clique nele. As transformações não aplicadas inclinam os eixos.
+- O botão **X** remove a peça. Recusa enquanto um conjunto, link ou outro
+parte o usa e os nomeia.
+- **Merge for VRChat** (duas ou mais partes do objeto) une as partes do objeto em
+uma malha com um grupo de vértices por objeto anterior e um modificador Armature.
+Faça isso por último. As partes unidas tornam-se partes soltas daquela malha. Isso
+remove todos os grupos de vértices nomeados após um osso desta armadura (exceto
+osso `DEF-` da própria peça), portanto, mescle apenas as peças que estão montadas no
+equipamento de mecanismo sozinho.
 
-Você pode renomear o objeto de uma peça: as peças são marcadas nos seus objetos, então a peça encontra seu objeto de novo. Uma cópia do objeto (Shift+D) não fica com a peça. Se o objeto de uma peça for excluído, a peça mostra "Part '<name>' is missing" (a peça '<name>' está faltando) com **Reassign** (reatribuir) e **Excluir**. Os outros mecanismos continuam funcionando.
+Você pode renomear o objeto de uma peça: as peças são marcadas em seus objetos, então a peça
+encontra seu objeto novamente. Uma cópia do objeto (Shift+D) não assume o controle
+parte. Se o objeto de uma peça for excluído, a peça mostrará "Parte '<nome>' ausente"
+com **Reassign** e**Delete**. Outros mecanismos continuam funcionando.
 
-- **Reassign** usa a malha que você selecionou. Ele recusa o que não é malha e recusa um objeto que outra peça de objeto já usa. Pedaços soltos de uma mesma malha podem compartilhar essa malha.
-- **Excluir** remove a peça (veja Edições e mudanças à mão, abaixo, para quando isso é recusado).
+- **Reassign** usa a malha que você selecionou. Ele recusa uma não-malha e
+recusa um objeto que outra parte do objeto já utiliza. Partes soltas de um
+mesh pode compartilhar essa malha.
+- **Delete** remove a peça (veja a edição abaixo para saber quando ela é recusada).
 
 ## Articulações e ligações, um exemplo de cada
 
-Adicione uma articulação com **Add Joint** (adicionar articulação) e uma ligação com **Add Link** (adicionar ligação). Cada escolha inicia uma construção guiada. Elas funcionam pela aba da viewport e pela aba Cena do editor de Propriedades; pela aba Cena, o guia usa a maior viewport 3D da tela. Regras curtas para toda construção guiada:
+Adicione uma junta com **Add Joint**, um link com**Add Link**. Cada escolha inicia um
+construção guiada. Eles funcionam na guia viewport e na cena do editor de propriedades
+guia; na guia Cena, o guia usa a maior viewport 3D da tela.
+Alternativamente, ative o Build Mechanism na barra de ferramentas da viewport, escolha a junta
+ou tipo de link no cabeçalho da ferramenta e clique na primeira parte. Esse clique inicia o
+mesmo guia e fornece sua primeira escolha. Continue com as escolhas e opções de eixo
+solicitado na janela de visualização; os menus Adicionar junta e Adicionar link permanecem disponíveis.
 
-- Clique nas peças na viewport. As peças clicadas ganham um contorno e um número.
-- Quando um passo precisa de um eixo, pressione **X**, **Y** ou **Z**, ou **A** para alinhar com a seleção. **Align to Selection** (alinhar com a seleção) serve para dobradiças inclinadas. Ele precisa que a malha da peça ainda esteja no Modo Edição com uma aresta ou face selecionada quando você pressiona **A**, e o guia ignora **Tab**. Então entre primeiro no Modo Edição na malha da peça e selecione uma aresta ou face. Continue no Modo Edição, inicie **Add Joint → Hinge**, clique na peça e pressione **A**. Se nada utilizável estiver selecionado, o guia avisa e você pode pressionar outra tecla.
-- O último passo pré-visualiza o mecanismo se movendo em loop. **Enter** o mantém. **Esc** o remove.
-- O cabeçalho e a barra de status mostram uma frase completa em cada passo. Com Show Helpers (mostrar ajudas) desativado, mostram um rótulo curto.
+Regras curtas para cada construção guiada:
 
-Cada linha da lista Joints & Links tem quatro botões de ícone: **Test** (triângulo de reprodução), **Editar** (lápis, mostra as configurações), **Detach** (desanexar; corrente quebrada) e **Excluir** (X).
+- Clique nas peças na viewport. As partes clicadas recebem um contorno e um número.
+- Onde uma etapa precisar de um eixo, pressione **X**,**Y** ou**Z** ou**A** para alinhar
+a seleção. **Align to Selection** é para dobradiças angulares. Precisa da malha da peça
+ainda estar no modo de edição com uma aresta ou face selecionada quando você pressiona **A**,
+e o guia ignora **Tab**. Então entre no Modo de Edição na malha da peça e
+selecione uma aresta ou face primeiro. Permaneça no modo de edição, inicie **Adicionar junta →
+Dobradiça**, clique na peça e pressione**A**. Se nada utilizável for selecionado, o guia
+informa e você pode pressionar outra tecla.
+- A última etapa mostra o mecanismo se movendo em loop. **Enter** mantém.
+**Esc** o remove.
+- O cabeçalho e a barra de status mostram uma frase completa para cada etapa. Com exposição
+Os ajudantes mostram uma pequena etiqueta.
 
-Depois da construção, o item selecionado na lista mostra só as configurações que o tipo dele usa.
+Cada linha da lista Juntas e Ligações possui quatro botões de ícone: **Test** (reproduzir
+triângulo), **Edit** (lápis, mostra as configurações),**Detach** (corrente quebrada) e
+**Delete** (X).
+
+Após a construção, o item selecionado na lista mostra apenas as configurações
+tipo usa.
 
 ### Hinge (dobradiça)
 
-Hinge de lâmina, 0°…90°:
+Dobradiça da lâmina, 0°…90°:
 
-1. Add Parts from Selection com uma peça Blade (lâmina).
-2. **Add Joint → Hinge**. Clique em Blade. Pressione **X**. Pressione **Enter**.
-3. Você obtém uma alça em semicírculo, `CTRL-Blade`, e uma *Blade Hinge* na lista. Defina **Min** como 0 e **Max** como 90 (em ° para uma Hinge).
-4. Teste: arraste a alça em semicírculo. Ela para em 90°. **Set Min** (definir mín.) e **Set Max** (definir máx.) copiam a pose atual da alça para os limites.
+1. Adicione peças da seleção com uma peça Blade.
+2. **Add Joint → Hinge**. Clique na lâmina. Pressione**X**. Pressione**Enter**.
+3. Você obtém uma alça de semicírculo, `CTRL-Blade`, e uma *Dobradiça de Lâmina* no
+lista. Defina **Min** 0 e**Max** 90 (° para uma dobradiça).
+4. Experimente: arraste a alça em semicírculo. Ele para em 90°. **Set Min** e
+**Set Max** copia a pose atual do identificador para os limites.
 
-Um limite menor que uma volta completa precisa ficar dentro de −180°…180°. Limites como 170°…190° são recusados com uma mensagem. Uma faixa de uma volta completa ou mais (por exemplo −180°…180°) gira livremente, sem limite.
+Um limite que esteja abaixo de uma volta completa deve ficar entre −180°…180°. Limites como
+170°…190° são recusados com uma mensagem. Um alcance de um turno completo ou mais (por
+exemplo −180°…180°) gira livremente sem limite.
 
 ### Slide (deslizador)
 
-Slide de cano, 0…0.3:
+Deslizamento do cano, 0…0,3:
 
-1. **Add Joint → Slide**. Clique na peça Barrel (cano). Pressione **Y**. Pressione **Enter**.
-2. Você obtém uma alça em seta. Defina **Min** como 0 e **Max** como 0.3 (unidades da cena).
-3. Teste: arraste a seta. O cano desliza e para em 0.3.
+1. **Add Joint → Slide**. Clique na parte Barril. Pressione**Y**. Pressione**Enter**.
+2. Você recebe uma alça de flecha. Defina **Min** 0 e**Max** 0,3 (unidades de cena).
+3. Experimente: arraste a seta. O cano desliza e para em 0,3.
 
 ### Telescope (telescópio)
 
 Mastro com três segmentos:
 
-1. Crie a base e três peças de segmento.
-2. **Add Joint → Telescope**. Clique na base. Clique em cada segmento, da base para fora. Pressione **Enter**. Pressione a tecla do eixo. Pressione **Enter** para manter.
-3. Você obtém uma alça em seta na base. **Length** (comprimento) é o curso total; **Shares (empty = even)** (partes; vazio = iguais) o divide entre os segmentos. Para testar partes personalizadas, defina primeiro **Length** como 1 e digite `0.5, 0.25, 0.25`. As partes precisam somar a Length, para que a ponta percorra o comprimento inteiro. Um erro de digitação (por exemplo `0.5, abc`) é recusado com a mesma mensagem simples: as partes precisam ser números, um por segmento, que somem a Length.
-4. Teste: arraste a única seta. Os três segmentos se estendem conforme suas partes. **Set Max** define a Length a partir da pose da alça.
+1. Faça a base e três partes do segmento.
+2. **Add Joint → Telescope**. Clique na base. Clique em cada segmento da base
+para fora. Pressione **Enter**. Pressione a tecla do eixo. Pressione**Enter** para mantê-lo.
+3. Você obtém uma alça de seta na base. **Length** é o percurso total;
+**Shares (empty = even)** divide-o entre os segmentos. Para experimentar personalizado
+compartilhamentos, defina **Length** como 1 primeiro e depois digite `0.5, 0.25, 0.25`. As ações
+deve somar o Comprimento, para que a ponta percorra todo o comprimento. Um erro de digitação (por
+exemplo `0.5, abc` ) é recusado com a mesma mensagem simples: as ações
+devem ser números, um por segmento, que somam o Comprimento.
+4. Experimente: arraste a seta. Todos os três segmentos se estendem por suas ações.
+**Set Max** define o comprimento a partir da pose da alça.
 
 ### Piston (pistão)
 
 Elevador: cilindro na estrutura, haste no braço.
 
-1. Dê primeiro uma Hinge ao braço e faça o braço ir montado na estrutura.
-2. **Add Link → Piston**. Clique na peça do cilindro (na estrutura). Clique na peça da haste (no braço).
-3. Você obtém um Piston sem alça. Cada peça aponta para o ponto de fixação da outra. **Esticar** (opcional) estica a haste, para molas e cabos.
-4. Teste: mova a alça do braço. O pistão acompanha. Se nada move o Piston ainda, a construção funciona, mas sem pré-visualização, e **Test** avisa.
+1. Dê uma dobradiça ao braço primeiro e coloque-o para montar na estrutura.
+2. **Add Link → Piston**. Clique na peça do cilindro (na moldura). Clique na haste
+parte (no braço).
+3. Você ganha um pistão sem alça. Cada parte aponta para o anexo da outra
+ponto. **Stretch** (opcional) estica a haste, para molas e cabos.
+4. Experimente: mova a alça do braço. O pistão segue. Se nada move o
+Pistão ainda, a construção funciona, mas não tem visualização e **Test** diz isso.
 
 ### Gear Link (ligação de engrenagem)
 
 Engrenagem 20:40:
 
-1. As duas peças precisam antes de uma articulação. A peça motora precisa de uma Hinge. Para Gear e Belt, a peça movida precisa de uma Hinge; para Rack, de uma Slide.
-2. **Add Link → Gear Link**. Clique na peça motora. Clique na peça movida.
-3. Nas configurações dela, defina **Source Teeth** (dentes da origem) como 20 e **Target Teeth** (dentes do destino) como 40 (ou digite um **Ratio**). **Kind** (tipo) é Gear, Belt ou Rack. **Reverse** (inverter) inverte o sentido.
-4. Teste: gire a origem. Com **Kind** em Gear, o destino gira −0.5× o tanto (+0.5× com Belt). Um Gear inverte o sentido, um Belt o mantém e um Rack transforma rotação em deslizamento (distância por radiano = **Ratio** × **Pinion Radius** (raio do pinhão)).
+1. Ambas as partes precisam primeiro de uma junta. A parte motriz precisa de uma dobradiça. Para equipamentos e
+Correia a parte acionada precisa de uma dobradiça; para Rack é necessário um Slide.
+2. **Add Link → Gear Link**. Clique na parte de direção. Clique na peça acionada.
+3. Em suas configurações defina **Source Teeth** 20 e**Target Teeth** 40 (ou digite um
+**Ratio** ).**Kind** é engrenagem, cinto ou rack.**Reverse** inverte a direção.
+4. Experimente: ligue a fonte. Com **Kind** Gear o alvo gira −0,5× até
+(+0,5× com Cinto). Uma engrenagem inverte
+direção, um cinto o mantém e um rack transforma a rotação em um deslizamento (distância
+por radiano = **Ratio** ×**Pinion Radius** ).
 
-Como o BoneCraft o constrói depende da faixa da Hinge de origem:
+A forma como BoneCraft o constrói depende do intervalo da dobradiça de origem:
 
-- Menos de uma volta completa: uma restrição Transformação. Ela segue tudo o que move a origem, inclusive sequências.
-- Uma volta completa ou mais: um driver que não precisa de Python. O destino gira sem parar com a origem. Ele segue só alças e engrenagens. O Validador de Rig avisa quando uma sequência ou um Follow seria perdido.
+- Sob uma volta completa: uma restrição Transform. Segue tudo o que se move
+a fonte, sequências incluídas.
+- Uma volta completa ou mais: um driver que não precisa de Python. O alvo gira para sempre
+com a fonte. Segue apenas alças e engrenagens. O validador da plataforma avisa
+quando uma sequência ou acompanhamento seria perdido.
 
 ### Follow (seguidor)
 
-Blade 0–90° levanta Cover (tampa) 0–40°:
+A lâmina 0–90° levanta a tampa 0–40°:
 
-1. As duas peças precisam de uma Hinge ou de uma Slide. Uma Hinge de origem precisa de limites menores que uma volta completa; uma origem que gira livremente é recusada.
-2. **Add Link → Follow**. Clique na peça que lidera (Blade). Clique na peça que segue (Cover).
-3. As faixas começam como a faixa completa de cada articulação. Defina **Source Range** (faixa de origem) como 0…90 e **Target Range** (faixa de destino) como 0…40. Além de qualquer uma das pontas, o destino fica parado.
-4. Teste: mova a alça de Blade. Cover acompanha.
-5. Marque **Curve** (curva) para remodelar a correspondência no editor de gráficos. O BoneCraft nunca sobrescreve sua curva (veja Edições e mudanças à mão, abaixo).
+1. Ambas as partes precisam de uma dobradiça ou corrediça. Uma dobradiça de origem precisa de limites sob um
+volta completa; uma fonte de giro livre é recusada.
+2. **Add Link → Follow**. Clique na parte principal (Lâmina). Clique no seguinte
+parte (capa).
+3. Os intervalos começam como o intervalo completo de cada articulação. Definir **Source Range**
+0…90 e **Target Range** 0…40. Depois de qualquer uma das extremidades, o alvo se mantém.
+4. Experimente: mova a alça da lâmina. A capa segue.
+5. Marque **Curve** para remodelar o mapeamento no Editor de gráfico. BoneCraft nunca
+substitui sua curva (veja Edição abaixo).
 
 ### Sequence (sequência)
 
-Capture Step para dobrar uma arma:
+Registre as etapas para dobrar uma arma:
 
-1. Em **3. Sequences**, clique em **Add Sequence** (adicionar sequência). Isso cria uma alça de controle deslizante `CTRL-SEQ-<name>`.
-2. Clique em **Capture Step** (capturar etapa). O controle deslizante salta para o fim (1).
-3. Faça a pose das alças das articulações para a primeira etapa. Clique em **Capture Step** de novo. Cada alça que se moveu vira uma etapa com seu valor alvo, e as alças voltam a zero.
-4. Repita o passo 3 para mais etapas. Cada etapa nova ocupa por padrão o próximo quarto do controle deslizante.
-5. Defina o **Alvo**, a suavização (Linear, Ease In, Ease Out, Ease In Out, Snap), **Iniciar** e **End** (fim) de cada etapa. Fora do seu trecho, uma etapa mantém o valor final. Várias sequências podem se empilhar.
-6. Clique em **Test**: o controle deslizante toca 0 → 1 → 0.
+1. Em **3. Sequences**, clique em**Add Sequence**. Faz uma alça deslizante
+`CTRL-SEQ-<name>`.
+2. Clique em **Move Slider to End**. O controle deslizante salta para o final (1) e o botão
+torna-se Record Step seguido pelo próximo número da etapa.
+3. Posicione as alças das juntas para o primeiro passo. Clique em Gravar Etapa 1.
+Cada alça movida se torna uma etapa com seu valor alvo, e o
+alças voltam a zero.
+4. Repita as etapas 2 e 3 para mais etapas. Cada novo passo leva o próximo trimestre do
+controle deslizante por padrão.
+5. Defina **Target**, a facilidade (Linear, Ease In, Ease Out, Ease In Out, Snap),
+**Start** e**End** para cada etapa. Fora de sua fatia, um degrau mantém seu fim
+valor. Várias sequências podem ser empilhadas.
+6. Clique em **Test**: o controle deslizante reproduz 0 → 1 → 0.
 
-Ao lado de **Capture Step** e **Test**, a sequência selecionada tem **Detach** (corrente quebrada) e **Excluir** (X). Uma sequência retida (por exemplo uma etapa cuja curva você remodelou) mostra sua mensagem e um botão **Restaurar**. Restaurar regenera as etapas a partir do registro. Keep mine (manter o meu) não é oferecido para uma sequência.
+Ao lado do botão de gravação passo a passo e **Test**, a sequência selecionada tem**Detach**
+(corrente quebrada) e **Delete** (X). Uma sequência mantida (por exemplo, uma etapa cuja
+curva que você remodelou) mostra sua mensagem e um botão **Restore**. Restaurar
+regenera as etapas do registro. Keep mine não é oferecido para uma sequência.
 
 ## Test
 
-**Test** (o botão de reprodução na lista, e em 3. Sequences) percorre um mecanismo por toda a sua faixa, ida e volta. Ele não grava chaves e restaura a pose ao terminar. Pressione **Esc** para pará-lo antes; a pose também é restaurada nesse caso. Em um Gear Link ou Follow, ele percorre a origem. Em um Piston, percorre a articulação que o move. Fique de olho em peças que colidem; o BoneCraft não detecta colisões.
+**Test** (o botão play na lista e em 3. Sequências) varre um
+mecanismo em toda a sua extensão e costas. Não escreve teclas e faz pose
+de volta quando terminar. Pressione **Esc** para interrompê-lo mais cedo; a pose é restaurada então
+também. Para um Gear Link ou Follow, ele varre a fonte. Para um Pistão ele varre o
+articulação que o move. Fique atento às peças que entram em conflito; BoneCraft não detecta
+colisões.
 
 ## Formas
 
 Em **4. Controls**:
 
-- Cada articulação e cada sequência tem um controle deslizante. Ele é o próprio canal da alça, então arrastar a alça e usar o controle deslizante são a mesma coisa.
-- **Save Form** (salvar forma) salva com um nome o valor de cada alça e de cada controle deslizante de sequência. Renomeie-a na lista.
-- **Go to Form** (ir para a forma) coloca cada controle nos valores salvos.
-- **Go and Key** (ir e inserir chave) faz o mesmo e ainda insere chaves no quadro atual.
-- O **X** ao lado da lista remove uma forma.
+- Cada junta e sequência possui um controle deslizante. É o próprio canal do identificador, então
+arrastar a alça e usar o controle deslizante são a mesma coisa.
+- **Save Form** registra cada identificador e valor do controle deslizante de sequência sob um nome.
+Renomeie-o na lista.
+- **Go to Form** define cada controle para os valores salvos.
+- **Go and Key** faz o mesmo e também insere chaves no quadro atual.
+- O **X** próximo à lista remove um formulário.
 
 ## O que o BoneCraft constrói
 
-Para cada peça:
+Para cada parte:
 
-| Osso | Função | Visível |
+|Osso|Trabalho|Visível|
 |---|---|---|
-| `CTRL-<part>` | A alça. O valor dela é o controle deslizante do painel. Só Hinge, Slide e Telescope a criam. | Sim |
-| `MCH-<part>` | Soma a alça e cada ligação e depois aplica os limites. | Oculto |
-| `DEF-<part>` | Copia `MCH-<part>`. A malha fica vinculada a ele. As engines recebem este osso. | Oculto |
+|`CTRL-<part>` |A alça. Seu valor é o controle deslizante do painel. Apenas Dobradiça, Slide e Telescópio fazem um.|Sim|
+|`MCH-<part>` |Adiciona o identificador e todos os links e aplica os limites.|Oculto|
+|`DEF-<part>` |Cópias `MCH-<part>`. A malha está ligada a ele. Os motores recebem esse osso.|Oculto|
 
-Os ossos ficam nas coleções `Mechanism Controls`, `Mechanism MCH` e `Mechanism DEF`. Uma peça sem articulação tem só ossos `MCH-` e `DEF-`. A alça de um Telescope é `CTRL-<telescope name>`. A de uma sequência é `CTRL-SEQ-<name>`. Um Piston adiciona ossos `MCH-<part>-aim` e `MCH-<part>-target` para cada uma das suas duas peças.
+Os ossos ficam nas coleções `Mechanism Controls`, `Mechanism MCH` e
+`Mechanism DEF`. Uma peça sem junta possui apenas ossos `MCH-` e `DEF-`. Um
+A alça do telescópio é `CTRL-<telescope name>`. Uma sequência é
+`CTRL-SEQ-<name>`. Um pistão adiciona ossos `MCH-<part>-aim` e `MCH-<part>-target`
+para cada uma de suas duas partes.
 
-As restrições de `MCH-<part>` vêm sempre na mesma ordem: Copiar transformações da alça, depois a contribuição de cada ligação, depois o Limite de rotação ou o Limite de posição da articulação. `DEF-<part>` tem uma Copiar transformações de `MCH-<part>`.
+As restrições em `MCH-<part>` sempre vêm na mesma ordem: Copiar Transformações
+da alça, depois a contribuição de cada link, depois o limite de rotação da junta
+ou Limitar localização. `DEF-<part>` tem uma cópia de transformação de `MCH-<part>`.
 
-Tudo o que o BoneCraft constrói é marcado com o seu registro: os nomes das restrições começam com `BC·<id>·<role>`, e os ossos levam as propriedades `bc_mech_id` e `bc_mech_role`. O BoneCraft encontra seus ossos pela marca, não pelo nome, então você pode renomear qualquer osso. Uma reconstrução o encontra de novo e não cria duplicado.
+Tudo o que BoneCraft compila é marcado com seu registro: nomes de restrições começam
+com `BC·<id>·<role>`, e os ossos carregam as propriedades `bc_mech_id` e
+`bc_mech_role`. BoneCraft encontra seus ossos por etiqueta, não por nome, para que você possa
+renomeie qualquer osso. Uma reconstrução o encontra novamente e não duplica.
 
-Com Show Helpers ativado, cada articulação e cada ligação tem uma nota **How this works** (como funciona). Ela lista as restrições pelo nome, diz o que cada uma faz e tem um botão **Selecionar** (ícone de seta) para inspecionar o osso.
+Com Show Helpers ativado, cada junta e link possui uma nota **How this works**. Isso
+lista as restrições por nome, diz o que cada uma faz e tem um **Select**
+botão (um ícone de seta) para inspecionar o osso.
 
-Suas próprias restrições, drivers e ossos nunca são tocados. Uma restrição que você adiciona a um osso MCH fica abaixo das do BoneCraft depois de uma reconstrução.
+Suas próprias restrições, motivadores e ossos nunca são tocados. Uma restrição que você adiciona
+a um osso MCH permanece abaixo do BoneCraft após uma reconstrução.
 
 ## Edições e mudanças à mão
 
-- As **Value edits** (edições de valores: limites, ratio, faixas, tempos, suavização, aparência da alça) atualizam as restrições existentes no lugar. Não há reconstrução.
-- As **Structural edits** (edições de estrutura: o **Kind** de um Gear Link, a **Curve** de um Follow, o **Esticar** de um Piston) substituem as restrições desse mecanismo e reconstroem só ele.
-- **Changed by hand.** (mudado à mão) Se você editar uma restrição do BoneCraft (por exemplo um Limite), a mensagem do mecanismo termina com "(changed by hand)". O BoneCraft nunca a sobrescreve em silêncio. Escolha:
-  - **Keep mine** (manter o meu) copia seus valores para o registro. Ele recusa o que não consegue ler de volta e diz para usar Restaurar ou Detach.
-  - **Restaurar** descarta sua edição e reconstrói a partir do registro.
-- Um mecanismo retido também retém cada mecanismo que usa os ossos dele, até você resolver.
-- Uma curva remodelada funciona igual. Se você remodelar a curva de um Follow (**Curve** marcada) no editor de gráficos e depois mudar um valor que a substituiria, como a Target Range, a mensagem do Follow termina com "(changed by hand)". **Keep mine** mantém sua curva. **Restaurar** a regenera.
-- Uma sequência retida mostra sua mensagem e **Restaurar** em **3. Sequences**, com **Detach** e **Excluir** ao lado. Keep mine não é oferecido para sequências.
-- **Detach** (botão de corrente quebrada) apaga o registro e as marcas, mas mantém os ossos e as restrições como seu próprio rig feito à mão. Detach e Excluir recusam um registro que outro registro usa, e nomeiam quem o usa.
-- **Excluir** (botão X) remove o registro e tudo o que o BoneCraft construiu para ele.
-- Um loop de ligações é recusado antes de qualquer construção, e o loop é nomeado, por exemplo "Blade Hinge → Cover Follow → Blade Hinge would loop." (formaria um loop)
+- **Edições de valor** (limites, proporção, intervalos, tempo, facilidade, aparência do identificador) atualizam o
+restrições existentes. Não há reconstrução.
+- **Edições estruturais** (um**Kind** do Gear Link, um**Curve** do Follow, um
+**Stretch** do pistão) substitui as restrições desse mecanismo e reconstrui apenas
+esse mecanismo.
+- **Alterado manualmente.** Se você editar uma restrição BoneCraft (por exemplo, um
+Limite), a mensagem do mecanismo termina com "(alterado manualmente)". BoneCraft nunca substitui
+isso silenciosamente. Escolha:
+ - **Keep mine** copia seus valores no registro. Recusa o que não pode
+leia novamente e diga para usar Restaurar ou Desanexar.
+ - **Restore** descarta sua edição e reconstrói a partir do registro.
+- Um mecanismo retido também mantém todos os mecanismos que usam seus ossos, até que você
+resolver isso.
+- Uma curva remodelada é a mesma. Se você remodelar uma curva de Follow (**Curve**
+marcada) no Editor de Gráfico e, em seguida, altere um valor que o substitua,
+como seu intervalo alvo, a mensagem do Follow termina com "(alterado manualmente)". **Keep mine**
+mantém sua curva. **Restore** o regenera.
+- Uma sequência retida mostra sua mensagem e **Restore** em**3. Sequences**, com
+**Detach** e**Delete** próximos a ele. Keep mine não é oferecido para sequências.
+- **Detach** (botão de cadeia quebrada) exclui o registro e as tags, mas mantém os ossos e
+restrições como seu próprio equipamento feito à mão. Desanexar e Excluir recusam um registro
+que outro registro usa e nomeie os usuários.
+- **Delete** (botão X) remove o registro e tudo que BoneCraft construiu para ele.
+- Um loop de link é recusado antes que qualquer coisa seja construída, e o loop é nomeado, por
+exemplo "Dobradiça da lâmina → Seguimento da tampa → Dobradiça da lâmina faria um loop."
 
-O Validador de Rig e o Quadro de Tarefas informam loops de ligações, peças faltando, ossos DEF movidos de fora do seu mecanismo, drivers que precisam de Python e Gear Links que perdem uma sequência ou um Follow. A verificação de nomes do validador aceita hífens (`CTRL-`, `MCH-`, `DEF-`), e a verificação de drivers só avisa em expressões que precisam de Python, então um rig de Mechanisms limpo não mostra erros de validação: só o aviso único sobre o osso `root` descrito em Limites desta versão.
+O Rig Validator e o Task Board relatam loops de link, peças faltantes, DEF
+ossos movidos de fora de seu mecanismo, drivers que precisam de Python e Gear
+Links que perdem uma sequência ou seguimento. A verificação de nomenclatura do validador aceita
+hífens (`CTRL-`, `MCH-`, `DEF-` ), e sua verificação de drivers avisa apenas em
+expressões que precisam de Python, portanto, um rig de Mecanismos limpo não mostra validação
+erros — apenas aquele que avisa sobre o osso `root` descrito em Limites desta versão.
 
 ## Show Helpers (mostrar ajudas)
 
-**Show Helpers** é uma única preferência para todo o BoneCraft: **Preferências → Add-ons → BoneCraft → Helpers**. Desativada, ela oculta em todo lugar o texto didático: as linhas o quê / quando, as notas **How this works** e as frases completas dos passos guiados (que viram rótulos curtos). Os passos em si, as listas, Test, os avisos e as dicas de passar o mouse do Blender sempre ficam.
+**Show Helpers** é uma preferência para todos os BoneCraft:**Preferências →
+Complementos → BoneCraft → Ajudantes**. Off esconde o texto didático em todos os lugares: o quê/quando
+linhas, as notas **How this works** e as frases completas de etapas guiadas (aquelas
+tornam-se rótulos curtos). As próprias etapas, as listas, testes, avisos e
+As dicas de ferramentas instantâneas de Blender sempre permanecem.
 
-O botão **Modo Compacto** do VRChat é o atalho dela: Modo Compacto ativado significa Show Helpers desativado.
+O botão VRChat **Compact Mode** é seu atalho: Modo Compacto ativado significa Mostrar
+Ajudantes desligados.
 
 ## Limites desta versão
 
-- Os mecanismos Click Turn, Track e Linkage virão depois.
-- A exportação para engines do movimento com bake dos mecanismos virá depois, após a verificação manual no desktop. Até lá, os ossos `DEF-` são os ossos a exportar.
-- O BoneCraft não detecta colisões. Use Test e observe.
-- Um Gear Link que gira livremente segue só alças e engrenagens.
-- O osso `root` do rig não está em nenhuma coleção de ossos, então a verificação de coleções do Validador de Rig avisa sobre ele e o Quadro de Tarefas mostra "Rig validation warnings (1)" (avisos de validação do rig (1)).
+- Os mecanismos Click Turn, Track e Linkage vêm depois.
+- A exportação do mecanismo do movimento do mecanismo cozido ocorre mais tarde, após a mão da área de trabalho
+verifique. Até então, os ossos `DEF-` são os ossos a serem exportados.
+- BoneCraft não detecta colisões. Use o teste e veja.
+- Um Gear Link de giro livre segue apenas alças e engrenagens.
+- O osso `root` da rig não está em nenhuma coleção de ossos, então o validador da rig
+verificação de coleções avisa sobre isso e o quadro de tarefas mostra "Validação de plataforma
+avisos (1)".
 
-Próximo: [Ferramentas do VRChat](08-vrchat.md)
+Próximo: [Ferramentas VRChat](08-vrchat.md)

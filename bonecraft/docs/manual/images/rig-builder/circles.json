@@ -1,0 +1,1245 @@
+{
+  "en": {
+    "a01-enable-rigify": {
+      "crop": [
+        1430,
+        365,
+        1920,
+        1010
+      ],
+      "width": 490,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1448,
+            475,
+            1470,
+            500
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1488,
+            915,
+            1898,
+            944
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "a02-simple-human": {
+      "crop": [
+        1430,
+        365,
+        1920,
+        1010
+      ],
+      "width": 455,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1488,
+            747,
+            1696,
+            779
+          ],
+          "badge": 1
+        }
+      ]
+    },
+    "a03-metarig": {
+      "crop": [
+        470,
+        125,
+        1000,
+        875
+      ],
+      "width": 530,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            490,
+            134,
+            815,
+            178
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            590,
+            245,
+            823,
+            845
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "a04-object-mode": {
+      "crop": [
+        15,
+        75,
+        900,
+        875
+      ],
+      "width": 885,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            25,
+            78,
+            137,
+            100
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            25,
+            101,
+            183,
+            124
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "a05-t-pose": {
+      "crop": [
+        1430,
+        365,
+        1920,
+        1010
+      ],
+      "width": 455,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1485,
+            922,
+            1697,
+            951
+          ],
+          "badge": 1
+        }
+      ]
+    },
+    "a06-final-settings": {
+      "crop": [
+        440,
+        225,
+        1920,
+        1008
+      ],
+      "width": 1200,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1487,
+            638,
+            1902,
+            661
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1486,
+            718,
+            1904,
+            820
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            1486,
+            937,
+            1904,
+            1000
+          ],
+          "badge": 3
+        }
+      ]
+    },
+    "a07-select-forearm": {
+      "crop": [
+        20,
+        76,
+        1150,
+        878
+      ],
+      "width": 1130,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            26,
+            78,
+            138,
+            102
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "badge": 2,
+          "center": [
+            846.5,
+            375.0
+          ],
+          "radius": 87.5
+        }
+      ]
+    },
+    "a09-clear-pose": {
+      "crop": [
+        470,
+        245,
+        1430,
+        870
+      ],
+      "width": 960,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            907,
+            324,
+            1405,
+            410
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            912,
+            410,
+            1403,
+            433
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "b01-select-mesh": {
+      "crop": [
+        440,
+        125,
+        1920,
+        880
+      ],
+      "width": 1200,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1490,
+            203,
+            1820,
+            226
+          ],
+          "badge": 1
+        }
+      ]
+    },
+    "b02-convert-mesh": {
+      "crop": [
+        460,
+        240,
+        1190,
+        865
+      ],
+      "width": 730,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            673,
+            595,
+            1155,
+            653
+          ],
+          "badge": 1
+        }
+      ]
+    },
+    "b03-clear-parent": {
+      "crop": [
+        460,
+        400,
+        1080,
+        870
+      ],
+      "width": 620,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            478,
+            603,
+            723,
+            630
+          ],
+          "badge": 1
+        }
+      ]
+    },
+    "b04-clear-groups": {
+      "crop": [
+        1440,
+        390,
+        1920,
+        1000
+      ],
+      "width": 480,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1877,
+            529,
+            1905,
+            559
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1670,
+            751,
+            1905,
+            783
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "b05-rigless-check": {
+      "crop": [
+        440,
+        125,
+        1920,
+        880
+      ],
+      "width": 1200,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1849,
+            224,
+            1889,
+            245
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1477,
+            386,
+            1908,
+            573
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "b10a-enable-rig-builder-tab": {
+      "crop": [
+        410,
+        150,
+        1260,
+        735
+      ],
+      "width": 850,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            586,
+            607,
+            782,
+            635
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            805,
+            607,
+            1018,
+            635
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "b06-start-wizard": {
+      "crop": [
+        1430,
+        365,
+        1920,
+        1010
+      ],
+      "width": 455,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1486,
+            837,
+            1905,
+            870
+          ],
+          "badge": 1
+        }
+      ]
+    },
+    "b07-select-input": {
+      "crop": [
+        1430,
+        365,
+        1920,
+        1010
+      ],
+      "width": 455,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1485,
+            776,
+            1905,
+            832
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1487,
+            837,
+            1905,
+            870
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "b08-body-ikfk": {
+      "crop": [
+        1430,
+        365,
+        1920,
+        1010
+      ],
+      "width": 455,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1484,
+            792,
+            1905,
+            825
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1485,
+            883,
+            1905,
+            942
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            1485,
+            952,
+            1905,
+            983
+          ],
+          "badge": 3
+        }
+      ]
+    },
+    "b09-detect-markers": {
+      "crop": [
+        1430,
+        365,
+        1920,
+        1010
+      ],
+      "width": 455,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1484,
+            845,
+            1905,
+            875
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1485,
+            973,
+            1710,
+            1002
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "b10-review-markers": {
+      "crop": [
+        1430,
+        365,
+        1920,
+        1010
+      ],
+      "width": 455,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1484,
+            569,
+            1907,
+            607
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1484,
+            813,
+            1907,
+            999
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "b11-place-wrist": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            400,
+            758,
+            470,
+            790
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "badge": 2,
+          "center": [
+            919.5,
+            372.5
+          ],
+          "radius": 22.5
+        }
+      ]
+    },
+    "b12-mirrored-wrist": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            40,
+            758,
+            470,
+            827
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "badge": 2,
+          "center": [
+            919.5,
+            373.0
+          ],
+          "radius": 26.0
+        }
+      ]
+    },
+    "b13-arm-precision": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            39,
+            728,
+            473,
+            858
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "badge": 2,
+          "center": [
+            786.5,
+            341.5
+          ],
+          "radius": 20.5
+        },
+        {
+          "shape": "circle",
+          "badge": 3,
+          "center": [
+            869.5,
+            341.5
+          ],
+          "radius": 20.5
+        }
+      ]
+    },
+    "b14-leg-precision": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            39,
+            669,
+            474,
+            792
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "badge": 2,
+          "center": [
+            740.0,
+            536.0
+          ],
+          "radius": 21.0
+        },
+        {
+          "shape": "circle",
+          "badge": 3,
+          "center": [
+            740.0,
+            702.0
+          ],
+          "radius": 21.0
+        }
+      ]
+    },
+    "b15-side-depth": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "circle",
+          "badge": 1,
+          "center": [
+            577.5,
+            143.5
+          ],
+          "radius": 92.5
+        },
+        {
+          "shape": "box",
+          "box": [
+            39,
+            808,
+            474,
+            843
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "circle",
+          "badge": 3,
+          "center": [
+            699.0,
+            820.0
+          ],
+          "radius": 34.0
+        }
+      ]
+    },
+    "b16-place-heels": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            39,
+            760,
+            474,
+            825
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "badge": 2,
+          "center": [
+            704.5,
+            824.5
+          ],
+          "radius": 20.5
+        }
+      ]
+    },
+    "b17-confirm-markers": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            39,
+            759,
+            474,
+            782
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            39,
+            795,
+            474,
+            820
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "b18-no-fingers": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            38,
+            287,
+            474,
+            310
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            38,
+            492,
+            474,
+            522
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "b19-review-generate": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            38,
+            129,
+            475,
+            172
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            38,
+            186,
+            475,
+            603
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            38,
+            616,
+            475,
+            643
+          ],
+          "badge": 3
+        }
+      ]
+    },
+    "b20-build-controls": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            38,
+            509,
+            474,
+            544
+          ],
+          "badge": 1
+        }
+      ]
+    },
+    "b21-close-wizard": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            38,
+            512,
+            474,
+            544
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            38,
+            555,
+            474,
+            585
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "c02-control-layer": {
+      "crop": [
+        20,
+        75,
+        1080,
+        975
+      ],
+      "width": 1060,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            25,
+            78,
+            138,
+            103
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            39,
+            426,
+            475,
+            541
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "c03-visible-controls": {
+      "crop": [
+        1440,
+        575,
+        1920,
+        1010
+      ],
+      "width": 480,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            1817,
+            680,
+            1852,
+            731
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            1486,
+            979,
+            1630,
+            1008
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "c04-select-fk": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "circle",
+          "badge": 1,
+          "center": [
+            771.5,
+            367.5
+          ],
+          "radius": 27.5
+        },
+        {
+          "shape": "box",
+          "box": [
+            252,
+            514,
+            471,
+            541
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "c05-fk-weight-check": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "circle",
+          "badge": 1,
+          "center": [
+            767.0,
+            347.5
+          ],
+          "radius": 87.0
+        }
+      ]
+    },
+    "b23-recalculate-weights": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            39,
+            408,
+            474,
+            512
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "box",
+          "box": [
+            39,
+            560,
+            474,
+            588
+          ],
+          "badge": 2
+        },
+        {
+          "shape": "box",
+          "box": [
+            39,
+            636,
+            474,
+            841
+          ],
+          "badge": 3
+        },
+        {
+          "shape": "box",
+          "box": [
+            39,
+            852,
+            474,
+            881
+          ],
+          "badge": 4
+        }
+      ]
+    },
+    "c05-fk-result": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "circle",
+          "badge": 1,
+          "center": [
+            731.5,
+            366.5
+          ],
+          "radius": 45.5
+        },
+        {
+          "shape": "circle",
+          "badge": 2,
+          "center": [
+            806.0,
+            337.0
+          ],
+          "radius": 44.0
+        }
+      ]
+    },
+    "c06-switch-ik": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            39,
+            514,
+            256,
+            541
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "badge": 2,
+          "center": [
+            767.0,
+            341.0
+          ],
+          "radius": 82.0
+        }
+      ]
+    },
+    "c07-select-ik": {
+      "crop": [
+        25,
+        125,
+        1080,
+        905
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "circle",
+          "badge": 1,
+          "center": [
+            823.5,
+            314.0
+          ],
+          "radius": 26.5
+        },
+        {
+          "shape": "box",
+          "box": [
+            492,
+            152,
+            836,
+            175
+          ],
+          "badge": 2
+        }
+      ]
+    },
+    "c08-move-ik": {
+      "crop": [
+        25,
+        125,
+        1080,
+        975
+      ],
+      "width": 1055,
+      "marks": [
+        {
+          "shape": "circle",
+          "badge": 1,
+          "center": [
+            781.0,
+            315.5
+          ],
+          "radius": 25.5
+        },
+        {
+          "shape": "circle",
+          "badge": 2,
+          "center": [
+            740.0,
+            377.5
+          ],
+          "radius": 55.0
+        },
+        {
+          "shape": "box",
+          "box": [
+            503,
+            833,
+            751,
+            869
+          ],
+          "badge": 3
+        }
+      ]
+    },
+    "c10-save-complete": {
+      "crop": [
+        20,
+        0,
+        1080,
+        975
+      ],
+      "width": 1060,
+      "marks": [
+        {
+          "shape": "box",
+          "box": [
+            252,
+            513,
+            471,
+            541
+          ],
+          "badge": 1
+        },
+        {
+          "shape": "circle",
+          "badge": 2,
+          "center": [
+            749.5,
+            349.5
+          ],
+          "radius": 64.5
+        },
+        {
+          "shape": "box",
+          "box": [
+            30,
+            1,
+            900,
+            23
+          ],
+          "badge": 3
+        }
+      ]
+    }
+  }
+}

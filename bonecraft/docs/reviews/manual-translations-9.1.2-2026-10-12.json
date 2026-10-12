@@ -1,0 +1,459 @@
+{
+  "release": "9.1.2",
+  "date": "2026-10-12",
+  "languages": {
+    "fr": {
+      "pages": 160,
+      "chapter_ranges": [
+        [
+          2,
+          5
+        ],
+        [
+          6,
+          14
+        ],
+        [
+          15,
+          24
+        ],
+        [
+          25,
+          26
+        ],
+        [
+          27,
+          35
+        ],
+        [
+          36,
+          81
+        ],
+        [
+          82,
+          89
+        ],
+        [
+          90,
+          93
+        ],
+        [
+          94,
+          98
+        ],
+        [
+          99,
+          103
+        ],
+        [
+          104,
+          107
+        ],
+        [
+          108,
+          160
+        ]
+      ],
+      "pdf_sha256": "814ec7b5248aacbde706c8f9f1a2498c005c51ab9bc1831ea051970735819466"
+    },
+    "es": {
+      "pages": 158,
+      "chapter_ranges": [
+        [
+          2,
+          5
+        ],
+        [
+          6,
+          14
+        ],
+        [
+          15,
+          23
+        ],
+        [
+          24,
+          25
+        ],
+        [
+          26,
+          34
+        ],
+        [
+          35,
+          80
+        ],
+        [
+          81,
+          87
+        ],
+        [
+          88,
+          91
+        ],
+        [
+          92,
+          96
+        ],
+        [
+          97,
+          101
+        ],
+        [
+          102,
+          105
+        ],
+        [
+          106,
+          158
+        ]
+      ],
+      "pdf_sha256": "e82e444767cb992f39cc8f49527b28d6afa9f68389fb885cd49c6a877147e093"
+    },
+    "pt": {
+      "pages": 158,
+      "chapter_ranges": [
+        [
+          2,
+          5
+        ],
+        [
+          6,
+          14
+        ],
+        [
+          15,
+          23
+        ],
+        [
+          24,
+          25
+        ],
+        [
+          26,
+          34
+        ],
+        [
+          35,
+          80
+        ],
+        [
+          81,
+          87
+        ],
+        [
+          88,
+          91
+        ],
+        [
+          92,
+          96
+        ],
+        [
+          97,
+          101
+        ],
+        [
+          102,
+          105
+        ],
+        [
+          106,
+          158
+        ]
+      ],
+      "pdf_sha256": "efbe08576b1eecdb943c67db3820d2e8067694e1e01cfd6f90764ebe9669dfcc"
+    },
+    "zh": {
+      "pages": 145,
+      "chapter_ranges": [
+        [
+          2,
+          4
+        ],
+        [
+          5,
+          12
+        ],
+        [
+          13,
+          20
+        ],
+        [
+          21,
+          22
+        ],
+        [
+          23,
+          29
+        ],
+        [
+          30,
+          74
+        ],
+        [
+          75,
+          80
+        ],
+        [
+          81,
+          84
+        ],
+        [
+          85,
+          88
+        ],
+        [
+          89,
+          92
+        ],
+        [
+          93,
+          95
+        ],
+        [
+          96,
+          145
+        ]
+      ],
+      "pdf_sha256": "840a347625b0f3a0cb66cb4cf16e0712f14527be0d95e566e19d5151ed9441f5"
+    },
+    "ja": {
+      "pages": 149,
+      "chapter_ranges": [
+        [
+          2,
+          4
+        ],
+        [
+          5,
+          13
+        ],
+        [
+          14,
+          22
+        ],
+        [
+          23,
+          24
+        ],
+        [
+          25,
+          32
+        ],
+        [
+          33,
+          77
+        ],
+        [
+          78,
+          84
+        ],
+        [
+          85,
+          88
+        ],
+        [
+          89,
+          92
+        ],
+        [
+          93,
+          96
+        ],
+        [
+          97,
+          99
+        ],
+        [
+          100,
+          149
+        ]
+      ],
+      "pdf_sha256": "76bcea4ab9ed30c9eac271efda271f5eb788a4a2fc9ef378d4c71ffbcc0a7930"
+    },
+    "ko": {
+      "pages": 149,
+      "chapter_ranges": [
+        [
+          2,
+          4
+        ],
+        [
+          5,
+          13
+        ],
+        [
+          14,
+          22
+        ],
+        [
+          23,
+          24
+        ],
+        [
+          25,
+          32
+        ],
+        [
+          33,
+          77
+        ],
+        [
+          78,
+          84
+        ],
+        [
+          85,
+          88
+        ],
+        [
+          89,
+          92
+        ],
+        [
+          93,
+          96
+        ],
+        [
+          97,
+          99
+        ],
+        [
+          100,
+          149
+        ]
+      ],
+      "pdf_sha256": "cf5d08c124a2d276bd890de7b00d08da63507c1dce66991765068376f970a978"
+    }
+  },
+  "translation_method": "Google public machine translation, technical postediting; no professional native-language certification",
+  "validation": "PASS all seven language manual tests; translated HTML links; all English inline-code tokens retained (language order and repeated mentions may differ); screenshot references and SHA256 equality; per-page PDF footer; stable localized TOC ranges",
+  "screenshots_reused_unchanged": 92,
+  "postediting": {
+    "fr": {
+      "terminology": 63,
+      "control_labels": 35,
+      "native_headings_reused": 207
+    },
+    "es": {
+      "terminology": 150,
+      "control_labels": 36,
+      "native_headings_reused": 207
+    },
+    "pt": {
+      "terminology": 126,
+      "control_labels": 33,
+      "native_headings_reused": 207
+    },
+    "zh": {
+      "terminology": 211,
+      "control_labels": 44,
+      "native_headings_reused": 207,
+      "bold_alignment_flags": 2
+    },
+    "ja": {
+      "terminology": 26,
+      "control_labels": 38,
+      "bold_alignment_flags": 1,
+      "native_headings_reused": 207
+    },
+    "ko": {
+      "terminology": 37,
+      "control_labels": 40,
+      "native_headings_reused": 207
+    }
+  },
+  "translation_files": {
+    "fr": {
+      "01-start.md": "1e23f19f39f51771d9c8a120240c4f9690d339e5cf157f7c4f27e707d2d6cc94",
+      "02-guides-a.md": "1734d7b12033a9755ff6fab590148426f5f9f39fed047f39b55f3034c04fd1f5",
+      "03-guides-b.md": "f0ac165cc635a42c0a4f7359527145363d44dd18681f777d5713722fc7d90199",
+      "04-cats-pipeline.md": "daac194b5d790cb0aae3459a16fce3de08e753ad3ac8acb5154619a15626a76d",
+      "05-rig-tools.md": "c24c6182215dc13e1b8b0fcc06418a2d724715a1877502c49787359eef12f99f",
+      "06-rig-builder.md": "a58ed60ddef6280b0c0415a02627e64f982387ec3b757b9dbff5acbb7701aaed",
+      "07-mechanisms.md": "7ace405a3ae2ee4309ed89b4d8b69cdf030f22ac98771d0de5809dab43da2383",
+      "08-vrchat.md": "0b3b213b53e05aca5119d85f631ecd7a30f2d51752d0a91bea4a977ef4263842",
+      "09-cats.md": "7963463663e62891fd77190ad80b8d93f7d7d7da6c736c7be95c2a112d951406",
+      "10-reference.md": "3287cb9b147ccba56286b749f57b4bd899fa720648f35dc598660838718a6ef3",
+      "11-whats-new.md": "7754d694d391a7bf575495ccaaf9175f639d077325d9720f2a296d003d6df734",
+      "12-crescent-rose.md": "514978930003a7eab538de5646073614ec4c373086df3a509a0d076ebefc5b4b",
+      "index.md": "43e34ae322607fd4162986d8a63369ffdbf89cef2462b5b502a2bc7e9d8f9de1"
+    },
+    "es": {
+      "01-start.md": "25771ca8365a4696e13debc1372f0ea6d23354ec15496b42dc93fca4462942e6",
+      "02-guides-a.md": "f52734d0f862c1d4074346a7c17fab857803384c71c97a3fe27f66d0266176a4",
+      "03-guides-b.md": "ccf0327a2bae659b70c53ca83ce7dc863335b78a2e74a8126c34c72ef15f1e50",
+      "04-cats-pipeline.md": "086c7fd8b7221aac179b08bdd984ef320aabd6bc157763c7ec4f397d0dec7655",
+      "05-rig-tools.md": "3ccafc26b5eb27daec05193a3a2bad128caa92325255a9c8fbf400693a9598e9",
+      "06-rig-builder.md": "7e8606b3af23ad4c48a9e21300dfa9723ec4a70aa3ee99df4dff2df0486fa77b",
+      "07-mechanisms.md": "1c3a1e6e091f6d14eb166e431f9a602c10e81a196fbb7bfb166ae1733669c554",
+      "08-vrchat.md": "b5fc862d4ac4994a3c68c3507559364230f79a364124edd74c51a645464290bf",
+      "09-cats.md": "65cf92f0eb740f5573aea46f54286a2b1c64bf999b0db3cb522b8c9ccdc2e547",
+      "10-reference.md": "0211acf8e14130fadd377dff2139121de3b53ca81a8fbce5106863686460ce39",
+      "11-whats-new.md": "eaeebffe978b5156609d079188d5cbc42b04935004b2b861cc4b63319e5a4240",
+      "12-crescent-rose.md": "92d1764867ac4d4f4bb5c7524ee936201490be5f1f7e0fff525d3a5528351578",
+      "index.md": "d7de879dc46c7f1879c5882538aefe17d50403953a797c057eb8ae4881f3cd7e"
+    },
+    "pt": {
+      "01-start.md": "ead1a00d24914d23165454f58d6054ccd9124839f6701f4c3333c3a19836afff",
+      "02-guides-a.md": "7af62b2b238558a095ba8816d4152195eb9e889fb78190f38bd214c938dd05a3",
+      "03-guides-b.md": "07f41d79655b22c40cc0f4d664c04f153f1985f27feefb0176a9180bd8bd21d3",
+      "04-cats-pipeline.md": "86c7923c6c6c8582383394babba246c98b3ebfe199869a28b4f3bcf83d38587e",
+      "05-rig-tools.md": "d39cc24e7d33623f29ffb79d321c98021100b1c35f6371f1bdd8d8c884798cac",
+      "06-rig-builder.md": "490cc29642afdeb53c78746f91890b7cec084fd6f7f3faafae5809d6dbd46350",
+      "07-mechanisms.md": "ae4e680fd57e558fc2cd630b95e261a1be802977b6b3c47ef1fdc7d158216f12",
+      "08-vrchat.md": "c61fd731850f16ac6b3a36985a1231f35ba45af349cf81e6a48b32454689a00f",
+      "09-cats.md": "06fc243253a13a5e559ec3429621031eefc1403e48cbee662c87d3ad2cd46493",
+      "10-reference.md": "b69e5c8847d019e80e37ec99455baf5daba8ee7213f2d5100c463ce925514fb9",
+      "11-whats-new.md": "5013ce7ad6c766497124e746b972c924c3e0aa2cd7e328e63ef1d4e30001a2a1",
+      "12-crescent-rose.md": "69c875fd40914976776a63e9e35f9b6f3844cfb8aa2e48991fc21b7f8b49dac7",
+      "index.md": "1f159767f84c75cc9d723424a41b9edf9436afc0ac5e516b8cda7d1f5814bd6b"
+    },
+    "zh": {
+      "01-start.md": "d0792f17ea5fd43d748c6c091ff575908190cc505417571dd602c88ff3db519c",
+      "02-guides-a.md": "0397ee1e3b1751c4a0000131b834de37e840c77ed4c643bbcac9b114ca6c790c",
+      "03-guides-b.md": "46525abc3a6b3281a6d7ed022656437e1e9e2af67bd713f9b24488dff061a721",
+      "04-cats-pipeline.md": "d4f9bf29bddc5b78312aace55e247a88c4ed82d52dd12dabac96394e092d9f9d",
+      "05-rig-tools.md": "a7d9b4864247c153c4f4f049321c935283c809769eec36159a34862701b22131",
+      "06-rig-builder.md": "122af3ace95ac9e1182eeee31d7338803db962e4fd98e8ecf39cd5a621e1b579",
+      "07-mechanisms.md": "4b5374fb84d3c6c29fe585e33347227421eb21649565bd16bbdac8829d6ce691",
+      "08-vrchat.md": "5437646c5d24e0b3c9d67ce1f0eee137416a3c0d5be0d3fdb4392efa6519208f",
+      "09-cats.md": "c7f02305647090caef48edc44a7440028d898fe05481d971e1594c29ad851e8a",
+      "10-reference.md": "2216b5556e4eaafc63eddb8b29b80af42cc907f24a3b4d8489b07f8db9726376",
+      "11-whats-new.md": "3c80c5c39c539149a23d8b514621590fb3046f3787ddc0f3c0e8abc37a14be0e",
+      "12-crescent-rose.md": "8e47209da71e0db50cebcef157fcc92fe059b032bcbc129f3d3359ebf97d0332",
+      "index.md": "3aa1db5d2b08a71e6cdc0cd0230365681a6578ae56064161f46ab90c0a64f13e"
+    },
+    "ja": {
+      "01-start.md": "68a3bde93ba5e20b396a6ba47a2a6ba35b4f9c6e8c4f0b3f21ad40aa223b9374",
+      "02-guides-a.md": "62942c9065928bf92da9ebf5b225d4fca1634856407fc056cae71cb2959f9491",
+      "03-guides-b.md": "1f462633a8912d6051c3ee9ea995d8dcc45fb4cf40fb48efe19356a95e2d2be0",
+      "04-cats-pipeline.md": "623cb7bde12dba6ae517f70f04e3251d4e32913857ab4d924a52dd24e22eb96f",
+      "05-rig-tools.md": "a8ab79847f9351bac9514daf9d291aa0284cb8f83a2a597f0613845061e2eefc",
+      "06-rig-builder.md": "52d10b0ca36d3c63bb0fbac240765b006891c08db8b988a560f47d03f2d3c17b",
+      "07-mechanisms.md": "f6560218b5df03d54646aa3e08ac8048c2e365e4410f4286bd486d8e67f74af6",
+      "08-vrchat.md": "ee623afe3cd540b86d2440166a03df7db970427299e89f099743a028fcdf4456",
+      "09-cats.md": "e14eea3070ef18a62c486c19d1429d69e34ce2693196b8c0f571571fc59c4ffe",
+      "10-reference.md": "9b6de6bb43590f47180eade2d2d64fa0c135e280b8b7559997a3360c6bf11e06",
+      "11-whats-new.md": "994d62981d207e1a6eef4af02e3883bbfa912dd6858f0301fbde09508dc0f443",
+      "12-crescent-rose.md": "8c0815bd48ccfb5a52f960aa0fdcda2e65dad0cf6516705a58ba8ed0b5e04493",
+      "index.md": "e0a23faa899f7a33725ddc94f0833b52906b57f91826d49dec671c6663f484ba"
+    },
+    "ko": {
+      "01-start.md": "d28d54a1b6533f17d5e9120bbd5e164aed54adc99e030e147f65ec283cfe7900",
+      "02-guides-a.md": "0948238f2b746044e4c60fdc72cf70d12ee788feaa6b6f2a702b6f3e0be9da5d",
+      "03-guides-b.md": "e696fba915b8a76e99df815a8d2b0feb1ea6f4c0cf22e7ddb85a9bf71eaef405",
+      "04-cats-pipeline.md": "aab78a7265dcf793b3296648435bc9e1f6af2b39289ae30d04f62b9ef5c34031",
+      "05-rig-tools.md": "b1eabc051de59da229483297b8636b0dfe9c5b8ed55c328523c2bd3988be2c72",
+      "06-rig-builder.md": "c9fa23158f61cf19e15b4cbcee433f6466028328a8812badda09c2704dceb816",
+      "07-mechanisms.md": "b8ff833b97b9b462273c32c59159596430b3494be92dfdf06290037e83f0abb7",
+      "08-vrchat.md": "7bfab4cac6942a092c193eea11b4758c02896f07e5eb96cb61036b14ccb1160e",
+      "09-cats.md": "7cf93f5b0c5d631b5a68cf6550f5b54af53e59e40675e5aa2883c6308a810003",
+      "10-reference.md": "4aec1ce64070de7ea988b62da5d6ead27549e2269c00b3dc7dda3e0649d3361f",
+      "11-whats-new.md": "35c9cf3ac7b3f6eca1a1afdc28f2f2372ae7e76253506c7799e6bedcdc12d5d5",
+      "12-crescent-rose.md": "089c020c97e19594ae1ad1d984dad46d6195c0347600d72b34df453e34a59152",
+      "index.md": "87b009ed65515ba02dee5f8d0464d0f4dc130a74a04b90ff0bbb68bdd9636e43"
+    }
+  }
+}

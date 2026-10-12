@@ -1,24 +1,24 @@
 # VRChat 工具
 
-[← 目录](index.md)
+[← 内容](index.md)
 
 ## VRChat 工具
 
-VRChat 工具位于右侧边栏（按 **N**）的 **CATS** 选项卡中的 **VRChat** 部分。它的子部分按照你需要它们的顺序排列：VRChat 设置（命名附加工具和人形骨骼）、身体与物理（头发、服装、口型），然后是性能和导出。同一个部分也始终位于 **属性** 编辑器的 **场景** 选项卡中。
+VRChat 工具位于右侧边栏（按 **CATS**）的**Avatar Tools** 部分的**Avatar Tools** 选项卡中。它的小节涵盖了人形骨骼、头发物理、视位映射和导出。下面单独的**VRChat Tools** 部分对性能、服装和命名实用程序进行了分组。当 Preferences → Tabs → Scene Properties → Show 打开时，相同的部分位于**Properties** 编辑器的**Scene** 选项卡中。此开关不会隐藏 CATS 视口选项卡。
 
 ---
 
 ### 设置人形骨骼
 
-把骨架的骨骼映射到 VRChat 的人形槽位，并检查映射。
+将骨架的骨骼映射到 VRChat 的人形插槽并检查映射。
 
-参见 [指南 5：将虚拟形象映射到 VRChat 的身体系统](02-guides-a.md#指南-5将虚拟形象映射到-vrchat-的身体系统)。
+参见 [指南5：将你的头像映射到VRChat 的身体系统](02-guides-a.md#指南-5将虚拟形象映射到-vrchat-的身体系统)。
 
 ---
 
 ### 添加头发物理
 
-在头发、耳朵、尾巴和饰品上设置带碰撞体的 PhysBone 链。
+使用碰撞器在头发、耳朵、尾巴和配件上设置 PhysBone 链。
 
 参见 [指南 6：添加头发物理](02-guides-a.md#指南-6添加头发物理)。
 
@@ -26,163 +26,169 @@ VRChat 工具位于右侧边栏（按 **N**）的 **CATS** 选项卡中的 **VRC
 
 ### 附加服装
 
-把服装合并到虚拟形象的骨架上，并传递其权重。
+**在哪里找到它：** CATS 选项卡 → VRChat 工具 → 服装
 
-参见 [指南 7：附加随身体移动的服装](02-guides-a.md#指南-7附加随身体移动的服装)。
+将衣服合并到你的化身的骨骼上并转移其权重。
+
+参见 [指南 7：穿上随身体移动的衣服](02-guides-a.md#指南-7附加随身体移动的服装)。
 
 ---
 
 ### VRChat Naming Extras（VRChat 命名附加工具）
 
-**作用：** 检测骨架的命名风格，并批量重命名骨骼。
+**在哪里可以找到它：** CATS 选项卡 → VRChat 工具 → 命名
 
-参见 [指南 4：修复虚拟形象的骨骼名称](02-guides-a.md#指南-4修复虚拟形象的骨骼名称)。
+**它的作用：** 检测骨骼的命名风格并批量重命名骨骼。
 
-**批量工具：** **查找和替换**、**添加前缀**、**移除前缀**、**添加后缀**、**移除后缀** 和 **正则表达式替换**
+参见 [指南 4：修复头像的骨骼名称](02-guides-a.md#指南-4修复虚拟形象的骨骼名称)。
+
+**批量工具：** **Find and Replace** 、**Add Prefix** 、**Remove Prefix** 、**Add Suffix** 、**Remove Suffix** 和**Regex Replace**
 
 ---
 
 ### VRChat Viseme Mapping（VRChat 口型映射）
 
-**作用：** 把网格的形态键映射到 VRChat 的 15 个口型同步口型。
+**它的作用：** 将网格体的形状关键点映射到 VRChat 的 15 个唇形同步视位。
 
-参见 [指南 8：设置口型同步](03-guides-b.md#指南-8设置口型同步)。要创建虚拟形象还没有的口型，参见 [CATS 工具：口型](09-cats.md#口型)。
+参见 [指南 8：设置唇形同步](03-guides-b.md#指南-8设置口型同步)。要创建您的头像还没有的发音嘴型，请参阅 [CATS 工具：发音嘴型](09-cats.md#口型)。
 
-**VRChat 的 15 个口型槽位：** `sil`、`PP`、`FF`、`TH`、`DD`、`kk`、`CH`、`SS`、`nn`、`RR`、`aa`、`E`、`I`、`O`、`U`
+**VRChat 的 15 个视位插槽：** `sil` 、`PP` 、`FF` 、`TH` 、`DD` 、`kk` 、 `CH` 、`SS` 、`nn` 、`RR` 、`aa` 、`E` 、`I` 、`O` 、 `U`
 
 ---
 
 ### 检查性能
 
-**作用：** 测量虚拟形象的 VRChat 性能等级，并提供修复。
+**在哪里找到它：** CATS 选项卡 → VRChat 工具 → 性能
 
-参见 [指南 9：提升虚拟形象的性能](03-guides-b.md#指南-9提升虚拟形象的性能)。
+**它的作用：** 测量您头像的 VRChat 性能排名并提供修复。
 
-**性能等级（从好到差）：** Excellent → Good → Medium → Poor → Very Poor
+参见 [指南 9：提高头像的表现](03-guides-b.md#指南-9提升虚拟形象的性能)。
+
+**性能等级（最好到最差）：** 优秀 → 良好 → 中等 → 较差 → 非常差
 
 **工具：**
-- **Calculate Performance Rank**（计算性能等级）— 当前等级，以及按多边形、蒙皮网格、材质槽、骨骼、PhysBone 和接触划分的细分项
-- **删除零权重骨骼**、**合并相同材质网格**、**删除未使用的形态键** 和 **删除未使用的顶点组** — 优化器的修复（**假设模式** 显示它们会改变什么）
-- VRChat精简 — 按比例减少多边形数量（先 **预览**，再 **应用**），并保护形态键
+- **Calculate Performance Rank** — 当前排名，按多边形、蒙皮网格、材质槽、骨骼、PhysBones 和接触进行细分
+- **Remove Zero-Weight Bones** 、**Merge Same-Material Meshes** 、**Remove Unused Shape Keys** 和**Remove Unused Vertex Groups** — 优化器的修复（**What-If Mode** 显示了它们将更改的内容）
+- VRChat 抽取 — 按比例减少多边形数量（首先是 **Preview**，然后是**Apply** ），保持形状键的安全
 
 ---
 
 ### 导出到VRChat
 
-**作用：** 把完成的虚拟形象导出为 FBX，供 Unity 中的 VRChat SDK 使用。除非开启 **Remove Shape Keys**，否则形态键（blend shape）会被保留。
+**它的作用：** 将您完成的头像导出为 Unity 中的 VRChat SDK 的 FBX。除非**Remove Shape Keys** 打开，否则将保留形状键（混合形状）。
 
 **设置：**
-- **Folder**（文件夹）— 导出的位置
-- **Avatar**（虚拟形象）— 导出的文件名
-- **Sidecar**（附件）— 同时为 BoneCraft 的 Unity 导入器写出一个 `.bfvrc` 设置文件
-- **Merge Meshes**（合并网格）— 把导出副本的网格合并为一个
-- **Separate Clothing**（分离服装）— 让服装保持为独立的网格
-- **Remove Shape Keys**（移除形态键）— 把形态键应用到导出副本的 Basis 上
-- **Embed Textures**（嵌入纹理）— 把纹理打包进 FBX，让 Unity 能找到它们
-- **Helper Meshes**（辅助网格）— 包含隐藏的或辅助的网格；普通虚拟形象请保持关闭
+- **Folder** — 出口去向
+- **Avatar** — 导出的文件名
+- **Sidecar** — 还为 BoneCraft 的 Unity 导入器写入 `.bfvrc` 设置文件
+- **Merge Meshes** — 将导出副本的网格连接成一个
+- **Separate Clothing** — 将衣服保持为单独的网格
+- **Remove Shape Keys** — 将形状关键帧应用于导出副本的基础
+- **Embed Textures** — 将纹理打包到 FBX 中，以便 Unity 找到它们
+- **Helper Meshes** — 包括隐藏或辅助网格物体；对于普通头像将其关闭
 
-**按钮：** **导出到 VRChat（Unity）**、**生成附件**、**复制导入器路径**（BoneCraft 的 Unity 导入脚本的路径），以及用于 VRM 材质的 **检查/保留MToon**。这个部分还会重复显示人形状态，并提供 **Auto-Map Humanoid**（自动映射人形）、**Normalize Names**（规范化名称）和 **验证**。
+**按钮：** **Export to VRChat (Unity)** 、**Generate Sidecar** 、**Copy Importer Path** （BoneCraft 的Unity 导入脚本的路径）和VRM 材质的**Check / Preserve MToon**。本节还用**Auto-Map Humanoid** 、**Normalize Names** 和**Validate** 重复人形状态。
 
 ---
 
 ### 清理
 
-导出前的网格清理在 CATS 工具中进行：**修复模型**、**合并网格** 和 **应用所有变换**。参见 [CATS 工具](09-cats.md)。
+导出前的网格清理位于 CATS 工具中：**Fix Model** 、**Join Meshes** 和**Apply All Transforms**。参见 [CATS 工具](09-cats.md)。
 
 ---
 
 ## VRM 桥接
 
-VRM 工具位于 **CATS** 选项卡 → **导入 / 导出** → **VRM / VRoid**。它们需要 VRM 插件；这个部分可以安装它（**从GitHub自动安装最新版本**、**从磁盘上的.zip安装…**、**打开扩展页面**）。
+VRM 工具位于 **CATS** 选项卡 →**Import / Export** →**VRM / VRoid** 中。他们需要 VRM 插件；该部分安装它（**Auto-Install Latest from GitHub** 、**Install from.zip on Disk…** 、**Open Extensions Page** ）。
 
 ---
 
 ### VRM 和 VRoid 导入
 
-**作用：** 导入 `.vrm` 虚拟形象（VRoid Studio、Virtual Cast 及其他 VRM 虚拟形象），包括它们的材质、骨架和形态键。
+**它的作用：** 导入 `.vrm` 化身（VRoid Studio、Virtual Cast 和其他 VRM 化身）及其材质、骨架和形状键。
 
-- **导入 VRM…** — 一个 `.vrm` 文件
-- **Import VRoid (.vroid / .zip)…**（导入 VRoid）— VRoid Hub 的下载文件（`.zip`）。VRoid Studio 项目（`.vroid`）会显示一张卡片，说明如何先把它导出为 VRM。
+- **Import VRM…** — `.vrm` 文件
+- **Import VRoid (.vroid /.zip)…** — VRoid 集线器下载 (`.zip` )。 VRoid Studio 项目 (`.vroid` ) 显示一张卡片，说明如何首先将其导出到 VRM。
 
 ---
 
 ### VRM Export（VRM 导出）
 
-**作用：** 把绑定好的角色导出为 VRM，或目标应用的格式。
+**它的作用：** 将您的装备角色导出为 VRM 或目标应用程序的格式。
 
 **设置：**
-- **Folder** 和 **File**（文件）— 导出位置和名称；扩展名随目标而定
-- **目标** — VRM 1.0、VRM 0.x、VRChat FBX、VSeeFace、Warudo 或 Resonite
-- **Scope**（范围）— 活动骨架，或每个带有 VRM 数据的骨架
-- Skip lint（跳过检查）— 不进行目标检查直接导出；只在你了解所报告的风险时使用
+- **Folder** 和**File** — 它的去向和名称；扩展跟随目标
+- **Target** — VRM 1.0、VRM 0.x、VRChat FBX 、VSeeFace、Warudo 或 Resonite
+- **Scope** — 主动电枢，或具有 VRM 数据的每个电枢
+- Skip lint — 导出时不进行目标检查；仅当您了解所报告的风险时才使用
 
-点击 **导出…**。
+单击 **Export…**。
 
 ---
 
 ### VRM Lint（VRM 检查）
 
-**作用：** 导出前按所选目标检查骨架：人形映射、VRM 元数据、目标的口型，以及目标应用的要求。
+**它的作用：** 在导出之前根据所选目标检查骨架：人形映射、VRM 元数据、目标的视位和目标应用程序的期望。
 
-**立即检查** 在不做任何更改的情况下运行检查。除非你跳过检查，否则错误会阻止导出；警告会说明哪些内容目标应用仍可导入、但运行效果可能较差。
+**Lint Now** 运行检查而不更改任何内容。错误会阻止导出，除非您跳过 lint；警告解释了目标应用程序可能仍会导入但运行情况更糟的内容。
 
-如果检查提示人形骨骼缺失，而它们实际存在，请点击 **Fix Humanoid Map**（修复人形映射）：BoneCraft 会重新检测人形槽位并保存映射，不会重命名任何骨骼。
+如果 lint 提示人形骨骼存在，但缺失，请单击 **Fix Humanoid Map**：BoneCraft 再次检测人形插槽并保存映射，而不重命名任何骨骼。
 
-**这里还有：** **转换SpringBones → PhysBones**（把 VRoid 的头发物理转换为 VRChat 的）和 **映射VRoid口型**。
+**也在这里：** **Convert SpringBones → PhysBones** （VRoid 头发物理到 VRChat ）和**Map VRoid Visemes**。
 
 ---
 
 ## MMD Bridge（MMD 桥接）
 
-MMD 工具位于 **CATS** 选项卡 → **导入 / 导出** → **MMD / PMX**。它们需要 mmd_tools 插件；这个部分可以安装它（**从GitHub自动安装最新版本**、**Install from .zip on Disk...**（从磁盘上的 .zip 安装））。
+MMD 工具位于 **CATS** 选项卡 →**Import / Export** →**MMD / PMX** 中。他们需要 mmd_tools 插件；该部分安装它（**Auto-Install Latest from GitHub**，**Install from.zip on Disk...** ）。
 
 ---
 
 ### MMD Import（MMD 导入）
 
-- **Import PMX / PMD...**（导入 PMX / PMD）— MMD 模型
-- **Import VMD Motion...**（导入 VMD 动作）— MMD 动画
-- **Import VPD Pose...**（导入 VPD 姿势）— MMD 姿势
+- **Import PMX / PMD...** — MMD 型号
+- **Import VMD Motion...** — MMD 动画
+- **Import VPD Pose...** — MMD 构成
 
 ---
 
 ### MMD Export（MMD 导出）
 
-**设置：** **Folder**，然后为每种格式设置一个文件名和一个范围（活动模型，或场景中的每个 MMD 模型）：**PMX File** 和 **PMX Scope**、**VMD File** 和 **VMD Scope**、**VPD File** 和 **VPD Scope**。
+**设置：** **Folder**，然后为每种格式提供一个文件名和范围（活动模型或场景中的每个 MMD 模型）：**PMX File** 和**PMX Scope** 、**VMD File** 和**VMD Scope**，**VPD File** 和**VPD Scope**。
 
-**按钮：** **Export PMX...**（导出 PMX）、**Export VMD Motion...**（导出 VMD 动作）和 **Export VPD Pose...**（导出 VPD 姿势）
+**按钮：** **Export PMX...** 、**Export VMD Motion...** 和**Export VPD Pose...**
 
-**这里还有：** **Convert Bone Names -> Unity**（将骨骼名称转换为 Unity 格式）和 **Convert Physics -> PhysBones**（将物理转换为 PhysBones）。
+**也在这里：** **Convert Bone Names -> Unity** 和**Convert Physics -> PhysBones**。
 
 ---
 
 ## Game Export（游戏导出）
 
-**作用：** 使用经过验证的配置文件为游戏引擎导出：Unreal（人形或通用）、Unity 人形、Godot 人形，以及通用的 FBX 或 GLB。配置文件需要的每项修复都会显示出来，只有在你点击时才会应用，绝不会悄悄应用。
+**它的作用：** 导出具有经过验证的配置文件的游戏引擎：Unreal（人形或通用）、Unity 人形、Godot 人形和通用 FBX 或 GLB。配置文件所需的每个修复仅在您单击时才会显示并应用，而不是静默。
 
-**设置：** **Profile**（配置文件）、要包含的 **Animation**（动画）、**Root Motion**（根运动）、**Interpolation**（插值），以及导出所用的 **T形姿势**（Unity 人形和 VRChat 默认使用 T 姿势）。
+**设置：** **Profile** 、要包含的**Animation** 、**Root Motion** 、**Interpolation** 和用于导出的**T-Pose** （默认情况下，Unity 人形为 T 姿势， VRChat ）。
 
 **按钮：**
-- **Check for Export**（导出检查）— 按配置文件检查绑定并列出发现的问题
-- **Apply Transforms (Fix)**（应用变换（修复））— 检查可能提供的明确修复之一
-- **Export (Profile)**（导出（配置文件））— 使用该配置文件导出
+- **Check for Export** — 根据配置文件检查绑定系统并列出结果
+- **Apply Transforms (Fix)** — 检查可以提供的显式修复之一
+- **Export (Profile)** — 使用配置文件导出
 
-**位置：** **CATS** 选项卡 → **导入 / 导出** → **Game Export**
+**在哪里找到它：** **CATS** 选项卡 →**Import / Export** →**Game Export**
 
 ---
 
 ## 任务板
 
-**作用：** 当前绑定的概要：健康评分、快速改进项，以及 BoneCraft 找到的任务列表（缺失的人形骨骼、未解决的名称、缺失的口型、装备验证器的警告等），按类别分组。**打开健康检查** 打开详细信息；**刷新任务板** 再检查一次。
+**它的作用：** 当前绑定系统的摘要：健康评分、快速获胜和 BoneCraft 找到的任务列表（缺少人形骨骼、未解析的名称、缺少视位、绑定系统验证器警告等），按类别分组。**Open Health Check** 打开详情；**Refresh Task Board** 再次检查。
 
-**位置：** **BoneCraft** 选项卡 → **概览** → **任务板**
+**在哪里可以找到它：** **BoneCraft** 选项卡 →**Overview** →**Task Board**
 
 ---
 
 ### 骨骼检查器
 
-**作用：** 详细显示选中的骨骼——它的名称、父级、约束、自定义属性和驱动器——并让你无需进入编辑模式就能编辑简单的属性。
+**它的作用：** 详细显示所选骨骼 - 其名称、父级、约束、自定义属性和驱动程序 - 并允许您编辑简单属性，而无需进入编辑模式。
 
-**位置：** **BoneCraft** 选项卡 → **审查** → **骨骼检查器**
+**在哪里可以找到它：** **BoneCraft** 选项卡 →**Review** →**Bone Inspector**
 
-下一章: [CATS 工具](09-cats.md)
+下一页： [CATS 工具](09-cats.md)

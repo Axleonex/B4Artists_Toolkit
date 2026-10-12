@@ -1,0 +1,721 @@
+{
+  "release": "9.1.2",
+  "host": "Bforartists 5.2.0 / Blender 5.3.0 Alpha 0a1ca45552db",
+  "release_sha256": "9901bdb98da47384522b5137df58e8722f7d4f8c6e20cf1d835630c6bbaafa63",
+  "language": "en",
+  "raw_directory": "G:\\LapArt\\output\\rig-builder-captures\\9.1.2\\en",
+  "screenshots": [
+    {
+      "image": "a01-enable-rigify",
+      "raw_sha256": "1a32df8c6d098e9578e59ed5d06fcbdd39451bee1fafae39cc193940501c4472",
+      "annotated_sha256": "6e93f6cea2331647dd7e0cae3429f47a71bc9290a857a5e8a5b47bb8af4e0901",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "(Unsaved) - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:41:41.770Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "a02-simple-human",
+      "raw_sha256": "ac7f2a95cd7cc38829fd544b67467d927d0d030e4ae5ab8af94808d86357d8a7",
+      "annotated_sha256": "a134cd06c202b2e4a629d5be11474c264f1b6f50a04f58297f71ac84e5ab32ec",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* (Unsaved) - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:41:57.949Z"
+      },
+      "marks": 1
+    },
+    {
+      "image": "a03-metarig",
+      "raw_sha256": "3fd38fa99d0b5fb634d32d80d60478c3e165ec87e24d451e17b8dd7bc889a884",
+      "annotated_sha256": "f4fbc61518f6cfa0de33dca9517fad6eeab703dd9653014951a1ebbc4934e68f",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* (Unsaved) - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:42:23.107Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "a04-object-mode",
+      "raw_sha256": "6304d8cdaa7fefcb565395a06af1be0d5ffe5680b3e64b53c169121dcddc1fd1",
+      "annotated_sha256": "deda7c8f0329e29bddfca8dc69e2616af37b028670f6873bcc90e6bd4c333969",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* (Unsaved) - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:42:32.629Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "a05-t-pose",
+      "raw_sha256": "868cc12717b5e02dff233c86f9c4e9beb65a52693b38a221b2417456a132aa8b",
+      "annotated_sha256": "661c49ca5f62bf12af4590545812a429e76971bb116ad90aacb88619be2a3f8f",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* (Unsaved) - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:42:45.590Z"
+      },
+      "marks": 1
+    },
+    {
+      "image": "a06-final-settings",
+      "raw_sha256": "47a187584df8940e4eef5534376170bda30de27441b312dcaeee3a7b2b0fbd6a",
+      "annotated_sha256": "d386b710ed0431ae21215372929b08d2c759045145bef9459f7b9fada12b58ab",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* (Unsaved) - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:47:33.268Z"
+      },
+      "marks": 3
+    },
+    {
+      "image": "a07-select-forearm",
+      "raw_sha256": "2d0c6158989272c9cba5ae38ecebfe8cb6c72a7130fdfc22f681bd181ddcf07a",
+      "annotated_sha256": "08f9d520f9914303b24c16e8fcce7cf1cef01544c352ff7b9b8d9847836101bc",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* (Unsaved) - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:48:01.431Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "a09-clear-pose",
+      "raw_sha256": "0786388ca0fed4105f00e2b2a27c7089f3dcc990eedf7e8c5ca210608f37efa6",
+      "annotated_sha256": "65ded9c8eb414eebf2409cc4e59e2dd8322a4210cf63fd329c8fcf5fa494e570",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* (Unsaved) - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:50:58.098Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b01-select-mesh",
+      "raw_sha256": "31866d3d14e804bc16abc5c3d19b82f5eddbbe4702ef65cda30aaf1942889a39",
+      "annotated_sha256": "4523418c1ee9807b03213677298ca0faa9c3b22e47e3a2b9d78cebf74cacb42a",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:57:37.126Z"
+      },
+      "marks": 1
+    },
+    {
+      "image": "b02-convert-mesh",
+      "raw_sha256": "8ada46698d4ace306e5d6463b0f640d22cee99fc68ddde5e0d65b5c4055bfc18",
+      "annotated_sha256": "3e20a7b6b4adab1249729d5dd5a32cf55ad96c069f65d52fd0b57a4f6ccb366a",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:58:05.358Z"
+      },
+      "marks": 1
+    },
+    {
+      "image": "b03-clear-parent",
+      "raw_sha256": "684e18d0f4a86818f29e135eda189d729eda02d0a340e4ec3879a99327f39dd6",
+      "annotated_sha256": "f51929074954b9b2a08dc1237700c2dc87fe3cd61c0a80ab6a1921511a8f8a98",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:58:22.143Z"
+      },
+      "marks": 1
+    },
+    {
+      "image": "b04-clear-groups",
+      "raw_sha256": "69921c0474a734c6b49c5f8df87822b7709f4ea74e8066b2c0907d01b17c4168",
+      "annotated_sha256": "01b31f08893c9a809a7ec8393a931f8b4f12a899eb4e1bca37d4d6c5a34e25a3",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:58:48.111Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b05-rigless-check",
+      "raw_sha256": "5d5e652f4227e12069e0242fbe8290faa55dedbc02abec8f200318d7e2cf58ea",
+      "annotated_sha256": "8efee95cd72455029d5005f0e33053d0d5d2a7ee2c3cd298fe69f3aabdd8f9e1",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:59:23.416Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b10a-enable-rig-builder-tab",
+      "raw_sha256": "7006d9350ff3012182aab959af587ef5fb6736207c45e0b19887fe38ef875fec",
+      "annotated_sha256": "d2fea01670c6e9ccd87729cd25baf781fab119f114157ea8745a713fcc730638",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 17044958,
+          "title": "Preferences"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:05:37.092Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b06-start-wizard",
+      "raw_sha256": "609c569e4ac90af2adadbc358ccbdbece111fa07b99918c943fa5d0913182418",
+      "annotated_sha256": "ad43485e13b9dea62a564438d284c94a81e291d4ec2c9d87ad462f66fca89a00",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T01:59:38.117Z"
+      },
+      "marks": 1
+    },
+    {
+      "image": "b07-select-input",
+      "raw_sha256": "f9055e666e36b40970acdde098430edeaaeb49144cf7c4228e53e5c6ad25f559",
+      "annotated_sha256": "0ce003d3db72dee90b22951db77cebb80b230edfb867d09224421689904c3229",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:00:07.688Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b08-body-ikfk",
+      "raw_sha256": "c050cf4300d255053d816c528fcdd3f3243d7f54e9867e50e61e74d83cbb688b",
+      "annotated_sha256": "df59eeb29c8a6e02e7e8879646c08359306f0d8ba6bdb351707b4bfc3d33feb2",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:00:22.916Z"
+      },
+      "marks": 3
+    },
+    {
+      "image": "b09-detect-markers",
+      "raw_sha256": "85784529bf18d3575aa59bee70bbe83ecda89176cf69737cec661eb663c3df08",
+      "annotated_sha256": "d39e7e8ecf6cf4c6e2818355a1a29910f9fbafc7783223966394bb883ca46620",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:00:37.525Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b10-review-markers",
+      "raw_sha256": "69f471a57d32b401e0ea8838491a7322be75ee1cd34d6a2db297117d62b7671b",
+      "annotated_sha256": "c8bff1f4153666f6b25520b17da5cfc0e581f54559ff14ca31a2d5b343ba5850",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:01:38.468Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b11-place-wrist",
+      "raw_sha256": "ffb923a2aaaf615b72545a281fe7ed405c7675b88c5badab303a7d8422c70e6f",
+      "annotated_sha256": "2705d61c1c56cf9cf11645a5478706d216d630b96010b4397248761189c6d75d",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:06:30.491Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b12-mirrored-wrist",
+      "raw_sha256": "36ce76fdb391486028a84964a7e3ee5b87a33547aa44d656b2f52748f3822cce",
+      "annotated_sha256": "74539d8bc2e698731fb3e169beadb9c01d52470f8093c78f1d74b0602363039f",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:06:47.592Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b13-arm-precision",
+      "raw_sha256": "af7f098021b15acb696c56dd235b6ffeed418c105c93e42ad904982d4f9b37ff",
+      "annotated_sha256": "a39f00969b161fa3ef1ea7af2f20c924b5ec477eda13e54e4d9b57a9bc3497c0",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:09:54.729Z"
+      },
+      "marks": 3
+    },
+    {
+      "image": "b14-leg-precision",
+      "raw_sha256": "a85c3a30b7600f452cc2b0459b9c4e2b3c53ee1fd803065f5d5e2f9232e28bea",
+      "annotated_sha256": "9376c97e860e6816a99b1f111278ada8ae47dba3434442a145fb791bbf6d1d15",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:11:48.998Z"
+      },
+      "marks": 3
+    },
+    {
+      "image": "b15-side-depth",
+      "raw_sha256": "c1988fb83bfc6f380c518b45e360ffc891126410c3c2e30f57e285c756fadb69",
+      "annotated_sha256": "b2979ca36d31782a43b7be36b1890b043a700ba195abf28db5f2814417cdf180",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:12:55.311Z"
+      },
+      "marks": 3
+    },
+    {
+      "image": "b16-place-heels",
+      "raw_sha256": "afc5fb78cdcd2fb37b78f477b6cbc04cad04a2abda6a86c376feec80aec1b21c",
+      "annotated_sha256": "ce234438c9d706ef6f32900ac86cb460906c6b66031e7c77858393d0f668df92",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:18:43.683Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b17-confirm-markers",
+      "raw_sha256": "6c4e705e3a6321e4e62914169c165847daf231f8d6f5165d7ba31b28807be7d8",
+      "annotated_sha256": "9ce70878d66c0fedbeffee5e1fef06524f906eb39a2a034416719d16cda3ffcc",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:19:07.338Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b18-no-fingers",
+      "raw_sha256": "ee5b2e00876599751a1cba4bb1047fb14def20e28f65146dd19ff11bce094244",
+      "annotated_sha256": "e0def5aa9d97bf87f9672af64965c5693d8b8ea291ec09274e05706064ad7910",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:14:53.536Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "b19-review-generate",
+      "raw_sha256": "bdc05845e9669ce36731e87e0f6dcc3bb9a458626b4968370c3dec014ccc307c",
+      "annotated_sha256": "7cc9943e2030e3953df94b49f7ac6ffb304be274dc8156613b05c28a769dba3d",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:19:21.416Z"
+      },
+      "marks": 3
+    },
+    {
+      "image": "b20-build-controls",
+      "raw_sha256": "9fb613ae63508965aa02f4a92a2dad7b233bba1a042731716c5efaa09a105648",
+      "annotated_sha256": "1ef62136f4ab41f9ad5f2d77ceb1062d10405ac51357f707e67dc427c2b9f4e7",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:19:31.608Z"
+      },
+      "marks": 1
+    },
+    {
+      "image": "b21-close-wizard",
+      "raw_sha256": "0c371028247bffc085ba723704c441ffeb30ae2e8fbbe1c1b71d7b07da8ea569",
+      "annotated_sha256": "74d6d1f93903f1f7636510a01d037351f45eb29ce6a3a3745161c1392019ee6e",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:19:42.698Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "c02-control-layer",
+      "raw_sha256": "9e7acacd80b3861e6252c232755877e2f647433b65e8558ccfa1b3ef92af80d6",
+      "annotated_sha256": "8651abf1468de70114ef7fb352ce8291f98f8ebbe1489068ee5811c254708da0",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:20:57.740Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "c03-visible-controls",
+      "raw_sha256": "9dc842c2403ac015522cdc131d948a6e444699706bc36c36ae6d4aae011ab0a7",
+      "annotated_sha256": "b09deb57ed17f37e05157b3fee4eab65e4a43d7b7497b5cbf21d336d30fb8031",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:22:27.519Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "c04-select-fk",
+      "raw_sha256": "4e53a2726f699a6ba279537b7ee14395820ba71468d9b85d38616f2cf4d5c270",
+      "annotated_sha256": "24a8eb7abcf9048804a2aca48cc4c0e310e98dd8ca02fd08549d72a9f4835e1b",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:22:37.950Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "c05-fk-weight-check",
+      "raw_sha256": "29a29ed435c812c95f01b7213214d76250b00f623cf511e3b0b96b98d5f4e2f0",
+      "annotated_sha256": "5eb8c97f3291fe3a7ca119d3636ad102c5f4c66286e210d147398b09b0377423",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* SimpleHuman_Mannequin [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\SimpleHuman_Mannequin.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:23:13.496Z"
+      },
+      "marks": 1
+    },
+    {
+      "image": "b23-recalculate-weights",
+      "raw_sha256": "85de5f784e5c678332ce495d91da0b9f5b31d58636d595db69c738f8d5305110",
+      "annotated_sha256": "cea055e88256c7a92b538a4337e179eb806c92cb2686454a428962560070f80c",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* Mannequin_AutoRig [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\Mannequin_AutoRig.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:34:58.999Z"
+      },
+      "marks": 4
+    },
+    {
+      "image": "c05-fk-result",
+      "raw_sha256": "ae16f548b88b25ae0f586ad1576bce06c68572263d9b3273b90ef607355ee1d6",
+      "annotated_sha256": "b91f0422f6bc1c2aec05cba05baa9eeceef55a17c3ec02ccdbdac30469fdfa46",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* Mannequin_AutoRig [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\Mannequin_AutoRig.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:36:28.568Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "c06-switch-ik",
+      "raw_sha256": "e59b5b7fb55e4996bae4f1b6dc07d10959deb832fc9db8ec37680598e7540aba",
+      "annotated_sha256": "ce59799143d69bec127290e6d231c3595be28e18b9696be335ecd187e646885e",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* Mannequin_AutoRig [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\Mannequin_AutoRig.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:36:53.438Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "c07-select-ik",
+      "raw_sha256": "c30375be9e13c2f85174a9d0dda98075fcdb19a4c17d1a04bfaa4a36d0ddce2c",
+      "annotated_sha256": "f273688a6006c42ba0b16d1b8810ddee9d6db6f954334f694e08d9613cb800fe",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* Mannequin_AutoRig [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\Mannequin_AutoRig.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:37:18.611Z"
+      },
+      "marks": 2
+    },
+    {
+      "image": "c08-move-ik",
+      "raw_sha256": "70ec17cfbad5c8b1da95db397bfce528c45c1a6e42249c43f317a83530b2507e",
+      "annotated_sha256": "67bdffd0e044b313839fb21e9f181ff6ddb2fcc7b9c5a35948b03c19fd599745",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* Mannequin_AutoRig [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\Mannequin_AutoRig.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:40:08.512Z"
+      },
+      "marks": 3
+    },
+    {
+      "image": "c10-save-complete",
+      "raw_sha256": "75c572a7a26a792eaf347761f791c91f65392549f86eb3cc409f8142e6ae318c",
+      "annotated_sha256": "a4a9ee92734a793e60bfc53ae7bc0137675e226e17f5d0bfdba6f3ef6edb6526",
+      "capture": {
+        "window": {
+          "app": "process:\\\\100.114.2.71\\Gdrive\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+          "id": 20846066,
+          "title": "* Mannequin_AutoRig [G:\\LapArt\\output\\crescent-rose-work\\9.1.2-en\\Mannequin_AutoRig.blend] - Bforartists 5.2.0"
+        },
+        "screenshotId": "screenshot-0",
+        "width": 1920,
+        "height": 1033,
+        "captured": "2026-10-12T02:40:30.549Z"
+      },
+      "marks": 3
+    }
+  ],
+  "rig_validation": {
+    "bones": 58,
+    "vertices": 1480,
+    "unweighted_vertices": 0,
+    "armature_modifiers": [
+      "BoneForge_Rig"
+    ],
+    "weight_backup": true,
+    "controls": true,
+    "limb_response": {
+      "forearm.fk-L": 113,
+      "forearm.fk-R": 117,
+      "shin.fk-L": 262,
+      "shin.fk-R": 262
+    }
+  },
+  "pdf_validation": {
+    "pages": 149,
+    "workshop_pages": [
+      35,
+      76
+    ],
+    "numbered_steps": 40,
+    "workshop_images": 40,
+    "issues": []
+  },
+  "crescent_rose_screenshots_preserved": 52,
+  "pdf_sha256": "5317858759d0e38baf8a7515faafafd1aceec5e33a334ee470d287767b3765ca",
+  "examples": {
+    "Mannequin_AutoRig.blend": "9ef52dd8d015c80871bb99c3cae31682f56a6c884babf8f417245fea8c80cbc4",
+    "SimpleHuman_Mannequin.blend": "0835997c527d2a0adfa6f22e08f88b646196b2f2bc37f17d508390623c197ffa"
+  }
+}

@@ -1,91 +1,109 @@
 # 入门
 
-[← 目录](index.md)
+[← 内容](index.md)
 
 ## BoneCraft 是什么？
 
-BoneCraft 是 Bforartists 的一个插件，帮助你为角色和道具绑定骨骼，并为 VRChat、VRoid / VRM 和 MMD 准备 3D 虚拟形象。它添加的面板和按钮能把最繁琐的步骤自动化：创建绑定、绘制权重、修复骨骼名称、设置口型同步和眼球追踪，以及导出。
+BoneCraft 是 Bforartists 的附加组件，可帮助您装配角色和道具，并为 VRChat 、VRoid / VRM 和 MMD 准备 3D 头像。它添加了面板和按钮，可以自动执行最繁琐的步骤：构建绑定系统、绘制权重、修复骨骼名称、设置唇形同步和眼动追踪以及导出。
 
-**BoneCraft 做不到的事：**
-- 它不能为虚拟形象的身体建模或雕刻
-- 它不能从零开始创建纹理或材质
-- 它不能直接上传到 VRChat（你仍然需要 VRChat Creator Companion / SDK）
+**BoneCraft 不能做什么：**
+- 它无法塑造或雕刻您头像的身体形状
+- 它无法从头开始创建纹理或材质
+- 它无法直接上传到VRChat （您仍然需要VRChat Creator Companion / SDK）
 
 ---
 
 ## BoneCraft 与 BoneForge
 
-BoneCraft 只能在 Bforartists（Blender 的分支）中运行。标准 Blender 有一个单独的插件 BoneForge，工具较少。两者只安装其一，切勿同时安装。在标准 Blender 中，BoneCraft 不会加载：它只显示一条提示，并附带一个获取 Bforartists 的按钮。
+BoneCraft 仅在 Bforartists （Blender 前叉）中运行。对于标准 Blender，有一个单独的附加组件 BoneForge，具有较小的工具集。安装其中之一，切勿同时安装。在标准 Blender 中，BoneCraft 不会加载：它显示一个带有获取 Bforartists 按钮的通知。
 
-| 方面 | BoneForge（标准 Blender） | BoneCraft（Bforartists） |
+|面积|BoneForge （标准Blender ）|BoneCraft (Bforartists )|
 | --- | --- | --- |
-| CATS 虚拟形象清理、Material Combiner、源自 UVToolkit 的控件 | 包含 | 包含 |
-| 基本的虚拟形象辅助工具（Mixamo 风格） | 包含 | 包含 |
-| 绑定构建器：关节检测、向导、控制绑定、Basic Humanoid 资源 | 不包含 | 包含 |
-| 动画师控制和 Control Picker | 不包含 | 包含 |
-| 用于道具和机械的 Mechanisms | 不包含 | 包含 |
-| 高级重定向和基于配置文件的游戏导出 | 不包含 | 包含 |
+|CATS 头像清理、材质组合器、UVToolkit 衍生控件|包含|包含|
+|基本头像助手（Mixamo 风格）|包含|包含|
+|Rig Builder：关节检测、向导、控制绑定系统、基本人形资产|不包括在内|包含|
+|Animator 控件和控件选择器|不包括在内|包含|
+|道具和机器的机制|不包括在内|包含|
+|高级重定向和配置文件驱动的游戏导出|不包括在内|包含|
 
 ## 安装 BoneCraft
 
-**你需要：**
-- Bforartists（BoneCraft 在 Bforartists 5.2 上测试过）
-- BoneCraft 的 `.zip` 文件
+**您需要什么：**
+- Bforartists （BoneCraft 在Bforartists 5.2上测试）
+- BoneCraft `.zip` 文件
 
 **步骤：**
 
-1. 打开 Bforartists。
-2. 打开 **编辑**（Edit）→ **偏好设置**（Preferences）→ **插件**（Add-ons）。
-3. 点击 **从磁盘安装…**（Install from Disk…），选择 BoneCraft 的 `.zip` 文件。
+1. 打开Bforartists。
+2. 打开 **Edit** →**Preferences** →**Add-ons**。
+3. 单击 **Install from Disk…** 并选择 BoneCraft `.zip` 文件。
 4. 勾选 BoneCraft 旁边的复选框以启用它。
-5. 展开 BoneCraft 的条目查看它的设置：**Tabs**（选项卡）、**Show Helpers**（显示帮助）、**Language**（语言）和 **工具** 列表。
+5. 展开 BoneCraft 的条目以查看其设置：**Language** 、**Tabs** 、**Shelf Width** 、**Show Helpers** 和**Tools** 列表。
 
-**你应该看到：** 左侧工具架（按 **T**）上的 BoneCraft 和 Rig Builder 选项卡，以及右侧边栏（按 **N**）上的 CATS 选项卡。
+**您应该看到：**左侧工具架上的 BoneCraft 和 Rig Builder 选项卡（按**T**）以及右侧边栏上的 CATS 选项卡（按**N**）。
 
 ## 各功能在哪里
 
-BoneCraft 在 3D 视口中添加了三个选项卡：
+BoneCraft 向 3D 视口添加三个选项卡：
 
-| 选项卡 | 默认位置 | 部分 |
+|选项卡|默认面|部分|
 | --- | --- | --- |
-| BoneCraft | 左侧工具架（按 T） | 概览、装备设置、蒙皮、Mechanisms、审查 |
-| Rig Builder | 左侧工具架（按 T） | 绑定构建器：Quick Rig、自动绑定向导、人体模型 |
-| CATS | 右侧边栏（按 N） | CATS、VRChat、导入 / 导出 |
+|BoneCraft |左工具架（按 T）|概述、设置索具、皮肤、机制、回顾|
+|绑定系统建造者|左工具架（按 T）|绑定系统生成器：自动绑定系统向导、快速绑定系统、人体模型|
+|CATS |右侧边栏（按 N）|CATS，头像工具，VRChat 工具，导入/导出|
 
-**移动选项卡：** 打开 **编辑** → **偏好设置** → **插件** → BoneCraft → **Tabs**。每个选项卡都有一个显示开关和两个按钮：Left（左）和 Right（右）。更改会立即生效。选项卡被隐藏时，它的 Left 和 Right 按钮会变灰，但仍然可以使用。
+**移动选项卡：**打开**Edit** →**Preferences** →**Add-ons** → BoneCraft →**Tabs**。每个选项卡都有一个显示开关和两个按钮，“左”和“右”。更改立即生效。当选项卡隐藏时，其“左”和“右”按钮会变成灰色，但它们仍然有效。
 
-**始终在属性编辑器中：** 无论选中什么，绑定构建器、Mechanisms、CATS、VRChat 和导入 / 导出也都显示在属性编辑器的场景选项卡中。选中骨架时，BoneCraft 的各部分还会显示在骨架数据选项卡中。显示开关永远不会隐藏这些副本。要在所有位置移除某个工具，请在 **工具** 列表中关闭它的工具包，或停用插件。
+**属性编辑器：** Rig Builder、Mechanisms、CATS 、Avatar Tools、VRChat Tools 和 Import/Export 也显示在属性编辑器的 Scene 选项卡中，而**Scene Properties** 在 Preferences → Tabs 中打开。此开关启动。单击其**Show** 按钮可隐藏或显示所有这些部分；蓝色表示它们已显示。它不会更改视口选项卡或骨架数据选项卡。选择骨架后，BoneCraft 的骨架工具也会出现在骨架数据选项卡中，独立于这些可见性开关。 Rig Builder、Mechanisms 和 CATS 部分改为使用 Scene 选项卡。要在各处删除工具，请在**Tools** 列表中关闭其软件包，或禁用该附加组件。
 
-**Show Helpers（显示帮助）：** BoneCraft 用简短的"做什么 / 何时用"说明和"How this works"（工作原理）注释来解释它的各个部分。在插件的偏好设置中取消勾选 **Show Helpers** 即可隐藏它们。在 VRChat 部分中，**紧凑模式** 是同一个开关的快捷方式。
+**货架宽度：** 加宽窄货架开始。如果 BoneCraft 选项卡低于“左”或“右”最小值，它会加宽一次，即默认为 240 和 260 像素，在 1× UI 比例下。之后您将其拉窄的架子将保持您选择的宽度。关闭开关以自行管理宽度；它的宽度字段变为非活动状态。
 
-**语言：** 插件偏好设置中的 **Language**（语言）设置可以把 BoneCraft 自己的面板切换为 English、日本語、한국어、中文、Français、Português 或 Español。
+**菜单和内置工具架选项卡：** 在 9.1 中，您还可以从 3D 视口的标题菜单访问工具：
 
-**每次都先运行修复模型：** 在 CATS 选项卡中，始终先运行 **修复模型**，再使用其他 CATS 工具。CATS 流程用一份记录来跟踪你完成了哪些步骤，如果你不按顺序运行某个工具，它会发出警告。参见 [CATS 流程](04-cats-pipeline.md)。
+|地点|工具|
+| --- | --- |
+|添加 → 骨架|快速绑定系统、自动绑定系统向导、主动绑定系统模型|
+|姿势 → BoneCraft （姿势模式）|姿势工具、选取器、骨骼集合、绑定系统设置和检查|
+|权重 → BoneCraft （权重绘制模式）|洪水填充、镜像和标准化权重|
+|对象 → 机制（对象模式）|添加零件、关节和链接；测试运动|
+|工具架 → 姿势或权重 → BoneCraft |用于常见姿势或权重操作的按钮|
 
-**快捷面板：** 在 3D 视口中按 **Ctrl+Shift+R**，可以在光标下方以弹出窗口打开 BoneCraft 的绑定面板。
+当架子较宽时，“姿势”和“权重”架子按钮会显示文本，而当架子较窄时，则会变成图标网格。将鼠标悬停在图标上以阅读其工具提示。这些接入点使用与 BoneCraft 自己的选项卡相同的工具；它们的可用性遵循启用的工具包。
+
+**视口工具：** 放置绑定系统标记在您单击网格时放置自动绑定系统向导的下一个标记；当您单击零件时，构建机制会启动引导关节或链接。请参阅 [绑定系统建造者](06-rig-builder.md#自动绑定向导) 和 [机制](07-mechanisms.md#关节与连接各举一例) 了解其设置和控制。
+
+**先运行，然后调整：** Quick Rig、Fit Dropped Rig、Weight Mirror、Weight Transfer、Flood to Custom、Ribbon、Spline IK 和 Delta Mush 等工具在单击时运行。随后，立即使用视口中的“调整上次操作”面板来更改其选项。在运行其他操作之前进行调整。其他面板将可选设置折叠在操作按钮下方；当您需要这些设置时将其展开。需要不同选择的面板可能会保持可见并解释要选择的内容。
+
+**显示助手：** BoneCraft 用简短的“内容/时间”行和“如何工作”注释解释了其部分。在附加组件的首选项中取消勾选**Show Helpers** 以隐藏它们。在“头像工具”部分中，**Compact Mode** 是同一开关的快捷方式。
+
+**语言：** 附加组件首选项中的**Language** 设置将 BoneCraft 自己的面板更改为英语、日本语、한국어、中文、法语、葡萄牙语或西班牙语。
+
+**每次首先修复模型：** 在 CATS 选项卡中，始终在任何其他 CATS 工具之前以**Fix Model** 开头。 CATS 管道使用分类账来跟踪您已完成的步骤，如果您不按顺序运行，每个工具都会向您发出警告。参见 [CATS 管道](04-cats-pipeline.md)。
+
+**快速面板：** 在 3D 视口中按**Ctrl+Shift+R** 以在光标下弹出 BoneCraft 的绑定系统面板。
 
 ---
 
 ## 我该从哪里开始？
 
-选择最符合你情况的描述：
+选择最适合您的描述：
 
-> **"你有一个全新的 3D 模型文件（FBX、OBJ 或 Blender 文件），想从零开始为 VRChat 绑定它。"**
-> → 前往 [指南 1：把你的第一个虚拟形象带进 VRChat](02-guides-a.md#指南-1把你的第一个虚拟形象带进-vrchat)
+> **“您拥有全新的 3D 模型文件（FBX 、OBJ 或 Blender 文件），并且想要从头开始为 VRChat 装配它。”**
+> → 前往 [指南 1：将您的第一个头像放入 VRChat](02-guides-a.md#指南-1把你的第一个虚拟形象带进-vrchat)
 
-> **"你在 VRoid Studio 中制作了虚拟形象，并导出了 VRM 文件。"**
-> → 前往 [指南 2：把 VRoid 虚拟形象带进 VRChat](02-guides-a.md#指南-2把-vroid-虚拟形象带进-vrchat)
+> **“您是在 VRoid Studio 中制作头像并导出 VRM 文件的人。”**
+> → 前往 [指南2：将VRoid 头像带入VRChat](02-guides-a.md#指南-2把-vroid-虚拟形象带进-vrchat)
 
-> **"你有一个 MMD 模型（PMX 文件），想在 VRChat 中使用它。"**
-> → 前往 [指南 3：把 MMD 虚拟形象带进 VRChat](02-guides-a.md#指南-3把-mmd-虚拟形象带进-vrchat)
+> **“您拥有 MMD 模型（PMX 文件）并希望在 VRChat 中使用它。”**
+> → 前往 [指南3：将MMD 头像带入VRChat](02-guides-a.md#指南-3把-mmd-虚拟形象带进-vrchat)
 
-> **"你已经有一个绑定好的虚拟形象，但因为骨骼名称不对而无法上传。"**
-> → 前往 [指南 4：修复虚拟形象的骨骼名称](02-guides-a.md#指南-4修复虚拟形象的骨骼名称)
+> **“你是一个已经有一个被操纵的头像的人，但它不会上传，因为骨骼的名称错误。”**
+> → 前往 [指南 4：修复头像的骨骼名称](02-guides-a.md#指南-4修复虚拟形象的骨骼名称)
 
-> **"你有一个绑定好的虚拟形象，想一次性让它为 VRChat 完全准备好：口型同步、眼球追踪、干净的网格。"**
-> → 前往 [指南 13：用 CATS 让虚拟形象为 VRChat 做好准备](03-guides-b.md#指南-13用-cats-让虚拟形象为-vrchat-做好准备)
+> **“您是一个拥有已装备化身的人，并且想要将其完全准备好 VRChat - 唇形同步、眼动追踪、干净的网格，全部同时完成。”**
+> → 前往 [指南 13：使用 CATS 准备好您的头像 VRChat](03-guides-b.md#指南-13用-cats-让虚拟形象为-vrchat-做好准备)
 
-> **"你想解决某个具体问题。"**
-> → 前往 [快速修复索引](10-reference.md#快速修复索引)
+> **“你是一个想要解决特定问题的人。”**
+> → 转到 [快速修复索引](10-reference.md#快速修复索引)
 
-下一章: [指南 1–7](02-guides-a.md)
+下一页： [指南 1–7](02-guides-a.md)

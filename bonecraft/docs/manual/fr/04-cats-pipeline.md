@@ -1,67 +1,67 @@
 # Le pipeline CATS
 
-[← Sommaire](index.md)
+[← Contenu](index.md)
 
 **Lisez ceci avant d'utiliser un outil CATS pour la première fois.**
 
-Les outils CATS ne sont pas un menu d'options indépendantes : ils forment un pipeline. Chaque étape s'appuie sur la précédente. Les lancer dans le désordre produit des résultats cassés qui restent invisibles jusqu'à ce que vous soyez déjà dans VRChat, et à ce moment-là, on ne peut plus les corriger sans tout recommencer. Vous pouvez sauter une phase dont votre avatar n'a pas besoin, mais les phases que vous lancez doivent garder cet ordre.
+Les outils CATS ne sont pas un menu d'options indépendantes: ils constituent un pipeline. Chaque étape s’appuie sur la précédente. Les exécuter dans le désordre produit des résultats cassés qui restent invisibles jusqu'à ce que vous soyez déjà dans VRChat, et ils ne peuvent alors pas être corrigés sans recommencer. Vous pouvez sauter une phase dont votre avatar n'a pas besoin, mais les phases que vous exécutez doivent conserver cet ordre.
 
 ---
 
 ## Les six phases, dans l'ordre
 
-L'État du Pipeline de l'onglet CATS liste les phases et coche chacune quand elle est terminée :
+L'état du pipeline de l'onglet CATS répertorie les phases et coche chacune d'entre elles une fois terminée :
 
-1. **Corriger le modèle** — Nettoyer le maillage : retirer les doublons et la géométrie cassée, corriger les normales. Toutes les autres étapes en dépendent.
+1. **Fix Model** — Nettoyez le maillage : supprimez les doublons et la géométrie cassée, corrigez les normales. Toutes les autres étapes dépendent de celle-ci.
 
-2. **Atlas de Matériaux** — Combiner les matériaux de l'avatar en une seule planche de texture (facultatif, pour les performances).
+2. **Material Atlas** — Combinez les matériaux de l'avatar en une seule feuille de texture (facultatif, pour les performances).
 
-3. **Visèmes** — Générer les 15 formes de bouche de synchronisation labiale de VRChat à partir de vos trois formes de base (A, O, CH).
+3. **Visemes** — Générez les 15 formes de bouche lip-sync VRChat à partir de vos trois formes de base (A, O, CH).
 
-4. **Suivi Oculaire** — Configurer le mouvement des yeux de VRChat avec les os des yeux de votre avatar.
+4. **Eye Tracking** — Configurez le mouvement des yeux de VRChat avec les os des yeux de votre avatar.
 
-5. **Pose en Clé de Forme** — Capturer des poses ou expressions personnalisées sous forme de clés de forme.
+5. **Pose to Shape Key** — Capturez des poses ou des expressions personnalisées sous forme de clés de forme.
 
-6. **Appliquer Toutes les Transformations** — Figer toute la position, la rotation et l'échelle pour que votre avatar ait des transformations propres à l'envoi.
+6. **Apply All Transforms** — Gelez toutes les positions, rotations et échelles afin que votre avatar dispose de transformations propres à télécharger.
 
 ---
 
 ## État du Pipeline et Registre des Opérations
 
-L'État du Pipeline affiche une ligne par phase. Quand une phase se termine, sa ligne affiche une coche. L'état est conservé dans la scène, donc il reste avec votre fichier.
+L'état du pipeline affiche une ligne par phase. Lorsqu'une phase se termine, sa ligne affiche une coche. Le statut est conservé dans la scène, il reste donc avec votre fichier.
 
-Le Registre des Opérations liste chaque opération CATS lancée, la plus récente en dernier, avec son heure et son résultat : Changed (elle a modifié le modèle), Clean (rien n'avait besoin de changer) ou Failed (échec). **Copier** met le registre dans le presse-papiers (utile pour demander de l'aide) ; **Effacer** le vide.
+Le registre des opérations répertorie chaque opération CATS que vous avez exécutée, la plus récente en dernier, avec son heure et son résultat : modifié (le modèle a été modifié), nettoyé (rien à modifier) ou échoué. **Copy** met le registre dans le presse-papiers (utile lorsque vous demandez de l'aide) ;**Clear** le vide.
 
-L'ordre est un conseil, pas un verrou : un outil dont la phase précédente n'est pas faite s'exécute quand même, mais affiche un avertissement comme « Run Fix Model first for best results » (lancez d'abord Corriger le modèle pour de meilleurs résultats). Prenez cet avertissement au sérieux.
+L'ordre est un conseil, pas un verrou : un outil dont la phase précédente n'est pas terminée s'exécute toujours, mais affiche un avertissement tel que "Exécutez d'abord le modèle de correction pour de meilleurs résultats". Prenez l'avertissement au sérieux.
 
 ---
 
 ## Pourquoi cet ordre
 
-Chaque phase modifie le maillage ou le squelette d'une façon dont la suivante dépend :
+Chaque phase modifie le maillage ou le squelette d'une manière dont la suivante dépend :
 
-- **Corriger le modèle doit passer en premier** car il change le nombre de sommets, retire les doublons et corrige les normales. Tout outil qui lit la position des sommets (génération des visèmes, détection des os des yeux, capture de pose) produit de mauvais résultats sur un maillage qui a encore des sommets en double ou cassés.
+- **Fix Model doit être le premier** car il modifie le nombre de sommets, supprime les doublons et corrige les normales. Tout outil qui lit les positions des sommets (génération de visèmes, détection des os de l'œil, capture de pose) produit des résultats erronés sur un maillage qui comporte encore des sommets en double ou cassés.
 
-- **Les visèmes avant le suivi oculaire** car tous deux modifient les clés de forme et les données d'os. Dans cet ordre, les clés de forme existent avant que les contraintes soient écrites.
+- **Visémes avant Eye Tracking** car les deux modifient la clé de forme et les données osseuses. Dans cet ordre, les clés de forme existent avant que les contraintes ne soient écrites.
 
-- **Le suivi oculaire avant Pose en Clé de Forme** car Pose en Clé de Forme capture tout le maillage, y compris la déformation pilotée par les os. Avec les contraintes des yeux en place d'abord, la position neutre des yeux dans la forme enregistrée est juste.
+- **Suivi oculaire avant Pose to Shape**, car Pose to Shape capture l'intégralité du maillage, y compris la déformation provoquée par les os. Avec les contraintes oculaires en place en premier, la position neutre de l'œil dans la forme enregistrée est correcte.
 
-- **Appliquer les transformations en dernier** car cela fige tout pour de bon. Toute géométrie non corrigée, toute clé de forme non mappée ou toute contrainte fausse est verrouillée. Après avoir appliqué les transformations, les seuls moyens de revenir à une phase précédente sont l'annulation (Ctrl+Z) ou la réimportation depuis le fichier source.
+- **Appliquer les transformations en dernier** car cela gèle tout pour de bon. Toute géométrie non corrigée, clés de forme non mappées ou contraintes incorrectes sont verrouillées. Après avoir appliqué les transformations, les seuls moyens de revenir à une phase antérieure sont d'annuler (Ctrl+Z) ou de réimporter à partir du fichier source.
 
 ---
 
 ## Ce qui casse si vous sautez une étape
 
-**Sauter Corriger le modèle :**
-Chaque outil suivant travaille sur un maillage qui peut contenir des sommets en double à la même position. Un visème généré peut alors déplacer le sommet visible mais pas son doublon caché, si bien que dans VRChat les deux s'écartent et déchirent la bouche à chaque forme de synchronisation labiale. Le suivi oculaire peut attacher ses contraintes au maillage d'œil en double au lieu du visible, ce qui bloque les yeux dans un regard fixe. Appliquer les transformations grave ensuite toutes ces erreurs.
+**Ignorer le modèle de correction :**
+Chaque outil ultérieur fonctionne sur un maillage qui peut contenir des sommets en double à la même position. Un visème généré peut alors déplacer le sommet visible mais pas sa copie cachée, donc dans VRChat, les deux se séparent et déchirent la bouche à chaque forme de synchronisation labiale. Le suivi oculaire peut attacher ses contraintes au maillage oculaire en double au lieu de celui visible, verrouillant les yeux dans un regard fixe. Apply Transforms intègre ensuite toutes ces erreurs.
 
-**Sauter les visèmes :**
-Sans visèmes générés ou mappés, votre avatar n'a pas de synchronisation labiale. Si votre avatar a déjà des clés de forme de visèmes, mappez-les dans VRChat Viseme Mapping (guide 8) au lieu d'en générer de nouvelles ; l'État du Pipeline laisse alors Visèmes non coché, et c'est normal.
+**Passer les visèmes :**
+Sans visèmes générés ou cartographiés, votre avatar n'a pas de synchronisation labiale. Si votre avatar possède déjà des clés de forme de visème, mappez-les dans VRChat Viseme Mapping (Guide 8) au lieu d'en générer de nouvelles ; L'état du pipeline affiche alors Visemes non coché, ce qui est très bien.
 
-**Sauter le suivi oculaire :**
-Votre avatar n'a pas de mouvement des yeux dans VRChat et regarde droit devant lui. C'est acceptable quand il n'a pas d'os d'yeux.
+** Ignorer le suivi oculaire :**
+Votre avatar n'a aucun mouvement oculaire dans VRChat et regarde droit devant lui. C'est acceptable lorsqu'il n'a pas d'os oculaire.
 
-**Sauter Pose en Clé de Forme :**
-Facultatif : sautez-le si vous n'avez pas d'expressions personnalisées à enregistrer.
+**Passer la pose à la forme :**
+Facultatif : ignorez-le si vous n'avez aucune expression personnalisée à enregistrer.
 
-Suite : [Outils de rig](05-rig-tools.md)
+Suivant: [Outils de plate-forme](05-rig-tools.md)

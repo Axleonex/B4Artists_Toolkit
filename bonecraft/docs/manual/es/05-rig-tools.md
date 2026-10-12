@@ -1,60 +1,62 @@
 # Herramientas de rig
 
-[← Índice](index.md)
+[← Contenidos](index.md)
 
-Este capítulo explica en detalle las herramientas de rigging, animación y pesos de BoneCraft. Úsalo cuando quieras entender mejor una función, o cuando las guías no cubran tu situación concreta.
+Este capítulo cubre en detalle las herramientas de rigging, animación y peso de BoneCraft. Úselo cuando desee comprender una característica más profundamente o cuando las guías no cubran su situación exacta.
 
-Cada entrada dice qué hace la herramienta, cuándo usarla, sus controles principales y dónde está. Algunas herramientas solo aparecen en cierto modo, y la línea «Dónde está» de cada entrada lo indica: por ejemplo, los controles de rig en Modo Pose, el espejo y la transferencia de pesos en el modo Pintura de pesos, y Delta Mush en Modo Objeto.
+Cada entrada dice qué hace la herramienta, cuándo la usarías, sus controles principales y dónde encontrarla. La línea "Dónde encontrarlo" de cada entrada nombra el modo necesario para usarlo: por ejemplo, controles de rig en modo Pose, espejo de peso y transferencia de peso en modo pintura con peso, y Delta Mush en modo objeto. Algunas secciones permanecen visibles con un mensaje sobre qué seleccionar cuando sus herramientas no se pueden ejecutar.
+
+En 9.1, muchas herramientas se ejecutan a la vez y colocan sus opciones en el panel Ajustar última operación. Cambie esas opciones inmediatamente después del clic, antes de ejecutar otra operación. Los menús Pose → BoneCraft y Pesos → BoneCraft, y los paneles de botones BoneCraft en las pestañas del estante de herramientas Pose y Pesos de Bforartists ofrecen accesos directos a operaciones comunes. [Empezando](01-start.md#dónde-está-cada-cosa) enumera estos puntos de acceso.
 
 ---
 
 ## Herramientas de interfaz de rig
 
-Estas herramientas te ayudan a gestionar la parte visual del trabajo con armaduras: qué huesos se ven, cómo se organizan y un acceso rápido.
+Estas herramientas le ayudan a gestionar el aspecto visual del trabajo con armaduras: qué huesos son visibles, cómo están organizados y acceso rápido.
 
 ---
 
 ### Colecciones de huesos
 
-**Qué hace:** muestra las colecciones de huesos de tu esqueleto como filas. Haz clic en el nombre de una colección para seleccionar sus huesos; el icono del ojo la muestra u oculta.
+**Qué hace:** Muestra las colecciones de huesos de su esqueleto como filas. Haga clic en el nombre de una colección para seleccionar sus huesos; el icono del ojo lo muestra u oculta.
 
-> Una colección de huesos es un grupo de huesos con nombre, por ejemplo «IK Controls», «Face Bones» y «Deform Bones». Ocultar una colección oculta esos huesos en la vista, para que puedas centrarte en una parte del rig.
+> Una colección de huesos es un grupo de huesos con nombre, por ejemplo, "Controles IK ", "Huesos de la cara" y "Deformar huesos". Ocultar una colección oculta esos huesos en la ventana gráfica, para que puedas concentrarte en una parte del rig.
 
-**Controles principales:**
-- Cada fila: el color de acento, **Toggle Collection Visibility** (alternar visibilidad; icono de ojo), el nombre de la colección (selecciona sus huesos), **Solo Collection** (colección en solitario; icono S) y **Rename Collection Display** (renombrar visualización; icono de engranaje), que da a la fila un nombre visible personalizado
-- **Show All Collections** (mostrar todas las colecciones) y **Hide All Collections** (ocultar todas las colecciones) (iconos de ojo abierto y cerrado sobre la lista) — todo de una vez
-- Secciones — agrupar varias colecciones bajo un encabezado plegable
+**Controles clave:**
+- Cada fila: el color de acento, **Toggle Collection Visibility** (icono de ojo), el nombre de la colección (selecciona sus componentes),**Solo Collection** y**Rename Collection Display**, que establece un nombre para mostrar personalizado para la fila. Pase el cursor sobre un botón de solo ícono para identificarlo por su información sobre herramientas
+- **Show All Collections** y**Hide All Collections** (iconos de ojos abiertos y cerrados encima de la lista): todo a la vez
+- Secciones: agrupa varias colecciones bajo un encabezado plegable
 
-**Dónde está:** pestaña BoneCraft → Revisión → Colecciones
+**Dónde encontrarlo:** Pestaña BoneCraft → Revisar → Colecciones
 
 ---
 
 ### Marcadores de Visibilidad
 
-**Qué hace:** guarda qué colecciones de huesos están visibles, para cambiar de golpe entre vistas guardadas.
+**Qué hace:** Guarda qué colecciones de huesos son visibles, para que puedas cambiar entre vistas guardadas a la vez.
 
-**Ejemplo de uso:** preparas una vista con solo los huesos de la cara para trabajar expresiones y la guardas como «Face Only». Luego muestras todo para pintar pesos y lo guardas como «Full Rig». Ahora un clic cambia entre ambas.
+**Uso de ejemplo:** Configura una vista con solo los huesos de la cara para el trabajo de expresión y la guarda como "Solo cara". Luego muestra todo para pintar con peso y lo guarda como "Full Rig". Ahora un clic cambia entre ellos.
 
-**Controles principales:** cada ranura es una fila.
-- El nombre del marcador — haz clic en él para aplicar la vista guardada
-- **Save Bookmark** (guardar marcador; icono de disco) — guarda la visibilidad actual en la ranura
-- La muestra de color — da un color al marcador
-- **Clear Bookmark** (vaciar marcador) y **Remove Bookmark** (eliminar marcador; iconos de cerrar) — vacían la ranura o quitan una ranura añadida
-- **Agregar marcador** — añade una ranura
+**Controles clave:** cada ranura es una fila.
+- El nombre del marcador: haga clic en él para aplicar la vista guardada.
+- **Save Bookmark**: guarda la visibilidad actual en la ranura; coloque el cursor sobre su ícono para ver la información sobre herramientas
+- La muestra de color: codifica con colores el marcador
+- **Clear Bookmark** y**Remove Bookmark** (iconos de cierre): vacíe la ranura o elimine una agregada
+- **Add Bookmark**: agrega una ranura
 
-**Marcadores predeterminados:** FK Arms, IK Body, Face Only, Full Rig
+**Marcadores predeterminados:** Brazos FK, Cuerpo IK, Solo cara, Plataforma completa
 
-**Dónde está:** pestaña BoneCraft → Revisión → Colecciones → Marcadores de Visibilidad
+**Dónde encontrarlo:** Pestaña BoneCraft → Revisar → Colecciones → Marcadores de visibilidad
 
 ---
 
 ### Panel rápido por atajo
 
-**Qué hace:** abre el panel de rig de BoneCraft (colecciones y marcadores) como ventana emergente donde esté el cursor.
+**Qué hace:** Abre el panel de rig de BoneCraft (colecciones y marcadores) como una ventana emergente dondequiera que esté el cursor.
 
-**Cómo usarlo:** pulsa **Ctrl+Shift+R** en la vista 3D. Haz clic fuera de la ventana para cerrarla.
+**Cómo utilizar:** Presione**Ctrl+Shift+R** en la ventana gráfica 3D. Haga clic fuera de la ventana emergente para cerrarla.
 
-**Dónde está:** el atajo **Ctrl+Shift+R** en la vista 3D (no tiene panel propio)
+**Dónde encontrarlo:** el acceso directo**Ctrl+Shift+R** en la ventana gráfica 3D (no tiene panel propio)
 
 ---
 
@@ -64,194 +66,203 @@ Estas herramientas te ayudan a gestionar la parte visual del trabajo con armadur
 
 ### Biblioteca de Poses
 
-**Qué hace:** guarda poses con nombre y miniatura que puedes aplicar a tu rig con un clic.
+**Qué hace:** Almacena poses nombradas con miniaturas que puedes aplicar a tu rig con un solo clic.
 
-**Controles principales:**
-- **Guardar** — guarda las posiciones actuales de los huesos como una pose con nombre, con una miniatura de la vista
-- **Aplicar** — lleva los huesos a la pose guardada
-- **Mezclar** — aplica la pose con intensidad parcial, mezclada con la posición actual
-- **Espejo** — aplica la pose invertida de izquierda a derecha
-- **Eliminar**, **Renombrar** y **Categoría** — gestionar la lista; **Filtro** muestra una sola categoría
-- **Exportar** e **Importar** — guardar en un archivo `.bfpose` o cargar desde uno
+**Controles clave:**
+- **Save**: almacena las posiciones actuales de los huesos como una pose con nombre, con una miniatura de la ventana gráfica
+- **Apply**: ajusta los huesos a la pose guardada
+- **Blend**: aplica la pose con fuerza parcial, mezclada con la posición actual
+- **Mirror**: aplica la pose volteada de izquierda a derecha
+- **Delete**,**Rename** y**Category**: gestionan la lista;**Filter** muestra una categoría
+- **Export** y**Import**: guardar o cargar desde un archivo `.bfpose`
 
-**Dónde está:** pestaña BoneCraft → Revisión → Biblioteca de Poses
+La mezcla se aplica inmediatamente. Establezca la intensidad de la mezcla en Ajustar última operación después de hacer clic en él.
+
+**Dónde encontrarlo:** Pestaña BoneCraft → Revisar → Biblioteca de poses
 
 ---
 
 ### Control Picker (selector de controles)
 
-**Qué hace:** un mapa en el que se puede hacer clic de los controles de tu rig. Haz clic en una forma para seleccionar su hueso; el selector resalta lo seleccionado.
+**Qué hace:** Un mapa en el que se puede hacer clic de los controles de su rig. Haga clic en una forma para seleccionar su hueso; el selector resalta lo que está seleccionado.
 
-**Controles principales:**
-- **Generate Picker** (generar selector) — construye la distribución a partir de tu rig
-- **Edit Layout** (editar distribución) — mover, cambiar de tamaño y reetiquetar los controles (**Move Picker Control** (mover control), **Resize Picker Control** (cambiar tamaño del control) y **Relabel Picker Control** (reetiquetar control) aparecen como iconos en la fila de cada control) y ajustarlos a una cuadrícula con **Snap** (ajustar); **Reconstruir diseño** la vuelve a construir
-- **Reflejar selección** — selecciona los controles simétricos
-- **Selector emergente** — abre el selector en una ventana flotante, que también tiene **Add Selection Set** (añadir conjunto de selección)
+**Controles clave:**
+- **Generate Picker**: crea el diseño desde su rig
+- **Edit Layout**: mueva, cambie el tamaño y vuelva a etiquetar los controles (**Move Picker Control**,**Resize Picker Control** y**Relabel Picker Control** aparecen como íconos en la fila de cada control) y**Snap** en una cuadrícula;**Rebuild Layout** lo construye de nuevo
+- **Mirror Selection**: selecciona los controles reflejados
+- **Pop-up Picker**: abre el selector en una ventana flotante, que también tiene**Add Selection Set**
 
-**Dónde está:** pestaña BoneCraft → Revisión → Control Picker
+**Dónde encontrarlo:** Pestaña BoneCraft → Revisar → Selector de control
 
 ---
 
 ### Control Layer (capa de control, IK/FK)
 
-**Qué hace:** controles de animador para las extremidades de un rig construido con **Construir rig de control**: cambiar una extremidad entre IK y FK sin que salte, y hornear una en la otra a lo largo de un rango de fotogramas.
+Para ver una comparación práctica ilustrada, siga [Pesas de prueba y uso IK/FK](06-rig-builder.md#parte-c-comprobar-los-pesos-y-usar-ikfk).
 
-**Controles principales:**
-- **IK** y **FK** — cambian la extremidad y ajustan los nuevos controles a donde está, para que el codo o la rodilla no salten
-- **Bake IK** (hornear en IK) y **Bake FK** (hornear en FK) — convierten la animación a IK o a FK en un rango de fotogramas
-- **Pole Follow** (seguimiento del polo), **Pin** (fijar) y **Lock-Free** (sin bloqueo), y **Global Rig Scale** (escala global del rig), que mantiene los bloqueos protegidos
+**Qué hace:** Controles del animador para las extremidades de un rig fabricado por**Build Control Rig**: cambia una extremidad entre IK y FK sin que la extremidad salte y fusiona una con la otra en un rango de fotogramas.
 
-**Dónde está:** pestaña BoneCraft → Revisión → Control Layer (con un rig construido con **Construir rig de control** seleccionado; consulta [Constructor de Rig](06-rig-builder.md))
+**Controles clave:**
+- **IK** y**FK**: cambie la extremidad y ajuste los nuevos controles a donde está la extremidad, para que el codo o la rodilla no salten
+- **Bake IK** y**Bake FK**: convierte la animación en un rango de cuadros a IK o a FK.
+- **Pole Follow**,**Pin** y**Lock-Free**, y**Global Rig Scale**, que mantiene cerraduras protegidas
+
+**Dónde encontrarlo:** Pestaña BoneCraft → Revisar → Capa de control (con un rig fabricado por**Build Control Rig** seleccionado; ver [Constructor de plataformas](06-rig-builder.md) )
 
 ---
 
 ### Herramientas Rigify
 
-**Qué hacen:** detectan un rig de control de Rigify y conectan el panel de colecciones, los marcadores y los deslizadores de propiedades de BoneCraft con los controles estándar de Rigify.
+**Qué hace:** Detecta un rig de control Rigify y conecta el panel de colección, los marcadores y los controles deslizantes de propiedades de BoneCraft a los controles estándar de Rigify.
 
-> Rigify es el sistema integrado de Bforartists para generar rigs listos para animar. Si construiste tu rig con Rigify, esto conecta la interfaz de BoneCraft con los controles IK/FK de Rigify.
+> Rigify es el sistema integrado de Bforartists para generar rigs listos para animación. Si construyó su rig con Rigify, esto conecta la interfaz de usuario de BoneCraft a los controles IK/FK de Rigify.
 
-**Controles principales:**
-- **Mejora Automática** — configura los paneles de BoneCraft para el rig de Rigify seleccionado
-- **Volver a Ejecutar el Mejoramiento** — los reconstruye desde cero
-- **Habilitar Rigify** y **Generar Rig de Control (metarig activo)** están en Quick Rig (consulta [Constructor de Rig](06-rig-builder.md))
-- Propiedades Rigify — los deslizadores de IK/FK, estiramiento, espacio padre y seguimiento de cabeza/cuello del rig
+**Controles clave:**
+- **Auto-Enhance**: configura los paneles de BoneCraft para el rig Rigify seleccionado
+- **Re-run Enhancement**: los reconstruye desde cero
+- **Enable Rigify** está en Quick Rig; ampliar su página de Solución de problemas para**Generate Control Rig (active metarig)** (ver [Constructor de plataformas](06-rig-builder.md) )
+- Propiedades de Rigify: los controles deslizantes de seguimiento de cabeza/cuello IK/FK, estiramiento, espacio principal y cabeza/cuello del rig
 
-**Dónde están:** pestaña BoneCraft → Configurar Rigging → Herramientas Rigify (y la sección Propiedades Rigify)
+**Dónde encontrarlo:** Pestaña BoneCraft → Configurar Rigging → Herramientas Rigify (y la sección Propiedades de Rigify )
 
 ---
 
 ### Redireccionar
 
-**Qué hace:** pasa una animación de un esqueleto a otro, por ejemplo un clip de captura de movimiento a tu avatar. Los huesos se emparejan por nombre y por dirección, así que las extremidades mantienen su orientación; las clavículas se emparejan de forma flexible para que los hombros no giren de más.
+**Qué hace:** Mueve la animación de un esqueleto a otro (por ejemplo, un clip de captura de movimiento a tu avatar). Los huesos se relacionan por nombre y dirección, de modo que las extremidades mantienen su orientación; Las clavículas están unidas libremente para que los hombros no giren demasiado.
 
-**Controles principales:**
-- **Importar Clip** y **Explorar Biblioteca** — cargar un clip, o definir una carpeta de biblioteca; haz clic en el nombre de un clip para seleccionarlo
-- **Auto-Match Bones** (emparejar huesos automáticamente; la marca de verificación en la fila de un clip) — empareja los huesos de origen y destino (la lista Mapeo de Huesos del panel muestra las parejas)
-- **Vista previa** y **Detener vista previa** — probar el resultado
-- **Aplicar** — hornea el clip en tu rig
+**Controles clave:**
+- **Import Clip** y**Browse Library**: carga un clip o configura una carpeta de biblioteca; haga clic en el nombre de un clip para seleccionarlo
+- **Auto-Match Bones** (la marca de verificación en la fila de un clip): empareja los huesos de origen y de destino (la lista de mapeo de huesos del panel muestra los pares)
+- **Preview** y**Stop Preview**: prueba el resultado
+- **Apply**: hornea el clip en tu rig
 
-**Dónde está:** pestaña BoneCraft → Configurar Rigging → Redireccionar
+**Dónde encontrarlo:** Pestaña BoneCraft → Configurar rigging → Retarget
 
 ---
 
 ### Shape keys correctivos
 
-**Qué hacen:** shape keys que se activan cuando un hueso alcanza un ángulo, para corregir pellizcos o hundimientos en poses extremas.
+**Qué hace:** Teclas de forma que se activan cuando un hueso alcanza un ángulo, para corregir pellizcos o colapsos en posturas extremas.
 
-**Ejemplo de uso:** el codo de tu personaje se hunde al doblarlo del todo. Esculpes un codo corregido y lo vinculas al hueso del brazo para que se aplique solo a medida que el codo se dobla.
+**Ejemplo de uso:** El codo de tu personaje colapsa cuando está completamente doblado. Esculpes un codo corregido y lo vinculas al hueso del brazo para que se aplique automáticamente cuando el codo se dobla.
 
-**Controles principales:**
-- Nueva Corrección — elige el **Shape Key**, el **Hueso Driver**, el eje de rotación, el ángulo en el que la forma está del todo activa y lo gradual de su entrada, y haz clic en **Crear Correctivo**
-- La lista de correctivos: haz clic en el nombre del shape key de un correctivo para seleccionarlo; **Editar** y **Eliminar**, debajo de la lista, actúan sobre el seleccionado
+**Controles clave:**
+- Nuevo correctivo: elija el **Shape Key**, el**Driver Bone**, el eje de rotación, el ángulo en el que la forma está completamente y cómo se desvanece gradualmente, luego**Create Corrective**
+- La lista de correctivos: haga clic en el nombre de la clave de forma de un correctivo para seleccionarlo; **Edit** y**Delete** en la lista actúan sobre el seleccionado
 
-**Dónde están:** pestaña BoneCraft → Malla → Correctivos (la malla necesita un shape key base)
+La edición comienza desde los valores actuales del correctivo. Cambie su ángulo y caída en Ajustar última operación después de hacer clic en él.
+
+**Dónde encontrarlo:** Pestaña BoneCraft → Máscara → Correctivos (la malla necesita una clave de forma básica)
 
 ---
 
 ### Herramientas de Gráfico
 
-**Qué hacen:** herramientas de animación para pulir fotogramas clave y curvas.
+**Qué hace:** Herramientas de refinamiento de animación para fotogramas clave y curvas.
 
-- **Desglose Interactivo** (Breakdowner; atajo **Ctrl+Shift+B** en la vista 3D) — arrastra a izquierda y derecha para mezclar la pose actual entre los fotogramas clave cercanos
-- **Aplicar Delta** (Movedor Delta; atajo **Ctrl+Shift+D** en la vista 3D) — desplaza los huesos seleccionados una cantidad exacta en el espacio de pantalla o del mundo
-- **Capturar** e **Intercambiar** (Curvas en Búfer) — guardar una copia de las curvas e intercambiar entre ella y tus cambios
-- **Horneado Inteligente** — hornea en claves la animación impulsada por restricciones, descartando claves redundantes (**Tol** fija cuánto)
-- **Filtro de Euler** — corrige los saltos de rotación causados por el bloqueo de cardán
-- Mangos Tangentes — definir el tipo de mango de las claves seleccionadas: **Auto**, **Vector**, **Aligned** (alineado), **Free** (libre) o **Auto Clamped** (auto limitado)
+- **Interactive Breakdown** (Desglose; método abreviado**Ctrl+Shift+B** en la ventana gráfica 3D): arrastre hacia la izquierda y hacia la derecha para combinar la pose actual entre los fotogramas clave más cercanos
+- **Apply Delta** (Delta Mover; método abreviado**Ctrl+Shift+D** en la ventana gráfica 3D): empuja los huesos seleccionados con un desplazamiento exacto en el espacio de la pantalla o el espacio mundial
+- **Capture** y**Swap** (Curvas de búfer): conserve una copia de las curvas e intercámbielas con sus ediciones.
+- **Smart Bake**: crea animaciones basadas en restricciones en las claves, eliminando claves redundantes (**Tol** establece cuánto)
+- **Euler Filter**: corrige los cambios de rotación causados por el bloqueo del cardán
+- Controladores tangentes: establezca tipos de controladores en teclas seleccionadas: **Auto**,**Vector**,**Aligned**,**Free** o**Auto Clamped**.
 
-**Dónde están:** pestaña BoneCraft → Revisión → Herramientas de Gráfico
+**Dónde encontrarlo:** Pestaña BoneCraft → Revisar → Herramientas gráficas
 
 ---
 
 ## Herramientas de pesos
 
-Estas herramientas controlan cómo se deforma tu malla cuando se mueven los huesos. Los pesos indican a cada parte de la malla qué huesos seguir y cuánto.
+Estas herramientas controlan cómo se deforma la malla cuando los huesos se mueven. Los pesos le indican a cada parte de la malla qué huesos seguir y cuánto.
 
 ---
 
 ### Recálculo automático de pesos de huesos
 
-**Qué hace:** vuelve a calcular los pesos de una malla a partir del rig existente, sin cambiar la malla. En mallas densas trabaja a través de una malla proxy más ligera, para no fallar en silencio.
+**Qué hace:** Vuelve a calcular los pesos de una malla del rig existente, sin cambiar la malla. En mallas densas, funciona a través de una malla proxy más ligera, por lo que no falla silenciosamente.
 
-**Controles principales:** la malla y la armadura de destino, el método, la mezcla y el suavizado, el número máximo de influencias de huesos por vértice, un peso mínimo y una copia de seguridad de los pesos anteriores. Ejecuta **Automatic Bone Weight Recalculation** (recálculo automático de pesos de huesos). La pestaña CATS tiene un atajo: **Smart Automatic Weights** (pesos automáticos inteligentes).
+**Controles clave:** elige la malla y la armadura del objetivo, luego el modo Cuerpo o Ropa. Body calcula los pesos a partir del rig existente; La ropa los transfiere desde una malla fuente correctamente ponderada. Establezca el método, la combinación y el suavizado, la cantidad máxima de influencias óseas por vértice, un peso mínimo y si desea mantener una copia de seguridad, luego ejecute**Automatic Bone Weight Recalculation**. Estas configuraciones están encima del botón. El acceso directo CATS,**Smart Automatic Weights**, abre un cuadro de diálogo para la malla de destino, la armadura y el modo, además de la malla de origen en el modo Ropa.
 
-**Dónde está:** pestaña BoneCraft → Malla → Herramientas de Peso
+**Dónde encontrarlo:** Pestaña BoneCraft → Máscara → Herramientas de peso
 
 ---
 
 ### Espejo de Pesos
 
-**Qué hace:** copia los pesos de un lado de tu avatar al otro. Imprescindible para personajes simétricos.
+**Qué hace:** Copia los pesos de un lado de tu avatar al otro. Esencial para personajes simétricos.
 
-**Controles principales:**
-- **Espejar Todos los Pesos** — refleja cada grupo de huesos a su lado opuesto
-- **Espejar Peso Activo** — refleja solo el grupo de huesos activo
+**Controles clave:**
+- **Mirror All Weights**: refleja cada grupo de huesos en su lado opuesto
+- **Mirror Active Weight**: refleja solo el grupo óseo activo
 - Eje de simetría y dirección del espejo (en ambos sentidos, de izquierda a derecha o de derecha a izquierda)
-- **Espejo de Topología** — empareja los vértices por la topología de la malla en lugar de por la posición
-- **Distancia de Búsqueda** — a qué distancia pueden estar dos vértices y seguir contando como pareja (súbela en mallas que no sean perfectamente simétricas)
-- **Seleccionar No Coincidentes** — selecciona los vértices sin pareja; **Normalizar Pesos** hace después que los pesos sumen 1.0
+- **Topology Mirror** — empareja vértices por topología de malla en lugar de posición
+- **Search Distance**: qué tan separados pueden estar dos vértices y seguir contando como un par (aumente el valor para mallas que no son perfectamente simétricas)
+- **Select Unmatched**: selecciona vértices sin pareja;**Normalize Weights** hace que los pesos sumen 1,0 después
 
-**Dónde está:** pestaña BoneCraft, en modo Pintura de pesos → Espejo de Pesos
+Primero haga clic en un botón de espejo, luego configure el eje, la dirección, el modo de topología y la distancia de búsqueda en Ajustar la última operación. **Mirror Active Weight** también se encuentra en Pesos → BoneCraft y en la pestaña Estante de herramientas de pesos.
+
+**Dónde encontrarlo:** Pestaña BoneCraft, en modo Pintura de peso → Espejo de peso
 
 ---
 
 ### Transferencia de pesos
 
-**Qué hace:** copia los pesos de una malla de origen a la malla activa. Se usa al unir ropa a un cuerpo, o al pasar pesos de una malla de alta resolución a otra más ligera.
+**Qué hace:** Copia los pesos de una malla de origen a la malla activa. Se utiliza para sujetar ropa a un cuerpo o mover pesos de una malla de alta resolución a una inferior.
 
-**Controles principales:**
-- Malla de origen, método de transferencia y filtro de huesos
-- **Normalizar Después de Transferir** — mantiene la suma de los pesos en 1.0
-- **Transferir Pesos** — la ejecuta; el resultado muestra la distancia media y la máxima, y **Seleccionar Vértices con Problemas** selecciona los vértices que se emparejaron mal
+**Controles clave:**
+- Elija la malla de origen antes de transferir
+- Después del clic, configure el método de transferencia y el filtro óseo en Ajustar última operación
+- **Normalize** en Ajustar última operación: mantiene los pesos sumando 1,0
+- **Transfer Weights**: lo ejecuta; el resultado muestra la distancia media y máxima, y**Select Problem Vertices** selecciona los vértices que no coinciden
 
-**Dónde está:** pestaña BoneCraft, en modo Pintura de pesos → Transferencia de pesos (también en Malla → Herramientas de Peso)
+**Dónde encontrarlo:** pestaña BoneCraft, en modo Pintura con peso → Transferencia de peso (también en Piel → Herramientas de peso)
 
 ---
 
 ### Tabla de Pesos
 
-**Qué hace:** muestra los pesos exactos del vértice seleccionado para cada hueso, para que puedas escribir valores precisos.
+**Qué hace:** Muestra los pesos exactos del vértice seleccionado para cada hueso y le permite establecer un valor preciso.
 
-**Cómo usarla:** selecciona un vértice en el modo Pintura de pesos; la tabla enumera sus huesos y pesos. Con varios vértices seleccionados, **Normalizar todos los vértices** los normaliza todos.
+**Cómo utilizar:** Seleccione un vértice en el modo Pintura ponderada; la tabla enumera sus huesos y pesos. Haga clic en el ícono de la mano en la fila de un hueso, luego configure**Weight** en Ajustar última operación. Add Influence usa el hueso que elijas; establezca también su nuevo peso en Ajustar última operación. Con varios vértices seleccionados,**Normalize All Vertices** los normaliza todos.
 
-**Dónde está:** pestaña BoneCraft, en modo Pintura de pesos → Tabla de Pesos
+**Dónde encontrarlo:** Pestaña BoneCraft, en modo Pintura de pesos → Tabla de pesos
 
 ---
 
 ### Relleno por Inundación
 
-**Qué hace:** fija con un clic el peso del grupo activo en los vértices seleccionados: **Inundar a 0.0**, **Inundar a 1.0**, o **Inundar** con un **Valor Personalizado** (con **Normalización Personalizada**).
+**Qué hace:** Establece el peso del grupo activo en los vértices seleccionados con un solo clic:**Flood to 0.0**,**Flood to 1.0** o**Flood to Custom**. Después de la inundación en Personalizado, configure**Value** y**Normalize** en Ajustar última operación. El menú y el estante de Pesos llaman a los botones de valor fijo Inundar a cero e Inundar a uno.
 
-**Dónde está:** pestaña BoneCraft → Malla → Herramientas de Peso
+**Dónde encontrarlo:** Pestaña BoneCraft → Piel → Herramientas de peso; también Pesas → BoneCraft y Estante de herramientas → Pesas → BoneCraft
 
 ---
 
 ### Deformar vs Controlar
 
-**Qué hace:** separa los huesos del rig en huesos de deformación (mueven la malla) y huesos de control (los mueve el animador), etiqueta los huesos de deformación, les da nombres de deformación y exporta un esqueleto solo de deformación.
+**Qué hace:** Clasifica los huesos de la rig en huesos deformados (mueven la malla) y huesos de control (el animador los mueve), etiqueta huesos deformados, les cambia el nombre a un nombre deformado y exporta un esqueleto solo deformado.
 
-**Dónde está:** pestaña BoneCraft, en Modo Pose → Deformar vs Controlar
+**Dónde encontrarlo:** Pestaña BoneCraft, en modo Pose → Deformar vs Control
 
 ---
 
 ### Delta Mush
 
-**Qué hace:** una deformación suavizante que reduce los pellizcos en las articulaciones. La malla conserva su forma en reposo pero se deforma de forma más limpia en movimiento.
+**Qué hace:** Una deformación suavizante que reduce los pellizcos en las articulaciones. La malla mantiene su forma en reposo pero se deforma más limpiamente en movimiento.
 
-**Controles principales:** iteraciones, fuerza del suavizado, bordes fijados, suavizar solo la deformación, y si se ejecuta antes que la armadura. El botón de añadir agrega el modificador y lo vincula a la forma de reposo.
+**Cómo utilizar:** Haga clic en**Add Delta Mush** para agregar el modificador y vincularlo al resto de la forma. Inmediatamente después, configure**Iterations**,**Smooth Strength**,**Pin Borders** y**Only Smooth Deform** en Ajustar última operación. Una vez que existe el modificador, el panel muestra**Rebind** y**Remove**, con un pliegue de Configuración que contiene las iteraciones del modificador, la fuerza de suavizado y los controles de fijación de bordes.
 
-**Dónde está:** pestaña BoneCraft, en Modo Objeto con una malla seleccionada → Delta Mush
+**Dónde encontrarlo:** Pestaña BoneCraft, en Modo Objeto con una malla seleccionada → Delta Mush
 
 ---
 
 ### Envoltura por Proximidad
 
-**Qué hace:** hace que una malla siga la superficie de otra, como una segunda piel. Útil para ropa ceñida al cuerpo.
+**Qué hace:** Hace que una malla siga la superficie de otra, como una segunda piel. Útil para prendas que abrazan el cuerpo.
 
-**Controles principales:** la malla conductora a seguir, el tipo de atenuación y la distancia máxima; el botón de vincular une la malla.
+**Cómo utilizar:** seleccione la malla de destino, elija un**Driver Mesh** diferente y luego haga clic en**Bind Proximity Wrap**. Mantenga la armadura del conductor en su posición de reposo al realizar el atado. Las Opciones se pliegan debajo del botón y enumeran**Falloff Type** y**Max Distance**; en 9.1.2 estos valores se almacenan con la configuración pero no cambian su enlace de Deformación de Superficie. Una vez encuadernado, el panel muestra**Rebind** y**Unbind**. Desvincular desactiva el modificador en la ventana gráfica y renderiza; no lo elimina.
 
-**Dónde está:** pestaña BoneCraft, en Modo Objeto con una malla seleccionada → Envoltura por Proximidad
+**Dónde encontrarlo:** Pestaña BoneCraft, en Modo Objeto con una malla seleccionada → Ajuste de proximidad
 
 ---
 
@@ -263,93 +274,93 @@ Estas herramientas aparecen en la pestaña BoneCraft en Modo Pose.
 
 ### Cambio de Espacio
 
-**Qué hace:** cambia el espacio que sigue un hueso durante la animación. Una mano que sujeta un accesorio puede pasar con un clic de seguir al cuerpo a quedarse quieta en el mundo.
+**Qué hace:** Cambia el espacio que sigue un hueso durante la animación. Una mano que sostiene un objeto puede pasar de seguir el cuerpo a quedarse quieto en el mundo con un solo clic.
 
-**Controles principales:**
-- **Añadir Espacio** y **Remove Space** (quitar espacio; icono X bajo Gestionar Espacios) — los espacios que puede seguir un hueso (World, Origin u otro hueso)
-- Un botón por espacio, con su nombre; el espacio actual lleva ●. Haz clic en el botón de otro espacio para cambiar el hueso a él
+**Controles clave:**
+- **Add Space** y**Remove Space** (icono X en Administrar espacios): los espacios que puede seguir un hueso (Mundo, Origen u otro hueso)
+- Un botón por espacio, que lleva su nombre; el espacio actual está marcado ●. Haga clic en el botón de otro espacio para cambiarle el hueso.
 
-**Dónde está:** pestaña BoneCraft, en Modo Pose → Cambio de Espacio
+**Dónde encontrarlo:** Pestaña BoneCraft, en modo Pose → Cambio espacial
 
 ---
 
 ### Spline IK
 
-**Qué hace:** hace que una cadena de huesos siga una curva. Se usa para colas, tentáculos, cuerdas, cabello largo y columnas que necesitan un movimiento suave y amplio.
+**Qué hace:** Hace que una cadena de huesos siga una curva. Se utiliza para colas, tentáculos, cuerdas, pelo largo y espinas que necesitan un movimiento suave y amplio.
 
-**Controles principales:** **Longitud de la Cadena**, **Resolución de Curva**, **Estirar**, **Modo de Torsión**, **Preservar Volumen**; **Generar Spline IK** y **Eliminar Spline IK**.
+**Cómo utilizar:** Active el hueso inicial y luego haga clic en**Generate Spline IK**. Configure**Chain Length**,**Curve Resolution**,**Stretch** y**Volume Preservation** en Ajustar última operación.**Remove Spline IK** elimina la configuración.
 
-**Dónde está:** pestaña BoneCraft, en Modo Pose → Spline IK
+**Dónde encontrarlo:** Pestaña BoneCraft, en modo Pose → Spline IK
 
 ---
 
 ### Dinámica de Cadena
 
-**Qué hace:** movimiento secundario de tipo físico en una cadena de huesos: los huesos se quedan atrás cuando el padre se mueve y rebotan cuando se detiene. Se usa para mechones de cabello, colas y accesorios.
+**Qué hace:** Movimiento secundario similar a la física en una cadena ósea: los huesos se quedan atrás cuando el padre se mueve y rebotan cuando se detiene. Se utiliza para mechones de cabello, colas y accesorios.
 
-**Controles principales:** rigidez, amortiguación, masa y gravedad; añadir dinámica a la cadena seleccionada. La colisión usa una forma de esfera simplificada, así que las superficies cóncavas pueden no colisionar bien.
+**Cómo utilizar:** seleccione la cadena de hueso y haga clic en**Add Chain Dynamics**. Configure**Stiffness**,**Damping**,**Mass** y**Gravity Scale** en Ajustar última operación. El panel también enumera los parámetros en un pliegue de Configuración debajo de la acción. Una vez que existe la dinámica, muestra**Bake** y**Remove**. La colisión utiliza una forma de esfera simplificada, por lo que es posible que las superficies cóncavas no colisionen correctamente.
 
-**Dónde está:** pestaña BoneCraft, en Modo Pose → Dinámica de Cadena
+**Dónde encontrarlo:** Pestaña BoneCraft, en modo Pose → Dinámica de cadena
 
 ---
 
 ### Cinta
 
-**Qué hace:** construye una cinta de Bendy Bones (huesos que se curvan y tuercen con suavidad) para labios, cejas, cinturones y otras zonas blandas y curvas.
+**Qué hace:** Forma una cinta de Bendy Bones (huesos que se curvan y giran suavemente) para labios, cejas, cinturones y otras áreas curvas suaves.
 
-**Controles principales:** **Huesos de Control** y **Ancho de la Cinta**; **Generar Cinta** y **Eliminar Cinta**.
+**Cómo utilizar:** Seleccione la cadena de huesos y haga clic en**Generate Ribbon**, luego configure**Control Bones** y**Ribbon Width** en Ajustar última operación.**Remove Ribbon** elimina la configuración.
 
-**Dónde está:** pestaña BoneCraft, en Modo Pose → Cinta
+**Dónde encontrarlo:** Pestaña BoneCraft, en Modo Pose → Cinta
 
 ---
 
 ### Biblioteca de Visemas
 
-**Qué hace:** crea y gestiona conjuntos de visemas (formas de boca) vinculados a shape keys, y genera claves de sincronización labial a partir de texto. Para el mapeo de visemas de VRChat usa VRChat Viseme Mapping; para generar visemas desde cero usa la sección Visemas de CATS.
+**Qué hace:** Crea y administra conjuntos de visemas (formas de boca) vinculados a claves de formas y genera claves de sincronización de labios a partir de texto. Para el mapeo de visema VRChat, utilice el mapeo de visema VRChat; para generar visemas desde cero utilice la sección CATS Visemes.
 
-**Controles principales:**
-- **Nuevo Conjunto** y **Eliminar** — crear o borrar un conjunto de visemas
-- En cada conjunto, un botón por visema (icono de altavoz) lo previsualiza
-- Sincronización Labial — de texto a claves de visemas, con fotogramas por fonema y suavizado
+**Controles clave:**
+- **New Set** y**Delete**: crear o eliminar un conjunto de visemas
+- En cada conjunto, un botón por visema (con un ícono de altavoz) lo muestra como vista previa
+- Lip Sync: texto a teclas de visema, con fotogramas por fonema y suavizado
 
-**Dónde está:** pestaña BoneCraft, con una armadura seleccionada → Biblioteca de Visemas
+**Dónde encontrarlo:** Pestaña BoneCraft, con una armadura seleccionada → Biblioteca Viseme
 
 ---
 
 ### Clave Conducida por Conjunto
 
-**Qué hace:** vincula un valor a otro sin expresiones de Python. Posa el conductor (por ejemplo un hueso de ceja), fija el valor conducido (por ejemplo un shape key «Brow Raised») y registra el punto; BoneCraft construye la curva del driver.
+**Qué hace:** Vincula un valor a otro sin expresiones de Python. Posicione al conductor (por ejemplo, el hueso de una ceja), establezca el valor impulsado (por ejemplo, una tecla de forma "Ceja levantada") y registre el punto; BoneCraft construye la curva del conductor.
 
-**Controles principales:**
-- **Hueso Driver** y **Atributo del Driver** — lo que conduce
-- **Hueso Objetivo** y **Atributo Objetivo** — lo que es conducido
-- **Establecer Valor** y **Registrar Punto** — registrar un punto en la curva
-- **Crear SDK** — construye el driver
+**Controles clave:**
+- **Driver Bone** y**Driver Attribute**: qué impulsa
+- **Target Bone** y**Target Attribute**: qué se impulsa
+- **Set Value** y**Record Point**: registran un punto en la curva
+- **Create SDK**: crea el controlador
 
-**Dónde está:** pestaña BoneCraft, en Modo Pose → Clave Conducida por Conjunto
+**Dónde encontrarlo:** Pestaña BoneCraft, en modo Pose → Establecer clave impulsada
 
 ---
 
 ### Validador de Rig
 
-**Qué hace:** comprueba tu rig con un conjunto de reglas e informa de los problemas: nombres, huesos que faltan, restricciones rotas, jerarquía, pesos, drivers que necesitan Python y las reglas de Mechanisms. Los nombres de huesos con guiones (como `DEF-upper_arm.L`) pasan.
+**Qué hace:** Compara tu rig con un conjunto de reglas e informa problemas: nombres, huesos faltantes, restricciones rotas, jerarquía, pesos, controladores que necesitan Python y las reglas de mecanismos. Los nombres de huesos con guiones (como `DEF-upper_arm.L` ) pasan.
 
-**Controles principales:**
-- **Ejecutar validación** — ejecuta cada comprobación y enumera los resultados
-- **Export Report** (exportar informe) — guarda los resultados en un archivo
+**Controles clave:**
+- **Run Validation**: ejecuta todas las comprobaciones y enumera los resultados
+- **Export Report**: guarda los resultados en un archivo
 
-El Tablero de Tareas (pestaña BoneCraft → Resumen → Tablero de Tareas) muestra una tarea del validador cuando falla una comprobación.
+El Panel de tareas (pestaña BoneCraft → Descripción general → Panel de tareas) muestra una tarea del validador cuando falla una verificación.
 
-**Dónde está:** pestaña BoneCraft → Revisión → Validador de Rig
+**Dónde encontrarlo:** Pestaña BoneCraft → Revisar → Validador de rig
 
 ---
 
 ### Notas del Rig
 
-**Qué hacen:** notas escritas unidas a los huesos del rig: lo que configuraste, recordatorios, notas para colaboradores.
+**Qué hace:** Notas escritas adjuntas a los huesos de la rig: lo que configuras, recordatorios, notas para los colaboradores.
 
-**Controles principales:** **Añadir Nota**, y **Eliminar** en cada nota. Léame del Rig muestra las notas del rig como una página de solo lectura.
+**Controles clave:** **Add Note** y**Remove** en cada nota. Rig Readme muestra las notas del rig como una página de solo lectura.
 
-**Dónde están:** pestaña BoneCraft → Resumen → Notas del Rig, y Revisión → Léame del Rig
+**Dónde encontrarlo:** Pestaña BoneCraft → Descripción general → Notas y revisión del rig → Léame del rig
 
-Siguiente: [Constructor de Rig](06-rig-builder.md)
+Siguiente: [Constructor de plataformas](06-rig-builder.md)

@@ -1,91 +1,109 @@
 # Primeros pasos
 
-[← Índice](index.md)
+[← Contenidos](index.md)
 
 ## ¿Qué es BoneCraft?
 
-BoneCraft es un complemento para Bforartists que te ayuda a hacer el rig de personajes y accesorios, y a preparar avatares 3D para VRChat, VRoid / VRM y MMD. Añade paneles y botones que automatizan los pasos más tediosos: construir un rig, pintar pesos, corregir nombres de huesos, configurar la sincronización labial y el seguimiento ocular, y exportar.
+BoneCraft es un complemento para Bforartists que te ayuda a manipular personajes y accesorios, y preparar avatares 3D para VRChat, VRoid / VRM y MMD. Agrega paneles y botones que automatizan los pasos más tediosos: construir una rig, pintar pesos, arreglar nombres de huesos, configurar sincronización de labios y seguimiento ocular, y exportar.
 
 **Lo que BoneCraft no puede hacer:**
-- No puede modelar ni esculpir la forma del cuerpo de tu avatar
-- No puede crear texturas ni materiales desde cero
-- No puede subir directamente a VRChat (sigues necesitando el VRChat Creator Companion / SDK)
+- No puede modelar ni esculpir la forma del cuerpo de tu avatar.
+- No puede crear texturas o materiales desde cero.
+- No se puede cargar directamente en VRChat (aún necesita el VRChat Creator Companion/SDK)
 
 ---
 
 ## BoneCraft y BoneForge
 
-BoneCraft solo funciona en Bforartists (el fork de Blender). Para Blender estándar hay un complemento aparte, BoneForge, con menos herramientas. Instala uno u otro, nunca los dos. En Blender estándar, BoneCraft no se carga: muestra un único aviso con un botón para conseguir Bforartists.
+BoneCraft se ejecuta solo en Bforartists (la bifurcación Blender ). Para el Blender estándar hay un complemento independiente, BoneForge, con un conjunto más pequeño de herramientas. Instale uno u otro, nunca ambos. En el estándar Blender, BoneCraft no se carga: muestra un aviso con un botón para obtener Bforartists.
 
-| Área | BoneForge (Blender estándar) | BoneCraft (Bforartists) |
+|Área|BoneForge (estándar Blender )|BoneCraft (Bforartists )|
 | --- | --- | --- |
-| Limpieza de avatares CATS, Material Combiner, controles derivados de UVToolkit | Incluido | Incluido |
-| Ayudas básicas para avatares (estilo Mixamo) | Incluido | Incluido |
-| Constructor de Rig: detección de articulaciones, asistente, rig de control, asset Basic Humanoid | No incluido | Incluido |
-| Controles de animador y el Control Picker | No incluido | Incluido |
-| Mechanisms para accesorios y máquinas | No incluido | Incluido |
-| Redireccionamiento avanzado y exportación para juegos por perfiles | No incluido | Incluido |
+|CATS Limpieza de avatar, Combinador de materiales, controles derivados de UVToolkit|Incluido|Incluido|
+|Ayudantes de avatar básicos (estilo Mixamo)|Incluido|Incluido|
+|Rig Builder: detección de articulaciones, asistente, rig de control, activo humanoide básico|No incluido|Incluido|
+|Controles del animador y selector de controles|No incluido|Incluido|
+|Mecanismos para utilería y máquinas.|No incluido|Incluido|
+|Reorientación avanzada y exportación de juegos basada en perfiles|No incluido|Incluido|
 
 ## Instalar BoneCraft
 
 **Lo que necesitas:**
-- Bforartists (BoneCraft está probado en Bforartists 5.2)
-- El archivo `.zip` de BoneCraft
+- Bforartists (BoneCraft se prueba en Bforartists 5.2)
+- El archivo BoneCraft `.zip`
 
 **Pasos:**
 
-1. Abre Bforartists.
-2. Abre **Editar** (Edit) → **Preferencias** (Preferences) → **Complementos** (Add-ons).
-3. Haz clic en **Instalar desde disco…** (Install from Disk…) y elige el archivo `.zip` de BoneCraft.
-4. Marca la casilla junto a BoneCraft para activarlo.
-5. Despliega la entrada de BoneCraft para ver sus ajustes: **Tabs** (pestañas), **Show Helpers** (mostrar ayudas), **Language** (idioma) y la lista **Herramientas**.
+1. Abra Bforartists.
+2. Abra **Edit** →**Preferences** →**Add-ons**.
+3. Haga clic en **Install from Disk…** y seleccione el archivo BoneCraft `.zip`.
+4. Marque la casilla de verificación junto a BoneCraft para habilitarlo.
+5. Expanda la entrada de BoneCraft para ver su configuración: **Language**,**Tabs**,**Shelf Width**,**Show Helpers** y la lista**Tools**.
 
-**Lo que deberías ver:** las pestañas BoneCraft y Rig Builder en la Tool Shelf izquierda (pulsa **T**) y la pestaña CATS en la barra lateral derecha (pulsa **N**).
+**Deberías ver:** las pestañas BoneCraft y Rig Builder en el estante de herramientas izquierdo (presiona**T**) y la pestaña CATS en la barra lateral derecha (presiona**N**).
 
 ## Dónde está cada cosa
 
-BoneCraft añade tres pestañas a la vista 3D:
+BoneCraft agrega tres pestañas a la ventana gráfica 3D:
 
-| Pestaña | Lado predeterminado | Secciones |
+|Pestaña|Lado predeterminado|Secciones|
 | --- | --- | --- |
-| BoneCraft | Tool Shelf izquierda (pulsa T) | Resumen, Configurar Rigging, Malla, Mechanisms, Revisión |
-| Rig Builder | Tool Shelf izquierda (pulsa T) | Constructor de Rig: Quick Rig, Asistente Auto-Rig, Maniquí |
-| CATS | Barra lateral derecha (pulsa N) | CATS, VRChat, Importar / Exportar |
+|BoneCraft |Estante de herramientas izquierdo (presione T)|Descripción general, configuración del rig, máscara, mecanismos, revisión|
+|Constructor de rigs|Estante de herramientas izquierdo (presione T)|Constructor de rigs: asistente de rig automática, rig rápida, maniquí|
+|CATS |Barra lateral derecha (presione N)|CATS, Herramientas Avatar, Herramientas VRChat, Importar/Exportar|
 
-**Mover una pestaña:** abre **Editar** → **Preferencias** → **Complementos** → BoneCraft → **Tabs**. Cada pestaña tiene un interruptor para mostrarla y dos botones, Left (izquierda) y Right (derecha). El cambio se aplica al momento. Mientras una pestaña está oculta, sus botones Left y Right se ven en gris, pero siguen funcionando.
+**Mover una pestaña:** abra**Edit** →**Preferences** →**Add-ons** → BoneCraft →**Tabs**. Cada pestaña tiene un interruptor de presentación y dos botones, izquierda y derecha. Un cambio se aplica de inmediato. Mientras una pestaña está oculta, sus botones izquierdo y derecho se vuelven grises, pero aún funcionan.
 
-**Siempre en el editor de Propiedades:** el Constructor de Rig, Mechanisms, CATS, VRChat e Importar / Exportar también se muestran en la pestaña Escena del editor de Propiedades, sea cual sea la selección. Con una armadura seleccionada, las secciones de BoneCraft también se muestran en la pestaña de datos de la armadura. Los interruptores para mostrar nunca ocultan estas copias. Para quitar una herramienta de todas partes, desactiva su paquete en la lista **Herramientas**, o desactiva el complemento.
+**Editor de propiedades:** Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools e Importar/Exportar también se muestran en la pestaña Escena del editor de Propiedades, mientras que**Scene Properties** está activado en Preferencias → Pestañas. Este interruptor se activa. Haga clic en su botón**Show** para ocultar o mostrar todas estas secciones; azul significa que se muestran. No cambia las pestañas de la ventana gráfica ni la pestaña de datos de armadura. Con una armadura seleccionada, las herramientas de armadura de BoneCraft también aparecen en la pestaña Datos de armadura, independientemente de estos interruptores de visibilidad. Las secciones Rig Builder, Mechanisms y CATS utilizan la pestaña Escena en su lugar. Para eliminar una herramienta en todas partes, desactive su paquete en la lista**Tools** o desactive el complemento.
 
-**Show Helpers (mostrar ayudas):** BoneCraft explica sus secciones con líneas breves de «qué / cuándo» y notas «How this works» (cómo funciona). Desmarca **Show Helpers** en las preferencias del complemento para ocultarlas. En la sección VRChat, **Modo Compacto** es un atajo al mismo interruptor.
+**Ancho de estante:** Comienza a ampliar estantes estrechos. Amplía los estantes que contienen pestañas BoneCraft una vez si están por debajo del mínimo izquierdo o derecho: 240 y 260 píxeles de forma predeterminada, en una escala de interfaz de usuario de 1×. Un estante que luego arrastras para estrecharlo permanece en el ancho elegido. Apague el interruptor para gestionar los anchos usted mismo; sus campos de ancho se vuelven inactivos.
 
-**Idioma:** el ajuste **Language** (idioma) de las preferencias del complemento cambia los paneles propios de BoneCraft a English, 日本語, 한국어, 中文, Français, Português o Español.
+**Menús y pestañas integradas del estante de herramientas:** en 9.1, también puedes acceder a las herramientas desde los menús de encabezado de la ventana gráfica 3D:
 
-**Corregir Modelo primero, siempre:** en la pestaña CATS, empieza siempre con **Corregir Modelo** antes que cualquier otra herramienta de CATS. El pipeline de CATS lleva un registro de los pasos que has hecho, y cada herramienta te avisa si la ejecutas fuera de orden. Consulta [El pipeline de CATS](04-cats-pipeline.md).
+|Ubicación|Herramientas|
+| --- | --- |
+|Agregar → Armadura|Quick Rig, Asistente de Auto-Rig, Maniquí para Active Rig|
+|Pose → BoneCraft (Modo Pose)|Herramientas de pose, el selector, colecciones de huesos, configuración y comprobaciones del rig.|
+|Pesos → BoneCraft (modo Pintura de peso)|Inundar, reflejar y normalizar pesos|
+|Objeto → Mecanismos (modo objeto)|Agregue piezas, uniones y enlaces; movimiento de prueba|
+|Estante de herramientas → Pose o pesos → BoneCraft |Botones para posturas comunes o operaciones con peso.|
 
-**Panel rápido:** pulsa **Ctrl+Shift+R** en la vista 3D para abrir el panel de rig de BoneCraft como ventana emergente bajo el cursor.
+Los botones del estante Pose y Pesos muestran texto cuando el estante es ancho y se convierten en una cuadrícula de íconos cuando es estrecho. Pase el cursor sobre un ícono para leer su información sobre herramientas. Estos puntos de acceso utilizan las mismas herramientas que las pestañas propias de BoneCraft; su disponibilidad depende de los paquetes de herramientas habilitados.
+
+**Herramientas de ventana gráfica:** Colocar marcadores de rig coloca el siguiente marcador del Asistente de rig automática cuando haces clic en la malla; El mecanismo de construcción inicia una unión guiada o un enlace al hacer clic en una pieza. Consulte [Constructor de plataformas](06-rig-builder.md#asistente-auto-rig) y [Mecanismos](07-mechanisms.md#articulaciones-y-enlaces-un-ejemplo-de-cada) para conocer su configuración y controles.
+
+**Ejecutar primero, ajustar después:** herramientas como Quick Rig, Fit Dropped Rig, Weight Mirror, Weight Transfer, Flood to Custom, Ribbon, Spline IK y Delta Mush se ejecutan al hacer clic. Inmediatamente después, use el panel Ajustar última operación en la ventana gráfica para cambiar sus opciones. Ajústelo antes de ejecutar otra operación. Otros paneles colocan configuraciones opcionales en un pliegue debajo de los botones de acción; expándalo cuando necesites esa configuración. Un panel que necesita una selección diferente puede permanecer visible y explicar qué seleccionar.
+
+**Mostrar ayudas:** BoneCraft explica sus secciones con líneas breves de "qué/cuándo" y notas de "Cómo funciona esto". Desmarca**Show Helpers** en las preferencias del complemento para ocultarlos. En la sección Herramientas de Avatar,**Compact Mode** es un acceso directo para el mismo interruptor.
+
+**Idioma:** la configuración**Language** en las preferencias del complemento cambia los propios paneles de BoneCraft a inglés, 日本語, 한국어, 中文, Français, Português o Español.
+
+**Reparar el modelo primero, siempre:** en la pestaña CATS, comience siempre con**Fix Model** antes que cualquier otra herramienta CATS. La canalización CATS utiliza un libro de contabilidad para realizar un seguimiento de los pasos que ha realizado y cada herramienta le advierte si la ejecuta fuera de servicio. Ver [La tubería CATS](04-cats-pipeline.md).
+
+**Panel rápido:** presione**Ctrl+Shift+R** en la ventana gráfica 3D para abrir el panel de rig de BoneCraft como una ventana emergente debajo del cursor.
 
 ---
 
 ## ¿Por dónde empiezo?
 
-Elige la descripción que mejor encaje contigo:
+Elige la descripción que mejor se adapte a ti:
 
-> **«Tienes un archivo de modelo 3D totalmente nuevo (FBX, OBJ o archivo de Blender) y quieres hacerle el rig para VRChat desde cero.»**
-> → Ve a la [guía 1: lleva tu primer avatar a VRChat](02-guides-a.md#guía-1-lleva-tu-primer-avatar-a-vrchat)
+> **"Eres una persona que tiene un archivo de modelo 3D nuevo (archivo FBX, OBJ o Blender ) y desea prepararlo para VRChat desde cero."**
+> → Ir a [Guía 1: Obtenga su primer avatar en VRChat](02-guides-a.md#guía-1-lleva-tu-primer-avatar-a-vrchat)
 
-> **«Has creado tu avatar en VRoid Studio y has exportado un archivo VRM.»**
-> → Ve a la [guía 2: lleva un avatar de VRoid a VRChat](02-guides-a.md#guía-2-lleva-un-avatar-de-vroid-a-vrchat)
+> **"Usted es una persona que creó su avatar en VRoid Studio y exportó un archivo VRM."**
+> → Ir a [Guía 2: Traiga un avatar VRoid a VRChat](02-guides-a.md#guía-2-lleva-un-avatar-de-vroid-a-vrchat)
 
-> **«Tienes un modelo de MMD (archivo PMX) y quieres usarlo en VRChat.»**
-> → Ve a la [guía 3: lleva un avatar de MMD a VRChat](02-guides-a.md#guía-3-lleva-un-avatar-de-mmd-a-vrchat)
+> **"Eres una persona que tiene un modelo MMD (archivo PMX ) y desea utilizarlo en VRChat."**
+> → Ir a [Guía 3: Traiga un avatar MMD a VRChat](02-guides-a.md#guía-3-lleva-un-avatar-de-mmd-a-vrchat)
 
-> **«Ya tienes un avatar con rig, pero no se sube porque los huesos tienen nombres incorrectos.»**
-> → Ve a la [guía 4: corrige los nombres de los huesos de tu avatar](02-guides-a.md#guía-4-corrige-los-nombres-de-los-huesos-de-tu-avatar)
+> **"Eres una persona que ya tiene un avatar manipulado pero no lo carga porque los huesos tienen nombres incorrectos."**
+> → Ir a [Guía 4: arregla los nombres de los huesos de tu avatar](02-guides-a.md#guía-4-corrige-los-nombres-de-los-huesos-de-tu-avatar)
 
-> **«Tienes un avatar con rig y quieres dejarlo totalmente listo para VRChat: sincronización labial, seguimiento ocular y malla limpia, todo de una vez.»**
-> → Ve a la [guía 13: prepara tu avatar para VRChat con CATS](03-guides-b.md#guía-13-prepara-tu-avatar-para-vrchat-con-cats)
+> **"Eres una persona que tiene un avatar manipulado y quiere tenerlo completamente listo para VRChat: sincronización de labios, seguimiento ocular, malla limpia, todo a la vez".**
+> → Ir a [Guía 13: Prepare su avatar VRChat con CATS](03-guides-b.md#guía-13-prepara-tu-avatar-para-vrchat-con-cats)
 
-> **«Quieres resolver un problema concreto.»**
-> → Ve al [Índice de soluciones rápidas](10-reference.md#índice-de-soluciones-rápidas)
+> **"Eres una persona que quiere solucionar un problema específico."**
+> → Ir al [Índice de solución rápida](10-reference.md#índice-de-soluciones-rápidas)
 
-Siguiente: [Guías 1–7](02-guides-a.md)
+Siguiente: [Guías 1 a 7](02-guides-a.md)
