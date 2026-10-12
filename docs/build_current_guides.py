@@ -12,7 +12,7 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, KeepTogether
 
 
 ROOT = Path(__file__).resolve().parent
@@ -67,7 +67,17 @@ def build(source):
     doc = SimpleDocTemplate(str(output), pagesize=A4, leftMargin=42, rightMargin=42,
                             topMargin=42, bottomMargin=48, title=title,
                             author="B4Artists Tools", subject="Current release guide")
-    doc.build(story, onFirstPage=footer, onLaterPages=footer)
+    grouped = []
+    index = 0
+    while index < len(story):
+        item = story[index]
+        if isinstance(item, Paragraph) and item.style.name == "Heading2" and index + 1 < len(story):
+            grouped.append(KeepTogether(story[index:index + 2]))
+            index += 2
+        else:
+            grouped.append(item)
+            index += 1
+    doc.build(grouped, onFirstPage=footer, onLaterPages=footer)
     print(output)
 
 

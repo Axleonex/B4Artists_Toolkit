@@ -26,6 +26,5 @@
     "crescent_rose_parts": true,
     "crescent_rose_rig": true
   },
-  "cleanup_commit": "2d970c7",
   "history_cleanup": "Four historical footer removals verified; file trees and metadata preserved."
 }
