@@ -26,12 +26,12 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.1.3 | [b4_anim_assist_v12.1.3.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.1.3/b4_anim_assist_v12.1.3.zip) |
-| Ghost Tool 4.2.2 (test build) | [b4_ghost_tool_v4.2.2.zip](releases/b4_ghost_tool_v4.2.2.zip?raw=1) |
+| Ghost Tool 4.2.2 (prerelease) | [b4_ghost_tool_v4.2.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.2/b4_ghost_tool_v4.2.2.zip) |
 | BoneCraft 9.1.2 (optional) | [BoneCraft-BFA-9.1.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.1.2/BoneCraft-BFA-9.1.2.zip) |
 
-Anim Assist 12.1.3 and BoneCraft 9.1.2 are published releases and pass their recorded host checks. Ghost Tool 4.2.2 is a repository test build. Live Update Markers and Live Update Skin default off; generating ghosts preserves those settings. Cached ghosts stay stable during native gestures and refresh after animation edits settle. The exact ZIP passes 230 background checks and five native auto-key cases on a Blender stand-in; Bforartists rig validation remains pending.
+Anim Assist 12.1.3 and BoneCraft 9.1.2 are published releases and pass their recorded host checks. Ghost Tool 4.2.2 is a prerelease. Live Update Markers and Live Update Skin default off; generating ghosts preserves those settings. Cached ghosts stay stable during native gestures and refresh after animation edits settle. The exact ZIP passes 230 background checks and five native auto-key cases on a Blender stand-in; Bforartists rig validation remains pending.
 
-See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The [GitHub Releases page](https://github.com/Axleonex/B4Artists_Toolkit/releases) provides the published releases, including [Ghost Tool 4.2.1](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.1) and the earlier [Ghost Tool 4.2.0 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.0).
+See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. Download [Ghost Tool 4.2.2](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2) from GitHub Releases. Earlier releases remain available for comparison.
 
 ## Install
 

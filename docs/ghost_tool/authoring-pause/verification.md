@@ -1,6 +1,6 @@
 # Ghost Tool 4.2.2 authoring pause
 
-Date: 2026-10-12. Status: local repository test build; Bforartists production-rig acceptance pending.
+Date: 2026-10-12. Status: 4.2.2 prerelease; Bforartists production-rig acceptance pending.
 
 The owner still sees jitter in 4.2.1 with auto-key and Update While Scrubbing enabled.
 The requested behavior is a stable cached overlay during a move, then a refresh after the move ends.
@@ -57,8 +57,10 @@ engine with real native event simulation. Results and the archive checksum are i
 - The nine-suite run does not repeat the stand-in annotation or fresh-child persistence suites;
   their earlier host limitations remain documented in the [4.2.1 report](../authoring-fix/verification.md).
 
-The old 4.2.1 release and ZIP are retained as history. This candidate is not published. These checks
-do not establish that the owner's production rig is free of jitter.
+The old 4.2.1 release and ZIP are retained as history. The unchanged tested archive is distributed
+as the [4.2.2 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2).
+The package receipt's `published: false` records its build-time status before release preparation.
+These checks do not establish that the owner's production rig is free of jitter.
 
 ## UI and execution record
 

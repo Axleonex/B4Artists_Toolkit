@@ -1,10 +1,10 @@
 # Ghost Tool 4.2.2 user guide
 
-Current repository test build: 4.2.2. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. All 230 background checks and five native auto-key cases pass on a Blender stand-in; Bforartists production-rig validation remains pending. The earlier 4.2.1 prerelease remains on GitHub Releases.
+Current prerelease: 4.2.2. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. All 230 background checks and five native auto-key cases pass on a Blender stand-in; Bforartists production-rig validation remains pending.
 
 ## Install and find Ghost Tool
 
-Download the [4.2.2 ZIP](../../releases/b4_ghost_tool_v4.2.2.zip?raw=1). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
+Download the [4.2.2 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.2/b4_ghost_tool_v4.2.2.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
 
 The main entry is the 3D Viewport header: the ghost toggle and Ghost Tool menu next to Pose. The menu groups display, editing, comparison and settings controls. Open in Separate Window keeps the controls available in a separate window.
 
