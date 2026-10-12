@@ -1,0 +1,125 @@
+{
+  "version": "4.2.2",
+  "artifact": "releases/b4_ghost_tool_v4.2.2.zip",
+  "bytes": 214338,
+  "sha256": "d74c692e4c6e62608fe3a093e6c5f6f9c891583b01429934ea42e96817ffff2b",
+  "source_modules": 29,
+  "source_bytes_match": true,
+  "background_tests": [
+    {
+      "test": "test_ghost_authoring.py",
+      "tests": 20,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_regressions.py",
+      "tests": 21,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_correctness.py",
+      "tests": 47,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_header_ui.py",
+      "tests": 16,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_paths.py",
+      "tests": 71,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_paths_fast.py",
+      "tests": 10,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_paths_handles.py",
+      "tests": 16,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_paths_vertex.py",
+      "tests": 13,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_snapshot_targets.py",
+      "tests": 16,
+      "exit_code": 0,
+      "status": "PASS"
+    }
+  ],
+  "native_tests": {
+    "host": "5.1.2",
+    "status": "PASS",
+    "cases": [
+      {
+        "mode": "OBJECT",
+        "live": false,
+        "cancel": false,
+        "status": "PASS",
+        "native_operator": "TRANSFORM_OT_translate",
+        "auto_key": true,
+        "held_ticks": 3,
+        "refreshes_after_finish": 1
+      },
+      {
+        "mode": "OBJECT",
+        "live": true,
+        "cancel": false,
+        "status": "PASS",
+        "native_operator": "TRANSFORM_OT_translate",
+        "auto_key": true,
+        "held_ticks": 3,
+        "refreshes_after_finish": 1
+      },
+      {
+        "mode": "POSE",
+        "live": false,
+        "cancel": false,
+        "status": "PASS",
+        "native_operator": "TRANSFORM_OT_translate",
+        "auto_key": true,
+        "held_ticks": 3,
+        "refreshes_after_finish": 1
+      },
+      {
+        "mode": "POSE",
+        "live": true,
+        "cancel": false,
+        "status": "PASS",
+        "native_operator": "TRANSFORM_OT_translate",
+        "auto_key": true,
+        "held_ticks": 3,
+        "refreshes_after_finish": 1
+      },
+      {
+        "mode": "OBJECT",
+        "live": false,
+        "cancel": true,
+        "status": "PASS",
+        "native_operator": "TRANSFORM_OT_translate",
+        "auto_key": true,
+        "held_ticks": 3,
+        "refreshes_after_finish": 1
+      }
+    ]
+  },
+  "status": "PASS",
+  "host": "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+  "host_role": "Blender 5.1.2 stand-in; registration gate patched only",
+  "bforartists_production_rig_validation": "PENDING",
+  "published": false
+}

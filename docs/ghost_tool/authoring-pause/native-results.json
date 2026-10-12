@@ -1,0 +1,56 @@
+{
+  "host": "5.1.2",
+  "status": "PASS",
+  "cases": [
+    {
+      "mode": "OBJECT",
+      "live": false,
+      "cancel": false,
+      "status": "PASS",
+      "native_operator": "TRANSFORM_OT_translate",
+      "auto_key": true,
+      "held_ticks": 3,
+      "refreshes_after_finish": 1
+    },
+    {
+      "mode": "OBJECT",
+      "live": true,
+      "cancel": false,
+      "status": "PASS",
+      "native_operator": "TRANSFORM_OT_translate",
+      "auto_key": true,
+      "held_ticks": 3,
+      "refreshes_after_finish": 1
+    },
+    {
+      "mode": "POSE",
+      "live": false,
+      "cancel": false,
+      "status": "PASS",
+      "native_operator": "TRANSFORM_OT_translate",
+      "auto_key": true,
+      "held_ticks": 3,
+      "refreshes_after_finish": 1
+    },
+    {
+      "mode": "POSE",
+      "live": true,
+      "cancel": false,
+      "status": "PASS",
+      "native_operator": "TRANSFORM_OT_translate",
+      "auto_key": true,
+      "held_ticks": 3,
+      "refreshes_after_finish": 1
+    },
+    {
+      "mode": "OBJECT",
+      "live": false,
+      "cancel": true,
+      "status": "PASS",
+      "native_operator": "TRANSFORM_OT_translate",
+      "auto_key": true,
+      "held_ticks": 3,
+      "refreshes_after_finish": 1
+    }
+  ]
+}

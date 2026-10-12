@@ -290,9 +290,8 @@ def _draw_show_ghosts(layout, context) -> None:
         col.prop(settings, "subdivision_level", text="Detail", slider=True)
 
     col = layout.column(align=True)
-    col.prop(settings, "live_point_ghosts", text="Update While Scrubbing", toggle=True,
-             icon='PLAY' if settings.live_point_ghosts else 'PAUSE')
-    if settings.live_point_ghosts or settings.live_mesh_ghosts:
+    col.prop(settings, "live_point_ghosts", text="Live Update Markers")
+    if settings.is_active:
         row = col.row(align=True)
         row.prop(settings, "live_freeze", text="Freeze", toggle=True,
                  icon='SNAP_ON' if settings.live_freeze else 'SNAP_OFF')
@@ -349,8 +348,7 @@ def _draw_onion_skin(layout, context) -> None:
     if settings.ghost_outline_enabled:
         col.prop(settings, "ghost_outline_width", text="Width")
         col.prop(settings, "ghost_outline_color", text="")
-    layout.prop(settings, "live_mesh_ghosts", text="Update While Scrubbing", toggle=True,
-                icon='PLAY' if settings.live_mesh_ghosts else 'PAUSE')
+    layout.prop(settings, "live_mesh_ghosts", text="Live Update Skin")
 
 
 def _draw_edit_motion(layout, context) -> None:

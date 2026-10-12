@@ -1170,9 +1170,8 @@ class GHOST_OT_generate(bpy.types.Operator):
             clear_existing=True,
         )
 
-        # Activate display and live updates
+        # Display the snapshot without overriding the user's scrub setting.
         settings.is_active = True
-        settings.live_point_ghosts = True
 
         # Auto-start hover detection so highlight rings and frame labels work
         GHOST_OT_hover_detect.ensure_running(context)

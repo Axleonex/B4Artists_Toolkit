@@ -1,24 +1,26 @@
-# Ghost Tool 4.2.1 user guide
+# Ghost Tool 4.2.2 user guide
 
-Current repository test build: 4.2.1. It fixes live refresh resetting an unkeyed pose while you author a new keyframe. All 13 focused authoring checks pass on a Blender stand-in; Bforartists viewport validation remains pending. The earlier 4.2.0 prerelease remains on GitHub Releases.
+Current repository test build: 4.2.2. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. All 230 background checks and five native auto-key cases pass on a Blender stand-in; Bforartists production-rig validation remains pending. The earlier 4.2.1 prerelease remains on GitHub Releases.
 
 ## Install and find Ghost Tool
 
-Download the [4.2.1 ZIP](../../releases/b4_ghost_tool_v4.2.1.zip?raw=1). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating from 4.2.0, restart Bforartists after installation.
+Download the [4.2.2 ZIP](../../releases/b4_ghost_tool_v4.2.2.zip?raw=1). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
 
 The main entry is the 3D Viewport header: the ghost toggle and Ghost Tool menu next to Pose. The menu groups display, editing, comparison and settings controls. Open in Separate Window keeps the controls available in a separate window.
 
-This is a Bforartists add-on. Version 4.2.1 was checked using Blender 5.1.2 as an animation-evaluation stand-in. Its Bforartists viewport validation is pending. The earlier 4.2.0 build passed its recorded checks on Bforartists 5.2.0, with Blender runtime 5.3.0 Alpha, build `0a1ca45552db`.
+This is a Bforartists add-on. Version 4.2.2 was checked using Blender 5.1.2 as an animation-evaluation stand-in. Its Bforartists viewport validation is pending. The earlier 4.2.0 build passed its recorded checks on Bforartists 5.2.0, with Blender runtime 5.3.0 Alpha, build `0a1ca45552db`.
 
 ## Author new keyframes with live ghosts
 
-Leave Ghost Tool and live ghosts enabled, move or rotate your object or pose control, confirm the transform, then insert a key. Live sampling preserves your unkeyed transform values and waits during native move, rotate and scale operations. The ghost display refreshes after the operation finishes.
+Leave Ghost Tool enabled and move, rotate or scale your object or pose control. The backend keeps the last ghost snapshot throughout a native gesture, including gizmo interaction, without stepping through animation frames. After you confirm or cancel, it waits briefly for edits to settle and refreshes once. Auto-key can remain enabled; without auto-key, insert a key after confirming the pose.
 
-After installing 4.2.1, test a new pose on your rig, wait for a ghost refresh, and insert the key. Seek away and return to confirm it saved correctly. Repeat with auto-key enabled and with mesh ghosts or a pinned motion path visible. Record any jitter or lost pose in the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues).
+Live Update Markers controls whether markers follow timeline changes; Live Update Skin controls onion skins. Both default off, and Show Markers or Show Onion Skin preserves your choices. With these controls off, scrubbing shows the last refreshed snapshot. Finishing an animation edit still refreshes existing ghosts. Freeze pauses these automatic refreshes too.
+
+After installing 4.2.2, test a new pose on your rig, wait for a ghost refresh, and insert the key. Seek away and return to confirm it saved correctly. Repeat with auto-key enabled and with mesh ghosts or a pinned motion path visible. Record any jitter or lost pose in the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues).
 
 ## Show and inspect motion
 
-Start with an animated object or pose bone. Select the target and use Show Markers. The displayed target identifies the object or bone being inspected. Show Markers displays live generated motion markers; it does not require saving a comparison snapshot.
+Start with an animated object or pose bone. Select the target and use Show Markers. The displayed target identifies the object or bone being inspected. Show Markers displays generated motion markers; it does not require saving a comparison snapshot.
 
 Use the motion-path controls for object and bone paths. Onion Skin and mesh-ghost controls provide additional pose context. Generated markers and paths are derived displays; a saved comparison snapshot is a separate record.
 
@@ -30,7 +32,7 @@ Easing presets change the motion between keys. Custom easing uses the four confi
 
 Escape cancels a drag or preview and restores the original curves and marker positions. A lost target, file/history change or add-on shutdown also cancels the active gesture against surviving original curves. Inspect the result and use Undo/Redo to verify recovery in your scene.
 
-Version 4.2.1 includes the 4.2.0 r4 repair for persistent curve tags that previously blocked adding a Cycles modifier. Old tags from r1-r3 are removed on file load or when the add-on is enabled.
+Version 4.2.2 includes the 4.2.0 r4 repair for persistent curve tags that previously blocked adding a Cycles modifier. Old tags from r1-r3 are removed on file load or when the add-on is enabled.
 
 ## Save snapshots and variants
 
@@ -66,6 +68,6 @@ For final review, test marker discovery, handle dragging and Escape, snapshot vi
 
 ## Release verification
 
-The exact 4.2.1 ZIP passed all 13 focused authoring checks. Across ten suites, 229 checks passed on a Blender 5.1.2 stand-in. Ten supplemental cases fail the same way on the 4.2.0 ZIP: nine depend on annotation APIs unavailable in this stand-in, and one fresh-process case encounters the Bforartists-only registration gate. See [4.2.1 repair verification](authoring-fix/verification.md) and its [package receipt](authoring-fix/package-receipt.json).
+The exact 4.2.2 ZIP passed 230 background checks across nine suites, including 20 authoring regressions. Five native GUI cases use real move operators and auto-key: object and pose moves with live updates off and on, plus cancellation. Each holds the ghost snapshot for three timer ticks during movement, refreshes once afterward, and checks the keyed pose after seeking away and back. See [4.2.2 verification](authoring-pause/verification.md) and its [package receipt](authoring-pause/package-receipt.json).
 
-The earlier 4.2.0 r4 ZIP passed 320 checks across 17 suites on its recorded Bforartists host. Those results describe that build, not the 4.2.1 repair. See [4.2.0 verification](afterimage-release/VERIFICATION-r4.md) and the [owner checklist](afterimage-release/UAT.md). Bforartists viewport validation and final owner acceptance of 4.2.1 remain pending.
+These checks use a Blender 5.1.2 stand-in with only the Bforartists registration gate patched. The broader earlier 4.2.1 run had ten host-limited failures. The earlier 4.2.0 r4 ZIP passed its recorded Bforartists checks. See the historical [4.2.1 report](authoring-fix/verification.md), [4.2.0 verification](afterimage-release/VERIFICATION-r4.md), and [owner checklist](afterimage-release/UAT.md). Bforartists production-rig validation and final owner acceptance of 4.2.2 remain pending.

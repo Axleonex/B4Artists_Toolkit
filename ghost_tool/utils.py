@@ -662,11 +662,17 @@ def is_sampling() -> bool:
 
 
 def is_native_transform_active(context) -> bool:
-    """Idle timers still run during native transforms; sampling must wait."""
+    """Hold snapshots throughout native modal operations, including gizmos and scrubs.
+
+    A gizmo or macro can own the modal handler instead of TRANSFORM_OT_*.
+    Our own gestures use SessionState.drag_active and controlled sampling;
+    native gestures must finish before any frame stepping is safe.
+    """
     manager = getattr(context, 'window_manager', None)
     for window in getattr(manager, 'windows', ()):
         for operator in getattr(window, 'modal_operators', ()):
-            if operator.bl_idname.startswith('TRANSFORM_OT_'):
+            if not operator.bl_idname.startswith((
+                    'ghost_tool.', 'GHOST_TOOL_OT_', 'GHOSTTOOL_OT_')):
                 return True
     return False
 
@@ -736,6 +742,8 @@ def scene_sampling(scene, *, preserve_pose=True):
     from . import ghost_data
     if ghost_data._IN_DRAW_HANDLER:
         raise RuntimeError("Scene sampling is forbidden inside a draw handler")
+    if is_native_transform_active(bpy.context):
+        raise RuntimeError("Scene sampling must wait until the native gesture finishes")
     frame, subframe = scene.frame_current, scene.frame_subframe
     pose = _capture_authoring_pose(scene) if preserve_pose else []
     _SAMPLING_DEPTH += 1

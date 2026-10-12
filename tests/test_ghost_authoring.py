@@ -64,6 +64,8 @@ class AuthoringRegression(unittest.TestCase):
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.data.objects.remove(self.obj, do_unlink=True)
         gp.GhostPipeline.clear_all_instances()
+        from ghost_tool.ghost_cache import GhostCache
+        GhostCache.clear_all_instances()
 
     def edit_pose(self):
         self.obj.location = (8, 9, 10)
@@ -86,10 +88,11 @@ class AuthoringRegression(unittest.TestCase):
     def test_live_refresh_preserves_pose_for_new_key(self):
         self.settings.is_active = True
         self.edit_pose()
-        for _ in range(3):
+        for tick in range(3):
             pipeline = gp.GhostPipeline.get(self.scene)
             pipeline.mark_dirty()
-            gp._deferred_live_update()
+            with patch.object(gp.time, 'monotonic', return_value=10**12 + tick):
+                gp._deferred_live_update()
             self.assertTrue(gd.GhostStore.get(self.scene).all_ghosts)
             self.assert_pose()
         self.bone.keyframe_insert('location', frame=7.25)
@@ -203,6 +206,7 @@ class AuthoringRegression(unittest.TestCase):
             generate.assert_not_called()
         context.window_manager.windows[0].modal_operators.clear()
         with patch.object(gp.bpy, 'context', context), \
+                patch.object(gp.time, 'monotonic', return_value=10**12), \
                 patch.object(gp.GhostPipeline, '_run_live_update') as run:
             gp._deferred_live_update()
             run.assert_called_once()
@@ -251,6 +255,113 @@ class AuthoringRegression(unittest.TestCase):
         with patch.object(mp.bpy, 'context', context), patch.object(mp, 'sync_markers') as sync:
             self.assertEqual(mp._deferred_marker_sync(), 0.05)
             sync.assert_not_called()
+
+    def test_scrub_updates_default_off(self):
+        fresh = bpy.data.scenes.new('SnapshotDefaults')
+        try:
+            self.assertFalse(fresh.ghost_tool.live_point_ghosts)
+            self.assertFalse(fresh.ghost_tool.live_mesh_ghosts)
+        finally:
+            bpy.data.scenes.remove(fresh)
+
+    def test_generation_keeps_scrub_updates_off(self):
+        self.settings.live_point_ghosts = self.settings.live_mesh_ghosts = False
+        self.assertEqual(bpy.ops.ghost_tool.generate_ghosts(), {'FINISHED'})
+        self.assertFalse(self.settings.live_point_ghosts)
+        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.ops.mesh.primitive_cube_add()
+        cube = bpy.context.object
+        try:
+            self.assertEqual(bpy.ops.ghost_tool.generate_mesh_ghosts(), {'FINISHED'})
+            self.assertFalse(self.settings.live_mesh_ghosts)
+        finally:
+            mg.clear_mesh_ghosts(bpy.context)
+            bpy.data.objects.remove(cube, do_unlink=True)
+            bpy.context.view_layer.objects.active = self.obj
+            bpy.ops.object.mode_set(mode='POSE')
+
+    def test_native_gizmo_and_scrub_hold_snapshot(self):
+        for identifier in ('GIZMOGROUP_OT_gizmo_tweak', 'ANIM_OT_change_frame', 'POSE_OT_push'):
+            context = SimpleNamespace(window_manager=SimpleNamespace(windows=[
+                SimpleNamespace(modal_operators=[SimpleNamespace(bl_idname=identifier)])]))
+            with self.subTest(operator=identifier):
+                self.assertTrue(utils.is_native_transform_active(context))
+
+    def test_sampler_cannot_change_frames_during_native_edit(self):
+        context = SimpleNamespace(window_manager=SimpleNamespace(windows=[
+            SimpleNamespace(modal_operators=[SimpleNamespace(bl_idname='TRANSFORM_OT_translate')])]))
+        self.edit_pose()
+        with patch.object(utils.bpy, 'context', context):
+            with self.assertRaises(RuntimeError):
+                with utils.scene_sampling(self.scene):
+                    self.scene.frame_set(2)
+        self.assert_pose()
+        self.assertEqual(self.scene.frame_current_final, 7.25)
+
+    def test_ghost_object_notifications_do_not_schedule_sampling(self):
+        self.settings.is_active = True
+        ghost = bpy.data.objects.new('FeedbackGhost', None)
+        self.scene.collection.objects.link(ghost)
+        ghost['ghost_tool_mesh_ghost'] = True
+        try:
+            updates = SimpleNamespace(updates=[SimpleNamespace(id=ghost)])
+            with patch.object(gp, '_schedule_deferred_update') as schedule, \
+                    patch.object(gp, '_last_depsgraph_check', 0):
+                gp._on_depsgraph_update_pipeline(self.scene, updates)
+                schedule.assert_not_called()
+        finally:
+            bpy.data.objects.remove(ghost, do_unlink=True)
+
+    def test_snapshot_refreshes_after_edit_without_following_scrub(self):
+        self.settings.live_point_ghosts = self.settings.live_mesh_ghosts = False
+        pipeline = gp.GhostPipeline.get(self.scene)
+        pipeline.generate_manual(bpy.context, self.obj, self.obj, [self.bone.name],
+                                 ['location'], 1)
+        before = [(g.frame, tuple(g.world_position)) for g in gd.GhostStore.get(self.scene)]
+        self.settings.is_active = True
+        self.scene.frame_set(9)
+        with patch.object(gp.GhostPipeline, '_run_live_update') as run:
+            gp._deferred_live_update()
+            run.assert_not_called()
+        self.obj.location.x = 15
+        self.obj.keyframe_insert('location', frame=9)
+        updates = SimpleNamespace(updates=[SimpleNamespace(id=self.obj)])
+        with patch.object(gp, '_schedule_deferred_update') as schedule, \
+                patch.object(gp, '_last_depsgraph_check', 0):
+            gp._on_depsgraph_update_pipeline(self.scene, updates)
+            schedule.assert_called_once()
+        # Repeated ticks before the edit settles must keep the old snapshot.
+        with patch.object(gp.time, 'monotonic', return_value=0):
+            self.assertIsNotNone(gp._deferred_live_update())
+        with patch.object(gp.time, 'monotonic', return_value=10**12):
+            gp._deferred_live_update()
+        after = [(g.frame, tuple(g.world_position)) for g in gd.GhostStore.get(self.scene)]
+        self.assertNotEqual(before, after)
+        cache = pipeline._get_cache()
+        self.assertFalse(cache.is_dirty)
+        with patch.object(gp, '_schedule_deferred_update') as schedule, \
+                patch.object(gp, '_last_depsgraph_check', 0):
+            gp._on_depsgraph_update_pipeline(self.scene, updates)
+            schedule.assert_not_called()
+
+    def test_source_mesh_geometry_edit_schedules_refresh(self):
+        self.settings.live_point_ghosts = self.settings.live_mesh_ghosts = False
+        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.ops.mesh.primitive_cube_add()
+        cube = bpy.context.object
+        try:
+            self.assertEqual(bpy.ops.ghost_tool.generate_mesh_ghosts(), {'FINISHED'})
+            cube.data.vertices[0].co.x += 2
+            updates = SimpleNamespace(updates=[SimpleNamespace(id=cube.data)])
+            with patch.object(gp, '_schedule_deferred_update') as schedule, \
+                    patch.object(gp, '_last_depsgraph_check', 0):
+                gp._on_depsgraph_update_pipeline(self.scene, updates)
+                schedule.assert_called_once()
+        finally:
+            mg.clear_mesh_ghosts(bpy.context)
+            bpy.data.objects.remove(cube, do_unlink=True)
+            bpy.context.view_layer.objects.active = self.obj
+            bpy.ops.object.mode_set(mode='POSE')
 
 
 if __name__ == '__main__':

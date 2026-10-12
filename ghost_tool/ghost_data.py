@@ -1620,23 +1620,23 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
     # playhead moves. Throttling prevents CPU overload.
 
     live_point_ghosts: bpy.props.BoolProperty(
-        name="Live Bone Markers",
+        name="Live Update Markers",
         description=(
-            "Live Mode: bone markers follow the playhead as you scrub. "
-            "Turn off for Snapshot Mode — markers stay frozen at the "
-            "frame where they were generated"
+            "Update markers when the timeline changes. Off keeps their last snapshot "
+            "while scrubbing. Animation edits refresh it after you finish moving; "
+            "updates pause during a move, rotation or scale"
         ),
-        default=True,
+        default=False,
     )  # type: ignore[assignment]
 
     live_mesh_ghosts: bpy.props.BoolProperty(
-        name="Live Onion Skin",
+        name="Live Update Skin",
         description=(
-            "Live Mode: onion skin meshes follow the playhead as you scrub. "
-            "Turn off for Snapshot Mode — meshes stay frozen at the "
-            "frame where they were generated"
+            "Update onion skins when the timeline changes. Off keeps their last snapshot "
+            "while scrubbing. Animation edits refresh it after you finish moving; "
+            "updates pause during a move, rotation or scale"
         ),
-        default=True,
+        default=False,
     )  # type: ignore[assignment]
 
     live_throttle_ms: bpy.props.IntProperty(

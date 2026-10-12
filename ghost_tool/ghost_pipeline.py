@@ -34,6 +34,7 @@ Design goals:
 from __future__ import annotations
 
 import time
+import hashlib
 from typing import Optional
 
 import bpy
@@ -49,7 +50,9 @@ from .ghost_data import (
 )
 from .ghost_cache import GhostCache
 from .session_state import SessionState
-from .utils import is_sampling, is_native_transform_active, log, warn, debug, get_scene_id, tag_viewport_redraw
+from .utils import (is_sampling, is_native_transform_active, get_fcurves_from_action,
+                    _POSE_PROPERTIES, _DELTA_PROPERTIES,
+                    log, warn, debug, get_scene_id, tag_viewport_redraw)
 
 # ---------------------------------------------------------------------------
 # Bake state flags — read by the 2D draw handler for HUD and preview
@@ -73,6 +76,80 @@ completes and the results are swapped into the main GhostStore."""
 
 DEFAULT_THROTTLE_SEC: float = 0.05
 """Minimum seconds between live updates (50ms = ~20 updates/sec max)."""
+
+EDIT_SETTLE_SEC = 0.15
+"""Wait for the last authored change before sampling a completed gesture."""
+
+
+def _rna_controls(block):
+    values = []
+    for prop in block.bl_rna.properties:
+        if prop.is_readonly or prop.identifier in {'name', 'show_expanded', 'select'}:
+            continue
+        value = getattr(block, prop.identifier)
+        if prop.type in {'BOOLEAN', 'INT', 'FLOAT', 'STRING', 'ENUM'}:
+            values.append((prop.identifier, tuple(value) if getattr(prop, 'is_array', False) else value))
+        elif prop.type == 'POINTER':
+            values.append((prop.identifier, value.as_pointer() if value else 0))
+    return tuple(values)
+
+
+def _edit_state(block):
+    """Original inputs distinguish edits from selection and our own evaluations."""
+    if isinstance(block, bpy.types.Object):
+        if block.get('ghost_tool_mesh_ghost') or block.get('ghost_tool_mesh_parent'):
+            return None
+        holders = [(block, _POSE_PROPERTIES + _DELTA_PROPERTIES)]
+        if block.pose:
+            holders += [(bone, _POSE_PROPERTIES) for bone in block.pose.bones]
+        values = []
+        for holder, properties in holders:
+            for name in properties:
+                value = getattr(holder, name)
+                values.append(value if isinstance(value, str) else tuple(value))
+            values.append(tuple(sorted((name, value) for name, value in holder.items()
+                                       if isinstance(value, (bool, int, float)))))
+        values.append(tuple(_rna_controls(c) for c in block.constraints))
+        values.append(tuple(_rna_controls(m) for m in block.modifiers))
+        if block.pose:
+            values.append(tuple(tuple(_rna_controls(c) for c in bone.constraints)
+                                for bone in block.pose.bones))
+        data = block.animation_data
+        values.append((data.action.as_pointer() if data and data.action else 0,
+                       getattr(data, 'action_slot_handle', 0) if data else 0))
+        return tuple(values)
+    if isinstance(block, bpy.types.Action):
+        return tuple((fc.data_path, fc.array_index, fc.mute, fc.extrapolation,
+                      tuple((tuple(k.co), tuple(k.handle_left), tuple(k.handle_right),
+                             k.handle_left_type, k.handle_right_type, k.interpolation,
+                             k.easing, k.amplitude, k.back, k.period)
+                            for k in fc.keyframe_points),
+                      tuple(_rna_controls(m) for m in fc.modifiers))
+                     for fc in get_fcurves_from_action(block))
+    if isinstance(block, bpy.types.Key):
+        return tuple((key.name, key.value, key.mute) for key in block.key_blocks)
+    if isinstance(block, bpy.types.Mesh):
+        import numpy as np
+        if block.is_editmode:
+            import bmesh
+            mesh = bmesh.from_edit_mesh(block)
+            indices = {v: i for i, v in enumerate(mesh.verts)}
+            arrays = (np.asarray([tuple(v.co) for v in mesh.verts], dtype=np.float32),
+                      np.asarray([[indices[v] for v in edge.verts] for edge in mesh.edges], dtype=np.int32),
+                      np.asarray([len(face.verts) for face in mesh.faces], dtype=np.int32),
+                      np.asarray([indices[v] for face in mesh.faces for v in face.verts], dtype=np.int32))
+        else:
+            arrays = []
+            for items, attribute, width, dtype in (
+                    (block.vertices, 'co', 3, np.float32),
+                    (block.edges, 'vertices', 2, np.int32),
+                    (block.polygons, 'loop_total', 1, np.int32),
+                    (block.loops, 'vertex_index', 1, np.int32)):
+                array = np.empty(len(items) * width, dtype=dtype)
+                items.foreach_get(attribute, array)
+                arrays.append(array)
+        return tuple(hashlib.blake2b(array.tobytes(), digest_size=16).digest() for array in arrays)
+    return None
 
 # Timestamp (monotonic) of the last depsgraph_update_post callback execution.
 # Used to throttle expensive handler work during rapid scene updates.
@@ -125,6 +202,9 @@ class GhostPipeline:
         """
         self._scene_id: str = scene_id
         self._cache: Optional[GhostCache] = None
+        self._edit_states = {}
+        self._edit_pending = False
+        self._last_edit_time = 0.0
 
     # --- Singleton access ---
 
@@ -141,6 +221,7 @@ class GhostPipeline:
         key = get_scene_id(scene)
         if key not in cls._instances:
             cls._instances[key] = cls(key)
+            cls._instances[key].remember_edit_state(scene)
         return cls._instances[key]
 
     @classmethod
@@ -176,6 +257,35 @@ class GhostPipeline:
         return self._cache
 
     # --- Dirty flag pass-through ---
+
+    def remember_edit_state(self, scene):
+        """Establish the settled pose without treating a seek or bake as an edit."""
+        blocks = list(scene.objects) + list(bpy.data.actions)
+        blocks += [obj.data for obj in scene.objects if obj.type == 'MESH'
+                   and not obj.get('ghost_tool_mesh_ghost')]
+        blocks += [obj.data.shape_keys for obj in scene.objects
+                   if getattr(obj.data, 'shape_keys', None)]
+        self._edit_states = {block.as_pointer(): state for block in blocks
+                             if (state := _edit_state(block)) is not None}
+
+    def note_animation_edit(self, block):
+        # Bakes update ghost mesh datablocks too. Only original source geometry
+        # belongs to the input baseline; never feed our output back into a bake.
+        if isinstance(block, bpy.types.Mesh) and block.as_pointer() not in self._edit_states:
+            return False
+        state = _edit_state(block)
+        if state is None or self._edit_states.get(block.as_pointer()) == state:
+            return False
+        self._edit_states[block.as_pointer()] = state
+        self._edit_pending = True
+        self._last_edit_time = time.monotonic()
+        self.mark_dirty()
+        return True
+
+    def edit_wait(self):
+        if self._edit_pending:
+            return max(0.0, EDIT_SETTLE_SEC - (time.monotonic() - self._last_edit_time))
+        return 0.0
 
     def mark_dirty(self) -> None:
         """Mark the pipeline as needing regeneration.
@@ -250,6 +360,7 @@ class GhostPipeline:
         cache.last_frame = context.scene.frame_current
         cache.update_settings_hash(compute_settings_hash(settings))
         cache.mark_clean()
+        self.remember_edit_state(context.scene)
 
         debug(f"Generated {len(ghosts)} ghosts, cache clean.")
 
@@ -333,6 +444,7 @@ class GhostPipeline:
         cache.last_frame = context.scene.frame_current
         cache.update_settings_hash(compute_settings_hash(settings))
         cache.mark_clean()
+        self.remember_edit_state(context.scene)
 
         debug(f"Generated {len(final_ghosts)} ghosts (with preview), cache clean.")
         tag_viewport_redraw(context)
@@ -359,11 +471,13 @@ class GhostPipeline:
         settings = scene.ghost_tool
 
         # Only run if any live mode is enabled
-        if not _any_live(settings):
+        if not _any_live(settings) and not self._edit_pending:
             return False
 
         # Keep the store stable while a modal drag holds ghost references.
         if SessionState.get(scene).drag_active or is_native_transform_active(context):
+            return False
+        if self.edit_wait():
             return False
 
         # Check freeze
@@ -442,8 +556,17 @@ class GhostPipeline:
 
         cache = self._get_cache()
 
-        live_points = settings.live_point_ghosts
-        live_mesh = settings.live_mesh_ghosts
+        # Scrub toggles control timeline following. Completed edits also refresh
+        # existing snapshots, even when timeline following is disabled.
+        from .motion_paths import owned_markers
+        owned = {g.uid for g in owned_markers(context.scene)}
+        live_points = settings.live_point_ghosts or (
+            self._edit_pending and any(g.uid not in owned for g in GhostStore.get(context.scene)))
+        from .mesh_ghosts import _private_mesh_collection
+        collection = _private_mesh_collection(context.scene)
+        live_mesh = settings.live_mesh_ghosts or (
+            self._edit_pending and collection is not None
+            and any(obj.get('ghost_tool_mesh_ghost') for obj in collection.objects))
 
         # Update point ghosts if enabled
         if live_points:
@@ -457,6 +580,9 @@ class GhostPipeline:
         # Update mesh ghosts if enabled
         if live_mesh and settings.show_mesh_ghosts:
             self._update_mesh_ghosts_live(context, settings)
+
+        self._edit_pending = False
+        self.remember_edit_state(context.scene)
 
         # Tag viewport for redraw
         tag_viewport_redraw(context)
@@ -772,15 +898,23 @@ def _deferred_live_update() -> Optional[float]:
         if not settings.is_active:
             return None
 
-        if not _any_live(settings):
+        pipeline = GhostPipeline.get(scene)
+        if not _any_live(settings) and not pipeline._edit_pending:
             return None
 
         if settings.live_freeze:
             return None
 
         if SessionState.get(scene).drag_active or is_native_transform_active(context):
+            if pipeline._edit_pending:
+                pipeline._last_edit_time = time.monotonic()
             _deferred_update_pending = True
             return 0.05
+
+        wait = pipeline.edit_wait()
+        if wait:
+            _deferred_update_pending = True
+            return max(0.01, wait)
 
         # Playback: wait and retry, so the frame it stops on gets ghosts even
         # if nothing fires a frame_change afterwards.
@@ -788,7 +922,6 @@ def _deferred_live_update() -> Optional[float]:
             _deferred_update_pending = True
             return 0.25
 
-        pipeline = GhostPipeline.get(scene)
         cache = pipeline._get_cache()
 
         # Throttle check
@@ -877,6 +1010,12 @@ def _forced_mesh_regen_callback() -> Optional[float]:
             _forced_mesh_regen_pending = True
             return 0.05
 
+        pipeline = GhostPipeline.get(scene)
+        wait = pipeline.edit_wait()
+        if wait:
+            _forced_mesh_regen_pending = True
+            return max(0.01, wait)
+
         from .mesh_ghosts import (
             clear_mesh_ghosts,
             generate_mesh_ghosts,
@@ -936,6 +1075,8 @@ def _forced_mesh_regen_callback() -> Optional[float]:
         new_hash = compute_settings_hash(settings)
         cache.update_settings_hash(new_hash)
         cache.mark_clean()
+        pipeline._edit_pending = False
+        pipeline.remember_edit_state(scene)
 
         # Tag viewport for redraw
         tag_viewport_redraw(context)
@@ -969,6 +1110,11 @@ def _on_frame_change_pipeline(scene: bpy.types.Scene, depsgraph=None) -> None:
     if not settings.is_active:
         return
 
+    # Evaluated movement caused by seeking is not an animation edit. Keep the
+    # baseline current even when scrub updates are disabled.
+    pipeline = GhostPipeline.get(scene)
+    pipeline.remember_edit_state(scene)
+
     # Only schedule if any live mode is enabled
     if not _any_live(settings):
         return
@@ -976,7 +1122,6 @@ def _on_frame_change_pipeline(scene: bpy.types.Scene, depsgraph=None) -> None:
     if settings.live_freeze:
         return
 
-    pipeline = GhostPipeline.get(scene)
     pipeline.mark_dirty()
     _schedule_deferred_update()
 
@@ -1018,8 +1163,12 @@ def _on_depsgraph_update_pipeline(scene: bpy.types.Scene, depsgraph=None) -> Non
     if not settings.is_active:
         return
 
-    # Only check depsgraph updates if any live mode is enabled
-    if not _any_live(settings):
+    # Completed animation edits refresh visible snapshots too. The live toggles
+    # decide only whether the snapshots follow timeline movement.
+    from .mesh_ghosts import _private_mesh_collection
+    collection = _private_mesh_collection(scene)
+    if (not _any_live(settings) and not GhostStore.get(scene).all_ghosts
+            and not (settings.show_mesh_ghosts and collection is not None and collection.objects)):
         return
 
     if depsgraph is None:
@@ -1040,22 +1189,20 @@ def _on_depsgraph_update_pipeline(scene: bpy.types.Scene, depsgraph=None) -> Non
 
     pipeline = GhostPipeline.get(scene)
 
-    # Check if any animation data was updated (Action or Object with animation)
-    # Motion paths need every changed ID, so this pass never stops early.
+    changed = False
     for update in depsgraph.updates:
         if hasattr(update, 'id') and update.id is not None:
+            block = getattr(update.id, 'original', update.id)
+            if not pipeline.note_animation_edit(block):
+                continue
+            changed = True
             try:
                 from . import motion_paths
-                motion_paths.mark_dirty_for_id(getattr(update.id, 'original', update.id))
+                motion_paths.mark_dirty_for_id(block)
             except Exception:
                 pass
-    for update in depsgraph.updates:
-        if hasattr(update, 'id') and update.id is not None:
-            # If an Action or Object was updated, mark dirty and schedule regeneration
-            if isinstance(update.id, (bpy.types.Action, bpy.types.Object)):
-                pipeline.mark_dirty()
-                _schedule_deferred_update()
-                break
+    if changed:
+        _schedule_deferred_update()
 
 
 def _register_live_handlers() -> None:

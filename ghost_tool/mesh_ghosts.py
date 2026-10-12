@@ -1355,11 +1355,12 @@ class GHOST_OT_generate_mesh_ghosts(bpy.types.Operator):
         if not settings.is_active:
             settings["is_active"] = True
         settings["show_mesh_ghosts"] = True
-        settings.live_mesh_ghosts = True
+        from .ghost_pipeline import GhostPipeline
+        GhostPipeline.get(scene).remember_edit_state(scene)
 
         mode_label = "at keyframes" if frame_mode == 'KEYFRAMES' else "frame-step"
         meshes = len(resolve_mesh_objects(obj))
-        self.report({'INFO'}, f"Created {count} onion skins from {meshes} mesh(es) ({mode_label}, live update enabled)")
+        self.report({'INFO'}, f"Created {count} onion skins from {meshes} mesh(es) ({mode_label})")
         if context.area:
             context.area.tag_redraw()
         return {'FINISHED'}
