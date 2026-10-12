@@ -1,0 +1,52 @@
+{
+  "version": "4.2.4",
+  "artifact": "C:\\Users\\AtonLotus\\.codex\\worktrees\\ghost-tool-4-2-4\\B4Artists_Tools\\releases\\b4_ghost_tool_v4.2.4.zip",
+  "bytes": 214194,
+  "sha256": "1c32458cb0faaaeb562bc3577c24e7680acdcce759cf67826ac1fd052826e9bb",
+  "source_modules": 29,
+  "source_bytes_match": true,
+  "changed_from_423": [
+    "ghost_tool/__init__.py",
+    "ghost_tool/ui_panel.py"
+  ],
+  "comparison_lf_normalized": true,
+  "tests": [
+    {
+      "test": "test_ghost_council_ui.py",
+      "exit_code": 0,
+      "tests": 12,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_header_ui.py",
+      "exit_code": 0,
+      "tests": 16,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_marker_targets_ui.py",
+      "exit_code": 0,
+      "tests": 6,
+      "status": "PASS"
+    },
+    {
+      "test": "test_ghost_authoring.py",
+      "exit_code": 0,
+      "tests": 20,
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS",
+  "host": "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+  "host_role": "Blender stand-in; Bforartists gate patched in tests only",
+  "native_bforartists_usability": "NOT VERIFIED",
+  "published": false,
+  "routing": {
+    "recommended_lane": "T3_PRIME_OMP",
+    "actual_lane": "T3_PRIME_OMP",
+    "policy_fingerprint": "29fa965cada3128ffe57b5d85d3b9f8e5d749d780954ea14ba5f45dcca1ad8b8",
+    "outcome": "Native fallback: OMP runtime unavailable on Windows (Unix sockets required)",
+    "authorization_risk": "low_static",
+    "escalation_count": 0
+  }
+}
