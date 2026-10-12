@@ -94,11 +94,12 @@ class GhostHeaderUI(unittest.TestCase):
         gd.GhostStore.get(self.scene).clear()
 
     # -------------------------------------------------------------- layout
-    def test_no_viewport_sidebar_tab_and_header_menu_present(self):
+    def test_optional_sidebar_and_default_header_menu_present(self):
         ours = {c.__name__: c for c in _walk(bpy.types.Panel)
                 if (c.__module__ or "").startswith("ghost_tool") and getattr(c, "is_registered", False)}
         sidebar = [n for n, c in ours.items() if c.bl_space_type == 'VIEW_3D' and c.bl_region_type == 'UI']
-        self.assertEqual(sidebar, ["GHOST_PT_window"])  # only in "Open in Separate Window" windows
+        self.assertEqual(set(sidebar), {"GHOST_PT_window", "GHOST_PT_sidebar"})
+        self.assertFalse(ui_panel.GHOST_PT_sidebar.poll(bpy.context))
         self.assertFalse(ui_panel.GHOST_PT_window.poll(bpy.context))
         self.assertIn("GHOST_PT_header_menu", ours)
         self.assertEqual(ours["GHOST_PT_header_menu"].bl_region_type, 'HEADER')

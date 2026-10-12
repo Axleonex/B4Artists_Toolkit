@@ -130,7 +130,8 @@ class AfterimageUI(unittest.TestCase):
     def test_native_shelf_uses_existing_tabs_and_feature_poll(self):
         self.assertEqual(ui.GHOST_PT_shelf_object.bl_category, 'Object')
         self.assertEqual(ui.GHOST_PT_shelf_pose.bl_category, 'Pose')
-        self.assertEqual(len(ui._shelf_registered), 2)
+        expected = [ui.GHOST_PT_tool_shelf, ui.GHOST_PT_shelf_object, ui.GHOST_PT_shelf_pose]
+        self.assertEqual(ui._shelf_registered, expected if ui.supports_tool_shelf() else [])
         context = SimpleNamespace(mode='OBJECT', space_data=SimpleNamespace(show_toolshelf_tabs=True))
         self.assertTrue(ui.GHOST_PT_shelf_object.poll(context))
         self.assertFalse(ui.GHOST_PT_shelf_pose.poll(context))

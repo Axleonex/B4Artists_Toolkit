@@ -35,13 +35,17 @@ source byte for byte. Its internal version is `(4, 2, 5)`; 4.2.4 was skipped as 
 | Header UI | 16 / 16 |
 | Authoring | 20 / 20 |
 | Snapshot targets and identity | 16 / 16 |
-| Afterimage UI | 8 / 9 |
+| Afterimage UI | 9 / 9 |
+| Display location | 11 / 11 |
 
-Total: 72 of 73 checks pass on Blender 5.1.2, build `ec6e62d40fa9`, with only the Bforartists
-registration gate patched. The single failure is the same native Tool Shelf registration
-assertion (`0 != 2`) documented for 4.2.3 and reproduced against 4.2.2. Bforartists native UI
-and production-rig acceptance remain pending. The older broad/native-move results remain
-attributed to their original builds; they were not repeated for this UI change.
+Current candidate: 84 of 84 checks pass on Blender 5.1.2, build `ec6e62d40fa9`, with only the
+Bforartists registration gate patched. The first Compare-only candidate passed 72/73: the
+remaining assertion expected two native shelf classes even on a host without shelf support.
+The approved display-location change adds a third native class; the updated assertion checks
+all three exact class identities on supported hosts and none on unsupported hosts. Its stand-in
+pass does not establish native left-shelf usability. Bforartists native UI and production-rig
+acceptance remain pending. The older broad/native-move results remain attributed to their
+original builds; they were not repeated for this UI change. See the [location report](../display-location/verification.md).
 
 The focused checks cover closed/open capture details, unique target counts without writes,
 independent snapshot folds with stable UIDs through rename/reorder, no target recovery, binding
@@ -59,8 +63,8 @@ focused checks. Expanded full names wrap at 220 px (R12); new fold headers have 
 Existing section header icons and operator homes remain the add-on convention. No operators,
 snapshot binding authority, animation settings or stored reference contents were changed.
 
-Archive: `releases/b4_ghost_tool_v4.2.5.zip`, 214,774 bytes.
-SHA256: `24035c68700bdca208ed0a07ee8e86cb4b5d22b545a7198952364243da3fe339`.
+Current archive, including display placement: `releases/b4_ghost_tool_v4.2.5.zip`, 216,217 bytes.
+SHA256: `2fc2ab0dc1c97acfe36c76e77298ea6226123666097602666241ddb8713dad85`.
 
 Owner check: install 4.2.5 and restart Bforartists. Select many pose bones, show markers, then
 open Compare. Capture Targets should start closed; Save Snapshot stays visible. Save two

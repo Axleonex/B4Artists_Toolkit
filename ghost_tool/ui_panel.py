@@ -2,11 +2,9 @@
 ui_panel.py — Ghost Tool UI: viewport header menu, separate window, floating
 toolbar, and the Timeline header strip.
 
-Ghost Tool adds no tab to the 3D Viewport sidebar. Its home is the viewport
-header: an on/off ghost toggle and a "Ghost Tool" dropdown next to the Pose
-menu. The same grouped layout (show ghosts, onion skin, edit motion, compare,
-physics, look, settings) also fills the floating toolbar and "Open in
-Separate Window", a second viewport whose sidebar shows only Ghost Tool.
+Preferences choose the full home: viewport header (default), right sidebar,
+or Bforartists left Tool Shelf. All homes share the same grouped layout,
+also used by the floating toolbar and separate Ghost Tool window.
 """
 
 from __future__ import annotations
@@ -814,6 +812,94 @@ class GHOST_PT_paths_popover(bpy.types.Panel):
         _draw_motion_paths(self.layout, context)
 
 
+def supports_tool_shelf() -> bool:
+    return 'show_toolshelf_tabs' in bpy.types.SpaceView3D.bl_rna.properties
+
+
+def display_location(context) -> str:
+    """Resolve the persisted home safely, including direct-registration startup."""
+    prefs = getattr(context, 'preferences', None)
+    addon = getattr(prefs, 'addons', {}).get('ghost_tool')
+    value = getattr(getattr(addon, 'preferences', None), 'display_location', 'HEADER')
+    if value not in {'HEADER', 'SIDEBAR', 'TOOLS'}:
+        return 'HEADER'
+    if value == 'TOOLS' and not supports_tool_shelf():
+        return 'HEADER'
+    return value
+
+
+def _main_home(context, location) -> bool:
+    from .settings_editor import is_editor
+    window = getattr(context, 'window', None)
+    return (hasattr(getattr(context, 'scene', None), 'ghost_tool')
+            and (window is None or window.as_pointer() not in _ghost_windows)
+            and not is_editor(context) and display_location(context) == location)
+
+
+def _draw_home(layout, context, prefix):
+    draw_ghost_tool(layout, context, prefix)
+    layout.separator()
+    layout.operator("ghost_tool.open_window", icon='WINDOW')
+    layout.operator("ghost_tool.open_settings_editor", text="Settings Editor (Prototype)")
+
+
+# Categories become available after layout. Pointers survive delayed callbacks
+# safely when their corresponding RNA objects have been closed.
+_pending_display_tabs: dict[tuple[int, int], tuple[str, int]] = {}
+
+
+def _display_windows():
+    return bpy.context.window_manager.windows
+
+
+def _select_display_tabs():
+    location = display_location(bpy.context)
+    windows = {w.as_pointer(): w for w in _display_windows()}
+    for key, (requested, attempts) in list(_pending_display_tabs.items()):
+        window = windows.get(key[0])
+        area = next((a for a in window.screen.areas if a.as_pointer() == key[1]), None) if window else None
+        if requested != location or area is None or attempts >= 10:
+            _pending_display_tabs.pop(key, None)
+            continue
+        kind = 'UI' if location == 'SIDEBAR' else 'TOOLS'
+        region = next((r for r in area.regions if r.type == kind), None)
+        try:
+            if region is None:
+                raise AttributeError('Region is not laid out yet')
+            region.active_panel_category = "Ghost Tool"
+        except (AttributeError, TypeError, RuntimeError):
+            _pending_display_tabs[key] = (requested, attempts + 1)
+        else:
+            _pending_display_tabs.pop(key, None)
+    return 0.1 if _pending_display_tabs else None
+
+
+def update_display_location(context) -> None:
+    """Reveal the selected home in ordinary viewports and schedule tab selection."""
+    from .settings_editor import is_editor
+    from types import SimpleNamespace
+    location = display_location(context)
+    _pending_display_tabs.clear()
+    manager = getattr(context, 'window_manager', None)
+    for window in getattr(manager, 'windows', ()):
+        if window.as_pointer() in _ghost_windows or is_editor(SimpleNamespace(window=window)):
+            continue
+        for area in window.screen.areas:
+            if area.type != 'VIEW_3D':
+                continue
+            space = area.spaces.active
+            if location == 'SIDEBAR':
+                space.show_region_ui = True
+            elif location == 'TOOLS':
+                space.show_region_toolbar = True
+                space.show_toolshelf_tabs = True
+            area.tag_redraw()
+            if location != 'HEADER':
+                _pending_display_tabs[(window.as_pointer(), area.as_pointer())] = (location, 0)
+    if _pending_display_tabs and not bpy.app.timers.is_registered(_select_display_tabs):
+        bpy.app.timers.register(_select_display_tabs, first_interval=0.05)
+
+
 class GHOST_PT_header_menu(bpy.types.Panel):
     """The Ghost Tool dropdown in the 3D Viewport header."""
 
@@ -824,11 +910,46 @@ class GHOST_PT_header_menu(bpy.types.Panel):
     bl_ui_units_x = 14
 
     def draw(self, context: bpy.types.Context) -> None:
-        draw_ghost_tool(self.layout, context, "menu")
-        layout = self.layout
-        layout.separator()
-        layout.operator("ghost_tool.open_window", icon='WINDOW')
-        layout.operator("ghost_tool.open_settings_editor", text="Settings Editor (Prototype)")
+        _draw_home(self.layout, context, "menu")
+
+    @classmethod
+    def poll(cls, context):
+        return _main_home(context, 'HEADER')
+
+
+class GHOST_PT_sidebar(bpy.types.Panel):
+    bl_label = "Ghost Tool"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "Ghost Tool"
+
+    @classmethod
+    def poll(cls, context):
+        return _main_home(context, 'SIDEBAR')
+
+    def draw_header(self, context):
+        self.layout.prop(context.scene.ghost_tool, "is_active", text="", icon='GHOST_ENABLED')
+
+    def draw(self, context):
+        _draw_home(self.layout, context, "sidebar")
+
+
+class GHOST_PT_tool_shelf(bpy.types.Panel):
+    bl_label = "Ghost Tool"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Ghost Tool"
+
+    @classmethod
+    def poll(cls, context):
+        return (supports_tool_shelf() and _main_home(context, 'TOOLS')
+                and bool(getattr(context.space_data, 'show_toolshelf_tabs', False)))
+
+    def draw_header(self, context):
+        self.layout.prop(context.scene.ghost_tool, "is_active", text="", icon='GHOST_ENABLED')
+
+    def draw(self, context):
+        _draw_home(self.layout, context, "shelf")
 
 
 # Windows opened by "Open in Separate Window" (their sidebars show Ghost Tool).
@@ -1055,7 +1176,7 @@ def _draw_graph_header_extension(self, context: bpy.types.Context) -> None:
 def _draw_viewport_header_menu(self, context: bpy.types.Context) -> None:
     """Ghost on/off toggle and the "Ghost Tool" dropdown, after the Pose menu."""
     scene = context.scene
-    if not hasattr(scene, 'ghost_tool'):
+    if not _main_home(context, 'HEADER'):
         return
     settings = scene.ghost_tool
     row = self.layout.row(align=True)
@@ -1137,6 +1258,7 @@ CLASSES: tuple[type, ...] = (
     GHOST_MT_paths_move_to,
     GHOST_PT_paths_popover,
     GHOST_PT_header_menu,
+    GHOST_PT_sidebar,
     GHOST_PT_window,
     GHOST_OT_open_window,
     GHOST_OT_floating_toolbar,
@@ -1151,8 +1273,8 @@ def register() -> None:
     for cls in CLASSES:
         bpy.utils.register_class(cls)
 
-    if 'show_toolshelf_tabs' in bpy.types.SpaceView3D.bl_rna.properties:
-        for cls in (GHOST_PT_shelf_object, GHOST_PT_shelf_pose):
+    if supports_tool_shelf():
+        for cls in (GHOST_PT_tool_shelf, GHOST_PT_shelf_object, GHOST_PT_shelf_pose):
             bpy.utils.register_class(cls)
             _shelf_registered.append(cls)
 
@@ -1193,6 +1315,9 @@ def register() -> None:
 
 def unregister() -> None:
     """Unregister all UI classes and remove header extensions."""
+    if bpy.app.timers.is_registered(_select_display_tabs):
+        bpy.app.timers.unregister(_select_display_tabs)
+    _pending_display_tabs.clear()
     # Remove header appends first
     for header_cls, func in _header_appends:
         try:

@@ -5,7 +5,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 | Tool | Version | What it does |
 |---|---|---|
 | **Anim Assist** | 12.1.3 | A production animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Inspired by Maya's AnimBot. |
-| **Ghost Tool** | 4.2.5 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Marker and Compare target names fold independently. Keeps cached ghosts stable during native gestures, then refreshes after animation edits settle. Live marker and skin updates default off. |
+| **Ghost Tool** | 4.2.5 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Choose a header, right sidebar or left Tool Shelf home in preferences. Marker and Compare target names fold independently. Keeps cached ghosts stable during native gestures, then refreshes after animation edits settle. Live marker and skin updates default off. |
 
 ### Optional add-on: BoneCraft (rigging)
 
@@ -29,7 +29,7 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 | Ghost Tool 4.2.5 (test build) | [b4_ghost_tool_v4.2.5.zip](releases/b4_ghost_tool_v4.2.5.zip?raw=1) |
 | BoneCraft 9.1.2 (optional) | [BoneCraft-BFA-9.1.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.1.2/BoneCraft-BFA-9.1.2.zip) |
 
-Anim Assist 12.1.3 and BoneCraft 9.1.2 are published releases and pass their recorded host checks. Ghost Tool 4.2.5 is a repository test build: Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently, keeping actions accessible on large rigs. It retains 4.2.2's default-off live updates and gesture pause. Bforartists rig and UI validation remain pending.
+Anim Assist 12.1.3 and BoneCraft 9.1.2 are published releases and pass their recorded host checks. Ghost Tool 4.2.5 is a repository test build: preferences choose its full viewport home, and Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. It retains 4.2.2's default-off live updates and gesture pause. Bforartists rig and left Tool Shelf validation remain pending.
 
 See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The published [Ghost Tool 4.2.2 prerelease](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2) remains available on GitHub Releases.
 
@@ -47,7 +47,7 @@ See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The
      - **Properties editor**, **Scene** tab, **Anim Assist** section (near the bottom), organised by scope: This Pose, Whole Animation, Rig, Face, then Setup, Settings and Help.
 
      Each of those editors' headers also has an **Anim Assist** menu with the most-used tools. The menu can open the full panel, switch to the **Anim Assist workspace** (the Animation layout plus a Graph Editor, with every home open), or open the panel in a **separate window** you can move to a second monitor.
-   - **Ghost Tool** home is the **3D Viewport header**: a ghost on/off toggle and a **Ghost Tool** dropdown after the **Pose** menu, grouped as Show Ghosts, Onion Skin, Edit Motion, Compare, Physics, Look and Settings. **Open in Separate Window** at the bottom keeps it open in its own window.
+   - **Ghost Tool** defaults to the **3D Viewport header** dropdown. In **Edit > Preferences > Add-ons > Ghost Tool**, set **Display Location** to **Top Header**, **Right Sidebar (N)** or **Left Tool Shelf (T)**. Switching reveals the chosen region and its Ghost Tool tab. All homes share the same controls; **Open in Separate Window** at the bottom keeps them open in another window. Save preferences normally to retain your choice.
    - **BoneCraft** (optional) adds the **BoneCraft** and **Rig Builder** tabs to the left Tool Shelf (press **T**) and the **CATS** tab to the right sidebar (press **N**); each tab's side can be changed in its preferences. Select your character's mesh and start the wizard on the **Rig Builder** tab.
 5. Anim Assist only: in **Properties > Scene > Anim Assist > Setup**, run **First Run Setup** once. It builds the Quick Shelf. The same section can add the Anim Assist workspace, and **Settings** turns on the optional **Anim Assist pie** shortcut (Shift Alt D, off by default).
 
@@ -79,7 +79,7 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - Ghost Tool 4.2.2 passes **230 background checks across nine suites** and **five native auto-key cases** on a Blender 5.1.2 stand-in. See the [4.2.2 verification report](docs/ghost_tool/authoring-pause/verification.md). These include actual native object/pose moves with live updates off and on, plus cancellation; Bforartists production-rig validation remains pending.
 - Ghost Tool 4.2.3 passes **50 of 51 focused checks** on the Blender stand-in, including all six target-fold checks and all 20 authoring regressions. The remaining native Tool Shelf assertion fails identically on 4.2.2 because it requires Bforartists. See the [4.2.3 verification report](docs/ghost_tool/marker-targets/verification.md).
-- Ghost Tool 4.2.5 passes **72 of 73 focused checks** on the Blender stand-in, including all Compare/marker fold, header, authoring and snapshot-target checks. The same native Tool Shelf assertion remains host-limited. See the [4.2.5 verification report](docs/ghost_tool/compare-targets/verification.md).
+- Ghost Tool 4.2.5 passes **84 of 84 focused checks** from the exact ZIP on the Blender stand-in, including location switching, Compare/marker folds, header, authoring and snapshot targets. Preference persistence and rendered header/right-sidebar layouts pass separate checks. Native Bforartists left Tool Shelf validation remains pending. See the [location report](docs/ghost_tool/display-location/verification.md) and [Compare report](docs/ghost_tool/compare-targets/verification.md).
 
 ## License
 

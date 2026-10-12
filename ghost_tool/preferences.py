@@ -20,6 +20,11 @@ from .utils import log, warn, debug
 _addon_keymaps: list[tuple[bpy.types.KeyMap, bpy.types.KeyMapItem]] = []
 
 
+def _update_display_location(self, context):
+    from .ui_panel import update_display_location
+    update_display_location(context)
+
+
 # ---------------------------------------------------------------------------
 # Addon Preferences
 # ---------------------------------------------------------------------------
@@ -33,6 +38,18 @@ class GhostToolPreferences(bpy.types.AddonPreferences):
     """
 
     bl_idname = "ghost_tool"
+
+    display_location: bpy.props.EnumProperty(
+        name="Display Location",
+        description="Choose where the full Ghost Tool controls appear in the 3D Viewport",
+        items=(
+            ('HEADER', "Top Header", "Open Ghost Tool from the viewport header"),
+            ('SIDEBAR', "Right Sidebar (N)", "Show Ghost Tool in the right sidebar"),
+            ('TOOLS', "Left Tool Shelf (T)", "Show Ghost Tool in the Bforartists left Tool Shelf"),
+        ),
+        default='HEADER',
+        update=_update_display_location,
+    )  # type: ignore[assignment]
 
     show_extended_help: bpy.props.BoolProperty(
         name="Show Extended Help Popups",
@@ -257,6 +274,12 @@ class GhostToolPreferences(bpy.types.AddonPreferences):
         """
         layout = self.layout
 
+        layout.prop(self, "display_location")
+        from .ui_panel import supports_tool_shelf
+        if self.display_location == 'TOOLS' and not supports_tool_shelf():
+            layout.label(text="Left Tool Shelf requires Bforartists; using Top Header.", icon='INFO')
+        layout.separator()
+
         help_box = layout.box()
         help_box.label(text="Help", icon='QUESTION')
         help_box.prop(self, "show_extended_help")
@@ -394,6 +417,8 @@ def register() -> None:
     for cls in CLASSES:
         bpy.utils.register_class(cls)
     register_keymaps()
+    from .ui_panel import update_display_location
+    update_display_location(bpy.context)
 
 
 def unregister() -> None:
