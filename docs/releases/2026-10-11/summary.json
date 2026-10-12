@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-11",
+  "host": "Bforartists 5.2.0 / Blender 5.3.0 Alpha / build 0a1ca45552db",
+  "anim_assist": {
+    "version": "12.1.3",
+    "exit_code": 0,
+    "passed": true,
+    "internal_tests": 170,
+    "repair_checks": 26,
+    "workflow_checks": 16,
+    "remaining": "Background checks do not establish owner usability or every interactive operator."
+  },
+  "ghost_tool": {
+    "version": "4.2.0",
+    "exit_code": 0,
+    "status": "PASS",
+    "suites": 17,
+    "checks": 320,
+    "owner_usability": "PENDING",
+    "build_revision": "r4"
+  },
+  "bonecraft": {
+    "version": "9.1.2",
+    "exit_code": 0,
+    "all_pass_markers": 19,
+    "pass_markers": 35,
+    "crescent_rose_parts": true,
+    "crescent_rose_rig": true
+  },
+  "history_cleanup": "Four historical footer removals verified; file trees and metadata preserved."
+}

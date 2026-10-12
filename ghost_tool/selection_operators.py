@@ -116,10 +116,15 @@ class GHOST_OT_box_select(bpy.types.Operator):
     def poll(cls, context: bpy.types.Context) -> bool:
         """Require active ghost display with ghosts present."""
         if not hasattr(context.scene, 'ghost_tool'):
+            cls.poll_message_set("Initialize Ghost Tool first")
             return False
         if not context.scene.ghost_tool.is_active:
+            cls.poll_message_set("Turn on Ghost Tool first")
             return False
-        return len(GhostStore.get(context.scene)) > 0
+        if not len(GhostStore.get(context.scene)):
+            cls.poll_message_set("Generate markers for an animated object first")
+            return False
+        return SessionState.poll_available(cls)
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:
         """Begin the box selection.
@@ -133,6 +138,9 @@ class GHOST_OT_box_select(bpy.types.Operator):
         """
         global _box_draw_handler, _box_rect
 
+        if not SessionState.available(self):
+            self.report({'WARNING'}, "Finish or cancel the current Ghost Tool gesture first")
+            return {'CANCELLED'}
         # Guard against reentrancy: if a box select is already running, cancel
         if _box_draw_handler is not None:
             return {'CANCELLED'}
@@ -150,11 +158,15 @@ class GHOST_OT_box_select(bpy.types.Operator):
         _box_rect = (self._start_x, self._start_y, self._start_x, self._start_y)
 
         # Register the draw handler for the selection rectangle overlay
-        _box_draw_handler = bpy.types.SpaceView3D.draw_handler_add(
-            _draw_selection_box, (), 'WINDOW', 'POST_PIXEL'
-        )
-
-        context.window_manager.modal_handler_add(self)
+        SessionState.begin_gesture(self, context.scene)
+        try:
+            _box_draw_handler = bpy.types.SpaceView3D.draw_handler_add(
+                _draw_selection_box, (), 'WINDOW', 'POST_PIXEL'
+            )
+            context.window_manager.modal_handler_add(self)
+        except Exception:
+            self._cleanup(context)
+            raise
         return {'RUNNING_MODAL'}
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:
@@ -172,6 +184,9 @@ class GHOST_OT_box_select(bpy.types.Operator):
         global _box_rect
 
         try:
+            if not SessionState.owns_gesture(self, context.scene):
+                self._cleanup(context)
+                return {'CANCELLED'}
             if event.type == 'MOUSEMOVE':
                 _box_rect = (
                     self._start_x, self._start_y,
@@ -241,6 +256,7 @@ class GHOST_OT_box_select(bpy.types.Operator):
     def _cleanup(self, context: bpy.types.Context) -> None:
         """Remove the draw handler and clear the rectangle overlay."""
         global _box_draw_handler, _box_rect
+        SessionState.end_gesture(self)
 
         _box_rect = None
 

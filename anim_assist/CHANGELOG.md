@@ -12,6 +12,59 @@ Each release updates four places in lockstep: `bl_info` in `__init__.py`,
 `ADDON_VERSION` and `ADDON_VERSION_STRING` in `constants.py`, and `version`
 in `blender_manifest.toml`.
 
+## v12.1.3 - Lipsync Layer Slot and Recents Order Fixes
+
+Local release, 2026-10-11; not published to GitHub.
+
+- Lipsync Bake and Rebake on an Animation Layers layer Action reuse that
+  action's only slot. Previously a second slot was created on Blender 5.x, so
+  baked keys were invisible to the layer stack. Clear Auto Keys and Mark
+  Manual no longer create slots.
+- Recents and Repeat Last follow each entry's timestamp. Files saved by
+  12.1.0 and earlier stored Recents oldest-first; Repeat Last now runs the
+  newest tool for them as well.
+- No interface, tool ID, setting or default changes.
+- Tested on a Blender 5.1.2 stand-in host (the Bforartists check passes by
+  install path). Not yet re-run on Bforartists.
+
+## v12.1.2 - Workflow Reliability and Lipsync Guidance
+
+Local release, 2026-10-11; not published to GitHub.
+
+- Lipsync bake, rebake, clearing and manual overrides use the correct modern
+  Action slot. New keyframes are inserted correctly; manual keys survive.
+- Reopening a file preserves explicit Lipsync target and preview/baked settings.
+- Toggle Shelf Mode correctly cycles Compact, Expanded and Favorites.
+- Lipsync shows the next setup step for a missing layer or WAV file, uses an
+  enable checkbox, and displays readable Live Preview / Baked mode labels.
+- Graph Editor, Dope Sheet and Scene Properties homes, tool IDs, settings and
+  defaults are preserved. No action promotion or confirmation removal.
+- Verified on Bforartists 5.2.0 (Blender 5.3.0 Alpha, build 0a1ca45552db)
+  with internal tests, host regressions, native Undo/Redo and clean installation.
+  Optional Rhubarb and every legacy interactive tool were not individually exercised.
+
+## v12.1.1 - Search and Matching Repair Candidate
+
+Local candidate, 2026-10-10. Runtime and interactive acceptance testing is
+pending; this build has not been published to GitHub.
+
+- Search is populated from registered public Anim Assist operators on enable
+  and restart. First Run Setup restores the catalogue and reports its tool
+  count; repeated setup preserves existing settings, favorites and recents.
+- Demo configuration uses real tools instead of nonexistent sample IDs.
+- The missing context-warning helper is restored so matching panels can draw
+  their selection guidance in the Graph Editor, Dope Sheet and Scene Properties.
+- Search and Repeat use the tools' invoke paths, respecting their setup,
+  dialogs and modal behavior. Cancelled tools no longer produce false success
+  reports; tools waiting for a dialog or modal input are not recorded as completed.
+- Completed Search tools enter Recents with the newest at index zero, which
+  is the item Repeat Last reads. Clearing Recents leaves the list empty.
+- Explicit Scale Keys and Offset Keys values survive invocation; scene
+  settings initialize only properties that were not explicitly supplied.
+- Common Breakdown, Retime, Match and Mirror polls now explain missing
+  selection, animation or mode prerequisites. Lipsync Bake explains missing
+  scene settings. Existing layout and operator identifiers are retained.
+
 ## v12.1.0 - Three Organised Homes, No Viewport Tab
 
 Minor: Anim Assist no longer adds tabs to the 3D Viewport sidebar (it

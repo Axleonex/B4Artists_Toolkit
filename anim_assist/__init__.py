@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Anim Assist",
     "author": "Developer",
-    "version": (12, 1, 0),
+    "version": (12, 1, 3),
     "blender": (4, 2, 0),
     "location": "Properties > Scene > Anim Assist; Graph Editor and Dope Sheet > Sidebar > Anim Assist; editor header menus",
     "description": "Production animation workflow tools for Bforartists. v12 adds hybrid PREVIEW/SHIPPED lipsync layers with shape key support.",
@@ -165,6 +165,9 @@ def register() -> None:
             except Exception:
                 _log.exception("%s registry seed failed - continuing", label)
 
+        # Seed on enable/restart independently of the saved first-run flag.
+        p10_tool_reg_mod.seed_registered_tools()
+
         try:
             from .prefs import get_prefs
             from .core.logging import set_level
@@ -224,6 +227,7 @@ def register() -> None:
 
         for cleanup in (
             mig_mod.cancel_pending_check,
+            p10_tool_reg_mod.clear,
             ui_pkg.header_menus.unregister,
             ui_pkg.header_toolbars.unregister,
             ui_pkg.headers.unregister,

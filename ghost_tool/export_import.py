@@ -26,10 +26,10 @@ from .utils import log, warn, debug, tag_viewport_redraw
 # Constants
 # ---------------------------------------------------------------------------
 
-EXPORT_VERSION: str = "1.1.0"
+EXPORT_VERSION: str = "2.0.0"
 """File format version for compatibility checking."""
 
-COMPATIBLE_VERSIONS: set[str] = {"1.0.0", "1.1.0"}
+COMPATIBLE_VERSIONS: set[str] = {"1.0.0", "1.1.0", "2.0.0"}
 """Set of file format versions that this module can read."""
 
 _REQUIRED_GHOST_FIELDS = {"frame", "world_position", "local_value", "channel", "object_name"}
@@ -160,6 +160,8 @@ def import_ghosts(
             raise ValueError("Import root must be an object")
         if not any(key in data for key in ('ghosts', 'snapshots')):
             raise ValueError("File contains no ghost or snapshot data")
+        if data.get('version', '1.0.0') not in COMPATIBLE_VERSIONS:
+            raise ValueError('Unsupported Ghost Tool file version')
         ghost_data_list = data.get('ghosts', [])
         snapshot_data_list = data.get('snapshots', [])
         if not isinstance(ghost_data_list, list) or not isinstance(snapshot_data_list, list):
@@ -174,14 +176,45 @@ def import_ghosts(
             raise ValueError("Duplicate ghost IDs")
         staged_snapshots = SnapshotStore()
         staged_snapshots.load_from_dict_list(snapshot_data_list)
+        existing = SnapshotStore.get(scene).get_all()
+        incoming = staged_snapshots.get_all()
+        from .snapshot import MAX_SNAPSHOTS
+        if len(existing) + len(incoming) > MAX_SNAPSHOTS:
+            raise ValueError('Import would exceed ten retained snapshots. Delete unwanted references and retry.')
         if target_object:
             staged_ghosts = _remap_ghost_data(staged_ghosts, target_object, remap_bones)
-            for snapshot in staged_snapshots.get_all():
-                snapshot.ghost_data = _remap_ghost_data(snapshot.ghost_data, target_object, remap_bones)
-                for curve in snapshot.curve_data:
-                    curve['object_name'] = target_object.name
-                snapshot.object_names = {target_object.name}
-                snapshot.bone_names = {g['bone_name'] for g in snapshot.ghost_data if g['bone_name']}
+            for reference in list(staged_snapshots.get_all()):
+                try:
+                    staged_snapshots.bind_snapshot(reference.uid, scene, target_object)
+                except ValueError as exc:
+                    # Keep the complete original reference viewable when an
+                    # explicit mapping cannot resolve every required channel.
+                    reference.unbound_reason = str(exc)
+                    if len(reference.object_names) <= 1:
+                        # Preserve the explicit legacy mapping request even
+                        # when a channel cannot bind. Labels move consistently;
+                        # frozen samples/keys remain unchanged and restore stays
+                        # unbound. Multi-source references are never collapsed.
+                        reference.ghost_data = _remap_ghost_data(reference.ghost_data, target_object, remap_bones)
+                        for entry in reference.curve_data + reference.scope:
+                            entry['object_name'] = target_object.name
+                        reference.object_names = {target_object.name}
+                        reference.bone_names = {g.get('bone_name', '') for g in reference.ghost_data if g.get('bone_name')}
+                    warn(f'Imported reference remains unbound: {exc}')
+        incoming = staged_snapshots.get_all()
+        from uuid import uuid4
+        used = {s.uid for s in existing}
+        remapped = {}
+        for reference in incoming:
+            if reference.uid in used:
+                remapped[reference.uid] = uuid4().hex
+            used.add(remapped.get(reference.uid, reference.uid))
+        for reference in incoming:
+            reference.uid = remapped.get(reference.uid, reference.uid)
+            reference.parent_uid = remapped.get(reference.parent_uid, reference.parent_uid)
+            if reference.origin.get('uid') in remapped:
+                reference.origin['uid'] = remapped[reference.origin['uid']]
+        combined = incoming + existing
         ghosts = [Ghost.from_dict(item) for item in staged_ghosts]
     except (ValueError, TypeError, KeyError, OverflowError) as exc:
         warn(f"Import rejected; existing data preserved: {exc}")
@@ -189,9 +222,24 @@ def import_ghosts(
 
     ghost_store = GhostStore.get(scene)
     snapshot_store = SnapshotStore.get(scene)
-    ghost_store.replace_all(ghosts)
-    snapshot_store._snapshots = staged_snapshots._snapshots
-    snapshot_store._index = staged_snapshots._index
+    old_ghosts = list(ghost_store)
+    old_snapshots = snapshot_store.get_all()
+    snapshots_replaced = False
+    try:
+        snapshot_store.replace_snapshots(combined)
+        snapshots_replaced = True
+        ghost_store.replace_all(ghosts)
+    except Exception as exc:
+        # A failed replace_snapshots already restored its own state; only undo
+        # a completed one. Unreadable saved data must not raise again here.
+        if snapshots_replaced:
+            try:
+                snapshot_store.replace_snapshots(old_snapshots, allow_overflow=True)
+            except Exception as rollback_exc:
+                warn(f'Snapshot rollback failed: {rollback_exc}')
+        ghost_store.replace_all(old_ghosts)
+        warn(f'Import commit failed; existing data preserved: {exc}')
+        return False
     from .session_state import SessionState
     from .viewport_draw import _batch_cache
     SessionState.get(scene).clear_all()

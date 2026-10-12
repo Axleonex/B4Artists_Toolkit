@@ -617,7 +617,7 @@ from Python at all, stop and report to the owner.
 
 ### Task G2: crossings → frames (pure math, no bpy)
 **Files:** new `ghost_tool/draw_to_keys.py`, `tests/test_ghost_draw_to_keys.py`
-(runs under plain Python too, like `test_b4artists_ml_*_math` suites do).
+(runs under plain Python too).
 **Steps:**
 1. Failing tests: `test_longest_stroke_is_the_path`,
    `test_crossings_sorted_along_path` (a path polyline and two dashes crossing it

@@ -71,9 +71,13 @@ def _migration_v3(scene: bpy.types.Scene) -> None:
 
     migrated = 0
     for link in p12.layer_links:
-        # If a link has bone wiring already populated and no shape key wiring,
-        # it's a v11-era link - pin it to BONES + SHIPPED.
+        # A new scene can hold current links before its scene schema marker
+        # advances. RNA defaults alone do not identify a legacy record: retain
+        # explicitly stored v12 fields (including their default enum values).
         try:
+            if any(link.is_property_set(name) for name in
+                   ("target_kind", "mode", "mesh_name")) or len(link.cue_table):
+                continue
             link.target_kind = "BONES"
             link.mode = "SHIPPED"
             migrated += 1

@@ -119,30 +119,38 @@ class AA_OT_p10_first_run_setup(Operator):
 
     def execute(self, context):
         """Execute first run setup with sensible defaults."""
+        p10 = None
         try:
             p10 = get_p10(context)
             if p10 is None:
                 self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
                 return {'CANCELLED'}
 
-            # Set sensible defaults
-            p10.recovery_enabled = True
-            p10.max_recents = 20
-            p10.audit_enabled = True
-            p10.shelf_mode = "COMPACT"
+            from ..core.p10_tool_registry import seed_registered_tools
+
+            tool_count = seed_registered_tools()
+            # Repair discovery on repeated setup without resetting the user's
+            # chosen settings, favorites or recent tools.
+            if not p10.first_run_complete:
+                p10.recovery_enabled = True
+                p10.max_recents = 20
+                p10.audit_enabled = True
+                p10.shelf_mode = "COMPACT"
             p10.first_run_complete = True
 
-            _log.info("First run setup completed with defaults: recovery_enabled=True, max_recents=20, audit_enabled=True, shelf_mode=COMPACT")
+            _log.info("First run setup completed: %d searchable tools", tool_count)
 
             log_operation(
                 "first_run_setup", success=True,
-                detail="recovery_enabled=True, max_recents=20, audit_enabled=True, shelf_mode=COMPACT",
+                detail=f"searchable_tools={tool_count}",
             )
 
-            self.report({'INFO'}, "First run setup completed with default settings")
+            self.report({'INFO'}, f"Setup complete: {tool_count} tools available in Search")
             return {'FINISHED'}
 
         except Exception as e:
+            if p10 is not None:
+                p10.first_run_complete = False
             _log.error(f"First run setup failed: {e}", exc_info=True)
             report_failure(self, "First Run Setup did not finish", "Restart Bforartists and run it again from Properties > Scene > Anim Assist > Setup", e)
             return {'CANCELLED'}
@@ -170,26 +178,13 @@ class AA_OT_p10_load_demo_config(Operator):
             p10.audit_enabled = True
             _log.info("Audit enabled")
 
-            # Register sample tools
-            try:
-                from ..core.p10_tool_registry import ToolEntry, register_tool
-
-                sample_tools = [
-                    ToolEntry(op_id="animassist.demo_tool_1", label="Demo Tool 1", phase=10, category="testing"),
-                    ToolEntry(op_id="animassist.demo_tool_2", label="Demo Tool 2", phase=10, category="testing"),
-                    ToolEntry(op_id="animassist.demo_tool_3", label="Demo Tool 3", phase=10, category="testing"),
-                ]
-
-                for entry in sample_tools:
-                    register_tool(entry)
-                    _log.info(f"Registered sample tool: {entry.op_id}")
-
-            except Exception as e:
-                _log.warning(f"Could not register sample tools: {e}")
+            # Use real tools; the previous sample IDs had no operators.
+            from ..core.p10_tool_registry import seed_registered_tools
+            tool_count = seed_registered_tools()
 
             log_operation(
                 "load_demo_config", success=True,
-                detail="debug_panel_enabled=True, audit_enabled=True, sample_tools_registered=3",
+                detail=f"debug_panel_enabled=True, audit_enabled=True, searchable_tools={tool_count}",
             )
 
             self.report({'INFO'}, "Demo configuration loaded successfully")

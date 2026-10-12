@@ -18,6 +18,8 @@ from mathutils import Vector
 
 from . import draw_to_keys_math as dm
 from . import motion_paths as mp
+from .session_state import SessionState
+from .target_binding import object_reason, slot_handle, ensure_bone_uid, find_bone
 from .utils import get_fcurves_from_action, scene_sampling, tag_viewport_redraw
 
 
@@ -148,14 +150,39 @@ class GHOST_OT_paths_draw_to_keys(bpy.types.Operator):
         if not annotation_strokes(context.scene)[0]:
             cls.poll_message_set("Draw a path and timing dashes with the Annotate tool (Surface or 3D Cursor)")
             return False
-        return True
+        return SessionState.poll_available(cls)
 
     def invoke(self, context, event):
+        obj, bone = _target(context)
+        original_bone = obj.data.bones.get(bone) if bone else None
+        bone_uid = ensure_bone_uid(obj, original_bone) if original_bone is not None else ''
+        self._dialog_target = (context.scene, obj, bone_uid, bone or '')
+        self._dialog_action = obj.animation_data.action if obj.animation_data else None
+        self._dialog_slot = slot_handle(obj) if obj.animation_data else 0
         return context.window_manager.invoke_props_dialog(self, width=280)
 
     def execute(self, context):
         scene = context.scene
+        if not SessionState.available(self):
+            self.report({'WARNING'}, 'Finish or cancel the current Ghost Tool gesture first')
+            return {'CANCELLED'}
         obj, bone = _target(context)
+        target = getattr(self, '_dialog_target', None)
+        if target is not None:
+            source_scene, obj, bone_uid, bone_name = target
+            reason = object_reason(scene, obj, source_scene)
+            if not reason:
+                action = obj.animation_data.action if obj.animation_data else None
+                slot = slot_handle(obj) if obj.animation_data else 0
+                if action != self._dialog_action or slot != self._dialog_slot:
+                    reason = 'Original animation assignment changed; open Draw to Keys again'
+                original = find_bone(obj, bone_uid, bone_name) if bone_uid else None
+                bone = original.name if original is not None else ''
+                if bone_uid and original is None:
+                    reason = 'Original bone is missing or ambiguous'
+            if reason:
+                self.report({'WARNING'}, reason)
+                return {'CANCELLED'}
         if obj is None or not self.axes:
             self.report({'WARNING'}, "Nothing to key: pick a target and at least one axis")
             return {'CANCELLED'}

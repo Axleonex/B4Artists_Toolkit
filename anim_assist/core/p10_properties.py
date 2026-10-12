@@ -36,6 +36,8 @@ __all__ = [
     "register_properties",
     "unregister_properties",
     "get_p10",
+    "recents_newest_first",
+    "sort_recents",
 ]
 
 P10_SCENE_ATTR = "anim_assist_p10"
@@ -412,3 +414,21 @@ def get_p10(context: Context) -> AA_P10_Properties | None:
     if not hasattr(context.scene, P10_SCENE_ATTR):
         return None
     return getattr(context.scene, P10_SCENE_ATTR)
+
+
+def recents_newest_first(p10: AA_P10_Properties) -> list:
+    """Recent entries, newest first.
+
+    Files saved by 12.1.0 and earlier stored Recents oldest-first; the
+    timestamp, not the collection order, is the authority.
+    """
+    return sorted(p10.recents, key=lambda item: item.timestamp, reverse=True)
+
+
+def sort_recents(p10: AA_P10_Properties) -> None:
+    """Reorder the stored collection newest-first (requires writable data)."""
+    recents = p10.recents
+    for target in range(len(recents)):
+        newest = max(range(target, len(recents)), key=lambda i: recents[i].timestamp)
+        if recents[newest].timestamp > recents[target].timestamp:
+            recents.move(newest, target)

@@ -479,9 +479,14 @@ class GHOST_OT_physics_suggest(bpy.types.Operator):
     def poll(cls, context: bpy.types.Context) -> bool:
         """Require active ghost display with ghosts present."""
         if not hasattr(context.scene, 'ghost_tool'):
+            cls.poll_message_set("Initialize Ghost Tool first")
             return False
         store = GhostStore.get(context.scene)
-        return len(store) > 0
+        if not len(store):
+            cls.poll_message_set("Generate markers between animation keys first")
+            return False
+        from .session_state import SessionState
+        return SessionState.poll_available(cls)
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:
         """Compute preview suggestions and enter modal mode.
@@ -494,6 +499,10 @@ class GHOST_OT_physics_suggest(bpy.types.Operator):
             set[str]: {'RUNNING_MODAL'} on success, {'CANCELLED'} if no suggestions.
         """
         # Guard against double-invoke while a preview is already active
+        from .session_state import SessionState
+        if not SessionState.available(self):
+            self.report({'WARNING'}, "Finish or cancel the current Ghost Tool gesture first")
+            return {'CANCELLED'}
         if get_physics_preview():
             self.report({'WARNING'}, "Physics preview already active")
             return {'CANCELLED'}
@@ -532,13 +541,27 @@ class GHOST_OT_physics_suggest(bpy.types.Operator):
             return {'CANCELLED'}
 
         # Store preview data and activate modal
+        from .session_state import CurveTransaction
+        targets = [store.get_by_uid(s['uid']) for s in all_suggestions]
+        try:
+            self._transaction = CurveTransaction(context.scene,
+                [(context.scene.objects.get(g.object_name), g.bone_name, g.channel) for g in targets if g])
+        except ValueError as exc:
+            self.report({'WARNING'}, str(exc))
+            return {'CANCELLED'}
+        SessionState.begin_gesture(self, context.scene, context=context,
+            cancel=lambda: self._cancel(bpy.context), validate=self._transaction.valid)
         self._preview_suggestions = all_suggestions
         self._preview_active = True
 
         # Store preview positions in a module-level list for the draw handler
         _set_physics_preview(all_suggestions)
 
-        context.window_manager.modal_handler_add(self)
+        try:
+            context.window_manager.modal_handler_add(self)
+        except Exception:
+            self._cancel(context)
+            raise
         from .session_state import SessionState
         self._preview_session = SessionState.get(context.scene)
         self._preview_session.drag_active = True
@@ -547,6 +570,17 @@ class GHOST_OT_physics_suggest(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:
+        from .session_state import SessionState
+        if not SessionState.owns_gesture(self, context.scene):
+            return self._cancel(context)
+        try:
+            return self._modal_inner(context, event)
+        except Exception as exc:
+            self._cancel(context)
+            self.report({'ERROR'}, f"Physics preview cancelled: {exc}")
+            return {'CANCELLED'}
+
+    def _modal_inner(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:
         """Handle confirm/cancel during preview.
 
         Args:
@@ -570,8 +604,15 @@ class GHOST_OT_physics_suggest(bpy.types.Operator):
 
     def _confirm(self, context: bpy.types.Context) -> set[str]:
         """Apply the previewed suggestions."""
+        transaction = getattr(self, '_transaction', None)
+        if transaction is not None and not transaction.valid():
+            return self._cancel(context)
         store = GhostStore.get(context.scene)
         applied = apply_suggestions(self._preview_suggestions, store, context.scene)
+        if transaction is not None:
+            transaction.finish()
+        from .session_state import SessionState
+        SessionState.end_gesture(self)
         _clear_physics_preview()
         self._preview_active = False
         if getattr(self, "_preview_session", None):
@@ -582,6 +623,12 @@ class GHOST_OT_physics_suggest(bpy.types.Operator):
 
     def _cancel(self, context: bpy.types.Context) -> set[str]:
         """Discard the preview without applying."""
+        transaction = getattr(self, '_transaction', None)
+        if transaction is not None:
+            transaction.rollback()
+            transaction.finish()
+        from .session_state import SessionState
+        SessionState.end_gesture(self)
         _clear_physics_preview()
         self._preview_active = False
         if getattr(self, "_preview_session", None):
@@ -627,7 +674,11 @@ class GHOST_OT_archetype_bake(bpy.types.Operator):
             bool: True when stamping can proceed.
         """
         obj = context.active_object
-        return bool(obj and obj.animation_data and obj.animation_data.action)
+        if not (obj and obj.animation_data and obj.animation_data.action):
+            cls.poll_message_set("Select an object with an animation action first")
+            return False
+        from .session_state import SessionState
+        return SessionState.poll_available(cls)
 
     def execute(self, context: bpy.types.Context) -> set[str]:
         """Write archetype-shaped keyframes to the target channel.

@@ -636,7 +636,7 @@ def draw_ghosts_3d(context: bpy.types.Context) -> None:
     """
     from . import ghost_data
 
-    scene = context.scene
+    scene = getattr(context, 'scene', None)
 
     # Check if ghost display is active
     if not hasattr(scene, 'ghost_tool') or not scene.ghost_tool.is_active:
@@ -1846,7 +1846,7 @@ def draw_ghosts_2d(context: bpy.types.Context) -> None:
         context: The current Blender context.
     """
     try:
-        scene = context.scene
+        scene = getattr(context, 'scene', None)
 
         if not hasattr(scene, 'ghost_tool') or not scene.ghost_tool.is_active:
             return

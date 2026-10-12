@@ -25,6 +25,7 @@ from ..core import p12_session as session
 from ..core.logging import get_logger
 from ..core.p11_properties import get_p11
 from ..core.helpers import report_failure
+from ..core.fcurve_compat import get_fcurves
 
 _log = get_logger(__name__)
 
@@ -113,7 +114,10 @@ class AA_OT_p12_bake_lipsync(Operator):
 
     @classmethod
     def poll(cls, context):
-        return p12_props.get_p12(context) is not None and get_p11(context) is not None
+        if p12_props.get_p12(context) is None or get_p11(context) is None:
+            cls.poll_message_set("Enable Anim Assist's lipsync and animation-layer settings for this scene")
+            return False
+        return True
 
     def execute(self, context):
         p12 = p12_props.get_p12(context)
@@ -192,6 +196,7 @@ class AA_OT_p12_bake_lipsync(Operator):
                     fps=fps,
                     frame_offset=link.frame_offset,
                     anticipation_frames=link.anticipation_frames,
+                    anim_data=bpy.data.objects[link.mesh_name].data.shape_keys.animation_data,
                 )
                 total_written += report.keys_written
                 total_skipped += report.keys_skipped_manual
@@ -261,13 +266,17 @@ class AA_OT_p12_clear_auto_keys(Operator):
             action = _resolve_action(context.scene, link.armature_name, layer) if layer else None
             bone_names = [e.bone_name for e in p12.rig_wiring if e.bone_name]
             if action is not None and bone_names:
-                total_deleted += engine.clear_auto_keys(action, bone_names)
+                arm = bpy.data.objects.get(link.armature_name)
+                anim_data = engine.action_context(action, owner=arm, create=False)
+                if anim_data is not None:
+                    total_deleted += engine.clear_auto_keys(action, bone_names, anim_data=anim_data)
 
         if link.target_kind in ("SHAPE_KEYS", "BOTH"):
             sk_action = _resolve_shape_key_action(link.mesh_name, link)
             sk_names = [e.shape_key_name for e in p12.shape_key_wiring if e.shape_key_name]
             if sk_action is not None and sk_names:
-                total_deleted += engine.clear_auto_shape_key_keys(sk_action, sk_names)
+                total_deleted += engine.clear_auto_shape_key_keys(sk_action, sk_names,
+                    anim_data=bpy.data.objects[link.mesh_name].data.shape_keys.animation_data)
 
         self.report({"INFO"}, "Cleared " + str(total_deleted) + " auto-baked keys (manual preserved)")
         return {"FINISHED"}
@@ -331,14 +340,16 @@ class AA_OT_p12_mark_manual(Operator):
             action = _resolve_action(context.scene, link.armature_name, layer) if layer else None
             bone_names = [e.bone_name for e in p12.rig_wiring if e.bone_name]
             if action is not None:
-                for fc in getattr(action, "fcurves", ()):
+                arm = bpy.data.objects.get(link.armature_name)
+                anim_data = engine.action_context(action, owner=arm, create=False)
+                for fc in (get_fcurves(action, anim_data=anim_data) if anim_data is not None else ()):
                     data_path = getattr(fc, "data_path", "")
                     if not any('pose.bones["' + n + '"]' in data_path for n in bone_names):
                         continue
                     for i, point in enumerate(getattr(fc, "keyframe_points", ())):
                         if not getattr(point, "select_control_point", False):
                             continue
-                        engine.mark_manual_override(action, data_path, fc.array_index, i)
+                        engine.mark_manual_override(action, data_path, fc.array_index, i, anim_data=anim_data)
                         marked += 1
 
         # Shape keys
@@ -346,14 +357,15 @@ class AA_OT_p12_mark_manual(Operator):
             sk_action = _resolve_shape_key_action(link.mesh_name, link)
             sk_names = [e.shape_key_name for e in p12.shape_key_wiring if e.shape_key_name]
             if sk_action is not None:
-                for fc in getattr(sk_action, "fcurves", ()):
+                anim_data = bpy.data.objects[link.mesh_name].data.shape_keys.animation_data
+                for fc in get_fcurves(sk_action, anim_data=anim_data):
                     data_path = getattr(fc, "data_path", "")
                     if not any('key_blocks["' + n + '"]' in data_path for n in sk_names):
                         continue
                     for i, point in enumerate(getattr(fc, "keyframe_points", ())):
                         if not getattr(point, "select_control_point", False):
                             continue
-                        engine.mark_manual_override(sk_action, data_path, 0, i)
+                        engine.mark_manual_override(sk_action, data_path, 0, i, anim_data=anim_data)
                         marked += 1
 
         self.report({"INFO"}, "Marked " + str(marked) + " keyframe(s) as manual override")

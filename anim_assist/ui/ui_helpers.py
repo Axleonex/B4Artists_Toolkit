@@ -327,6 +327,11 @@ def scope_block(
 # Spacing
 # ---------------------------------------------------------------------------
 
+def draw_context_warning(layout: bpy.types.UILayout, message: str) -> None:
+    """Draw missing-selection guidance without hiding the matching panel."""
+    layout.label(text=message, icon="INFO")
+
+
 def separator(layout: bpy.types.UILayout, *, factor: float = 1.0) -> None:
     """Insert a consistent vertical separator."""
     layout.separator(factor=factor)
@@ -347,6 +352,7 @@ __all__ = [
     "danger_box",
     "analysis_box",
     "scope_block",
+    "draw_context_warning",
     "separator",
     "draw_explainer_icon",
     "get_help",

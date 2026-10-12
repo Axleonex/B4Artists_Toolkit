@@ -5,7 +5,6 @@ or a click within 8 px of a handle end starts it; anywhere else the event passes
 drag and to selection, so a handle end wins when both are in reach.
 """
 
-from __future__ import annotations
 
 from typing import Optional
 
@@ -16,6 +15,7 @@ from mathutils import Vector
 from . import motion_paths as mp
 from .fcurve_utils import restore_fcurve, set_handle_values, snapshot_fcurve
 from .utils import get_fcurves_from_action, scene_sampling, tag_viewport_redraw
+from .session_state import SessionState, CurveTransaction
 
 PICK_RADIUS_PX = 8.0
 _addon_keymaps: list = []
@@ -80,6 +80,12 @@ class HandleDrag:
         self.ok = bool(self.transform and self.curves and self.original_handles)
         if not self.ok:
             return
+        try:
+            self.transaction = CurveTransaction(scene, [(target.obj, target.key[1], 'location.' + 'xyz'[axis])
+                                                        for axis in self.curves])
+        except ValueError:
+            self.ok = False
+            return
         self.snapshots = {axis: snapshot_fcurve(fc) for axis, fc in self.curves.items()}
         self.depth = self.original_handles[0 if side == 'LEFT' else 1].copy()
         # An unkeyed axis keeps the value the drawn handle had (its curve's value at the key frame).
@@ -88,6 +94,8 @@ class HandleDrag:
         self._last = None
 
     def move_to(self, world_point: Vector) -> None:
+        if not self.transaction.valid():
+            raise ValueError('Original handle target changed; drag cancelled')
         self._last = world_point.copy()
         for axis, value in solve_handle_values(self.transform, world_point, self.curves).items():
             set_handle_values(self.curves[axis], self.frame, self.side, value, aligned=self.aligned)
@@ -110,13 +118,21 @@ class HandleDrag:
         return to_world @ (Vector(left) + offset), to_world @ (Vector(right) + offset)
 
     def cancel(self) -> None:
-        for axis, fc in self.curves.items():
-            restore_fcurve(fc, self.snapshots[axis])
-        mp._handles[self.cache_key] = self.original_handles
+        if self.transaction.finished:
+            return
+        original_still_valid = self.transaction.valid()
+        self.transaction.rollback()
+        if original_still_valid:
+            mp._handles[self.cache_key] = self.original_handles
+        else:
+            mp._handles.pop(self.cache_key, None)
 
     def confirm(self, context) -> None:
         # The curve between the keys changed: re-sample this path and every path that follows the object
         # (a pinned child, a constraint user), as a key edit in the Graph Editor would.
+        if not self.transaction.valid():
+            raise ValueError('Original handle target changed; drag cancelled')
+        self.transaction.finish()
         mp.mark_dirty_for_id(self.target.obj)
         mp.refresh_paths(context)
 
@@ -134,30 +150,98 @@ class GHOST_OT_path_handle_drag(bpy.types.Operator):
     bl_label = "Drag Path Handle"
     bl_options = {'REGISTER', 'UNDO'}
 
+    wait_for_click: bpy.props.BoolProperty(
+        name="Pick Handle", default=False, options={'HIDDEN', 'SKIP_SAVE'},
+        description="Click a visible handle after choosing this action from the header")
+
     @classmethod
     def poll(cls, context):
         settings = getattr(context.scene, "ghost_tool", None)
-        return (settings is not None and settings.is_active and settings.paths_enabled
-                and settings.paths_show_handles and context.area is not None and context.area.type == 'VIEW_3D')
+        reason = None
+        if settings is None or not settings.is_active:
+            reason = "Turn on Ghost Tool first"
+        elif not settings.paths_enabled:
+            reason = "Turn on Motion Paths first"
+        elif not settings.paths_show_handles:
+            reason = "Enable Handles in Motion Paths first"
+        elif context.area is None or context.area.type != 'VIEW_3D':
+            reason = "Use this action in a 3D Viewport"
+        elif not mp.pinned_targets(context.scene):
+            reason = "Add a path for an animated object or bone first"
+        if reason:
+            cls.poll_message_set(reason)
+            return False
+        return SessionState.poll_available(cls)
 
     def invoke(self, context, event):
-        pick = handle_under_cursor(context, context.region, context.region_data,
-                                   event.mouse_region_x, event.mouse_region_y)
-        if pick is None:
-            return {'PASS_THROUGH'}   # the marker drag or selection gets the event
-        self._drag = HandleDrag(context.scene, *pick)
-        if not self._drag.ok:
+        if not SessionState.available(self):
+            return {'CANCELLED'}
+        self._region = next((r for r in context.area.regions if r.type == 'WINDOW'), None)
+        self._rv3d = context.space_data.region_3d
+        self._scene = context.scene
+        self._drag = None
+        if self._region is None or self._rv3d is None:
+            self.report({'WARNING'}, "Open a 3D Viewport to drag handles")
+            return {'CANCELLED'}
+        if not self.wait_for_click and not self._pick(context, event):
             return {'PASS_THROUGH'}
-        self._via_click = event.type == 'LEFTMOUSE'
-        context.window_manager.modal_handler_add(self)
-        context.workspace.status_text_set(_status(self._drag))
+        SessionState.begin_gesture(self, context.scene, context=context,
+            cancel=self._abort, validate=lambda: self._drag is None or self._drag.transaction.valid())
+        try:
+            context.window_manager.modal_handler_add(self)
+            context.workspace.status_text_set(_status(self._drag) if self._drag else
+                                             "Click a path handle in the viewport; Esc cancels")
+        except Exception:
+            self._finish(context)
+            raise
         return {'RUNNING_MODAL'}
 
+    def _coordinates(self, event):
+        return event.mouse_x - self._region.x, event.mouse_y - self._region.y
+
+    def _pick(self, context, event):
+        pick = handle_under_cursor(context, self._region, self._rv3d, *self._coordinates(event))
+        if pick is None:
+            return False
+        drag = HandleDrag(self._scene, *pick)
+        if not drag.ok:
+            return False
+        self._drag = drag
+        self._via_click = event.type == 'LEFTMOUSE'
+        return True
+
     def modal(self, context, event):
+        try:
+            if not SessionState.owns_gesture(self, context.scene):
+                if self._drag is not None:
+                    self._drag.cancel()
+                self._finish(context)
+                return {'CANCELLED'}
+            return self._modal_inner(context, event)
+        except Exception as exc:
+            try:
+                if self._drag is not None:
+                    self._drag.cancel()
+            finally:
+                self._finish(context)
+            self.report({'ERROR'}, f"Handle drag cancelled: {exc}")
+            return {'CANCELLED'}
+
+    def _modal_inner(self, context, event):
         drag = self._drag
+        if drag is None:
+            if event.type in {'RIGHTMOUSE', 'ESC'} and event.value == 'PRESS':
+                self._finish(context)
+                return {'CANCELLED'}
+            if event.type == 'LEFTMOUSE' and event.value == 'PRESS':
+                if self._pick(context, event):
+                    context.workspace.status_text_set(_status(self._drag))
+                else:
+                    context.workspace.status_text_set("No editable handle here; click a visible handle or Esc")
+            return {'RUNNING_MODAL'}
         if event.type == 'MOUSEMOVE':
             drag.move_to(view3d_utils.region_2d_to_location_3d(
-                context.region, context.region_data, (event.mouse_region_x, event.mouse_region_y), drag.depth))
+                self._region, self._rv3d, self._coordinates(event), drag.depth))
             tag_viewport_redraw(context)
         elif event.type in {'LEFT_ALT', 'RIGHT_ALT'} and event.value == 'PRESS':
             drag.toggle_aligned()
@@ -173,7 +257,14 @@ class GHOST_OT_path_handle_drag(bpy.types.Operator):
             return {'CANCELLED'}
         return {'RUNNING_MODAL'}
 
+    def _abort(self):
+        if self._drag is not None:
+            self._drag.cancel()
+        self._drag = None
+        SessionState.end_gesture(self)
+
     def _finish(self, context):
+        SessionState.end_gesture(self)
         context.workspace.status_text_set(None)
         tag_viewport_redraw(context)
 

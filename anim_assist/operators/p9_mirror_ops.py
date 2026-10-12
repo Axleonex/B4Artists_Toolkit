@@ -12,10 +12,21 @@ from ..core.bone_utils import pose_bone_selected, set_pose_bone_selected
 _log = get_logger(__name__)
 
 
-def _pose_poll(context):
+def _pose_poll(context, cls=None):
     obj = context.active_object
-    return (obj is not None and obj.type == "ARMATURE"
-            and context.mode == "POSE" and obj.data.bones.active is not None)
+    if obj is None or obj.type != "ARMATURE":
+        if cls is not None:
+            cls.poll_message_set("Select an armature to use pose mirroring")
+        return False
+    if context.mode != "POSE":
+        if cls is not None:
+            cls.poll_message_set("Switch to Pose Mode to mirror bones")
+        return False
+    if obj.data.bones.active is None:
+        if cls is not None:
+            cls.poll_message_set("Select an active pose bone to mirror")
+        return False
+    return True
 
 
 def _get_overrides(p9):
@@ -72,7 +83,7 @@ class AA_OT_p9_match_to_opposite(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -112,7 +123,7 @@ class AA_OT_p9_match_opposite_to_active(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -151,7 +162,7 @@ class AA_OT_p9_mirror_pose(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -194,7 +205,7 @@ class AA_OT_p9_mirror_selected(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -243,7 +254,7 @@ class AA_OT_p9_mirror_location(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -292,7 +303,7 @@ class AA_OT_p9_mirror_rotation(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -341,7 +352,7 @@ class AA_OT_p9_mirror_scale(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -390,7 +401,7 @@ class AA_OT_p9_mirror_frame(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -457,7 +468,7 @@ class AA_OT_p9_mirror_range(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -522,7 +533,7 @@ class AA_OT_p9_mirror_preview(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -593,7 +604,7 @@ class AA_OT_p9_mirror_keyed_only(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -662,7 +673,7 @@ class AA_OT_p9_mirror_visible_only(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -725,7 +736,7 @@ class AA_OT_p9_mirror_local(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -769,7 +780,7 @@ class AA_OT_p9_mirror_world(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -813,7 +824,7 @@ class AA_OT_p9_visual_mirror(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -857,7 +868,7 @@ class AA_OT_p9_mirror_with_offset(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -913,7 +924,7 @@ class AA_OT_p9_mirror_without_offset(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object
@@ -963,7 +974,7 @@ class AA_OT_p9_swap_poses(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return _pose_poll(context)
+        return _pose_poll(context, cls)
 
     def execute(self, context):
         obj = context.active_object

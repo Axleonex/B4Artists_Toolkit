@@ -1,0 +1,49 @@
+BoneForge B4Artists 8.4.0 — in-host behavioural verification
+Host: H:\5.1.0\bforartists.exe (Bforartists 5.2.0 Alpha)
+Command: bforartists --background --factory-startup --python tests/run_headless.py
+Generated: 2026-06-15 (post-review). Success = stdout markers (benign teardown crash filtered).
+============================================================
+live rig: bones=85 constraints=32 drivers=16 (plan: 85/32/16)
+in-host golden-rig verified (exact bone/constraint/driver counts match the plan; collections = plan + host default)
+foot-roll network verified (limits + rotation drivers, both sides)
+idempotent re-run verified (counts stable: (85, 32, 16))
+FK deform verified (max vertex displacement = 0.704)
+IK deform verified (max vertex displacement = 0.373)
+ALL IN-HOST RIG TESTS PASS
+control layer: discovered 4 IK/FK limbs
+blend driver verified (FK->IK engages the IK-blend influence)
+no-pop IK->FK verified (max pop = 0.0000)
+FK->IK verified (control on FK hand, pole on bend side, pole_angle=-0.000)
+bake verified (5 frames, IK keys on 1..5)
+foot-roll behaviour verified (value drives the bone: 1.20 rad)
+global scale verified (scales, and respects protected locks)
+pin + lock-free inherit verified
+per-character state isolation verified (two rigs independent)
+ALL CONTROL-LAYER TESTS PASS
+jaw deform verified (0.049); soft-lips follow = 0.300 rad
+sticky-lips verified (follow 0.300 -> 0.085 rad as sticky 0->1)
+eye aim verified (eyeball deformed 0.014 under target move)
+ALL FACE TESTS PASS
+  mocap_humanoid     motion preserved (30.0 deg vs 30)
+  rigify_deform      motion preserved (30.0 deg vs 30)
+  unity_humanoid     motion preserved (30.0 deg vs 30)
+per-bone tweak verified (0.5x of 40 deg -> 20.0 deg)
+batch verified (2 clips -> 2 clean target actions)
+ALL RETARGET TESTS PASS
+picker layout generated (60 controls, no deform/MCH)
+picker selection + mirror verified (active bone matches)
+per-character picker state verified (two rigs independent)
+layout JSON round-trip verified
+ALL PICKER TESTS PASS
+detection pipeline verified (19 proposals, world-space, geometry fallback, none auto-confirm)
+detection operator/session verified (run -> 19 markers, accept-high -> 6 confirmed, reset-low, mirror)
+ALL DETECTION TESTS PASS
+export checks ran (78 findings for unreal_humanoid)
+FBX deform-only round-trip verified (39 bones, controls stripped, deform kept)
+GLB export verified (bf_export_test.glb)
+single-action export verified (bf_export_anim.fbx)
+per-bone interpolation verified (keys -> {'LINEAR'})
+root-motion export verified (root bone present + re-imported)
+multi-action export verified (action_mode=ALL re-imports 10 action take(s) / animation data)
+shape-key validation verified (1 shape-key finding(s))
+ALL EXPORT TESTS PASS

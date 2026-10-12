@@ -137,6 +137,7 @@ class AA_OT_p12_toggle_mode(Operator):
                     fps=fps,
                     frame_offset=link.frame_offset,
                     anticipation_frames=link.anticipation_frames,
+                    anim_data=mesh.data.shape_keys.animation_data,
                 )
                 de.remove_drivers_for_link(mesh, wiring)
                 self.report(
@@ -151,7 +152,8 @@ class AA_OT_p12_toggle_mode(Operator):
             if link.target_kind in ("SHAPE_KEYS", "BOTH") and mesh is not None:
                 action = _ensure_shape_key_action(mesh, link)
                 if action is not None:
-                    deleted = engine.clear_auto_shape_key_keys(action, list(wiring.values()))
+                    deleted = engine.clear_auto_shape_key_keys(action, list(wiring.values()),
+                        anim_data=mesh.data.shape_keys.animation_data)
                     self.report({"INFO"}, "Cleared " + str(deleted) + " auto-baked shape key keys")
                 installed = de.install_drivers_for_link(link, mesh, wiring)
                 self.report({"INFO"}, "PREVIEW: " + str(installed) + " driver(s) installed")

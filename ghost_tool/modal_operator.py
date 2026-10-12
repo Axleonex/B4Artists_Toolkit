@@ -348,6 +348,30 @@ def _apply_axis_constraint(
 # GhostDragOperator
 # ---------------------------------------------------------------------------
 
+def _restore_marker_state(op, context: bpy.types.Context) -> None:
+    """Return dragged markers to their pre-drag values and clear selection."""
+    ghost = op._active_ghost
+    if ghost and op._original_position is not None:
+        ghost.world_position = op._original_position.copy()
+        ghost.local_value = op._original_local_value
+
+    for entry in getattr(op, "_driven", []):
+        if entry["ghost"] is not None and op._original_position is not None:
+            entry["ghost"].local_value = entry["original"]
+            entry["ghost"].world_position = op._original_position.copy()
+    for neighbor, original_value, _weight in op._falloff_neighbors:
+        neighbor.local_value = original_value
+    for other, original_value, original_position in op._multi_drag_ghosts:
+        other.local_value = original_value
+        other.world_position = original_position.copy()
+
+    # Clear selection via SessionState
+    try:
+        SessionState.get(context.scene).clear_selection()
+    except (AttributeError, ReferenceError):
+        pass
+
+
 class GhostDragOperator(bpy.types.Operator):
     """Modal operator for dragging ghost markers in the 3D viewport.
 
@@ -397,11 +421,16 @@ class GhostDragOperator(bpy.types.Operator):
         """
         scene = context.scene
         if not hasattr(scene, 'ghost_tool'):
+            cls.poll_message_set("Initialize Ghost Tool first")
             return False
         if not scene.ghost_tool.is_active:
+            cls.poll_message_set("Turn on Ghost Tool first")
             return False
         store = GhostStore.get(scene)
-        return len(store) > 0
+        if not len(store):
+            cls.poll_message_set("Generate markers for an animated object first")
+            return False
+        return SessionState.poll_available(cls)
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:
         """Begin the modal ghost drag operation.
@@ -418,6 +447,9 @@ class GhostDragOperator(bpy.types.Operator):
         """
         settings = context.scene.ghost_tool
         grab_radius = settings.grab_radius
+        if not SessionState.available(self):
+            self.report({'WARNING'}, "Finish or cancel the current Ghost Tool gesture first")
+            return {'CANCELLED'}
 
         # Find ghost under cursor
         ghost = _find_ghost_under_cursor(
@@ -520,7 +552,23 @@ class GhostDragOperator(bpy.types.Operator):
         session = SessionState.get(context.scene)
         session.select_only(ghost.uid)
 
-        context.window_manager.modal_handler_add(self)
+        from .session_state import CurveTransaction
+        targets = [(obj, ghost.bone_name, e['channel']) for e in self._driven]
+        targets += [(context.scene.objects.get(g.object_name), g.bone_name, g.channel)
+                    for g, *_ in self._falloff_neighbors + self._multi_drag_ghosts]
+        try:
+            self._transaction = CurveTransaction(context.scene, targets)
+        except ValueError as exc:
+            self.report({'WARNING'}, str(exc))
+            self._cleanup()
+            return {'CANCELLED'}
+        SessionState.begin_gesture(self, context.scene, context=context,
+            cancel=lambda: self._cancel_drag(bpy.context), validate=self._transaction.valid)
+        try:
+            context.window_manager.modal_handler_add(self)
+        except Exception:
+            self._cleanup()
+            raise
         self._drag_session = session
         session.drag_active = True
         tag_viewport_redraw(context)
@@ -529,6 +577,9 @@ class GhostDragOperator(bpy.types.Operator):
 
     def modal(self, context, event):
         try:
+            if not SessionState.owns_gesture(self, context.scene):
+                self._cancel_drag(context)
+                return {'CANCELLED'}
             return self._modal_inner(context, event)
         except Exception as exc:
             try:
@@ -936,6 +987,11 @@ class GhostDragOperator(bpy.types.Operator):
             except Exception as exc:
                 debug(f"Ghost moved callback error: {exc}")
 
+        # Release the gesture's temporary curve tags before the undo step.
+        transaction = getattr(self, '_transaction', None)
+        if transaction is not None:
+            transaction.finish()
+
         # Push to undo stack
         undo_label = (
             "Ghost Tool: Insert Keyframe" if editing_mode == 'INSERT_KEY'
@@ -954,25 +1010,20 @@ class GhostDragOperator(bpy.types.Operator):
         Args:
             context: The current Blender context.
         """
+        transaction = getattr(self, '_transaction', None)
+        if transaction is not None:
+            try:
+                # Markers are not regenerated when live updates are off or
+                # frozen; put them back with the curves.
+                _restore_marker_state(self, context)
+                transaction.rollback()
+            finally:
+                self._cleanup()
+                tag_viewport_redraw(context)
+            self.report({'INFO'}, "Ghost drag cancelled")
+            return
         ghost = self._active_ghost
-        if ghost:
-            # Restore ghost position
-            ghost.world_position = self._original_position.copy()
-            ghost.local_value = self._original_local_value
-
-        for entry in getattr(self, "_driven", []):
-            if entry["ghost"] is not None:
-                entry["ghost"].local_value = entry["original"]
-                entry["ghost"].world_position = self._original_position.copy()
-        for neighbor, original_value, _weight in self._falloff_neighbors:
-            neighbor.local_value = original_value
-        for other, original_value, original_position in self._multi_drag_ghosts:
-            other.local_value = original_value
-            other.world_position = original_position.copy()
-
-        # Clear selection via SessionState
-        session = SessionState.get(context.scene)
-        session.clear_selection()
+        _restore_marker_state(self, context)
 
         # For Model A cancel, remove the temp key before restoring the snapshot.
         # restore_fcurve only writes values for existing keyframes — it cannot
@@ -1002,6 +1053,10 @@ class GhostDragOperator(bpy.types.Operator):
 
     def _cleanup(self) -> None:
         """Reset internal state after drag completion or cancellation."""
+        SessionState.end_gesture(self)
+        transaction = getattr(self, '_transaction', None)
+        if transaction is not None:
+            transaction.finish()
         session = getattr(self, "_drag_session", None)
         if session is not None:
             session.drag_active = False
@@ -1048,10 +1103,12 @@ class GHOST_OT_generate(bpy.types.Operator):
         """
         obj = context.active_object
         if not obj:
+            cls.poll_message_set("Select an animated object or a bone in Pose mode")
             return False
         if not obj.animation_data or not obj.animation_data.action:
+            cls.poll_message_set("Add animation keys to the selected object first")
             return False
-        return True
+        return SessionState.poll_available(cls)
 
     def execute(self, context: bpy.types.Context) -> set[str]:
         """Run ghost generation via the pipeline.
@@ -1197,7 +1254,10 @@ class GHOST_OT_pin_ghost(bpy.types.Operator):
         Returns:
             bool: True if ghost display is active.
         """
-        return hasattr(context.scene, 'ghost_tool') and context.scene.ghost_tool.is_active
+        if not hasattr(context.scene, 'ghost_tool') or not context.scene.ghost_tool.is_active:
+            cls.poll_message_set("Turn on Ghost Tool first")
+            return False
+        return SessionState.poll_available(cls)
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:
         """Find and toggle the pin state of the nearest ghost.
@@ -1454,10 +1514,15 @@ class GHOST_OT_select_ghost(bpy.types.Operator):
     def poll(cls, context: bpy.types.Context) -> bool:
         """Require active ghost display with ghosts."""
         if not hasattr(context.scene, 'ghost_tool'):
+            cls.poll_message_set("Initialize Ghost Tool first")
             return False
         if not context.scene.ghost_tool.is_active:
+            cls.poll_message_set("Turn on Ghost Tool first")
             return False
-        return len(GhostStore.get(context.scene)) > 0
+        if not len(GhostStore.get(context.scene)):
+            cls.poll_message_set("Generate markers for an animated object first")
+            return False
+        return SessionState.poll_available(cls)
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:
         """Pick the ghost under the cursor and update selection.

@@ -5,13 +5,15 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import sys
 import unittest
 from pathlib import Path
 
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
-_spec = importlib.util.spec_from_file_location("draw_to_keys_math", ROOT / "ghost_tool" / "draw_to_keys_math.py")
+ADDON_ROOT = Path(os.environ.get("GHOST_TEST_ADDON_ROOT", ROOT / "ghost_tool"))
+_spec = importlib.util.spec_from_file_location("draw_to_keys_math", ADDON_ROOT / "draw_to_keys_math.py")
 dm = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(dm)   # by path: the package __init__ needs bpy, the math does not
 

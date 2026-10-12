@@ -1,0 +1,15 @@
+# Committed allow-list: generic terms that must NEVER be flagged.
+# Stripped from text before substring matching.
+rig ui
+rig_ui
+auto-rig
+auto rig
+auto-rigging
+autorig
+control picker
+selection set
+foot roll
+twist bone
+game export
+mixamo
+rigify

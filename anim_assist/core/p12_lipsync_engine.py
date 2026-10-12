@@ -19,8 +19,10 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from types import SimpleNamespace
 
 from . import p12_viseme_library as vl
+from .fcurve_compat import get_fcurves, find_fcurve, ensure_fcurve
 from .logging import get_logger
 
 _KEY_MANUAL_OVERRIDE = "aa_p12_manual"
@@ -33,6 +35,49 @@ __all__ = [
 ]
 
 _log = get_logger(__name__)
+
+
+def action_context(action, owner=None, anim_data=None, create=True):
+    """Resolve the actual owner's slot, including detached layer Actions.
+
+    With ``create=False`` (read-only callers) no slot is added; None is
+    returned when the owner has no slot yet.
+
+    Never redirect a live AnimData block to a different Action. Legacy/stub
+    Actions retain their existing interface and manual-flag storage.
+    """
+    if hasattr(action, "fcurves"):
+        return anim_data
+    owner = owner or getattr(anim_data, "id_data", None)
+    if anim_data is None and owner is not None:
+        anim_data = getattr(owner, "animation_data", None)
+    if anim_data is not None and getattr(anim_data, "action", None) == action:
+        if getattr(anim_data, "action_slot", None) is not None:
+            return anim_data
+    slots = getattr(action, "slots", ())
+    if owner is None:
+        if len(slots) != 1:
+            raise ValueError("Lipsync requires an animated owner to resolve this Action slot")
+        return SimpleNamespace(action=action, action_slot=slots[0], id_data=None)
+    matches = [slot for slot in slots if slot.target_id_type == owner.id_type
+               and (slot.name_display == owner.name or owner in slot.users())]
+    if len(matches) > 1:
+        raise ValueError("Lipsync Action has multiple slots for this owner; bind the intended slot first")
+    if not matches:
+        # Detached layer Actions are keyed and read without an owner, through
+        # their only slot (generic "Slot", or the owner's name before a rename).
+        # Reuse it: a second slot would hide lipsync keys from the layer stack.
+        matches = [slot for slot in slots
+                   if slot.target_id_type in (owner.id_type, 'UNSPECIFIED')]
+        if len(matches) != 1 or len(slots) != 1:
+            matches = []
+    if not matches and not create:
+        return None
+    slot = matches[0] if matches else action.slots.new(id_type=owner.id_type, name=owner.name)
+    if anim_data is not None and getattr(anim_data, "action", None) == action:
+        anim_data.action_slot = slot
+        return anim_data
+    return SimpleNamespace(action=action, action_slot=slot, id_data=owner)
 
 
 @dataclass
@@ -99,15 +144,15 @@ def _write_manual_frames(action, key, frames):
     action[key] = json.dumps(sorted(int(f) for f in frames))
 
 
-def is_manual_override(action, curve_path, curve_index, key_index_or_frame):
-    frame = _resolve_to_frame(action, curve_path, curve_index, key_index_or_frame)
+def is_manual_override(action, curve_path, curve_index, key_index_or_frame, *, anim_data=None):
+    frame = _resolve_to_frame(action, curve_path, curve_index, key_index_or_frame, anim_data=anim_data)
     if frame is None:
         return False
     return frame in _read_manual_frames(action, _flag_storage_key(curve_path, curve_index))
 
 
-def mark_manual_override(action, curve_path, curve_index, key_index_or_frame):
-    frame = _resolve_to_frame(action, curve_path, curve_index, key_index_or_frame)
+def mark_manual_override(action, curve_path, curve_index, key_index_or_frame, *, anim_data=None):
+    frame = _resolve_to_frame(action, curve_path, curve_index, key_index_or_frame, anim_data=anim_data)
     if frame is None:
         return
     key = _flag_storage_key(curve_path, curve_index)
@@ -116,17 +161,8 @@ def mark_manual_override(action, curve_path, curve_index, key_index_or_frame):
     _write_manual_frames(action, key, frames)
 
 
-def _resolve_to_frame(action, curve_path, curve_index, value):
-    fcurves = getattr(action, "fcurves", None)
-    if fcurves is None:
-        return int(value)
-    finder = getattr(fcurves, "find", None)
-    if finder is None:
-        return int(value)
-    try:
-        curve = finder(curve_path, index=curve_index)
-    except TypeError:
-        curve = finder(curve_path)
+def _resolve_to_frame(action, curve_path, curve_index, value, *, anim_data=None):
+    curve = find_fcurve(action, curve_path, curve_index, anim_data=anim_data)
     if curve is None:
         return int(value)
     points = list(getattr(curve, "keyframe_points", []))
@@ -142,6 +178,7 @@ def _resolve_to_frame(action, curve_path, curve_index, value):
 # ---------------------------------------------------------------------------
 
 def bake_lipsync(req):
+    anim_data = action_context(req.action, owner=req.armature)
     library = vl.merge_user_overrides(req.library_id, req.user_pose_overrides)
     bones_touched = set()
     keys_written = 0
@@ -168,7 +205,7 @@ def bake_lipsync(req):
             for frame in target_frames:
                 wrote, skipped = _write_bone_keys(
                     action=req.action, bone_name=bone_name, frame=frame,
-                    loc=loc, rot=rot, scale=scale,
+                    loc=loc, rot=rot, scale=scale, anim_data=anim_data,
                 )
                 keys_written += wrote
                 keys_skipped += skipped
@@ -182,12 +219,10 @@ def bake_lipsync(req):
     )
 
 
-def clear_auto_keys(action, bone_names):
+def clear_auto_keys(action, bone_names, *, anim_data=None):
     if action is None or not bone_names:
         return 0
-    fcurves = getattr(action, "fcurves", None)
-    if fcurves is None:
-        return 0
+    fcurves = get_fcurves(action, anim_data=anim_data)
     deleted = 0
     for bone_name in bone_names:
         prefix = 'pose.bones["' + bone_name + '"].'
@@ -213,7 +248,7 @@ def clear_auto_keys(action, bone_names):
     return deleted
 
 
-def _write_bone_keys(action, bone_name, frame, loc, rot, scale):
+def _write_bone_keys(action, bone_name, frame, loc, rot, scale, *, anim_data=None):
     written = 0
     skipped = 0
     channels = (
@@ -223,7 +258,7 @@ def _write_bone_keys(action, bone_name, frame, loc, rot, scale):
     )
     for path, values in channels:
         for axis, value in enumerate(values):
-            curve = _ensure_fcurve(action, path, axis)
+            curve = _ensure_fcurve(action, path, axis, anim_data=anim_data)
             if curve is None:
                 continue
             manual_frames = _read_manual_frames(action, _flag_storage_key(path, axis))
@@ -236,28 +271,8 @@ def _write_bone_keys(action, bone_name, frame, loc, rot, scale):
     return written, skipped
 
 
-def _ensure_fcurve(action, data_path, array_index):
-    fcurves = getattr(action, "fcurves", None)
-    if fcurves is None:
-        return None
-    finder = getattr(fcurves, "find", None)
-    if finder is not None:
-        try:
-            existing = finder(data_path, index=array_index)
-        except TypeError:
-            existing = finder(data_path)
-        if existing is not None:
-            return existing
-    new = getattr(fcurves, "new", None)
-    if new is None:
-        return None
-    try:
-        return new(data_path=data_path, index=array_index)
-    except (RuntimeError, TypeError):
-        try:
-            return new(data_path=data_path)
-        except (RuntimeError, TypeError):
-            return None
+def _ensure_fcurve(action, data_path, array_index, *, anim_data=None):
+    return ensure_fcurve(action, data_path, array_index, anim_data=anim_data)
 
 
 def _find_point_at_frame(curve, frame):
@@ -278,7 +293,8 @@ def _insert_or_replace_key(curve, frame, value):
     if insert is None:
         return None
     try:
-        insert(frame, value, options={"REPLACE"})
+        options = {"REPLACE"} if _find_point_at_frame(curve, frame) is not None else set()
+        insert(frame, value, options=options)
     except TypeError:
         try:
             insert(frame, value)
@@ -293,7 +309,7 @@ def _insert_or_replace_key(curve, frame, value):
 # v12: SHAPE KEY BAKE PATH
 # ===========================================================================
 
-def bake_shape_keys(action, cues, shape_key_wiring, fps, frame_offset, anticipation_frames=2):
+def bake_shape_keys(action, cues, shape_key_wiring, fps, frame_offset, anticipation_frames=2, *, anim_data=None):
     """Write shape key fcurves from *cues* onto the shape-keys *action*.
 
     Parameters
@@ -309,6 +325,7 @@ def bake_shape_keys(action, cues, shape_key_wiring, fps, frame_offset, anticipat
     """
     if action is None or not cues or not shape_key_wiring:
         return BakeReport(0, 0, 0, len(cues) if cues else 0, frame_offset, frame_offset)
+    anim_data = action_context(action, anim_data=anim_data)
 
     keys_written = 0
     keys_skipped = 0
@@ -332,7 +349,7 @@ def bake_shape_keys(action, cues, shape_key_wiring, fps, frame_offset, anticipat
             if not key_name:
                 continue
             data_path = 'key_blocks["' + key_name + '"].value'
-            curve = _ensure_fcurve(action, data_path, 0)
+            curve = _ensure_fcurve(action, data_path, 0, anim_data=anim_data)
             if curve is None:
                 continue
             keys_touched.add(key_name)
@@ -359,13 +376,11 @@ def bake_shape_keys(action, cues, shape_key_wiring, fps, frame_offset, anticipat
     )
 
 
-def clear_auto_shape_key_keys(action, key_block_names):
+def clear_auto_shape_key_keys(action, key_block_names, *, anim_data=None):
     """Remove auto-baked shape key keys; preserve manual override frames."""
     if action is None or not key_block_names:
         return 0
-    fcurves = getattr(action, "fcurves", None)
-    if fcurves is None:
-        return 0
+    fcurves = get_fcurves(action, anim_data=anim_data)
     deleted = 0
     for key_name in key_block_names:
         if not key_name:
