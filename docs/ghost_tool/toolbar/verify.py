@@ -91,8 +91,8 @@ def main():
             results.append(result)
             print(json.dumps(result), flush=True)
         for width, scale, maximize, tier in ((1920, 1.0, True, 'FULL'),
-                (1700, 1.0, False, 'COMPACT'), (1100, 1.0, False, 'MINIMAL'),
-                (1920, 1.5, True, 'COMPACT')):
+                (1700, 1.0, False, 'FULL'), (1100, 1.0, False, 'FULL'),
+                (1920, 1.5, True, 'FULL')):
             name = f'native-{width}-scale-{scale}'
             evidence_file = OUTPUT / (name + '.json')
             evidence_file.unlink(missing_ok=True)
