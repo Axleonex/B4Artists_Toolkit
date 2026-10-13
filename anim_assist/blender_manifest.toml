@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "anim_assist"
-version = "12.5.1"
+version = "12.6.0"
 name = "Anim Assist"
 tagline = "Production animation workflow tools for Bforartists (not compatible with standard Blender)"
 maintainer = "Developer <dev@example.com>"
