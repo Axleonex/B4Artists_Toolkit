@@ -1,3 +1,14 @@
+# 12.5.0 — Inline family clusters
+
+- Each of seven Timeline family menus now sits beside its selected quick tools.
+- Select any of 70 existing presets through native, global preference checkboxes.
+- Gear opens Timeline Quick Tools; empty selection and all-family reset are supported.
+- Native header panning retains selected tools at narrow widths.
+- Quick selections transfer through settings export/import; legacy files retain current pins.
+- Legacy scene category switches continue to control other editor headers.
+- Fix Debug Mode callback binding exposed by settings import.
+- Local candidate; actual Bforartists and owner acceptance remain pending. See qualification report for recovery/display limits.
+
 # Anim Assist Changelog
 
 ## Versioning policy
@@ -11,6 +22,78 @@ Anim Assist follows a phase-aligned semantic version scheme:
 Each release updates four places in lockstep: `bl_info` in `__init__.py`,
 `ADDON_VERSION` and `ADDON_VERSION_STRING` in `constants.py`, and `version`
 in `blender_manifest.toml`.
+
+## v12.4.0 - Compact Council Timeline Toolbar
+
+Local release, 2026-10-12; not published to GitHub.
+
+- Build the approved full Brainstorm Council design: seven fixed family menus,
+  prominent percentage/Drag shortcuts and grouped More containing all 17
+  original shortcuts. Timing/Keys expand at wider widths; Tools consolidates
+  families at narrow widths. Selection changes affect availability in place.
+- Share scope, prerequisite, gesture and permanent family-path tooltips across
+  inline buttons, menus and More. Name object bake/proxies, key-time rounding
+  and Action value offset according to their actual behavior.
+- Include the owner's requested Breakdown anchor explanation in percentage
+  and Drag tooltips and Help, with an empty-frame/existing-key numeric example.
+- Repair Opposite selection through the existing pose-selection compatibility
+  helper; Drag cancellation restores key selection, type and easing metadata.
+- Show native Drag factor feedback and captured Offset object/Action/live mask.
+- Scale the native editor-border pairing tolerance with UI scale, preventing
+  repeated strip creation at 150% and keeping dispatch paired to the Timeline.
+- Explicitly enable target undo in Python toolbar dispatch, repairing the
+  measured missing redo step for a percentage Breakdown.
+- Preserve all 70 preset IDs, operator targets/arguments and seven families.
+  Actual Bforartists compatibility and owner usability require that host.
+
+## v12.3.1 - Clearer Timeline Toolbar Gear
+
+Local release, 2026-10-12; not published to GitHub.
+
+- Match the owned Timeline strip's gear labels to Tween, Curves, Timing, Keys,
+  Motion and Pose menus using contextual labels on the existing properties.
+- Identify Timeline placement as an add-on preference and category visibility
+  as a scene setting shared across editor headers.
+- Implement the council's winning Team C base recommendation. Preserve the
+  existing menu targets, shortcuts, visibility behavior and animation math.
+- Actual Bforartists compatibility and the owner's usability walkthrough remain
+  unverified. No automated tests or animation action/Undo checks were run.
+
+## v12.3.0 - Grouped Animation Tools in the Timeline Toolbar
+
+Local release, 2026-10-12; not published to GitHub.
+
+- Add Tween, Curves, Timing, Keys, Pose, Bake and Motion menus to the second
+  Timeline row, preserving the current quick buttons.
+- Expose existing tools corresponding to animBot concepts: tweening, neighbor
+  and frame blending, easing, smoothing, timing nudges, native handles, key
+  types, mirroring, matching, transform baking, proxies and motion trails.
+- Distinguish selected-key nudges from Action timing offsets, and reference
+  value scaling from neighbor Push/Pull. Partial matches have accurate labels
+  and tooltips; no new animation math or claims of full animBot parity.
+- Fixed +/-1-frame nudges execute immediately using the existing undoable tool.
+- Pose and Motion menus follow the existing matching and trajectory visibility
+  settings. The gear heading now describes both toolbar uses.
+- See `docs/anim_assist/releases/12.3.0/animbot-matches.md` for the match table.
+  Native preview uses a Blender stand-in; interactive behavior and actual
+  Bforartists compatibility remain unverified.
+
+## v12.2.0 - Toolbar Above Timeline
+
+Local release, 2026-10-12; not published to GitHub.
+
+- Move existing Timeline shortcuts into a thin editor strip above the native
+  Timeline controls: Breakdown, Push/Pull, Timing, Selection and Anim Offset.
+- Toolbar buttons use the adjacent Timeline's context and the existing tool
+  implementations. Graph Editor and Dope Sheet shortcuts retain their placement.
+- Add “Toolbar Above Timeline” in preferences and the toolbar gear popover.
+  Turning it off rejoins the strip and restores native-header shortcuts.
+- Saved strips reconnect by an owned Text datablock. Add-on disable rejoins
+  adjacent owned strips; manually rearranged strips become ordinary Text editors.
+- Use native-header fallback when the Timeline is too short to split or the
+  host's Text header hook is unavailable. Native theme and scrolling apply.
+- Layout API and visual inspection used a Blender 5.1.2 stand-in. Actual
+  Bforartists use and interactive tool/undo behavior remain unverified.
 
 ## v12.1.3 - Lipsync Layer Slot and Recents Order Fixes
 

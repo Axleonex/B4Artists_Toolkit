@@ -1,9 +1,7 @@
 """Addon preferences with module toggles and settings I/O hooks."""
 
-from __future__ import annotations
-
 import bpy
-from bpy.props import BoolProperty, FloatProperty, IntProperty
+from bpy.props import BoolProperty, EnumProperty, FloatProperty, IntProperty
 
 from . import constants
 from .core.logging import get_logger, set_level
@@ -19,8 +17,66 @@ def _update_pie_hotkey(self, _context: bpy.types.Context) -> None:
     header_menus.set_pie_hotkey_active(self.pie_hotkey_enabled)
 
 
+def _update_timeline_quick(_self, context) -> None:
+    """Redraw existing owned rows; configuring buttons never changes layout."""
+    from .ui.timeline_strip import is_strip
+    ctx = context or bpy.context
+    manager = getattr(ctx, "window_manager", None)
+    for window in getattr(manager, "windows", ()):
+        for area in window.screen.areas:
+            if is_strip(area):
+                area.tag_redraw()
+
+
+def prepare_timeline_quick_preferences() -> None:
+    """Prepare RNA after package imports, before preferences registration."""
+    from .ui.timeline_catalog import (
+        ACTIONS, DEFAULT_QUICK_ACTIONS, FAMILY, GROUPS, quick_property_name,
+    )
+    if getattr(AA_AddonPreferences, "is_registered", False):
+        return
+    annotations = AA_AddonPreferences.__annotations__
+    for action, (_suffix, _arguments, label) in ACTIONS.items():
+        annotations[quick_property_name(action)] = BoolProperty(
+            name=label,
+            description=f"Show a quick button beside {FAMILY[action][1]} in the Timeline toolbar",
+            default=action in DEFAULT_QUICK_ACTIONS,
+            update=_update_timeline_quick,
+        )
+    annotations["timeline_quick_family"] = EnumProperty(
+        name="Family",
+        description="Choose the family whose quick-button checkboxes you want to edit",
+        items=[(key, label, f"Choose quick buttons for {label}")
+               for key, label, _actions in GROUPS],
+        default="tween",
+    )
+
+
+def draw_timeline_quick_settings(layout, context, prefs) -> None:
+    """The same native preference controls in the strip and add-on settings."""
+    from .ui.timeline_catalog import GROUPS, quick_property_name
+    layout.prop(prefs, "timeline_toolbar_row")
+    layout.label(text="Saved in add-on preferences")
+    layout.label(text="Quick buttons apply to all Timeline strips")
+    layout.prop(prefs, "timeline_quick_family")
+    actions = next(actions for key, _label, actions in GROUPS
+                   if key == prefs.timeline_quick_family)
+    column = layout.column(align=True)
+    for action in actions:
+        if action is not None:
+            column.prop(prefs, quick_property_name(action))
+    layout.separator()
+    layout.operator("animassist.reset_timeline_quick_defaults",
+                    text="Reset All Quick Buttons to Defaults", icon="LOOP_BACK")
+    layout.label(text="Middle-mouse drag the toolbar to pan")
+    if not context.preferences.use_preferences_save:
+        layout.label(text="Save Preferences to keep choices after restart", icon="INFO")
+        layout.operator("wm.save_userpref", text="Save Preferences", icon="FILE_TICK")
+
+
 class AA_AddonPreferences(bpy.types.AddonPreferences):
-    bl_idname = constants.ADDON_PACKAGE
+    # ZIP and extension installs may use B4_anim_assist or bl_ext.<repo>.<id>.
+    bl_idname = __package__
 
     debug_mode: BoolProperty(  # type: ignore[valid-type]
         name="Debug Mode",
@@ -99,6 +155,14 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
     )
 
     # Where Anim Assist appears (Properties > Scene > Anim Assist > Settings).
+    timeline_toolbar_row: BoolProperty(  # type: ignore[valid-type]
+        name="Toolbar Above Timeline",
+        description=(
+            "Move Anim Assist shortcuts into a thin editor strip above each visible Timeline; "
+            "turn off to rejoin the strip and return shortcuts to the native header"
+        ),
+        default=True,
+    )
     pie_hotkey_enabled: BoolProperty(  # type: ignore[valid-type]
         name="Anim Assist Pie Menu Hotkey",
         description=(
@@ -164,11 +228,16 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
 
         box = layout.box()
         box.label(text="Where Anim Assist Appears", icon='WINDOW')
+        box.prop(self, "timeline_toolbar_row")
         box.prop(self, "pie_hotkey_enabled")
         col = box.column(heading="Header menu in", align=True)
         col.prop(self, "header_menu_view3d")
         col.prop(self, "header_menu_graph")
         col.prop(self, "header_menu_dopesheet")
+
+        box = layout.box()
+        box.label(text="Timeline Quick Tools", icon='PREFERENCES')
+        draw_timeline_quick_settings(box, context, self)
 
         box = layout.box()
         box.label(text="Modules", icon='PACKAGE')
@@ -226,7 +295,7 @@ def get_prefs(context: bpy.types.Context | None = None) -> AA_AddonPreferences |
     addons = getattr(getattr(ctx, "preferences", None), "addons", None)
     if addons is None:
         return None
-    addon = addons.get(constants.ADDON_PACKAGE)
+    addon = addons.get(__package__) or addons.get(constants.ADDON_PACKAGE)
     if addon is None:
         return None
     return getattr(addon, "preferences", None)

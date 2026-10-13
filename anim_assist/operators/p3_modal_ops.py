@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import bpy
 
+from ..constants import BREAKDOWN_ANCHOR_HINT
+
 from ..core import breakdown_core as bc
 from ..core.fcurve_compat import get_fcurves
 from ..core.p3_properties import get_p3
@@ -27,7 +29,9 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
     bl_idname = "animassist.modal_drag_breakdown"
     bl_label = "Modal Drag Breakdown"
     bl_description = (
-        "Drag horizontally to scrub the breakdown factor. Click commits, Esc cancels and restores the pose"
+        "Active object's Action using Breakdown targets and mask. Drag horizontally; "
+        "release left mouse to apply, Esc/right mouse restores the pre-drag keys. "
+        + BREAKDOWN_ANCHOR_HINT
     )
     bl_options = {"REGISTER", "UNDO", "GRAB_CURSOR", "BLOCKING"}
 
@@ -61,6 +65,14 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
                     str(kp.handle_left_type),
                     str(kp.handle_right_type),
                     str(kp.interpolation),
+                    str(kp.type),
+                    bool(kp.select_control_point),
+                    bool(kp.select_left_handle),
+                    bool(kp.select_right_handle),
+                    str(kp.easing),
+                    float(kp.amplitude),
+                    float(kp.back),
+                    float(kp.period),
                 ))
             self._snap.append((fc, rows))
 
@@ -82,11 +94,16 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
                     kp = fc.keyframe_points.insert(
                         row[0], row[1], options={"FAST"},
                     )
-                    kp.handle_left = (row[2], row[3])
-                    kp.handle_right = (row[4], row[5])
                     kp.handle_left_type = row[6]
                     kp.handle_right_type = row[7]
                     kp.interpolation = row[8]
+                    kp.type = row[9]
+                    kp.select_control_point = row[10]
+                    kp.select_left_handle = row[11]
+                    kp.select_right_handle = row[12]
+                    kp.easing, kp.amplitude, kp.back, kp.period = row[13:17]
+                    kp.handle_left = (row[2], row[3])
+                    kp.handle_right = (row[4], row[5])
                 fc.update()
             except Exception:
                 continue
@@ -101,6 +118,13 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
     # ------------------------------------------------------------------
     # Invoke / modal
     # ------------------------------------------------------------------
+    def _status(self, context):
+        if context.workspace:
+            obj = self._snap_obj
+            context.workspace.status_text_set(
+                f"Breakdown {self._p3.factor:.2f} | {obj.name if obj else 'No object'} "
+                "| Breakdown targets/mask | Release: apply | Esc: cancel")
+
     def invoke(self, context, event):
         p3 = get_p3(context)
         if p3 is None:
@@ -112,6 +136,7 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
         self._committed = False
         self._snapshot_fcurves(context)
         self._apply(context, self._start_factor)
+        self._status(context)
         if context.window is not None:
             context.window.cursor_modal_set("SCROLL_X")
         context.window_manager.modal_handler_add(self)
@@ -126,10 +151,13 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
             # the fcurve never accumulates stale scrub keys.
             self._restore_snapshot()
             self._apply(context, new_factor)
+            self._status(context)
             if context.area is not None:
                 context.area.tag_redraw()
             return {"RUNNING_MODAL"}
         if event.type == "LEFTMOUSE" and event.value == "RELEASE":
+            if context.workspace:
+                context.workspace.status_text_set(None)
             if context.window is not None:
                 context.window.cursor_modal_restore()
             bc.remember_last(_options_from_scene(context))
@@ -140,6 +168,8 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
             )
             return {"FINISHED"}
         if event.type in {"RIGHTMOUSE", "ESC"}:
+            if context.workspace:
+                context.workspace.status_text_set(None)
             # Hard-restore the pre-drag state; do NOT write another key.
             self._p3.factor = self._start_factor
             self._restore_snapshot()

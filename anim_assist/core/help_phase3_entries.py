@@ -11,6 +11,8 @@ teardown via :func:`unregister_phase_help`.
 
 from __future__ import annotations
 
+from ..constants import BREAKDOWN_ANCHOR_HINT
+
 from .help_registry import (
     HelpEntry,
     register_phase_help,
@@ -101,7 +103,10 @@ PHASE3_ENTRIES: tuple[HelpEntry, ...] = (
        "25 / 50 / 75 Quick Buttons",
        "Quick percentage breakdowns via one-click buttons",
        "Writes a breakdown at a fixed percentage (25%, 50%, or 75%) without "
-       "touching the factor slider. Ideal for muscle-memory pose-to-pose blocking.",
+       "touching the factor slider. " + BREAKDOWN_ANCHOR_HINT + " "
+       "Example: keys at frames 1=0 and 11=10 give 2.5 at an empty frame 6 "
+       "with 25%. If frame 6 already has a key valued 3, it becomes the previous "
+       "anchor and the same button gives 4.75 (3 + 25% of the way to 10).",
        "Breakdown Core"),
     _H("op.animassist.breakdown_offset",
        "Relative Offset",
@@ -361,8 +366,9 @@ PHASE3_ENTRIES: tuple[HelpEntry, ...] = (
        "Modal Drag Breakdown",
        "Interactive drag to set the breakdown factor",
        "Enter modal mode and drag the mouse horizontally to scrub the breakdown "
-       "factor between the previous and next pose. LMB commits, RMB / Esc "
-       "cancels and restores the pre-drag state.",
+       "factor between the previous and next pose. Release LMB to apply; RMB / Esc "
+       "cancels and restores the pre-drag key state, including selection and type. "
+       + BREAKDOWN_ANCHOR_HINT,
        "Modal Breakdown"),
     _H("op.animassist.preview_breakdown",
        "Preview Breakdown",

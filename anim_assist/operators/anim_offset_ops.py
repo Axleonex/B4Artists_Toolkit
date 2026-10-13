@@ -17,6 +17,21 @@ from ..core.utils import EPSILON
 
 
 _TIMER_STEP: float = 0.08
+_sessions = {}
+
+
+def offset_session_status(scene, mask_scene=None):
+    """Describe the captured target and the mask actually read by propagation."""
+    target = _sessions.get(scene.as_pointer())
+    if not target or not scene.anim_assist.anim_offset_active:
+        return ""
+    mask = (mask_scene or scene).anim_assist.mask
+    coverage = (f"mask {min(mask.start_frame, mask.end_frame)}–{max(mask.start_frame, mask.end_frame)} "
+                f"(blend {mask.blend_left}/{mask.blend_right})" if mask.enabled else "all frames")
+    try:
+        return f"{target[0].name} / {target[1].name} | {coverage}"
+    except ReferenceError:
+        return f"Captured target removed | {coverage}"
 
 
 def _addon_prefs(context: bpy.types.Context):
@@ -97,9 +112,13 @@ class ANIMASSIST_OT_anim_offset(Operator):
             self._pending_fast_update = False
 
             settings.anim_offset_active = True
+            obj = _target_object(context)
+            self._scene = context.scene
+            _sessions[self._scene.as_pointer()] = (obj, obj.animation_data.action)
+            self._status(context)
             self._timer = context.window_manager.event_timer_add(_TIMER_STEP, window=context.window)
             context.window_manager.modal_handler_add(self)
-            self.report({"INFO"}, "Anim Offset activated")
+            self.report({"INFO"}, f"Offset active: {offset_session_status(context.scene)}")
             return {"RUNNING_MODAL"}
         except Exception as exc:
             self.report({"ERROR"}, str(exc))
@@ -130,6 +149,7 @@ class ANIMASSIST_OT_anim_offset(Operator):
                 self._propagate(context)
 
         if event.type == "TIMER":
+            self._status(context)
             if prefs and prefs.animassist_fast_offset:
                 # fast mode: only apply on mouse release
                 pass
@@ -137,6 +157,11 @@ class ANIMASSIST_OT_anim_offset(Operator):
                 self._propagate(context)
 
         return {"PASS_THROUGH"}
+
+    def _status(self, context):
+        if context.workspace:
+            context.workspace.status_text_set(
+                f"Action Offset: {offset_session_status(self._scene, context.scene)} | Toggle: finish | Esc: restore snapshot")
 
     def _build_mask(self, context: bpy.types.Context) -> MaskRegion:
         m = context.scene.anim_assist.mask
@@ -220,6 +245,9 @@ class ANIMASSIST_OT_anim_offset(Operator):
 
     def _cleanup(self, context: bpy.types.Context) -> None:
         context.scene.anim_assist.anim_offset_active = False
+        _sessions.pop(self._scene.as_pointer(), None)
+        if context.workspace:
+            context.workspace.status_text_set(None)
         if hasattr(self, "_timer") and self._timer is not None:
             context.window_manager.event_timer_remove(self._timer)
             self._timer = None

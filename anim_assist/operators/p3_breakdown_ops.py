@@ -21,6 +21,8 @@ from typing import Iterable, Optional
 import bpy
 from bpy.props import EnumProperty, FloatProperty, IntProperty
 
+from .. import constants
+
 from ..core import breakdown_core as bc
 from ..core.breakdown_masks import BreakdownMask, ExclusionSet
 from ..core.fcurve_compat import get_fcurves
@@ -293,7 +295,10 @@ class AA_OT_breakdown_pull_next(bpy.types.Operator):
 class AA_OT_breakdown_percentage(bpy.types.Operator):
     bl_idname = "animassist.breakdown_percentage"
     bl_label = "Quick Percentage Breakdown"
-    bl_description = "Write a breakdown at a fixed percentage via the 25 / 50 / 75 quick buttons"
+    bl_description = (
+        "Write a breakdown at a fixed percentage on the active object's Action "
+        "using Breakdown targets and mask. " + constants.BREAKDOWN_ANCHOR_HINT
+    )
     bl_options = {"REGISTER", "UNDO"}
 
     percent: IntProperty(  # type: ignore[valid-type]
