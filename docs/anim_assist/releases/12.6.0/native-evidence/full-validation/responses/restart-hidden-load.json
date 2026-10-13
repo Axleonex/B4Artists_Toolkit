@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "restart-hidden-load",
+    "code": "bpy.ops.wm.open_mainfile(filepath=str(ROOT/'restart-hidden.blend'))\nresult='load hidden'"
+  },
+  "response": {
+    "id": "restart-hidden-load",
+    "result": "load hidden",
+    "error": null
+  }
+}

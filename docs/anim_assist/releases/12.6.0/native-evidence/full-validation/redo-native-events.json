@@ -1,0 +1,30 @@
+[
+  {
+    "type": "MOUSEMOVE",
+    "value": "NOTHING",
+    "ctrl": false,
+    "shift": false,
+    "alt": false
+  },
+  {
+    "type": "LEFT_CTRL",
+    "value": "PRESS",
+    "ctrl": true,
+    "shift": false,
+    "alt": false
+  },
+  {
+    "type": "",
+    "value": "PRESS",
+    "ctrl": true,
+    "shift": false,
+    "alt": false
+  },
+  {
+    "type": "Z",
+    "value": "PRESS",
+    "ctrl": true,
+    "shift": false,
+    "alt": false
+  }
+]

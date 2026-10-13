@@ -11,6 +11,11 @@
 - The genuine second row requires the matching custom Bforartists application.
   Compilation and manual native qualification are recorded with the local build;
   this source update alone does not establish runtime or AnimBot parity.
+- Fix native toolbar re-enable while the Timeline is maximized.
+- Explain Ease's two-key prerequisite before invocation.
+- Preserve handles, key types, selection and custom easing on Action Offset
+  cancellation, including newly inserted keys. Read fast-mode preferences from
+  the installed package and translate Bezier handles with offset values.
 
 # 12.5.1 — Timeline layout repair
 

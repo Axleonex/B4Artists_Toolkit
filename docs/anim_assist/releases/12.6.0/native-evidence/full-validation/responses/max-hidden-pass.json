@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "max-hidden-pass",
+    "code": "check('Maximized explicit hide survives disable reenable',all(not a.spaces.active.show_region_tool_header and a.spaces.active.timeline_toolbar_hidden_by_user for w,a in timelines()),geometry())\nwith timeline_context(): bpy.ops.screen.screen_full_area(use_hide_panels=False)\nprefs=importlib.import_module(PACKAGE+'.prefs').get_prefs(bpy.context)\nprefs.timeline_toolbar_row=False; prefs.timeline_toolbar_row=True\nresult='return and show'"
+  },
+  "response": {
+    "id": "max-hidden-pass",
+    "result": "return and show",
+    "error": null
+  }
+}

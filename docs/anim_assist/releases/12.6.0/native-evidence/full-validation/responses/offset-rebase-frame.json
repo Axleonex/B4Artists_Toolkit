@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "offset-rebase-frame",
+    "code": "rebase_expected=object_snapshot(modal_obj)\nbpy.context.scene.frame_set(40)\nresult='rebase to40'"
+  },
+  "response": {
+    "id": "offset-rebase-frame",
+    "result": "rebase to40",
+    "error": null
+  }
+}

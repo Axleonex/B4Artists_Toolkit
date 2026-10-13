@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "native-keying-prepare",
+    "code": "bpy.context.scene.keying_sets.active_index=-2\ncheck('Location keying set configured',bpy.context.scene.keying_sets.active.bl_idname=='Location',bpy.context.scene.keying_sets.active.bl_idname)\nplayback_obj.location.x=3.5\nresult='ready'"
+  },
+  "response": {
+    "id": "native-keying-prepare",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 203, in bridge\n    if action=='BAKE_CLEANUP': bpy.ops.animassist.p7_create_proxy(proxy_type='WORLD_SPACE')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 2, in <module>\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 45, in check\n    raise AssertionError(name + ': ' + repr(actual) + ' expected ' + repr(expected))\nAssertionError: Location keying set configured: 'Available' expected None\n"
+  }
+}

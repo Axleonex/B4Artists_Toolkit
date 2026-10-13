@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "offset-toggle-finish",
+    "code": "check('Offset toggle finishes session',dispatch('OFFSET')==['FINISHED'],None,'FINISHED')"
+  },
+  "response": {
+    "id": "offset-toggle-finish",
+    "result": null,
+    "error": null
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "request": {
+    "id": "redo-clean-live",
+    "code": "undo_live=object_snapshot(bpy.data.objects['VAL_Animated'])\nresult=[k['co'][0] for k in undo_live[0]['keys']]"
+  },
+  "response": {
+    "id": "redo-clean-live",
+    "result": [
+      2,
+      21,
+      41
+    ],
+    "error": null
+  }
+}

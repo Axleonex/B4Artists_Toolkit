@@ -1,32 +1,35 @@
 {
   "release": "Anim Assist 12.6.0 local Windows x64",
-  "status": "built; partially qualified in the compiled native application; not published",
+  "status": "built; available-host validation matrix passed with documented render/DPI limits; unpublished",
   "application": "Custom Bforartists 5.2.0",
   "application_source_baseline": "v5.2.0",
   "native_patch_commit": "f5f550195e2299239f020f8e5b3cc5c391dadb43",
   "native_patch_sha256": "4a5e5d80402c55104621f49e625a94ac7adeec629317c3b4d58e87661c5050d2",
   "application_archive": "Bforartists_5.2.0_AnimAssist_12.6.0_Windows_x64.zip",
   "application_archive_location": "G:\\LapArt\\Local-Releases\\AnimAssist\\12.6.0\\Bforartists_5.2.0_AnimAssist_12.6.0_Windows_x64.zip",
-  "application_archive_bytes": 496449956,
-  "application_archive_sha256": "ad116e6137387f3d9d31b93e462406825ff6d6274e82bcff5589057edf4b8172",
+  "application_archive_bytes": 418370720,
+  "application_archive_sha256": "4c7ef295825bd540b7c2a3a826c414ac6789ec4d883e14189fdc41ed064fd963",
   "application_executable_bytes": 122898944,
   "application_executable_sha256": "f6647c50792f1be94ff1473c83cdd19c33702ea6181c2188a0d54175a898587b",
   "addon_archive": "b4_anim_assist_v12.6.0.zip",
-  "addon_archive_bytes": 576442,
-  "addon_archive_sha256": "221afae332a3b2217d3e33c6075bac24c22def82cdd7bbf909a2e14f5de72a1b",
+  "addon_archive_bytes": 577101,
+  "addon_archive_sha256": "60d4c7f10d9f14adde17e0cd5269bb07d4a4fc8f96810a4cd6e67903e5e73193",
   "runtime_file_count": 8818,
   "excluded_pdb_symbol_files": 3,
   "observed": [
-    "Fresh native row at 100%",
-    "Representative Nudge, Search, Pin, Copy and Tween/anchor-help controls",
-    "Settled resize at 100%",
-    "Temporary UI scale 150%",
-    "Smooth modal Escape restored key/handle/selection snapshot"
+    "All80 immediate action effects in patched and genuine unpatched hosts",
+    "All9 native modal actions with live geometry, commit and cancellation",
+    "Fresh row, pin/search/reset/empty/custom process persistence",
+    "Editor resize in-gesture framebuffer samples at100%/150%; settled window resizing",
+    "Migration, saved layouts, workspaces, multiple windows and maximized visibility lifecycle",
+    "Native playback/scrub/keying/Undo/Redo; exact203 installed archive files"
   ],
   "limits": [
-    "Continuous in-drag flicker not qualified",
-    "Migration, persistence, multi-window, visibility lifecycle, native playback/keying and other listed cases remain unobserved"
+    "Window-border native renders cover before/after only; universal absence of flicker not certified",
+    "Windows global display DPI transitions unrun pending authorization",
+    "Representative fixtures do not establish exhaustive production-rig or full AnimBot parity"
   ],
-  "formal_tests": "none run",
-  "published": false
+  "formal_tests": "Native GUI integration assertions plus actual input; tests/summarize_native_validation.py audited evidence",
+  "published": false,
+  "validation_summary": "native-evidence/full-validation/summary.json"
 }

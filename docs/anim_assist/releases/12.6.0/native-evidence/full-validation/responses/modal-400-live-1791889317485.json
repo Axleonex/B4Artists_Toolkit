@@ -1,0 +1,16 @@
+{
+  "request": {
+    "id": "modal-400-live-1791889317485",
+    "code": "result=modal_live()"
+  },
+  "response": {
+    "id": "modal-400-live-1791889317485",
+    "result": {
+      "changed": true,
+      "operators": [
+        "ANIMASSIST_OT_p6_modal_offset"
+      ]
+    },
+    "error": null
+  }
+}

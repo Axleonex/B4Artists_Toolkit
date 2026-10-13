@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "restart-hidden-assert",
+    "code": "check('Restart saved explicit hide retained',all(not a.spaces.active.show_region_tool_header and a.spaces.active.timeline_toolbar_hidden_by_user for w,a in timelines()))\nprefs=importlib.import_module(PACKAGE+'.prefs').get_prefs(bpy.context)\nprefs.timeline_toolbar_enabled=False; prefs.timeline_toolbar_enabled=True\nresult='explicit reveal'"
+  },
+  "response": {
+    "id": "restart-hidden-assert",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 453, in bridge\n    exec(data['code'],globals())\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 50, in check\n    raise AssertionError(name + ': ' + repr(actual) + ' expected ' + repr(expected))\nAssertionError: Restart saved explicit hide retained: None expected None\n"
+  }
+}

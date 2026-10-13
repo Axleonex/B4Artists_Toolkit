@@ -112,7 +112,7 @@ def main():
     expected_changes = {f"{root}/{name}" for name in (
         "CHANGELOG.md", "__init__.py", "constants.py", "blender_manifest.toml",
         "prefs.py", "ui/timeline_strip.py", "ui/timeline_catalog.py",
-        "ui/header_toolbars.py", "ui/headers.py")}
+        "ui/header_toolbars.py", "ui/headers.py", "operators/anim_offset_ops.py")}
     defaults = literal_assignment(contents[f"{root}/ui/timeline_catalog.py"].decode("utf-8"), "DEFAULT_QUICK_ACTIONS")
     if set(defaults) != {"B25","B50","B75","DRAG","SMOOTH","NUDGE_LEFT","NUDGE_RIGHT",
                          "RIPPLE","RANGE","ENDS","MIRROR_SELECTED","BAKE_STEP","TRAIL_SHOW"} or len(defaults)!=13:

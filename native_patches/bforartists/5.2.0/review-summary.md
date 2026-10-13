@@ -1,7 +1,8 @@
 # Native Timeline source reviews
 
-All reviews are static source inspection; they do not qualify a compiled app.
-No formal tests were added or run.
+The initial reviews below were static source inspection. Native validation was
+subsequently requested and completed for the available-host matrix; see the
+validation supplement and the 12.6.0 qualification report.
 
 ## Add-on
 
@@ -60,3 +61,28 @@ by `timeline_strip._arguments()` against declarations in the bookmark, mirror,
 clipboard and switch operators: all supplied property names exist. This supports
 source wiring only. The reviewer corrected coverage claims about fixed-argument
 inspection and empty-query popup behavior; native observations remain pending.
+
+## Native validation supplement — 2026-10-13
+
+The compiled native host and genuine unpatched baseline ran explicit integration
+assertions on independent fixtures. All 80 immediate effects passed in both
+hosts; nine native modal tools passed commit and cancellation. Legacy migration,
+restart/save UI persistence, workspace/multi-window/maximized lifecycle and
+native playback/scrub/keying/Undo/Redo passed.
+
+Spec review passed before quality review approved the observed source repairs:
+maximized re-enable context, Ease prerequisites, and Offset preferences/handles/
+full snapshot restoration. The reviewers inspected source; the parent performed
+the actual GUI regressions. The validation helper now rejects catalogue actions
+without an outcome assertion and requires curve geometry for modal live effects.
+
+The evidence audit retained failed reproductions and fixture/input mistakes,
+required valid in-gesture editor framebuffer samples, and verified all 203
+installed ZIP files. It explicitly rejected continuous window-drag render
+coverage because its samples were outside the input interval. No Windows global
+DPI transition, universal no-flicker claim, full production-rig algorithm proof
+or full AnimBot parity is certified.
+
+Current evidence: docs/anim_assist/releases/12.6.0/native-evidence/full-validation/
+summary.json. Historical pending labels above describe pre-build review gates;
+the current qualification report supersedes their runtime status.

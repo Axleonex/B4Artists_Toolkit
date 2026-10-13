@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "direct-undo",
+    "code": "result=object_snapshot(bpy.data.objects['VAL_Animated'])==undo_before"
+  },
+  "response": {
+    "id": "direct-undo",
+    "result": true,
+    "error": null
+  }
+}

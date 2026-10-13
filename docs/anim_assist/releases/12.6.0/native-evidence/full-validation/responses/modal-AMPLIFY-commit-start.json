@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-AMPLIFY-commit-start",
+    "code": "result=modal_start('AMPLIFY','commit')"
+  },
+  "response": {
+    "id": "modal-AMPLIFY-commit-start",
+    "result": {
+      "action": "AMPLIFY",
+      "ending": "commit",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_push_pull"
+      ]
+    },
+    "error": null
+  }
+}

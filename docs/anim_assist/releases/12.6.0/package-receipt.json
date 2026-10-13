@@ -1,6 +1,6 @@
 {
   "version": "12.6.0",
-  "status": "local Anim Assist 12.6.0 package; native second row requires the matching custom Bforartists 5.2.0 application",
+  "status": "local native provider; available-host validation matrix passed; unpublished",
   "package_root": "B4_anim_assist",
   "files": 203,
   "changed_files_from_12_5_1": [
@@ -8,6 +8,7 @@
     "B4_anim_assist/__init__.py",
     "B4_anim_assist/blender_manifest.toml",
     "B4_anim_assist/constants.py",
+    "B4_anim_assist/operators/anim_offset_ops.py",
     "B4_anim_assist/prefs.py",
     "B4_anim_assist/ui/header_toolbars.py",
     "B4_anim_assist/ui/headers.py",
@@ -133,11 +134,11 @@
     "constants_string": "12.6.0",
     "manifest": "12.6.0"
   },
-  "bytes": 576442,
-  "sha256": "221afae332a3b2217d3e33c6075bac24c22def82cdd7bbf909a2e14f5de72a1b",
+  "bytes": 577101,
+  "sha256": "60d4c7f10d9f14adde17e0cd5269bb07d4a4fc8f96810a4cd6e67903e5e73193",
   "baseline_sha256": "7dbe61a35f01eb69431756a6b01133fdc04a3bec45dadca3264975b571d7511c",
   "source_files_sha256": {
-    "B4_anim_assist/CHANGELOG.md": "f6b7d3a9127fee6444715175d001abbce28503aff87e1e2f51b508bc44190cd9",
+    "B4_anim_assist/CHANGELOG.md": "24fd44f59110449be0363b523e27d8d8919fcfd5d40eba682c551896150ad5d3",
     "B4_anim_assist/__init__.py": "d83e099ba0c8b9aa1f934239af8a30929108d88cadf23204798d88a39e968121",
     "B4_anim_assist/blender_manifest.toml": "9afa7cd2855f7ad1d036cb9705379b77ab124df1166035cc506551686bd6ecff",
     "B4_anim_assist/constants.py": "0e7e57631cb9d4b88261bea69d0ddc4e8f8eacc2f9d76358ecbed74aa808c7e8",
@@ -240,7 +241,7 @@
     "B4_anim_assist/core/ui_state.py": "60464f1f7e97aaa4eae213b2ce2dccbcc342cace6701b191a3e600c99b114dbd",
     "B4_anim_assist/core/utils.py": "965dbe40e090defd74fedca25068c1ce62511df11907ea3df302fa42812321da",
     "B4_anim_assist/operators/__init__.py": "61c4263a3218068f8628935783f5a9cf8d060a762a2529a712cae7d492ddf89e",
-    "B4_anim_assist/operators/anim_offset_ops.py": "6e26aec156b3fcf535b33b48558261b81d278f86a8668ae80f1145272c105927",
+    "B4_anim_assist/operators/anim_offset_ops.py": "d8245ff64415292ddffea5537bdb3db4d0ca896d64ba175db36c4e08907af1ba",
     "B4_anim_assist/operators/curve_tool_ops.py": "32608c27fdcff4486837544cbe8083a59f84bb3cf51471c1fecd42d030f78c09",
     "B4_anim_assist/operators/diagnostics_ops.py": "e61a91201e2b14c5087545c9d2a87d58d9ad80622400bb3184cddef397e71950",
     "B4_anim_assist/operators/help_popup.py": "66400cb7136d73bb8bb4029cfba7f216d4731068755b799531b1b297dc2077b7",
@@ -337,12 +338,11 @@
     "B4_anim_assist/ui/panels.py": "a35ac8fdb0fdeb0a4a8f65f6626ecd2b2748406f8deebd6953d015353913ccbf",
     "B4_anim_assist/ui/pie_menus.py": "3a05cdece389d9daff066c031eee96cac774fe94aae7437f40202f24c639190a",
     "B4_anim_assist/ui/scope_ui.py": "abfef2e81d059b8d1099863a4ed646dab0f0e0147c6bfde84962bc73329aedbe",
-    "B4_anim_assist/ui/timeline_catalog.py": "3ed2b5f2f8462d5b010417d6368a2b1390ae6e9f47d7f47f433752ea4829e59b",
-    "B4_anim_assist/ui/timeline_strip.py": "728e6b3ae638c4fb9d98ede67166dd470d645dc63b9fa9a4683637e92c0958d0",
+    "B4_anim_assist/ui/timeline_catalog.py": "802c7e6d1cd638d6edab4ff4b0b31dd188e9dc7d54bab54efc618dccbb248d3f",
+    "B4_anim_assist/ui/timeline_strip.py": "dc1be2447e2d0806b96f3d9251d04322ad4318860f48f71c98a6f1c1fbaa94d3",
     "B4_anim_assist/ui/ui_helpers.py": "b9e34aad40528bbc4725bf87c29efb5b6a05b4bde8c1648c23c9a9aec1d9daa1"
   },
-  "native_application": "Custom Bforartists 5.2.0 Windows x64",
-  "native_application_executable_sha256": "f6647c50792f1be94ff1473c83cdd19c33702ea6181c2188a0d54175a898587b",
-  "native_patch_sha256": "4a5e5d80402c55104621f49e625a94ac7adeec629317c3b4d58e87661c5050d2",
-  "native_ui_qualification": "partial; see qualification.md"
+  "native_validation": "native-evidence/full-validation/summary.json",
+  "native_patch_commit": "f5f550195e2299239f020f8e5b3cc5c391dadb43",
+  "native_executable_sha256": "f6647c50792f1be94ff1473c83cdd19c33702ea6181c2188a0d54175a898587b"
 }

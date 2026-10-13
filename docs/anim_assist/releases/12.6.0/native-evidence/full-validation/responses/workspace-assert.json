@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "workspace-assert",
+    "code": "row_check('Workspace Animation initializes native rows')\nbpy.context.window.workspace=validation_workspace\nresult='returned'"
+  },
+  "response": {
+    "id": "workspace-assert",
+    "result": "returned",
+    "error": null
+  }
+}

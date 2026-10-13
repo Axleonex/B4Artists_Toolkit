@@ -1,0 +1,19 @@
+{
+  "request": {
+    "id": "window-height150-pass",
+    "code": "check('Actual window height resize 150%',bpy.context.window.height!=window_dims[1],bpy.context.window.height,window_dims[1])\nrow_check('Rows after actual window height resize 150%')\nresult=flush_capture('windowheight150-pixels')"
+  },
+  "response": {
+    "id": "window-height150-pass",
+    "result": {
+      "samples": 6,
+      "kind_counts": {
+        "TOOL_HEADER": 2,
+        "HEADER": 2,
+        "WINDOW": 2
+      },
+      "errors": []
+    },
+    "error": null
+  }
+}

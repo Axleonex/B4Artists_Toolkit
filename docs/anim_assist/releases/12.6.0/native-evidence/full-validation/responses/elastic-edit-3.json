@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "elastic-edit-3",
+    "code": "curves=offset_mod.get_fcurves(modal_obj.animation_data.action)\nfor fc in curves: fc.keyframe_points.insert(25,-5)\nmodal_obj.location.x=5\nmodal_obj.keyframe_insert(data_path='location',index=0,frame=20)\nresult='edited'"
+  },
+  "response": {
+    "id": "elastic-edit-3",
+    "result": "edited",
+    "error": null
+  }
+}

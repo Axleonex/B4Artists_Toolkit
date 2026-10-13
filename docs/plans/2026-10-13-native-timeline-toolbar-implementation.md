@@ -95,11 +95,11 @@ Toolkit files: version tuple/string, manifest, `CHANGELOG.md`, release builder/r
 ## Progress ledger
 
 1. Pinned source checkout/dependencies — complete; exact source mirror, libraries and runtime assets staged.
-2. Native region — implemented and statically reviewed; native observations pending.
-3. Native sizing — implemented and statically reviewed; native observations pending.
-4. Add-on integration/access — implemented and statically reviewed; 89 presets locally packaged.
-5. Compilation/portable output — configured; Release install compilation running.
-6. Native acceptance — pending; isolated profile and exact matching add-on staged.
-7. Packaging/review — local add-on ZIP/source patch/build records created; application package and final integration review pending.
+2. Native region — compiled, source reviewed and observed in the real application.
+3. Native sizing — area/window resizing observed at 100%/150%; editor gestures have in-drag framebuffer samples; window gestures have settled render coverage.
+4. Add-on integration/access — all 89 presets accessible; 80 immediate fixture effects and nine modal commit/cancel pairs qualified; validation defects repaired and separately reviewed.
+5. Compilation/portable output — complete; native commit f5f550195e22 and executable hash recorded.
+6. Native validation — available-host matrix passed, including restarts, explicit saved UI loading, migration, multiple windows, maximized lifecycle, playback/keying and unpatched fallback. Windows display-DPI transition remains unrun pending global-setting authorization. Owner workflow acceptance and full algorithm parity remain distinct.
+7. Packaging/review — corrected exact 12.6.0 add-on built; native evidence and local portable package refreshed. Public version/download stays 12.5.1 pending separate publication confirmation.
 
 Endpoint: actual compiled native application plus matching exact add-on artifact and observed usability evidence. Source-only implementation is incomplete.

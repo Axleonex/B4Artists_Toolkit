@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "quit-for-exact-package",
+    "code": "bpy.ops.wm.quit_blender()"
+  },
+  "response": {
+    "id": "quit-for-exact-package",
+    "result": null,
+    "error": null
+  }
+}

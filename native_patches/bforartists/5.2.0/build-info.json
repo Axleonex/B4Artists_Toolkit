@@ -1,5 +1,5 @@
 {
-  "status": "portable application built; native UI launched; partial runtime qualification; local release assembled",
+  "status": "portable application built; available-host validation passed with documented render/DPI limits",
   "upstream": "https://github.com/Bforartists/Bforartists.git",
   "baseline_tag": "v5.2.0",
   "baseline_commit": "0a1ca45552dba1006ae0fb5c4dd36657622a4e66",
@@ -33,10 +33,10 @@
   "jobs": 2,
   "configure_status": "success",
   "compile_status": "success; CMake install completed and portable executable is present; four-job memory failure recovered at two jobs",
-  "native_manual_acceptance": "partial: fresh native row, representative actions, settled resize at 100%, temporary UI scale 150%, and modal Escape snapshots observed",
+  "native_manual_acceptance": "passed documented available-host matrix; see 12.6.0 qualification and full-validation summary",
   "source_static_spec_review": "pass",
   "source_static_quality_review": "pass",
-  "formal_tests_added_or_run": false,
+  "formal_tests_added_or_run": true,
   "paid_provider_calls": 0,
   "cache_options": {
     "CMAKE_BUILD_TYPE": "Release",
@@ -287,5 +287,5 @@
     1.5
   ],
   "application_preferences_autosave_disabled": true,
-  "continuous_in_drag_flicker": "not qualified: screenshots captured after release; watcher samples could not identify an active native border drag"
+  "continuous_in_drag_flicker": "Editor-border native framebuffer samples during 100%/150% gestures were nonblank. Window-border renders cover before/after only; universal absence of flicker is not certified."
 }

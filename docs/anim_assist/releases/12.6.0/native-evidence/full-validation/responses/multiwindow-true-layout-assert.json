@@ -1,0 +1,177 @@
+{
+  "request": {
+    "id": "multiwindow-true-layout-assert",
+    "code": "check('Saved UI restores two windows',len(bpy.context.window_manager.windows)==2,len(bpy.context.window_manager.windows),2)\ncheck('Saved UI restores three Timelines',len(timelines())==3,len(timelines()),3)\nrow_check('All reopened saved native rows')\nresult=geometry()"
+  },
+  "response": {
+    "id": "multiwindow-true-layout-assert",
+    "result": [
+      {
+        "window": 2258284046752,
+        "screen": "Main",
+        "area": 2258864749856,
+        "x": 1602,
+        "y": 23,
+        "width": 316,
+        "height": 701,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 1602,
+            "y": 698,
+            "width": 316,
+            "height": 26
+          },
+          {
+            "type": "HEADER",
+            "x": 1602,
+            "y": 672,
+            "width": 316,
+            "height": 26
+          },
+          {
+            "type": "FOOTER",
+            "x": 1602,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 1602,
+            "y": 23,
+            "width": 200,
+            "height": 649
+          },
+          {
+            "type": "UI",
+            "x": 1917,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 1802,
+            "y": 23,
+            "width": 116,
+            "height": 649
+          }
+        ]
+      },
+      {
+        "window": 2258284046752,
+        "screen": "Main",
+        "area": 2258864979744,
+        "x": 2,
+        "y": 23,
+        "width": 1597,
+        "height": 157,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 2,
+            "y": 154,
+            "width": 1597,
+            "height": 26
+          },
+          {
+            "type": "HEADER",
+            "x": 2,
+            "y": 128,
+            "width": 1597,
+            "height": 26
+          },
+          {
+            "type": "FOOTER",
+            "x": 2,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 2,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "UI",
+            "x": 1598,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 2,
+            "y": 23,
+            "width": 1597,
+            "height": 105
+          }
+        ]
+      },
+      {
+        "window": 2258284046432,
+        "screen": "VAL_Second_Window",
+        "area": 2258274161184,
+        "x": 0,
+        "y": 0,
+        "width": 1824,
+        "height": 908,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 0,
+            "y": 882,
+            "width": 1824,
+            "height": 26
+          },
+          {
+            "type": "HEADER",
+            "x": 0,
+            "y": 856,
+            "width": 1824,
+            "height": 26
+          },
+          {
+            "type": "FOOTER",
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 0,
+            "y": 0,
+            "width": 200,
+            "height": 856
+          },
+          {
+            "type": "UI",
+            "x": 1823,
+            "y": 0,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 200,
+            "y": 0,
+            "width": 1624,
+            "height": 856
+          }
+        ]
+      }
+    ],
+    "error": null
+  }
+}
