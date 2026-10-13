@@ -2,6 +2,8 @@
 
 This patch repairs the oversized gray toolbar editor and collapsed Timeline reported in 12.5.0.
 
+Published to the repository on 2026-10-12 in commit `d065fdc`. The current download and all four add-on version fields identify **12.5.1**. The public ZIP was verified against the recorded checksum; see [package-receipt.json](package-receipt.json).
+
 ## What changed
 
 - After a resize, the toolbar automatically rejoins its adjacent Timeline and recreates a thin row. Added height goes to the native key area. Recovery occurs after the resize and timer update; the editor can briefly expand during the drag.
