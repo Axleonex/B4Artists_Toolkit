@@ -176,6 +176,16 @@
     "title": "Ghost Tool 4.2.7 user guide",
     "pages": 3
   },
-  "published": false,
-  "vendor_branding_found": false
+  "published": true,
+  "vendor_branding_found": false,
+  "publication": {
+    "draft": false,
+    "html_url": "https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.7",
+    "prerelease": false,
+    "published_at": "2026-10-13T02:52:36Z",
+    "tag_name": "ghost-v4.2.7",
+    "target_commitish": "fc57a339fc431781146bcc9c9e1f537220dceadd",
+    "latest": true
+  },
+  "downloaded_assets_match": true
 }
