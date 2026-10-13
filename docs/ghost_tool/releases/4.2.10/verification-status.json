@@ -1,0 +1,49 @@
+{
+  "version": "4.2.10",
+  "status": "BLOCKED",
+  "published": false,
+  "archive": "releases/b4_ghost_tool_v4.2.10.zip",
+  "archive_bytes": 221085,
+  "archive_sha256": "34dac5868c2718c582a0b1d8019fa93741d69abad2fc2382c5623988daa9aca4",
+  "source_archive_match": true,
+  "candidate_manual_pdf": {
+    "path": "docs/ghost_tool/GhostTool_User_Manual.pdf",
+    "bytes": 12321,
+    "sha256": "c6dab02d342072ee7a6a057dc5b916570f93e4fb134ad4e32ac1006963f88915",
+    "pages": 4,
+    "author": "GoingGhost"
+  },
+  "host": "Bforartists 5.2.0, Blender runtime 5.3.0 Alpha",
+  "pure_width_policy_checks": {
+    "status": "PASS",
+    "count": 15
+  },
+  "native_shelf_verification": {
+    "status": "NOT_RUN",
+    "reason": "The Bforartists process timed out during startup before the shelf test script wrote any result or screenshot.",
+    "gui_attempts": [
+      {
+        "timeout_seconds": 240,
+        "log_bytes": 0,
+        "result_written": false
+      },
+      {
+        "timeout_seconds": 240,
+        "log_bytes": 0,
+        "result_written": false
+      }
+    ],
+    "background_start_probe": {
+      "timeout_seconds": 60,
+      "status": "REMAINED_RUNNING_WITHOUT_OUTPUT",
+      "process_stopped": true
+    },
+    "screenshots": []
+  },
+  "previous_layout_measurement": {
+    "ghost_left_shelf_pixels": 132,
+    "open_n_panel_pixels": 220,
+    "source": "Prior native measurement before the 4.2.10 implementation; it is not evidence that the candidate now widens correctly."
+  },
+  "publication_gate": "Run the exact-package native shelf test, inspect its screenshots, then produce the full verification receipt."
+}

@@ -1,6 +1,6 @@
 # Ghost toolbar verification
 
-Historical verification of the initial 4.2.5 source candidate. The toolbar is now packaged as **4.2.9**; see the [current package receipt](../releases/4.2.9/package-receipt.json) for 89 focused tests/checks in native Bforartists and the matching repository ZIP. The original evidence below retains its tested version and checksum.
+Historical verification of the initial 4.2.5 source candidate. The current source candidate is **4.2.10** (unpublished); see its [verification status](../releases/4.2.10/verification-status.json) for the current native startup blocker. The original evidence below retains its tested version and checksum.
 
 Verified on 2026-10-12 against an isolated candidate built from the source. **178 checks/cases passed:** 117 background assertions, 56 native toolbar checks and five native auto-key transform cases. Independent task and final integration reviews approved the change. Source remains **4.2.5**; no release or repository push was performed.
 

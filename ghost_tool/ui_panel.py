@@ -1036,6 +1036,9 @@ def update_display_location(context) -> None:
     """Reveal the selected home in ordinary viewports and schedule tab selection."""
     location = display_location(context)
     _pending_display_tabs.clear()
+    if location == 'TOOLS':
+        from .shelf_width import forget_all
+        forget_all()
     for window, area in _ordinary_viewports(context):
         space = area.spaces.active
         if location == 'SIDEBAR':
