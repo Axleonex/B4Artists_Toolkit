@@ -1,5 +1,5 @@
 {
-  "status": "native compile running; manual acceptance pending",
+  "status": "portable application built; native UI launched; partial runtime qualification; local release assembled",
   "upstream": "https://github.com/Bforartists/Bforartists.git",
   "baseline_tag": "v5.2.0",
   "baseline_commit": "0a1ca45552dba1006ae0fb5c4dd36657622a4e66",
@@ -32,8 +32,8 @@
   "configuration": "Release/Ninja",
   "jobs": 2,
   "configure_status": "success",
-  "compile_status": "running; four-job resource failure resumed at two jobs",
-  "native_manual_acceptance": "pending",
+  "compile_status": "success; CMake install completed and portable executable is present; four-job memory failure recovered at two jobs",
+  "native_manual_acceptance": "partial: fresh native row, representative actions, settled resize at 100%, temporary UI scale 150%, and modal Escape snapshots observed",
   "source_static_spec_review": "pass",
   "source_static_quality_review": "pass",
   "formal_tests_added_or_run": false,
@@ -266,5 +266,26 @@
     "recovery_concurrency": 2,
     "failed_targets_recompiled": true
   },
-  "initial_run": "intentionally interrupted to change concurrency; returned exit0 but no portable directory existed; not a completed build"
+  "initial_run": "intentionally interrupted to change concurrency; returned exit0 but no portable directory existed; not a completed build",
+  "portable_executable_last_write_utc": "2026-10-13T07:22:14.1277709Z",
+  "portable_executable_bytes": 122898944,
+  "portable_executable_sha256": "f6647c50792f1be94ff1473c83cdd19c33702ea6181c2188a0d54175a898587b",
+  "portable_executable": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\portable\\bforartists.exe",
+  "compile_exit_code": 0,
+  "application_build_time_utc": "07:18:44 UTC",
+  "executable_metadata_observation": "GUI title identifies Bforartists 5.2.0; bpy.app.version reports [5, 3, 0]; native row visible in compiled application",
+  "application_build_hash": "f5f550195e22",
+  "application_version": "5.2.0 Release",
+  "application_commit_date_utc": "2026-10-13",
+  "application_build_date_utc": "2026-10-13",
+  "application_commit_time_utc": "05:07 UTC",
+  "application_gui_observed": true,
+  "application_executable_sha256": "f6647c50792f1be94ff1473c83cdd19c33702ea6181c2188a0d54175a898587b",
+  "application_executable_bytes": 122898944,
+  "observed_application_ui_scales": [
+    1.0,
+    1.5
+  ],
+  "application_preferences_autosave_disabled": true,
+  "continuous_in_drag_flicker": "not qualified: screenshots captured after release; watcher samples could not identify an active native border drag"
 }

@@ -1,0 +1,4247 @@
+[
+  {
+    "stage": "fresh-native-row",
+    "utc": "2026-10-13T08:48:31.944014+00:00",
+    "binary": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\portable\\bforartists.exe",
+    "build_hash": "f5f550195e22",
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "config": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\observation-profile\\config",
+    "bforartists_native_property": true,
+    "addon_version": [
+      12,
+      6,
+      0
+    ],
+    "frame": 1,
+    "ui_scale": 1.0,
+    "ui_scale_setting": 1.0,
+    "dpi": 72,
+    "pixel_size": 1.0,
+    "addon_enabled": true,
+    "addon_preference_entry": true,
+    "active_object": null,
+    "quick_actions": [
+      "NUDGE_RIGHT",
+      "B25",
+      "B75",
+      "B50",
+      "SMOOTH",
+      "TRAIL_SHOW",
+      "RIPPLE",
+      "DRAG",
+      "MIRROR_SELECTED",
+      "ENDS",
+      "NUDGE_LEFT",
+      "RANGE",
+      "BAKE_STEP"
+    ],
+    "toolbar_preference": true,
+    "paste_offset": 0.0,
+    "reference_frame": 0,
+    "reference_bookmarks": [],
+    "active_bookmark_index": 0,
+    "timeline_spaces": [
+      {
+        "screen": "Animation",
+        "area_pointer": 1856926610464,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926746016,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Main",
+        "area_pointer": 1856926600480,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926522016,
+        "active": true,
+        "toolbar_visible": true,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926431008,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926377632,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926425376,
+        "active_area_type": "NODE_EDITOR",
+        "space_pointer": 1856926370720,
+        "active": false,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      }
+    ],
+    "objects": [
+      {
+        "name": "Light",
+        "type": "LIGHT",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            -0.29086464643478394,
+            -0.7711008191108704,
+            0.5663931965827942,
+            4.076245307922363
+          ],
+          [
+            0.9551711678504944,
+            -0.1998833566904068,
+            0.21839119493961334,
+            1.0054539442062378
+          ],
+          [
+            -0.05518905818462372,
+            0.6045247316360474,
+            0.7946722507476807,
+            5.903861999511719
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Camera",
+        "type": "CAMERA",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            0.8339634537696838,
+            -0.2560030519962311,
+            0.4888429343700409,
+            5.527342796325684
+          ],
+          [
+            0.5518196821212769,
+            0.38689669966697693,
+            -0.7387868165969849,
+            -8.328495025634766
+          ],
+          [
+            -4.083162608026214e-08,
+            0.885874330997467,
+            0.46392524242401123,
+            5.168280124664307
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      }
+    ],
+    "windows": [
+      {
+        "pointer": 1856926785440,
+        "screen": "Main",
+        "areas": [
+          {
+            "pointer": 1856926604320,
+            "type": "PROPERTIES",
+            "x": 1602,
+            "y": 23,
+            "width": 316,
+            "height": 701,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 698,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 1602,
+                "y": 23,
+                "width": 29,
+                "height": 675
+              },
+              {
+                "type": "WINDOW",
+                "x": 1631,
+                "y": 23,
+                "width": 287,
+                "height": 675
+              }
+            ]
+          },
+          {
+            "pointer": 1856926600736,
+            "type": "OUTLINER",
+            "x": 1602,
+            "y": 727,
+            "width": 316,
+            "height": 227,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 928,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 1602,
+                "y": 727,
+                "width": 316,
+                "height": 201
+              }
+            ]
+          },
+          {
+            "pointer": 1856926600480,
+            "type": "DOPESHEET_EDITOR",
+            "x": 2,
+            "y": 23,
+            "width": 1597,
+            "height": 99,
+            "regions": [
+              {
+                "type": "TOOL_HEADER",
+                "x": 2,
+                "y": 96,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 70,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "FOOTER",
+                "x": 2,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "CHANNELS",
+                "x": 2,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 1598,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 23,
+                "width": 1597,
+                "height": 47
+              }
+            ],
+            "mode": "TIMELINE",
+            "toolbar_visible": true,
+            "toolbar_hidden_by_user": false,
+            "timeline_view": {
+              "width": 1597,
+              "height": 47,
+              "bottom_left": [
+                -9.0,
+                -47.0
+              ],
+              "top_right": [
+                260.1685485839844,
+                1.0217399597167969
+              ]
+            }
+          },
+          {
+            "pointer": 1856926600224,
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 52,
+            "width": 1597,
+            "height": 902,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 928,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 2,
+                "y": 902,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 2,
+                "y": 52,
+                "width": 1597,
+                "height": 75
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 2,
+                "y": 127,
+                "width": 1597,
+                "height": 24
+              },
+              {
+                "type": "TOOLS",
+                "x": 2,
+                "y": 151,
+                "width": 132,
+                "height": 751
+              },
+              {
+                "type": "UI",
+                "x": 1379,
+                "y": 151,
+                "width": 220,
+                "height": 751
+              },
+              {
+                "type": "HUD",
+                "x": 134,
+                "y": 151,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 52,
+                "width": 1597,
+                "height": 902
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "stage": "manual-animation-prepared",
+    "utc": "2026-10-13T08:56:21.054745+00:00",
+    "binary": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\portable\\bforartists.exe",
+    "build_hash": "f5f550195e22",
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "config": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\observation-profile\\config",
+    "bforartists_native_property": true,
+    "addon_version": [
+      12,
+      6,
+      0
+    ],
+    "frame": 10,
+    "ui_scale": 1.0,
+    "ui_scale_setting": 1.0,
+    "dpi": 72,
+    "pixel_size": 1.0,
+    "addon_enabled": true,
+    "addon_preference_entry": true,
+    "active_object": "AA_ObservedCube",
+    "quick_actions": [
+      "NUDGE_RIGHT",
+      "B25",
+      "B75",
+      "B50",
+      "SMOOTH",
+      "TRAIL_SHOW",
+      "RIPPLE",
+      "DRAG",
+      "MIRROR_SELECTED",
+      "ENDS",
+      "NUDGE_LEFT",
+      "RANGE",
+      "BAKE_STEP"
+    ],
+    "toolbar_preference": true,
+    "paste_offset": 0.0,
+    "reference_frame": 0,
+    "reference_bookmarks": [],
+    "active_bookmark_index": 0,
+    "timeline_spaces": [
+      {
+        "screen": "Animation",
+        "area_pointer": 1856926610464,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926746016,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Main",
+        "area_pointer": 1856926600480,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926522016,
+        "active": true,
+        "toolbar_visible": true,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926431008,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926377632,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926425376,
+        "active_area_type": "NODE_EDITOR",
+        "space_pointer": 1856926370720,
+        "active": false,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      }
+    ],
+    "objects": [
+      {
+        "name": "AA_ObservedCube",
+        "type": "MESH",
+        "selected": true,
+        "numeric_properties": {
+          "space": 0.0
+        },
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            1.8422510623931885
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": [
+          {
+            "path": "location",
+            "index": 0,
+            "keys": [
+              {
+                "co": [
+                  1.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -5.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  7.333333492279053,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  20.0,
+                  4.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  13.666666030883789,
+                  4.0
+                ],
+                "handle_right": [
+                  26.66666603088379,
+                  4.0
+                ]
+              },
+              {
+                "co": [
+                  40.0,
+                  1.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  33.33333206176758,
+                  1.0
+                ],
+                "handle_right": [
+                  46.66666793823242,
+                  1.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 1,
+            "keys": [
+              {
+                "co": [
+                  1.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -5.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  7.333333492279053,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  20.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  13.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  26.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  40.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  33.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  46.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 2,
+            "keys": [
+              {
+                "co": [
+                  1.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -5.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  7.333333492279053,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  20.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  13.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  26.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  40.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  33.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  46.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "AA_Reference",
+        "type": "EMPTY",
+        "selected": true,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            6.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            2.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Light",
+        "type": "LIGHT",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            -0.29086464643478394,
+            -0.7711008191108704,
+            0.5663931965827942,
+            4.076245307922363
+          ],
+          [
+            0.9551711678504944,
+            -0.1998833566904068,
+            0.21839119493961334,
+            1.0054539442062378
+          ],
+          [
+            -0.05518905818462372,
+            0.6045247316360474,
+            0.7946722507476807,
+            5.903861999511719
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Camera",
+        "type": "CAMERA",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            0.8339634537696838,
+            -0.2560030519962311,
+            0.4888429343700409,
+            5.527342796325684
+          ],
+          [
+            0.5518196821212769,
+            0.38689669966697693,
+            -0.7387868165969849,
+            -8.328495025634766
+          ],
+          [
+            -4.083162608026214e-08,
+            0.885874330997467,
+            0.46392524242401123,
+            5.168280124664307
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      }
+    ],
+    "windows": [
+      {
+        "pointer": 1856926785440,
+        "screen": "Scripting",
+        "areas": [
+          {
+            "pointer": 1856926423328,
+            "type": "PROPERTIES",
+            "x": 1602,
+            "y": 23,
+            "width": 316,
+            "height": 460,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 457,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 1602,
+                "y": 23,
+                "width": 29,
+                "height": 434
+              },
+              {
+                "type": "WINDOW",
+                "x": 1631,
+                "y": 23,
+                "width": 287,
+                "height": 434
+              }
+            ]
+          },
+          {
+            "pointer": 1856926423072,
+            "type": "OUTLINER",
+            "x": 1602,
+            "y": 717,
+            "width": 316,
+            "height": 229,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 920,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 1602,
+                "y": 717,
+                "width": 316,
+                "height": 203
+              }
+            ]
+          },
+          {
+            "pointer": 1856926422816,
+            "type": "INFO",
+            "x": 2,
+            "y": 23,
+            "width": 559,
+            "height": 149,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 171,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 23,
+                "width": 559,
+                "height": 149
+              }
+            ]
+          },
+          {
+            "pointer": 1856926422560,
+            "type": "TEXT_EDITOR",
+            "x": 564,
+            "y": 23,
+            "width": 1035,
+            "height": 923,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 564,
+                "y": 920,
+                "width": 1035,
+                "height": 26
+              },
+              {
+                "type": "FOOTER",
+                "x": 564,
+                "y": 23,
+                "width": 1035,
+                "height": 26
+              },
+              {
+                "type": "UI",
+                "x": 1598,
+                "y": 49,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 564,
+                "y": 49,
+                "width": 1035,
+                "height": 871
+              }
+            ],
+            "text_name": null,
+            "owned_legacy_strip": false
+          },
+          {
+            "pointer": 1856926422304,
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 562,
+            "width": 559,
+            "height": 384,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 920,
+                "width": 559,
+                "height": 26
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 2,
+                "y": 894,
+                "width": 559,
+                "height": 26
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 2,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 2,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "TOOLS",
+                "x": 2,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 560,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 562,
+                "width": 559,
+                "height": 384
+              }
+            ]
+          },
+          {
+            "pointer": 1856926421792,
+            "type": "CONSOLE",
+            "x": 2,
+            "y": 175,
+            "width": 559,
+            "height": 384,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 533,
+                "width": 559,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 175,
+                "width": 559,
+                "height": 358
+              }
+            ]
+          },
+          {
+            "pointer": 1856926421536,
+            "type": "OUTLINER",
+            "x": 1602,
+            "y": 486,
+            "width": 316,
+            "height": 228,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 688,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 1602,
+                "y": 486,
+                "width": 316,
+                "height": 202
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "stage": "after-native-nudge-copy-pinned",
+    "utc": "2026-10-13T09:03:23.695394+00:00",
+    "binary": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\portable\\bforartists.exe",
+    "build_hash": "f5f550195e22",
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "config": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\observation-profile\\config",
+    "bforartists_native_property": true,
+    "addon_version": [
+      12,
+      6,
+      0
+    ],
+    "frame": 10,
+    "ui_scale": 1.0,
+    "ui_scale_setting": 1.0,
+    "dpi": 72,
+    "pixel_size": 1.0,
+    "addon_enabled": true,
+    "addon_preference_entry": true,
+    "active_object": "AA_ObservedCube",
+    "quick_actions": [
+      "NUDGE_RIGHT",
+      "B25",
+      "B75",
+      "B50",
+      "SMOOTH",
+      "TRAIL_SHOW",
+      "RIPPLE",
+      "DRAG",
+      "MIRROR_SELECTED",
+      "ENDS",
+      "COPY_KEYS",
+      "NUDGE_LEFT",
+      "RANGE",
+      "BAKE_STEP"
+    ],
+    "toolbar_preference": true,
+    "paste_offset": 0.0,
+    "reference_frame": 0,
+    "reference_bookmarks": [],
+    "active_bookmark_index": 0,
+    "timeline_spaces": [
+      {
+        "screen": "Animation",
+        "area_pointer": 1856926610464,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926746016,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Main",
+        "area_pointer": 1856926600480,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926522016,
+        "active": true,
+        "toolbar_visible": true,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926431008,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926377632,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926425376,
+        "active_area_type": "NODE_EDITOR",
+        "space_pointer": 1856926370720,
+        "active": false,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      }
+    ],
+    "objects": [
+      {
+        "name": "AA_ObservedCube",
+        "type": "MESH",
+        "selected": true,
+        "numeric_properties": {
+          "space": 0.0
+        },
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            1.5302523374557495
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": [
+          {
+            "path": "location",
+            "index": 0,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  4.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  4.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  4.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  1.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  1.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  1.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 1,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 2,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "AA_Reference",
+        "type": "EMPTY",
+        "selected": true,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            6.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            2.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Light",
+        "type": "LIGHT",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            -0.29086464643478394,
+            -0.7711008191108704,
+            0.5663931965827942,
+            4.076245307922363
+          ],
+          [
+            0.9551711678504944,
+            -0.1998833566904068,
+            0.21839119493961334,
+            1.0054539442062378
+          ],
+          [
+            -0.05518905818462372,
+            0.6045247316360474,
+            0.7946722507476807,
+            5.903861999511719
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Camera",
+        "type": "CAMERA",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            0.8339634537696838,
+            -0.2560030519962311,
+            0.4888429343700409,
+            5.527342796325684
+          ],
+          [
+            0.5518196821212769,
+            0.38689669966697693,
+            -0.7387868165969849,
+            -8.328495025634766
+          ],
+          [
+            -4.083162608026214e-08,
+            0.885874330997467,
+            0.46392524242401123,
+            5.168280124664307
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      }
+    ],
+    "windows": [
+      {
+        "pointer": 1856926785440,
+        "screen": "Main",
+        "areas": [
+          {
+            "pointer": 1856926604320,
+            "type": "PROPERTIES",
+            "x": 1602,
+            "y": 23,
+            "width": 316,
+            "height": 695,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 692,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 1602,
+                "y": 23,
+                "width": 29,
+                "height": 669
+              },
+              {
+                "type": "WINDOW",
+                "x": 1631,
+                "y": 23,
+                "width": 287,
+                "height": 669
+              }
+            ]
+          },
+          {
+            "pointer": 1856926600736,
+            "type": "OUTLINER",
+            "x": 1602,
+            "y": 721,
+            "width": 316,
+            "height": 225,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 920,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 1602,
+                "y": 721,
+                "width": 316,
+                "height": 199
+              }
+            ]
+          },
+          {
+            "pointer": 1856926600480,
+            "type": "DOPESHEET_EDITOR",
+            "x": 2,
+            "y": 23,
+            "width": 1597,
+            "height": 99,
+            "regions": [
+              {
+                "type": "TOOL_HEADER",
+                "x": 2,
+                "y": 96,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 70,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "FOOTER",
+                "x": 2,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "CHANNELS",
+                "x": 2,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 1598,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 23,
+                "width": 1597,
+                "height": 47
+              }
+            ],
+            "mode": "TIMELINE",
+            "toolbar_visible": true,
+            "toolbar_hidden_by_user": false,
+            "timeline_view": {
+              "width": 1597,
+              "height": 47,
+              "bottom_left": [
+                -9.0,
+                -47.0
+              ],
+              "top_right": [
+                260.1685485839844,
+                1.0217399597167969
+              ]
+            }
+          },
+          {
+            "pointer": 1856926600224,
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 125,
+            "width": 1597,
+            "height": 821,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 920,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 2,
+                "y": 894,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 2,
+                "y": 125,
+                "width": 1597,
+                "height": 75
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 2,
+                "y": 200,
+                "width": 1597,
+                "height": 24
+              },
+              {
+                "type": "TOOLS",
+                "x": 2,
+                "y": 224,
+                "width": 132,
+                "height": 670
+              },
+              {
+                "type": "UI",
+                "x": 1379,
+                "y": 224,
+                "width": 220,
+                "height": 670
+              },
+              {
+                "type": "HUD",
+                "x": 134,
+                "y": 224,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 125,
+                "width": 1597,
+                "height": 821
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "stage": "native-border-drag-samples",
+    "samples": []
+  },
+  {
+    "stage": "native-keys-before-minimum-resize",
+    "utc": "2026-10-13T09:15:07.441063+00:00",
+    "binary": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\portable\\bforartists.exe",
+    "build_hash": "f5f550195e22",
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "config": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\observation-profile\\config",
+    "bforartists_native_property": true,
+    "addon_version": [
+      12,
+      6,
+      0
+    ],
+    "frame": 10,
+    "ui_scale": 1.0,
+    "ui_scale_setting": 1.0,
+    "dpi": 72,
+    "pixel_size": 1.0,
+    "addon_enabled": true,
+    "addon_preference_entry": true,
+    "active_object": "AA_ObservedCube",
+    "quick_actions": [
+      "NUDGE_RIGHT",
+      "B25",
+      "B75",
+      "B50",
+      "SMOOTH",
+      "TRAIL_SHOW",
+      "RIPPLE",
+      "DRAG",
+      "MIRROR_SELECTED",
+      "ENDS",
+      "COPY_KEYS",
+      "NUDGE_LEFT",
+      "RANGE",
+      "BAKE_STEP"
+    ],
+    "toolbar_preference": true,
+    "paste_offset": 0.0,
+    "reference_frame": 0,
+    "reference_bookmarks": [],
+    "active_bookmark_index": 0,
+    "timeline_spaces": [
+      {
+        "screen": "Animation",
+        "area_pointer": 1856926610464,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926746016,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Main",
+        "area_pointer": 1856926600480,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926522016,
+        "active": true,
+        "toolbar_visible": true,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926431008,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926377632,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926425376,
+        "active_area_type": "NODE_EDITOR",
+        "space_pointer": 1856926370720,
+        "active": false,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      }
+    ],
+    "objects": [
+      {
+        "name": "AA_ObservedCube",
+        "type": "MESH",
+        "selected": true,
+        "numeric_properties": {
+          "space": 0.0
+        },
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            1.5302523374557495
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": [
+          {
+            "path": "location",
+            "index": 0,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  4.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  4.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  4.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  1.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  1.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  1.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 1,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 2,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "AA_Reference",
+        "type": "EMPTY",
+        "selected": true,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            6.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            2.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Light",
+        "type": "LIGHT",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            -0.29086464643478394,
+            -0.7711008191108704,
+            0.5663931965827942,
+            4.076245307922363
+          ],
+          [
+            0.9551711678504944,
+            -0.1998833566904068,
+            0.21839119493961334,
+            1.0054539442062378
+          ],
+          [
+            -0.05518905818462372,
+            0.6045247316360474,
+            0.7946722507476807,
+            5.903861999511719
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Camera",
+        "type": "CAMERA",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            0.8339634537696838,
+            -0.2560030519962311,
+            0.4888429343700409,
+            5.527342796325684
+          ],
+          [
+            0.5518196821212769,
+            0.38689669966697693,
+            -0.7387868165969849,
+            -8.328495025634766
+          ],
+          [
+            -4.083162608026214e-08,
+            0.885874330997467,
+            0.46392524242401123,
+            5.168280124664307
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      }
+    ],
+    "windows": [
+      {
+        "pointer": 1856926785440,
+        "screen": "Scripting",
+        "areas": [
+          {
+            "pointer": 1856926423328,
+            "type": "PROPERTIES",
+            "x": 1602,
+            "y": 23,
+            "width": 316,
+            "height": 460,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 457,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 1602,
+                "y": 23,
+                "width": 29,
+                "height": 434
+              },
+              {
+                "type": "WINDOW",
+                "x": 1631,
+                "y": 23,
+                "width": 287,
+                "height": 434
+              }
+            ]
+          },
+          {
+            "pointer": 1856926423072,
+            "type": "OUTLINER",
+            "x": 1602,
+            "y": 717,
+            "width": 316,
+            "height": 229,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 920,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 1602,
+                "y": 717,
+                "width": 316,
+                "height": 203
+              }
+            ]
+          },
+          {
+            "pointer": 1856926422816,
+            "type": "INFO",
+            "x": 2,
+            "y": 23,
+            "width": 559,
+            "height": 149,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 171,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 23,
+                "width": 559,
+                "height": 149
+              }
+            ]
+          },
+          {
+            "pointer": 1856926422560,
+            "type": "TEXT_EDITOR",
+            "x": 564,
+            "y": 23,
+            "width": 1035,
+            "height": 923,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 564,
+                "y": 920,
+                "width": 1035,
+                "height": 26
+              },
+              {
+                "type": "FOOTER",
+                "x": 564,
+                "y": 23,
+                "width": 1035,
+                "height": 26
+              },
+              {
+                "type": "UI",
+                "x": 1598,
+                "y": 49,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 564,
+                "y": 49,
+                "width": 1035,
+                "height": 871
+              }
+            ],
+            "text_name": null,
+            "owned_legacy_strip": false
+          },
+          {
+            "pointer": 1856926422304,
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 562,
+            "width": 559,
+            "height": 384,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 920,
+                "width": 559,
+                "height": 26
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 2,
+                "y": 894,
+                "width": 559,
+                "height": 26
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 2,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 2,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "TOOLS",
+                "x": 2,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 560,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 562,
+                "width": 559,
+                "height": 384
+              }
+            ]
+          },
+          {
+            "pointer": 1856926421792,
+            "type": "CONSOLE",
+            "x": 2,
+            "y": 175,
+            "width": 559,
+            "height": 384,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 533,
+                "width": 559,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 175,
+                "width": 559,
+                "height": 358
+              }
+            ]
+          },
+          {
+            "pointer": 1856926421536,
+            "type": "OUTLINER",
+            "x": 1602,
+            "y": 486,
+            "width": 316,
+            "height": 228,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 688,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 1602,
+                "y": 486,
+                "width": 316,
+                "height": 202
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "stage": "native-border-drag-samples",
+    "samples": [
+      {
+        "monotonic": 58048.711046,
+        "utc": "2026-10-13T09:21:09.852804+00:00",
+        "windows": [
+          {
+            "pointer": 1856926785440,
+            "operators": [
+              "CONSOLE_OT_select_set"
+            ],
+            "operator_details": [
+              {
+                "idname": "CONSOLE_OT_select_set",
+                "rna_type": "Operator"
+              }
+            ],
+            "areas": [
+              {
+                "pointer": 1856926423328,
+                "type": "PROPERTIES",
+                "height": 460,
+                "width": 316,
+                "regions": [
+                  {
+                    "type": "HEADER",
+                    "height": 26
+                  },
+                  {
+                    "type": "NAVIGATION_BAR",
+                    "height": 434
+                  },
+                  {
+                    "type": "WINDOW",
+                    "height": 434
+                  }
+                ]
+              },
+              {
+                "pointer": 1856926423072,
+                "type": "OUTLINER",
+                "height": 229,
+                "width": 316,
+                "regions": [
+                  {
+                    "type": "HEADER",
+                    "height": 26
+                  },
+                  {
+                    "type": "WINDOW",
+                    "height": 203
+                  }
+                ]
+              },
+              {
+                "pointer": 1856926422816,
+                "type": "INFO",
+                "height": 149,
+                "width": 559,
+                "regions": [
+                  {
+                    "type": "HEADER",
+                    "height": 1
+                  },
+                  {
+                    "type": "WINDOW",
+                    "height": 149
+                  }
+                ]
+              },
+              {
+                "pointer": 1856926422560,
+                "type": "TEXT_EDITOR",
+                "height": 923,
+                "width": 1035,
+                "regions": [
+                  {
+                    "type": "HEADER",
+                    "height": 26
+                  },
+                  {
+                    "type": "FOOTER",
+                    "height": 26
+                  },
+                  {
+                    "type": "UI",
+                    "height": 1
+                  },
+                  {
+                    "type": "WINDOW",
+                    "height": 871
+                  }
+                ]
+              },
+              {
+                "pointer": 1856926422304,
+                "type": "VIEW_3D",
+                "height": 384,
+                "width": 559,
+                "regions": [
+                  {
+                    "type": "HEADER",
+                    "height": 26
+                  },
+                  {
+                    "type": "TOOL_HEADER",
+                    "height": 26
+                  },
+                  {
+                    "type": "ASSET_SHELF",
+                    "height": 1
+                  },
+                  {
+                    "type": "ASSET_SHELF_HEADER",
+                    "height": 1
+                  },
+                  {
+                    "type": "TOOLS",
+                    "height": 1
+                  },
+                  {
+                    "type": "UI",
+                    "height": 1
+                  },
+                  {
+                    "type": "WINDOW",
+                    "height": 384
+                  }
+                ]
+              },
+              {
+                "pointer": 1856926421792,
+                "type": "CONSOLE",
+                "height": 384,
+                "width": 559,
+                "regions": [
+                  {
+                    "type": "HEADER",
+                    "height": 26
+                  },
+                  {
+                    "type": "WINDOW",
+                    "height": 358
+                  }
+                ]
+              },
+              {
+                "pointer": 1856926421536,
+                "type": "OUTLINER",
+                "height": 228,
+                "width": 316,
+                "regions": [
+                  {
+                    "type": "HEADER",
+                    "height": 26
+                  },
+                  {
+                    "type": "WINDOW",
+                    "height": 202
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "observation_filter": "All active modal operators; correlate boundary movement with manual input and raw geometry"
+  },
+  {
+    "stage": "native-row-150",
+    "utc": "2026-10-13T09:22:31.668912+00:00",
+    "binary": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\portable\\bforartists.exe",
+    "build_hash": "f5f550195e22",
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "config": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\observation-profile\\config",
+    "bforartists_native_property": true,
+    "addon_version": [
+      12,
+      6,
+      0
+    ],
+    "frame": 10,
+    "ui_scale": 1.5,
+    "ui_scale_setting": 1.5,
+    "dpi": 108,
+    "pixel_size": 1.0,
+    "addon_enabled": true,
+    "addon_preference_entry": true,
+    "active_object": "AA_ObservedCube",
+    "quick_actions": [
+      "NUDGE_RIGHT",
+      "B25",
+      "B75",
+      "B50",
+      "SMOOTH",
+      "TRAIL_SHOW",
+      "RIPPLE",
+      "DRAG",
+      "MIRROR_SELECTED",
+      "ENDS",
+      "COPY_KEYS",
+      "NUDGE_LEFT",
+      "RANGE",
+      "BAKE_STEP"
+    ],
+    "toolbar_preference": true,
+    "paste_offset": 0.0,
+    "reference_frame": 0,
+    "reference_bookmarks": [],
+    "active_bookmark_index": 0,
+    "timeline_spaces": [
+      {
+        "screen": "Animation",
+        "area_pointer": 1856926610464,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926746016,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Main",
+        "area_pointer": 1856926600480,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926522016,
+        "active": true,
+        "toolbar_visible": true,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926431008,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926377632,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926425376,
+        "active_area_type": "NODE_EDITOR",
+        "space_pointer": 1856926370720,
+        "active": false,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      }
+    ],
+    "objects": [
+      {
+        "name": "AA_ObservedCube",
+        "type": "MESH",
+        "selected": true,
+        "numeric_properties": {
+          "space": 0.0
+        },
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            1.5302523374557495
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": [
+          {
+            "path": "location",
+            "index": 0,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  4.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  4.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  4.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  1.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  1.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  1.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 1,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 2,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "AA_Reference",
+        "type": "EMPTY",
+        "selected": true,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            6.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            2.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Light",
+        "type": "LIGHT",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            -0.29086464643478394,
+            -0.7711008191108704,
+            0.5663931965827942,
+            4.076245307922363
+          ],
+          [
+            0.9551711678504944,
+            -0.1998833566904068,
+            0.21839119493961334,
+            1.0054539442062378
+          ],
+          [
+            -0.05518905818462372,
+            0.6045247316360474,
+            0.7946722507476807,
+            5.903861999511719
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Camera",
+        "type": "CAMERA",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            0.8339634537696838,
+            -0.2560030519962311,
+            0.4888429343700409,
+            5.527342796325684
+          ],
+          [
+            0.5518196821212769,
+            0.38689669966697693,
+            -0.7387868165969849,
+            -8.328495025634766
+          ],
+          [
+            -4.083162608026214e-08,
+            0.885874330997467,
+            0.46392524242401123,
+            5.168280124664307
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      }
+    ],
+    "windows": [
+      {
+        "pointer": 1856926785440,
+        "screen": "Scripting",
+        "areas": [
+          {
+            "pointer": 1856926423328,
+            "type": "PROPERTIES",
+            "x": 1603,
+            "y": 35,
+            "width": 314,
+            "height": 438,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1603,
+                "y": 435,
+                "width": 314,
+                "height": 38
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 1603,
+                "y": 35,
+                "width": 44,
+                "height": 400
+              },
+              {
+                "type": "WINDOW",
+                "x": 1647,
+                "y": 35,
+                "width": 270,
+                "height": 400
+              }
+            ]
+          },
+          {
+            "pointer": 1856926423072,
+            "type": "OUTLINER",
+            "x": 1603,
+            "y": 700,
+            "width": 314,
+            "height": 218,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1603,
+                "y": 880,
+                "width": 314,
+                "height": 38
+              },
+              {
+                "type": "WINDOW",
+                "x": 1603,
+                "y": 700,
+                "width": 314,
+                "height": 180
+              }
+            ]
+          },
+          {
+            "pointer": 1856926422816,
+            "type": "INFO",
+            "x": 3,
+            "y": 35,
+            "width": 557,
+            "height": 141,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 3,
+                "y": 175,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 3,
+                "y": 35,
+                "width": 557,
+                "height": 141
+              }
+            ]
+          },
+          {
+            "pointer": 1856926422560,
+            "type": "TEXT_EDITOR",
+            "x": 565,
+            "y": 35,
+            "width": 1033,
+            "height": 883,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 565,
+                "y": 880,
+                "width": 1033,
+                "height": 38
+              },
+              {
+                "type": "FOOTER",
+                "x": 565,
+                "y": 35,
+                "width": 1033,
+                "height": 38
+              },
+              {
+                "type": "UI",
+                "x": 1597,
+                "y": 73,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 565,
+                "y": 73,
+                "width": 1033,
+                "height": 807
+              }
+            ],
+            "text_name": null,
+            "owned_legacy_strip": false
+          },
+          {
+            "pointer": 1856926422304,
+            "type": "VIEW_3D",
+            "x": 3,
+            "y": 551,
+            "width": 557,
+            "height": 367,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 3,
+                "y": 880,
+                "width": 557,
+                "height": 38
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 3,
+                "y": 842,
+                "width": 557,
+                "height": 38
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 3,
+                "y": 551,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 3,
+                "y": 551,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "TOOLS",
+                "x": 3,
+                "y": 551,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 559,
+                "y": 551,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 3,
+                "y": 551,
+                "width": 557,
+                "height": 367
+              }
+            ]
+          },
+          {
+            "pointer": 1856926421792,
+            "type": "CONSOLE",
+            "x": 3,
+            "y": 181,
+            "width": 557,
+            "height": 365,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 3,
+                "y": 508,
+                "width": 557,
+                "height": 38
+              },
+              {
+                "type": "WINDOW",
+                "x": 3,
+                "y": 181,
+                "width": 557,
+                "height": 327
+              }
+            ]
+          },
+          {
+            "pointer": 1856926421536,
+            "type": "OUTLINER",
+            "x": 1603,
+            "y": 478,
+            "width": 314,
+            "height": 217,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1603,
+                "y": 657,
+                "width": 314,
+                "height": 38
+              },
+              {
+                "type": "WINDOW",
+                "x": 1603,
+                "y": 478,
+                "width": 314,
+                "height": 179
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "stage": "native-before-smooth-Esc",
+    "utc": "2026-10-13T09:25:42.089836+00:00",
+    "binary": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\portable\\bforartists.exe",
+    "build_hash": "f5f550195e22",
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "config": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\observation-profile\\config",
+    "bforartists_native_property": true,
+    "addon_version": [
+      12,
+      6,
+      0
+    ],
+    "frame": 10,
+    "ui_scale": 1.5,
+    "ui_scale_setting": 1.5,
+    "dpi": 108,
+    "pixel_size": 1.0,
+    "addon_enabled": true,
+    "addon_preference_entry": true,
+    "active_object": "AA_ObservedCube",
+    "quick_actions": [
+      "NUDGE_RIGHT",
+      "B25",
+      "B75",
+      "B50",
+      "SMOOTH",
+      "TRAIL_SHOW",
+      "RIPPLE",
+      "DRAG",
+      "MIRROR_SELECTED",
+      "ENDS",
+      "COPY_KEYS",
+      "NUDGE_LEFT",
+      "RANGE",
+      "BAKE_STEP"
+    ],
+    "toolbar_preference": true,
+    "paste_offset": 0.0,
+    "reference_frame": 0,
+    "reference_bookmarks": [],
+    "active_bookmark_index": 0,
+    "timeline_spaces": [
+      {
+        "screen": "Animation",
+        "area_pointer": 1856926610464,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926746016,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Main",
+        "area_pointer": 1856926600480,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926522016,
+        "active": true,
+        "toolbar_visible": true,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926431008,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926377632,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926425376,
+        "active_area_type": "NODE_EDITOR",
+        "space_pointer": 1856926370720,
+        "active": false,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      }
+    ],
+    "objects": [
+      {
+        "name": "AA_ObservedCube",
+        "type": "MESH",
+        "selected": true,
+        "numeric_properties": {
+          "space": 0.0
+        },
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            1.5302523374557495
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": [
+          {
+            "path": "location",
+            "index": 0,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  4.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  4.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  4.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  1.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  1.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  1.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 1,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 2,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "AA_Reference",
+        "type": "EMPTY",
+        "selected": true,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            6.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            2.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Light",
+        "type": "LIGHT",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            -0.29086464643478394,
+            -0.7711008191108704,
+            0.5663931965827942,
+            4.076245307922363
+          ],
+          [
+            0.9551711678504944,
+            -0.1998833566904068,
+            0.21839119493961334,
+            1.0054539442062378
+          ],
+          [
+            -0.05518905818462372,
+            0.6045247316360474,
+            0.7946722507476807,
+            5.903861999511719
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Camera",
+        "type": "CAMERA",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            0.8339634537696838,
+            -0.2560030519962311,
+            0.4888429343700409,
+            5.527342796325684
+          ],
+          [
+            0.5518196821212769,
+            0.38689669966697693,
+            -0.7387868165969849,
+            -8.328495025634766
+          ],
+          [
+            -4.083162608026214e-08,
+            0.885874330997467,
+            0.46392524242401123,
+            5.168280124664307
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      }
+    ],
+    "windows": [
+      {
+        "pointer": 1856926785440,
+        "screen": "Scripting",
+        "areas": [
+          {
+            "pointer": 1856926423328,
+            "type": "PROPERTIES",
+            "x": 1603,
+            "y": 35,
+            "width": 314,
+            "height": 438,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1603,
+                "y": 435,
+                "width": 314,
+                "height": 38
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 1603,
+                "y": 35,
+                "width": 44,
+                "height": 400
+              },
+              {
+                "type": "WINDOW",
+                "x": 1647,
+                "y": 35,
+                "width": 270,
+                "height": 400
+              }
+            ]
+          },
+          {
+            "pointer": 1856926423072,
+            "type": "OUTLINER",
+            "x": 1603,
+            "y": 700,
+            "width": 314,
+            "height": 218,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1603,
+                "y": 880,
+                "width": 314,
+                "height": 38
+              },
+              {
+                "type": "WINDOW",
+                "x": 1603,
+                "y": 700,
+                "width": 314,
+                "height": 180
+              }
+            ]
+          },
+          {
+            "pointer": 1856926422816,
+            "type": "INFO",
+            "x": 3,
+            "y": 35,
+            "width": 557,
+            "height": 141,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 3,
+                "y": 175,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 3,
+                "y": 35,
+                "width": 557,
+                "height": 141
+              }
+            ]
+          },
+          {
+            "pointer": 1856926422560,
+            "type": "TEXT_EDITOR",
+            "x": 565,
+            "y": 35,
+            "width": 1033,
+            "height": 883,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 565,
+                "y": 880,
+                "width": 1033,
+                "height": 38
+              },
+              {
+                "type": "FOOTER",
+                "x": 565,
+                "y": 35,
+                "width": 1033,
+                "height": 38
+              },
+              {
+                "type": "UI",
+                "x": 1597,
+                "y": 73,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 565,
+                "y": 73,
+                "width": 1033,
+                "height": 807
+              }
+            ],
+            "text_name": null,
+            "owned_legacy_strip": false
+          },
+          {
+            "pointer": 1856926422304,
+            "type": "VIEW_3D",
+            "x": 3,
+            "y": 551,
+            "width": 557,
+            "height": 367,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 3,
+                "y": 880,
+                "width": 557,
+                "height": 38
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 3,
+                "y": 842,
+                "width": 557,
+                "height": 38
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 3,
+                "y": 551,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 3,
+                "y": 551,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "TOOLS",
+                "x": 3,
+                "y": 551,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 559,
+                "y": 551,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 3,
+                "y": 551,
+                "width": 557,
+                "height": 367
+              }
+            ]
+          },
+          {
+            "pointer": 1856926421792,
+            "type": "CONSOLE",
+            "x": 3,
+            "y": 181,
+            "width": 557,
+            "height": 365,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 3,
+                "y": 508,
+                "width": 557,
+                "height": 38
+              },
+              {
+                "type": "WINDOW",
+                "x": 3,
+                "y": 181,
+                "width": 557,
+                "height": 327
+              }
+            ]
+          },
+          {
+            "pointer": 1856926421536,
+            "type": "OUTLINER",
+            "x": 1603,
+            "y": 478,
+            "width": 314,
+            "height": 217,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1603,
+                "y": 657,
+                "width": 314,
+                "height": 38
+              },
+              {
+                "type": "WINDOW",
+                "x": 1603,
+                "y": 478,
+                "width": 314,
+                "height": 179
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "stage": "native-after-smooth-Esc-scale-restored",
+    "utc": "2026-10-13T09:29:35.314474+00:00",
+    "binary": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\portable\\bforartists.exe",
+    "build_hash": "f5f550195e22",
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "config": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\observation-profile\\config",
+    "bforartists_native_property": true,
+    "addon_version": [
+      12,
+      6,
+      0
+    ],
+    "frame": 10,
+    "ui_scale": 1.0,
+    "ui_scale_setting": 1.0,
+    "dpi": 72,
+    "pixel_size": 1.0,
+    "addon_enabled": true,
+    "addon_preference_entry": true,
+    "active_object": "AA_ObservedCube",
+    "quick_actions": [
+      "NUDGE_RIGHT",
+      "B25",
+      "B75",
+      "B50",
+      "SMOOTH",
+      "TRAIL_SHOW",
+      "RIPPLE",
+      "DRAG",
+      "MIRROR_SELECTED",
+      "ENDS",
+      "COPY_KEYS",
+      "NUDGE_LEFT",
+      "RANGE",
+      "BAKE_STEP"
+    ],
+    "toolbar_preference": true,
+    "paste_offset": 0.0,
+    "reference_frame": 0,
+    "reference_bookmarks": [],
+    "active_bookmark_index": 0,
+    "timeline_spaces": [
+      {
+        "screen": "Animation",
+        "area_pointer": 1856926610464,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926746016,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Main",
+        "area_pointer": 1856926600480,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926522016,
+        "active": true,
+        "toolbar_visible": true,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926431008,
+        "active_area_type": "DOPESHEET_EDITOR",
+        "space_pointer": 1856926377632,
+        "active": true,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      },
+      {
+        "screen": "Nodes",
+        "area_pointer": 1856926425376,
+        "active_area_type": "NODE_EDITOR",
+        "space_pointer": 1856926370720,
+        "active": false,
+        "toolbar_visible": false,
+        "toolbar_hidden_by_user": false
+      }
+    ],
+    "objects": [
+      {
+        "name": "AA_ObservedCube",
+        "type": "MESH",
+        "selected": true,
+        "numeric_properties": {
+          "space": 0.0
+        },
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            1.5302523374557495
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": [
+          {
+            "path": "location",
+            "index": 0,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  4.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  4.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  4.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  1.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  1.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  1.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 1,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          },
+          {
+            "path": "location",
+            "index": 2,
+            "keys": [
+              {
+                "co": [
+                  2.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  -4.333333492279053,
+                  0.0
+                ],
+                "handle_right": [
+                  8.333333969116211,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  21.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  14.666666030883789,
+                  0.0
+                ],
+                "handle_right": [
+                  27.66666603088379,
+                  0.0
+                ]
+              },
+              {
+                "co": [
+                  41.0,
+                  0.0
+                ],
+                "type": "KEYFRAME",
+                "selected": true,
+                "interpolation": "BEZIER",
+                "handle_left": [
+                  34.33333206176758,
+                  0.0
+                ],
+                "handle_right": [
+                  47.66666793823242,
+                  0.0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "AA_Reference",
+        "type": "EMPTY",
+        "selected": true,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            6.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            2.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Light",
+        "type": "LIGHT",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            -0.29086464643478394,
+            -0.7711008191108704,
+            0.5663931965827942,
+            4.076245307922363
+          ],
+          [
+            0.9551711678504944,
+            -0.1998833566904068,
+            0.21839119493961334,
+            1.0054539442062378
+          ],
+          [
+            -0.05518905818462372,
+            0.6045247316360474,
+            0.7946722507476807,
+            5.903861999511719
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      },
+      {
+        "name": "Camera",
+        "type": "CAMERA",
+        "selected": false,
+        "numeric_properties": {},
+        "matrix_world": [
+          [
+            0.8339634537696838,
+            -0.2560030519962311,
+            0.4888429343700409,
+            5.527342796325684
+          ],
+          [
+            0.5518196821212769,
+            0.38689669966697693,
+            -0.7387868165969849,
+            -8.328495025634766
+          ],
+          [
+            -4.083162608026214e-08,
+            0.885874330997467,
+            0.46392524242401123,
+            5.168280124664307
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "curves": []
+      }
+    ],
+    "windows": [
+      {
+        "pointer": 1856926785440,
+        "screen": "Scripting",
+        "areas": [
+          {
+            "pointer": 1856926423328,
+            "type": "PROPERTIES",
+            "x": 1602,
+            "y": 23,
+            "width": 316,
+            "height": 460,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 457,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 1602,
+                "y": 23,
+                "width": 29,
+                "height": 434
+              },
+              {
+                "type": "WINDOW",
+                "x": 1631,
+                "y": 23,
+                "width": 287,
+                "height": 434
+              }
+            ]
+          },
+          {
+            "pointer": 1856926423072,
+            "type": "OUTLINER",
+            "x": 1602,
+            "y": 717,
+            "width": 316,
+            "height": 229,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 920,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 1602,
+                "y": 717,
+                "width": 316,
+                "height": 203
+              }
+            ]
+          },
+          {
+            "pointer": 1856926422816,
+            "type": "INFO",
+            "x": 2,
+            "y": 23,
+            "width": 559,
+            "height": 149,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 171,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 23,
+                "width": 559,
+                "height": 149
+              }
+            ]
+          },
+          {
+            "pointer": 1856926422560,
+            "type": "TEXT_EDITOR",
+            "x": 564,
+            "y": 23,
+            "width": 1035,
+            "height": 923,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 564,
+                "y": 920,
+                "width": 1035,
+                "height": 26
+              },
+              {
+                "type": "FOOTER",
+                "x": 564,
+                "y": 23,
+                "width": 1035,
+                "height": 26
+              },
+              {
+                "type": "UI",
+                "x": 1598,
+                "y": 49,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 564,
+                "y": 49,
+                "width": 1035,
+                "height": 871
+              }
+            ],
+            "text_name": null,
+            "owned_legacy_strip": false
+          },
+          {
+            "pointer": 1856926422304,
+            "type": "VIEW_3D",
+            "x": 2,
+            "y": 562,
+            "width": 559,
+            "height": 384,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 920,
+                "width": 559,
+                "height": 26
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 2,
+                "y": 894,
+                "width": 559,
+                "height": 26
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 2,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 2,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "TOOLS",
+                "x": 2,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 560,
+                "y": 562,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 562,
+                "width": 559,
+                "height": 384
+              }
+            ]
+          },
+          {
+            "pointer": 1856926421792,
+            "type": "CONSOLE",
+            "x": 2,
+            "y": 175,
+            "width": 559,
+            "height": 384,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 533,
+                "width": 559,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 175,
+                "width": 559,
+                "height": 358
+              }
+            ]
+          },
+          {
+            "pointer": 1856926421536,
+            "type": "OUTLINER",
+            "x": 1602,
+            "y": 486,
+            "width": 316,
+            "height": 228,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 688,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 1602,
+                "y": 486,
+                "width": 316,
+                "height": 202
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

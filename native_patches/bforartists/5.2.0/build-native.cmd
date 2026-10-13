@@ -46,5 +46,13 @@ set "PATH=%AA_NINJA%;%PATH%"
 if errorlevel 1 exit /b 1
 "%AA_CMAKE%" --build "%AA_BUILD%" --target install --parallel %AA_JOBS%
 if errorlevel 1 exit /b 1
+if not exist "%AA_OUTPUT%\bforartists.exe" (
+  echo Build returned success without an installed Bforartists executable.
+  exit /b 1
+)
+if not exist "%AA_OUTPUT%\bforartists.shared\bforartists.shared.manifest" (
+  echo Build returned success without the installed runtime manifest.
+  exit /b 1
+)
 echo Portable application installed to %AA_OUTPUT%
 exit /b 0
