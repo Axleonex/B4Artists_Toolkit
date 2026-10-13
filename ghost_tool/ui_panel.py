@@ -1363,16 +1363,16 @@ def _draw_graph_header_extension(self, context: bpy.types.Context) -> None:
 # ║  SECTION 6 — 3D VIEWPORT HEADER EXTENSION                             ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 
-def _draw_viewport_header_menu(self, context: bpy.types.Context) -> None:
-    """Ghost on/off toggle and the "Ghost Tool" dropdown, after the Pose menu."""
-    scene = context.scene
+def _draw_viewport_view_menu(self, context: bpy.types.Context) -> None:
+    """Recover hidden Ghost controls without duplicating the main header row."""
     if not _main_home(context, 'TOOLBAR'):
         return
-    settings = scene.ghost_tool
-    row = self.layout.row(align=True)
-    row.prop(settings, "is_active", text="",
-             icon='GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED', toggle=True)
-    row.popover(panel="GHOST_PT_header_menu", text="Ghost Tool")
+    native_visible = getattr(getattr(context, 'space_data', None), 'show_region_tool_header', True)
+    if toolbar_visible(context) and native_visible:
+        return
+    self.layout.separator()
+    self.layout.operator('ghost_tool.set_toolbar_visibility',
+                         text='Show Ghost Toolbar', icon='GHOST_ENABLED').show = True
 
 
 def _toolbar_tier(context):
@@ -1524,14 +1524,14 @@ def register() -> None:
     except Exception as exc:
         warn(f"Could not append to Graph Editor header: {exc}")
 
-    # 3D Viewport header: toggle + "Ghost Tool" dropdown after the Pose menu
+    # Recovery stays in View; the main header no longer duplicates the row below.
     try:
-        bpy.types.VIEW3D_MT_editor_menus.append(_draw_viewport_header_menu)
+        bpy.types.VIEW3D_MT_view.append(_draw_viewport_view_menu)
         _header_appends.append(
-            (bpy.types.VIEW3D_MT_editor_menus, _draw_viewport_header_menu)
+            (bpy.types.VIEW3D_MT_view, _draw_viewport_view_menu)
         )
     except Exception as exc:
-        warn(f"Could not append to 3D Viewport header: {exc}")
+        warn(f"Could not append Ghost toolbar recovery to View: {exc}")
 
     try:
         bpy.types.VIEW3D_HT_tool_header.append(_draw_viewport_tool_header)
