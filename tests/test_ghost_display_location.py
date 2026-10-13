@@ -135,22 +135,30 @@ class DisplayLocation(unittest.TestCase):
         with patch('ghost_tool.settings_editor.is_editor', return_value=True):
             self.assertFalse(ui.GHOST_PT_sidebar.poll(context))
 
-    def test_header_entry_is_hidden_for_side_home(self):
+    def test_visible_toolbar_and_side_homes_have_no_view_recovery_duplicate(self):
         for location in ('HEADER', 'TOOLBAR', 'SIDEBAR', 'TOOLS'):
-            layout = NS(row=lambda **kw: NS(prop=lambda *a, **kw: None,
-                           popover=lambda **kw: entries.append(kw['panel'])))
-            entries = []
+            layout = HeaderLayout()
             with patch.object(ui, 'supports_tool_shelf', return_value=True):
-                entries.clear()
-                ui._draw_viewport_header_menu(NS(layout=layout), context_for(location))
-            self.assertEqual(entries, ['GHOST_PT_header_menu'] if location in {'HEADER', 'TOOLBAR'} else [])
+                ui._draw_viewport_view_menu(NS(layout=layout), context_for(location))
+            self.assertFalse(layout.calls)
+
+    def test_view_recovery_is_available_for_both_hidden_states(self):
+        for ghost_visible, native_visible in ((False, True), (True, False), (False, False)):
+            context = context_for('TOOLBAR', visible=ghost_visible)
+            context.space_data.show_region_tool_header = native_visible
+            layout = HeaderLayout()
+            ui._draw_viewport_view_menu(NS(layout=layout), context)
+            self.assertEqual([c[1] for c in layout.calls if c[0] == 'op'],
+                             ['ghost_tool.set_toolbar_visibility'])
+            self.assertIn('Show Ghost Toolbar', [c[2] for c in layout.calls if c[0] == 'op'])
+            self.assertEqual(context.space_data.show_region_tool_header, native_visible)
 
     def test_toolbar_recovery_excludes_legacy_windows(self):
         context = context_for('TOOLBAR')
         ui._ghost_windows.add(context.window.as_pointer())
         self.assertFalse(ui.GHOST_PT_header_menu.poll(context))
         layout = HeaderLayout()
-        ui._draw_viewport_header_menu(NS(layout=layout), context)
+        ui._draw_viewport_view_menu(NS(layout=layout), context)
         self.assertFalse(layout.calls)
         ui._ghost_windows.clear()
         with patch('ghost_tool.settings_editor.is_editor', return_value=True):
@@ -193,7 +201,7 @@ class DisplayLocation(unittest.TestCase):
         self.assertFalse(space.show_region_tool_header)
         self.assertTrue(redraws)
         context.preferences.addons['ghost_tool'].preferences.show_toolbar = True
-        ui._draw_viewport_header_menu(NS(layout=HeaderLayout()), context)
+        ui._draw_viewport_view_menu(NS(layout=HeaderLayout()), context)
         self.assertFalse(space.show_region_tool_header)
         self.assertTrue(ui.GHOST_PT_header_menu.poll(context))
 

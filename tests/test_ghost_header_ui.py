@@ -94,7 +94,7 @@ class GhostHeaderUI(unittest.TestCase):
         gd.GhostStore.get(self.scene).clear()
 
     # -------------------------------------------------------------- layout
-    def test_optional_sidebar_and_default_header_menu_present(self):
+    def test_optional_sidebar_and_toolbar_preserved_without_duplicate_header(self):
         ours = {c.__name__: c for c in _walk(bpy.types.Panel)
                 if (c.__module__ or "").startswith("ghost_tool") and getattr(c, "is_registered", False)}
         sidebar = [n for n, c in ours.items() if c.bl_space_type == 'VIEW_3D' and c.bl_region_type == 'UI']
@@ -104,7 +104,9 @@ class GhostHeaderUI(unittest.TestCase):
         self.assertIn("GHOST_PT_header_menu", ours)
         self.assertEqual(ours["GHOST_PT_header_menu"].bl_region_type, 'HEADER')
         draws = getattr(bpy.types.VIEW3D_MT_editor_menus.draw, "_draw_funcs", [])
-        self.assertIn(ui_panel._draw_viewport_header_menu, draws)
+        self.assertFalse(any(getattr(f, '__module__', '') == ui_panel.__name__ for f in draws))
+        view_draws = getattr(bpy.types.VIEW3D_MT_view.draw, "_draw_funcs", [])
+        self.assertIn(ui_panel._draw_viewport_view_menu, view_draws)
         self.assertTrue(hasattr(bpy.ops.ghost_tool, "open_window"))
         self.assertEqual([s[1] for s in ui_panel.GHOST_SECTIONS],
                          ["Show Ghosts", "Onion Skin", "Motion Paths", "Edit Motion", "Compare", "Physics",
