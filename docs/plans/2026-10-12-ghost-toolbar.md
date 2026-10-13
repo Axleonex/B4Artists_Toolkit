@@ -1,6 +1,6 @@
 # Ghost Toolbar Implementation Plan
 
-Historical implementation plan. The toolbar was merged as commit `9ee8840` and initially packaged as 4.2.6. The current release is **4.2.7**, with the toolbar visible by default and migration from the retired Top Header setting. See [4.2.7 release notes](../ghost_tool/releases/4.2.7/RELEASE-NOTES.md). Original implementation constraints below describe the approved scope at that time.
+Historical implementation plan. The toolbar was merged as commit `9ee8840` and initially packaged as 4.2.6. The current release is **4.2.8**, with the toolbar visible by default and migration from the retired Top Header setting. See [4.2.8 release notes](../ghost_tool/releases/4.2.8/RELEASE-NOTES.md). Original implementation constraints below describe the approved scope at that time.
 
 > **For the executing agent:** Use the subagent-driven-development skill to implement this plan task-by-task. The owner approved implementation on 2026-10-12; no repeated design approval is needed.
 
