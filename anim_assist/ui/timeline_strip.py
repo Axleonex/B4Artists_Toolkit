@@ -21,6 +21,7 @@ _MARKER = "animassist_timeline_toolbar"
 _seen = set()
 _owned = set()
 _migration_attempted = set()
+_pending_user_action = set()
 _registered = False
 _force_reconcile = False
 
@@ -544,6 +545,10 @@ def reconcile_preferences():
     """Explicit preference changes may show/hide; ordinary resizing never does."""
     global _force_reconcile
     _force_reconcile = True
+    # Inactive workspace Timelines receive this explicit choice when opened,
+    # while ordinary workspace switching still respects their native hide flag.
+    _pending_user_action.update(area.spaces.active.as_pointer()
+        for screen in bpy.data.screens for area in screen.areas if is_timeline(area))
 
 
 @persistent
@@ -552,6 +557,7 @@ def _load_post(_unused):
     _seen.clear()
     _owned.clear()
     _migration_attempted.clear()
+    _pending_user_action.clear()
     # Saved explicit native hiding is honored. Only an actual preference change
     # is an instruction to reveal an already hidden row.
     _force_reconcile = False
@@ -569,6 +575,7 @@ def _sync():
                 for area in screen.areas if is_timeline(area)}
         _seen.intersection_update(live)
         _owned.intersection_update(live)
+        _pending_user_action.intersection_update(live)
         for window in bpy.context.window_manager.windows:
             screen = window.screen
             if (not screen.is_temporary and not screen.show_fullscreen
@@ -581,20 +588,22 @@ def _sync():
                 if area.width == 0 or area.height == 0:
                     continue  # Wait for initial native geometry, not a resize repair.
                 pointer = area.spaces.active.as_pointer()
-                if pointer in _seen and not force:
+                user_action = force or pointer in _pending_user_action
+                if pointer in _seen and not user_action:
                     continue
                 _seen.add(pointer)
+                _pending_user_action.discard(pointer)
                 if not native_available():
                     area.tag_redraw()
                     continue
                 _owned.add(pointer)
-                if area.spaces.active.timeline_toolbar_hidden_by_user and not force:
+                if area.spaces.active.timeline_toolbar_hidden_by_user and not user_action:
                     continue
                 try:
                     with bpy.context.temp_override(window=window, screen=screen, area=area,
                                                    region=_window_region(area)):
                         result = bpy.ops.screen.timeline_toolbar_set(
-                            enabled=_enabled(), user_action=force)
+                            enabled=_enabled(), user_action=user_action)
                     if "FINISHED" not in result:
                         _log.warning("Native Timeline toolbar could not change visibility")
                 except (RuntimeError, ReferenceError, StopIteration) as exc:
@@ -646,6 +655,7 @@ def unregister():
     _seen.clear()
     _owned.clear()
     _migration_attempted.clear()
+    _pending_user_action.clear()
     _force_reconcile = False
     for cls in reversed(_settings_classes + _menus):
         bpy.utils.unregister_class(cls)
