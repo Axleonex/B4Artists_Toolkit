@@ -22,6 +22,7 @@ _seen = set()
 _owned = set()
 _migration_attempted = set()
 _legacy_candidates = set()
+_capture_pending = False
 _pending_user_action = set()
 _registered = False
 _force_reconcile = False
@@ -519,10 +520,14 @@ def _legacy_target(screen, strip):
 
 def _capture_legacy_candidates():
     """Only editors present on enable/load are eligible for migration."""
+    screens = getattr(bpy.data, "screens", None)
+    if screens is None:
+        return False  # addon_utils.enable supplies _RestrictData during register.
     _legacy_candidates.clear()
     _migration_attempted.clear()
-    _legacy_candidates.update(area.as_pointer() for screen in bpy.data.screens
+    _legacy_candidates.update(area.as_pointer() for screen in screens
                               for area in screen.areas if is_strip(area))
+    return True
 
 
 def _migrate_legacy(window, screen):
@@ -560,18 +565,21 @@ def reconcile_preferences():
     """Explicit preference changes may show/hide; ordinary resizing never does."""
     global _force_reconcile
     _force_reconcile = True
+    screens = getattr(bpy.data, "screens", None)
+    if screens is None:
+        return  # The first unrestricted lifecycle callback queues the choice.
     # Inactive workspace Timelines receive this explicit choice when opened,
     # while ordinary workspace switching still respects their native hide flag.
     _pending_user_action.update(area.spaces.active.as_pointer()
-        for screen in bpy.data.screens for area in screen.areas if is_timeline(area))
+        for screen in screens for area in screen.areas if is_timeline(area))
 
 
 @persistent
 def _load_post(_unused):
-    global _force_reconcile
+    global _force_reconcile, _capture_pending
     _seen.clear()
     _owned.clear()
-    _capture_legacy_candidates()
+    _capture_pending = True
     _pending_user_action.clear()
     # Saved explicit native hiding is honored. Only an actual preference change
     # is an instruction to reveal an already hidden row.
@@ -580,14 +588,23 @@ def _load_post(_unused):
 
 def _sync():
     """Observe lifecycle only. Never enforce geometry or reverse a manual hide."""
-    global _force_reconcile
+    global _force_reconcile, _capture_pending
     if not _registered:
         return None
+    screens = getattr(bpy.data, "screens", None)
+    if screens is None:
+        return 1.0
+    if _capture_pending:
+        if not _capture_legacy_candidates():
+            return 1.0
+        _capture_pending = False
     force = _force_reconcile
     _force_reconcile = False
     try:
-        live = {area.spaces.active.as_pointer() for screen in bpy.data.screens
+        live = {area.spaces.active.as_pointer() for screen in screens
                 for area in screen.areas if is_timeline(area)}
+        if force:
+            _pending_user_action.update(live)
         _seen.intersection_update(live)
         _owned.intersection_update(live)
         _pending_user_action.intersection_update(live)
@@ -629,13 +646,15 @@ def _sync():
 
 
 def register():
-    global _registered
+    global _registered, _capture_pending
     bpy.utils.register_class(ANIMASSIST_OT_timeline_tool)
     for cls in _settings_classes + _menus:
         bpy.utils.register_class(cls)
     if native_available():
         bpy.utils.register_class(ANIMASSIST_HT_timeline_tools)
-    _capture_legacy_candidates()
+    # Registration runs under restricted data/context. Capture legacy editors
+    # only in the first unrestricted callback after enable/load.
+    _capture_pending = True
     _registered = True
     if _load_post not in bpy.app.handlers.load_post:
         bpy.app.handlers.load_post.append(_load_post)
@@ -643,37 +662,63 @@ def register():
         bpy.app.timers.register(_sync, first_interval=0.1, persistent=True)
 
 
+def _hide_native_rows():
+    manager = getattr(bpy.context, "window_manager", None)
+    windows = list(getattr(manager, "windows", ()))
+    screens = getattr(bpy.data, "screens", None)
+    if not windows or screens is None:
+        return
+    ordinary = next((window for window in windows
+                     if not window.screen.is_temporary and not window.screen.show_fullscreen), None)
+    for screen in screens:
+        owner = next((window for window in windows if window.screen == screen), None)
+        # Active windows use their own implicit screen, including maximized
+        # editors. Only ordinary inactive workspaces receive a screen override.
+        if owner is None and (ordinary is None or screen.is_temporary or screen.show_fullscreen):
+            continue
+        for area in screen.areas:
+            if not (is_timeline(area) and (area.spaces.active.as_pointer() in _owned
+                    or area.spaces.active.show_region_tool_header)):
+                continue
+            try:
+                override = {"window": owner or ordinary, "area": area,
+                            "region": _window_region(area)}
+                if owner is None:
+                    override["screen"] = screen
+                with bpy.context.temp_override(**override):
+                    bpy.ops.screen.timeline_toolbar_set(enabled=False, user_action=False)
+                area.tag_redraw()
+            except (RuntimeError, ReferenceError, StopIteration, TypeError) as exc:
+                _log.warning("Native Timeline toolbar could not be hidden: %s", exc)
+
+
 def unregister():
-    global _registered, _force_reconcile
+    global _registered, _force_reconcile, _capture_pending
     _registered = False
-    if bpy.app.timers.is_registered(_sync):
-        bpy.app.timers.unregister(_sync)
-    if _load_post in bpy.app.handlers.load_post:
-        bpy.app.handlers.load_post.remove(_load_post)
-    if native_available():
-        windows = list(bpy.context.window_manager.windows)
-        if windows:
-            for screen in bpy.data.screens:
-                for area in screen.areas:
-                    if (is_timeline(area) and (area.spaces.active.as_pointer() in _owned
-                            or area.spaces.active.show_region_tool_header)):
-                        # Hide the provider without growing/shrinking areas. All
-                        # inactive screens are included; no orphan blank row.
-                        try:
-                            with bpy.context.temp_override(window=windows[0], screen=screen,
-                                    area=area, region=_window_region(area)):
-                                bpy.ops.screen.timeline_toolbar_set(enabled=False, user_action=False)
-                            area.tag_redraw()
-                        except (RuntimeError, ReferenceError, StopIteration) as exc:
-                            _log.warning("Native Timeline toolbar could not be hidden: %s", exc)
-        if getattr(ANIMASSIST_HT_timeline_tools, "is_registered", False):
-            bpy.utils.unregister_class(ANIMASSIST_HT_timeline_tools)
-    _seen.clear()
-    _owned.clear()
-    _migration_attempted.clear()
-    _legacy_candidates.clear()
-    _pending_user_action.clear()
-    _force_reconcile = False
-    for cls in reversed(_settings_classes + _menus):
-        bpy.utils.unregister_class(cls)
-    bpy.utils.unregister_class(ANIMASSIST_OT_timeline_tool)
+    try:
+        if bpy.app.timers.is_registered(_sync):
+            bpy.app.timers.unregister(_sync)
+        if _load_post in bpy.app.handlers.load_post:
+            bpy.app.handlers.load_post.remove(_load_post)
+        if native_available():
+            _hide_native_rows()
+    except (RuntimeError, ReferenceError, AttributeError, TypeError) as exc:
+        _log.warning("Native Timeline toolbar cleanup context unavailable: %s", exc)
+    finally:
+        # A rejected window/screen override must never leave operators, menus,
+        # panels or the Header registered and break the next enable operation.
+        _seen.clear()
+        _owned.clear()
+        _migration_attempted.clear()
+        _legacy_candidates.clear()
+        _pending_user_action.clear()
+        _force_reconcile = False
+        _capture_pending = False
+        classes = [ANIMASSIST_HT_timeline_tools, *reversed(_settings_classes + _menus),
+                   ANIMASSIST_OT_timeline_tool]
+        for cls in classes:
+            if getattr(cls, "is_registered", False):
+                try:
+                    bpy.utils.unregister_class(cls)
+                except (RuntimeError, ReferenceError, TypeError) as exc:
+                    _log.warning("Could not unregister Timeline toolbar class %s: %s", cls.__name__, exc)
