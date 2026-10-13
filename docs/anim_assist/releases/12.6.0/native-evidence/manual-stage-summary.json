@@ -1,0 +1,43 @@
+{
+  "qualification": "partial manual native UI observation",
+  "build_hash": "f5f550195e22",
+  "addon_version": "12.6.0",
+  "observed": [
+    "Installed genuine native binary and exact staged release addon; row visible on fresh startup in the original Timeline without reveal dragging.",
+    "Direct +1 frame action moved selected keys from 1/20/40 to 2/21/41.",
+    "Search found Copy Selected Keys with Handles; pin added direct COPY access; direct invocation reported nine copied keys.",
+    "Tween options displayed masks, mode and inbetween count; 50 percent tooltip explained the previous anchor when an existing playhead key is present and surrounding anchors on an empty frame.",
+    "Settled native Timeline expansion and minimum-height shrink at 100 percent retained both rows and visible key data.",
+    "Native row visible at temporary 150 percent application UI scale; restored to 100 percent before exit.",
+    "Smooth invoked from the native row, showed live adjustment feedback and changed the evaluated pose; Escape restored the pose and toolbar.",
+    "Before/after Escape snapshots retained identical key coordinates, selection, Bezier interpolation and handles."
+  ],
+  "unqualified": [
+    "Continuous no-flicker behavior during border dragging: screenshot response completed after release; no continuous pixel capture exists.",
+    "Original border watcher returned zero samples. Revised all-modal watcher returned one sample that cannot establish an active border drag. Preserve both raw records as measurement limits.",
+    "Final geometry-delta watcher change was saved in the observer source but was not loaded or exercised in this pass."
+  ],
+  "unobserved": [
+    "Border or window resizing at 150 percent; Windows display DPI changes.",
+    "Modal commit, Reset, empty pins, exhaustive family actions and horizontal header panning.",
+    "Paste offsets, bookmarks, matching objects and configured numeric rig space switching.",
+    "Legacy strip migration, save/reopen, multiple Timeline editors or windows, hide/show and addon disable/re-enable.",
+    "Native playback, scrub and keying behavior; unpatched runtime fallback."
+  ],
+  "shutdown": {
+    "owned_pid": 41176,
+    "process_exit_verified": true,
+    "verification": "Get-Process found no PID 41176; native stdout reported Bforartists quit.",
+    "scene_changes": "Discarded using the task-owned window's Don't Save confirmation.",
+    "final_application_ui_scale": 1.0,
+    "preferences_auto_save": false,
+    "configuration_scope": "Task-owned observation-profile/config; initial Quick Setup saved only that isolated userpref.blend.",
+    "automatic_recovery": "Bforartists wrote G:/Temp/AtonLotus/quit.blend on exit; no scene save was requested."
+  },
+  "evidence": {
+    "screenshots": "01 through 16 in this directory",
+    "raw_observations": "../native-observations.json",
+    "drag_timing": "09-native-resize-timing-100.json"
+  },
+  "scope": "No formal test suite was run. No full AnimBot algorithm parity or unobserved lifecycle pass is claimed."
+}

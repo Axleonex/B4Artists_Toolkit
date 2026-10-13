@@ -1,32 +1,56 @@
-# Anim Assist 12.6.0 — native Timeline tool access
+# Anim Assist 12.6.0 — native Timeline toolbar
 
-Local build in progress; public download remains 12.5.1.
+Local Windows x64 release built for custom Bforartists 5.2.0. The public
+repository download remains 12.5.1; this release has not been published.
 
-## Changes
+## Toolbar
 
-The matching custom Bforartists 5.2.0 application supplies a genuine native
-Timeline TOOL_HEADER and native minimum-height handling. Anim Assist supplies
-inline family clusters, configurable direct buttons, visible Search and Gear,
-and adjacent family options. The add-on alone cannot add the native region to
-an official unpatched application; there it uses the existing Timeline header.
+The patched Bforartists application supplies a genuine native Timeline
+TOOL_HEADER above the native playback/keyframe row, with native sizing and
+minimum-height handling. Anim Assist fills it with seven inline families,
+configurable direct buttons, Search, Pin and family options. On fresh startup,
+both rows appeared without dragging in the observed 100% and 150% UI-scale
+captures.
 
-All 70 previous preset dispatch mappings, 13 defaults and 17 original quick
-presets remain. The searchable/pinnable catalogue grows to 89 actions by exposing
-existing clipboard, reference bookmark, object matching and configured rig
-switch operations. Clipboard pastes copied times plus its configured offset;
-reference recall sets a reference frame; matching targets objects.
+The add-on alone cannot add the native region to an official unpatched
+Bforartists application; there it uses the existing Timeline header. There is
+no separate helper editor or recurring geometry repair.
 
-Text Editor strip creation and recurring geometry repair are removed. A marked
-legacy strip is assessed once on enable/load and joined only when safely paired;
-unpaired or moved editors stay untouched. Native user hiding is respected.
+## Action access
 
-## Installation and evidence
+The searchable and pinnable catalogue exposes 89 existing Anim Assist actions
+across Tween, Curves, Timing, Keys, Pose, Bake and Motion. All 70 prior dispatch
+mappings, 13 default quick actions and 17 prior quick presets are preserved.
+The local build exposes existing clipboard, reference bookmark, object matching
+and configured rig switching operations. Clipboard pastes copied key times
+with its configured offset; reference recall sets a reference frame; matching
+targets objects.
 
-The custom portable application and exact matching add-on are being prepared.
-Use an isolated profile while qualifying the build. Do not install over the
-existing Bforartists application or save the owner's preferences during review.
+Search finds actions outside the visible quick buttons. Pin places an action
+in its family for one-click use. The Gear controls quick selection and Reset;
+family options open their supported settings. Observed live examples include
+Nudge Right, Copy, Tween options, and the breakdown-anchor tooltip. This
+catalogue improves access to Anim Assist's current tools; it does not provide
+full AnimBot algorithm or gesture parity.
 
-See [qualification](qualification.md), [coverage](tool-access-coverage.md), and
-[package receipt](package-receipt.json). Source syntax and mapping inspection
-are packaging prerequisites; native usability still requires observed use.
-This release does not establish full AnimBot algorithm or gesture parity.
+## Local install
+
+The local archive is named
+`Bforartists_5.2.0_AnimAssist_12.6.0_Windows_x64.zip`. Extract it and start
+`Launch Anim Assist (isolated).cmd`, then install the included
+`AnimAssist/b4_anim_assist_v12.6.0.zip` and enable Anim Assist. The launcher
+keeps this build's preferences, scripts and data files in an adjacent profile.
+Keep it separate from other Bforartists installations.
+
+The application archive SHA256 is recorded in the local release receipt. The
+matching add-on ZIP is 576,442 bytes with SHA256
+`221afae332a3b2217d3e33c6075bac24c22def82cdd7bbf909a2e14f5de72a1b`.
+
+## Qualification
+
+The patched application compiled and launched. Representative native row,
+tool-access, 100%/150% UI-scale, resize-at-rest and modal Escape observations
+are documented in [qualification](qualification.md). Continuous flicker while
+dragging, Windows display-DPI changes, legacy migration, persistence,
+multi-window behavior, hide/show and several operators remain unqualified.
+Read the limitations before using the build on production preferences.

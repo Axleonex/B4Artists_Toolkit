@@ -1,53 +1,63 @@
 # Native Timeline qualification — 12.6.0
 
-Status: implementation and local packaging in progress; native compilation and
-manual usability observations pending. No runtime pass is claimed.
+Status: the local Windows application and matching add-on are built. Manual
+native UI qualification is partial. Only the cases listed as observed below
+are qualified.
 
-## Source evidence
+## Build identity
 
-- Add-on commits: 8f1fc5c, 810de59, 3b581a2, 21d7822, 1c76f9c.
-- Native source baseline: Bforartists v5.2.0,
-  0a1ca45552dba1006ae0fb5c4dd36657622a4e66.
-- Windows libraries: 60d6e96b917568278d400a4024c98da0fb777338.
-- Add-on syntax inventory: 201 Python files; archive inventory: 203 files.
-- Catalogue: 89 presets; 70 prior mappings, 13 defaults and 17 quick presets
-  preserved; valid operator IDs and parameter names checked from source.
-- Separate spec review found migration retries and search-ID mismatch;
-  both corrected in 3b581a2. Follow-up static spec review passed.
-- Independent add-on quality review found restricted startup-data access and
-  multi-window disable failures; corrected in 21d7822, re-review passed.
-- Native static spec review passed after fixing ordinary-header visibility
-  restoration and bounded impossible-size reporting. Native quality review passed for f63e549b after inactive-space ownership and warning-cache lifecycle fixes.
-- CMake Release/Ninja configuration succeeded with MSVC 19.44.35228.0 and
-  pinned libraries in the C: build cache. This confirms configuration only;
-  the application has not yet finished compiling or launched.
-- Native compilation now running from a byte-verified C: source mirror at
-  f5f550195e2299239f020f8e5b3cc5c391dadb43; exact local source diff and
-  build record are in native_patches. The changed Action-space region and RNA
-  translation units have compiled. This is partial build evidence only.
-- Isolated CONFIG/SCRIPTS/DATAFILES directories are precreated. The exact
-  12.6.0 ZIP is staged; startup helper asserts isolation before enabling it.
+- Custom Bforartists Windows x64 application, source baseline `v5.2.0`
+  (`0a1ca45552dba1006ae0fb5c4dd36657622a4e66`), native patch commit
+  `f5f550195e2299239f020f8e5b3cc5c391dadb43`.
+- Release/Ninja build completed with MSVC 19.44.35228.0 and two build jobs.
+  The four-job attempt exhausted compiler heap/PDB resources; the failed
+  targets compiled after resuming at two jobs. An interrupted exit-zero run
+  without an application was excluded.
+- Executable SHA256:
+  `f6647c50792f1be94ff1473c83cdd19c33702ea6181c2188a0d54175a898587b`.
+  The application UI identifies as Bforartists 5.2.0; `bpy.app.version`
+  reports `[5, 3, 0]` in this build.
+- Matching Anim Assist add-on `12.6.0`: 576,442 bytes,
+  SHA256 `221afae332a3b2217d3e33c6075bac24c22def82cdd7bbf909a2e14f5de72a1b`.
+- The portable archive omits the three optional PDB debug-symbol files.
+  GPU rendering/device coverage is not established by this Timeline build.
 
-## Required native observations
+## Observed in the native application
 
-Fresh visible two rows; border/window resizing at 100% and 150%; unchanged
-area count; direct buttons/search/pins/options; modal commit/Esc; disabled
-prerequisites; native playback/scrub/keying; save/reopen and user hiding;
-workspace/multiple-window behavior; one-time legacy migration; stable behavior
-when geometry cannot grow. Unobserved cases must remain marked pending.
+| Case | Observation |
+|---|---|
+| Fresh Timeline | The native Anim Assist TOOL_HEADER and native playback HEADER appeared together on the same Timeline without reveal dragging. The ruler and keys remained visible. |
+| Direct action | Nudge Right moved the selected keyframes from frames 1/20/40 to 2/21/41. Selection, Bezier interpolation and both handle offsets were preserved. |
+| Search and pin | Search found Copy Selected Keys with Handles; Pin added a direct COPY button, and invoking it reported nine copied keys. |
+| Options and anchor help | Tween options opened with mode, masks and inbetween count. The 50% tooltip explained that a key on the playhead is the previous anchor; an empty frame uses surrounding keys. |
+| Settled resize at 100% | Screenshots before, after expansion and at minimum height show both header rows remaining visible with key data. |
+| UI scale at 150% | The add-on row, native playback row, ruler and keys remained visible. Scale returned to 100% before exit. |
+| Modal Escape | Smooth showed live adjustment feedback. Escape restored the evaluated pose. Before/after snapshots show identical key coordinates, selection, Bezier interpolation and handles. |
 
-The exact compiled application, portable artifact hashes and recorded
-observations will be added after actual build and use. No Blender stand-in
-qualifies this native application. No formal test suite was added or run.
+Screenshots 01–16 and the exact stage summary are in `native-evidence/`;
+`native-observations.json` stores the underlying application snapshots.
+Qualification used the compiled binary and the exact 12.6.0 ZIP in a
+task-owned profile. Preference autosave was disabled. The scene was discarded
+on exit.
 
-Additional cached-space fixes: native f5f5501 and add-on 1c76f9c. Both passed
-independent static quality review. The latest local ZIP is 576442 bytes with
-SHA256 `221afae332a3b2217d3e33c6075bac24c22def82cdd7bbf909a2e14f5de72a1b`.
-The exact staged profile matches this package. The C: build source was updated
-while compiling; a final incremental install build is required before launch
-to ensure all changed sources and build metadata are current.
+## Limits
 
-An attempted four-job build exhausted compiler heap/PDB resources. The failed
-translation units compiled after resuming with two jobs. An earlier intentional
-interruption returned exit zero without an installed application; that result
-is explicitly excluded from build completion evidence.
+Continuous no-flicker behavior during border dragging is not qualified. The
+screenshots were returned after the drag ended; the native modal-operator
+observer yielded zero samples on its first pass and one ambiguous sample on
+the second. A geometry-delta observer was saved but not exercised. The
+before/after screenshots establish settled behavior only, not absence of
+flashing while dragging.
+
+These cases remain unobserved: border/window resize at 150% and Windows display
+DPI changes; modal commit, Reset and empty pins; exhaustive actions and header
+panning; paste offsets, bookmarks, object matching and numeric rig switching;
+legacy-strip migration; save/reopen; multiple editors/windows; hide/show and
+disable/re-enable lifecycle; native playback/scrub/keying; and fallback in an
+unpatched runtime. Keep those claims open.
+
+The catalogue statically exposes 89 existing Anim Assist actions across seven
+families, with direct quick buttons, Search and Pin. Representative toolbar
+actions were used above; every operator algorithm was not individually
+qualified. This release does not claim full AnimBot algorithm or gesture
+parity. No formal test suite was run.

@@ -1,6 +1,6 @@
 {
   "version": "12.6.0",
-  "status": "local native toolbar provider; compiled Bforartists qualification pending",
+  "status": "local Anim Assist 12.6.0 package; native second row requires the matching custom Bforartists 5.2.0 application",
   "package_root": "B4_anim_assist",
   "files": 203,
   "changed_files_from_12_5_1": [
@@ -340,5 +340,9 @@
     "B4_anim_assist/ui/timeline_catalog.py": "3ed2b5f2f8462d5b010417d6368a2b1390ae6e9f47d7f47f433752ea4829e59b",
     "B4_anim_assist/ui/timeline_strip.py": "728e6b3ae638c4fb9d98ede67166dd470d645dc63b9fa9a4683637e92c0958d0",
     "B4_anim_assist/ui/ui_helpers.py": "b9e34aad40528bbc4725bf87c29efb5b6a05b4bde8c1648c23c9a9aec1d9daa1"
-  }
+  },
+  "native_application": "Custom Bforartists 5.2.0 Windows x64",
+  "native_application_executable_sha256": "f6647c50792f1be94ff1473c83cdd19c33702ea6181c2188a0d54175a898587b",
+  "native_patch_sha256": "4a5e5d80402c55104621f49e625a94ac7adeec629317c3b4d58e87661c5050d2",
+  "native_ui_qualification": "partial; see qualification.md"
 }

@@ -1,6 +1,10 @@
 # Bforartists 5.2.0 — native Timeline toolbar patch
 
-Implementation in progress. This directory records the source patch and build procedure for the owner-approved native Timeline row. A completed portable application has not yet been qualified.
+The native patch has been compiled into a local Windows x64 Bforartists 5.2.0
+application and launched with the exact Anim Assist 12.6.0 add-on. Manual UI
+qualification is partial; see the release's qualification record for observed
+cases and limits. The custom application archive is a separate local artifact,
+not an update to the public repository release.
 
 Upstream baseline: Bforartists `v5.2.0`, commit `0a1ca45552dba1006ae0fb5c4dd36657622a4e66`. Pinned Windows library commit: `60d6e96b917568278d400a4024c98da0fb777338` from `https://projects.blender.org/blender/lib-windows_x64.git`.
 

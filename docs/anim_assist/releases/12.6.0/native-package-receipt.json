@@ -1,0 +1,32 @@
+{
+  "release": "Anim Assist 12.6.0 local Windows x64",
+  "status": "built; partially qualified in the compiled native application; not published",
+  "application": "Custom Bforartists 5.2.0",
+  "application_source_baseline": "v5.2.0",
+  "native_patch_commit": "f5f550195e2299239f020f8e5b3cc5c391dadb43",
+  "native_patch_sha256": "4a5e5d80402c55104621f49e625a94ac7adeec629317c3b4d58e87661c5050d2",
+  "application_archive": "Bforartists_5.2.0_AnimAssist_12.6.0_Windows_x64.zip",
+  "application_archive_location": "G:\\LapArt\\Local-Releases\\AnimAssist\\12.6.0\\Bforartists_5.2.0_AnimAssist_12.6.0_Windows_x64.zip",
+  "application_archive_bytes": 496449956,
+  "application_archive_sha256": "ad116e6137387f3d9d31b93e462406825ff6d6274e82bcff5589057edf4b8172",
+  "application_executable_bytes": 122898944,
+  "application_executable_sha256": "f6647c50792f1be94ff1473c83cdd19c33702ea6181c2188a0d54175a898587b",
+  "addon_archive": "b4_anim_assist_v12.6.0.zip",
+  "addon_archive_bytes": 576442,
+  "addon_archive_sha256": "221afae332a3b2217d3e33c6075bac24c22def82cdd7bbf909a2e14f5de72a1b",
+  "runtime_file_count": 8818,
+  "excluded_pdb_symbol_files": 3,
+  "observed": [
+    "Fresh native row at 100%",
+    "Representative Nudge, Search, Pin, Copy and Tween/anchor-help controls",
+    "Settled resize at 100%",
+    "Temporary UI scale 150%",
+    "Smooth modal Escape restored key/handle/selection snapshot"
+  ],
+  "limits": [
+    "Continuous in-drag flicker not qualified",
+    "Migration, persistence, multi-window, visibility lifecycle, native playback/keying and other listed cases remain unobserved"
+  ],
+  "formal_tests": "none run",
+  "published": false
+}
