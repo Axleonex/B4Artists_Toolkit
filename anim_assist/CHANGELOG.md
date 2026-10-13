@@ -1,3 +1,10 @@
+# 12.5.1 — Timeline layout repair
+
+- Keep the second toolbar thin after resizing by rebuilding only its owned Timeline pair.
+- Preserve a native frame ruler and editable key area when creating the strip; short Timelines retain the native header until enlarged.
+- Require an upper split copy, repair inverted owned pairs, and retry transient layout failures instead of blacklisting a Timeline for the session.
+- Use normal-session join/split operations; avoid timer-driven border moves whose poll requires the actual mouse to be on a border.
+
 # 12.5.0 — Inline family clusters
 
 - Each of seven Timeline family menus now sits beside its selected quick tools.
