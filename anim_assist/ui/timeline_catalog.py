@@ -1,4 +1,4 @@
-"""Existing actions exposed in the Timeline strip, grouped by animation task.
+"""Existing actions exposed in the native Timeline toolbar, grouped by task.
 
 Concept mapping: docs/anim_assist/releases/12.3.0/animbot-matches.md.
 Names describe our actual scope; they do not promise animBot feature parity.
@@ -62,7 +62,7 @@ ACTIONS = {
     "MIRROR_ACTIVE": ("p9_mirror_pose", {}, "Mirror Active Bone to Opposite"),
     "MIRROR_SELECTED": ("p9_mirror_selected", {}, "Mirror Selected Bones"),
     "MIRROR_FRAME": ("p9_mirror_frame", {}, "Mirror and Key Current Frame"),
-    "MIRROR_RANGE": ("p9_mirror_range", {}, "Mirror and Key Frame Range..."),
+    "MIRROR_RANGE": ("p9_mirror_range", {}, "Mirror and Key Preview or Playback Range"),
     "OPPOSITE": ("p9_select_opposite", {}, "Select Opposite of Active Bone"),
     "SWAP": ("p9_swap_poses", {}, "Swap Left/Right Poses"),
     "ALIGN": ("p8_match_selected_to_active", {}, "Align Selected Objects to Active"),
@@ -80,10 +80,29 @@ ACTIONS = {
     "TRAIL_DIAGNOSE": ("p5_run_diagnostics", {}, "Diagnose Motion Arcs"),
     "OFFSET_MASK": ("anim_offset_toggle_mask", {}, "Toggle Anim Offset Mask"),
     "OFFSET_SCENE_RANGE": ("anim_offset_range_from_scene", {}, "Set Offset Mask from Scene Range"),
+    "COPY_KEYS": ("copy_selected_keys", {}, "Copy Selected Keys with Handles"),
+    "PASTE_KEYS": ("paste_keys_at_frame", {}, "Paste Keys at Copied Times"),
+    "BOOKMARK_ADD": ("add_bookmark", {}, "Save Reference Bookmark"),
+    "BOOKMARK_REMOVE": ("remove_bookmark", {}, "Remove Active Reference Bookmark"),
+    "BOOKMARK_RECALL": ("recall_bookmark", {}, "Set Reference from Active Bookmark"),
+    "MATCH_WORLD": ("p8_match_to_world", {}, "Match Object to World Origin"),
+    "MATCH_PARENT": ("p8_match_to_parent", {}, "Match Object to Parent"),
+    "MATCH_TARGET": ("p8_match_to_target", {}, "Match Active Object to Selected Target"),
+    "MATCH_LOCATION": ("p8_match_location", {}, "Match Object Location to Selected Target"),
+    "MATCH_ROTATION": ("p8_match_rotation", {}, "Match Object Rotation to Selected Target"),
+    "MATCH_SCALE": ("p8_match_scale", {}, "Match Object Scale to Selected Target"),
+    "MATCH_TRS": ("p8_match_trs", {}, "Match Object Transforms to Selected Target"),
+    "MATCH_VISUAL": ("p8_match_visual_matrix", {}, "Match Object Evaluated Matrix"),
+    "MATCH_LOCAL": ("p8_match_local_matrix", {}, "Match Object Local Matrix"),
+    "SWITCH_SINGLE": ("p8_compensate_single", {}, "Switch Configured Rig Property and Compensate"),
+    "SWITCH_RANGE": ("p8_compensate_multi", {}, "Switch and Key Configured Rig Property in Range"),
+    "SWITCH_BOOL": ("p8_switch_bool", {}, "Toggle Configured Rig Boolean and Compensate"),
+    "SWITCH_ENUM": ("p8_switch_enum", {}, "Set Configured Rig Integer and Compensate"),
+    "SWITCH_INFLUENCE": ("p8_switch_influence", {}, "Set Configured Rig Influence and Compensate"),
 }
 
 # Fixed nudge presets run immediately through the existing undoable execute path.
-EXECUTE_ACTIONS = {"NUDGE_LEFT", "NUDGE_RIGHT"}
+EXECUTE_ACTIONS = {"NUDGE_LEFT", "NUDGE_RIGHT", "MIRROR_RANGE", "BOOKMARK_ADD"}
 
 TIPS = {
     "NEIGHBORS": "Drag to blend selected keys toward the line between bounding neighbors. Esc restores the keys",
@@ -101,8 +120,9 @@ TIPS = {
     "BAKE_STEP": "Bake the active object's evaluated transform using the existing bake range and Frame Step settings",
     "SMART_BAKE": "Bake the active object's evaluated transform, then reduce keys using the existing reduction tolerance",
     "REDUCE": "Reduce the active object's animation using the existing key-reduction tolerance",
-    "PROXY_WORLD": "Create a temporary helper using the existing Copy Transforms proxy setup. It is not an editable temporary pivot",
+    "PROXY_WORLD": "Create a temporary helper using the existing Copy Transforms proxy setup",
     "BAKE_CLEANUP": "Bake the active proxy session's constrained objects and remove that session's helpers. Uses existing bake settings",
+    "PASTE_KEYS": "Paste copied absolute key times plus the paste offset onto matching Action names and curve paths; the playhead does not set the paste time",
 }
 
 GROUPS = (
@@ -111,7 +131,8 @@ GROUPS = (
         "PUSH_PREV", "PULL_PREV", "PULL_NEXT", "PUSH_NEXT")),
     ("curves", "Curves", (
         "NEIGHBORS", "FRAME", "EASE", "AMPLIFY", "SMOOTH", "REFERENCE", None,
-        "HANDLE_AUTO", "HANDLE_CLAMPED", "HANDLE_VECTOR", "HANDLE_ALIGNED", "HANDLE_FREE")),
+        "HANDLE_AUTO", "HANDLE_CLAMPED", "HANDLE_VECTOR", "HANDLE_ALIGNED", "HANDLE_FREE", None,
+        "BOOKMARK_ADD", "BOOKMARK_RECALL", "BOOKMARK_REMOVE")),
     ("timing", "Timing", (
         "NUDGE_LEFT", "NUDGE_RIGHT", None, "T80", "T90", "T110", "T120", "SCALE_DRAG",
         "OFFSET_DRAG", "OFFSET_ACTION", None, "RIPPLE", "INSERT_TIME", "REMOVE_TIME",
@@ -119,10 +140,13 @@ GROUPS = (
     ("keys", "Keys", (
         "ALL", "RANGE", "ENDS", None, "GROW_LEFT", "GROW_RIGHT", "GROW_BOTH", None,
         "TYPE_KEYFRAME", "TYPE_BREAKDOWN", "TYPE_HOLD", "TYPE_EXTREME", "TYPE_JITTER",
-        "SELECT_BREAKDOWNS")),
+        "SELECT_BREAKDOWNS", None, "COPY_KEYS", "PASTE_KEYS")),
     ("pose", "Pose", (
         "MIRROR_ACTIVE", "MIRROR_SELECTED", "MIRROR_FRAME", "MIRROR_RANGE", None,
-        "OPPOSITE", "SWAP", "ALIGN")),
+        "OPPOSITE", "SWAP", "ALIGN", None,
+        "MATCH_WORLD", "MATCH_PARENT", "MATCH_TARGET", "MATCH_LOCATION", "MATCH_ROTATION",
+        "MATCH_SCALE", "MATCH_TRS", "MATCH_VISUAL", "MATCH_LOCAL", None,
+        "SWITCH_SINGLE", "SWITCH_RANGE", "SWITCH_BOOL", "SWITCH_ENUM", "SWITCH_INFLUENCE")),
     ("bake", "Bake", (
         "BAKE_STEP", "SMART_BAKE", "REDUCE", None, "PROXY_TRANSLATION",
         "PROXY_ORIENTATION", "PROXY_WORLD", "PROXY_PARENT", "BAKE_CLEANUP")),
@@ -209,6 +233,9 @@ def command_metadata(action):
     gesture = ""
     if action.startswith("HANDLE_") or action.startswith("TYPE_") or action.startswith("NUDGE_"):
         scope, prerequisite = _SELECTED_KEY_SCOPE
+    if action.startswith(("TYPE_", "NUDGE_")):
+        scope = "Selected keys in the active object's Action"
+        prerequisite = "Select keys in the active object's Action"
     if action == "SELECT_BREAKDOWNS":
         scope = "Editor-selected curves, or the active object's Action; selects keys by type"
         prerequisite = "Have curves on the active object's Action"
@@ -235,6 +262,22 @@ def command_metadata(action):
         prerequisite = "Choose the frame range and blend margins in Offset settings"
     if action == "REFERENCE":
         scope, prerequisite = "Scene playhead; stores the reference frame", "Choose the desired reference frame"
+    if action in {"COPY_KEYS", "PASTE_KEYS"}:
+        scope = "Editable, unhidden, unmuted view-layer Action curves matched by Action name, path and array index"
+        prerequisite = "Select editable keys to copy" if action == "COPY_KEYS" else "Copy keys into the Anim Assist clipboard first"
+    if action.startswith("BOOKMARK_"):
+        scope = "Scene reference-frame bookmarks; recall sets the reference without moving the playhead"
+        prerequisite = "Set a reference frame" if action == "BOOKMARK_ADD" else "Choose an existing reference bookmark"
+    if action.startswith("MATCH_"):
+        scope = "Active object's transforms using matching filters, locks, offset and keying settings"
+        prerequisite = "Select an active object in Object or Pose mode"
+        if action == "MATCH_PARENT":
+            prerequisite = "Select an object with a parent"
+        elif action not in {"MATCH_WORLD"}:
+            prerequisite = "Select a reference object and make the object to match active"
+    if action.startswith("SWITCH_"):
+        scope = "Configured object or pose-bone property; compensate its evaluated transform using rig switch settings"
+        prerequisite = "Configure a writable numeric rig property and target value in Pose options"
     if action == "DRAG":
         gesture = "Release left mouse to apply; Esc/right mouse restores the pre-drag keys"
     elif action in {"NEIGHBORS", "FRAME", "EASE", "AMPLIFY", "SMOOTH", "SCALE_DRAG", "OFFSET_DRAG"}:
@@ -252,8 +295,32 @@ def command_description(action, operation):
         parts.append(BREAKDOWN_ANCHOR_HINT)
     if gesture:
         parts.append(gesture + ".")
-    parts.append(f"Also in {FAMILY[action][1]} > {ACTIONS[action][2]}. Uses the Timeline below.")
+    parts.append(f"Also in {FAMILY[action][1]} > {ACTIONS[action][2]}.")
     return " ".join(parts)
+
+
+# Original search terms describe concepts, not another application's guarantees.
+SEARCH_TERMS = {
+    "B25": "tween breakdown quarter", "B50": "tween breakdown halfway", "B75": "tween breakdown three quarters",
+    "DRAG": "tween slider blend", "NEIGHBORS": "tween neighbors slider", "FRAME": "tween reference slider",
+    "AMPLIFY": "scale amplitude push pull slider", "SMOOTH": "smooth roughen slider",
+    "OFFSET_DRAG": "time offset offsetter timing slider", "OFFSET_ACTION": "time offset offsetter timing",
+    "SCALE_DRAG": "retime scale timing slider",
+    "COPY_KEYS": "clipboard copy animation", "PASTE_KEYS": "clipboard paste animation",
+    "BOOKMARK_ADD": "reference bookmark save", "BOOKMARK_RECALL": "reference bookmark load",
+    "BOOKMARK_REMOVE": "reference bookmark delete",
+    "SWITCH_SINGLE": "space switch rig compensate", "SWITCH_RANGE": "space switch rig bake compensate",
+    "SWITCH_BOOL": "space switch rig boolean", "SWITCH_ENUM": "space switch rig integer enum",
+    "SWITCH_INFLUENCE": "space switch rig constraint influence",
+}
+
+
+def search_actions(query):
+    """Stable token matching across the complete catalogue, including aliases."""
+    terms = query.casefold().split()
+    return tuple(action for action, (suffix, _arguments, label) in ACTIONS.items()
+                 if all(term in f"{label} {FAMILY[action][1]} {suffix} {SEARCH_TERMS.get(action, '')}".casefold()
+                        for term in terms))
 
 
 def toolbar_plan(logical_width):

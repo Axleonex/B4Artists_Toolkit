@@ -53,14 +53,14 @@ class ANIMASSIST_PT_header_toolbar_options(bpy.types.Panel):
         props = context.scene.anim_assist
         layout = self.layout
         prefs = get_prefs(context)
-        owned_strip = context.area is not None and timeline_strip.is_strip(context.area)
+        timeline = timeline_strip.is_timeline(context.area)
         if prefs is not None:
-            if owned_strip:
+            if timeline:
                 layout.label(text="Timeline Placement")
                 layout.label(text="Add-on preference")
             layout.prop(prefs, "timeline_toolbar_row")
             layout.separator()
-        if owned_strip:
+        if timeline:
             layout.label(text="Category Visibility / This Scene")
             layout.label(text="Shared across editor headers")
             for property_name, label in (
@@ -161,7 +161,9 @@ def _draw_dopesheet_toolbar(self, context: bpy.types.Context) -> None:
     Each group respects the corresponding ``header_show_*`` scene property
     so the animator can hide categories to save header space.
     """
-    if timeline_strip.hides_native_shortcuts(context):
+    if timeline_strip.is_timeline(context.area):
+        if not timeline_strip.native_visible(context.area):
+            timeline_strip._draw_toolbar(self, context)
         return
     props = context.scene.anim_assist
     layout = self.layout
