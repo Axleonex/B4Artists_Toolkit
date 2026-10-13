@@ -21,6 +21,7 @@ _MARKER = "animassist_timeline_toolbar"
 _seen = set()
 _owned = set()
 _migration_attempted = set()
+_legacy_candidates = set()
 _pending_user_action = set()
 _registered = False
 _force_reconcile = False
@@ -516,18 +517,32 @@ def _legacy_target(screen, strip):
                       or abs(strip.y + strip.height - area.y) <= border)), None)
 
 
+def _capture_legacy_candidates():
+    """Only editors present on enable/load are eligible for migration."""
+    _legacy_candidates.clear()
+    _migration_attempted.clear()
+    _legacy_candidates.update(area.as_pointer() for screen in bpy.data.screens
+                              for area in screen.areas if is_strip(area))
+
+
 def _migrate_legacy(window, screen):
     for strip in list(screen.areas):
         if not is_strip(strip):
             continue
         pointer = strip.as_pointer()
-        if pointer in _migration_attempted:
+        if pointer not in _legacy_candidates or pointer in _migration_attempted:
             continue
+        if strip.width == 0 or strip.height == 0 or any(
+                is_timeline(area) and (area.width == 0 or area.height == 0)
+                for area in screen.areas):
+            continue  # Initial layout has not supplied trustworthy geometry yet.
+        # Freeze the first valid assessment, including the decision to leave an
+        # unpaired strip alone. Moving it later must never trigger a timer join.
+        _migration_attempted.add(pointer)
         target = _legacy_target(screen, strip)
         if target is None:
             # A moved legacy editor is not ours to repurpose or join.
             continue
-        _migration_attempted.add(pointer)
         try:
             with bpy.context.temp_override(window=window, screen=screen, area=target):
                 result = bpy.ops.screen.area_join(
@@ -537,7 +552,7 @@ def _migrate_legacy(window, screen):
                 _seen.discard(target.spaces.active.as_pointer())
                 return True
         except (RuntimeError, ReferenceError) as exc:
-            _log.warning("Legacy Timeline toolbar migration deferred: %s", exc)
+            _log.warning("Legacy Timeline toolbar migration could not complete: %s", exc)
     return False
 
 
@@ -556,7 +571,7 @@ def _load_post(_unused):
     global _force_reconcile
     _seen.clear()
     _owned.clear()
-    _migration_attempted.clear()
+    _capture_legacy_candidates()
     _pending_user_action.clear()
     # Saved explicit native hiding is honored. Only an actual preference change
     # is an instruction to reveal an already hidden row.
@@ -620,6 +635,7 @@ def register():
         bpy.utils.register_class(cls)
     if native_available():
         bpy.utils.register_class(ANIMASSIST_HT_timeline_tools)
+    _capture_legacy_candidates()
     _registered = True
     if _load_post not in bpy.app.handlers.load_post:
         bpy.app.handlers.load_post.append(_load_post)
@@ -655,6 +671,7 @@ def unregister():
     _seen.clear()
     _owned.clear()
     _migration_attempted.clear()
+    _legacy_candidates.clear()
     _pending_user_action.clear()
     _force_reconcile = False
     for cls in reversed(_settings_classes + _menus):
