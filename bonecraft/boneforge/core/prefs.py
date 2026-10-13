@@ -412,7 +412,7 @@ class BoneForgePreferences(bpy.types.AddonPreferences):
     )
     show_starter_shelf: BoolProperty(
         name="Starter Rigs",
-        description="Show BoneCraft's complete starter rig catalog in the asset shelf; turn off to return to the regular asset shelf",
+        description="Include BoneCraft starter rigs alongside the other assets in the bottom asset shelf",
         default=True,
     )
 
