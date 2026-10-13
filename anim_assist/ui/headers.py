@@ -12,6 +12,7 @@ from typing import Callable
 
 import bpy
 from . import is_bforartists
+from . import timeline_strip
 
 _appended: list[tuple[type, Callable]] = []
 
@@ -50,6 +51,8 @@ def _draw_dopesheet_header(self, context: bpy.types.Context) -> None:
     The offset toggle acts as a play/pause for the live animation offset
     mode.  Key-type and interpolation menus are hidden in Bforartists.
     """
+    if timeline_strip.hides_native_shortcuts(context):
+        return
     layout = self.layout
     row = layout.row(align=True)
     row.separator()
