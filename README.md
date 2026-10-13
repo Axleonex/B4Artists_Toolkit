@@ -13,7 +13,7 @@ BoneCraft is the **advanced version of [BoneForge](https://github.com/Axleonex/B
 
 | Tool | Version | What it does |
 |---|---|---|
-| **BoneCraft** | 9.2.0 | Auto-rigging for humanoid characters (VRoid/VRM and similar): a Rig Builder wizard that finds the joints on the mesh, generates a skeleton and skin weights, then builds an animator control rig: IK/FK arms and legs with no-pop switching, a Control Picker, twist bones, joint corrective shapes, skirt/dress bones, and face controls (eye aim, blinks, jaw with lip follow). Also retargets walk/run clips and exports to VRChat, Unity and Unreal, with an optional T-pose export. Manual: [bonecraft/docs](bonecraft/docs/README.md). |
+| **BoneCraft** | 9.2.1 | Auto-rigging for humanoid characters (VRoid/VRM and similar): a Rig Builder wizard that finds the joints on the mesh, generates a skeleton and skin weights, then builds an animator control rig: IK/FK arms and legs with no-pop switching, a Control Picker, twist bones, joint corrective shapes, skirt/dress bones, and face controls (eye aim, blinks, jaw with lip follow). Also retargets walk/run clips and exports to VRChat, Unity and Unreal, with an optional T-pose export. Manual: [bonecraft/docs](bonecraft/docs/README.md). |
 
 See [`docs/bonecraft/`](docs/bonecraft/) for a short guide.
 
@@ -27,11 +27,11 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 |---|---|
 | Anim Assist 12.5.0 | [b4_anim_assist_v12.5.0.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.5.0.zip) |
 | Ghost Tool 4.2.6 | [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip) |
-| BoneCraft 9.2.0 (optional) | [BoneCraft-BFA-9.2.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.0/BoneCraft-BFA-9.2.0.zip) |
+| BoneCraft 9.2.1 (optional) | [BoneCraft-BFA-9.2.1.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/BoneCraft-BFA-9.2.1.zip) |
 
 Anim Assist 12.5.0 adds configurable quick buttons above the Timeline. See the [usage screenshots](docs/anim_assist/releases/12.5.0/USAGE.md). Its package, preferences and dispatch checks pass in a Blender stand-in; native Redo and trail geometry have known issues. Actual Bforartists and owner workflow acceptance remain pending. Details are in the [qualification report](docs/anim_assist/releases/12.5.0/qualification.md).
 
-BoneCraft 9.2.0 adds the complete starter catalog and passes its [recorded host and native viewport checks](docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md). Ghost Tool 4.2.6 includes the persistent toolbar, shared feature options and cached visibility controls. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
+BoneCraft 9.2.1 restores the native asset shelf so starter rigs appear alongside the other libraries; its [release notes](docs/bonecraft/releases/9.2.1/RELEASE-NOTES.md) record host and GUI verification. Ghost Tool 4.2.6 includes the persistent toolbar, shared feature options and cached visibility controls. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
 
 See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The current [Ghost Tool 4.2.6 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6) includes the matching ZIP and PDF guide. Earlier releases remain available as history.
 
@@ -52,7 +52,7 @@ The unpacked, readable source for each tool is in this repository so you can rea
 
 - [`anim_assist/`](anim_assist/) — Anim Assist source (`core/`, `operators/`, `ui/`, `tests/`)
 - [`ghost_tool/`](ghost_tool/) — Ghost Tool source
-- [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.2.0 source
+- [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.2.1 source
 
 The ZIPs package their recorded release source for one-click installation. The current Ghost Tool 4.2.6 ZIP matches the source modules; see its [package receipt](docs/ghost_tool/releases/4.2.6/package-receipt.json).
 
@@ -62,7 +62,7 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - [Anim Assist 12.5.0 toolbar guide](docs/anim_assist/releases/12.5.0/USAGE.md) — screenshots, configuration and Breakdown anchor explanation; [suite manuals](docs/anim_assist/) cover the other animation tools.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.6 guide, PDF and toolbar notes
-- [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.0 English manual and translation status
+- [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.1 English manual and translation status
 
 ## Requirements
 

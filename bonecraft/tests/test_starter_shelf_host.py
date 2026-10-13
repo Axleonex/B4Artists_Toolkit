@@ -5,6 +5,11 @@ from unittest.mock import patch
 import bpy
 
 
+class Tags(list):
+    def __contains__(self, name):
+        return any(tag.name == name for tag in self)
+
+
 def run():
     from boneforge.autorig import quick_human as qh, rig_assets as ra, rig_asset_ops as ops
     native = getattr(bpy.types, 'VIEW3D_AST_object', None)
@@ -16,18 +21,38 @@ def run():
         shelf = getattr(bpy.types, ra.SHELF_IDNAME)
         assert shelf.bl_activate_operator == 'BONEFORGE_OT_add_starter_asset'
         assert shelf.bl_drag_operator == 'BONEFORGE_OT_drag_starter_asset'
-        assert 'DEFAULT_VISIBLE' in shelf.bl_options
+        # The dedicated catalog is popup-only; the native viewport shelf owns
+        # the shared libraries and the host's normal asset drag/drop behavior.
+        assert shelf.bl_space_type == 'PROPERTIES'
+        assert 'DEFAULT_VISIBLE' not in shelf.bl_options
         native_enum = bpy.types.AssetWeakReference.bl_rna.properties['asset_library_type'].enum_items
         for operator in (bpy.ops.boneforge.add_starter_asset, bpy.ops.boneforge.drag_starter_asset):
             own_enum = operator.get_rna_type().properties['asset_library_type'].enum_items
             assert {(e.identifier, e.value) for e in own_enum} == {(e.identifier, e.value) for e in native_enum}
         assert ops.draw_starter_header in bpy.types.VIEW3D_HT_header.draw._draw_funcs
         if native:
-            assert not native.poll(bpy.context) and shelf.poll(bpy.context)
-            asset = SimpleNamespace(metadata=SimpleNamespace(tags=[SimpleNamespace(name=ra.ASSET_TAG)]))
-            assert not native.asset_poll(asset)
+            assert native.__dict__['poll'] is native_poll
+            assert native.poll(bpy.context) and shelf.poll(bpy.context)
+            asset = SimpleNamespace(id_type='OBJECT', metadata=SimpleNamespace(tags=[SimpleNamespace(name=ra.ASSET_TAG)]))
+            assert native.asset_poll(asset)
+            # An in-place reload from the previous release must restore both
+            # the native shelf and rig visibility without losing its callbacks.
+            setattr(native, ra._NATIVE_POLL_KEY, native_poll)
+            native.poll = classmethod(lambda cls, context: False)
+            native.asset_poll = classmethod(lambda cls, asset: False)
+            ra.route_native_shelf(True)
+            assert native.__dict__['poll'] is native_poll
+            assert native.asset_poll(asset)
+            for kind in ('OBJECT', 'MATERIAL', 'COLLECTION', 'WORLD', 'NODETREE'):
+                tags = Tags(SimpleNamespace(name=name) for name in
+                            (['Geometry Nodes', '3D View'] if kind == 'NODETREE' else []))
+                ordinary = SimpleNamespace(id_type=kind, metadata=SimpleNamespace(tags=tags))
+                assert native.asset_poll(ordinary)
+                assert not shelf.asset_poll(ordinary)
             assert bpy.ops.boneforge.toggle_starter_shelf() == {'FINISHED'}
-            assert native.poll(bpy.context) and not shelf.poll(bpy.context)
+            assert native.poll(bpy.context) and shelf.poll(bpy.context)
+            assert not native.asset_poll(asset)
+            assert native.asset_poll(ordinary)
             assert bpy.ops.boneforge.toggle_starter_shelf() == {'FINISHED'}
         starter = next(r for r in ra.starter_manifest() if r['requires_rigify'])
         identifier = 'quick_rigs.blend/Object/' + starter['asset_name']
