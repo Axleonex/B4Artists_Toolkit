@@ -134,7 +134,7 @@ def main():
     candidate.replace(OUTPUT)
     receipt = {
         "version": VERSION,
-        "status": "local layout patch; actual Bforartists verification pending; native stand-in geometry checks recorded separately",
+        "status": "layout patch; actual Bforartists verification pending; native stand-in geometry checks recorded separately",
         "package_root": root,
         "files": len(contents),
         "changed_files_from_12_5_0": changed_files,
