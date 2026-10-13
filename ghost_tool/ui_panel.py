@@ -909,7 +909,7 @@ def _draw_feature_destination(layout, key, label, icon):
     layout.popover(panel=_FEATURE_PANELS[key], text=label, icon=icon)
 
 
-def _draw_generation_pair(layout, key, *, menu=False):
+def _draw_generation_pair(layout, key):
     """Only the operator polls its target; the adjacent options stay enabled."""
     row = layout.row(align=True)
     marker = key == 'show'
@@ -917,16 +917,20 @@ def _draw_generation_pair(layout, key, *, menu=False):
                  text='Show Markers' if marker else 'Show Onion Skin',
                  icon='GHOST_ENABLED' if marker else 'MESH_DATA')
     row.popover(panel=_FEATURE_PANELS[key],
-                text=('Marker options' if marker else 'Onion Skin options') if menu else '')
+                text='Marker options' if marker else 'Onion Skin options')
 
 
-def _draw_toolbar_menu(layout, context):
+def _draw_ghosts_toggle(layout, context):
     settings = context.scene.ghost_tool
     layout.prop(settings, 'is_active', text='Turn On Ghosts' if not settings.is_active else 'Ghosts On',
                 toggle=True, icon='GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED')
+
+
+def _draw_toolbar_menu(layout, context):
+    _draw_ghosts_toggle(layout, context)
     for key, label, icon, _draw, _topic, _open in GHOST_SECTIONS:
         if key in {'show', 'onion'}:
-            _draw_generation_pair(layout, key, menu=True)
+            _draw_generation_pair(layout, key)
         else:
             _draw_feature_destination(layout, key, label, icon)
     layout.separator()
@@ -952,22 +956,6 @@ class GHOST_PT_toolbar_menu(bpy.types.Panel):
 
     def draw(self, context):
         _draw_toolbar_menu(self.layout, context)
-
-
-class GHOST_PT_toolbar_more(bpy.types.Panel):
-    bl_idname = 'GHOST_PT_toolbar_more'
-    bl_label = 'More Ghost Tools'
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'HEADER'
-    bl_ui_units_x = 14
-
-    @classmethod
-    def poll(cls, context):
-        return _feature_context(context)
-
-    def draw(self, context):
-        for key, label, icon, _draw, _topic, _open in GHOST_SECTIONS[4:]:
-            _draw_feature_destination(self.layout, key, label, icon)
 
 
 def supports_tool_shelf() -> bool:
@@ -1048,6 +1036,9 @@ def update_display_location(context) -> None:
     """Reveal the selected home in ordinary viewports and schedule tab selection."""
     location = display_location(context)
     _pending_display_tabs.clear()
+    if location == 'TOOLS':
+        from .shelf_width import forget_all
+        forget_all()
     for window, area in _ordinary_viewports(context):
         space = area.spaces.active
         if location == 'SIDEBAR':
@@ -1375,51 +1366,21 @@ def _draw_graph_header_extension(self, context: bpy.types.Context) -> None:
 # ║  SECTION 6 — 3D VIEWPORT HEADER EXTENSION                             ║
 # ╚══════════════════════════════════════════════════════════════════════════╝
 
-def _draw_viewport_header_menu(self, context: bpy.types.Context) -> None:
-    """Ghost on/off toggle and the "Ghost Tool" dropdown, after the Pose menu."""
-    scene = context.scene
+def _draw_viewport_view_menu(self, context: bpy.types.Context) -> None:
+    """Recover hidden Ghost controls without duplicating the main header row."""
     if not _main_home(context, 'TOOLBAR'):
         return
-    settings = scene.ghost_tool
-    row = self.layout.row(align=True)
-    row.prop(settings, "is_active", text="",
-             icon='GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED', toggle=True)
-    row.popover(panel="GHOST_PT_header_menu", text="Ghost Tool")
-
-
-# Appended native headers do not expose their preceding layout's occupied
-# width. These conservative viewport-width bands are an explicit fallback,
-# not a claim of exact remaining-space measurement. Native horizontal panning
-# remains available. UI scale normalizes pixels; each area retains its tier
-# within an options-arrow-width expansion margin to avoid boundary flicker.
-_TOOLBAR_FULL_WIDTH = 1800.0
-_TOOLBAR_COMPACT_WIDTH = 1150.0
-_TOOLBAR_EXPAND_MARGIN = 32.0
-_toolbar_tiers: dict[int, str] = {}
+    native_visible = getattr(getattr(context, 'space_data', None), 'show_region_tool_header', True)
+    if toolbar_visible(context) and native_visible:
+        return
+    self.layout.separator()
+    self.layout.operator('ghost_tool.set_toolbar_visibility',
+                         text='Show Ghost Toolbar', icon='GHOST_ENABLED').show = True
 
 
 def _toolbar_tier(context):
-    area = getattr(context, 'area', None)
-    pointer = area.as_pointer() if area is not None else 0
-    if getattr(context, 'mode', 'OBJECT') not in {'OBJECT', 'POSE'}:
-        _toolbar_tiers[pointer] = 'MINIMAL'
-        return 'MINIMAL'
-    width = getattr(getattr(context, 'region', None), 'width', 0)
-    if not width:
-        width = getattr(area, 'width', 0)
-    scale = getattr(getattr(getattr(context, 'preferences', None), 'view', None), 'ui_scale', 1.0)
-    width /= max(float(scale), 0.25)
-    previous = _toolbar_tiers.get(pointer)
-    full_at = _TOOLBAR_FULL_WIDTH + (_TOOLBAR_EXPAND_MARGIN if previous in {'COMPACT', 'MINIMAL'} else 0)
-    compact_at = _TOOLBAR_COMPACT_WIDTH + (_TOOLBAR_EXPAND_MARGIN if previous == 'MINIMAL' else 0)
-    tier = 'FULL' if width >= full_at else 'COMPACT' if width >= compact_at else 'MINIMAL'
-    _toolbar_tiers[pointer] = tier
-    if len(_toolbar_tiers) > 64:
-        live = {a.as_pointer() for w in bpy.context.window_manager.windows
-                for a in w.screen.areas if a.type == 'VIEW_3D'}
-        for stale in _toolbar_tiers.keys() - live:
-            _toolbar_tiers.pop(stale, None)
-    return tier
+    """Keep the full animation toolbar at every width; retain other-mode access."""
+    return 'FULL' if getattr(context, 'mode', 'OBJECT') in {'OBJECT', 'POSE'} else 'MINIMAL'
 
 
 def _draw_viewport_tool_header(self, context):
@@ -1432,16 +1393,14 @@ def _draw_viewport_tool_header(self, context):
     tier = _toolbar_tier(context)
     if tier == 'MINIMAL':
         return
+    row.separator(factor=0.4)
+    _draw_ghosts_toggle(row, context)
     for key in ('show', 'onion'):
         row.separator(factor=0.4)
         _draw_generation_pair(row, key)
-    destinations = GHOST_SECTIONS[2:] if tier == 'FULL' else GHOST_SECTIONS[2:4]
-    for key, label, icon, _draw, _topic, _open in destinations:
+    for key, label, icon, _draw, _topic, _open in GHOST_SECTIONS[2:]:
         row.separator(factor=0.4)
         _draw_feature_destination(row, key, label, icon)
-    if tier == 'COMPACT':
-        row.separator(factor=0.4)
-        row.popover(panel='GHOST_PT_toolbar_more', text='More')
 
 
 # ---------------------------------------------------------------------------
@@ -1523,7 +1482,6 @@ CLASSES: tuple[type, ...] = (
     GHOST_PT_look_popover,
     GHOST_PT_settings_popover,
     GHOST_PT_toolbar_menu,
-    GHOST_PT_toolbar_more,
     GHOST_OT_set_toolbar_visibility,
     GHOST_PT_header_menu,
     GHOST_PT_sidebar,
@@ -1569,14 +1527,14 @@ def register() -> None:
     except Exception as exc:
         warn(f"Could not append to Graph Editor header: {exc}")
 
-    # 3D Viewport header: toggle + "Ghost Tool" dropdown after the Pose menu
+    # Recovery stays in View; the main header no longer duplicates the row below.
     try:
-        bpy.types.VIEW3D_MT_editor_menus.append(_draw_viewport_header_menu)
+        bpy.types.VIEW3D_MT_view.append(_draw_viewport_view_menu)
         _header_appends.append(
-            (bpy.types.VIEW3D_MT_editor_menus, _draw_viewport_header_menu)
+            (bpy.types.VIEW3D_MT_view, _draw_viewport_view_menu)
         )
     except Exception as exc:
-        warn(f"Could not append to 3D Viewport header: {exc}")
+        warn(f"Could not append Ghost toolbar recovery to View: {exc}")
 
     try:
         bpy.types.VIEW3D_HT_tool_header.append(_draw_viewport_tool_header)
@@ -1592,7 +1550,6 @@ def unregister() -> None:
     if bpy.app.timers.is_registered(_select_display_tabs):
         bpy.app.timers.unregister(_select_display_tabs)
     _pending_display_tabs.clear()
-    _toolbar_tiers.clear()
     # Remove header appends first
     for header_cls, func in _header_appends:
         try:

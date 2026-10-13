@@ -1,16 +1,16 @@
-# Ghost Tool 4.2.7 documentation
+# Ghost Tool 4.2.10 candidate documentation
 
-Ghost Tool 4.2.7 defaults to a visible **Top Toolbar**. Top Header has been removed from display settings; saved Top Header choices migrate automatically. Right Sidebar (N), Left Tool Shelf (T), shared feature popovers, Hide/Show Toolbar recovery and cached marker/skin visibility remain available. Saved sidebar, shelf and toolbar visibility choices are retained.
+The unpublished Ghost Tool 4.2.10 candidate widens the left shelf once to match an open N-panel, or uses a 240 px fallback when closed. It preserves later manual resizing. The duplicate main-header button is removed; all named lower toolbar sections and the direct Ghosts On switch remain. View > Show Ghost Toolbar recovers hidden toolbar controls. It defaults to a visible **Top Toolbar**. Top Header has been removed from display settings; saved Top Header choices migrate automatically. Right Sidebar (N), Left Tool Shelf (T), shared feature popovers, Hide/Show Toolbar recovery and cached marker/skin visibility remain available. Saved sidebar, shelf and toolbar visibility choices are retained.
 
-The exact package passes 148 checks/cases in native Bforartists 5.2.0, including fresh defaults and legacy-header migration. Production-rig acceptance and a complete visual check of every display location remain pending. The matching ZIP and PDF are published in the [4.2.7 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.7).
+The 15 pure width-policy checks pass. Two native Bforartists GUI starts timed out before the shelf test script ran, so left-shelf width behavior and its screenshots remain unverified. The earlier 4.2.9 split-view checks still describe that published build. Production rigs, keyboard navigation and alternate themes also remain unverified for this candidate. See the [verification status](releases/4.2.10/verification-status.json) and [release notes](releases/4.2.10/RELEASE-NOTES.md). The regular published 4.2.9 release remains available.
 
-[4.2.7 user guide](GhostTool_User_Manual.md) | [4.2.7 PDF](GhostTool_User_Manual.pdf) | [Toolbar guide](toolbar/README.md) | [4.2.7 release notes](releases/4.2.7/RELEASE-NOTES.md) | [Package receipt](releases/4.2.7/package-receipt.json)
+[4.2.10 candidate user guide](GhostTool_User_Manual.md) | [4.2.10 candidate PDF](GhostTool_User_Manual.pdf) | [Toolbar guide](toolbar/README.md) | [Published 4.2.9 release notes](releases/4.2.9/RELEASE-NOTES.md) | [4.2.9 package receipt](releases/4.2.9/package-receipt.json)
 
 The guides describe the current interface. Detailed tool help remains available inside the add-on.
 
 Choose **Display Location** in Edit > Preferences > Add-ons > Ghost Tool. Switching reveals the selected region and chooses its Ghost Tool tab when supported. Save preferences normally to retain the choice. Other native panels stay available. A left-shelf choice on a host without Bforartists shelf tabs uses Top Toolbar and shows an explanation in preferences.
 
-Download the [4.2.7 release ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.7/b4_ghost_tool_v4.2.7.zip). Restart Bforartists after installation. Live updates default off; existing scenes retain their saved choices.
+Install the [4.2.10 candidate ZIP](../../releases/b4_ghost_tool_v4.2.10.zip?raw=1). Restart Bforartists after installation. Live updates default off; existing scenes retain their saved choices.
 
 The earlier 3.3.0 PDF is retained under [archive/](archive/) for historical reference. It does not describe the current interface.
 

@@ -74,8 +74,6 @@ class ToolbarUI(unittest.TestCase):
         ghost_tool.unregister()
 
     def setUp(self):
-        if hasattr(ui, '_toolbar_tiers'):
-            ui._toolbar_tiers.clear()
         bpy.context.scene.ghost_tool['is_active'] = True
 
     def draw(self, context):
@@ -83,29 +81,50 @@ class ToolbarUI(unittest.TestCase):
         ui._draw_viewport_tool_header(NS(layout=layout), context)
         return layout.calls
 
-    def test_wide_and_compact_keep_feature_order_and_narrow_full_access(self):
+    def test_full_toolbar_keeps_same_controls_at_every_width_and_scale(self):
         wide = self.draw(context_for())
         panels = [c[1] for c in wide if c[0] == 'popover']
         self.assertEqual(panels, ['GHOST_PT_toolbar_menu', 'GHOST_PT_marker_options',
             'GHOST_PT_skin_options', 'GHOST_PT_paths_popover', 'GHOST_PT_edit_popover',
             'GHOST_PT_compare_popover', 'GHOST_PT_physics_popover',
             'GHOST_PT_look_popover', 'GHOST_PT_settings_popover'])
-        compact = self.draw(context_for(1400))
-        self.assertIn('GHOST_PT_toolbar_more', [c[1] for c in compact if c[0] == 'popover'])
-        narrow = self.draw(context_for(600))
-        self.assertEqual([c[1] for c in narrow if c[0] == 'popover'], ['GHOST_PT_toolbar_menu'])
+        def controls(calls):
+            return [(c[0], c[1], c[2], c[3]) for c in calls
+                    if c[0] in {'operator', 'popover', 'prop'}]
+        for mode in ('OBJECT', 'POSE'):
+            for width, scale in ((2400, 1), (1400, 1), (1050, 1),
+                                 (530, 1), (530, 1.5), (2400, 2)):
+                with self.subTest(mode=mode, width=width, scale=scale):
+                    self.assertEqual(controls(self.draw(context_for(width, scale, mode))),
+                                     controls(wide))
         menu = Layout()
         ui._draw_toolbar_menu(menu, context_for(600))
         self.assertEqual([c[1] for c in menu.calls if c[0] == 'popover'], panels[1:])
         self.assertNotIn('ghost_tool.restore_snapshot', [c[1] for c in menu.calls])
 
-    def test_hysteresis_and_ui_scale_keep_layout_stable(self):
+    def test_other_modes_keep_the_existing_minimal_layout(self):
         self.assertEqual(ui._toolbar_tier(context_for(2400)), 'FULL')
-        self.assertEqual(ui._toolbar_tier(context_for(1790)), 'COMPACT')
-        self.assertEqual(ui._toolbar_tier(context_for(1810)), 'COMPACT')
-        self.assertEqual(ui._toolbar_tier(context_for(1850)), 'FULL')
-        self.assertEqual(ui._toolbar_tier(context_for(2400, 2)), 'COMPACT')
         self.assertEqual(ui._toolbar_tier(context_for(2400, 1, 'SCULPT')), 'MINIMAL')
+        self.assertEqual([c[1] for c in self.draw(context_for(530, 2, 'SCULPT'))
+                          if c[0] == 'popover'], ['GHOST_PT_toolbar_menu'])
+
+    def test_named_sections_and_direct_master_state_match_the_menu(self):
+        for active, label in ((True, 'Ghosts On'), (False, 'Turn On Ghosts')):
+            bpy.context.scene.ghost_tool['is_active'] = active
+            calls = self.draw(context_for())
+            sections = {c[1]: c[2].get('text') for c in calls if c[0] == 'popover'}
+            self.assertEqual(sections['GHOST_PT_marker_options'], 'Marker options')
+            self.assertEqual(sections['GHOST_PT_skin_options'], 'Onion Skin options')
+            masters = [c for c in calls if c[0] == 'prop' and c[1] == 'is_active']
+            self.assertEqual(len(masters), 1)
+            self.assertEqual(masters[0][2]['text'], label)
+            self.assertTrue(masters[0][2]['toggle'])
+            menu = Layout()
+            ui._draw_toolbar_menu(menu, context_for())
+            self.assertEqual(masters[0][2], next(c[2] for c in menu.calls
+                             if c[0] == 'prop' and c[1] == 'is_active'))
+            self.assertEqual([c[1] for c in calls if c[0] == 'operator'],
+                             ['ghost_tool.generate_ghosts', 'ghost_tool.generate_mesh_ghosts'])
 
     def test_missing_targets_keep_options_enabled_and_options_do_not_generate(self):
         calls = self.draw(context_for(active=None))
