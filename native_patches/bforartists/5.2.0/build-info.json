@@ -27,12 +27,12 @@
   ],
   "build_directory": "C:/Users/AtonLotus/AppData/Local/Temp/aa-native-build/build-native",
   "portable_directory": "C:/Users/AtonLotus/AppData/Local/Temp/aa-native-build/portable",
-  "build_log": "C:/Users/AtonLotus/AppData/Local/Temp/aa-native-build/build.log",
+  "build_log": "C:/Users/AtonLotus/AppData/Local/Temp/aa-native-build/build-resume-2.log",
   "compiler": "MSVC 19.44.35228.0",
   "configuration": "Release/Ninja",
   "jobs": 2,
   "configure_status": "success",
-  "compile_status": "running; final incremental build required after provider-guard update",
+  "compile_status": "running; four-job resource failure resumed at two jobs",
   "native_manual_acceptance": "pending",
   "source_static_spec_review": "pass",
   "source_static_quality_review": "pass",
@@ -252,5 +252,19 @@
     "source/blender/editors/screen/screen_ops.cc": "7221a6fc6fc5ac6128b714efb6abbda5986427ab15b9c2d12699db95a87e6d82",
     "source/blender/editors/space_action/space_action.cc": "d6aea71093f1593b878b53158032d0f9639f828705dac596d6bfaa9123aeb15a",
     "source/blender/makesrna/intern/rna_space.cc": "9f17fb0a15a7989e0b5527e72980e38107c1e795f66c196c88ab6c4c73527111"
-  }
+  },
+  "build_log_history": [
+    "C:/Users/AtonLotus/AppData/Local/Temp/aa-native-build/build.log",
+    "C:/Users/AtonLotus/AppData/Local/Temp/aa-native-build/build-resume.log"
+  ],
+  "resource_failure": {
+    "errors": [
+      "MSVC C1060 heap exhaustion",
+      "MSVC C1090 PDB API error24"
+    ],
+    "failed_concurrency": 4,
+    "recovery_concurrency": 2,
+    "failed_targets_recompiled": true
+  },
+  "initial_run": "intentionally interrupted to change concurrency; returned exit0 but no portable directory existed; not a completed build"
 }

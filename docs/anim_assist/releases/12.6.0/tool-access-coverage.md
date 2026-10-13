@@ -139,7 +139,15 @@ All rows below are pinnable and searchable by catalogue ID/name. `INVOKE` preser
 
 ## Source evidence and UI audit
 
-Source inventory parses the owned Python files; checks all 89 mapped operator IDs and fixed/dynamic parameter names exist in source; confirms all 70 previous operator/argument pairs, 13 defaults and 17 original quick presets are unchanged. Every catalogue ID belongs to a family and is included by empty-query search. This is static evidence only, with no native registration/execution/Undo/Redo pass.
+The package builder parses the inventoried Python files, checks all 89 mapped
+operator IDs and their fixed argument names, and confirms all 70 previous
+operator/argument pairs, 13 defaults and 17 original quick presets are unchanged.
+Dynamic arguments supplied by `_arguments()` require separate source inspection
+and native use; they are not checked by the builder's fixed-argument inventory.
+Every catalogue ID belongs to a family and can be searched with a matching
+query. The visible popup's empty query shows pins or defaults rather than all
+89 entries. This is static evidence only, with no native registration,
+execution, Undo or Redo pass.
 
 Bforartists UI rules: R1 act-first and R2 no-pre-dialog are addressed by immediate mapped calls and EXECUTE for Mirror Range/bookmark creation; R3 menu-reachable by family menus; R5 tools-apart by secondary family Options and existing target redo; R10 show-don't-hide by fixed action positions and grayed prerequisites; R11 explanations by command metadata/gesture tooltips. **Runtime usability for these rules remains NOT VERIFIED.** Existing broader sidebar/tool-shelf conventions are outside this packet. No proprietary assets, code or tooltip text are copied.
 

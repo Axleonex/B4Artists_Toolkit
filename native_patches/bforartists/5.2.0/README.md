@@ -22,12 +22,17 @@ The included helper invokes upstream CMake directly with the Windows platform co
 
 ```bat
 rem [CMD]
-build-native.cmd "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\source" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\windows_x64" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\build" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\portable" 2
+build-native.cmd "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\source" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\windows_x64" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\build-native" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\portable" 2
 ```
 
 A byte-verified source mirror, library cache, build and portable directories use the local C: drive to avoid slow small-file writes observed during dependency checkout on G:. The pinned revision is unchanged.
 
-Two compile jobs are the initial setting for this host's available memory. GPU kernel binary generation and the oneAPI device are disabled in this local configuration; rendering/device coverage is not established by Timeline acceptance. Record actual build options in the final build receipt.
+Two compile jobs and one link job are the current settings for this host's
+available memory. A four-job attempt exhausted compiler heap/PDB resources;
+the affected units compiled after resuming with two jobs. GPU kernel binary
+generation and the oneAPI device are disabled in this local configuration;
+rendering/device coverage is not established by Timeline acceptance. Record
+actual build options in the final build receipt.
 
 Do not install over the owner's Bforartists. Launch the portable output with existing isolated CONFIG/SCRIPTS/DATAFILES directories and install the matching add-on into that isolated profile for acceptance observations. A native source diff or Blender stand-in screenshot is not evidence that the portable build works.
 
