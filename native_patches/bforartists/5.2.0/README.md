@@ -22,13 +22,17 @@ The included helper invokes upstream CMake directly with the Windows platform co
 
 ```bat
 rem [CMD]
-build-native.cmd "G:\LapArt\Projects\Blender_Addons\Bforartists_Native_Timeline" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\windows_x64" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\build" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\portable" 2
+build-native.cmd "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\source" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\windows_x64" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\build" "C:\Users\AtonLotus\AppData\Local\Temp\aa-native-build\portable" 2
 ```
 
-The library cache, build and portable directories use the local C: drive to avoid slow small-file writes observed during dependency checkout on G:. The pinned revision is unchanged.
+A byte-verified source mirror, library cache, build and portable directories use the local C: drive to avoid slow small-file writes observed during dependency checkout on G:. The pinned revision is unchanged.
 
 Two compile jobs are the initial setting for this host's available memory. GPU kernel binary generation and the oneAPI device are disabled in this local configuration; rendering/device coverage is not established by Timeline acceptance. Record actual build options in the final build receipt.
 
 Do not install over the owner's Bforartists. Launch the portable output with existing isolated CONFIG/SCRIPTS/DATAFILES directories and install the matching add-on into that isolated profile for acceptance observations. A native source diff or Blender stand-in screenshot is not evidence that the portable build works.
 
 Public publication remains a separate owner-confirmed step. The existing 12.5.1 download remains current while this implementation is prepared.
+
+Native patch commit: `f5f550195e2299239f020f8e5b3cc5c391dadb43`. See [source patch](native-timeline-toolbar.patch), [build record](build-info.json) and [static reviews](review-summary.md). The source mirror differs from the pinned baseline in exactly the five recorded native files; all 649 build/runtime LFS resources and contributed add-ons use pinned source revisions.
+
+For manual observations, `observe-profile.py` checks precreated isolated resource directories before enabling the staged exact add-on. It disables automatic preference saving, exposes `aa_observe(stage)` and `aa_prepare_animation()` in the Python console, and optionally saves a new task-owned scene for an unambiguous window title. It runs no tool actions or formal tests by itself. Set `AA_NATIVE_OBSERVATIONS` to the designated release evidence JSON and optionally `AA_NATIVE_TITLE_FILE` to a new file.

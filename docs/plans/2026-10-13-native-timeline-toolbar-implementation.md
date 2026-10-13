@@ -94,12 +94,12 @@ Toolkit files: version tuple/string, manifest, `CHANGELOG.md`, release builder/r
 
 ## Progress ledger
 
-1. Pinned source checkout/dependencies — started.
-2. Native region — pending.
-3. Native sizing — pending.
-4. Add-on integration/access — pending.
-5. Compilation/portable output — pending.
-6. Native acceptance — pending.
-7. Packaging/review — pending.
+1. Pinned source checkout/dependencies — complete; exact source mirror, libraries and runtime assets staged.
+2. Native region — implemented and statically reviewed; native observations pending.
+3. Native sizing — implemented and statically reviewed; native observations pending.
+4. Add-on integration/access — implemented and statically reviewed; 89 presets locally packaged.
+5. Compilation/portable output — configured; Release install compilation running.
+6. Native acceptance — pending; isolated profile and exact matching add-on staged.
+7. Packaging/review — local add-on ZIP/source patch/build records created; application package and final integration review pending.
 
 Endpoint: actual compiled native application plus matching exact add-on artifact and observed usability evidence. Source-only implementation is incomplete.
