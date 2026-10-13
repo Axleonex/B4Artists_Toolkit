@@ -133,8 +133,8 @@
     "constants_string": "12.6.0",
     "manifest": "12.6.0"
   },
-  "bytes": 576139,
-  "sha256": "15da533ef69f679f0537a8f0c02e525bc7673debfc4ef4099c5cbab3de5b0283",
+  "bytes": 576442,
+  "sha256": "221afae332a3b2217d3e33c6075bac24c22def82cdd7bbf909a2e14f5de72a1b",
   "baseline_sha256": "7dbe61a35f01eb69431756a6b01133fdc04a3bec45dadca3264975b571d7511c",
   "source_files_sha256": {
     "B4_anim_assist/CHANGELOG.md": "f6b7d3a9127fee6444715175d001abbce28503aff87e1e2f51b508bc44190cd9",
@@ -338,7 +338,7 @@
     "B4_anim_assist/ui/pie_menus.py": "3a05cdece389d9daff066c031eee96cac774fe94aae7437f40202f24c639190a",
     "B4_anim_assist/ui/scope_ui.py": "abfef2e81d059b8d1099863a4ed646dab0f0e0147c6bfde84962bc73329aedbe",
     "B4_anim_assist/ui/timeline_catalog.py": "3ed2b5f2f8462d5b010417d6368a2b1390ae6e9f47d7f47f433752ea4829e59b",
-    "B4_anim_assist/ui/timeline_strip.py": "143dd3809417ee4d3bdc71e408911d3743e0ed5b45d3c1aa400c0d6f929f52f5",
+    "B4_anim_assist/ui/timeline_strip.py": "728e6b3ae638c4fb9d98ede67166dd470d645dc63b9fa9a4683637e92c0958d0",
     "B4_anim_assist/ui/ui_helpers.py": "b9e34aad40528bbc4725bf87c29efb5b6a05b4bde8c1648c23c9a9aec1d9daa1"
   }
 }
