@@ -1,6 +1,6 @@
 {
   "version": "12.6.0",
-  "status": "local native provider; available-host validation matrix passed; unpublished",
+  "status": "native toolbar provider; available-host validation matrix passed",
   "package_root": "B4_anim_assist",
   "files": 203,
   "changed_files_from_12_5_1": [

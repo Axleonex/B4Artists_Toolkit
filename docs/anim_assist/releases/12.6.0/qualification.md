@@ -1,7 +1,7 @@
 # Native Timeline qualification — 12.6.0
 
 Status: the available-host validation matrix passed after the repairs below.
-The local Windows application and matching add-on are built and unpublished.
+The Windows application and matching add-on are built and byte-verified.
 Windows display-DPI transitions and continuous window-border render coverage
 remain outside the qualified evidence.
 

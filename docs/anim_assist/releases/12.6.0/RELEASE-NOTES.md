@@ -1,7 +1,7 @@
 # Anim Assist 12.6.0 — native Timeline toolbar
 
-Local Windows x64 release built for custom Bforartists 5.2.0. The public
-repository download remains 12.5.1; this release has not been published.
+Windows x64 release for custom Bforartists 5.2.0, with the matching Anim Assist
+12.6.0 add-on. The custom application supplies the genuine native second row.
 
 ## Toolbar
 
