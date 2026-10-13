@@ -26,14 +26,14 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.5.1 | [b4_anim_assist_v12.5.1.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.5.1.zip) |
-| Ghost Tool 4.2.9 | [b4_ghost_tool_v4.2.9.zip](releases/b4_ghost_tool_v4.2.9.zip?raw=1) |
+| Ghost Tool 4.2.9 | [b4_ghost_tool_v4.2.9.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.9/b4_ghost_tool_v4.2.9.zip) |
 | BoneCraft 9.2.1 (optional) | [BoneCraft-BFA-9.2.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip) |
 
 Anim Assist 12.5.1 keeps the configurable toolbar thin after resizing and reserves native Timeline key space. If the Timeline is too short, enlarge it to display the extra row. See the [layout repair and screenshots](docs/anim_assist/releases/12.5.1/RELEASE-NOTES.md). Targeted normal-GUI layout checks pass in a Blender stand-in; native Redo and trail geometry have known issues. Actual Bforartists and owner workflow acceptance remain pending. Details are in the [qualification report](docs/anim_assist/releases/12.5.1/qualification.md).
 
-BoneCraft 9.2.1 restores the native asset shelf so starter rigs appear alongside the other libraries; its [release notes](docs/bonecraft/releases/9.2.1/RELEASE-NOTES.md) record host and GUI verification. The unpublished Ghost Tool 4.2.9 candidate names every toolbar section and adds a direct Ghosts On switch. It keeps the complete Object/Pose toolbar in every split viewport, with native horizontal panning for overflow. It defaults to a visible Top Toolbar and migrates saved Top Header choices. Top Header has been removed from display settings. Shared feature options and cached visibility controls remain available. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
+BoneCraft 9.2.1 restores the native asset shelf so starter rigs appear alongside the other libraries; its [release notes](docs/bonecraft/releases/9.2.1/RELEASE-NOTES.md) record host and GUI verification. Ghost Tool 4.2.9 names every toolbar section and adds a direct Ghosts On switch. It keeps the complete Object/Pose toolbar in every split viewport, with native horizontal panning for overflow. It defaults to a visible Top Toolbar and migrates saved Top Header choices. Top Header has been removed from display settings. Shared feature options and cached visibility controls remain available. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
 
-See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The Ghost Tool 4.2.9 candidate includes the matching repository ZIP and PDF guide and awaits publication approval. The current published [4.2.8 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.8) remains available. Earlier releases remain available as history.
+See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The regular Latest [Ghost Tool 4.2.9 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.9) includes the matching repository ZIP and PDF guide. Earlier releases remain available as history.
 
 The [Ghost toolbar guide](docs/ghost_tool/toolbar/README.md) covers the current 4.2.9 package. Earlier archives and their verification reports remain available as history.
 
@@ -69,7 +69,7 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - Anim Assist, Ghost Tool and BoneCraft require Bforartists.
 
-- The Ghost Tool 4.2.9 candidate passes **89 focused tests/checks in Bforartists 5.2.0** from its exact ZIP: 54 background tests and 35 native split-view checks. Named options, the master switch, full-row consistency, panning and cached-state preservation pass. See the [package receipt](docs/ghost_tool/releases/4.2.9/package-receipt.json). Publication awaits approval.
+- Ghost Tool 4.2.9 passes **89 focused tests/checks in Bforartists 5.2.0** from its exact ZIP: 54 background tests and 35 native split-view checks. Named options, the master switch, full-row consistency, panning and cached-state preservation pass. See the [package receipt](docs/ghost_tool/releases/4.2.9/package-receipt.json).
 
 - Historical Ghost Tool 4.2.8 passed **77 focused tests/checks in Bforartists 5.2.0** from the exact ZIP: 53 background tests and 24 native split-view checks. Object/Pose, UI scale, new splits, horizontal panning, hide/show and frame/cache preservation pass. See the [package receipt](docs/ghost_tool/releases/4.2.8/package-receipt.json). Production rigs, full keyboard navigation and alternate themes remain unverified.
 

@@ -2,11 +2,11 @@
 
 This guide describes Ghost Tool 4.2.9's named toolbar sections and shared controls. See the [toolbar guide](toolbar/README.md) for placement and recovery.
 
-Candidate version: 4.2.9; not yet published. Every Object/Pose viewport keeps the complete named toolbar. Narrow rows scroll horizontally. The ZIP passes 89 focused Bforartists 5.2.0 tests/checks: 54 background tests and 35 native split-view checks.
+Current version: 4.2.9. Every Object/Pose viewport keeps the complete named toolbar. Narrow rows scroll horizontally. The ZIP passes 89 focused Bforartists 5.2.0 tests/checks: 54 background tests and 35 native split-view checks.
 
 ## Install and find Ghost Tool
 
-Download the [4.2.9 ZIP](../../releases/b4_ghost_tool_v4.2.9.zip?raw=1). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
+Download the [4.2.9 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.9/b4_ghost_tool_v4.2.9.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
 
 Ghost Tool starts with a visible Top Toolbar beneath the main 3D Viewport header, in the native Tool Settings row. In Edit > Preferences > Add-ons > Ghost Tool, choose Top Toolbar, Right Sidebar (N), or Left Tool Shelf (T). Top Header is no longer a display choice; saved Top Header preferences migrate to a visible toolbar. Existing sidebar, shelf and toolbar visibility choices are preserved. The main-header Ghost Tool menu provides feature access and restores a hidden toolbar. Save preferences normally to retain your choice.
 

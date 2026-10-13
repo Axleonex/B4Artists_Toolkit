@@ -25,3 +25,7 @@ Success: names and master state are visible in draw checks, generation/options r
 5. Commit locally and present the concrete before/after for merge, push and release confirmation.
 
 Self-review: the request has a finite UI scope, no new theme or backend behavior, and no unresolved design choice. All full-size labels cannot fit simultaneously into every narrow viewport; native panning remains necessary.
+
+## Approved publication
+
+The owner confirmed the merge update on 2026-10-13 after reviewing the prepared 4.2.9 change. Publication uses a regular Latest release with matching ZIP and PDF assets. The package receipt records downloaded asset comparisons and repository metadata after publication.
