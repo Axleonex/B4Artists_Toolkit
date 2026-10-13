@@ -14,7 +14,7 @@ unregister functions are called in the correct dependency order.
 bl_info = {
     "name": "Ghost Tool",
     "author": "GoingGhost",
-    "version": (4, 2, 9),
+    "version": (4, 2, 10),
     "blender": (4, 0, 0),
     "location": "View3D > Header > Ghost Tool",
     "description": "Ghost animation tools for Bforartists with scoped snapshots, independent variants, saved references and undoable restoration.",
@@ -101,6 +101,7 @@ def _import_modules(*, reload_modules: bool = True):
     from . import viewport_draw
     from . import ui_panel
     from . import preferences
+    from . import shelf_width
     from . import api
     from . import mesh_ghosts
     from . import motion_paths
@@ -135,6 +136,7 @@ def _import_modules(*, reload_modules: bool = True):
         importlib.reload(viewport_draw)
         importlib.reload(ui_panel)
         importlib.reload(preferences)
+        importlib.reload(shelf_width)
         importlib.reload(api)
 
     _modules_loaded = True
@@ -163,6 +165,7 @@ def _import_modules(*, reload_modules: bool = True):
         "viewport_draw": viewport_draw,
         "ui_panel": ui_panel,
         "preferences": preferences,
+        "shelf_width": shelf_width,
         "api": api,
     }
 
@@ -191,6 +194,7 @@ _REGISTER_ORDER = [
     "ui_panel",
     "settings_editor",
     "preferences",
+    "shelf_width",
 ]
 
 

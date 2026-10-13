@@ -1,5 +1,7 @@
 # Ghost panel layout correction
 
+Follow-up: the initial public-API limitation below is superseded by [Ghost shelf width implementation](2026-10-13-ghost-shelf-width.md). BoneCraft already uses a guarded native stored-width workaround; the 4.2.10 candidate adapts that mechanism. The earlier evidence remains as a record of the initial investigation and header-only correction.
+
 The owner requests a readable left shelf matching the opened right N-panel width and removal of only the duplicate Ghost Tool main-header button. The existing lower toolbar and all tools must remain available.
 
 Subject: Ghost Tool users finding the same controls in a readable native viewport layout. Treatment: native UI tool; inherit Bforartists' theme palette, typography, icons and spacing. Layout: retain the complete lower Tool Settings row, remove the standalone main-header entry, and place hidden-toolbar recovery in the existing View menu. No new theme, tab, or animation behavior.

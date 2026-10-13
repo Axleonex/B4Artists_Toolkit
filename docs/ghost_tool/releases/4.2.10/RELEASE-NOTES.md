@@ -1,0 +1,11 @@
+# Ghost Tool 4.2.10 — candidate
+
+The left Ghost Tool shelf now widens once to match an already open right N-panel. With that panel closed, it uses BoneCraft's 240 px left default, adjusted for UI scale. Already wider shelves stay wider, and later manual resizing is preserved. Widen Narrow Shelf defaults on in Ghost preferences; switching it off leaves widths under manual control. Relocating the display or explicitly changing that switch permits another default-width check.
+
+The duplicate Ghost Tool button in the main viewport header is removed. The lower Tool Settings row retains every named section, generation action and the Ghosts On master switch. View > Show Ghost Toolbar recovers hidden controls when Top Toolbar is selected. No tools or animation backend behavior are removed.
+
+The width mechanism adapts BoneCraft's existing guarded stored-width locator and relayout. Ghost's standalone ZIP does not depend on BoneCraft. It validates native dimensions, region type, UI scale and a unique candidate before writing one stored-width field. Ambiguous or unrecognized layouts receive no write. This is a native host-layout workaround, not a public width setter; verification is specific to the tested Bforartists build.
+
+The 15 pure width-policy checks pass. The exact-package native shelf test has not run: two Bforartists GUI launches each timed out after 240 seconds before the script wrote a result or screenshot. A separate background-start probe remained alive without output after 60 seconds and was stopped. Thus the candidate's actual shelf width and controls remain unverified. The prior source's measured left/right widths were 132/220 px, so a matching-width assertion failed before implementation. Native acceptance must show automatic timer widening and readable Ghost controls. See the [verification status](verification-status.json). Production rigs, other host versions, alternate themes and complete keyboard navigation are outside this focused verification.
+
+This is an **unpublished candidate**. The [candidate ZIP](../../../../releases/b4_ghost_tool_v4.2.10.zip?raw=1) and updated PDF guide are prepared locally. Published 4.2.9 and all historical receipts remain intact. Do not treat this candidate as verified; native shelf evidence is required before publication. Restart Bforartists after installing an update.

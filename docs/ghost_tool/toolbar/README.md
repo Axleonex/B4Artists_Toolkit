@@ -1,4 +1,4 @@
-# Ghost Tool 4.2.9 viewport toolbar
+# Ghost Tool 4.2.10 viewport toolbar candidate
 
 The toolbar keeps Ghost actions in the native viewport **Tool Settings** row beneath the main header. Ghost Tool defaults to **Top Toolbar**, with **Show Ghost Toolbar** enabled. **Top Header** has been removed from Display Location; saved Top Header choices migrate to a visible toolbar. Right Sidebar (N), Left Tool Shelf (T), and their saved choices remain available. Existing toolbar visibility choices are retained.
 
@@ -20,14 +20,20 @@ Marker options retain **Marker Targets**, frame range and **Live Update Markers*
 
 ## Keep the viewport clear
 
-Ghost Tool 4.2.9 keeps the complete Object/Pose toolbar in every viewport, at every width and UI scale. Buttons keep the same labels and order as the wide layout. When a row overflows, middle-mouse drag it horizontally to reach the remaining buttons. Resizing or splitting a viewport does not move tools into **More** or a Ghost-only layout. Other modes retain their existing Ghost menu.
+Ghost Tool 4.2.10 keeps the complete Object/Pose toolbar in every viewport, at every width and UI scale. Buttons keep the same labels and order as the wide layout. When a row overflows, middle-mouse drag it horizontally to reach the remaining buttons. Resizing or splitting a viewport does not move tools into **More** or a Ghost-only layout. Other modes retain their existing Ghost menu.
 
 Earlier 4.2.7 used width-based layouts. The complete split-view toolbar was introduced in 4.2.8; see its [verification](split-view-verification.md).
 
-Choose **Hide Toolbar** in Ghost to hide its controls while keeping previews, targets, settings and the native Tool Settings row. To restore it, open **Ghost Tool** in the main viewport header and choose **Show Toolbar**. This also reveals Tool Settings if you hid that native region through View controls. Hiding the native region later remains your choice until you explicitly show the toolbar again. Leaving Top Toolbar does not close native regions.
+Choose **Hide Toolbar** in Ghost to hide its controls while keeping previews, targets, settings and the native Tool Settings row. To restore it, choose **View > Show Ghost Toolbar** or enable **Show Ghost Toolbar** in preferences. This also reveals Tool Settings if you hid that native region through View controls. Hiding the native region later remains your choice until you explicitly show the toolbar again. Leaving Top Toolbar does not close native regions.
 
 Location and Ghost-control visibility apply across ordinary viewports. Save preferences normally to retain them. Each viewport keeps its own native region alignment and visibility.
 
 ## Source and release status
 
-The current source, repository ZIP and regular Latest release are **4.2.9**. Install [b4_ghost_tool_v4.2.9.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.9/b4_ghost_tool_v4.2.9.zip). The release's [package receipt](../releases/4.2.9/package-receipt.json) records exact source matching and 89 passing focused tests/checks in native Bforartists 5.2.0. Earlier archives and the [original toolbar verification](verification.md) retain their tested versions.
+The current source and matching candidate ZIP are **4.2.10**. Install [b4_ghost_tool_v4.2.10.zip](../../../releases/b4_ghost_tool_v4.2.10.zip?raw=1). The published regular 4.2.9 release remains available. Pure width-policy checks pass; native shelf verification is blocked because Bforartists timed out during startup before the test script ran. See the [verification status](../releases/4.2.10/verification-status.json) and [release notes](../releases/4.2.10/RELEASE-NOTES.md). Earlier archives and the [original toolbar verification](verification.md) retain their tested versions.
+
+## Left shelf width and header placement
+
+The 4.2.10 candidate is designed to widen a narrow Ghost shelf once to match an already open right N-panel. With the N-panel closed, its intended default is 240 px at 1x UI scale. It leaves wider shelves and later manual resizing alone. Widen Narrow Shelf in Ghost preferences defaults on; turn it off to manage the width yourself. Changing that switch or relocating the display permits another default-width check. The host test did not start, so these shelf behaviors remain unverified; see the [verification status](../releases/4.2.10/verification-status.json).
+
+The standalone Ghost Tool button in the main viewport header is removed. The Ghost menu, master switch, generation actions and all section dropdowns remain in the Tool Settings row below. In Top Toolbar mode, use View > Show Ghost Toolbar or its preference checkbox to recover hidden controls.
