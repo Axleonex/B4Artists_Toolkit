@@ -30,6 +30,17 @@ def _update_toolbar_visibility(self, context):
     update_toolbar_visibility(context)
 
 
+def migrate_display_location(context):
+    """Replace the retired header choice without renumbering saved locations."""
+    addon = context.preferences.addons.get('ghost_tool')
+    prefs = addon.preferences if addon else None
+    # RNA returns an empty identifier for saved HEADER=0 after its removal.
+    # AddonPreferences does not expose its storage through IDProperty access.
+    if prefs is not None and prefs.display_location not in {'TOOLBAR', 'SIDEBAR', 'TOOLS'}:
+        prefs.display_location = 'TOOLBAR'
+        prefs.show_toolbar = True
+
+
 # ---------------------------------------------------------------------------
 # Addon Preferences
 # ---------------------------------------------------------------------------
@@ -48,12 +59,12 @@ class GhostToolPreferences(bpy.types.AddonPreferences):
         name="Display Location",
         description="Choose where the full Ghost Tool controls appear in the 3D Viewport",
         items=(
-            ('HEADER', "Top Header", "Open Ghost Tool from the viewport header"),
-            ('SIDEBAR', "Right Sidebar (N)", "Show Ghost Tool in the right sidebar"),
-            ('TOOLS', "Left Tool Shelf (T)", "Show Ghost Tool in the Bforartists left Tool Shelf"),
-            ('TOOLBAR', "Top Toolbar", "Keep Ghost Tool in the viewport Tool Settings row"),
+            # Keep the pre-existing RNA numbers: 0 was the retired HEADER.
+            ('TOOLBAR', "Top Toolbar", "Keep Ghost Tool in the viewport Tool Settings row", 3),
+            ('SIDEBAR', "Right Sidebar (N)", "Show Ghost Tool in the right sidebar", 1),
+            ('TOOLS', "Left Tool Shelf (T)", "Show Ghost Tool in the Bforartists left Tool Shelf", 2),
         ),
-        default='HEADER',
+        default='TOOLBAR',
         update=_update_display_location,
     )  # type: ignore[assignment]
 
@@ -292,7 +303,7 @@ class GhostToolPreferences(bpy.types.AddonPreferences):
             layout.prop(self, "show_toolbar")
         from .ui_panel import supports_tool_shelf
         if self.display_location == 'TOOLS' and not supports_tool_shelf():
-            layout.label(text="Left Tool Shelf requires Bforartists; using Top Header.", icon='INFO')
+            layout.label(text="Left Tool Shelf requires Bforartists; using Top Toolbar.", icon='INFO')
         layout.separator()
 
         help_box = layout.box()
@@ -432,6 +443,7 @@ def register() -> None:
     for cls in CLASSES:
         bpy.utils.register_class(cls)
     register_keymaps()
+    migrate_display_location(bpy.context)
     from .ui_panel import update_display_location
     update_display_location(bpy.context)
 

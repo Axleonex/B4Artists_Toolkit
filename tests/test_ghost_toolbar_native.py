@@ -57,13 +57,15 @@ def tick():
                 if 'ghost_tool' not in bpy.context.preferences.addons:
                     bpy.context.preferences.addons.new().module = 'ghost_tool'
                 prefs = bpy.context.preferences.addons['ghost_tool'].preferences
-                prefs.display_location = 'TOOLBAR'
-                prefs.show_toolbar = True
+                check('New installation defaults to visible toolbar',
+                      prefs.display_location == 'TOOLBAR' and prefs.show_toolbar)
                 state['prefs'] = prefs
                 check('Toolbar preference reveals native row', area.spaces.active.show_region_tool_header)
                 check('Native header append registered once', sum(
                     f is ui._draw_viewport_tool_header for f in
                     bpy.types.VIEW3D_HT_tool_header.draw._draw_funcs) == 1)
+                bpy.ops.object.select_all(action='DESELECT')
+                bpy.ops.mesh.primitive_cube_add()
                 cube = bpy.context.active_object
                 for frame, value in ((1, 0), (20, 5)):
                     cube.location.x = value
@@ -132,7 +134,7 @@ def tick():
                 check('Hide/show preserves skin identity', state['skin_objects'] == tuple(
                     o.as_pointer() for o in bpy.data.objects if o.get('ghost_tool_mesh_ghost')))
                 check('Main-header recovery remains available', ui.GHOST_PT_header_menu.poll(bpy.context))
-                state['prefs'].display_location = 'HEADER'
+                state['prefs'].display_location = 'SIDEBAR'
                 check('Leaving toolbar preserves native region choice', area.spaces.active.show_region_tool_header)
                 ghost_tool.unregister()
                 check('Unregister removes native append', ui._draw_viewport_tool_header not in

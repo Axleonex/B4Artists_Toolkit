@@ -234,7 +234,7 @@ def draw_starter_header(self, context):
 class BONEFORGE_OT_toggle_starter_shelf(Operator):
     bl_idname = 'boneforge.toggle_starter_shelf'
     bl_label = 'Starter Rigs'
-    bl_description = "Switch between BoneCraft starter rigs and the regular asset shelf"
+    bl_description = "Show BoneCraft starter rigs alongside the other assets in the bottom shelf"
 
     def execute(self, context):
         enabled = not ra.shelf_enabled()

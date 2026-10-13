@@ -1,16 +1,16 @@
 # Ghost Tool 4.2.6 user guide
 
-This guide and its PDF describe the current release, including the persistent toolbar, cached visibility and independent target folds. See the [Ghost toolbar guide](toolbar/README.md) for placement and recovery details.
+This guide and its PDF describe the toolbar, cached visibility and independent target folds, including the pending source change to the default display. See the [Ghost toolbar guide](toolbar/README.md) for placement, recovery and publication status.
 
-Current version: 4.2.6. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. All 178 checks/cases pass on a Blender stand-in; native Bforartists validation remains pending.
+Published version: 4.2.6. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. The release passed 178 checks/cases on a Blender stand-in. The pending toolbar-default source change passed 49 preference, toolbar, cached-display and header checks, plus 30 GUI checks across fresh-install and migrated-header scenarios in Bforartists 5.2.0.
 
 ## Install and find Ghost Tool
 
 Download the [4.2.6 ZIP](../../releases/b4_ghost_tool_v4.2.6.zip?raw=1). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
 
-The main entry is the Ghost Tool menu in the 3D Viewport header. In Edit > Preferences > Add-ons > Ghost Tool, choose Top Header, Top Toolbar, Right Sidebar (N), or Left Tool Shelf (T). Top Header remains the default. All locations share feature controls. Save preferences normally to retain your choice. Separate Window and Prototype Settings Editor launch controls have been removed.
+The source now starts with a visible Top Toolbar beneath the main 3D Viewport header, in the native Tool Settings row. In Edit > Preferences > Add-ons > Ghost Tool, choose Top Toolbar, Right Sidebar (N), or Left Tool Shelf (T). Top Header is no longer a display choice; saved Top Header preferences migrate to a visible toolbar. Existing sidebar, shelf and toolbar visibility choices are preserved. The main-header Ghost Tool menu provides feature access and restores a hidden toolbar. Save preferences normally to retain your choice. This default change is pending publication; the existing 4.2.6 download still offers Top Header.
 
-This is a Bforartists add-on. Version 4.2.6 was checked using Blender 5.1.2 as a stand-in, with only the host registration gate patched. Native Bforartists toolbar geometry, Tool Shelf integration and production-rig validation are pending.
+This is a Bforartists add-on. The original 4.2.6 release checks used Blender 5.1.2 as a stand-in, with only the host registration gate patched. The subsequent native checks used Bforartists 5.2.0 without patching that gate and confirmed the wide toolbar, default visibility, preference migration, hide/show recovery and reload. Production-rig acceptance and a complete native visual check of every display location remain pending.
 
 ## Use the persistent toolbar
 
