@@ -561,6 +561,26 @@ def _migrate_legacy(window, screen):
     return False
 
 
+def _apply_inactive_timeline_choice(screens):
+    """An explicit global choice includes cached Timeline spaces in other editors."""
+    if not native_available():
+        return
+    for screen in screens:
+        for area in screen.areas:
+            active = area.spaces.active
+            for space in area.spaces:
+                if (space == active or space.type != "DOPESHEET_EDITOR"
+                        or space.mode != "TIMELINE"):
+                    continue
+                try:
+                    # The host RNA setter finds this space's own region list.
+                    # This is an explicit user choice, so marking/clearing the
+                    # native user-hide flag is intended. No active area changes.
+                    space.show_region_tool_header = _enabled()
+                except (RuntimeError, ReferenceError, TypeError) as exc:
+                    _log.warning("Cached Timeline toolbar choice could not be applied: %s", exc)
+
+
 def reconcile_preferences():
     """Explicit preference changes may show/hide; ordinary resizing never does."""
     global _force_reconcile
@@ -568,6 +588,7 @@ def reconcile_preferences():
     screens = getattr(bpy.data, "screens", None)
     if screens is None:
         return  # The first unrestricted lifecycle callback queues the choice.
+    _apply_inactive_timeline_choice(screens)
     # Inactive workspace Timelines receive this explicit choice when opened,
     # while ordinary workspace switching still respects their native hide flag.
     _pending_user_action.update(area.spaces.active.as_pointer()
@@ -604,6 +625,9 @@ def _sync():
         live = {area.spaces.active.as_pointer() for screen in screens
                 for area in screen.areas if is_timeline(area)}
         if force:
+            # A preference callback may have run under _RestrictData. Reconcile
+            # cached spaces here too, without treating load/disable as user intent.
+            _apply_inactive_timeline_choice(screens)
             _pending_user_action.update(live)
         _seen.intersection_update(live)
         _owned.intersection_update(live)
