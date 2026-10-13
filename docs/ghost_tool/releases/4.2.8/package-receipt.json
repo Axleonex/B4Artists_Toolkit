@@ -1,0 +1,126 @@
+{
+  "version": "4.2.8",
+  "status": "PASS",
+  "archive": "b4_ghost_tool_v4.2.8.zip",
+  "bytes": 218862,
+  "sha256": "48ffc4239b0e098c23a442c9257c661ba32c79c7e536d019be45612b8fdc2041",
+  "source_modules": 29,
+  "extracted_bytes_match": true,
+  "host": "Bforartists 5.2.0 (Blender runtime 5.3.0 Alpha)",
+  "native_gui_host_gate_patched": false,
+  "results": [
+    {
+      "suite": "test_ghost_toolbar_ui",
+      "tests": 7,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_display_location",
+      "tests": 18,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_cached_display",
+      "tests": 8,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "test_ghost_authoring",
+      "tests": 20,
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "suite": "native-split",
+      "tests": 24,
+      "exit_code": 0,
+      "status": "PASS",
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Actual native Bforartists host",
+          "Default is visible Top Toolbar",
+          "Multiple native 3D viewports",
+          "Split viewports exercise the old collapsing widths",
+          "Object mode: viewport 1 has every feature in order",
+          "Object mode: viewport 2 has every feature in order",
+          "Native Tool Settings remains visible in every viewport",
+          "Pose mode: viewport 1 has every feature in order",
+          "Pose mode: viewport 2 has every feature in order",
+          "Scaled Pose mode: viewport 1 has every feature in order",
+          "Scaled Pose mode: viewport 2 has every feature in order",
+          "Hide applies to every viewport",
+          "Hide keeps native Tool Settings",
+          "Show recovery: viewport 1 has every feature in order",
+          "Show recovery: viewport 2 has every feature in order",
+          "Native horizontal panning exposes overflowing controls",
+          "Newly split viewport inherits visible native row",
+          "New split: viewport 1 has every feature in order",
+          "New split: viewport 2 has every feature in order",
+          "New split: viewport 3 has every feature in order",
+          "Drawing and layout actions preserve the frame",
+          "Drawing and hide/show preserve cached marker identities",
+          "Layout does not enable live updates",
+          "Native header append remains registered exactly once"
+        ],
+        "geometry": [
+          {
+            "width": 791,
+            "height": 585
+          },
+          {
+            "width": 803,
+            "height": 585
+          }
+        ],
+        "pan_before": 0.0,
+        "pan_after": 287.0,
+        "host": "5.3.0 Alpha"
+      }
+    }
+  ],
+  "total_checks": 77,
+  "source_manifest": {
+    "__init__.py": "385216f021a1cf974621149f38403068fdbbca44c7ef108a15d4716bbd6fafec",
+    "api.py": "1de83ca8b563bcd03ae05a4a16adf8b31c76b7a257eb136220b9926de743898a",
+    "diff_mode.py": "f8439fce15da8475b93563070d76cd0789d5dddef00574b83f77ae57edc17966",
+    "draw_to_keys.py": "8d1422a9334ad6b2dbd1272024a80ddbe31bd4e7162138c7715fdb0d7ecb68e3",
+    "draw_to_keys_math.py": "eb2d0be5f455859f54d9c1651b15a17cea5b6e1907d7664c04e20138448e6084",
+    "easing_presets.py": "f8644da32ad619bf648739f168d0eaad791c9f52e92cab193661ba730680e257",
+    "export_import.py": "be0aa66295f830d25d7bb971c07569132f029865f443528494f331a4974e77cc",
+    "fcurve_utils.py": "cc379ff5b89b3696657329904c4120ff374ccdb0160497553eb0c86dbb28e3b6",
+    "ghost_cache.py": "e728bfa32e2d14cfcd525b64e3f420e941bc9bb720eb0b28bd2d9bacc0d79f39",
+    "ghost_data.py": "5cf59a7b758edff8a189f0a012bdcdfbbb2c4ff108c6448d2888f0862e446b4d",
+    "ghost_pipeline.py": "24122f070cc55684bcb80b0447d49181ec3e885f2326104dc86e2009eca2ba44",
+    "mesh_ghosts.py": "521bab6c7bddf3e638c192dad922583b9d5fab520639b1aadb48975ffd39d35f",
+    "modal_operator.py": "6cb2952ff5b2135a9961cd511d9baff284466ac0b0d69f2b71f9894b7f52cb19",
+    "motion_channels.py": "69053e9bcb49576b145418153e7dda02bb8d3fd2ba81c5d36085e08d6e2af190",
+    "motion_paths.py": "5710908fe9512e7b45a02e1a8b33f42a4c58d2a22fd192aa9d3ffa5bd00739d7",
+    "path_fast_sampler.py": "e0275f56838bb7e82e32d1027c67e34bbd25a4fccf5b33aa4a12e4d9493632fd",
+    "path_handle_drag.py": "e86f7fb9862d8417ab2c7abf309969fc5732971d20db463acd17abf4de7e10ec",
+    "physics_archetypes.py": "7dbf69ef8caea3226f98e21a2d0b498ef304bb333baf75af45bf03cabbc07e3d",
+    "physics_suggest.py": "487cd63e34eff7fe16066c6549d182a30c773c7df8b57e07fdccfe9246d74ef5",
+    "preferences.py": "b8b585933003c060875e4f00042c3e780e45cb438b5860c037106a943ea3d30c",
+    "selection_operators.py": "facbf44f3366790f1d082189beb4ce031a7fe32d26e3d8e613f25fa8cb742998",
+    "session_state.py": "bd98c1aa30382fe5357749fa4a3e06710a2850e62d8b619129e1f74cd4146b07",
+    "settings_editor.py": "11c2b9efbd1689b1de52ce7a1d283825deda8f67a867d1c1c1bc689842af44cd",
+    "snapshot.py": "e0cb0bc5ed0896273d0d9799e52ae43d53abd2b8a84b5f20feeea29ee4f73ab6",
+    "snapshot_storage.py": "061c16926ce8ed82f63ea001d34a52c326db5e12db2656fd36cdabc164947660",
+    "target_binding.py": "8be5467cf10ec649bd220dbe4f7708e2dd46eba9dc59149e2c6900219cdcf6fb",
+    "ui_panel.py": "d334aaeb0f18cb79d52905864d28ef41ad6b3d9a3ef6e8f1237088f87243cff8",
+    "utils.py": "7fe35ccf95b0ec6abad19c7fca07aab2423e6cd4bbaac7051a8cd3b39b1fa265",
+    "viewport_draw.py": "9062d8c839f55ff36c7cc346c1dad70fa50ff9d806c40c695c8035759e48d867"
+  },
+  "pdf": {
+    "path": "docs/ghost_tool/GhostTool_User_Manual.pdf",
+    "sha256": "d566d6a9a287cef9d94b34e50a5dd999c42f58fa472345a0572d0f0956e764fd",
+    "title": "Ghost Tool 4.2.8 user guide",
+    "pages": 3,
+    "bytes": 10974
+  },
+  "published": false,
+  "vendor_branding_found": false
+}

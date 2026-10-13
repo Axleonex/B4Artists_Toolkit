@@ -1,20 +1,20 @@
-# Ghost Tool 4.2.7 user guide
+# Ghost Tool 4.2.8 user guide
 
-This guide and its PDF describe Ghost Tool 4.2.7, including the visible toolbar default, cached visibility and independent target folds. See the [Ghost toolbar guide](toolbar/README.md) for placement, recovery and publication status.
+This guide and its PDF describe Ghost Tool 4.2.8, including the complete split-viewport toolbar, visible toolbar default, cached visibility and independent target folds. See the [Ghost toolbar guide](toolbar/README.md) for placement, recovery and publication status.
 
-Current version: 4.2.7. Live Update Markers and Live Update Skin default off. Ghosts pause during native gestures and refresh after animation edits settle. The exact package passed 148 checks/cases in Bforartists 5.2.0: 118 background checks and 30 GUI checks across fresh-install and migrated-header scenarios.
+Current version: 4.2.8. Every Object/Pose viewport keeps the complete toolbar layout. Narrow rows scroll horizontally instead of collapsing tools. Live Update Markers and Live Update Skin default off; existing authoring and settled-refresh behavior is retained. The exact package passes 77 focused tests/checks in Bforartists 5.2.0: 53 background tests and 24 native split-view checks.
 
 ## Install and find Ghost Tool
 
-Download the [4.2.7 ZIP](../../releases/b4_ghost_tool_v4.2.7.zip?raw=1). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
+Download the [4.2.8 ZIP](../../releases/b4_ghost_tool_v4.2.8.zip?raw=1). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
 
 Ghost Tool starts with a visible Top Toolbar beneath the main 3D Viewport header, in the native Tool Settings row. In Edit > Preferences > Add-ons > Ghost Tool, choose Top Toolbar, Right Sidebar (N), or Left Tool Shelf (T). Top Header is no longer a display choice; saved Top Header preferences migrate to a visible toolbar. Existing sidebar, shelf and toolbar visibility choices are preserved. The main-header Ghost Tool menu provides feature access and restores a hidden toolbar. Save preferences normally to retain your choice.
 
-This is a Bforartists add-on. Package verification used Bforartists 5.2.0 without patching the host registration gate and confirmed the wide toolbar, default visibility, preference migration, hide/show recovery and reload. Production-rig acceptance and a complete native visual check of every display location remain pending.
+This is a Bforartists add-on. Package verification used Bforartists 5.2.0. Focused background tests cover display preferences and migration, toolbar drawing, cached visibility and authoring behavior. Native GUI checks, without a host-gate patch, confirm split viewports, Object/Pose, UI scale, new splits, horizontal panning and hide/show recovery. Production-rig acceptance and a complete native visual check of every display location remain pending.
 
 ## Use the persistent toolbar
 
-Choose Top Toolbar to keep Ghost actions in the native Tool Settings row beneath the main viewport header when headers are aligned at the top. Native tool and mode controls remain available. Wide layouts expose every feature; compact layouts place Compare, Physics, Look and Settings under More. Narrow layouts provide full access through Ghost in the same feature order.
+Choose Top Toolbar to keep Ghost actions in the native Tool Settings row beneath the main viewport header when headers are aligned at the top. Native tool and mode controls remain available. Every Object/Pose viewport keeps the complete toolbar, with the same buttons, labels and order. Middle-mouse drag the native row horizontally to reach offscreen buttons. Splitting or narrowing a viewport no longer moves tools into More or a Ghost-only layout. Other modes retain their existing Ghost menu.
 
 Show Markers and Show Onion Skin generate and display previews. Their adjacent arrows open Marker options and Onion Skin options without generating. Use Show cached markers or Show cached skin at the top of those options to change existing preview visibility without rebuilding. Hidden markers cannot be picked or box-selected. Clear All Ghosts removes both markers and onion skins.
 
@@ -28,7 +28,7 @@ Leave Ghost Tool enabled and move, rotate or scale your object or pose control. 
 
 Live Update Markers controls whether markers follow timeline changes; Live Update Skin controls onion skins. Both default off, and Show Markers or Show Onion Skin preserves your choices. With these controls off, scrubbing shows the last refreshed snapshot. Finishing an animation edit still refreshes existing ghosts. Freeze pauses these automatic refreshes too.
 
-After installing 4.2.7, test a new pose on your rig, wait for a ghost refresh, and insert the key. Seek away and return to confirm it saved correctly. Repeat with auto-key enabled and with mesh ghosts or a pinned motion path visible. Record any jitter or lost pose in the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues).
+After installing 4.2.8, test a new pose on your rig, wait for a ghost refresh, and insert the key. Seek away and return to confirm it saved correctly. Repeat with auto-key enabled and with mesh ghosts or a pinned motion path visible. Record any jitter or lost pose in the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues).
 
 ## Show and inspect motion
 
@@ -80,6 +80,6 @@ For final review, test marker discovery, handle dragging and Escape, snapshot vi
 
 ## Release verification
 
-The exact 4.2.7 ZIP passed 118 background checks and 30 native GUI checks in Bforartists 5.2.0. Background checks cover display preferences, toolbar destinations, cached visibility, independent target folds, header features, authoring and snapshot targets. Both fresh defaults and migrated Top Header settings passed Object/Pose, cache-preserving hide/show, missing-target and reload checks. See the [package receipt](releases/4.2.7/package-receipt.json) and [release notes](releases/4.2.7/RELEASE-NOTES.md).
+The exact 4.2.8 ZIP passes 53 focused background tests and 24 native GUI checks in Bforartists 5.2.0. Background tests cover toolbar controls at multiple widths/scales, display preferences and migration, cached visibility and authoring regressions. Native Animation viewports retain every feature in Object/Pose modes and at larger UI scale; a third split inherits the visible row. Horizontal panning, hide/show, frame/cache preservation and single header registration pass. See the [package receipt](releases/4.2.8/package-receipt.json) and [release notes](releases/4.2.8/RELEASE-NOTES.md).
 
-Full keyboard navigation, theme variants and production rigs remain unverified. This version changes display defaults and migration; it adds no sampling scheduler or backend jitter repair. Historical builds and their original evidence remain listed in the [release index](../../releases/VERSIONS.md).
+Full keyboard navigation, theme variants and production rigs remain unverified. This patch changes toolbar layout; existing display defaults, preference migration and animation sampling are retained. Historical builds and their original evidence remain listed in the [release index](../../releases/VERSIONS.md).

@@ -1,6 +1,6 @@
 # Full Ghost toolbar in split viewports
 
-Local candidate for the owner's requested correction. Published 4.2.7 is unchanged; this correction is not yet packaged or published.
+Ghost Tool 4.2.8 includes this correction. Its [package receipt](../releases/4.2.8/package-receipt.json) records a fresh exact-ZIP run of the same 77 focused tests/checks. The earlier 4.2.7 package and original receipts are preserved.
 
 ## Cause and change
 

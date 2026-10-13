@@ -24,3 +24,5 @@ Success: identical recorded toolbar controls/order at wide, compact and narrow w
 5. Commit locally on the work branch. Published 4.2.7 assets and historical receipts remain intact. Present the reviewed change before merge/push approval.
 
 Self-review: no new surfaces, dependencies or unresolved design choices; the finite endpoint is the verified local correction. Small-view overflow remains native scrolling, so fitting all full-size buttons simultaneously into every width is not claimed.
+
+Release follow-through: the owner confirmed merge on 2026-10-13. The correction is packaged as 4.2.8, with current repository references and the PDF manual updated. Historical 4.2.7 artifacts remain intact.
