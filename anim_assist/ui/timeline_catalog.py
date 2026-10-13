@@ -319,7 +319,7 @@ def search_actions(query):
     """Stable token matching across the complete catalogue, including aliases."""
     terms = query.casefold().split()
     return tuple(action for action, (suffix, _arguments, label) in ACTIONS.items()
-                 if all(term in f"{label} {FAMILY[action][1]} {suffix} {SEARCH_TERMS.get(action, '')}".casefold()
+                 if all(term in f"{action} {label} {FAMILY[action][1]} {suffix} {SEARCH_TERMS.get(action, '')}".casefold()
                         for term in terms))
 
 
