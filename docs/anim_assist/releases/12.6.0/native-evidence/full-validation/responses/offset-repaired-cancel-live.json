@@ -1,0 +1,16 @@
+{
+  "request": {
+    "id": "offset-repaired-cancel-live",
+    "code": "result=modal_live()\nxcurve=next(c for c in modal_live_snapshot if c['index']==0)\ncheck('Offset translates values and Bezier handles', [k['co'][1] for k in xcurve['keys']]==[1,5,2] and all(abs(k['left'][1]-(k['co'][1]-0.25))<1e-5 and abs(k['right'][1]-(k['co'][1]+0.25))<1e-5 for k in xcurve['keys']),xcurve,[1,5,2])"
+  },
+  "response": {
+    "id": "offset-repaired-cancel-live",
+    "result": {
+      "changed": true,
+      "operators": [
+        "ANIMASSIST_OT_anim_offset"
+      ]
+    },
+    "error": null
+  }
+}

@@ -231,6 +231,8 @@ def command_metadata(action):
     family = FAMILY[action][0]
     scope, prerequisite = _SCOPES[family]
     gesture = ""
+    if action == "EASE":
+        prerequisite = "Select at least two keys on the same editable curve; include an interior key to reshape it"
     if action.startswith("HANDLE_") or action.startswith("TYPE_") or action.startswith("NUDGE_"):
         scope, prerequisite = _SELECTED_KEY_SCOPE
     if action.startswith(("TYPE_", "NUDGE_")):

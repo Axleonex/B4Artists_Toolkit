@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "restart-hide-final",
+    "code": "check('Confirmed saved hide restored in restarted process',all(not a.spaces.active.show_region_tool_header and a.spaces.active.timeline_toolbar_hidden_by_user for w,a in timelines()),geometry())\nprefs.timeline_toolbar_row=False; prefs.timeline_toolbar_row=True\nresult='reveal requested'"
+  },
+  "response": {
+    "id": "restart-hide-final",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 453, in bridge\n    exec(data['code'],globals())\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 50, in check\n    raise AssertionError(name + ': ' + repr(actual) + ' expected ' + repr(expected))\nAssertionError: Confirmed saved hide restored in restarted process: [{'window': 2258861577632, 'screen': 'Main', 'area': 2258864966944, 'x': 2, 'y': 23, 'width': 997, 'height': 99, 'visible': True, 'hidden_by_user': False, 'regions': [{'type': 'TOOL_HEADER', 'x': 2, 'y': 96, 'width': 997, 'height': 26}, {'type': 'HEADER', 'x': 2, 'y': 70, 'width': 997, 'height': 26}, {'type': 'FOOTER', 'x': 2, 'y': 23, 'width': 1, 'height': 1}, {'type': 'CHANNELS', 'x': 2, 'y': 23, 'width': 1, 'height': 1}, {'type': 'UI', 'x': 998, 'y': 23, 'width': 1, 'height': 1}, {'type': 'WINDOW', 'x': 2, 'y': 23, 'width': 997, 'height': 47}]}] expected None\n"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "request": {
+    "id": "drag-commit-finish",
+    "code": "result=modal_finish()"
+  },
+  "response": {
+    "id": "drag-commit-finish",
+    "result": {
+      "action": "DRAG",
+      "ending": "commit",
+      "passed": true
+    },
+    "error": null
+  }
+}

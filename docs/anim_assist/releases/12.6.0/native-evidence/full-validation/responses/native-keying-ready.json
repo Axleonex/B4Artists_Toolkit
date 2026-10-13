@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "native-keying-ready",
+    "code": "bpy.context.scene.keying_sets.active_index=-3\ncheck('Location keying set configured',bpy.context.scene.keying_sets.active.bl_idname=='Location',bpy.context.scene.keying_sets.active.bl_idname)\nplayback_obj.location.x=3.5\nresult='ready'"
+  },
+  "response": {
+    "id": "native-keying-ready",
+    "result": "ready",
+    "error": null
+  }
+}

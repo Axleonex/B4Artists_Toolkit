@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "offset-rebase-cancel-pass",
+    "code": "check('Offset Escape restores latest playhead baseline',object_snapshot(modal_obj)==rebase_expected)\ncheck('Rebased Offset handler ends',not bpy.context.window.modal_operators and not bpy.context.scene.anim_assist.anim_offset_active)\nresult='baseline at frame40 restored including handles and easing'"
+  },
+  "response": {
+    "id": "offset-rebase-cancel-pass",
+    "result": "baseline at frame40 restored including handles and easing",
+    "error": null
+  }
+}

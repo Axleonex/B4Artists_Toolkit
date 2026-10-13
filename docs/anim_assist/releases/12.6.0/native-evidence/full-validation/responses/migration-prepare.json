@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "migration-prepare",
+    "code": "bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'validation-baseline.blend'))\noriginal_areas=len(bpy.context.window.screen.areas)\noriginal_timeline=timelines()[0][1].as_pointer()\nwith timeline_context(): migration_obj,_=fixture()\nmigration_before=object_snapshot(migration_obj)\naddon_utils.disable(PACKAGE,default_set=False)\nlegacy_area=next(a for a in bpy.context.window.screen.areas if a.type=='VIEW_3D')\nlegacy_area.type='TEXT_EDITOR'\nlegacy_text=bpy.data.texts.new('VAL_LegacyStrip'); legacy_text['animassist_timeline_toolbar']=1\nlegacy_area.spaces.active.text=legacy_text\naddon_utils.enable(PACKAGE,default_set=False,persistent=True)\nresult='waiting lifecycle'"
+  },
+  "response": {
+    "id": "migration-prepare",
+    "result": "waiting lifecycle",
+    "error": null
+  }
+}

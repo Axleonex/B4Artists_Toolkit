@@ -1,0 +1,67 @@
+{
+  "request": {
+    "id": "restart-empty-and-native-row",
+    "code": "prefs=importlib.import_module(PACKAGE+'.prefs').get_prefs(bpy.context)\ncheck('Fresh process retains enabled addon',addon_utils.check(PACKAGE)[1])\ncheck('Fresh process retains empty pins',not cat.selected_quick_actions(prefs))\nrow_check('Fresh process default row shown without reveal')\nresult=geometry()"
+  },
+  "response": {
+    "id": "restart-empty-and-native-row",
+    "result": [
+      {
+        "window": 2258861577632,
+        "screen": "Main",
+        "area": 2258864966944,
+        "x": 2,
+        "y": 23,
+        "width": 997,
+        "height": 99,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 2,
+            "y": 96,
+            "width": 997,
+            "height": 26
+          },
+          {
+            "type": "HEADER",
+            "x": 2,
+            "y": 70,
+            "width": 997,
+            "height": 26
+          },
+          {
+            "type": "FOOTER",
+            "x": 2,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 2,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "UI",
+            "x": 998,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 2,
+            "y": 23,
+            "width": 997,
+            "height": 47
+          }
+        ]
+      }
+    ],
+    "error": null
+  }
+}

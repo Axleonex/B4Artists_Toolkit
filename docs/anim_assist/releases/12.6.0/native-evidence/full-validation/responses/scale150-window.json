@@ -1,0 +1,14 @@
+{
+  "request": {
+    "id": "scale150-window",
+    "code": "bpy.context.preferences.view.ui_scale=1.5\nresult=(bpy.context.window.width,bpy.context.window.height)"
+  },
+  "response": {
+    "id": "scale150-window",
+    "result": [
+      1920,
+      1009
+    ],
+    "error": null
+  }
+}

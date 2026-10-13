@@ -43,14 +43,18 @@ keeps this build's preferences, scripts and data files in an adjacent profile.
 Keep it separate from other Bforartists installations.
 
 The application archive SHA256 is recorded in the local release receipt. The
-matching add-on ZIP is 576,442 bytes with SHA256
-`221afae332a3b2217d3e33c6075bac24c22def82cdd7bbf909a2e14f5de72a1b`.
+matching add-on ZIP is 577,101 bytes with SHA256
+`60d4c7f10d9f14adde17e0cd5269bb07d4a4fc8f96810a4cd6e67903e5e73193`.
 
 ## Qualification
 
-The patched application compiled and launched. Representative native row,
-tool-access, 100%/150% UI-scale, resize-at-rest and modal Escape observations
-are documented in [qualification](qualification.md). Continuous flicker while
-dragging, Windows display-DPI changes, legacy migration, persistence,
-multi-window behavior, hide/show and several operators remain unqualified.
-Read the limitations before using the build on production preferences.
+The available-host matrix passed: all 80 immediate effects in patched and
+unpatched Bforartists, all nine native modal tools with commit/cancel, migration,
+persistence, multi-window/maximized lifecycle and native animation controls.
+Validation repaired maximized re-enable, Ease prerequisites and Action Offset
+preference/handle/cancellation defects. See [qualification](qualification.md).
+
+Editor-border captures include sampled frames during 100%/150% drags. Window
+resizing has settled render coverage only; universal absence of flicker and
+Windows display-DPI transitions are not certified. Production-rig and full
+AnimBot algorithm parity are outside the fixture coverage.

@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "reload-complete-repairs",
+    "code": "offset_mod=importlib.reload(importlib.import_module(PACKAGE+'.operators.anim_offset_ops'))\ncat=importlib.reload(cat)\ntoolbar=importlib.reload(toolbar)\nimportlib.reload(importlib.import_module(PACKAGE+'.operators'))\naddon_utils.enable(PACKAGE,default_set=False,persistent=True)\nbpy.context.preferences.use_preferences_save=False\ncheck('packaged Offset reads actual add-on preferences',offset_mod._addon_prefs(bpy.context) is bpy.context.preferences.addons[PACKAGE].preferences,None,True)\nwith timeline_context():\n    test_obj,_=fixture()\n    for fc in compat.get_fcurves(test_obj.animation_data.action,anim_data=test_obj.animation_data):\n        for i,k in enumerate(fc.keyframe_points): k.select_control_point=i==1\n    reason=toolbar._unavailable(bpy.context,bpy.context.area,'EASE')\n    check('Ease one-key prerequisite is disabled',bool(reason),reason,'At least two on same curve')\n    for fc in compat.get_fcurves(test_obj.animation_data.action,anim_data=test_obj.animation_data):\n        for k in fc.keyframe_points:k.select_control_point=True\n    check('Ease valid multiple-key prerequisite remains available',not toolbar._unavailable(bpy.context,bpy.context.area,'EASE'),None,'Available')\nresult='Corrected packaged modules enabled'"
+  },
+  "response": {
+    "id": "reload-complete-repairs",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 203, in bridge\n    bpy.ops.animassist.p5_enable_overlay()\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 7, in <module>\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 45, in check\n    raise AssertionError(name + ': ' + repr(actual) + ' expected ' + repr(expected))\nAssertionError: packaged Offset reads actual add-on preferences: None expected True\n"
+  }
+}

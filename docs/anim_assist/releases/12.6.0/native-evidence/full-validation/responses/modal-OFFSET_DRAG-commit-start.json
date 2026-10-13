@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-OFFSET_DRAG-commit-start",
+    "code": "result=modal_start('OFFSET_DRAG','commit')"
+  },
+  "response": {
+    "id": "modal-OFFSET_DRAG-commit-start",
+    "result": {
+      "action": "OFFSET_DRAG",
+      "ending": "commit",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_p6_modal_offset"
+      ]
+    },
+    "error": null
+  }
+}

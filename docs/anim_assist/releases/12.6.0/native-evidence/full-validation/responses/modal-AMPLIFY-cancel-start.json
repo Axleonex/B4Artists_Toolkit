@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-AMPLIFY-cancel-start",
+    "code": "result=modal_start('AMPLIFY','cancel')"
+  },
+  "response": {
+    "id": "modal-AMPLIFY-cancel-start",
+    "result": {
+      "action": "AMPLIFY",
+      "ending": "cancel",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_push_pull"
+      ]
+    },
+    "error": null
+  }
+}

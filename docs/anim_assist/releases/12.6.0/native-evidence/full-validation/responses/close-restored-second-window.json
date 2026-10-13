@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "close-restored-second-window",
+    "code": "second=next(w for w in bpy.context.window_manager.windows if w.screen.name=='VAL_Second_Window')\nwith bpy.context.temp_override(window=second): bpy.ops.wm.window_close()\nmain=bpy.context.window_manager.windows[0]\nfor area in main.screen.areas:\n if toolbar.is_timeline(area) and area.x>1500: area.type='PROPERTIES'\nresult='restored one task window'"
+  },
+  "response": {
+    "id": "close-restored-second-window",
+    "result": "restored one task window",
+    "error": null
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "disable-for-validation-repairs",
+    "code": "addon_utils.disable(PACKAGE,default_set=False)\nresult='disabled with no modal handler'"
+  },
+  "response": {
+    "id": "disable-for-validation-repairs",
+    "result": "disabled with no modal handler",
+    "error": null
+  }
+}

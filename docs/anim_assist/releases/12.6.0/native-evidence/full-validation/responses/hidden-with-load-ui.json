@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "hidden-with-load-ui",
+    "code": "bpy.ops.wm.open_mainfile(filepath=str(ROOT/'restart-hidden-confirmed.blend'),load_ui=True)\nresult='loaded actual saved layout'"
+  },
+  "response": {
+    "id": "hidden-with-load-ui",
+    "result": "loaded actual saved layout",
+    "error": null
+  }
+}

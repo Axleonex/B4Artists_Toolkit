@@ -137,7 +137,11 @@ def _unavailable(context, target, action):
                 else:
                     from ..operators.keymanager_ops import _visible_fcurves
                     curves = _visible_fcurves(context)
-                if not any(k.select_control_point for fc in curves for k in fc.keyframe_points):
+                if action == "EASE":
+                    if not any(sum(k.select_control_point for k in fc.keyframe_points) >= 2
+                               for fc in curves):
+                        return "Select at least two editable keys on the same curve"
+                elif not any(k.select_control_point for fc in curves for k in fc.keyframe_points):
                     return "Select editable keys on an animated object"
             if action == "COPY_KEYS":
                 from ..core.context_utils import iter_selected_keys
@@ -656,7 +660,9 @@ def _sync():
                 if area.spaces.active.timeline_toolbar_hidden_by_user and not user_action:
                     continue
                 try:
-                    with bpy.context.temp_override(window=window, screen=screen, area=area,
+                    # The owning window supplies its active screen. Explicit
+                    # screen overrides are rejected for maximized editors.
+                    with bpy.context.temp_override(window=window, area=area,
                                                    region=_window_region(area)):
                         result = bpy.ops.screen.timeline_toolbar_set(
                             enabled=_enabled(), user_action=user_action)

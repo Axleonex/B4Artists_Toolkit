@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "post-offset-regression",
+    "code": "check('Offset extra-key cancellation restores original key count',sum(len(c['keys']) for c in object_snapshot(modal_obj))==9,None,9)\nresult='Fast-mode, mask, added keys and key type cancellation passed'"
+  },
+  "response": {
+    "id": "post-offset-regression",
+    "result": "Fast-mode, mask, added keys and key type cancellation passed",
+    "error": null
+  }
+}

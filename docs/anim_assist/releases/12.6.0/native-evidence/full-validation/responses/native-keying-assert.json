@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "native-keying-assert",
+    "code": "keyed=object_snapshot(playback_obj)\ncheck('Native header inserts Location keys',all(any(k['co'][0]==15 for k in c['keys']) for c in keyed if c['path']=='location'))\ncheck('Native keying inserts intended value',any(k['co']==[15.0,3.5] for c in keyed if c['index']==0 for k in c['keys']))\nwith timeline_context():\n undo_obj,_=fixture()\n undo_before=object_snapshot(undo_obj)\n bpy.ops.ed.undo_push(message='VAL toolbar undo baseline')\nresult='baseline'"
+  },
+  "response": {
+    "id": "native-keying-assert",
+    "result": "baseline",
+    "error": null
+  }
+}

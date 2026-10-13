@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "final-validation-quit",
+    "code": "bpy.ops.wm.quit_blender()"
+  },
+  "response": {
+    "id": "final-validation-quit",
+    "result": null,
+    "error": null
+  }
+}

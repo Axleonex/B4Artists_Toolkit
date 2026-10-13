@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "redo-native-call-2",
+    "code": "with timeline_context(): result=sorted(bpy.ops.ed.undo('EXEC_DEFAULT',True))\nresult=[k['co'][0] for k in object_snapshot(bpy.data.objects['VAL_Animated'])[0]['keys']]"
+  },
+  "response": {
+    "id": "redo-native-call-2",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 203, in bridge\n    if action=='BAKE_CLEANUP': bpy.ops.animassist.p7_create_proxy(proxy_type='WORLD_SPACE')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\nRuntimeError: Operator bpy.ops.ed.undo.poll() failed, context is incorrect\n"
+  }
+}

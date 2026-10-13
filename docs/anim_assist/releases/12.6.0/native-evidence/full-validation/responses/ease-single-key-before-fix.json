@@ -1,0 +1,4 @@
+{
+  "id": "modal-EASE-cancel-start",
+  "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 203, in bridge\n    bpy.ops.animassist.p5_enable_overlay()\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\n  File \"<modal-cases>\", line 338, in modal_start\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 45, in check\n    raise AssertionError(name + ': ' + repr(actual) + ' expected ' + repr(expected))\nAssertionError: modal starts EASE cancel: [] expected 'ANIMASSIST_OT_ease_to_ease'\n"
+}

@@ -1,0 +1,166 @@
+{
+  "status": "passed for the documented available-host matrix",
+  "immediate_actions": 80,
+  "modal_actions": 9,
+  "modal_commit_cancel_pairs": 9,
+  "modal_commit_cancel_cases": 18,
+  "fallback_immediate_actions": 80,
+  "archive_files_verified": 203,
+  "addon_sha256": "60d4c7f10d9f14adde17e0cd5269bb07d4a4fc8f96810a4cd6e67903e5e73193",
+  "assertion_history_count": 477,
+  "initial_failed_assertions": [
+    {
+      "name": "immediate action DISTRIBUTE_TIME",
+      "utc": "2026-10-13T10:51:05.147769+00:00",
+      "disposition": "Later assertion with the same name passed after correction; original failure retained."
+    },
+    {
+      "name": "modal starts EASE cancel",
+      "utc": "2026-10-13T10:58:44.662498+00:00",
+      "disposition": "Invalid one-key fixture; backend requires two keys. Corrected fixture and UI prerequisite passed."
+    },
+    {
+      "name": "modal cancel preserves intended state OFFSET",
+      "utc": "2026-10-13T11:03:32.989755+00:00",
+      "disposition": "Later assertion with the same name passed after correction; original failure retained."
+    },
+    {
+      "name": "packaged Offset reads actual add-on preferences",
+      "utc": "2026-10-13T11:06:30.388217+00:00",
+      "disposition": "RNA proxy identity test was invalid; matching as_pointer and actual fast-mode behavior passed."
+    },
+    {
+      "name": "Offset easing metadata reproduction",
+      "utc": "2026-10-13T11:12:44.000332+00:00",
+      "disposition": "Later assertion with the same name passed after correction; original failure retained."
+    },
+    {
+      "name": "Location keying set configured",
+      "utc": "2026-10-13T11:19:54.014373+00:00",
+      "disposition": "Later assertion with the same name passed after correction; original failure retained."
+    },
+    {
+      "name": "Native redo restores toolbar action",
+      "utc": "2026-10-13T11:20:42.622009+00:00",
+      "disposition": "Sky delivered Z with ctrl=True, shift=False. Native Edit menu redo passed."
+    },
+    {
+      "name": "Clean native redo restores toolbar action",
+      "utc": "2026-10-13T11:21:53.846087+00:00",
+      "disposition": "Same measured input defect; native Edit menu redo passed."
+    },
+    {
+      "name": "Saved fixture native redo",
+      "utc": "2026-10-13T11:23:39.478904+00:00",
+      "disposition": "Same measured input defect; native Edit menu redo passed."
+    },
+    {
+      "name": "Restart saved explicit hide retained",
+      "utc": "2026-10-13T11:36:09.345242+00:00",
+      "disposition": "Load UI preference was false; explicit load_ui=True restored saved hide."
+    },
+    {
+      "name": "Confirmed saved hide restored in restarted process",
+      "utc": "2026-10-13T11:37:13.883982+00:00",
+      "disposition": "Load UI preference was false; explicit load_ui=True restored saved hide."
+    },
+    {
+      "name": "Actual window dimensions changed at 100%",
+      "utc": "2026-10-13T11:38:03.238707+00:00",
+      "disposition": "Gesture missed the outer border; corrected permitted edge gesture changed width and passed."
+    },
+    {
+      "name": "Explicit show after maximized hidden lifecycle",
+      "utc": "2026-10-13T11:49:28.372643+00:00",
+      "disposition": "Observation at 0.5 seconds preceded the 1-second lifecycle timer; settled natural callback passed."
+    }
+  ],
+  "unresolved_failed_assertions": [],
+  "render_gestures": [
+    {
+      "label": "area100-expand",
+      "start_epoch_ms": 1791887712516,
+      "end_epoch_ms": 1791887712770,
+      "in_gesture_samples": 5,
+      "total_samples": 12,
+      "kinds": [
+        "HEADER",
+        "TOOL_HEADER",
+        "WINDOW"
+      ],
+      "coverage": "in-drag sampled frames"
+    },
+    {
+      "label": "area100-shrink",
+      "start_epoch_ms": 1791887725591,
+      "end_epoch_ms": 1791887725737,
+      "in_gesture_samples": 3,
+      "total_samples": 12,
+      "kinds": [
+        "HEADER",
+        "TOOL_HEADER",
+        "WINDOW"
+      ],
+      "coverage": "in-drag sampled frames"
+    },
+    {
+      "label": "area150-expand",
+      "start_epoch_ms": 1791887776626,
+      "end_epoch_ms": 1791887776785,
+      "in_gesture_samples": 3,
+      "total_samples": 9,
+      "kinds": [
+        "HEADER",
+        "TOOL_HEADER",
+        "WINDOW"
+      ],
+      "coverage": "in-drag sampled frames"
+    },
+    {
+      "label": "area150-shrink",
+      "start_epoch_ms": 1791887792685,
+      "end_epoch_ms": 1791887792837,
+      "in_gesture_samples": 3,
+      "total_samples": 9,
+      "kinds": [
+        "HEADER",
+        "TOOL_HEADER",
+        "WINDOW"
+      ],
+      "coverage": "in-drag sampled frames"
+    },
+    {
+      "label": "window100-valid",
+      "start_epoch_ms": 1791891619928,
+      "end_epoch_ms": 1791891620229,
+      "in_gesture_samples": 0,
+      "total_samples": 6,
+      "kinds": [],
+      "coverage": "settled before/after only"
+    },
+    {
+      "label": "window150-valid",
+      "start_epoch_ms": 1791891688359,
+      "end_epoch_ms": 1791891688494,
+      "in_gesture_samples": 0,
+      "total_samples": 6,
+      "kinds": [],
+      "coverage": "settled before/after only"
+    },
+    {
+      "label": "windowheight150",
+      "start_epoch_ms": 1791891708342,
+      "end_epoch_ms": 1791891708477,
+      "in_gesture_samples": 0,
+      "total_samples": 6,
+      "kinds": [],
+      "coverage": "settled before/after only"
+    }
+  ],
+  "limitations": [
+    "Discrete framebuffer samples do not prove absence of every possible flicker.",
+    "Window-border gestures have before/after render coverage; no in-gesture framebuffer samples.",
+    "Windows display DPI transition requires global-setting authorization and was not run.",
+    "Representative fixtures do not establish full AnimBot algorithm or production-rig parity."
+  ]
+}

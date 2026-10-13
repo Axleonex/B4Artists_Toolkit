@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "offset-cancel-edit",
+    "code": "bpy.context.preferences.addons[PACKAGE].preferences.animassist_fast_offset=False\nmodal_obj.location.x=5.0\nmodal_obj.keyframe_insert(data_path='location',index=0,frame=20)\nresult='Native frame-20 location key changed from 4 to 5'"
+  },
+  "response": {
+    "id": "offset-cancel-edit",
+    "result": "Native frame-20 location key changed from 4 to 5",
+    "error": null
+  }
+}

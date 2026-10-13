@@ -1,0 +1,15 @@
+{
+  "request": {
+    "id": "redo-menu-pass",
+    "code": "check('Native menu redo restores toolbar action',object_snapshot(bpy.data.objects['VAL_Animated'])==undo_live)\nresult=[k['co'][0] for k in object_snapshot(bpy.data.objects['VAL_Animated'])[0]['keys']]"
+  },
+  "response": {
+    "id": "redo-menu-pass",
+    "result": [
+      2,
+      21,
+      41
+    ],
+    "error": null
+  }
+}

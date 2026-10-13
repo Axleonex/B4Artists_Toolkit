@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "restart-visible-before-hidden-load",
+    "code": "with timeline_context(): bpy.ops.screen.timeline_toolbar_set(enabled=True,user_action=True)\nbpy.ops.wm.open_mainfile(filepath=str(ROOT/'restart-hidden-confirmed.blend'))\nresult='reloaded'"
+  },
+  "response": {
+    "id": "restart-visible-before-hidden-load",
+    "result": "reloaded",
+    "error": null
+  }
+}

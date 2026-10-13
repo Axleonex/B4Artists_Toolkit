@@ -1,0 +1,67 @@
+{
+  "request": {
+    "id": "playback-prepare",
+    "code": "with timeline_context(): playback_obj,_=fixture()\nplayback_before=object_snapshot(playback_obj)\nbpy.context.scene.frame_set(1)\nresult=geometry()"
+  },
+  "response": {
+    "id": "playback-prepare",
+    "result": [
+      {
+        "window": 2191890177312,
+        "screen": "Main",
+        "area": 2191899035424,
+        "x": 2,
+        "y": 23,
+        "width": 1597,
+        "height": 156,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 2,
+            "y": 153,
+            "width": 1597,
+            "height": 26
+          },
+          {
+            "type": "HEADER",
+            "x": 2,
+            "y": 127,
+            "width": 1597,
+            "height": 26
+          },
+          {
+            "type": "FOOTER",
+            "x": 2,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 2,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "UI",
+            "x": 1598,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 2,
+            "y": 23,
+            "width": 1597,
+            "height": 104
+          }
+        ]
+      }
+    ],
+    "error": null
+  }
+}

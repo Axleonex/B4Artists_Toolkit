@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "redo-file-assert",
+    "code": "check('Saved fixture native redo',object_snapshot(bpy.data.objects['VAL_Animated'])==undo_live,[k['co'][0] for k in object_snapshot(bpy.data.objects['VAL_Animated'])[0]['keys']],[2,21,41])\nresult='passed'"
+  },
+  "response": {
+    "id": "redo-file-assert",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 203, in bridge\n    if action=='BAKE_CLEANUP': bpy.ops.animassist.p7_create_proxy(proxy_type='WORLD_SPACE')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 45, in check\n    raise AssertionError(name + ': ' + repr(actual) + ' expected ' + repr(expected))\nAssertionError: Saved fixture native redo: [1.0, 20.0, 40.0] expected [2, 21, 41]\n"
+  }
+}

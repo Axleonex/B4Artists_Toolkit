@@ -1,0 +1,13 @@
+{
+  "request": {
+    "id": "redo-input-probe-alias",
+    "code": "native_events=[]\nwith timeline_context(): result=sorted(bpy.ops.wm.val_event_probe('INVOKE_DEFAULT'))"
+  },
+  "response": {
+    "id": "redo-input-probe-alias",
+    "result": [
+      "RUNNING_MODAL"
+    ],
+    "error": null
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "request": {
+    "id": "modal-finish-1791889280385",
+    "code": "result=modal_finish()"
+  },
+  "response": {
+    "id": "modal-finish-1791889280385",
+    "result": {
+      "action": "AMPLIFY",
+      "ending": "commit",
+      "passed": true
+    },
+    "error": null
+  }
+}

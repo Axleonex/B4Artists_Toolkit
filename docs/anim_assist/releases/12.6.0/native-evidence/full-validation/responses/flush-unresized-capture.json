@@ -1,0 +1,19 @@
+{
+  "request": {
+    "id": "flush-unresized-capture",
+    "code": "result=flush_capture('smallwindow100-pixels')"
+  },
+  "response": {
+    "id": "flush-unresized-capture",
+    "result": {
+      "samples": 3,
+      "kind_counts": {
+        "TOOL_HEADER": 1,
+        "HEADER": 1,
+        "WINDOW": 1
+      },
+      "errors": []
+    },
+    "error": null
+  }
+}
