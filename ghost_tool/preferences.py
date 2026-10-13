@@ -30,6 +30,11 @@ def _update_toolbar_visibility(self, context):
     update_toolbar_visibility(context)
 
 
+def _update_shelf_width(self, context):
+    from .shelf_width import forget_all
+    forget_all()
+
+
 def migrate_display_location(context):
     """Replace the retired header choice without renumbering saved locations."""
     addon = context.preferences.addons.get('ghost_tool')
@@ -73,6 +78,13 @@ class GhostToolPreferences(bpy.types.AddonPreferences):
         description="Show Ghost controls in the native Tool Settings row; hiding them keeps cached ghosts and settings",
         default=True,
         update=_update_toolbar_visibility,
+    )  # type: ignore[assignment]
+
+    auto_widen_shelf: bpy.props.BoolProperty(
+        name="Widen Narrow Shelf",
+        description="Widen the left Ghost shelf once to match an open right sidebar, or use 240 pixels when closed; keep later manual resizing",
+        default=True,
+        update=_update_shelf_width,
     )  # type: ignore[assignment]
 
     show_extended_help: bpy.props.BoolProperty(
@@ -301,6 +313,8 @@ class GhostToolPreferences(bpy.types.AddonPreferences):
         layout.prop(self, "display_location")
         if self.display_location == 'TOOLBAR':
             layout.prop(self, "show_toolbar")
+        elif self.display_location == 'TOOLS':
+            layout.prop(self, "auto_widen_shelf")
         from .ui_panel import supports_tool_shelf
         if self.display_location == 'TOOLS' and not supports_tool_shelf():
             layout.label(text="Left Tool Shelf requires Bforartists; using Top Toolbar.", icon='INFO')
