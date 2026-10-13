@@ -18,7 +18,9 @@ Marker options retain **Marker Targets**, frame range and **Live Update Markers*
 
 ## Keep the viewport clear
 
-Wide toolbars expose every feature. Compact toolbars place Compare, Physics, Look and Settings under **More**. Narrow toolbars use **Ghost** for full access in the same feature order. Complete feature groups move together. Native horizontal header panning remains available when the viewport is especially narrow.
+The pending split-view correction keeps the complete Object/Pose toolbar in every viewport, at every width and UI scale. Buttons keep the same labels and order as the wide layout. When a row overflows, middle-mouse drag it horizontally to reach the remaining buttons. Resizing or splitting a viewport does not move tools into **More** or a Ghost-only layout. Other modes retain their existing Ghost menu.
+
+The published **4.2.7** download still uses the earlier width-based layouts: wide exposes every feature, compact puts some tools under **More**, and narrow shows **Ghost** alone. The split-view correction requires the next package; see its [verification](split-view-verification.md).
 
 Choose **Hide Toolbar** in Ghost to hide its controls while keeping previews, targets, settings and the native Tool Settings row. To restore it, open **Ghost Tool** in the main viewport header and choose **Show Toolbar**. This also reveals Tool Settings if you hid that native region through View controls. Hiding the native region later remains your choice until you explicitly show the toolbar again. Leaving Top Toolbar does not close native regions.
 
@@ -26,4 +28,4 @@ Location and Ghost-control visibility apply across ordinary viewports. Save pref
 
 ## Source and release status
 
-The current source, repository ZIP and [GitHub release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.7) are **4.2.7**. Download [b4_ghost_tool_v4.2.7.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.7/b4_ghost_tool_v4.2.7.zip). Its [package receipt](../releases/4.2.7/package-receipt.json) records source matching and 148 passing checks/cases in native Bforartists 5.2.0. Earlier archives and the [original toolbar verification](verification.md) are retained as history.
+The repository ZIP and [GitHub release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.7) are **4.2.7**. Download [b4_ghost_tool_v4.2.7.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.7/b4_ghost_tool_v4.2.7.zip). Its [package receipt](../releases/4.2.7/package-receipt.json) records that release's source and 148 passing checks/cases in native Bforartists 5.2.0. The local split-view candidate changes the toolbar module and has not been packaged or published. Earlier archives and the [original toolbar verification](verification.md) are retained as history.
