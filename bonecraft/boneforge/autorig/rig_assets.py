@@ -22,37 +22,33 @@ def shelf_enabled():
     return _session_store().get('bonecraft_starter_shelf_enabled', True)
 
 
-def _native_object_poll(cls, context):
-    original = cls.__dict__[_NATIVE_POLL_KEY]
-    return original.__get__(None, cls)(context) and not shelf_enabled()
-
-
 def _native_asset_poll(cls, asset):
-    # Starter templates use our dependency-aware shelf, not the generic importer.
+    # The switch controls only our rigs, never the host's other assets.
     if any(t.name == ASSET_TAG for t in asset.metadata.tags):
-        return False
+        return asset.id_type == 'OBJECT' and shelf_enabled()
     return cls.__dict__[_NATIVE_ASSET_POLL_KEY].__get__(None, cls)(asset)
 
 
 def route_native_shelf(enable):
-    """Temporarily let our shelf win Object Mode; restore the host callback exactly.
+    """Include starters in the native shelf without replacing its drag/drop.
 
-    No host shelf is unregistered. The header switch immediately returns to the
-    original shelf, and disabling Rig Builder restores its original poll method.
+    Other assets retain the host's filter. The dedicated starter popup keeps
+    dependency-aware activation and dragging independently of the shared shelf.
     """
     import bpy
     native = getattr(bpy.types, 'VIEW3D_AST_object', None)
     if native is None:
         return
-    if enable and not hasattr(native, _NATIVE_POLL_KEY):
-        setattr(native, _NATIVE_POLL_KEY, native.__dict__['poll'])
-        setattr(native, _NATIVE_ASSET_POLL_KEY, native.__dict__['asset_poll'])
-        native.poll = classmethod(_native_object_poll)
-        native.asset_poll = classmethod(_native_asset_poll)
-    elif not enable and hasattr(native, _NATIVE_POLL_KEY):
+    # Restore the old exclusive routing if this module was reloaded in-place.
+    if hasattr(native, _NATIVE_POLL_KEY):
         native.poll = native.__dict__[_NATIVE_POLL_KEY]
-        native.asset_poll = native.__dict__[_NATIVE_ASSET_POLL_KEY]
         delattr(native, _NATIVE_POLL_KEY)
+    if enable:
+        if not hasattr(native, _NATIVE_ASSET_POLL_KEY):
+            setattr(native, _NATIVE_ASSET_POLL_KEY, native.__dict__['asset_poll'])
+        native.asset_poll = classmethod(_native_asset_poll)
+    elif not enable and hasattr(native, _NATIVE_ASSET_POLL_KEY):
+        native.asset_poll = native.__dict__[_NATIVE_ASSET_POLL_KEY]
         delattr(native, _NATIVE_ASSET_POLL_KEY)
 CATALOGS = {
     "humans": (CATALOG_ID, "Humans"),
@@ -189,15 +185,18 @@ def _make_shelf():
 
     class BF_AST_bonecraft_rigs(bpy.types.AssetShelf):
         bl_idname = SHELF_IDNAME
-        bl_space_type = 'VIEW_3D'
-        bl_options = {'DEFAULT_VISIBLE'}
+        # Popup polling ignores space type; PROPERTIES has no shelf region.
+        # Keeping this out of VIEW_3D also migrates saved exclusive shelves
+        # back to the native shelf, including its normal library selector.
+        bl_space_type = 'PROPERTIES'
+        bl_options = set()
         bl_activate_operator = "BONEFORGE_OT_add_starter_asset"
         bl_drag_operator = "BONEFORGE_OT_drag_starter_asset"
         bl_default_preview_size = 96
 
         @classmethod
         def poll(cls, context):
-            return context.mode == 'OBJECT' and shelf_enabled()
+            return context.mode == 'OBJECT'
 
         @classmethod
         def asset_poll(cls, asset):

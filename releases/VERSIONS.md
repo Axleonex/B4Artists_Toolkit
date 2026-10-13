@@ -13,11 +13,13 @@ Current repository packages and their publication status.
 | Ghost Tool (4.2.2) | 4.2.2 | [b4_ghost_tool_v4.2.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.2/b4_ghost_tool_v4.2.2.zip) | 214,338 | `d74c692e4c6e` | Prerelease; 230 background checks and five native auto-key cases pass on Blender stand-in; Bforartists rig validation pending |
 | Ghost Tool (4.2.1) | 4.2.1 | [b4_ghost_tool_v4.2.1.zip](b4_ghost_tool_v4.2.1.zip?raw=1) | 212,103 | `dc5e374a8d7e` | Prerelease; 13 authoring checks pass on Blender stand-in; Bforartists viewport validation pending |
 | Ghost Tool (4.2.0) | 4.2.0 | [b4_ghost_tool_v4.2.0.zip](b4_ghost_tool_v4.2.0.zip) | 211,099 | `16a354dc92d6` | Published prerelease; recorded Bforartists checks pass; owner usability acceptance pending |
-| BoneCraft | 9.2.0 | [BoneCraft-BFA-9.2.0.zip](BoneCraft-BFA-9.2.0.zip) | 1,238,057 | `655ad55bfac3` | Starter catalog; targeted host and native viewport checks pass |
+| BoneCraft | 9.2.1 | [BoneCraft-BFA-9.2.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip) | 1,237,105 | `0903581df305` | Published release; shared asset shelf bug fix; targeted Bforartists host and GUI checks pass |
 
 Anim Assist uses the package root `B4_anim_assist`; Ghost Tool uses `ghost_tool`; BoneCraft uses `boneforge`.
 
 ## Checks and notes
+
+- [BoneCraft 9.2.1 release notes](../docs/bonecraft/releases/9.2.1/RELEASE-NOTES.md). The normal bottom asset shelf retains the existing libraries alongside BoneCraft rigs.
 
 - [Anim Assist 12.5.1 release notes](../docs/anim_assist/releases/12.5.1/RELEASE-NOTES.md), [qualification](../docs/anim_assist/releases/12.5.1/qualification.md), [layout evidence](../docs/anim_assist/releases/12.5.1/layout-evidence.json) and [package receipt](../docs/anim_assist/releases/12.5.1/package-receipt.json). Full SHA256: `7dbe61a35f01eb69431756a6b01133fdc04a3bec45dadca3264975b571d7511c`. All version fields identify 12.5.1. The retained 12.5.0 ZIP is its baseline. The [quick-tool guide](../docs/anim_assist/releases/12.5.0/USAGE.md) still applies to unchanged tool selection and Breakdown anchors. Native Redo and trail-position findings remain open.
 - [Ghost Tool 4.2.6 toolbar release notes](../docs/ghost_tool/releases/4.2.6/RELEASE-NOTES.md) and [package receipt](../docs/ghost_tool/releases/4.2.6/package-receipt.json).
@@ -34,7 +36,7 @@ Anim Assist uses the package root `B4_anim_assist`; Ghost Tool uses `ghost_tool`
 - [BoneCraft 9.2.0 release notes](../docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md) and [package checksum and verification](../docs/bonecraft/releases/9.2.0/package-receipt.json).
 - [BoneCraft 9.1.2 release notes](../docs/bonecraft/releases/9.1.2/RELEASE-NOTES.md).
 
-Published builds: [Anim Assist 12.1.3](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/v12.1.3), [Ghost Tool 4.2.6 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6) and [BoneCraft 9.2.0](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/bonecraft-v9.2.0). The Ghost Tool release includes the tested ZIP and updated PDF guide. Earlier [4.2.2](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2), [4.2.1](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.1) and [4.2.0](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.0) downloads remain available for comparison.
+Published builds: [Anim Assist 12.1.3](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/v12.1.3), [Ghost Tool 4.2.6 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6) and [BoneCraft 9.2.1](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/bonecraft-v9.2.1). The Ghost Tool release includes the tested ZIP and updated PDF guide. Earlier [4.2.2](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.2), [4.2.1](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.1) and [4.2.0](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.0) downloads remain available for comparison.
 
 ## Identify a build
 

@@ -5,7 +5,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 | Tool | Version | What it does |
 |---|---|---|
 | **Anim Assist** | 12.5.1 | An animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Seven inline Timeline toolbar families provide configurable direct buttons for 70 existing presets. Repairs toolbar resizing and preserves native Timeline key space. Inspired by Maya's AnimBot. |
-| **Ghost Tool** | 4.2.6 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, header, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
+| **Ghost Tool** | 4.2.6 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
 
 ### Optional add-on: BoneCraft (rigging)
 
@@ -13,7 +13,7 @@ BoneCraft is the **advanced version of [BoneForge](https://github.com/Axleonex/B
 
 | Tool | Version | What it does |
 |---|---|---|
-| **BoneCraft** | 9.2.0 | Auto-rigging for humanoid characters (VRoid/VRM and similar): a Rig Builder wizard that finds the joints on the mesh, generates a skeleton and skin weights, then builds an animator control rig: IK/FK arms and legs with no-pop switching, a Control Picker, twist bones, joint corrective shapes, skirt/dress bones, and face controls (eye aim, blinks, jaw with lip follow). Also retargets walk/run clips and exports to VRChat, Unity and Unreal, with an optional T-pose export. Manual: [bonecraft/docs](bonecraft/docs/README.md). |
+| **BoneCraft** | 9.2.1 | Auto-rigging for humanoid characters (VRoid/VRM and similar): a Rig Builder wizard that finds the joints on the mesh, generates a skeleton and skin weights, then builds an animator control rig: IK/FK arms and legs with no-pop switching, a Control Picker, twist bones, joint corrective shapes, skirt/dress bones, and face controls (eye aim, blinks, jaw with lip follow). Also retargets walk/run clips and exports to VRChat, Unity and Unreal, with an optional T-pose export. Manual: [bonecraft/docs](bonecraft/docs/README.md). |
 
 See [`docs/bonecraft/`](docs/bonecraft/) for a short guide.
 
@@ -27,11 +27,11 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 |---|---|
 | Anim Assist 12.5.1 | [b4_anim_assist_v12.5.1.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.5.1.zip) |
 | Ghost Tool 4.2.6 | [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip) |
-| BoneCraft 9.2.0 (optional) | [BoneCraft-BFA-9.2.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.0/BoneCraft-BFA-9.2.0.zip) |
+| BoneCraft 9.2.1 (optional) | [BoneCraft-BFA-9.2.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip) |
 
 Anim Assist 12.5.1 keeps the configurable toolbar thin after resizing and reserves native Timeline key space. If the Timeline is too short, enlarge it to display the extra row. See the [layout repair and screenshots](docs/anim_assist/releases/12.5.1/RELEASE-NOTES.md). Targeted normal-GUI layout checks pass in a Blender stand-in; native Redo and trail geometry have known issues. Actual Bforartists and owner workflow acceptance remain pending. Details are in the [qualification report](docs/anim_assist/releases/12.5.1/qualification.md).
 
-BoneCraft 9.2.0 adds the complete starter catalog and passes its [recorded host and native viewport checks](docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md). Ghost Tool 4.2.6 includes the persistent toolbar, shared feature options and cached visibility controls. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
+BoneCraft 9.2.1 restores the native asset shelf so starter rigs appear alongside the other libraries; its [release notes](docs/bonecraft/releases/9.2.1/RELEASE-NOTES.md) record host and GUI verification. Ghost Tool 4.2.6 includes the persistent toolbar, shared feature options and cached visibility controls. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. Bforartists rig and left Tool Shelf validation remain pending.
 
 See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The current [Ghost Tool 4.2.6 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6) includes the matching ZIP and PDF guide. Earlier releases remain available as history.
 
@@ -45,6 +45,7 @@ The [Ghost toolbar guide](docs/ghost_tool/toolbar/README.md) covers the current 
 
    When updating Ghost Tool to 4.2.6, restart Bforartists after installation. Marker Targets, Capture Targets and Snapshot Targets open their full lists independently of the other tools. Saved scenes retain their existing live-update choices: turn off Live Update Markers and Live Update Skin to keep snapshots while scrubbing. Test a move with auto-key enabled; ghosts should refresh after you finish moving.
 
+   **Ghost Tool** source now defaults to a visible **Top Toolbar** in the native Tool Settings row. In **Edit > Preferences > Add-ons > Ghost Tool**, choose **Top Toolbar**, **Right Sidebar (N)** or **Left Tool Shelf (T)**. Saved Top Header choices migrate to the toolbar; saved sidebar, shelf and toolbar visibility choices remain intact. Its **Ghost** menu and the main-header **Ghost Tool** menu provide Hide/Show Toolbar. Save preferences normally to retain your choice. This default change is pending publication; the existing 4.2.6 download still offers Top Header.
 
 ## Browse the source
 
@@ -52,9 +53,9 @@ The unpacked, readable source for each tool is in this repository so you can rea
 
 - [`anim_assist/`](anim_assist/) — Anim Assist source (`core/`, `operators/`, `ui/`, `tests/`)
 - [`ghost_tool/`](ghost_tool/) — Ghost Tool source
-- [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.2.0 source
+- [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.2.1 source
 
-The ZIPs package their recorded release source for one-click installation. The current Ghost Tool 4.2.6 ZIP matches the source modules; see its [package receipt](docs/ghost_tool/releases/4.2.6/package-receipt.json).
+The ZIPs package their recorded release source for one-click installation. The Ghost Tool 4.2.6 ZIP matches the source recorded in its [package receipt](docs/ghost_tool/releases/4.2.6/package-receipt.json); it predates the toolbar-default change now in the source tree.
 
 ## Documentation
 
@@ -62,7 +63,7 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - [Anim Assist 12.5.1 toolbar layout repair](docs/anim_assist/releases/12.5.1/RELEASE-NOTES.md) — resizing, recovery and screenshots; the [quick-tool guide](docs/anim_assist/releases/12.5.0/USAGE.md) covers unchanged configuration and Breakdown anchors. [Suite manuals](docs/anim_assist/) cover the other animation tools.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.6 guide, PDF and toolbar notes
-- [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.0 English manual and translation status
+- [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.1 English manual and translation status
 
 ## Requirements
 
