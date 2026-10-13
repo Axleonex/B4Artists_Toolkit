@@ -44,17 +44,7 @@ The [Ghost toolbar guide](docs/ghost_tool/toolbar/README.md) covers the current 
 3. Enable the add-on by ticking its checkbox.
 
    When updating Ghost Tool to 4.2.6, restart Bforartists after installation. Marker Targets, Capture Targets and Snapshot Targets open their full lists independently of the other tools. Saved scenes retain their existing live-update choices: turn off Live Update Markers and Live Update Skin to keep snapshots while scrubbing. Test a move with auto-key enabled; ghosts should refresh after you finish moving.
-4. Find the add-on:
-   - **Anim Assist** provides a toolbar and panels organised for each editor:
-     - **Timeline toolbar** above the native playback/keyframe row: Tween, Curves, Timing, Keys, Pose, Bake and Motion. Click a visible quick button directly. Use Gear to choose any of 70 presets with native checkboxes; selections are shared by all Timeline strips and saved in add-on preferences. Middle-mouse drag over a narrow toolbar to pan. See the [illustrated guide](docs/anim_assist/releases/12.5.0/USAGE.md).
-     - **Graph Editor** sidebar (press **N**), **Anim Assist** tab, organised by what you do to curves: Select, Shape Curves, Retime, Clean Up, Pose & Rig, Quick Shelf.
-     - **Dope Sheet** sidebar (press **N**), **Anim Assist** tab, organised by animation stage: Block, Inbetween, Time, Mirror & Match, Keys & Channels, Shelf & Macros.
-     - **Properties editor**, **Scene** tab, **Anim Assist** section (near the bottom), organised by scope: This Pose, Whole Animation, Rig, Face, then Setup, Settings and Help.
 
-     Each of those editors' headers also has an **Anim Assist** menu with the most-used tools. The menu can open the full panel, switch to the **Anim Assist workspace** (the Animation layout plus a Graph Editor, with every home open), or open the panel in a **separate window** you can move to a second monitor.
-   - **Ghost Tool** defaults to the **3D Viewport header** dropdown. In **Edit > Preferences > Add-ons > Ghost Tool**, choose **Top Header**, **Top Toolbar**, **Right Sidebar (N)** or **Left Tool Shelf (T)**. Top Toolbar keeps actions in the native Tool Settings row. Its **Ghost** menu and the main-header **Ghost Tool** menu provide Hide/Show Toolbar. All locations share feature options. Save preferences normally to retain your choice.
-   - **BoneCraft** (optional) adds the **BoneCraft** and **Rig Builder** tabs to the left Tool Shelf (press **T**) and the **CATS** tab to the right sidebar (press **N**); each tab's side can be changed in its preferences. Select your character's mesh and start the wizard on the **Rig Builder** tab.
-5. Anim Assist only: in **Properties > Scene > Anim Assist > Setup**, run **First Run Setup** once. It builds the Quick Shelf. The same section can add the Anim Assist workspace, and **Settings** turns on the optional **Anim Assist pie** shortcut (Shift Alt D, off by default).
 
 ## Browse the source
 
