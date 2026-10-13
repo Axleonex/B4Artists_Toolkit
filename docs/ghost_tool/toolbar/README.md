@@ -1,6 +1,6 @@
-# Ghost Tool 4.2.6 viewport toolbar
+# Ghost Tool 4.2.7 viewport toolbar
 
-The toolbar keeps Ghost actions in the native viewport **Tool Settings** row beneath the main header. The source now defaults to **Top Toolbar**, with **Show Ghost Toolbar** enabled. **Top Header** has been removed from Display Location; saved Top Header choices migrate to a visible toolbar. Right Sidebar (N), Left Tool Shelf (T), and their saved choices remain available. Existing toolbar visibility choices are retained.
+The toolbar keeps Ghost actions in the native viewport **Tool Settings** row beneath the main header. Ghost Tool defaults to **Top Toolbar**, with **Show Ghost Toolbar** enabled. **Top Header** has been removed from Display Location; saved Top Header choices migrate to a visible toolbar. Right Sidebar (N), Left Tool Shelf (T), and their saved choices remain available. Existing toolbar visibility choices are retained.
 
 With native headers aligned at the top, the toolbar appears beneath the main viewport header. Native tool and mode controls retain their position and behavior. The toolbar follows the viewport's native header alignment.
 
@@ -26,4 +26,4 @@ Location and Ghost-control visibility apply across ordinary viewports. Save pref
 
 ## Source and release status
 
-The [published release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.6) remains **4.2.6**. Download [b4_ghost_tool_v4.2.6.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.6/b4_ghost_tool_v4.2.6.zip). The toolbar-default change described above is pending publication; that ZIP still offers Top Header. Its [package receipt](../releases/4.2.6/package-receipt.json) records the released archive and its original 178 passing checks/cases. The existing 4.2.5 ZIP and [original toolbar verification](verification.md) are retained as history.
+The current source, repository ZIP and [GitHub release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.7) are **4.2.7**. Download [b4_ghost_tool_v4.2.7.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.7/b4_ghost_tool_v4.2.7.zip). Its [package receipt](../releases/4.2.7/package-receipt.json) records source matching and 148 passing checks/cases in native Bforartists 5.2.0. Earlier archives and the [original toolbar verification](verification.md) are retained as history.
