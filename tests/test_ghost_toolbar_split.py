@@ -50,8 +50,15 @@ def draw(window, area):
 
 def assert_full(window, areas, label):
     for index, area in enumerate(areas):
+        calls = draw(window, area)
         check(f'{label}: viewport {index + 1} has every feature in order',
-              [c[1] for c in draw(window, area) if c[0] == 'popover'] == EXPECTED)
+              [c[1] for c in calls if c[0] == 'popover'] == EXPECTED)
+        names = {c[1]: c[2].get('text') for c in calls if c[0] == 'popover'}
+        master = [c for c in calls if c[0] == 'prop' and c[1] == 'is_active']
+        check(f'{label}: viewport {index + 1} names sections and shows the master switch',
+              names['GHOST_PT_marker_options'] == 'Marker options'
+              and names['GHOST_PT_skin_options'] == 'Onion Skin options'
+              and len(master) == 1 and master[0][2]['text'] == 'Ghosts On')
 
 
 def tick():

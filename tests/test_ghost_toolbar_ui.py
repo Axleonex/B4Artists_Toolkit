@@ -108,6 +108,24 @@ class ToolbarUI(unittest.TestCase):
         self.assertEqual([c[1] for c in self.draw(context_for(530, 2, 'SCULPT'))
                           if c[0] == 'popover'], ['GHOST_PT_toolbar_menu'])
 
+    def test_named_sections_and_direct_master_state_match_the_menu(self):
+        for active, label in ((True, 'Ghosts On'), (False, 'Turn On Ghosts')):
+            bpy.context.scene.ghost_tool['is_active'] = active
+            calls = self.draw(context_for())
+            sections = {c[1]: c[2].get('text') for c in calls if c[0] == 'popover'}
+            self.assertEqual(sections['GHOST_PT_marker_options'], 'Marker options')
+            self.assertEqual(sections['GHOST_PT_skin_options'], 'Onion Skin options')
+            masters = [c for c in calls if c[0] == 'prop' and c[1] == 'is_active']
+            self.assertEqual(len(masters), 1)
+            self.assertEqual(masters[0][2]['text'], label)
+            self.assertTrue(masters[0][2]['toggle'])
+            menu = Layout()
+            ui._draw_toolbar_menu(menu, context_for())
+            self.assertEqual(masters[0][2], next(c[2] for c in menu.calls
+                             if c[0] == 'prop' and c[1] == 'is_active'))
+            self.assertEqual([c[1] for c in calls if c[0] == 'operator'],
+                             ['ghost_tool.generate_ghosts', 'ghost_tool.generate_mesh_ghosts'])
+
     def test_missing_targets_keep_options_enabled_and_options_do_not_generate(self):
         calls = self.draw(context_for(active=None))
         arrows = [c for c in calls if c[0] == 'popover' and c[1] in
