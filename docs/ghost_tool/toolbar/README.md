@@ -30,4 +30,4 @@ Location and Ghost-control visibility apply across ordinary viewports. Save pref
 
 ## Source and release status
 
-The current source and candidate ZIP are **4.2.9**, awaiting publication approval. Install [b4_ghost_tool_v4.2.9.zip](../../../releases/b4_ghost_tool_v4.2.9.zip?raw=1). The published 4.2.8 release remains available. The candidate's [package receipt](../releases/4.2.9/package-receipt.json) records exact source matching and 89 passing focused tests/checks in native Bforartists 5.2.0. Earlier archives and the [original toolbar verification](verification.md) retain their tested versions.
+The current source, repository ZIP and regular Latest release are **4.2.9**. Install [b4_ghost_tool_v4.2.9.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.9/b4_ghost_tool_v4.2.9.zip). The release's [package receipt](../releases/4.2.9/package-receipt.json) records exact source matching and 89 passing focused tests/checks in native Bforartists 5.2.0. Earlier archives and the [original toolbar verification](verification.md) retain their tested versions.

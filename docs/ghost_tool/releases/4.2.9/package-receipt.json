@@ -133,10 +133,10 @@
   },
   "pdf": {
     "path": "docs/ghost_tool/GhostTool_User_Manual.pdf",
-    "sha256": "14d0767448d8114f3e77c47afca63d25bc22186ed9f67e57261fe5dffb557c51",
+    "sha256": "36627e8345bcefa8e025a2900e9c1202b7b02b3b45df2fd1a0f542b00d64a8ce",
     "title": "Ghost Tool 4.2.9 user guide",
     "pages": 3,
-    "bytes": 10946
+    "bytes": 10929
   },
   "published": false,
   "vendor_branding_found": false
