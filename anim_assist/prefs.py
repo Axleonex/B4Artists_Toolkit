@@ -159,6 +159,8 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         name="Toolbar Above Timeline",
         description=(
             "Move Anim Assist shortcuts into a thin editor strip above each visible Timeline; "
+            "keep the strip thin when resized and retain the frame ruler and keys; "
+            "grow a short Timeline to make room for the extra row; "
             "turn off to rejoin the strip and return shortcuts to the native header"
         ),
         default=True,

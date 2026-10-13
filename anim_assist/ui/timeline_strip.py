@@ -8,6 +8,7 @@ Checked: Blender 5.1.2 stand-in, 2026-10-12. If unavailable, keep native shortcu
 
 import bpy
 from math import ceil
+from time import monotonic
 from bpy.props import StringProperty
 from ..core.logging import get_logger
 from .timeline_catalog import (
@@ -19,7 +20,54 @@ from .timeline_catalog import (
 _log = get_logger(__name__)
 _MARKER = "animassist_timeline_toolbar"
 _original_draw = None
-_failed_splits: set[int] = set()
+_failed_splits: dict[int, tuple] = {}
+
+
+def _layout_signature(area):
+    header = next((r for r in area.regions if r.type == "HEADER"), None)
+    return (area.x, area.y, area.width, area.height,
+            header.height if header else 0, bpy.context.preferences.system.ui_scale)
+
+
+def _remember_failure(area):
+    # Retry after resizing or a transient unavailable screen operator. A failed
+    # split must not blacklist this Timeline for the rest of the session.
+    _failed_splits[area.as_pointer()] = (_layout_signature(area), monotonic() + 5.0)
+
+
+def _retry_blocked(area):
+    failed = _failed_splits.get(area.as_pointer())
+    return bool(failed and failed[0] == _layout_signature(area)
+                and monotonic() < failed[1])
+
+
+def _row_height(area):
+    scale = max(0.5, bpy.context.preferences.system.ui_scale)
+    header = next((r for r in area.regions if r.type == "HEADER"), None)
+    return max(header.height if header else 0, ceil(24 * scale)) + ceil(4 * scale)
+
+
+def _timeline_min_height(area):
+    scale = max(0.5, bpy.context.preferences.system.ui_scale)
+    header = next((r for r in area.regions if r.type == "HEADER"), None)
+    # Leave a frame ruler AND an editable key region below the native header.
+    return (header.height if header else 0) + ceil(48 * scale)
+
+
+def _fit_strip(window, screen, strip, target):
+    desired = max(_row_height(target), _row_height(strip))
+    border = ceil(4 * max(0.5, bpy.context.preferences.system.ui_scale))
+    minimum = desired + _timeline_min_height(target) + border
+    combined = strip.height + target.height + (strip.y - target.y - target.height)
+    if (combined < minimum or abs(strip.height - desired) > border
+            or target.height < _timeline_min_height(target)):
+        # area_move polls the screen's actual mouse region, so it cannot be
+        # driven reliably from a timer. Rejoin this owned pair and let the next
+        # tick split it again. The surviving Timeline keeps its native state.
+        # If the whole pair was collapsed, keep a usable Timeline until enlarged.
+        _remove_strip(window, screen, strip)
+        return True
+    return False
 
 def is_strip(area):
     return (area.type == "TEXT_EDITOR"
@@ -293,18 +341,22 @@ def _marker_text():
 
 
 def _split(window, screen, area):
-    pointer = area.as_pointer()
-    header = next(r for r in area.regions if r.type == "HEADER")
-    row_height = max(header.height, 24) + 4
-    # Account for the split border and retain room for native keys + header.
-    if area.height < row_height + header.height + 12 or area.width < 240:
+    row_height = _row_height(area)
+    border = ceil(4 * max(0.5, bpy.context.preferences.system.ui_scale))
+    # Blender creates the upper copy only when factor > .5. Keep the original
+    # Timeline in the lower half, with its native header, view and key settings.
+    minimum = max(row_height + _timeline_min_height(area) + border,
+                  2 * (row_height + border) + 1)
+    if area.width < 240:
         return False
+    if area.height < minimum:
+        return False  # Never consume the frame ruler and editable key region.
     before = {a.as_pointer() for a in screen.areas}
     with bpy.context.temp_override(window=window, area=area):
         result = bpy.ops.screen.area_split(
-            direction="HORIZONTAL", factor=(area.height - row_height - 3) / area.height)
+            direction="HORIZONTAL", factor=(area.height - row_height - border) / area.height)
     if "FINISHED" not in result:
-        _failed_splits.add(pointer)
+        _remember_failure(area)
         return False
     # Native horizontal split retains the original lower area and creates upper.
     # New geometry is zero until redraw; never use those dimensions for pairing.
@@ -326,6 +378,8 @@ def _split(window, screen, area):
 def _remove_strip(window, screen, strip):
     target = timeline_below(screen, strip)
     if target is None:
+        target = _timeline_above(screen, strip)
+    if target is None:
         # Do not join or overwrite an unrelated editor after manual rearrangement.
         strip.spaces.active.text = None
         strip.tag_redraw()
@@ -335,6 +389,15 @@ def _remove_strip(window, screen, strip):
         bpy.ops.screen.area_join(
             source_xy=(target.x + target.width // 2, target.y + target.height // 2),
             target_xy=(strip.x + strip.width // 2, strip.y + strip.height // 2))
+
+
+def _timeline_above(screen, strip):
+    """Recognize an inverted owned pair left by older split geometry."""
+    scale = max(0.5, bpy.context.preferences.system.ui_scale)
+    return next((a for a in screen.areas if is_timeline(a)
+                 and abs(a.x - strip.x) <= ceil(2 * scale)
+                 and abs(a.width - strip.width) <= ceil(2 * scale)
+                 and abs(strip.y + strip.height - a.y) <= ceil(4 * scale)), None)
 
 
 def _sync():
@@ -360,8 +423,23 @@ def _sync():
                 # Wait for native redraw after a split before looking for a pair.
                 if any(is_strip(a) and a.width == 0 for a in screen.areas):
                     return 0.2
+                for strip in list(screen.areas):
+                    if not is_strip(strip) or _retry_blocked(strip):
+                        continue
+                    try:
+                        target = timeline_below(screen, strip)
+                        if target is None and _timeline_above(screen, strip) is not None:
+                            # Rejoin only the owned, directly adjacent inverted
+                            # pair; the next tick recreates the row above it.
+                            _remove_strip(window, screen, strip)
+                            return 0.2
+                        if target is not None and _fit_strip(window, screen, strip, target):
+                            return 0.2
+                    except (RuntimeError, ReferenceError, StopIteration) as exc:
+                        _remember_failure(strip)
+                        _log.warning("Timeline toolbar size update deferred: %s", exc)
                 for area in screen.areas:
-                    if not is_timeline(area) or area.as_pointer() in _failed_splits:
+                    if not is_timeline(area) or _retry_blocked(area):
                         continue
                     if any(is_strip(a) and timeline_below(screen, a) == area
                            for a in screen.areas):
@@ -370,7 +448,7 @@ def _sync():
                         if _split(window, screen, area):
                             return 0.2
                     except (RuntimeError, ReferenceError, StopIteration) as exc:
-                        _failed_splits.add(area.as_pointer())
+                        _remember_failure(area)
                         _log.warning("Timeline toolbar kept in native header: %s", exc)
     except (RuntimeError, ReferenceError, AttributeError) as exc:
         _log.warning("Timeline toolbar layout update deferred: %s", exc)
