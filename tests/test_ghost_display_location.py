@@ -21,7 +21,7 @@ class HeaderLayout(Layout):
         self.calls.append(('popover', kwargs['panel'], kwargs, self.path))
 
 
-def context_for(location='HEADER', window=None, visible=True):
+def context_for(location='TOOLBAR', window=None, visible=True):
     return NS(scene=bpy.context.scene, window=window or bpy.context.window,
               space_data=NS(show_toolshelf_tabs=True),
               preferences=NS(addons={'ghost_tool': NS(preferences=NS(
@@ -42,6 +42,7 @@ class DisplayLocation(unittest.TestCase):
     def setUpClass(cls):
         with patch.object(ghost_tool, '_clear_pycache'):
             ghost_tool.register()
+        bpy.ops.mesh.primitive_cube_add()
 
     @classmethod
     def tearDownClass(cls):
@@ -54,10 +55,12 @@ class DisplayLocation(unittest.TestCase):
 
     def test_enum_default_and_labels(self):
         prop = preferences.GhostToolPreferences.bl_rna.properties['display_location']
-        self.assertEqual(prop.default, 'HEADER')
+        self.assertEqual(prop.default, 'TOOLBAR')
         self.assertEqual([(v.identifier, v.name) for v in prop.enum_items],
-                         [('HEADER', 'Top Header'), ('SIDEBAR', 'Right Sidebar (N)'),
-                          ('TOOLS', 'Left Tool Shelf (T)'), ('TOOLBAR', 'Top Toolbar')])
+                         [('TOOLBAR', 'Top Toolbar'), ('SIDEBAR', 'Right Sidebar (N)'),
+                          ('TOOLS', 'Left Tool Shelf (T)')])
+        self.assertEqual({v.identifier: v.value for v in prop.enum_items},
+                         {'TOOLBAR': 3, 'SIDEBAR': 1, 'TOOLS': 2})
         self.assertFalse(prop.is_skip_save)
         visibility = preferences.GhostToolPreferences.bl_rna.properties['show_toolbar']
         self.assertTrue(visibility.default)
@@ -66,22 +69,58 @@ class DisplayLocation(unittest.TestCase):
         self.assertTrue(action.is_hidden)
         self.assertTrue(action.is_skip_save)
 
-    def test_missing_preferences_and_invalid_value_use_header(self):
-        for context in (NS(), NS(preferences=NS(addons={})), context_for('unknown')):
-            self.assertEqual(ui.display_location(context), 'HEADER')
+    def test_missing_preferences_and_legacy_value_use_toolbar(self):
+        for context in (NS(), NS(preferences=NS(addons={})), context_for('unknown'), context_for('HEADER')):
+            self.assertEqual(ui.display_location(context), 'TOOLBAR')
+
+    def test_saved_enum_values_and_header_migration(self):
+        addon = bpy.context.preferences.addons.get('ghost_tool')
+        created = addon is None
+        if created:
+            addon = bpy.context.preferences.addons.new()
+            addon.module = 'ghost_tool'
+        prefs = addon.preferences
+        original = (prefs.display_location, prefs.show_toolbar)
+        try:
+            # Install the old schema to write exactly the values an upgrade
+            # loads; AddonPreferences has no Python IDProperty access.
+            class LegacyPreferences(bpy.types.AddonPreferences):
+                bl_idname = 'ghost_tool'
+                display_location: bpy.props.EnumProperty(items=(
+                    ('HEADER', 'Header', '', 0), ('SIDEBAR', 'Sidebar', '', 1),
+                    ('TOOLS', 'Tools', '', 2), ('TOOLBAR', 'Toolbar', '', 3)), default='HEADER')
+                show_toolbar: bpy.props.BoolProperty(default=True)
+            for name in ('SIDEBAR', 'TOOLS', 'TOOLBAR', 'HEADER'):
+                bpy.utils.unregister_class(preferences.GhostToolPreferences)
+                bpy.utils.register_class(LegacyPreferences)
+                prefs = addon.preferences
+                prefs.display_location = name
+                prefs.show_toolbar = False
+                bpy.utils.unregister_class(LegacyPreferences)
+                bpy.utils.register_class(preferences.GhostToolPreferences)
+                prefs = addon.preferences
+                preferences.migrate_display_location(bpy.context)
+                self.assertEqual(prefs.display_location, 'TOOLBAR' if name == 'HEADER' else name)
+                self.assertEqual(prefs.show_toolbar, name == 'HEADER')
+                preferences.migrate_display_location(bpy.context)
+                self.assertEqual(prefs.display_location, 'TOOLBAR' if name == 'HEADER' else name)
+        finally:
+            prefs.display_location, prefs.show_toolbar = original
+            if created:
+                bpy.context.preferences.addons.remove(addon)
 
     def test_exactly_one_full_home_for_each_supported_choice(self):
         panels = (ui.GHOST_PT_header_menu, ui.GHOST_PT_sidebar, ui.GHOST_PT_tool_shelf)
         with patch.object(ui, 'supports_tool_shelf', return_value=True):
-            for location, expected in [('HEADER', 0), ('SIDEBAR', 1), ('TOOLS', 2)]:
+            for location, expected in [('SIDEBAR', 1), ('TOOLS', 2)]:
                 self.assertEqual([p.poll(context_for(location)) for p in panels],
                                  [i == expected for i in range(3)])
             self.assertEqual([p.poll(context_for('TOOLBAR')) for p in panels], [True, False, False])
 
-    def test_unsupported_left_choice_retains_header_access(self):
+    def test_unsupported_left_choice_uses_toolbar_with_recovery_access(self):
         context = context_for('TOOLS')
         with patch.object(ui, 'supports_tool_shelf', return_value=False):
-            self.assertEqual(ui.display_location(context), 'HEADER')
+            self.assertEqual(ui.display_location(context), 'TOOLBAR')
             self.assertTrue(ui.GHOST_PT_header_menu.poll(context))
             self.assertFalse(ui.GHOST_PT_sidebar.poll(context))
             self.assertFalse(ui.GHOST_PT_tool_shelf.poll(context))
@@ -192,7 +231,7 @@ class DisplayLocation(unittest.TestCase):
         self.assertEqual(len(store), count)
         self.assertEqual(original, (settings.is_active, settings.show_level_1, settings.show_mesh_ghosts,
                                   settings.live_point_ghosts, settings.live_mesh_ghosts))
-        context.preferences.addons['ghost_tool'].preferences.display_location = 'HEADER'
+        context.preferences.addons['ghost_tool'].preferences.display_location = 'SIDEBAR'
         with patch('ghost_tool.settings_editor.is_editor', return_value=False):
             ui.update_display_location(context)
         self.assertTrue(space.show_region_tool_header)
@@ -216,14 +255,14 @@ class DisplayLocation(unittest.TestCase):
 
     def test_all_homes_share_drawer_and_keep_legacy_launch_buttons_removed(self):
         prefixes = []
-        for cls in (ui.GHOST_PT_header_menu, ui.GHOST_PT_sidebar, ui.GHOST_PT_tool_shelf):
+        for cls in (ui.GHOST_PT_sidebar, ui.GHOST_PT_tool_shelf):
             layout = Layout()
             with patch.object(ui, 'draw_ghost_tool') as draw:
                 cls.draw(NS(layout=layout), bpy.context)
                 prefixes.append(draw.call_args.args[2])
             self.assertNotIn('ghost_tool.open_window', [c[1] for c in layout.calls if c[0] == 'op'])
             self.assertNotIn('ghost_tool.open_settings_editor', [c[1] for c in layout.calls if c[0] == 'op'])
-        self.assertEqual(len(set(prefixes)), 3)
+        self.assertEqual(len(set(prefixes)), 2)
 
     def test_full_controls_and_target_folds_survive_every_home(self):
         bpy.context.scene.ghost_tool.is_active = True
@@ -240,8 +279,7 @@ class DisplayLocation(unittest.TestCase):
             from ghost_tool import target_binding
             samples = [NS(object_name=bpy.context.active_object.name, bone_name='Bone A'),
                        NS(object_name=bpy.context.active_object.name, bone_name='Bone B')]
-            for cls, prefix in ((ui.GHOST_PT_header_menu, 'menu'),
-                                (ui.GHOST_PT_sidebar, 'sidebar'), (ui.GHOST_PT_tool_shelf, 'shelf')):
+            for cls, prefix in ((ui.GHOST_PT_sidebar, 'sidebar'), (ui.GHOST_PT_tool_shelf, 'shelf')):
                 layout = Layout(closed={'ghost_marker_targets', 'ghost_capture_targets',
                                         f'ghost_snapshot_targets_{snap.uid}'})
                 with patch.object(target_binding, 'selected_samples', return_value=(samples, '')), \
@@ -288,7 +326,7 @@ class DisplayLocation(unittest.TestCase):
         area = NS(regions=[region], as_pointer=lambda: 5)
         window = NS(screen=NS(areas=[area]), as_pointer=lambda: 9)
         ui._pending_display_tabs[(9, 5)] = ('SIDEBAR', 0)
-        with patch.object(ui, 'display_location', return_value='HEADER'), \
+        with patch.object(ui, 'display_location', return_value='TOOLBAR'), \
              patch.object(ui, '_display_windows', return_value=[window]):
             self.assertIsNone(ui._select_display_tabs())
         self.assertEqual(region.active_panel_category, 'User Tab')

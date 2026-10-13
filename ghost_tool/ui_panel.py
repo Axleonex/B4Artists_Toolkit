@@ -978,11 +978,11 @@ def display_location(context) -> str:
     """Resolve the persisted home safely, including direct-registration startup."""
     prefs = getattr(context, 'preferences', None)
     addon = getattr(prefs, 'addons', {}).get('ghost_tool')
-    value = getattr(getattr(addon, 'preferences', None), 'display_location', 'HEADER')
-    if value not in {'HEADER', 'SIDEBAR', 'TOOLS', 'TOOLBAR'}:
-        return 'HEADER'
+    value = getattr(getattr(addon, 'preferences', None), 'display_location', 'TOOLBAR')
+    if value not in {'SIDEBAR', 'TOOLS', 'TOOLBAR'}:
+        return 'TOOLBAR'
     if value == 'TOOLS' and not supports_tool_shelf():
-        return 'HEADER'
+        return 'TOOLBAR'
     return value
 
 
@@ -1112,14 +1112,11 @@ class GHOST_PT_header_menu(bpy.types.Panel):
     bl_ui_units_x = 14
 
     def draw(self, context: bpy.types.Context) -> None:
-        if display_location(context) == 'TOOLBAR':
-            _draw_toolbar_menu(self.layout, context)
-        else:
-            draw_ghost_tool(self.layout, context, "menu")
+        _draw_toolbar_menu(self.layout, context)
 
     @classmethod
     def poll(cls, context):
-        return _main_home(context, 'HEADER') or _main_home(context, 'TOOLBAR')
+        return _main_home(context, 'TOOLBAR')
 
 
 class GHOST_PT_sidebar(bpy.types.Panel):
@@ -1381,7 +1378,7 @@ def _draw_graph_header_extension(self, context: bpy.types.Context) -> None:
 def _draw_viewport_header_menu(self, context: bpy.types.Context) -> None:
     """Ghost on/off toggle and the "Ghost Tool" dropdown, after the Pose menu."""
     scene = context.scene
-    if not (_main_home(context, 'HEADER') or _main_home(context, 'TOOLBAR')):
+    if not _main_home(context, 'TOOLBAR'):
         return
     settings = scene.ghost_tool
     row = self.layout.row(align=True)
