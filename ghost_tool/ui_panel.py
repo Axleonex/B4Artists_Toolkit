@@ -909,7 +909,7 @@ def _draw_feature_destination(layout, key, label, icon):
     layout.popover(panel=_FEATURE_PANELS[key], text=label, icon=icon)
 
 
-def _draw_generation_pair(layout, key, *, menu=False):
+def _draw_generation_pair(layout, key):
     """Only the operator polls its target; the adjacent options stay enabled."""
     row = layout.row(align=True)
     marker = key == 'show'
@@ -917,16 +917,20 @@ def _draw_generation_pair(layout, key, *, menu=False):
                  text='Show Markers' if marker else 'Show Onion Skin',
                  icon='GHOST_ENABLED' if marker else 'MESH_DATA')
     row.popover(panel=_FEATURE_PANELS[key],
-                text=('Marker options' if marker else 'Onion Skin options') if menu else '')
+                text='Marker options' if marker else 'Onion Skin options')
 
 
-def _draw_toolbar_menu(layout, context):
+def _draw_ghosts_toggle(layout, context):
     settings = context.scene.ghost_tool
     layout.prop(settings, 'is_active', text='Turn On Ghosts' if not settings.is_active else 'Ghosts On',
                 toggle=True, icon='GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED')
+
+
+def _draw_toolbar_menu(layout, context):
+    _draw_ghosts_toggle(layout, context)
     for key, label, icon, _draw, _topic, _open in GHOST_SECTIONS:
         if key in {'show', 'onion'}:
-            _draw_generation_pair(layout, key, menu=True)
+            _draw_generation_pair(layout, key)
         else:
             _draw_feature_destination(layout, key, label, icon)
     layout.separator()
@@ -1386,6 +1390,8 @@ def _draw_viewport_tool_header(self, context):
     tier = _toolbar_tier(context)
     if tier == 'MINIMAL':
         return
+    row.separator(factor=0.4)
+    _draw_ghosts_toggle(row, context)
     for key in ('show', 'onion'):
         row.separator(factor=0.4)
         _draw_generation_pair(row, key)
