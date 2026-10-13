@@ -15,7 +15,13 @@ One native Timeline editor
 └──────────────────────────────────────────────────────────┘
 ```
 
-The seven family clusters, 70 existing presets, 13 defaults and saved quick selections carry over. The toolbar uses native buttons, menus, tooltips and horizontal header scrolling.
+The seven family clusters, 70 existing presets, 13 defaults and saved quick selections carry over. The catalogue may expand to include additional existing tools needed for AnimBot-style access; 70 is the preserved baseline, not a limit. The toolbar uses native buttons, menus, tooltips and horizontal header scrolling.
+
+## Tool access requirement
+
+The owner's follow-up requires AnimBot-style tool access. The [access specification](2026-10-12-native-timeline-toolbar-access.md) is part of this design: matching available tools must be pinnable as direct actions, continuous tools retain live adjustment/cancellation, related options remain reachable beside the action, and a visible search control covers the validated catalogue. Existing clipboard and reference-bookmark commands must be assessed for addition rather than omitted because they are outside the old 70 presets.
+
+Similar names do not establish equivalent functionality. The implementation coverage matrix must identify actual operator targets, scope, invocation and any limitations; unmet backend capabilities are recorded explicitly. A working native second row alone does not satisfy tool-access acceptance.
 
 ## Evidence and baseline
 
@@ -65,6 +71,7 @@ Completion requires a compiled native Bforartists executable and recorded eviden
 - Fresh default workspace: native tool row appears on Anim Assist enable; playhead, ruler and keys remain visible without dragging to reveal it.
 - Repeated shrinking, expanding and window resizing at 100% and 150% scale: both header regions remain stable, the screen area count is unchanged, and no marked Text Editor strip is created. Capture before/during/after evidence, not just a settled screenshot.
 - Default and saved quick selections, empty selection, reset, family menus and header panning remain usable. Commands operate on the current Timeline and retain their existing prerequisites.
+- The access specification passes: all mapped available tools are searchable and pinnable; pinned actions do not require entry into a submenu; continuous actions preserve live interaction/cancel; options and prerequisites are accurate. The coverage matrix separates working access, partial functional matches and unmet capabilities.
 - Old 12.5.1 layouts migrate once without losing keys/view state or affecting unrelated editors. Saving/reopening, workspace changes, multiple Timelines/windows, hide/show, disable and re-enable retain one native row per enabled Timeline.
 - Native keying, playback and scrubbing remain usable. Other editor sizing, Ghost Tool and BoneCraft UI remain intact.
 - The add-on on unpatched Bforartists uses the documented native-header fallback and never starts the legacy split/join timer.
