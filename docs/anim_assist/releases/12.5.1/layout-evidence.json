@@ -1,0 +1,926 @@
+{
+  "version": "12.5.1",
+  "date": "2026-10-12",
+  "host": "standard Blender 5.1.2 stand-in",
+  "actual_bforartists": false,
+  "normal_gui_event_simulation": false,
+  "runtime_python_byte_parity_with_final_zip": true,
+  "runtime_python_files": 201,
+  "zip_sha256": "7dbe61a35f01eb69431756a6b01133fdc04a3bec45dadca3264975b571d7511c",
+  "baseline_expansion_simulated_event_fixture": {
+    "host": "5.1.2",
+    "real_bfa": false,
+    "log": [
+      {
+        "label": "expanded-step0",
+        "areas": [
+          {
+            "p": 2579097942752,
+            "type": "PROPERTIES",
+            "mode": null,
+            "strip": false,
+            "x": 1152,
+            "y": 23,
+            "w": 246,
+            "h": 692,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097942304,
+            "type": "OUTLINER",
+            "mode": null,
+            "strip": false,
+            "x": 1152,
+            "y": 718,
+            "w": 246,
+            "h": 156,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097942080,
+            "type": "DOPESHEET_EDITOR",
+            "mode": "TIMELINE",
+            "strip": false,
+            "x": 2,
+            "y": 23,
+            "w": 1147,
+            "h": 61,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097941856,
+            "type": "VIEW_3D",
+            "mode": null,
+            "strip": false,
+            "x": 2,
+            "y": 87,
+            "w": 1147,
+            "h": 787,
+            "header": 26,
+            "paired": null
+          }
+        ]
+      },
+      {
+        "label": "expanded-step1",
+        "areas": [
+          {
+            "p": 2579097942752,
+            "type": "PROPERTIES",
+            "mode": null,
+            "strip": false,
+            "x": 1152,
+            "y": 23,
+            "w": 246,
+            "h": 692,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097942304,
+            "type": "OUTLINER",
+            "mode": null,
+            "strip": false,
+            "x": 1152,
+            "y": 718,
+            "w": 246,
+            "h": 156,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097942080,
+            "type": "DOPESHEET_EDITOR",
+            "mode": "TIMELINE",
+            "strip": false,
+            "x": 2,
+            "y": 23,
+            "w": 1147,
+            "h": 208,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097941856,
+            "type": "VIEW_3D",
+            "mode": null,
+            "strip": false,
+            "x": 2,
+            "y": 267,
+            "w": 1147,
+            "h": 607,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2577819355608,
+            "type": "TEXT_EDITOR",
+            "mode": null,
+            "strip": true,
+            "x": 2,
+            "y": 234,
+            "w": 1147,
+            "h": 30,
+            "header": 26,
+            "paired": 2579097942080
+          }
+        ]
+      },
+      {
+        "label": "expanded-step2",
+        "areas": [
+          {
+            "p": 2579097942752,
+            "type": "PROPERTIES",
+            "mode": null,
+            "strip": false,
+            "x": 1152,
+            "y": 23,
+            "w": 246,
+            "h": 692,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097942304,
+            "type": "OUTLINER",
+            "mode": null,
+            "strip": false,
+            "x": 1152,
+            "y": 718,
+            "w": 246,
+            "h": 156,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097942080,
+            "type": "DOPESHEET_EDITOR",
+            "mode": "TIMELINE",
+            "strip": false,
+            "x": 2,
+            "y": 23,
+            "w": 1147,
+            "h": 208,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097941856,
+            "type": "VIEW_3D",
+            "mode": null,
+            "strip": false,
+            "x": 2,
+            "y": 447,
+            "w": 1147,
+            "h": 427,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2577819355608,
+            "type": "TEXT_EDITOR",
+            "mode": null,
+            "strip": true,
+            "x": 2,
+            "y": 234,
+            "w": 1147,
+            "h": 210,
+            "header": 26,
+            "paired": 2579097942080
+          }
+        ]
+      },
+      {
+        "label": "expanded-step3",
+        "areas": [
+          {
+            "p": 2579097942752,
+            "type": "PROPERTIES",
+            "mode": null,
+            "strip": false,
+            "x": 1152,
+            "y": 23,
+            "w": 246,
+            "h": 692,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097942304,
+            "type": "OUTLINER",
+            "mode": null,
+            "strip": false,
+            "x": 1152,
+            "y": 718,
+            "w": 246,
+            "h": 156,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097942080,
+            "type": "DOPESHEET_EDITOR",
+            "mode": "TIMELINE",
+            "strip": false,
+            "x": 2,
+            "y": 23,
+            "w": 1147,
+            "h": 208,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2579097941856,
+            "type": "VIEW_3D",
+            "mode": null,
+            "strip": false,
+            "x": 2,
+            "y": 447,
+            "w": 1147,
+            "h": 427,
+            "header": 26,
+            "paired": null
+          },
+          {
+            "p": 2577819355608,
+            "type": "TEXT_EDITOR",
+            "mode": null,
+            "strip": true,
+            "x": 2,
+            "y": 234,
+            "w": 1147,
+            "h": 210,
+            "header": 26,
+            "paired": 2579097942080
+          }
+        ]
+      }
+    ]
+  },
+  "normal_gui_observed_checkpoints": {
+    "initial": {
+      "strip_height": 31,
+      "timeline_height": 177,
+      "key_window_height": 151
+    },
+    "outer_border_up_180": {
+      "strip_height": 30,
+      "timeline_height": 358,
+      "key_window_height": 332
+    },
+    "internal_divider_collapse_recovery": {
+      "strip_height": 30,
+      "timeline_height": 358,
+      "timeline_pointer_retained": 2950559429368
+    },
+    "placement_disabled": {
+      "owned_strips": 0,
+      "timeline_height": 387
+    }
+  },
+  "short_timeline_enabled": {
+    "host": "5.1.2",
+    "real_bfa": false,
+    "step": 2,
+    "areas": [
+      {
+        "p": 2950102055648,
+        "type": "PROPERTIES",
+        "strip": false,
+        "x": 1152,
+        "y": 23,
+        "w": 246,
+        "h": 692,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "NAVIGATION_BAR",
+            "h": 666
+          },
+          {
+            "type": "WINDOW",
+            "h": 666
+          }
+        ]
+      },
+      {
+        "p": 2950102055200,
+        "type": "OUTLINER",
+        "strip": false,
+        "x": 1152,
+        "y": 718,
+        "w": 246,
+        "h": 156,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "WINDOW",
+            "h": 130
+          }
+        ]
+      },
+      {
+        "p": 2950102054752,
+        "type": "VIEW_3D",
+        "strip": false,
+        "x": 2,
+        "y": 75,
+        "w": 1147,
+        "h": 799,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "TOOL_HEADER",
+            "h": 26
+          },
+          {
+            "type": "ASSET_SHELF",
+            "h": 1
+          },
+          {
+            "type": "ASSET_SHELF_HEADER",
+            "h": 1
+          },
+          {
+            "type": "TOOLS",
+            "h": 747
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "HUD",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 799
+          }
+        ]
+      },
+      {
+        "p": 2950559429368,
+        "type": "DOPESHEET_EDITOR",
+        "strip": false,
+        "x": 2,
+        "y": 23,
+        "w": 1147,
+        "h": 49,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "FOOTER",
+            "h": 1
+          },
+          {
+            "type": "CHANNELS",
+            "h": 23
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 23
+          }
+        ]
+      }
+    ],
+    "frame": 6
+  },
+  "scale150": {
+    "host": "5.1.2",
+    "real_bfa": false,
+    "step": 2,
+    "areas": [
+      {
+        "p": 2950102055648,
+        "type": "PROPERTIES",
+        "strip": false,
+        "x": 1153,
+        "y": 35,
+        "w": 244,
+        "h": 670,
+        "header": 38,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 38
+          },
+          {
+            "type": "NAVIGATION_BAR",
+            "h": 632
+          },
+          {
+            "type": "WINDOW",
+            "h": 632
+          }
+        ]
+      },
+      {
+        "p": 2950102055200,
+        "type": "OUTLINER",
+        "strip": false,
+        "x": 1153,
+        "y": 710,
+        "w": 244,
+        "h": 151,
+        "header": 38,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 38
+          },
+          {
+            "type": "WINDOW",
+            "h": 113
+          }
+        ]
+      },
+      {
+        "p": 2950102054752,
+        "type": "VIEW_3D",
+        "strip": false,
+        "x": 3,
+        "y": 241,
+        "w": 1145,
+        "h": 620,
+        "header": 38,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 38
+          },
+          {
+            "type": "TOOL_HEADER",
+            "h": 38
+          },
+          {
+            "type": "ASSET_SHELF",
+            "h": 1
+          },
+          {
+            "type": "ASSET_SHELF_HEADER",
+            "h": 1
+          },
+          {
+            "type": "TOOLS",
+            "h": 544
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "HUD",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 620
+          }
+        ]
+      },
+      {
+        "p": 2950559429368,
+        "type": "DOPESHEET_EDITOR",
+        "strip": false,
+        "x": 3,
+        "y": 35,
+        "w": 1145,
+        "h": 158,
+        "header": 38,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 38
+          },
+          {
+            "type": "FOOTER",
+            "h": 1
+          },
+          {
+            "type": "CHANNELS",
+            "h": 120
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 120
+          }
+        ]
+      },
+      {
+        "p": 2950555980216,
+        "type": "TEXT_EDITOR",
+        "strip": true,
+        "x": 3,
+        "y": 198,
+        "w": 1145,
+        "h": 38,
+        "header": 38,
+        "paired": 2950559429368,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 38
+          },
+          {
+            "type": "FOOTER",
+            "h": 1
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 2
+          }
+        ]
+      }
+    ],
+    "frame": 6
+  },
+  "final_zip_saved_file_reopen": {
+    "host": "5.1.2",
+    "real_bfa": false,
+    "step": 2,
+    "areas": [
+      {
+        "p": 1983470299264,
+        "type": "PROPERTIES",
+        "strip": false,
+        "x": 1152,
+        "y": 23,
+        "w": 246,
+        "h": 692,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "NAVIGATION_BAR",
+            "h": 666
+          },
+          {
+            "type": "WINDOW",
+            "h": 666
+          }
+        ]
+      },
+      {
+        "p": 1983470299040,
+        "type": "OUTLINER",
+        "strip": false,
+        "x": 1152,
+        "y": 718,
+        "w": 246,
+        "h": 156,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "WINDOW",
+            "h": 130
+          }
+        ]
+      },
+      {
+        "p": 1983470298592,
+        "type": "VIEW_3D",
+        "strip": false,
+        "x": 2,
+        "y": 237,
+        "w": 1147,
+        "h": 637,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "TOOL_HEADER",
+            "h": 26
+          },
+          {
+            "type": "ASSET_SHELF",
+            "h": 1
+          },
+          {
+            "type": "ASSET_SHELF_HEADER",
+            "h": 1
+          },
+          {
+            "type": "TOOLS",
+            "h": 585
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "HUD",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 637
+          }
+        ]
+      },
+      {
+        "p": 1983470298368,
+        "type": "DOPESHEET_EDITOR",
+        "strip": false,
+        "x": 2,
+        "y": 23,
+        "w": 1147,
+        "h": 177,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "FOOTER",
+            "h": 1
+          },
+          {
+            "type": "CHANNELS",
+            "h": 151
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 151
+          }
+        ]
+      },
+      {
+        "p": 1983470298144,
+        "type": "TEXT_EDITOR",
+        "strip": true,
+        "x": 2,
+        "y": 203,
+        "w": 1147,
+        "h": 31,
+        "header": 26,
+        "paired": 1983470298368,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "FOOTER",
+            "h": 1
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 5
+          }
+        ]
+      }
+    ],
+    "frame": 6
+  },
+  "inverted_pair_repaired": {
+    "host": "5.1.2",
+    "real_bfa": false,
+    "step": 2,
+    "areas": [
+      {
+        "p": 1983470299264,
+        "type": "PROPERTIES",
+        "strip": false,
+        "x": 1152,
+        "y": 23,
+        "w": 246,
+        "h": 692,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "NAVIGATION_BAR",
+            "h": 666
+          },
+          {
+            "type": "WINDOW",
+            "h": 666
+          }
+        ]
+      },
+      {
+        "p": 1983470299040,
+        "type": "OUTLINER",
+        "strip": false,
+        "x": 1152,
+        "y": 718,
+        "w": 246,
+        "h": 156,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "WINDOW",
+            "h": 130
+          }
+        ]
+      },
+      {
+        "p": 1983470298592,
+        "type": "VIEW_3D",
+        "strip": false,
+        "x": 2,
+        "y": 237,
+        "w": 1147,
+        "h": 637,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "TOOL_HEADER",
+            "h": 26
+          },
+          {
+            "type": "ASSET_SHELF",
+            "h": 1
+          },
+          {
+            "type": "ASSET_SHELF_HEADER",
+            "h": 1
+          },
+          {
+            "type": "TOOLS",
+            "h": 585
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "HUD",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 637
+          }
+        ]
+      },
+      {
+        "p": 1983470298368,
+        "type": "DOPESHEET_EDITOR",
+        "strip": false,
+        "x": 2,
+        "y": 23,
+        "w": 1147,
+        "h": 177,
+        "header": 26,
+        "paired": null,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "FOOTER",
+            "h": 1
+          },
+          {
+            "type": "CHANNELS",
+            "h": 151
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 151
+          }
+        ]
+      },
+      {
+        "p": 1983578863896,
+        "type": "TEXT_EDITOR",
+        "strip": true,
+        "x": 2,
+        "y": 203,
+        "w": 1147,
+        "h": 31,
+        "header": 26,
+        "paired": 1983470298368,
+        "regions": [
+          {
+            "type": "HEADER",
+            "h": 26
+          },
+          {
+            "type": "FOOTER",
+            "h": 1
+          },
+          {
+            "type": "UI",
+            "h": 1
+          },
+          {
+            "type": "WINDOW",
+            "h": 5
+          }
+        ]
+      }
+    ],
+    "frame": 6
+  },
+  "inverted_pair_native_timeline_pointer_preserved": true,
+  "screenshots_sha256": {
+    "after-resize.png": "7692f9600ee5309c52d7a3c93f6f698bb4b94e900f76b283f99b56f2f4bd2067",
+    "short-timeline.png": "015a5448b641aa5ae2b5b4649f1faaf06223e26ccb6223cb9119784000704dc6",
+    "scale150.png": "84fb2b933a2aebf87c3a408580e36db438473abb220485b823bf048c6fa379a9"
+  },
+  "isolation": {
+    "config_existed_before_launch": true,
+    "resolved_config_asserted": true,
+    "saved_user_preferences": false,
+    "installed_owner_addon": false
+  },
+  "diagnostic_fixture_incident": "The first normal GUI controller exited after its JSON write raced with an evidence reader file lock. A fresh guarded controller handled that diagnostic-file condition and checked the final ZIP. This was not an add-on exception.",
+  "unverified": [
+    "actual Bforartists",
+    "owner saved workspace",
+    "multiple windows and Timelines",
+    "fullscreen",
+    "direct add-on disable"
+  ],
+  "inherited_findings": [
+    "native B50 Redo",
+    "trail position offset"
+  ],
+  "routing_native_fallback_authorized": true,
+  "independent_review_passed": false
+}
