@@ -138,6 +138,28 @@
     "pages": 3,
     "bytes": 10929
   },
-  "published": false,
-  "vendor_branding_found": false
+  "published": true,
+  "vendor_branding_found": false,
+  "publication": {
+    "tag_name": "ghost-v4.2.9",
+    "tag_target": "b5c14f53f5db7087560c2bc51ab10d18acbc7372",
+    "draft": false,
+    "prerelease": false,
+    "is_latest": true,
+    "url": "https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.9",
+    "downloaded_assets_match": true,
+    "assets": {
+      "b4_ghost_tool_v4.2.9.zip": {
+        "bytes": 218876,
+        "sha256": "527a06294e2ac54724c38416b4368db9e4d5438e1652a4d9e737d1fea3254452",
+        "url": "https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.9/b4_ghost_tool_v4.2.9.zip"
+      },
+      "GhostTool_User_Manual.pdf": {
+        "bytes": 10929,
+        "sha256": "36627e8345bcefa8e025a2900e9c1202b7b02b3b45df2fd1a0f542b00d64a8ce",
+        "url": "https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.9/GhostTool_User_Manual.pdf"
+      }
+    },
+    "repository_description_version": "4.2.9"
+  }
 }
