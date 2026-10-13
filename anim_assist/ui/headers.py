@@ -51,7 +51,9 @@ def _draw_dopesheet_header(self, context: bpy.types.Context) -> None:
     The offset toggle acts as a play/pause for the live animation offset
     mode.  Key-type and interpolation menus are hidden in Bforartists.
     """
-    if timeline_strip.hides_native_shortcuts(context):
+    # The Timeline draws the shared configurable catalogue in its TOOL_HEADER
+    # or existing-header fallback; avoid a second copy of the old shortcuts.
+    if timeline_strip.is_timeline(context.area):
         return
     layout = self.layout
     row = layout.row(align=True)
