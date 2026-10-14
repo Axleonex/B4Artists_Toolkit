@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "gui-pin-unpin",
+    "code": "prefs=importlib.import_module(PACKAGE+'.prefs').get_prefs(bpy.context)\ncheck('GUI Search unpins Copy',not getattr(prefs,cat.quick_property_name('COPY_KEYS')))\nresult='unpin passed'"
+  },
+  "response": {
+    "id": "gui-pin-unpin",
+    "result": "unpin passed",
+    "error": null
+  }
+}

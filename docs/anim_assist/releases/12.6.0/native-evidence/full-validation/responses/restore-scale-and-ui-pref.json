@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "restore-scale-and-ui-pref",
+    "code": "bpy.context.preferences.view.ui_scale=1.0\nbpy.context.preferences.filepaths.use_load_ui=True\nwith timeline_context(): bpy.ops.animassist.timeline_quick_reset()\nresult='default reset requested'"
+  },
+  "response": {
+    "id": "restore-scale-and-ui-pref",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 453, in bridge\n    exec(data['code'],globals())\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 3, in <module>\nAttributeError: Calling operator \"bpy.ops.animassist.timeline_quick_reset\" error, could not be found\n"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "final-rows-capture-arm",
+    "code": "arm_capture('final-native-rows',10)\nresult='capture'"
+  },
+  "response": {
+    "id": "final-rows-capture-arm",
+    "result": "capture",
+    "error": null
+  }
+}

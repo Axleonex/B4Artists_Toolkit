@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-EASE-commit-start",
+    "code": "result=modal_start('EASE','commit')"
+  },
+  "response": {
+    "id": "modal-EASE-commit-start",
+    "result": {
+      "action": "EASE",
+      "ending": "commit",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_ease_to_ease"
+      ]
+    },
+    "error": null
+  }
+}

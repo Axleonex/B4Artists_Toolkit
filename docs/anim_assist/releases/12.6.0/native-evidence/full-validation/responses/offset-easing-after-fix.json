@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "offset-easing-after-fix",
+    "code": "with timeline_context():\n    probe,_=fixture()\ncurves=compat.get_fcurves(probe.animation_data.action,anim_data=probe.animation_data)\nfor fc in curves:\n    key=fc.keyframe_points[-1]\n    key.interpolation='ELASTIC'; key.easing='EASE_OUT'; key.amplitude=3.7; key.back=2.5; key.period=0.8\nprobe_before=object_snapshot(probe)\nbackup=offset_mod._snapshot_for_cancel(curves)\nfor fc in curves:fc.keyframe_points.insert(25,-5)\noffset_mod._restore_cancel_snapshot(curves,backup)\ncheck('Offset easing metadata reproduction',object_snapshot(probe)==probe_before,object_snapshot(probe),probe_before)"
+  },
+  "response": {
+    "id": "offset-easing-after-fix",
+    "result": null,
+    "error": null
+  }
+}

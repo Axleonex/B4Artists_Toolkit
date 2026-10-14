@@ -1,0 +1,22 @@
+{
+  "request": {
+    "id": "max-reveal-state",
+    "code": "result=dict(force=toolbar._force_reconcile,pending=list(toolbar._pending_user_action),seen=list(toolbar._seen),prefs=prefs.timeline_toolbar_row,timer=bpy.app.timers.is_registered(toolbar._sync))"
+  },
+  "response": {
+    "id": "max-reveal-state",
+    "result": {
+      "force": false,
+      "pending": [
+        2258864519712,
+        2258267589152
+      ],
+      "seen": [
+        2258267602208
+      ],
+      "prefs": true,
+      "timer": true
+    },
+    "error": null
+  }
+}

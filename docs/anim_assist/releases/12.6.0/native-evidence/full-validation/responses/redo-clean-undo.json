@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "redo-clean-undo",
+    "code": "check('Clean single undo restores',object_snapshot(bpy.data.objects['VAL_Animated'])==undo_before)\nresult='passed'"
+  },
+  "response": {
+    "id": "redo-clean-undo",
+    "result": "passed",
+    "error": null
+  }
+}

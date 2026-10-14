@@ -1,0 +1,42 @@
+{
+  "request": {
+    "id": "load-ui-probe",
+    "code": "result=dict(use_load_ui=bpy.context.preferences.filepaths.use_load_ui, load_schema=[p.identifier for p in bpy.ops.wm.open_mainfile.get_rna_type().properties])"
+  },
+  "response": {
+    "id": "load-ui-probe",
+    "result": {
+      "use_load_ui": false,
+      "load_schema": [
+        "rna_type",
+        "filepath",
+        "hide_props_region",
+        "check_existing",
+        "filter_blender",
+        "filter_backup",
+        "filter_image",
+        "filter_movie",
+        "filter_python",
+        "filter_font",
+        "filter_sound",
+        "filter_text",
+        "filter_archive",
+        "filter_btx",
+        "filter_alembic",
+        "filter_usd",
+        "filter_obj",
+        "filter_volume",
+        "filter_folder",
+        "filter_blenlib",
+        "filemode",
+        "display_type",
+        "sort_method",
+        "load_ui",
+        "use_scripts",
+        "display_file_selector",
+        "state"
+      ]
+    },
+    "error": null
+  }
+}

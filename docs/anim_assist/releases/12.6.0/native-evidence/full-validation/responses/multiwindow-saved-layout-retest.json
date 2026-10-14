@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "multiwindow-saved-layout-retest",
+    "code": "bpy.ops.wm.open_mainfile(filepath=str(ROOT/'visible-multiwindow.blend'),load_ui=True)\nresult='loaded multiwindow UI'"
+  },
+  "response": {
+    "id": "multiwindow-saved-layout-retest",
+    "result": "loaded multiwindow UI",
+    "error": null
+  }
+}

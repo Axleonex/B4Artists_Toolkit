@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-SMOOTH-cancel-start",
+    "code": "result=modal_start('SMOOTH','cancel')"
+  },
+  "response": {
+    "id": "modal-SMOOTH-cancel-start",
+    "result": {
+      "action": "SMOOTH",
+      "ending": "cancel",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_smooth_keys"
+      ]
+    },
+    "error": null
+  }
+}

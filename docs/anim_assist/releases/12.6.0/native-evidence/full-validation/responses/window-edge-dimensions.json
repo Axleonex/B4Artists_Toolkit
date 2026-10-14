@@ -1,0 +1,23 @@
+{
+  "request": {
+    "id": "window-edge-dimensions",
+    "code": "result=dict(width=bpy.context.window.width,height=bpy.context.window.height,capture=flush_capture('window100-corrected-pixels'))"
+  },
+  "response": {
+    "id": "window-edge-dimensions",
+    "result": {
+      "width": 1000,
+      "height": 800,
+      "capture": {
+        "samples": 3,
+        "kind_counts": {
+          "TOOL_HEADER": 1,
+          "HEADER": 1,
+          "WINDOW": 1
+        },
+        "errors": []
+      }
+    },
+    "error": null
+  }
+}

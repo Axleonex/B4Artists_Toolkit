@@ -1,0 +1,19 @@
+{
+  "request": {
+    "id": "final-rows-capture-flush",
+    "code": "result=flush_capture('final-native-rows')"
+  },
+  "response": {
+    "id": "final-rows-capture-flush",
+    "result": {
+      "samples": 3,
+      "kind_counts": {
+        "TOOL_HEADER": 1,
+        "HEADER": 1,
+        "WINDOW": 1
+      },
+      "errors": []
+    },
+    "error": null
+  }
+}

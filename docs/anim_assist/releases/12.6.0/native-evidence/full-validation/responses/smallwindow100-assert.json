@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "smallwindow100-assert",
+    "code": "check('Actual window dimensions changed at 100%',(bpy.context.window.width,bpy.context.window.height)!=window_dims,(bpy.context.window.width,bpy.context.window.height),window_dims)\nrow_check('Native rows after window resize 100%')\nresult=flush_capture('smallwindow100-pixels')"
+  },
+  "response": {
+    "id": "smallwindow100-assert",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 453, in bridge\n    exec(data['code'],globals())\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 50, in check\n    raise AssertionError(name + ': ' + repr(actual) + ' expected ' + repr(expected))\nAssertionError: Actual window dimensions changed at 100%: (1200, 800) expected (1200, 800)\n"
+  }
+}

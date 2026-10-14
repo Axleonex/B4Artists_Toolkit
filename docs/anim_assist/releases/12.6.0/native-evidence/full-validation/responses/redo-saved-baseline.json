@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "redo-saved-baseline",
+    "code": "with timeline_context(): undo_obj,_=fixture()\nundo_before=object_snapshot(undo_obj)\nbpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'undo-fixture.blend'))\nbpy.ops.wm.open_mainfile(filepath=str(ROOT/'undo-fixture.blend'))\nresult='fresh load baseline'"
+  },
+  "response": {
+    "id": "redo-saved-baseline",
+    "result": "fresh load baseline",
+    "error": null
+  }
+}

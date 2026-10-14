@@ -1,0 +1,13 @@
+{
+  "request": {
+    "id": "modal-coverage-complete",
+    "code": "check('all nine modal actions committed and cancelled',len({(r['action'],r['ending']) for r in modal_records})==18,len(modal_records),18)\nrow_check('native toolbar restored after every modal gesture')\nresult={'cases':len(modal_records)}"
+  },
+  "response": {
+    "id": "modal-coverage-complete",
+    "result": {
+      "cases": 19
+    },
+    "error": null
+  }
+}

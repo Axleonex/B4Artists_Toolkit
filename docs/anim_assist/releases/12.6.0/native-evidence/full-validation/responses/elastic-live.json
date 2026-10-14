@@ -1,0 +1,16 @@
+{
+  "request": {
+    "id": "elastic-live",
+    "code": "result=modal_live()"
+  },
+  "response": {
+    "id": "elastic-live",
+    "result": {
+      "changed": true,
+      "operators": [
+        "ANIMASSIST_OT_anim_offset"
+      ]
+    },
+    "error": null
+  }
+}

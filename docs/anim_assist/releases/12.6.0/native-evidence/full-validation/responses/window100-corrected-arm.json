@@ -1,0 +1,16 @@
+{
+  "request": {
+    "id": "window100-corrected-arm",
+    "code": "arm_capture('window100-corrected-pixels',30)\nwindow_dims=(bpy.context.window.width,bpy.context.window.height)\nresult=dict(width=bpy.context.window.width,height=bpy.context.window.height,x=bpy.context.window.x,y=bpy.context.window.y)"
+  },
+  "response": {
+    "id": "window100-corrected-arm",
+    "result": {
+      "width": 1200,
+      "height": 800,
+      "x": 100,
+      "y": 100
+    },
+    "error": null
+  }
+}

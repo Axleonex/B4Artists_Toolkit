@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "search-copy-final",
+    "code": "check('GUI Search Copy executes',importlib.import_module(PACKAGE+'.core.key_utils').clipboard_size()==9)\nresult='copied 9 keys'"
+  },
+  "response": {
+    "id": "search-copy-final",
+    "result": "copied 9 keys",
+    "error": null
+  }
+}

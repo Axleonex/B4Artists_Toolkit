@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "migration-once",
+    "code": "n=len(bpy.context.window.screen.areas)\ntoolbar._sync(); toolbar._sync()\ncheck('Legacy migration not repeated',len(bpy.context.window.screen.areas)==n)\nbpy.ops.wm.open_mainfile(filepath=str(ROOT/'validation-baseline.blend'))\nresult='restored baseline'"
+  },
+  "response": {
+    "id": "migration-once",
+    "result": "restored baseline",
+    "error": null
+  }
+}

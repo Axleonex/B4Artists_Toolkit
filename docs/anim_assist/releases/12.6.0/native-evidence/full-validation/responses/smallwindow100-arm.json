@@ -1,0 +1,14 @@
+{
+  "request": {
+    "id": "smallwindow100-arm",
+    "code": "arm_capture('smallwindow100-pixels',30)\nwindow_resize_before=geometry()\nwindow_dims=(bpy.context.window.width,bpy.context.window.height)\nresult=window_dims"
+  },
+  "response": {
+    "id": "smallwindow100-arm",
+    "result": [
+      1200,
+      800
+    ],
+    "error": null
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "tagged-undo",
+    "code": "result=object_snapshot(bpy.data.objects['VAL_Animated'])==undo_before"
+  },
+  "response": {
+    "id": "tagged-undo",
+    "result": true,
+    "error": null
+  }
+}

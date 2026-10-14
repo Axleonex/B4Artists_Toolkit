@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "redo-update-instrument",
+    "code": "addon_utils.disable(PACKAGE,default_set=False)\ndef tagged_move_execute(self,context):\n result=original_move_execute(self,context)\n if 'FINISHED' in result:\n  context.object.animation_data.action.update_tag()\n  context.view_layer.update()\n return result\nkeymod.ANIMASSIST_OT_move_keys.execute=tagged_move_execute\naddon_utils.enable(PACKAGE,default_set=False,persistent=True)\nbpy.ops.wm.open_mainfile(filepath=str(ROOT/'undo-fixture.blend'))\nresult='synchronous evaluation instrumented'"
+  },
+  "response": {
+    "id": "redo-update-instrument",
+    "result": "synchronous evaluation instrumented",
+    "error": null
+  }
+}
