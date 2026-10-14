@@ -8,6 +8,8 @@ from .timeline_catalog import ACTIONS, FAMILY, GROUPS
 
 _editors={}
 _tool_editors={}
+_layout_editors={}
+_layout_items={}
 _MODES=(('HIDDEN','Hidden','Keep this tool in Search and More',0),
         ('BUTTON','Button','Invoke the existing action directly',1),
         ('POPOUT','Popout slider','Press and drag to reveal a temporary slider',2),
@@ -50,6 +52,16 @@ def sync_editor(context,data):
     if active: active.populate(data)
 
 
+def _choices(self,context):
+    data=getattr(self,'_record',None)
+    if data is None: data=record(context)
+    names=tuple((x['id'],x['name']) for x in data['saved'])
+    if names not in _layout_items:
+        _layout_items[names]=[('recommended','Recommended','Built-in two-slider layout',0)]+[
+            (ident,name,'Load or manage '+name,index+1) for index,(ident,name) in enumerate(names)]
+    return _layout_items[names]
+
+
 class AA_ToolbarEntry(bpy.types.PropertyGroup):
     action: StringProperty(options={'HIDDEN'})
     family: StringProperty(options={'HIDDEN'})
@@ -77,6 +89,7 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
         items=[(key,label,'Configure '+label) for key,label,_ in GROUPS],default='tween',update=_family_update)
     entries: CollectionProperty(type=AA_ToolbarEntry)
     active_index: IntProperty(default=0)
+    layout_choice: EnumProperty(name='Saved Layout',description='Choose a saved layout to load or manage',items=_choices,default=0)
 
     def populate(self,data):
         self._record=copy.deepcopy(data)
@@ -88,6 +101,7 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
             entry.family=FAMILY[action][0]
             entry.mode=tool['mode']; entry.label_mode=tool['label_mode']; entry.width=tool['width']
         _family_update(self,None)
+        self.layout_choice=data['active_saved_id'] or 'recommended'
 
     def serialize(self):
         data=copy.deepcopy(self._record)
@@ -111,6 +125,15 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
     def draw(self,context):
         layout=self.layout
         layout.label(text='Layout: '+self._record['active']['name']+(' *' if model.modified(self.serialize(),ACTIONS) else ''))
+        layout.prop(self,'layout_choice')
+        row=layout.row(align=True)
+        for operation,label in (('SAVE','Save As'),('LOAD','Load'),('UPDATE','Update Saved')):
+            cell=row.row(align=True)
+            cell.enabled=operation!='UPDATE' or self._record['active_saved_id'] not in {None,'recommended'}
+            op=cell.operator('animassist.layout_action',text=label); op.operation=operation; op.target=self.layout_choice
+        row=layout.row(align=True); row.enabled=self.layout_choice!='recommended'
+        for operation,label in (('RENAME','Rename'),('DELETE','Delete')):
+            op=row.operator('animassist.layout_action',text=label); op.operation=operation; op.target=self.layout_choice
         layout.prop(self,'family')
         layout.template_list('AA_UL_toolbar_tools','',self,'entries',self,'active_index',rows=8)
         if 0<=self.active_index<len(self.entries):
@@ -122,6 +145,9 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
             if entry.action in model.SLIDERS: layout.prop(entry,'width')
         layout.operator('animassist.restore_toolbar',text='Restore Recommended Layout')
         layout.label(text='Hidden tools remain available in Search and More.')
+        if not context.preferences.use_preferences_save:
+            layout.label(text='Apply changes, then Save Preferences to keep layouts after restart.')
+            layout.operator('wm.save_userpref',text='Save Applied Preferences')
 
     def execute(self,context):
         try: write(context,self.serialize())
@@ -235,16 +261,84 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
             _tool_editors.pop(context.window.as_pointer(),None)
 
 
+class ANIMASSIST_OT_layout_action(bpy.types.Operator):
+    bl_idname='animassist.layout_action'
+    bl_label='Saved Toolbar Layout'
+    bl_description='Save, load, rename or delete a named toolbar arrangement without changing animation'
+    operation: StringProperty(options={'HIDDEN','SKIP_SAVE'})
+    target: StringProperty(options={'HIDDEN','SKIP_SAVE'})
+    layout_name: StringProperty(name='Layout Name',description='A unique user-entered name, at most 64 characters',maxlen=64)
+    discard_changes: BoolProperty(name='Discard Unsaved Working Changes',description='Replace the current modified arrangement with the selected saved layout')
+
+    def invoke(self,context,event):
+        from ..operators.timeline_slider_ops import busy
+        if busy():
+            self.report({'WARNING'},'Finish or cancel the active slider first'); return {'CANCELLED'}
+        data=staged_record(context)
+        self._item=next((item for item in data['saved'] if item['id']==self.target),None)
+        if self.operation=='RENAME' and self._item: self.layout_name=self._item['name']
+        needs_dialog=self.operation in {'SAVE','RENAME','DELETE'} or (self.operation=='LOAD' and model.modified(data,ACTIONS))
+        if needs_dialog:
+            _layout_editors[context.window.as_pointer()]=self
+            return context.window_manager.invoke_props_dialog(self,width=430)
+        return self.execute(context)
+
+    def draw(self,context):
+        if self.operation in {'SAVE','RENAME'}:
+            self.layout.label(text='Save your arrangement' if self.operation=='SAVE' else 'Rename saved layout')
+            self.layout.prop(self,'layout_name')
+        elif self.operation=='DELETE':
+            self.layout.label(text='Delete '+(self._item['name'] if self._item else 'this layout')+'?')
+            self.layout.label(text='The current working arrangement stays available.')
+        elif self.operation=='LOAD':
+            self.layout.label(text='The current arrangement has unsaved changes.')
+            op=self.layout.operator('animassist.layout_action',text='Save As First'); op.operation='SAVE'
+            self.layout.prop(self,'discard_changes')
+
+    def execute(self,context):
+        try:
+            data=staged_record(context)
+            if self.operation=='SAVE': model.save_as(data,self.layout_name)
+            elif self.operation=='UPDATE': model.update_saved(data)
+            elif self.operation=='RENAME': model.rename(data,self.target,self.layout_name)
+            elif self.operation=='DELETE': model.delete(data,self.target)
+            elif self.operation=='LOAD':
+                if model.modified(data,ACTIONS) and not self.discard_changes:
+                    raise ValueError('Save As first or explicitly discard the working changes')
+                model.load(data,self.target,ACTIONS)
+            else: raise ValueError('Choose a known layout operation')
+            write(context,data); sync_editor(context,data)
+            _layout_editors.pop(context.window.as_pointer(),None)
+            return {'FINISHED'}
+        except ValueError as exc:
+            _layout_editors.pop(context.window.as_pointer(),None)
+            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+
+    def cancel(self,context):
+        if _layout_editors.get(context.window.as_pointer()) is self:
+            _layout_editors.pop(context.window.as_pointer(),None)
+
+
 CLASSES=(AA_ToolbarEntry,AA_UL_toolbar_tools,ANIMASSIST_OT_toolbar_settings,
-         ANIMASSIST_OT_toolbar_reorder,ANIMASSIST_OT_restore_toolbar,ANIMASSIST_OT_tool_settings)
+         ANIMASSIST_OT_toolbar_reorder,ANIMASSIST_OT_restore_toolbar,ANIMASSIST_OT_tool_settings,
+         ANIMASSIST_OT_layout_action)
 
 
 def register():
     for cls in CLASSES: bpy.utils.register_class(cls)
+    bpy.app.handlers.load_pre.append(clear_dialogs)
+
+
+@bpy.app.handlers.persistent
+def clear_dialogs(_unused=None):
+    _editors.clear(); _tool_editors.clear(); _layout_editors.clear()
 
 
 def unregister():
     _editors.clear()
     _tool_editors.clear()
+    _layout_editors.clear()
+    _layout_items.clear()
+    if clear_dialogs in bpy.app.handlers.load_pre: bpy.app.handlers.load_pre.remove(clear_dialogs)
     for cls in reversed(CLASSES):
         if cls.is_registered: bpy.utils.unregister_class(cls)

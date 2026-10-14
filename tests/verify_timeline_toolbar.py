@@ -22,7 +22,7 @@ def owned_profile(path):
         raise ValueError('Test profile owner marker does not match')
     path.mkdir(parents=True, exist_ok=True)
     marker.write_text(json.dumps({'purpose': 'anim-assist-toolbar-verification'}))
-    for name in ('config', 'scripts/addons', 'datafiles'):
+    for name in ('config', 'scripts/addons', 'datafiles', 'tmp'):
         (path / name).mkdir(parents=True, exist_ok=True)
     return path
 
@@ -54,7 +54,9 @@ class Host:
         env.update(BLENDER_USER_CONFIG=str(profile/'config'),
                    BLENDER_USER_SCRIPTS=str(profile/'scripts'),
                    BLENDER_USER_DATAFILES=str(profile/'datafiles'),
+                   TMP=str(profile/'tmp'), TEMP=str(profile/'tmp'),
                    AA_OVERLAY_EVIDENCE=str(self.root))
+        if getattr(args,'resume',False): env['AA_TOOLBAR_RESUME']='1'
         if args.attach:
             self.proc = subprocess.Popen(['powershell.exe','-NoProfile','-Command',
                 f'Wait-Process -Id {int(args.attach)}'], stdout=self.log, stderr=subprocess.STDOUT)
@@ -130,6 +132,26 @@ def run(args):
         host.request("event('ESC')")  # Dismiss the first-start welcome popup before pointer tests.
         host.request('prepare_geometry()')
         host.request('expand_geometry()')
+        if args.layouts:
+            host.request('ui_defaults()')
+            host.request('layouts_prepare()')
+            for name in ('Blocking','Polish'):
+                host.request(f'layout_save_open({name!r})')
+                host.request("ui_screenshot('layout-save')")
+                host.request("event('RET')")
+                host.request(f'layout_saved({name!r})')
+            host.request('layout_manage()')
+            host.request('layout_transfer_and_save()')
+            host.request('ui_settings_open()')
+            host.request("ui_screenshot('named-layout-settings')")
+            host.request("event('ESC')")
+            host.close()
+            args.resume=True
+            host=Host(args,profile)
+            host.request(f"exec(compile(open({str(source)!r}, encoding='utf-8').read(), {str(source)!r}, 'exec'), globals())")
+            host.request('layout_restart_check()')
+            print((host.root/'layout-coverage.json').read_text())
+            return
         if args.ui:
             host.request('ui_defaults()')
             for action,mode in (('DRAG','INLINE'),('SMOOTH','INLINE'),('SCALE_DRAG','POPOUT')):
@@ -220,4 +242,5 @@ if __name__ == '__main__':
     parser.add_argument('--diagnostic-push', action='store_true', help='Diagnose missing native undo checkpoint; never use for qualification')
     parser.add_argument('--adapters', action='store_true', help='Exercise new scalar adapters before row integration')
     parser.add_argument('--ui', action='store_true', help='Exercise actual row controls and native settings windows')
+    parser.add_argument('--layouts', action='store_true', help='Verify named layouts, transfer and normal restart')
     run(parser.parse_args())

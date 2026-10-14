@@ -77,6 +77,11 @@ class AA_OT_export_settings(bpy.types.Operator, ExportHelper):
             name = quick_property_name(action)
             data[name] = getattr(prefs, name)
         data["timeline_quick_family"] = prefs.timeline_quick_family
+        from ..prefs import timeline_record
+        from ..ui.timeline_config import encode
+        data['timeline_layouts_json']=prefs.timeline_layouts_json or encode(timeline_record(prefs),ACTIONS)
+        data['timeline_toolbar_row']=prefs.timeline_toolbar_row
+        data['timeline_canvas_row_initialized']=prefs.timeline_canvas_row_initialized
         data["_version"] = constants.ADDON_VERSION_STRING
 
         try:
@@ -127,6 +132,35 @@ class AA_OT_import_settings(bpy.types.Operator, ImportHelper):
         if not isinstance(data, dict):
             self.report({"ERROR"}, "Import failed: JSON root must be an object")
             return {"CANCELLED"}
+
+        # Validate the whole toolbar record before assigning any preferences.
+        # A rejected layout file cannot partially overwrite a user's library.
+        from ..ui import timeline_config as toolbar_model
+        from ..ui.timeline_catalog import ACTIONS, quick_property_name
+        from ..prefs import timeline_record
+        try:
+            layout_raw=data.get('timeline_layouts_json')
+            if 'timeline_layouts_json' in data and not isinstance(layout_raw,str):
+                raise ValueError('Toolbar layout must be a JSON string')
+            if layout_raw:
+                if not isinstance(layout_raw,str): raise ValueError('Toolbar layout must be a JSON string')
+                data['timeline_layouts_json']=toolbar_model.encode(toolbar_model.decode(layout_raw,ACTIONS),ACTIONS)
+            elif any(quick_property_name(action) in data for action in ACTIONS):
+                existing=timeline_record(prefs)
+                chosen={a for a in ACTIONS if existing['active']['tools'][a]['mode']!='HIDDEN'}
+                for action in ACTIONS:
+                    key=quick_property_name(action)
+                    if key in data:
+                        if type(data[key]) is not bool: raise ValueError('Quick tool choices must be checkboxes')
+                        if data[key]: chosen.add(action)
+                        else: chosen.discard(action)
+                migrated=toolbar_model.from_legacy(ACTIONS,chosen)
+                migrated['saved']=existing['saved']
+                data['timeline_layouts_json']=toolbar_model.encode(migrated,ACTIONS)
+            elif 'timeline_layouts_json' in data:
+                raise ValueError('The settings file has an empty toolbar layout record')
+        except ValueError as exc:
+            self.report({'ERROR'},str(exc)); return {'CANCELLED'}
 
         applied = 0
         from ..ui.timeline_catalog import GROUPS

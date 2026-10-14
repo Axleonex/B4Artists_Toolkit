@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import traceback
+import importlib
 
 root = Path(os.environ['AA_OVERLAY_EVIDENCE'])
 root.mkdir(parents=True, exist_ok=True)
@@ -12,8 +13,14 @@ config = Path(os.environ['BLENDER_USER_CONFIG']).resolve()
 assert config.is_dir() and Path(bpy.utils.user_resource('CONFIG')).resolve() == config
 scripts = Path(os.environ['BLENDER_USER_SCRIPTS']).resolve()
 assert scripts.is_dir()
-addon_utils.enable('B4_anim_assist', default_set=True, persistent=True)
+if os.environ.get('AA_TOOLBAR_RESUME')=='1':
+    assert addon_utils.check('B4_anim_assist')[1], 'Saved add-on was not automatically enabled'
+else:
+    addon_utils.enable('B4_anim_assist', default_set=True, persistent=True)
+assert Path(importlib.import_module('B4_anim_assist').__file__).resolve() == (scripts/'addons/B4_anim_assist/__init__.py').resolve()
 bpy.context.preferences.use_preferences_save = False
+if hasattr(bpy.context.preferences.filepaths,'use_save_for_quit'):
+    bpy.context.preferences.filepaths.use_save_for_quit = False
 
 
 def state():
