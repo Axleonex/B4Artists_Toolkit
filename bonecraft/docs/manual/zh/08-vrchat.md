@@ -4,7 +4,16 @@
 
 ## VRChat 工具
 
-VRChat 工具位于右侧边栏（按 **N**）的 **CATS** 选项卡中的 **VRChat** 部分。它的子部分按照你需要它们的顺序排列：VRChat 设置（命名附加工具和人形骨骼）、身体与物理（头发、服装、口型），然后是性能和导出。同一个部分也始终位于 **属性** 编辑器的 **场景** 选项卡中。
+选项卡用于选择功能组。Setup Rigging、Skin、Review、Avatar Tools 和 Facial 是选项卡内可展开的分区，不是独立选项卡。下列路径保留英文界面标签；翻译名称取决于 Language 设置。
+
+| 工具 | 打开路径 |
+| --- | --- |
+| Humanoid / Hair / Export | CATS → Avatar Tools |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Performance / Clothing / Naming | CATS → VRChat Tools |
+
+偏好设置：Edit → Preferences → Add-ons → BoneCraft → Tabs 控制选项卡显示。Scene Properties 独立控制 Properties → Scene 中的 Rig Builder 和 CATS 面板。Show Helpers 隐藏说明；Language 更改界面语言；Tools 启用各工具包。Ctrl+Shift+R 打开快捷绑定面板。
 
 ---
 
@@ -156,7 +165,7 @@ MMD 工具位于 **CATS** 选项卡 → **导入 / 导出** → **MMD / PMX**。
 
 ---
 
-## Game Export（游戏导出）
+## Game Engine Export（游戏导出）
 
 **作用：** 使用经过验证的配置文件为游戏引擎导出：Unreal（人形或通用）、Unity 人形、Godot 人形，以及通用的 FBX 或 GLB。配置文件需要的每项修复都会显示出来，只有在你点击时才会应用，绝不会悄悄应用。
 
@@ -167,7 +176,7 @@ MMD 工具位于 **CATS** 选项卡 → **导入 / 导出** → **MMD / PMX**。
 - **Apply Transforms (Fix)**（应用变换（修复））— 检查可能提供的明确修复之一
 - **Export (Profile)**（导出（配置文件））— 使用该配置文件导出
 
-**位置：** **CATS** 选项卡 → **导入 / 导出** → **Game Export**
+**位置：** **CATS** 选项卡 → **导入 / 导出** → **Game Engine Export**
 
 ---
 

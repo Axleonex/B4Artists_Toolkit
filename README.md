@@ -30,7 +30,7 @@ The unpacked, readable source for each tool is in this repository so you can rea
 
 - [`anim_assist/`](anim_assist/) — Anim Assist source (`core/`, `operators/`, `ui/`, `tests/`)
 - [`ghost_tool/`](ghost_tool/) — Ghost Tool source
-- [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.2.1 source
+- [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.2.2 source
 
 
 ## Documentation
@@ -39,7 +39,7 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - [Anim Assist 12.6.0 add-on](docs/anim_assist/releases/12.6.0/RELEASE-NOTES.md) — installation, quick tools and validation; [tool access coverage](docs/anim_assist/releases/12.6.0/tool-access-coverage.md) records the actions and gestures. [Suite manuals](docs/anim_assist/) cover the other animation tools.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.11 guide, PDF and toolbar notes
-- [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.1 English manual and translation status
+- [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.2 interface manual and translation status
 
 ## Requirements
 

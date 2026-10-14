@@ -2,7 +2,7 @@
 
 [← Índice](index.md)
 
-Las herramientas de CATS están en la pestaña **CATS** de la barra lateral derecha (pulsa **N**), en la sección **CATS**, y siempre en la pestaña **Escena** del editor de **Propiedades**. Siguen el pipeline descrito en [El pipeline de CATS](04-cats-pipeline.md). Elige arriba en la sección la armadura con la que trabajan.
+Las herramientas de CATS están en la pestaña **CATS** de la barra lateral derecha (pulsa **N**), en la sección **CATS**, y  en la pestaña **Escena** del editor de **Propiedades**. Siguen el pipeline descrito en [El pipeline de CATS](04-cats-pipeline.md). Elige arriba en la sección la armadura con la que trabajan. Los paneles Escena aparecen cuando Preferences → Tabs → Scene Properties → Show está activado. Ocultar una pestaña de la vista 3D no oculta esta copia.
 
 ---
 

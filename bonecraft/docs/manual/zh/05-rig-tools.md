@@ -241,7 +241,7 @@
 
 **主要控件：** 迭代次数、平滑强度、固定边界、仅平滑变形，以及是否在骨架之前运行。添加按钮会添加修改器，并把它绑定到静止形状。
 
-**位置：** BoneCraft 选项卡，物体模式下选中网格时 → 增量柔化
+**位置：** BoneCraft → Skin → Delta Mush (Object Mode; Mesh)
 
 ---
 
@@ -251,7 +251,7 @@
 
 **主要控件：** 要跟随的驱动网格、衰减类型和最大距离；绑定按钮会附着网格。
 
-**位置：** BoneCraft 选项卡，物体模式下选中网格时 → 近距离包裹
+**位置：** BoneCraft → Skin → Proximity Wrap (Object Mode; Mesh)
 
 ---
 
@@ -312,7 +312,7 @@
 - 每个集合中，每个口型有一个按钮（扬声器图标），点击即可预览
 - 口型同步 — 从文本生成口型关键帧，可设置每个音素的帧数和平滑
 
-**位置：** BoneCraft 选项卡，选中骨架时 → 口型库
+**位置：** CATS → Avatar Tools → Viseme Library (Armature); Lip Sync (Pose Mode)
 
 ---
 

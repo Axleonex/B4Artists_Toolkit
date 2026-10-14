@@ -4,7 +4,16 @@
 
 ## Outils VRChat
 
-Les outils VRChat sont dans l'onglet **CATS** de la barre latérale de droite (touche **N**), dans la section **VRChat**. Ses sous-sections suivent l'ordre dans lequel vous en avez besoin : configuration VRChat (extras de nommage et os humanoïdes), corps et physique (cheveux, vêtements, visèmes), puis performances et export. La même section est toujours dans l'onglet **Scène** de l'éditeur **Propriétés**.
+Les onglets sélectionnent un groupe. Setup Rigging, Skin, Review, Avatar Tools et Facial sont des sections à déplier dans ces onglets, pas des onglets distincts. Les chemins ci-dessous conservent les labels anglais ; leur traduction dépend du réglage Language.
+
+| Outil | Chemin à ouvrir |
+| --- | --- |
+| Humanoid / Hair / Export | CATS → Avatar Tools |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Performance / Clothing / Naming | CATS → VRChat Tools |
+
+Préférences : Edit → Preferences → Add-ons → BoneCraft → Tabs contrôle les onglets. Scene Properties contrôle séparément les panneaux Rig Builder et CATS dans Properties → Scene. Show Helpers masque les explications ; Language change les labels ; Tools active les paquets. Ctrl+Shift+R ouvre le panneau rapide.
 
 ---
 
@@ -156,7 +165,7 @@ Les outils MMD sont dans l'onglet **CATS** → **Importer / Exporter** → **MMD
 
 ---
 
-## Game Export (export pour jeux)
+## Game Engine Export (export pour jeux)
 
 **Ce qu'il fait :** exporte pour les moteurs de jeu avec un profil validé : Unreal (humanoïde ou universel), humanoïde Unity, humanoïde Godot, et FBX ou GLB génériques. Chaque correction dont le profil a besoin est affichée et n'est appliquée que lorsque vous cliquez dessus, jamais en silence.
 
@@ -167,7 +176,7 @@ Les outils MMD sont dans l'onglet **CATS** → **Importer / Exporter** → **MMD
 - **Apply Transforms (Fix)** (appliquer les transformations (correction)) — l'une des corrections explicites que la vérification peut proposer
 - **Export (Profile)** (exporter (profil)) — exporte avec le profil
 
-**Où le trouver :** onglet **CATS** → **Importer / Exporter** → **Game Export**
+**Où le trouver :** onglet **CATS** → **Importer / Exporter** → **Game Engine Export**
 
 ---
 

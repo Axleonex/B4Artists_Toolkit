@@ -1,8 +1,10 @@
 # BoneCraft マニュアル
 
-BoneCraft 9.1.2。BoneCraft は Bforartists 用のリギングとアバターのツールキットです。
+BoneCraft 9.2.2。BoneCraft は Bforartists 用のリギングとアバターのツールキットです。
 
 このマニュアルは英語版から機械翻訳されたものです。
+
+タブで機能グループを選びます。Setup Rigging、Skin、Review、Avatar Tools、Facial はタブ内の展開可能なセクションで、独立したタブではありません。以下は英語 UI のラベルです。翻訳名は Language 設定に従います。
 
 ## 章
 

@@ -22,7 +22,7 @@ BoneCraft가 제공하는 것은 도구이지 무기가 아닙니다. 부품은 
 ## 위치
 
 - 3D 뷰포트의 **BoneCraft 탭 → Mechanisms**. BoneCraft 탭은 환경 설정에서 오른쪽 사이드바(**N** 키)로 옮기지 않았다면 왼쪽 툴 셸프(**T** 키)에 있습니다. 스킨과 리뷰 사이에 있습니다. 활성 오브젝트가 메시일 때(리그를 시작하기 위해), 또는 메커니즘이 있는 아마추어일 때 표시됩니다.
-- **속성 에디터 → 장면 탭 → Mechanisms**, 리그 빌더 바로 다음. 항상 있습니다. 쓸 수 있는 것을 아무것도 선택하지 않았다면 "Select a mesh to start, or an armature with mechanisms."(시작하려면 메시를, 또는 메커니즘이 있는 아마추어를 선택하세요.) 한 줄만 표시됩니다. 뷰포트의 BoneCraft 탭을 꺼도 사라지지 않습니다. `mechanisms` 도구 스위치(**환경 설정 → 애드온 → BoneCraft → 도구**)만이 이것을 뷰포트 쪽 사본과 함께 없앱니다. 장면 탭의 섹션은 처음에 접혀 있으므로 **Mechanisms**를 클릭해 펼치세요.
+- Properties → Scene → Mechanisms. 장면 패널은 Preferences → Tabs → Scene Properties → Show가 켜져 있을 때 표시됩니다. 뷰포트 탭을 숨겨도 이 복사본은 숨겨지지 않습니다.
 
 Mechanisms 안에는 네 개의 하위 섹션이 있습니다: **1. Parts**(파트), **2. Joints & Links**(조인트와 링크), **3. Sequences**(시퀀스), **4. Controls**(컨트롤). 리그에 파트가 생기면 나타납니다. 그 전에는 **Add Parts from Selection**(선택에서 파트 추가)만 보입니다.
 

@@ -4,7 +4,7 @@
 
 ## VRChat Tools
 
-The VRChat tools are in the **CATS** tab on the right sidebar (press **N**), in the **Avatar Tools** section. Its subsections cover humanoid bones, hair physics, viseme mapping and export. The separate **VRChat Tools** section below it groups Performance, Clothing and Naming utilities. The same section is in the **Properties** editor's **Scene** tab while Preferences → Tabs → Scene Properties → Show is on. This switch does not hide the CATS viewport tab.
+The VRChat tools are in the **CATS** tab on the right sidebar (press **N**), in the **Avatar Tools** section. Its subsections cover humanoid bones, hair physics, Viseme Library / Lip Sync and export. The separate **VRChat Tools** section below it groups Check Performance, Attach Clothing, Facial and VRChat Naming Extras. The same section is in the **Properties** editor's **Scene** tab while Preferences → Tabs → Scene Properties → Show is on. This switch does not hide the CATS viewport tab.
 
 ---
 
@@ -47,6 +47,8 @@ See [Guide 4: Fix Your Avatar's Bone Names](02-guides-a.md#guide-4-fix-your-avat
 ---
 
 ### VRChat Viseme Mapping
+
+**Where to find it:** CATS → VRChat Tools → Facial. Face Tracking is in the same section.
 
 **What it does:** Maps your mesh's shape keys to VRChat's 15 lip-sync visemes.
 
@@ -162,7 +164,7 @@ The MMD tools are in the **CATS** tab → **Import / Export** → **MMD / PMX**.
 
 ---
 
-## Game Export
+## Game Engine Export
 
 **What it does:** Exports for game engines with a validated profile: Unreal (humanoid or universal), Unity humanoid, Godot humanoid, and generic FBX or GLB. Every fix the profile needs is shown and applied only when you click it, never silently.
 
@@ -173,7 +175,7 @@ The MMD tools are in the **CATS** tab → **Import / Export** → **MMD / PMX**.
 - **Apply Transforms (Fix)** — one of the explicit fixes the check can offer
 - **Export (Profile)** — exports with the profile
 
-**Where to find it:** **CATS** tab → **Import / Export** → **Game Export**
+**Where to find it:** **CATS** tab → **Import / Export** → **Game Engine Export**
 
 ---
 

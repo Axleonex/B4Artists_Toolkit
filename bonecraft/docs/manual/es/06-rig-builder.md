@@ -4,7 +4,7 @@
 
 ## Construir un rig nuevo
 
-El Constructor de Rig crea un rig nuevo para un personaje. Está en su propia pestaña **Rig Builder** de la Tool Shelf izquierda (pulsa **T**), y siempre en la pestaña **Escena** del editor de **Propiedades**. En una Tool Shelf estrecha cambia a una distribución compacta con etiquetas cortas.
+El Constructor de Rig crea un rig nuevo para un personaje. Está en su propia pestaña **Rig Builder** de la Tool Shelf izquierda (pulsa **T**), y  en la pestaña **Escena** del editor de **Propiedades**. En una Tool Shelf estrecha cambia a una distribución compacta con etiquetas cortas. Los paneles Escena aparecen cuando Preferences → Tabs → Scene Properties → Show está activado. Ocultar una pestaña de la vista 3D no oculta esta copia.
 
 ---
 
@@ -98,6 +98,6 @@ La [guía 11](03-guides-b.md#guía-11-une-dos-rigs) la recorre paso a paso.
 - **Run Merge Preview** (ejecutar vista previa de fusión) — informa de lo que haría la fusión, sin cambiar nada
 - **Combinar Armaduras** — hace una copia de seguridad de ambas armaduras y las fusiona
 
-**Dónde está:** pestaña BoneCraft → Fusión de Huesos
+**Dónde está:** BoneCraft → Setup Rigging → Bone Merge
 
 Siguiente: [Mechanisms (mecanismos)](07-mechanisms.md)
