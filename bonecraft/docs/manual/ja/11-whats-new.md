@@ -4,6 +4,10 @@
 
 新しい順に並べています。
 
+## 9.2.3 — VRChat エクスポートの場所
+
+Avatar Tools の重複した Export to VRChat パネルを削除しました。エクスポートは CATS → Import / Export → Unity / VRChat に残ります。
+
 ## 9.2.2 — 現在のインターフェース
 
 タブで機能グループを選びます。Setup Rigging、Skin、Review、Avatar Tools、Facial はタブ内の展開可能なセクションで、独立したタブではありません。以下は英語 UI のラベルです。翻訳名は Language 設定に従います。

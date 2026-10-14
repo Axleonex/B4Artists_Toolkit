@@ -4,6 +4,10 @@
 
 Newest first.
 
+## 9.2.3 — VRChat export location
+
+Removes the duplicate Export to VRChat panel from Avatar Tools. Export remains under CATS → Import / Export → Unity / VRChat.
+
 ## 9.2.2 — Current interface
 
 Tab names select a workspace group. Setup Rigging, Skin, Review, Avatar Tools and Facial are expandable sections inside those tabs, not separate tabs. The paths below use the English UI labels; translated labels depend on the Language preference.

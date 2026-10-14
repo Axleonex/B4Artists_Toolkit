@@ -4,6 +4,10 @@
 
 Les plus récentes d'abord.
 
+## 9.2.3 — Emplacement de l’export VRChat
+
+Le panneau Export to VRChat en double est supprimé d’Avatar Tools. L’export reste dans CATS → Import / Export → Unity / VRChat.
+
 ## 9.2.2 — Interface actuelle
 
 Les onglets sélectionnent un groupe. Setup Rigging, Skin, Review, Avatar Tools et Facial sont des sections à déplier dans ces onglets, pas des onglets distincts. Les chemins ci-dessous conservent les labels anglais ; leur traduction dépend du réglage Language.

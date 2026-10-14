@@ -14,9 +14,9 @@
 }
 </style>
 
-BoneCraft 9.2.2. BoneCraft is a rigging and avatar toolkit for Bforartists.
+BoneCraft 9.2.3. BoneCraft is a rigging and avatar toolkit for Bforartists.
 
-The navigation and tool paths in this edition cover BoneCraft 9.2.2, including Setup Rigging, Skin, Avatar Tools and Facial. See Getting Started for the interface map and visibility settings.
+The navigation and tool paths in this edition cover BoneCraft 9.2.3, including Setup Rigging, Skin, Avatar Tools and Facial. See Getting Started for the interface map and visibility settings.
 
 The Crescent Rose tutorial includes eight FBX preparation steps, 30 Mechanisms steps and 52 annotated screenshots checked against the 9.1.2 interface.
 
