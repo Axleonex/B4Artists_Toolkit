@@ -20,6 +20,7 @@ modal_records = []
 button_records = []
 recovery_records = []
 slider_records = []
+extra_records = []
 MODAL_ACTIONS = {'DRAG','NEIGHBORS','FRAME','EASE','AMPLIFY','SMOOTH','SCALE_DRAG','OFFSET_DRAG','OFFSET'}
 source = Path(__file__).with_name('native_timeline_validation.py').read_text()
 needed = {'write_results','check','object_snapshot','fixture','immediate_catalogue',
@@ -111,6 +112,9 @@ def prepare_button(action):
         if action in {'RANGE','ENDS'}:
             for fc in curves:
                 for k in fc.keyframe_points: k.select_control_point=False
+        if action=='PASTE_KEYS':
+            bpy.ops.animassist.copy_selected_keys()
+            bpy.context.preferences.addons[PACKAGE].preferences.timeline_paste_offset=100
         bake_values={fc.array_index: [fc.evaluate(f) for f in (1,2,3)]
                      for fc in curves if fc.data_path=='location'}
         button_before=object_snapshot(button_obj)
@@ -138,6 +142,10 @@ def assert_button():
                 condition=condition and abs(b['left'][0]-a['left'][0]-delta)<1e-5
     elif action=='RANGE': condition=all(k['selected'] for c in after for k in c['keys'])
     elif action=='ENDS': condition=all([k['selected'] for k in c['keys']]==[True,False,True] for c in after)
+    elif action=='COPY_KEYS':
+        condition=importlib.import_module(PACKAGE+'.core.key_utils').clipboard_size()==9
+    elif action=='PASTE_KEYS':
+        condition=all([k['co'][0] for k in c['keys']]==[1,20,40,101,120,140] for c in after)
     elif action=='MIRROR_SELECTED':
         details={p.name:list(p.location) for p in button_obj.pose.bones}
         condition=details=={'Hand.L':[-4,3,0],'Hand.R':[-1,2,0]}
@@ -341,7 +349,7 @@ def write_slider_coverage():
 
 def ui_screenshot(name):
     with timeline_context():
-        operator=bpy.ops.screen.screenshot if 'settings' in name or 'layout' in name else bpy.ops.screen.screenshot_area
+        operator=bpy.ops.screen.screenshot if 'settings' in name or 'layout' in name or name.startswith('menu-') else bpy.ops.screen.screenshot_area
         operator(filepath=str(ROOT/(name+'.png')))
 
 
@@ -499,6 +507,186 @@ def layout_restart_check():
     (ROOT/'layout-coverage.json').write_text(json.dumps(dict(named_layouts_saved=True,
         rename_delete_reset=True,export_import=True,rejected_future_schema=True,
         animation_unchanged=True,normal_restart=True,automatically_enabled=True,passed=True),indent=2))
+
+
+def full_legacy_layout():
+    model=importlib.import_module(PACKAGE+'.ui.timeline_config')
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    data=model.recommended(cat.ACTIONS)
+    for action,tool in data['active']['tools'].items():
+        tool['mode']='BUTTON' if action in cat.DEFAULT_QUICK_ACTIONS else 'HIDDEN'
+    settings.write(bpy.context,data)
+
+
+def select_slider_mode():
+    model=importlib.import_module(PACKAGE+'.ui.timeline_config')
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    data=model.recommended(cat.ACTIONS)
+    for tool in data['active']['tools'].values(): tool['mode']='HIDDEN'
+    data['active']['tools'][slider_case['action']]['mode']=slider_case['mode']
+    settings.write(bpy.context,data)
+
+
+def settings_change():
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    current=settings.editor(bpy.context)
+    assert current and len(current.entries)==89
+    for entry in current.entries:
+        if entry.action=='SMOOTH': entry.mode='POPOUT'; entry.width=160
+    ui_screenshot('toolbar-settings-final')
+
+
+def settings_accepted():
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    tool=settings.record(bpy.context)['active']['tools']['SMOOTH']
+    assert tool['mode']=='POPOUT' and tool['width']==160
+    assert object_snapshot(bpy.context.active_object)==ui_before_animation
+    extra_records.append(dict(check='Toolbar settings acceptance',passed=True,actual=tool))
+
+
+def tool_change():
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    op=settings._tool_editors[bpy.context.window.as_pointer()]
+    op.mode='INLINE'; op.overshoot_enabled=True; op.range_min=-100; op.range_max=200
+    op.precision=2; op.presets_text='-100, 0, 100'
+
+
+def tool_accepted():
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    tool=settings.record(bpy.context)['active']['tools']['SMOOTH']
+    assert tool['overshoot_enabled'] and tool['range_min']==-100 and tool['range_max']==200
+    assert tool['presets']==[-100,0,100] and tool['precision']==2 and tool['mode']=='INLINE'
+    assert object_snapshot(bpy.context.active_object)==ui_before_animation
+    extra_records.append(dict(check='Per-tool settings acceptance',passed=True,actual=tool))
+
+
+def numeric_prepare(value):
+    global numeric_value,numeric_obj,recovery_before,recovery_name
+    with timeline_context():
+        numeric_obj,_=fixture()
+        for other in list(bpy.context.selected_objects):
+            if other!=numeric_obj: other.select_set(False)
+        for fc in compat.get_fcurves(numeric_obj.animation_data.action,anim_data=numeric_obj.animation_data):
+            for i,k in enumerate(fc.keyframe_points): k.select_control_point=i==1
+        recovery_before=object_snapshot(numeric_obj); recovery_name=numeric_obj.name
+        numeric_value=value
+        bpy.ops.ed.undo_push(message='Before numeric adjustment')
+        assert bpy.ops.animassist.slider_value('INVOKE_DEFAULT',True,action='SMOOTH',value=value)=={'RUNNING_MODAL'}
+
+
+def numeric_check():
+    global recovery_after
+    recovery_after=object_snapshot(numeric_obj)
+    curve=next(c for c in recovery_after if c['index']==0)
+    actual=curve['keys'][1]['co'][1]; expected=4+(.5-4)*numeric_value/100
+    assert abs(actual-expected)<1e-5,(actual,expected)
+    extra_records.append(dict(check='Numeric/extended Smooth '+str(numeric_value),passed=True,actual=actual,expected=expected))
+
+
+def misuse_checks():
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    prefs=bpy.context.preferences.addons[PACKAGE].preferences
+    with timeline_context():
+        obj,_=fixture(); before=object_snapshot(obj)
+        prefs.enable_retime=False
+        assert toolbar._unavailable(bpy.context,timeline(),'SCALE_DRAG')
+        prefs.enable_retime=True
+        for fc in compat.get_fcurves(obj.animation_data.action,anim_data=obj.animation_data):
+            fc.lock=True
+        assert toolbar._unavailable(bpy.context,timeline(),'SCALE_DRAG')
+        for fc in compat.get_fcurves(obj.animation_data.action,anim_data=obj.animation_data):
+            fc.lock=False
+            for k in fc.keyframe_points: k.select_control_point=False
+        assert toolbar._unavailable(bpy.context,timeline(),'SMOOTH')
+        for fc in compat.get_fcurves(obj.animation_data.action,anim_data=obj.animation_data):
+            for k in fc.keyframe_points: k.select_control_point=True
+        assert object_snapshot(obj)==before
+        old=bpy.context.view_layer.objects.active; bpy.context.view_layer.objects.active=None
+        assert toolbar._unavailable(bpy.context,timeline(),'DRAG')
+        assert toolbar._unavailable(bpy.context,timeline(),'TRAIL_SHOW')
+        bpy.context.view_layer.objects.active=old
+    extra_records.append(dict(check='Disabled module/locked/no keys/no object prerequisites',passed=True))
+
+
+def ui_click(kind,key=''):
+    with timeline_context():
+        item=next(i for i in overlay._items(bpy.context)[0] if i[:2]==(kind,key))
+        x,y,w,h=item[3]; r=bpy.context.region
+        position=dict(x=round(r.x+x+w/2),y=round(r.y+y+h/2))
+        event('MOUSEMOVE','NOTHING',**position); event('LEFTMOUSE',**position); event('LEFTMOUSE','RELEASE',**position)
+
+
+def scrub_prepare():
+    global scrub_before
+    with timeline_context():
+        bpy.context.scene.frame_set(10); scrub_before=10
+        r=bpy.context.region
+        point=dict(x=r.x+600,y=r.y+r.height-10)
+        event('MOUSEMOVE','NOTHING',**point); event('LEFTMOUSE',**point); event('LEFTMOUSE','RELEASE',**point)
+
+
+def scrub_check():
+    assert bpy.context.scene.frame_current!=scrub_before
+    extra_records.append(dict(check='Native scrub outside band',passed=True,actual=bpy.context.scene.frame_current))
+
+
+def hide_check():
+    prefs=bpy.context.preferences.addons[PACKAGE].preferences
+    prefs.timeline_toolbar_row=False
+    assert not toolbar._enabled()
+    prefs.timeline_toolbar_row=True
+    assert toolbar._enabled()
+    extra_records.append(dict(check='Show/hide row',passed=True))
+
+
+def lifecycle_disable():
+    global lifecycle_area_count
+    import addon_utils
+    lifecycle_area_count=sum(len(w.screen.areas) for w in bpy.context.window_manager.windows)
+    addon_utils.disable(PACKAGE,default_set=False)
+    assert overlay._handle is None and not overlay._keymaps
+    bindings=[i for km in bpy.context.window_manager.keyconfigs.addon.keymaps for i in km.keymap_items
+              if i.idname in {'animassist.timeline_overlay_events','animassist.clear_timeline_hover'}]
+    assert not bindings
+
+
+def lifecycle_enable():
+    import addon_utils
+    addon_utils.enable(PACKAGE,default_set=True,persistent=True)
+    assert overlay._handle is not None and len(overlay._keymaps)==13
+    bindings=[i for km in bpy.context.window_manager.keyconfigs.addon.keymaps for i in km.keymap_items
+              if i.idname in {'animassist.timeline_overlay_events','animassist.clear_timeline_hover'}]
+    assert len(bindings)==13
+    assert sum(len(w.screen.areas) for w in bpy.context.window_manager.windows)==lifecycle_area_count
+    extra_records.append(dict(check='Disable/re-enable native bindings and no helper editor',passed=True))
+
+
+def migration_checks():
+    prefs=bpy.context.preferences.addons[PACKAGE].preferences
+    from_module=importlib.import_module(PACKAGE+'.prefs')
+    saved=prefs.timeline_layouts_json
+    for a in cat.ACTIONS: setattr(prefs,cat.quick_property_name(a),a in {'B25','SMOOTH'})
+    prefs.timeline_layouts_json=''
+    migrated=from_module.timeline_record(prefs,initialize=True)
+    assert {a for a,t in migrated['active']['tools'].items() if t['mode']!='HIDDEN'}=={'B25','SMOOTH'}
+    assert migrated['active']['tools']['SMOOTH']['mode']=='POPOUT'
+    prefs.timeline_layouts_json=''
+    for a in cat.ACTIONS: setattr(prefs,cat.quick_property_name(a),False)
+    empty=from_module.timeline_record(prefs,initialize=True)
+    assert all(t['mode']=='HIDDEN' for t in empty['active']['tools'].values())
+    prefs.timeline_layouts_json=saved
+    extra_records.append(dict(check='Explicit legacy custom and empty migration',passed=True))
+
+
+def write_full_coverage():
+    assert len(slider_records)==32 and all(r['passed'] for r in slider_records)
+    assert all(r['passed'] for r in button_records+recovery_records+extra_records)
+    ui_screenshot('final-row')
+    (ROOT/'extras.json').write_text(json.dumps(extra_records,indent=2))
+    (ROOT/'full-coverage.json').write_text(json.dumps(dict(immediate=immediate['count'],
+        original_interactive_cases=len(modal_records),native_bar_buttons=len(button_records),
+        native_row_scalar_cases=len(slider_records),recovery_assertions=len(recovery_records),
+        extras=len(extra_records),passed=True),indent=2))
 
 
 def write_coverage():

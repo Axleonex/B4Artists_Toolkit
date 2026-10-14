@@ -26,8 +26,12 @@ def last_value(window,area,action,default):
 
 
 @bpy.app.handlers.persistent
-def cancel_active(_unused=None):
-    for op in list(_active.values()): op.abort()
+def cancel_active(_unused=None, *, finalize=False):
+    for op in list(_active.values()):
+        op.abort()
+        # Unregister removes the native modal operator before its next timer
+        # callback. Dispose that timer while the operator RNA is still alive.
+        if finalize: op._cleanup()
     _last_values.clear()
 
 

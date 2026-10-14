@@ -484,7 +484,7 @@ def unregister():
     global _handle, _epoch
     _epoch = object()
     from ..operators.timeline_slider_ops import cancel_active
-    cancel_active()
+    cancel_active(finalize=True)
     for handlers in (bpy.app.handlers.load_pre,bpy.app.handlers.undo_pre):
         if cancel_active in handlers: handlers.remove(cancel_active)
     if _handle is not None:

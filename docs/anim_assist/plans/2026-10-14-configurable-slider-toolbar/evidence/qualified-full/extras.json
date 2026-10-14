@@ -1,0 +1,77 @@
+[
+  {
+    "check": "Toolbar settings acceptance",
+    "passed": true,
+    "actual": {
+      "action": "SMOOTH",
+      "mode": "POPOUT",
+      "label_mode": "LABEL",
+      "width": 160.0,
+      "range_min": 0.0,
+      "range_max": 100.0,
+      "default": 0.0,
+      "sensitivity": 200.0,
+      "precision": 1,
+      "snap_enabled": false,
+      "snap_step": 1.0,
+      "presets": [],
+      "overshoot_enabled": false
+    }
+  },
+  {
+    "check": "Per-tool settings acceptance",
+    "passed": true,
+    "actual": {
+      "action": "SMOOTH",
+      "mode": "INLINE",
+      "label_mode": "LABEL",
+      "width": 160.0,
+      "range_min": -100.0,
+      "range_max": 200.0,
+      "default": 0.0,
+      "sensitivity": 200.0,
+      "precision": 2,
+      "snap_enabled": false,
+      "snap_step": 1.0,
+      "presets": [
+        -100.0,
+        0.0,
+        100.0
+      ],
+      "overshoot_enabled": true
+    }
+  },
+  {
+    "check": "Numeric/extended Smooth -100",
+    "passed": true,
+    "actual": 7.5,
+    "expected": 7.5
+  },
+  {
+    "check": "Numeric/extended Smooth 200",
+    "passed": true,
+    "actual": -3.0,
+    "expected": -3.0
+  },
+  {
+    "check": "Disabled module/locked/no keys/no object prerequisites",
+    "passed": true
+  },
+  {
+    "check": "Native scrub outside band",
+    "passed": true,
+    "actual": 92
+  },
+  {
+    "check": "Show/hide row",
+    "passed": true
+  },
+  {
+    "check": "Disable/re-enable native bindings and no helper editor",
+    "passed": true
+  },
+  {
+    "check": "Explicit legacy custom and empty migration",
+    "passed": true
+  }
+]
