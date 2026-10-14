@@ -4,7 +4,7 @@
 
 ## Construire un nouveau rig
 
-Le Constructeur de Rig crée un nouveau rig pour un personnage. Il se trouve dans son propre onglet **Rig Builder** sur la Tool Shelf de gauche (touche **T**), et toujours dans l'onglet **Scène** de l'éditeur **Propriétés**. Dans une Tool Shelf étroite, il passe à une disposition compacte avec des libellés courts.
+Le Constructeur de Rig crée un nouveau rig pour un personnage. Il se trouve dans son propre onglet **Rig Builder** sur la Tool Shelf de gauche (touche **T**), et  dans l'onglet **Scène** de l'éditeur **Propriétés**. Dans une Tool Shelf étroite, il passe à une disposition compacte avec des libellés courts. Les panneaux Scène sont visibles quand Preferences → Tabs → Scene Properties → Show est activé. Masquer un onglet de la vue 3D ne masque pas cette copie.
 
 ---
 
@@ -98,6 +98,6 @@ Le [guide 11](03-guides-b.md#guide-11--fusionner-deux-rigs) la parcourt étape p
 - **Run Merge Preview** (lancer l'aperçu de fusion) — indique ce que ferait la fusion, sans rien modifier
 - **Fusionner les Armatures** — sauvegarde les deux armatures et les fusionne
 
-**Où la trouver :** onglet BoneCraft → Fusion d'Os
+**Où la trouver :** BoneCraft → Setup Rigging → Bone Merge
 
 Suite : [Mechanisms (mécanismes)](07-mechanisms.md)

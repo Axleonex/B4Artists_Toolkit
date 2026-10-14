@@ -17,7 +17,7 @@
 
 ### 步骤 1 — 打开绑定构建器
 
-打开左侧工具架（在 3D 视口中按 **T**）上的 **Rig Builder** 选项卡。同一个绑定构建器也始终位于 **属性** 编辑器的 **场景** 选项卡中。它有三个部分：Quick Rig（现成的骨架）、**自动绑定向导** 和 **人体模型**。
+在左侧 Tool Shelf（T）打开 Rig Builder。依次是 Auto-Rig Wizard、Quick Rig、Mannequin。Properties → Scene 中的副本只在 Preferences → Tabs → Scene Properties → Show 开启时显示。
 
 展开 **自动绑定向导**，然后点击 **开始自动骨架**。
 
@@ -77,7 +77,7 @@
 
 ### 步骤 8 — 映射到 VRChat 的人形骨骼
 
-打开右侧边栏（按 **N**）上的 **CATS** 选项卡，展开 **VRChat**，再展开 **设置人形骨骼**。点击 **全部自动映射**：BoneCraft 会把你的骨骼连接到 VRChat 用来让虚拟形象跟随你移动的身体槽位。点击 **Normalize Names**（规范化名称），为已映射的骨骼赋予 VRChat 期望的名称，然后点击 **验证**。
+打开右侧边栏（按 **N**）上的 **CATS** 选项卡，展开 **Avatar Tools**，再展开 **设置人形骨骼**。点击 **全部自动映射**：BoneCraft 会把你的骨骼连接到 VRChat 用来让虚拟形象跟随你移动的身体槽位。点击 **Normalize Names**（规范化名称），为已映射的骨骼赋予 VRChat 期望的名称，然后点击 **验证**。
 
 **你应该看到：** 每个必需槽位（Hips、Spine、Head、LeftUpperArm 等）都显示了一根骨骼。指南 5 会解释这些槽位。
 
@@ -85,7 +85,7 @@
 
 ### 步骤 9 — 为 VRChat 导出
 
-在 **CATS** 选项卡中，展开 **VRChat** → **导出到VRChat**。设置 **Folder**（文件夹）和 **Avatar**（虚拟形象）名称，然后点击 **导出到 VRChat（Unity）**。
+在 **CATS** 选项卡中，展开 **Avatar Tools** → **导出到VRChat**。设置 **Folder**（文件夹）和 **Avatar**（虚拟形象）名称，然后点击 **导出到 VRChat（Unity）**。
 
 **你应该看到：** 导出的虚拟形象出现在你选择的文件夹中，可用于 VRChat Creator Companion 和 Unity 中的 VRChat SDK。
 
@@ -124,7 +124,7 @@ BoneCraft 使用 VRM 插件读取 `.vrm` 文件。在 **CATS** 选项卡中，�
 
 ### 步骤 3 — 映射到 VRChat 的人形骨骼
 
-在 **CATS** 选项卡 → **VRChat** → **设置人形骨骼** 中，点击 **全部自动映射**。VRoid 骨架遵循标准布局，因此通常会填满所有槽位。如果某个槽位有误，**VRM / VRoid** 部分中（Lint 下方）的 **Fix Humanoid Map**（修复人形映射）可以修复常见的 VRoid 名称混淆。
+在 **CATS** 选项卡 → **Avatar Tools** → **设置人形骨骼** 中，点击 **全部自动映射**。VRoid 骨架遵循标准布局，因此通常会填满所有槽位。如果某个槽位有误，**VRM / VRoid** 部分中（Lint 下方）的 **Fix Humanoid Map**（修复人形映射）可以修复常见的 VRoid 名称混淆。
 
 ---
 
@@ -193,7 +193,7 @@ MMD 模型常常带有多余的几何体和许多分离的部件。在 **CATS** 
 
 ### 步骤 5 — 映射到 VRChat 的人形骨骼
 
-在 **CATS** 选项卡 → **VRChat** → **设置人形骨骼** 中，点击 **全部自动映射**。MMD 骨架与 VRChat 的骨架很接近，因此大多数槽位会自动填好。对于空槽位，点击它的按钮并选择骨骼。
+在 **CATS** 选项卡 → **Avatar Tools** → **设置人形骨骼** 中，点击 **全部自动映射**。MMD 骨架与 VRChat 的骨架很接近，因此大多数槽位会自动填好。对于空槽位，点击它的按钮并选择骨骼。
 
 ---
 
@@ -207,6 +207,8 @@ MMD 模型常常带有多余的几何体和许多分离的部件。在 **CATS** 
 
 ## 指南 4：修复虚拟形象的骨骼名称
 
+`CATS → VRChat Tools → VRChat Naming Extras`
+
 > **时间：** 约 5–15 分钟
 > **结果：** VRChat 需要的骨骼都已重命名为 VRChat 兼容的名称
 
@@ -217,7 +219,7 @@ MMD 模型常常带有多余的几何体和许多分离的部件。在 **CATS** 
 
 ### 步骤 1 — 检测当前的命名风格
 
-在 **CATS** 选项卡中，展开 **VRChat** → **VRChat Naming Extras**（VRChat 命名附加工具），然后点击 **检测**。BoneCraft 会显示它找到的命名风格（例如 Mixamo、VRoid 或 Unity）和一个得分；更改名称后，**强制重新扫描** 会再次检查。
+在 **CATS** 选项卡中，展开 **VRChat Tools** → **VRChat Naming Extras**（VRChat 命名附加工具），然后点击 **检测**。BoneCraft 会显示它找到的命名风格（例如 Mixamo、VRoid 或 Unity）和一个得分；更改名称后，**强制重新扫描** 会再次检查。
 
 如果骨骼名称是日语、中文、韩语、葡萄牙语、西班牙语或法语，请改用 **CATS** 选项卡 → **CATS** → **翻译骨骼名称**：选择 **语言** 并运行。它会一步把名称转换为英语。
 
@@ -246,6 +248,8 @@ MMD 模型常常带有多余的几何体和许多分离的部件。在 **CATS** 
 
 ## 指南 5：将虚拟形象映射到 VRChat 的身体系统
 
+`CATS → Avatar Tools → Set Up Humanoid Bones`
+
 > **时间：** 约 10–15 分钟
 > **结果：** 你的虚拟形象骨架已连接到 VRChat 的人形运动系统
 
@@ -258,7 +262,7 @@ MMD 模型常常带有多余的几何体和许多分离的部件。在 **CATS** 
 
 ### 步骤 1 — 打开设置人形骨骼
 
-在 **CATS** 选项卡中，展开 **VRChat** → **设置人形骨骼**。
+在 **CATS** 选项卡中，展开 **Avatar Tools** → **设置人形骨骼**。
 
 ---
 
@@ -294,6 +298,8 @@ MMD 模型常常带有多余的几何体和许多分离的部件。在 **CATS** 
 
 ## 指南 6：添加头发物理
 
+`CATS → Avatar Tools → Add Hair Physics`
+
 > **时间：** 约 15–25 分钟
 > **结果：** 你的虚拟形象的头发（以及其他柔软部位）在 VRChat 中自然摆动
 
@@ -307,7 +313,7 @@ MMD 模型常常带有多余的几何体和许多分离的部件。在 **CATS** 
 
 ### 步骤 1 — 打开添加头发物理
 
-在 **CATS** 选项卡中，展开 **VRChat** → **添加头发物理**。它有四个部分：Hair Chain Detection（头发链检测）、Hair Chain Generation（头发链生成）、PhysBone Configuration（PhysBone 配置）和 Hair Physics Colliders（头发物理碰撞体）。
+在 **CATS** 选项卡中，展开 **Avatar Tools** → **添加头发物理**。它有四个部分：Hair Chain Detection（头发链检测）、Hair Chain Generation（头发链生成）、PhysBone Configuration（PhysBone 配置）和 Hair Physics Colliders（头发物理碰撞体）。
 
 ---
 
@@ -343,6 +349,8 @@ MMD 模型常常带有多余的几何体和许多分离的部件。在 **CATS** 
 
 ## 指南 7：附加随身体移动的服装
 
+`CATS → VRChat Tools → Attach Clothing`
+
 > **时间：** 约 20–30 分钟
 > **结果：** 一件服装附着在虚拟形象的骨架上，随身体移动
 
@@ -355,7 +363,7 @@ MMD 模型常常带有多余的几何体和许多分离的部件。在 **CATS** 
 
 ### 步骤 1 — 打开附加服装
 
-在 **CATS** 选项卡中，展开 **VRChat** → **附加服装**。它有三个部分：Bone Matching（骨骼匹配）、Collision Detection（碰撞检测）和 Clothing Merge（服装合并）。
+在 **CATS** 选项卡中，展开 **VRChat Tools** → **附加服装**。它有三个部分：Bone Matching（骨骼匹配）、Collision Detection（碰撞检测）和 Clothing Merge（服装合并）。
 
 ---
 

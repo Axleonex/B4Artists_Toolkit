@@ -4,7 +4,16 @@
 
 ## VRChat 도구
 
-VRChat 도구는 오른쪽 사이드바(**N** 키)의 **CATS** 탭 안 **VRChat** 섹션에 있습니다. 하위 섹션은 필요한 순서대로 놓여 있습니다: VRChat 설정(이름 추가 도구와 휴머노이드 본), 몸과 피직스(머리카락, 의상, 비세임), 그다음 성능과 내보내기. 같은 섹션은 **속성** 에디터의 **장면** 탭에도 항상 있습니다.
+탭은 기능 그룹을 선택합니다. Setup Rigging, Skin, Review, Avatar Tools, Facial은 탭 안에서 펼치는 섹션이며 별도 탭이 아닙니다. 아래 경로는 영어 UI 이름입니다. 번역된 이름은 Language 설정에 따라 달라집니다.
+
+| 도구 | 열 경로 |
+| --- | --- |
+| Humanoid / Hair / Export | CATS → Avatar Tools |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Performance / Clothing / Naming | CATS → VRChat Tools |
+
+설정: Edit → Preferences → Add-ons → BoneCraft → Tabs에서 탭 표시를 조정합니다. Scene Properties는 Properties → Scene의 Rig Builder와 CATS 패널을 별도로 제어합니다. Show Helpers는 설명 표시, Language는 표시 언어, Tools는 패키지 활성화입니다. Ctrl+Shift+R로 빠른 패널을 엽니다.
 
 ---
 
@@ -156,7 +165,7 @@ MMD 도구는 **CATS** 탭 → **가져오기 / 내보내기** → **MMD / PMX**
 
 ---
 
-## Game Export(게임 내보내기)
+## Game Engine Export(게임 내보내기)
 
 **하는 일:** 검증된 프로필로 게임 엔진용으로 내보냅니다: Unreal(휴머노이드 또는 유니버설), Unity 휴머노이드, Godot 휴머노이드, 일반 FBX나 GLB. 프로필에 필요한 수정은 모두 표시되며, 클릭할 때만 적용되고 말없이 적용되는 일은 없습니다.
 
@@ -167,7 +176,7 @@ MMD 도구는 **CATS** 탭 → **가져오기 / 내보내기** → **MMD / PMX**
 - **Apply Transforms (Fix)**(트랜스폼 적용(수정)) — 확인이 제시할 수 있는 명시적 수정 중 하나
 - **Export (Profile)**(내보내기(프로필)) — 프로필로 내보냅니다
 
-**위치:** **CATS** 탭 → **가져오기 / 내보내기** → **Game Export**
+**위치:** **CATS** 탭 → **가져오기 / 내보내기** → **Game Engine Export**
 
 ---
 

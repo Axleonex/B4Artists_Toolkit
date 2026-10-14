@@ -2,7 +2,7 @@
 
 [← Sumário](index.md)
 
-As ferramentas do CATS ficam na aba **CATS** da barra lateral da direita (pressione **N**), na seção **CATS**, e sempre na aba **Cena** do editor de **Propriedades**. Elas seguem o pipeline descrito em [O pipeline do CATS](04-cats-pipeline.md). Escolha no topo da seção a armadura com que elas trabalham.
+As ferramentas do CATS ficam na aba **CATS** da barra lateral da direita (pressione **N**), na seção **CATS**, e  na aba **Cena** do editor de **Propriedades**. Elas seguem o pipeline descrito em [O pipeline do CATS](04-cats-pipeline.md). Escolha no topo da seção a armadura com que elas trabalham. Os painéis Cena aparecem quando Preferences → Tabs → Scene Properties → Show está ativado. Ocultar uma aba da viewport não oculta essa cópia.
 
 ---
 

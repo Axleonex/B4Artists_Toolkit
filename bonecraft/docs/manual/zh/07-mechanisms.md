@@ -22,7 +22,7 @@ BoneCraft 提供的是工具，而不是武器。部件由你自己提供。
 ## 位置
 
 - 3D 视口中的 **BoneCraft 选项卡 → Mechanisms**。BoneCraft 选项卡位于左侧工具架（按 **T**），除非你在偏好设置中把它移到了右侧边栏（**N**）。它位于蒙皮和审查之间。当活动物体是网格（用来开始一个绑定），或是带有机械装置的骨架时，它才会显示。
-- **属性编辑器 → 场景选项卡 → Mechanisms**，紧接在绑定构建器之后。它始终在那里。没有选中任何可用的东西时，它只显示一行："Select a mesh to start, or an armature with mechanisms."（选择一个网格以开始，或选择一个带有机械装置的骨架。）关闭视口中的 BoneCraft 选项卡不会移除它。只有 `mechanisms` 工具开关（**偏好设置 → 插件 → BoneCraft → 工具**）会把它连同视口中的副本一起移除。场景选项卡中的部分一开始是折叠的，因此请点击 **Mechanisms** 展开它。
+- Properties → Scene → Mechanisms. 仅在 Preferences → Tabs → Scene Properties → Show 开启时显示场景面板；关闭视口选项卡不会隐藏此副本。
 
 Mechanisms 中有四个子部分：**1. Parts**（部件）、**2. Joints & Links**（关节与连接）、**3. Sequences**（序列）和 **4. Controls**（控制）。绑定有了部件之后它们才会出现。在此之前你只能看到 **Add Parts from Selection**（从所选项添加部件）。
 

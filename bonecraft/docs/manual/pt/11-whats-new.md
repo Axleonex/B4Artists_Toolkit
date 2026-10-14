@@ -4,6 +4,15 @@
 
 O mais recente primeiro.
 
+## 9.2.2 — Interface atual
+
+As abas selecionam grupos de ferramentas. Setup Rigging, Skin, Review, Avatar Tools e Facial são seções expansíveis dentro das abas, não abas separadas. Os caminhos abaixo usam os nomes da interface em inglês; a tradução depende de Language.
+
+- Bone Merge → BoneCraft → Setup Rigging
+- Delta Mush / Proximity Wrap → BoneCraft → Skin
+- Viseme Library / Lip Sync → CATS → Avatar Tools
+- VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
+
 ## 9.1.2 (outubro de 2026)
 
 - **Chave Propriedades da cena:** Preferências > Abas tem uma nova linha Propriedades da cena. Seu botão Mostrar (azul enquanto ligado) mostra ou oculta todas as seções do BoneCraft em Propriedades > aba Cena (Construtor de Rig, Mecanismos, CATS, VRChat, Importar / Exportar) sem desativar o complemento. Começa ligado e não altera as abas da janela 3D nem a aba Armadura.

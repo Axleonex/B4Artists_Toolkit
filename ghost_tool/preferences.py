@@ -21,13 +21,13 @@ _addon_keymaps: list[tuple[bpy.types.KeyMap, bpy.types.KeyMapItem]] = []
 
 
 def _update_display_location(self, context):
-    from .ui_panel import update_display_location
-    update_display_location(context)
+    from .ui_panel import schedule_display_location_update
+    schedule_display_location_update()
 
 
 def _update_toolbar_visibility(self, context):
-    from .ui_panel import update_toolbar_visibility
-    update_toolbar_visibility(context)
+    from .ui_panel import schedule_display_location_update
+    schedule_display_location_update(visibility_only=True)
 
 
 def _update_shelf_width(self, context):
@@ -458,8 +458,8 @@ def register() -> None:
         bpy.utils.register_class(cls)
     register_keymaps()
     migrate_display_location(bpy.context)
-    from .ui_panel import update_display_location
-    update_display_location(bpy.context)
+    from .ui_panel import schedule_display_location_update
+    schedule_display_location_update()
 
 
 def unregister() -> None:

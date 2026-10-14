@@ -254,6 +254,8 @@ class DisplayLocation(unittest.TestCase):
             preferences._update_toolbar_visibility(prefs, context)
             self.assertFalse(space.show_region_tool_header)
             self.assertFalse(space.show_region_ui)
+            self.assertFalse(redraws)  # Callbacks must not traverse startup RNA.
+            ui.update_toolbar_visibility(context)  # Deferred body's current context.
             self.assertTrue(redraws)
             result = ui.GHOST_OT_set_toolbar_visibility.execute(NS(show=True), context)
         self.assertEqual(result, {'FINISHED'})

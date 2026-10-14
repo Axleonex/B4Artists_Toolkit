@@ -4,7 +4,7 @@
 
 ## Construir um rig novo
 
-O Construtor de Rig cria um rig novo para um personagem. Ele fica na sua própria aba **Rig Builder** da Tool Shelf da esquerda (pressione **T**), e sempre na aba **Cena** do editor de **Propriedades**. Em uma Tool Shelf estreita, ele muda para um layout compacto com rótulos curtos.
+O Construtor de Rig cria um rig novo para um personagem. Ele fica na sua própria aba **Rig Builder** da Tool Shelf da esquerda (pressione **T**), e  na aba **Cena** do editor de **Propriedades**. Em uma Tool Shelf estreita, ele muda para um layout compacto com rótulos curtos. Os painéis Cena aparecem quando Preferences → Tabs → Scene Properties → Show está ativado. Ocultar uma aba da viewport não oculta essa cópia.
 
 ---
 
@@ -98,6 +98,6 @@ O [guia 11](03-guides-b.md#guia-11-junte-dois-rigs) percorre o processo passo a 
 - **Run Merge Preview** (executar pré-visualização da mesclagem) — informa o que a mesclagem faria, sem mudar nada
 - **Mesclar Armaduras** — faz backup das duas armaduras e as mescla
 
-**Onde fica:** aba BoneCraft → Mesclagem de Ossos
+**Onde fica:** BoneCraft → Setup Rigging → Bone Merge
 
 Próximo: [Mechanisms (mecanismos)](07-mechanisms.md)

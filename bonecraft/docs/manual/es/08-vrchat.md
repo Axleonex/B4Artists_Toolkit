@@ -4,7 +4,16 @@
 
 ## Herramientas de VRChat
 
-Las herramientas de VRChat están en la pestaña **CATS** de la barra lateral derecha (pulsa **N**), en la sección **VRChat**. Sus subsecciones siguen el orden en que las necesitas: configuración de VRChat (extras de nombres y huesos humanoides), cuerpo y física (cabello, ropa, visemas), y después rendimiento y exportación. La misma sección está siempre en la pestaña **Escena** del editor de **Propiedades**.
+Las pestañas seleccionan grupos de herramientas. Setup Rigging, Skin, Review, Avatar Tools y Facial son secciones desplegables dentro de las pestañas, no pestañas distintas. Las rutas siguientes usan las etiquetas inglesas; su traducción depende de Language.
+
+| Herramienta | Ruta |
+| --- | --- |
+| Humanoid / Hair / Export | CATS → Avatar Tools |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Performance / Clothing / Naming | CATS → VRChat Tools |
+
+Preferencias: Edit → Preferences → Add-ons → BoneCraft → Tabs controla las pestañas. Scene Properties controla por separado los paneles Rig Builder y CATS en Properties → Scene. Show Helpers oculta explicaciones; Language cambia las etiquetas; Tools activa los paquetes. Ctrl+Shift+R abre el panel rápido.
 
 ---
 
@@ -156,7 +165,7 @@ Las herramientas de MMD están en la pestaña **CATS** → **Importar / Exportar
 
 ---
 
-## Game Export (exportación para juegos)
+## Game Engine Export (exportación para juegos)
 
 **Qué hace:** exporta para motores de juego con un perfil validado: Unreal (humanoide o universal), humanoide de Unity, humanoide de Godot, y FBX o GLB genéricos. Cada corrección que necesita el perfil se muestra y solo se aplica cuando haces clic en ella, nunca en silencio.
 
@@ -167,7 +176,7 @@ Las herramientas de MMD están en la pestaña **CATS** → **Importar / Exportar
 - **Apply Transforms (Fix)** (aplicar transformaciones (corrección)) — una de las correcciones explícitas que puede ofrecer la comprobación
 - **Export (Profile)** (exportar (perfil)) — exporta con el perfil
 
-**Dónde está:** pestaña **CATS** → **Importar / Exportar** → **Game Export**
+**Dónde está:** pestaña **CATS** → **Importar / Exportar** → **Game Engine Export**
 
 ---
 
