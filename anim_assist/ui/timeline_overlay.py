@@ -124,7 +124,7 @@ _hover_started = {}
 
 
 def _items(context):
-    from ..prefs import get_prefs
+    from ..prefs import get_prefs, timeline_record
     header = next((r for r in context.area.regions if r.type == "HEADER"), None)
     scale = context.preferences.system.ui_scale
     h = max(24 * scale, header.height if header else 0)
@@ -265,8 +265,10 @@ def _start_windows():
     if _handle is None:
         return None
     from . import timeline_strip as tools
-    from ..prefs import get_prefs
+    from ..prefs import get_prefs, timeline_record
     prefs = get_prefs()
+    if prefs and not prefs.timeline_layouts_json:
+        timeline_record(prefs, initialize=True)
     if prefs and not prefs.timeline_canvas_row_initialized:
         # Before 12.6.1, False meant "use the existing header", not hide tools.
         # Apply the new visible placement once; later explicit hiding persists.
