@@ -860,3 +860,14 @@ STRINGS.update({
     "Starter Rig Catalog": "Cat?logo de esqueletos iniciais",
     "Add Starter Rig": "Adicionar esqueleto inicial"
 })
+
+# Task Board: distinct recommendations and working health results.
+STRINGS.update({
+    "Remaining Tasks": "Tarefas restantes",
+    "Select an armature or a mesh bound to one.": "Selecione uma armadura ou uma malha vinculada a ela.",
+    "Enable Advanced Rigging Systems in add-on preferences.": "Ative Advanced Rigging Systems nas preferências do complemento.",
+    "Rig Validator failed to register. Check the console for details.": "Rig Validator não foi registrado. Consulte o console para obter detalhes.",
+    "Failed checks: {count}": "Verificações com falha: {count}",
+    "Warnings: {count}": "Avisos: {count}",
+    "Refresh Results": "Atualizar resultados",
+})
