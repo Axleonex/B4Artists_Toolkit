@@ -193,6 +193,13 @@ def selected_quick_actions(prefs):
     defaults = frozenset(DEFAULT_QUICK_ACTIONS)
     if prefs is None:
         return defaults
+    if getattr(prefs,'timeline_layouts_json',''):
+        from .timeline_config import decode
+        try:
+            tools=decode(prefs.timeline_layouts_json,ACTIONS)['active']['tools']
+            return frozenset(action for action in ACTIONS if tools[action]['mode']!='HIDDEN')
+        except ValueError:
+            pass
     return frozenset(action for action in ACTIONS
                      if getattr(prefs, quick_property_name(action), action in defaults))
 

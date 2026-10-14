@@ -70,6 +70,7 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
             self._window_id=context.window.as_pointer(); self._area_id=context.area.as_pointer()
             self._scene=context.scene
             self._region=context.region
+            self._area_size=(context.area.width,context.area.height)
             self._session=capture(context,self.action)
             self._start_x=event.mouse_x
             self._start=min(self._tool['range_max'],max(self._tool['range_min'],
@@ -135,7 +136,7 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
     def modal(self,context,event):
         model=_model()
         try:
-            if self._aborted or context.scene!=self._scene or not self._session.valid() or not any(a==self._area for a in self._window.screen.areas):
+            if self._aborted or context.scene!=self._scene or not self._session.valid() or not any(a==self._area for a in self._window.screen.areas) or (self._area.width,self._area.height)!=self._area_size:
                 self.abort(); self._cleanup(); return {'CANCELLED'}
             if event.type in {'ESC','RIGHTMOUSE','WINDOW_DEACTIVATE'}:
                 self.abort(); self._cleanup(); return {'CANCELLED'}
@@ -173,5 +174,35 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
     def cancel(self,context):
         self.abort(); self._cleanup()
 
+    def execute(self,context):
+        from ..prefs import get_prefs,timeline_record
+        try:
+            if self.action not in _model().SLIDERS: raise ValueError('Choose a numeric animation tool')
+            tool=_model().effective_tool(self.action,timeline_record(get_prefs(context))['active']['tools'][self.action])
+            if not tool['range_min']<=self.value<=tool['range_max']: raise ValueError('Use a value inside the configured slider range')
+            session=capture(context,self.action)
+            session.preview(self.value); session.commit()
+            _last_values[(context.window.as_pointer(),context.area.as_pointer(),self.action)]=self.value
+            context.area.tag_redraw()
+            return {'FINISHED'}
+        except Exception as exc:
+            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
 
-CLASSES=(ANIMASSIST_OT_timeline_slider,)
+
+class ANIMASSIST_OT_slider_value(bpy.types.Operator):
+    bl_idname='animassist.slider_value'
+    bl_label='Set Slider Amount'
+    bl_description='Enter an exact adjustment amount; accept applies one undoable adjustment'
+    bl_options={'REGISTER','UNDO'}
+    action: StringProperty(options={'HIDDEN','SKIP_SAVE'})
+    value: FloatProperty(name='Amount',description='Amount in this tool’s displayed units')
+    def invoke(self,context,event): return context.window_manager.invoke_props_dialog(self,width=300)
+    def draw(self,context):
+        label,unit,*_=_model().SLIDERS[self.action]
+        self.layout.label(text=label)
+        self.layout.prop(self,'value',text=f'Amount ({unit})')
+    def execute(self,context):
+        return ANIMASSIST_OT_timeline_slider.execute(self,context)
+
+
+CLASSES=(ANIMASSIST_OT_timeline_slider,ANIMASSIST_OT_slider_value)

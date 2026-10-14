@@ -12,7 +12,8 @@ import time
 from types import SimpleNamespace
 from gpu_extras.batch import batch_for_shader
 from bpy.props import StringProperty
-from .timeline_catalog import ACTIONS, GROUPS, QUICK_LABELS, quick_clusters, selected_quick_actions
+from .timeline_catalog import ACTIONS, GROUPS, FAMILY, QUICK_LABELS, command_metadata
+from . import timeline_config as model
 
 
 def row_layout(width, height, row_height, at_top, clusters, measure):
@@ -89,11 +90,18 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
     @classmethod
     def description(cls, context, properties):
         from . import timeline_strip as tools
+        action=properties.key.split(':',1)[0]
+        if properties.kind in {'SLIDER','POPOUT','PRESET'} and action in ACTIONS:
+            operator=tools._operator(action)
+            text=operator.get_rna_type().description if operator else ACTIONS[action][2]
+            scope=command_metadata(action)[0]
+            from ..constants import BREAKDOWN_ANCHOR_HINT
+            return text+'. '+scope+'. Drag to preview; release to apply; Esc cancels. Right-click for tool settings.'+((' '+BREAKDOWN_ANCHOR_HINT) if action=='DRAG' else '')
         if properties.kind == "ACTION" and properties.key in ACTIONS:
             return tools.ANIMASSIST_OT_timeline_tool.description(
                 context, SimpleNamespace(action=properties.key))
         return {"SEARCH": "Find an animation tool; run it or pin a quick button",
-                "SETTINGS": "Choose which one-click tools appear beside each family",
+                "SETTINGS": "Choose visible tools, slider modes, order and named layouts",
                 "MORE": "All animation families and configured quick tools",
                 "MENU": "Open this animation family's tools",
                 "BAND": "Anim Assist tools; the remaining Timeline keeps its normal controls"}.get(properties.kind, "Anim Assist")
@@ -107,7 +115,7 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
         if self.kind == "SEARCH":
             return bpy.ops.animassist.timeline_search("INVOKE_DEFAULT")
         if self.kind == "SETTINGS":
-            return bpy.ops.wm.call_panel("INVOKE_DEFAULT", name="ANIMASSIST_PT_timeline_quick_settings")
+            return bpy.ops.animassist.toolbar_settings("INVOKE_DEFAULT")
         if self.kind == "MENU":
             return bpy.ops.wm.call_menu("INVOKE_DEFAULT", name=tools._menu_id(self.key))
         if self.kind == "MORE":
@@ -127,16 +135,19 @@ def _items(context):
     from ..prefs import get_prefs, timeline_record
     header = next((r for r in context.area.regions if r.type == "HEADER"), None)
     scale = context.preferences.system.ui_scale
-    h = max(24 * scale, header.height if header else 0)
+    h = max(28 * scale, header.height if header else 0)
     blf.size(0, round(11 * scale))
     top = bool(header and header.y > context.region.y)
     # Bforartists draws its frame indicator after pixel callbacks. Preserve
     # the native scrub ruler at the top, so it cannot cover an action button.
     ruler = 24 * scale if top else 0
     usable_height = max(0, context.region.height-ruler)
-    items = row_layout(context.region.width, usable_height, h, top,
-                       quick_clusters(selected_quick_actions(get_prefs(context))),
-                       lambda text: blf.dimensions(0, text)[0])
+    try: record=timeline_record(get_prefs(context))
+    except ValueError: record=model.recommended(ACTIONS)
+    labels={**QUICK_LABELS,'COPY_KEYS':'Copy','PASTE_KEYS':'Paste',
+            'MIRROR_SELECTED':'Mirror','BAKE_STEP':'Bake Object','TRAIL_SHOW':'Trails'}
+    items = model.toolbar_layout(context.region.width, usable_height, h, top,
+                       record,GROUPS,labels,lambda text: blf.dimensions(0, text)[0])
     y = max(0, usable_height-h) if top else 0
     return items, (0, y, context.region.width, min(h, context.region.height))
 
@@ -144,6 +155,79 @@ def _items(context):
 def _inside(rect, location):
     x, y, w, h = rect
     return x <= location[0] < x+w and y <= location[1] < y+h
+
+
+_COLORS={'tween':(.25,.8,.8,1),'timing':(1,.72,.25,1),'curves':(.4,.75,1,1),
+         'keys':(1,.8,.35,1),'pose':(.8,.6,1,1),'bake':(1,.6,.3,1),'motion':(.5,.85,.5,1)}
+
+
+def _text(rect,text,color,scale,font=11,left=False):
+    x,y,w,h=rect
+    blf.size(0,round(font*scale)); blf.color(0,*color)
+    tw,th=blf.dimensions(0,text)
+    blf.position(0,x+3*scale if left else x+(w-tw)/2,y+(h-th)/2+1,0)
+    blf.draw(0,text)
+
+
+def _glyph(rect,action,color):
+    x,y,w,h=rect; cx=x+w/2; cy=y+h/2; r=min(w,h)*.28
+    shader=gpu.shader.from_builtin('UNIFORM_COLOR')
+    if action in {'SEARCH','SETTINGS','MORE'}:
+        if action=='MORE':
+            for dx in (-r,0,r): _quad((cx+dx-1,cy-1,2,2),color)
+        else:
+            import math
+            positions=[(cx+math.cos(i*math.pi/4)*r,cy+math.sin(i*math.pi/4)*r) for i in range(9)]
+            if action=='SEARCH': positions.extend(((cx+r*.7,cy-r*.7),(cx+r*1.5,cy-r*1.5)))
+            batch=batch_for_shader(shader,'LINE_STRIP',{'pos':positions})
+            shader.bind(); shader.uniform_float('color',color); batch.draw(shader)
+            if action=='SETTINGS':
+                for i in range(4):
+                    dx=math.cos(i*math.pi/2)*r; dy=math.sin(i*math.pi/2)*r
+                    _quad((cx+dx-2,cy+dy-2,4,4),color)
+        return
+    positions=((cx,cy+r),(cx+r,cy),(cx,cy-r),(cx,cy+r),(cx,cy-r),(cx-r,cy))
+    if action.startswith('NUDGE_'):
+        sign=-1 if action=='NUDGE_LEFT' else 1
+        positions=((cx+sign*r,cy),(cx-sign*r,cy+r),(cx-sign*r,cy-r))
+    elif action in {'COPY_KEYS','PASTE_KEYS','BAKE_STEP'}:
+        positions=((cx-r,cy-r),(cx+r,cy-r),(cx+r,cy+r),
+                   (cx-r,cy-r),(cx+r,cy+r),(cx-r,cy+r))
+    batch=batch_for_shader(shader,'TRIS',{'pos':positions})
+    shader.bind(); shader.uniform_float('color',color); batch.draw(shader)
+    if action=='COPY_KEYS': _quad((cx-r/2,cy-r/2,r,r),(.12,.12,.12,1))
+
+
+def _parts(rect,label,scale):
+    blf.size(0,round(11*scale))
+    return model.slider_parts(rect,label,lambda s:blf.dimensions(0,s)[0],scale)
+
+
+def _track(rect,value,tool,color):
+    x,y,w,h=rect; cy=y+h/2
+    fraction=min(1,max(0,(value-tool['range_min'])/(tool['range_max']-tool['range_min'])))
+    _quad((x,cy-2,w,4),(.15,.15,.15,1))
+    _quad((x,cy-2,w*fraction,4),color)
+    _quad((x+w*fraction-3,cy-5,6,10),color)
+
+
+def _slider_controls(context,event,item,scale):
+    from ..prefs import get_prefs,timeline_record
+    from ..operators import timeline_slider_ops as sliders
+    kind,action,label,rect=item
+    tool=model.effective_tool(action,timeline_record(get_prefs(context))['active']['tools'][action])
+    track,value_rect,reset_rect=_parts(rect,label,scale)
+    if kind=='POPOUT': track=(rect[0],rect[1],120*scale,rect[3])
+    point=(event.mouse_region_x,event.mouse_region_y)
+    value=sliders.last_value(context.window,context.area,action,tool['default'])
+    if kind=='SLIDER' and _inside(value_rect,point):
+        return bpy.ops.animassist.slider_value('INVOKE_DEFAULT',True,action=action,value=value)
+    if kind=='SLIDER' and _inside(reset_rect,point):
+        result=bpy.ops.animassist.timeline_slider('EXEC_DEFAULT',action=action,value=tool['default'])
+        if 'FINISHED' in result: bpy.ops.ed.undo_push(message='Reset '+model.SLIDERS[action][0])
+        return result
+    return bpy.ops.animassist.timeline_slider('INVOKE_DEFAULT',True,action=action,
+        mode='INLINE' if kind=='SLIDER' else 'POPOUT',track_x=track[0],track_y=track[1],track_width=track[2])
 
 
 def _draw():
@@ -156,26 +240,54 @@ def _draw():
     items, band = _items(context)
     background, widgets = _theme(context)
     scale = context.preferences.system.ui_scale
+    from ..prefs import get_prefs,timeline_record
+    from ..operators import timeline_slider_ops as sliders
+    try: record=timeline_record(get_prefs(context))
+    except ValueError: record=model.recommended(ACTIONS)
+    active=sliders.feedback(context.window,context.area)
     old_blend = gpu.state.blend_get()
     try:
         gpu.state.blend_set("ALPHA")
         _quad(band, (*background[:3], 1))
         hover = _hover.get(context.window.as_pointer())
         for kind, key, label, rect in items:
+            action=key.split(':',1)[0]
             highlighted = hover == (context.area.as_pointer(), kind, key)
-            reason = tools._unavailable(context, context.area, key) if kind == "ACTION" else ""
+            reason = tools._unavailable(context, context.area, action) if action in ACTIONS else ""
             color = widgets.inner_sel if highlighted else widgets.inner
-            _quad(rect, tuple(color))
+            _quad(rect,tuple(color) if kind!='MENU' else (*background[:3],1))
             text_color = widgets.text_sel if highlighted else widgets.text
-            blf.size(0, round(11 * scale))
-            blf.color(0, *text_color[:3], .45 if reason else 1)
-            tw, th = blf.dimensions(0, label)
-            x, y, w, h = rect
-            blf.position(0, x + (w-tw)/2, y + (h-th)/2 + 1, 0)
-            blf.draw(0, label)
+            ink=(*text_color[:3],.45 if reason else 1)
+            accent=_COLORS.get(FAMILY[action][0] if action in FAMILY else key,ink)
+            if kind=='SLIDER':
+                tool=model.effective_tool(action,record['active']['tools'][action])
+                value=active.value if active and active.action==action else sliders.last_value(context.window,context.area,action,tool['default'])
+                track,value_rect,reset_rect=_parts(rect,label,scale)
+                if label: _text((rect[0],rect[1],track[0]-rect[0],rect[3]),label,ink,scale,left=True)
+                _track(track,value,tool,(*accent[:3],ink[3]))
+                unit=model.SLIDERS[action][1]
+                number=f'{value:.{tool["precision"]}f}' if abs(value)<10000 else f'{value:.3g}'
+                _text(value_rect,number+unit,ink,scale,font=9)
+                _text(reset_rect,'R',ink,scale,font=9)
+            elif not label:
+                _glyph(rect,action if action else kind,(*accent[:3],ink[3]))
+            else:
+                _text(rect,label,(*accent[:3],ink[3]) if kind=='MENU' else ink,scale)
+                if kind=='POPOUT': _quad((rect[0]+3*scale,rect[1]+2*scale,rect[2]-6*scale,1*scale),accent)
         # Thin separator, respecting top and bottom header placement.
         _quad((band[0], band[1], band[2], 1), (*widgets.outline[:3], 1))
-        if hover and time.monotonic() - _hover_started.get(context.window.as_pointer(), float("inf")) > .6:
+        if active and active.mode=='POPOUT' and active._moved:
+            width=min(280*scale,context.region.width); height=min(44*scale,context.region.height)
+            x=max(0,min(active.track_x,context.region.width-width))
+            y=band[1]-height-4*scale if band[1]>height else band[1]+band[3]+4*scale
+            y=max(0,min(y,context.region.height-height))
+            accent=_COLORS[FAMILY[active.action][0]]
+            _quad((x,y,width,height),(*background[:3],1))
+            _quad((x,y,width,1),accent)
+            _text((x+5*scale,y+23*scale,width-10*scale,18*scale),model.SLIDERS[active.action][0],(*widgets.text[:3],1),scale,left=True)
+            _track((x+10*scale,y+5*scale,max(1,width-70*scale),16*scale),active.value,active._tool,accent)
+            _text((x+width-60*scale,y+3*scale,55*scale,20*scale),f'{active.value:.{active._tool["precision"]}f}'+model.SLIDERS[active.action][1],(*widgets.text[:3],1),scale,font=10)
+        if not active and hover and time.monotonic() - _hover_started.get(context.window.as_pointer(), float("inf")) > .6:
             item = next((item for item in items if (item[0], item[1]) == hover[1:]), None)
             if item:
                 description = ANIMASSIST_OT_overlay_control.description(
@@ -235,8 +347,25 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
                 bpy.app.timers.register(tooltip_redraw, first_interval=.65)
         if event.type == "MOUSEMOVE" or not hit:
             return {"CANCELLED", "PASS_THROUGH"}
+        if event.type=='RIGHTMOUSE' and found:
+            action=found[1].split(':',1)[0]
+            if action in ACTIONS:
+                bpy.ops.animassist.tool_settings('INVOKE_DEFAULT',action=action)
+                return {'FINISHED'}
         if event.type == "LEFTMOUSE" and found:
-            bpy.ops.animassist.overlay_control("INVOKE_DEFAULT", kind=found[0], key=found[1])
+            action=found[1].split(':',1)[0]
+            from . import timeline_strip as tools
+            reason=tools._unavailable(context,context.area,action) if action in ACTIONS else ''
+            if reason:
+                self.report({'WARNING'},reason)
+            elif found[0] in {'SLIDER','POPOUT'}:
+                _slider_controls(context,event,found,context.preferences.system.ui_scale)
+            elif found[0]=='PRESET':
+                value=float(found[1].split(':',1)[1])
+                result=bpy.ops.animassist.timeline_slider('EXEC_DEFAULT',action=action,value=value)
+                if 'FINISHED' in result: bpy.ops.ed.undo_push(message='Preset '+model.SLIDERS[action][0])
+            else:
+                bpy.ops.animassist.overlay_control("INVOKE_DEFAULT", kind=found[0], key=found[1])
             context.area.tag_redraw()
         return {"FINISHED"}
 
@@ -345,12 +474,19 @@ def register():
                                                   type=event_type, value="ANY" if event_type=="MOUSEMOVE" else "PRESS", any=True)
                     _keymaps.append((keymap, item))
         bpy.app.handlers.load_post.append(_load_post)
+        from ..operators.timeline_slider_ops import cancel_active
+        bpy.app.handlers.load_pre.append(cancel_active)
+        bpy.app.handlers.undo_pre.append(cancel_active)
         bpy.app.timers.register(_start_windows, first_interval=.1, persistent=True)
 
 
 def unregister():
     global _handle, _epoch
     _epoch = object()
+    from ..operators.timeline_slider_ops import cancel_active
+    cancel_active()
+    for handlers in (bpy.app.handlers.load_pre,bpy.app.handlers.undo_pre):
+        if cancel_active in handlers: handlers.remove(cancel_active)
     if _handle is not None:
         bpy.types.SpaceDopeSheetEditor.draw_handler_remove(_handle, "WINDOW")
         _handle = None

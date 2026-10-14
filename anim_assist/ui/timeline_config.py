@@ -207,3 +207,68 @@ def effective_tool(action,tool):
         result['range_min'],result['range_max']=SLIDERS[action][3:5]
         result['default']=min(result['range_max'],max(result['range_min'],result['default']))
     return result
+
+
+def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure):
+    """Bounded presentation only; never modify the saved layout on overflow."""
+    scale=row_height/28.
+    gap=3*scale; pad=5*scale
+    y=max(0,height-row_height) if at_top else 0
+    h=max(1,min(height,row_height)-4*scale)
+    tools=record['active']['tools']; order=record['active']['order']
+    families={key:(label,{a for a in actions if a is not None}) for key,label,actions in groups}
+    utilities=[('SEARCH','','Find'),('MORE','','More'),('SETTINGS','','Settings')]
+    utility_widths=[max(24*scale,measure(label)+2*pad) for _,_,label in utilities]
+    if sum(utility_widths)+4*gap>width:
+        utilities=[(kind,key,'') for kind,key,_ in utilities]
+        utility_widths=[24*scale]*3
+    budget=max(0,width-sum(utility_widths)-4*gap)
+
+    def compose(compact=False,demote=False,no_families=False):
+        specs=[]
+        for family in FAMILY_ORDER:
+            label,known=families[family]
+            selected=[a for a in order if a in known and tools[a]['mode']!='HIDDEN']
+            if not no_families:
+                specs.append(('MENU',family,label,measure(label)+(6 if compact else 10)*scale))
+            for action in selected:
+                tool=tools[action]; mode=tool['mode']
+                label=SLIDERS[action][0] if action in SLIDERS else labels.get(action,action.replace('_',' ').title())
+                if mode=='INLINE' and not demote:
+                    label='' if compact or tool['label_mode']=='ICON' else label
+                    w=(80 if compact else tool['width'])*scale+measure(label)+(46 if compact else 54)*scale
+                    kind='SLIDER'
+                else:
+                    kind='POPOUT' if mode in {'POPOUT','INLINE'} else 'ACTION'
+                    if tool['label_mode']=='ICON': label=''
+                    w=max(24*scale,measure(label)+2*pad)
+                specs.append((kind,action,label,w))
+                if action in SLIDERS:
+                    for value in tool['presets']:
+                        text=f'{value:g}'
+                        specs.append(('PRESET',action+':'+text,text,max(24*scale,measure(text)+2*pad)))
+        return specs
+
+    candidates=[compose(),compose(compact=True),compose(compact=True,demote=True),
+                compose(compact=True,demote=True,no_families=True)]
+    specs=next((s for s in candidates if sum(i[3]+gap for i in s)<=budget),candidates[-1])
+    controls=[]; x=gap
+    for kind,key,label,w in specs:
+        if x+w>budget: continue
+        controls.append((kind,key,label,(x,y+2*scale,w,h)))
+        x+=w+gap
+    x=max(x,width-sum(utility_widths)-3*gap)
+    for (kind,key,label),w in zip(utilities,utility_widths):
+        if x+w<=width:
+            controls.append((kind,key,label,(x,y+2*scale,w,h)))
+        x+=w+gap
+    return controls
+
+
+def slider_parts(rect,label,measure,scale):
+    x,y,w,h=rect
+    label_width=measure(label)+4*scale if label else 0
+    reset=(x+w-18*scale,y,18*scale,h)
+    value=(reset[0]-34*scale,y,34*scale,h)
+    track=(x+label_width+3*scale,y+3*scale,max(1,value[0]-x-label_width-6*scale),h-6*scale)
+    return track,value,reset
