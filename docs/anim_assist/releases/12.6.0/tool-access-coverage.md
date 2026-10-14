@@ -1,3 +1,5 @@
+> Historical record: the custom Windows application described here is withdrawn. The current download is the Anim Assist add-on for existing Bforartists, using its existing Timeline header. See [current installation instructions](RELEASE-NOTES.md).
+
 # Native Timeline tool access coverage
 
 Updated 2026-10-13. All 89 catalogue presets have representative native
