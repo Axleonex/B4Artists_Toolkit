@@ -4,7 +4,7 @@
 
 ## VRChat Tools
 
-The VRChat tools are in the **CATS** tab on the right sidebar (press **N**), in the **Avatar Tools** section. Its subsections cover humanoid bones, hair physics, Viseme Library / Lip Sync and export. The separate **VRChat Tools** section below it groups Check Performance, Attach Clothing, Facial and VRChat Naming Extras. The same section is in the **Properties** editor's **Scene** tab while Preferences → Tabs → Scene Properties → Show is on. This switch does not hide the CATS viewport tab.
+The VRChat tools are in the **CATS** tab on the right sidebar (press **N**), in the **Avatar Tools** section. Its subsections cover humanoid bones, hair physics and Viseme Library / Lip Sync. VRChat export is under CATS → Import / Export → Unity / VRChat. The separate **VRChat Tools** section below it groups Check Performance, Attach Clothing, Facial and VRChat Naming Extras. The same section is in the **Properties** editor's **Scene** tab while Preferences → Tabs → Scene Properties → Show is on. This switch does not hide the CATS viewport tab.
 
 ---
 
@@ -89,7 +89,7 @@ See [Guide 9: Improve Your Avatar's Performance](03-guides-b.md#guide-9-improve-
 - **Embed Textures** — packs the textures into the FBX, so Unity finds them
 - **Helper Meshes** — includes hidden or helper meshes; leave it off for normal avatars
 
-**Buttons:** **Export to VRChat (Unity)**, **Generate Sidecar**, **Copy Importer Path** (the path of BoneCraft's Unity import script), and **Check / Preserve MToon** for VRM materials. The section also repeats the humanoid status with **Auto-Map Humanoid**, **Normalize Names** and **Validate**.
+**Location:** CATS → Import / Export → Unity / VRChat. Use **Export to VRChat (Unity)** to write the FBX, or **Check Performance Rank** before exporting.
 
 ---
 

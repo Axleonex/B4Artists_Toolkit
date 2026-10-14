@@ -4,6 +4,10 @@
 
 Lo más reciente primero.
 
+## 9.2.3 — Ubicación de exportación VRChat
+
+Se elimina el panel duplicado Export to VRChat de Avatar Tools. La exportación permanece en CATS → Import / Export → Unity / VRChat.
+
 ## 9.2.2 — Interfaz actual
 
 Las pestañas seleccionan grupos de herramientas. Setup Rigging, Skin, Review, Avatar Tools y Facial son secciones desplegables dentro de las pestañas, no pestañas distintas. Las rutas siguientes usan las etiquetas inglesas; su traducción depende de Language.

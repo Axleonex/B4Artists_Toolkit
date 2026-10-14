@@ -4,6 +4,10 @@
 
 最新的在前。
 
+## 9.2.3 — VRChat 导出位置
+
+移除 Avatar Tools 中重复的 Export to VRChat 面板。导出功能保留在 CATS → Import / Export → Unity / VRChat。
+
 ## 9.2.2 — 当前界面
 
 选项卡用于选择功能组。Setup Rigging、Skin、Review、Avatar Tools 和 Facial 是选项卡内可展开的分区，不是独立选项卡。下列路径保留英文界面标签；翻译名称取决于 Language 设置。

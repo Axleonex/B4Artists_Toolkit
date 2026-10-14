@@ -4,6 +4,10 @@
 
 최신 항목이 먼저 옵니다.
 
+## 9.2.3 — VRChat 내보내기 위치
+
+Avatar Tools에서 중복된 Export to VRChat 패널을 제거했습니다. 내보내기는 CATS → Import / Export → Unity / VRChat에 유지됩니다.
+
 ## 9.2.2 — 현재 인터페이스
 
 탭은 기능 그룹을 선택합니다. Setup Rigging, Skin, Review, Avatar Tools, Facial은 탭 안에서 펼치는 섹션이며 별도 탭이 아닙니다. 아래 경로는 영어 UI 이름입니다. 번역된 이름은 Language 설정에 따라 달라집니다.

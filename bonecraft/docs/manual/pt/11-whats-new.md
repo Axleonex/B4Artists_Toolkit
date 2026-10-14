@@ -4,6 +4,10 @@
 
 O mais recente primeiro.
 
+## 9.2.3 — Local da exportação VRChat
+
+Remove o painel duplicado Export to VRChat de Avatar Tools. A exportação permanece em CATS → Import / Export → Unity / VRChat.
+
 ## 9.2.2 — Interface atual
 
 As abas selecionam grupos de ferramentas. Setup Rigging, Skin, Review, Avatar Tools e Facial são seções expansíveis dentro das abas, não abas separadas. Os caminhos abaixo usam os nomes da interface em inglês; a tradução depende de Language.

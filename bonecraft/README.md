@@ -6,7 +6,7 @@ only in Bforartists: in standard Blender it does not load and shows a single "Ge
 | | |
 |---|---|
 | **Add-on** | BoneCraft |
-| **Version** | 9.2.2 |
+| **Version** | 9.2.3 |
 | **Host** | Bforartists (tested on 5.2) — not standard Blender |
 | **Category** | Rigging / Animation |
 | **License** | GPL v2.0 or later |
@@ -36,16 +36,21 @@ Switching a package off unregisters its classes, so it costs nothing until you s
 
 ## Install
 
-1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([latest published ZIP: BoneCraft 9.2.2](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.2/BoneCraft-BFA-9.2.2.zip)).
+1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([latest published ZIP: BoneCraft 9.2.3](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.3/BoneCraft-BFA-9.2.3.zip)).
 2. Tick its checkbox.
 3. In the 3D Viewport, the **BoneCraft** and **Rig Builder** tabs are on the left Tool Shelf (press **T**) and the
    **CATS** tab is on the right sidebar (press **N**). Each tab's side can be changed in the add-on's preferences
    (**Tabs**). Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools and Import / Export are also in the Properties
    editor's Scene tab while **Tabs → Scene Properties → Show** is on (the default).
 
-Published release changes and checks: [BoneCraft 9.2.2 release notes](../docs/bonecraft/releases/9.2.2/RELEASE-NOTES.md).
+Published release changes and checks: [BoneCraft 9.2.3 release notes](../docs/bonecraft/releases/9.2.3/RELEASE-NOTES.md).
 
-### 9.2.2 changes
+### 9.2.3 changes
+
+- Removes the duplicate Export to VRChat panel and export overview row from Avatar Tools.
+- Retains VRChat export under CATS → Import / Export → Unity / VRChat.
+
+### Previous changes (9.2.2)
 
 - Bone Merge is under BoneCraft → Setup Rigging.
 - Delta Mush and Proximity Wrap are under BoneCraft → Skin.
@@ -54,7 +59,7 @@ Published release changes and checks: [BoneCraft 9.2.2 release notes](../docs/bo
 - Other Tools and its grouping hooks are removed.
 
 Placement, drawing, visibility and tool-toggle host checks pass. Live-window appearance is not verified.
-BoneCraft 9.2.2 is published with a verified install-from-disk ZIP.
+The 9.2.3 ZIP is verified for installation from disk.
 
 ## Manual
 
