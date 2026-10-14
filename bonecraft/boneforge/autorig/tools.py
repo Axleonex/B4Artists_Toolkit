@@ -157,7 +157,8 @@ def register():
     if old is not None:                                            # a reloaded copy's operator
         bpy.utils.unregister_class(old)
     bpy.utils.register_class(BF_OT_PlaceMarkerAtClick)
-    toolbar.register(BF_WT_place_rig_markers, after={"builtin.relax"}, separator=True, group=False)
+    # Append at top level: anchoring inside a native group puts the separator inside it too.
+    toolbar.register(BF_WT_place_rig_markers, separator=True, group=False)
 
 
 def unregister():
