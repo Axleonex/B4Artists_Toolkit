@@ -53,17 +53,26 @@ def run():
                           "BF_PT_sb_io": 6}, orders
         assert bpy.types.BF_PT_rb_setup.bl_order == 1, "Rig Builder stays first"
 
-        # M6: every generic root panel folds under one collapsed Other Tools parent; curated sections stay on top
-        curated = {"BF_PT_sb_overview", "BF_PT_sb_setup", "BF_PT_sb_skin", "BF_PT_mech", "BF_PT_sb_animate", "BF_PT_sb_other"}
-        other = getattr(bpy.types, "BF_PT_sb_other", None)
-        assert other is not None and other.bl_order == 45 and 'DEFAULT_CLOSED' in other.bl_options
+        # Tools have explicit workflow homes; there is no catch-all section.
+        curated = {"BF_PT_sb_overview", "BF_PT_sb_setup", "BF_PT_sb_skin", "BF_PT_mech", "BF_PT_sb_animate"}
+        assert getattr(bpy.types, "BF_PT_sb_other", None) is None
         strays = [c.bl_idname for c in bpy.types.Panel.__subclasses__()
                   if getattr(c, "is_registered", False) and getattr(c, "bl_space_type", "") == 'VIEW_3D'
                   and getattr(c, "bl_category", "") == 'BoneCraft' and not getattr(c, "bl_parent_id", "")
                   and getattr(c, "bl_idname", "") not in curated
-                  and not c.bl_idname.startswith("BONEFORGE_PT_vrc_")]          # hidden; VRChat Tools draws them
+                  and not c.bl_idname.startswith("BONEFORGE_PT_vrc_")
+                  and (not hasattr(c, "poll") or c.poll(bpy.context))]          # hidden source panels are delegated
         assert not strays, strays
-        assert bpy.types.BONEFORGE_PT_bone_merge.bl_parent_id == "BF_PT_sb_other"
+        placements = {
+            "BONEFORGE_PT_bone_merge": "BF_PT_sb_setup",
+            "BONEFORGE_PT_p2b_delta_mush": "BF_PT_sb_skin",
+            "BONEFORGE_PT_p2b_proximity_wrap": "BF_PT_sb_skin",
+        }
+        for idn, parent_id in placements.items():
+            cls = getattr(bpy.types, idn)
+            assert cls.bl_parent_id == parent_id, (idn, cls.bl_parent_id)
+            assert cls.bl_category == "BoneCraft"
+            assert cls.bl_region_type == getattr(bpy.types, parent_id).bl_region_type
         # ...except the VRChat utilities: one VRChat Tools section in the CATS tab draws them, in the owner's order
         from boneforge.taskboard import sidebar
         vrc = getattr(bpy.types, "BF_PT_cats_vrc_tools", None)
@@ -72,24 +81,32 @@ def run():
         assert [c for _group, tools_ in sidebar.VRC_TOOL_GROUPS for _m, c in tools_] == [
             "BONEFORGE_PT_vrc_performance", "BONEFORGE_PT_vrc_decimation", "BONEFORGE_PT_vrc_optimizer",
             "BONEFORGE_PT_vrc_bone_match", "BONEFORGE_PT_vrc_collision", "BONEFORGE_PT_vrc_clothing_merge",
+            "BONEFORGE_PT_vrc_viseme_mapper", "BONEFORGE_PT_vrc_face_tracking",
             "BONEFORGE_PT_vrc_naming_detect", "BONEFORGE_PT_vrc_naming_presets", "BONEFORGE_PT_vrc_batch_rename"]
-        for gone in ("BF_PT_sb_vrc_naming", "BF_PT_sb_vrc_clothing", "BF_PT_sb_vrc_perf"):
+        for gone in ("BF_PT_sb_vrc_naming", "BF_PT_sb_vrc_clothing", "BF_PT_sb_vrc_perf", "BF_PT_sb_vrc_visemes"):
             assert getattr(bpy.types, gone, None) is None, (gone, "would draw the same tools twice")
         tools = [c for _group, tools_ in sidebar.VRC_TOOL_GROUPS for _m, c in tools_]
         for idn in tools:
             cls = getattr(bpy.types, idn)
-            assert cls.is_registered and not getattr(cls, "bl_parent_id", "") and not cls.poll(bpy.context), \
-                (idn, "stays a hidden panel: VRChat Tools draws it, so it never shows twice")
+            assert cls.is_registered, idn
+            if idn in {"BONEFORGE_PT_vrc_viseme_mapper", "BONEFORGE_PT_vrc_face_tracking"}:
+                assert cls.bl_parent_id == "BONEFORGE_PT_vrc_main"
+                assert not bpy.types.BONEFORGE_PT_vrc_main.poll(bpy.context), "facial tools' source parent stays hidden"
+            else:
+                assert not getattr(cls, "bl_parent_id", "") and not cls.poll(bpy.context), \
+                    (idn, "stays a hidden panel: VRChat Tools draws it, so it never shows twice")
         bpy.ops.object.armature_add()
         assert vrc.poll(Ctx()), "an active armature shows the section"
         shim = Shim()
         vrc.draw(shim, bpy.context)
         groups = [g for g, _tools in sidebar.VRC_TOOL_GROUPS]
         heads = [k for n, a_, k in shim.layout.log if n == "label" and k.get("text") in groups]
-        assert [k["text"] for k in heads] == ["Performance", "Clothing", "Naming"], heads
+        assert [k["text"] for k in heads] == ["Performance", "Clothing", "Facial", "Naming"], heads
+        assert "VRChat Viseme Mapping" in _texts(shim.layout.log)
+        assert "Face Tracking" in _texts(shim.layout.log)
         assert not [k for k in heads if k.get("icon", 'NONE') != 'NONE'], "headings carry no topic icon"
         assert not [k.get("text") for n, a_, k in shim.layout.log if n == "label" and k.get("icon") in ('ERROR', 'QUESTION')]
-        drawn = []                                         # every one of the nine draws, in order, through its own draw()
+        drawn = []                                         # every enabled tool draws once, in group order
         real = {idn: getattr(bpy.types, idn).draw for idn in tools}
         try:
             for idn in tools:
@@ -130,7 +147,7 @@ def run():
         bpy.context.view_layer.objects.active = empty
         try:
             for idn in ("BF_PT_sb_vrchat", "BF_PT_cats_vrc_tools", "BF_PT_sb_vrc_humanoid", "BF_PT_sb_vrc_hair",
-                        "BF_PT_sb_vrc_visemes", "BF_PT_sb_vrc_export"):
+                        "BONEFORGE_PT_p2c_viseme_library", "BF_PT_sb_vrc_export"):
                 assert getattr(bpy.types, idn).poll(Ctx()), (idn, "hidden while the picker has an armature")
             shim = Shim()
             vrc.draw(shim, bpy.context)
@@ -325,11 +342,16 @@ def run():
             "keying the % view would key nothing; key the handle bone or use Go and Key"
         assert mech_ops.delete_refusal(arm, "h1").startswith("Can't delete"), "a used record is refused before the dialog"
         assert mech_ops.delete_refusal(arm, "q1") == "" and mech_ops.delete_refusal(arm, "g1") == ""
-        assert other.poll(Ctx(tab=True)) and not other.poll(Ctx(tab=False)), "Other Tools follows the tab switch"
+        assert getattr(bpy.types, "BF_PT_sb_other", None) is None, "tool toggles must not recreate Other Tools"
         lip = getattr(bpy.types, "BONEFORGE_PT_p2c_lip_sync", None)
-        if lip is not None:
-            assert lip.is_registered and lip.bl_parent_id == "BONEFORGE_PT_p2c_viseme_library"
-            assert bpy.types.BONEFORGE_PT_p2c_viseme_library.bl_parent_id == "BF_PT_sb_other"
+        assert lip is not None, "Viseme Library and Lip Sync must register"
+        assert lip.is_registered and lip.bl_parent_id == "BONEFORGE_PT_p2c_viseme_library"
+        library = bpy.types.BONEFORGE_PT_p2c_viseme_library
+        assert library.bl_parent_id == "BF_PT_sb_vrchat"
+        assert library.bl_category == lip.bl_category == "CATS"
+        assert bpy.types.BF_PT_sb_vrc_hair.bl_order < library.bl_order < bpy.types.BF_PT_sb_vrc_export.bl_order
+        mirrored = getattr(bpy.types, library.bl_idname + stm.SUFFIX)
+        assert mirrored.bl_parent_id == "BF_PT_sb_vrchat" + stm.SUFFIX
 
         # X4: adding into a folded section reopens it
         wm.bonecraft_mech_show_seqs = False
