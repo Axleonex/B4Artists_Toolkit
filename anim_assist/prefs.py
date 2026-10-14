@@ -29,6 +29,7 @@ def _update_timeline_quick(_self, context) -> None:
 
 
 def _update_timeline_placement(_self, _context) -> None:
+    _self.timeline_canvas_row_initialized = True
     from .ui.timeline_strip import reconcile_preferences
     reconcile_preferences()
 
@@ -58,14 +59,11 @@ def prepare_timeline_quick_preferences() -> None:
 
 
 def draw_timeline_quick_settings(layout, context, prefs) -> None:
-    """The same preference controls in the native row and add-on settings."""
+    """Shared quick-selection controls in the tool row and preferences."""
     from .ui.timeline_catalog import GROUPS, quick_property_name
-    from .ui.timeline_strip import native_available
     layout.prop(prefs, "timeline_toolbar_row")
-    layout.label(text="Native second row available" if native_available()
-                 else "This application uses the existing Timeline header", icon="INFO")
-    if not native_available():
-        layout.label(text="The patched Bforartists application enables a native second row")
+    layout.label(text="Tool row inside the Timeline, beside its header", icon="INFO")
+    layout.label(text="No separate editor or application required")
     layout.label(text="Saved in add-on preferences")
     layout.label(text="Quick buttons apply to all Timelines")
     layout.prop(prefs, "timeline_quick_family")
@@ -78,7 +76,7 @@ def draw_timeline_quick_settings(layout, context, prefs) -> None:
     layout.separator()
     layout.operator("animassist.reset_timeline_quick_defaults",
                     text="Reset All Quick Buttons to Defaults", icon="LOOP_BACK")
-    layout.label(text="Middle-mouse drag the toolbar to pan")
+    layout.label(text="More contains quick tools that do not fit this width")
     if not context.preferences.use_preferences_save:
         layout.label(text="Save Preferences to keep choices after restart", icon="INFO")
         layout.operator("wm.save_userpref", text="Save Preferences", icon="FILE_TICK")
@@ -165,12 +163,18 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
     )
 
     # Where Anim Assist appears (Properties > Scene > Anim Assist > Settings).
+    timeline_canvas_row_initialized: BoolProperty(  # type: ignore[valid-type]
+        name="Timeline Row Upgrade Applied",
+        description="Remember that existing-header preferences were migrated to the canvas row",
+        default=False,
+        options={"HIDDEN"},
+    )
+
     timeline_toolbar_row: BoolProperty(  # type: ignore[valid-type]
-        name="Native Timeline Toolbar",
+        name="Timeline Tool Row",
         description=(
-            "Show Anim Assist in the Timeline's native second row on a patched application; "
-            "make room automatically when enabling; turn off to use the existing native header. "
-            "Applications without the native second row use the existing header"
+            "Show an Anim Assist tool row inside the Timeline beside its header; "
+            "uses a narrow band of canvas without resizing or creating editors"
         ),
         default=True,
         update=_update_timeline_placement,

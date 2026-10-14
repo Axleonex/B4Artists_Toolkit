@@ -1,0 +1,13 @@
+{
+  "addon_files": 204,
+  "application_binaries": 0,
+  "native_effect_failures": 0,
+  "native_immediate_effects": 80,
+  "pure_layout_tests": 4,
+  "attribution_policy": "No co-author trailers or generated-by banners",
+  "sha256": "4da8edac4e4be36f9fc11462aaead261ed13c81510a1afefe0c03d7e8f36146d",
+  "source_versions_match": true,
+  "push_status": "not pushed",
+  "publication_status": "local release",
+  "version": "12.6.1"
+}

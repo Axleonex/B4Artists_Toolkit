@@ -1,0 +1,154 @@
+{
+  "binary": "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+  "build_hash": "0a1ca45552db",
+  "results": [
+    {
+      "label": "dismiss startup popup",
+      "ok": true
+    },
+    {
+      "label": "fresh default row and fixture",
+      "ok": true
+    },
+    {
+      "label": "direct breakdown click",
+      "ok": true
+    },
+    {
+      "label": "direct action effect",
+      "ok": true
+    },
+    {
+      "label": "Search click",
+      "ok": true
+    },
+    {
+      "label": "Search rendered",
+      "ok": true
+    },
+    {
+      "label": "close Search",
+      "ok": true
+    },
+    {
+      "label": "Tween family click",
+      "ok": true
+    },
+    {
+      "label": "family menu rendered",
+      "ok": true
+    },
+    {
+      "label": "close family",
+      "ok": true
+    },
+    {
+      "label": "Settings click",
+      "ok": true
+    },
+    {
+      "label": "Settings rendered",
+      "ok": true
+    },
+    {
+      "label": "close settings",
+      "ok": true
+    },
+    {
+      "label": "modal drag begin",
+      "ok": true
+    },
+    {
+      "label": "modal drag move",
+      "ok": true
+    },
+    {
+      "label": "modal cancel",
+      "ok": true
+    },
+    {
+      "label": "modal cancellation effect",
+      "ok": true
+    },
+    {
+      "label": "hide row",
+      "ok": true
+    },
+    {
+      "label": "hidden render",
+      "ok": true
+    },
+    {
+      "label": "show row",
+      "ok": true
+    },
+    {
+      "label": "top header render",
+      "ok": true
+    },
+    {
+      "label": "flip native header",
+      "ok": true
+    },
+    {
+      "label": "bottom alignment",
+      "ok": true
+    },
+    {
+      "label": "bottom header render",
+      "ok": true
+    },
+    {
+      "label": "move pointer to native resize border",
+      "ok": true
+    },
+    {
+      "label": "reduce Timeline height",
+      "ok": true
+    },
+    {
+      "label": "manual height remains after discovery timer",
+      "ok": true
+    },
+    {
+      "label": "small Timeline rendered",
+      "ok": true
+    },
+    {
+      "label": "move pointer to border again",
+      "ok": true
+    },
+    {
+      "label": "expand Timeline",
+      "ok": true
+    },
+    {
+      "label": "maximize Timeline",
+      "ok": true
+    },
+    {
+      "label": "maximized render",
+      "ok": true
+    },
+    {
+      "label": "restore Timeline",
+      "ok": true
+    },
+    {
+      "label": "native scrub",
+      "ok": true
+    },
+    {
+      "label": "native scrub effect",
+      "ok": true
+    },
+    {
+      "label": "pin and save preferences/layout",
+      "ok": true
+    },
+    {
+      "label": "final rendered row",
+      "ok": true
+    }
+  ]
+}

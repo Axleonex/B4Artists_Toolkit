@@ -1,0 +1,41 @@
+{
+  "binary": "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+  "build_hash": "0a1ca45552db",
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "native_available": false,
+  "results": {
+    "count": 80,
+    "failed": []
+  },
+  "regions": [
+    {
+      "type": "HEADER",
+      "width": 1163,
+      "height": 26
+    },
+    {
+      "type": "FOOTER",
+      "width": 1,
+      "height": 1
+    },
+    {
+      "type": "CHANNELS",
+      "width": 1,
+      "height": 1
+    },
+    {
+      "type": "UI",
+      "width": 1,
+      "height": 1
+    },
+    {
+      "type": "WINDOW",
+      "width": 1163,
+      "height": 86
+    }
+  ]
+}
