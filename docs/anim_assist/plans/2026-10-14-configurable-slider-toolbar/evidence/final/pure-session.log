@@ -1,0 +1,11 @@
+test_absolute_preview (test_timeline_slider_session.TransactionTests.test_absolute_preview) ... ok
+test_cancel (test_timeline_slider_session.TransactionTests.test_cancel) ... ok
+test_commit (test_timeline_slider_session.TransactionTests.test_commit) ... ok
+test_exception_restores (test_timeline_slider_session.TransactionTests.test_exception_restores) ... ok
+test_invalid_target (test_timeline_slider_session.TransactionTests.test_invalid_target) ... ok
+test_nonfinite (test_timeline_slider_session.TransactionTests.test_nonfinite) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.000s
+
+OK
