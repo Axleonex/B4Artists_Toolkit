@@ -1,0 +1,17 @@
+{
+  "immediate": 80,
+  "modal_cases": 18,
+  "button_cases": 11,
+  "modal_ids": [
+    "AMPLIFY",
+    "DRAG",
+    "EASE",
+    "FRAME",
+    "NEIGHBORS",
+    "OFFSET",
+    "OFFSET_DRAG",
+    "SCALE_DRAG",
+    "SMOOTH"
+  ],
+  "passed": false
+}

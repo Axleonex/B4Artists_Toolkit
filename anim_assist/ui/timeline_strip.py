@@ -237,10 +237,13 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
                         and not operator.poll()):
                     context.scene.anim_assist.anim_offset_active = False
                     return {"FINISHED"}
-                # The existing target owns undo and modal lifetime. This wrapper
-                # does not add an undo step or create a second modal handler.
+                # Nested immediate calls from the canvas keymap do not retain
+                # their committed state in native redo history. Checkpoint it
+                # once here; asynchronous modals own their completion history.
                 mode = "EXEC_DEFAULT" if self.action in EXECUTE_ACTIONS else "INVOKE_DEFAULT"
                 result = operator(mode, True, **_arguments(context, self.action))
+                if "FINISHED" in result:
+                    bpy.ops.ed.undo_push(message=_ACTIONS[self.action][2])
             return {"CANCELLED"} if "CANCELLED" in result else {"FINISHED"}
         except (RuntimeError, ReferenceError, AttributeError) as exc:
             self.report({"WARNING"}, str(exc))

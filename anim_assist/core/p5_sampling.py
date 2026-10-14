@@ -104,7 +104,7 @@ def sample_path_fast(
 
     Returns an empty list if no location fcurves exist for the target.
     """
-    if bpy is None or action is None or Vector is None:
+    if bpy is None or obj is None or action is None or Vector is None:
         return []
 
     if bone_name:
@@ -127,7 +127,12 @@ def sample_path_fast(
         if arm_data and bone_name in arm_data.bones:
             bone_rest = arm_data.bones[bone_name].matrix_local
 
-    rest_world = arm_world @ bone_rest
+    # Object location is already in parent coordinates. Its current world
+    # matrix includes that animated translation (and its own rotation/scale);
+    # applying it to sampled location would add the current pose twice.
+    rest_world = (arm_world @ bone_rest if bone_name else
+                  arm_world @ obj.matrix_basis.inverted_safe())
+    fallback = tuple(obj.pose.bones[bone_name].location) if bone_name else tuple(obj.location)
 
     samples: list[SamplePoint] = []
     f = float(frame_start)
@@ -136,9 +141,9 @@ def sample_path_fast(
     count = 0
 
     while f <= end + 1e-4 and count < max_samples:
-        lx = float(loc_fcs[0].evaluate(f)) if 0 in loc_fcs else 0.0
-        ly = float(loc_fcs[1].evaluate(f)) if 1 in loc_fcs else 0.0
-        lz = float(loc_fcs[2].evaluate(f)) if 2 in loc_fcs else 0.0
+        lx = float(loc_fcs[0].evaluate(f)) if 0 in loc_fcs else fallback[0]
+        ly = float(loc_fcs[1].evaluate(f)) if 1 in loc_fcs else fallback[1]
+        lz = float(loc_fcs[2].evaluate(f)) if 2 in loc_fcs else fallback[2]
 
         local = (lx, ly, lz)
         world_v = rest_world @ Vector((lx, ly, lz, 1.0))
