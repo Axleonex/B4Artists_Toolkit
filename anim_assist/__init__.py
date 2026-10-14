@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Anim Assist",
     "author": "Developer",
-    "version": (12, 6, 2),
+    "version": (12, 7, 0),
     "blender": (4, 2, 0),
     "location": "Properties > Scene > Anim Assist; Graph Editor and Dope Sheet > Sidebar > Anim Assist; editor header menus",
     "description": "Animation tools with configurable Timeline sliders and named toolbar layouts, for Bforartists.",

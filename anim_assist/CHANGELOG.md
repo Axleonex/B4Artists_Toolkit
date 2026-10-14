@@ -1,3 +1,12 @@
+# 12.7.0 — Timeline toolbar overhaul
+
+- Consolidates the configurable inline/popout toolbar, per-tool settings and
+  user-named layouts as a minor overhaul release.
+- Qualifies fresh-start row visibility and an animator workflow through direct
+  gestures, settings, layout switching, native navigation and normal restart.
+- Retains the animation algorithms, 89 dispatch mappings and lifecycle repairs
+  from 12.6.2; the version consolidation changes no tool math or selection scope.
+
 # 12.6.2 — Configurable sliders and named toolbar layouts
 
 - Keeps the add-on-only second Timeline row, with Tween, Timing, Curves, Keys,
