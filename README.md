@@ -29,26 +29,6 @@ Install add-on ZIPs directly in your existing Bforartists installation.
 | Ghost Tool 4.2.10 candidate | [b4_ghost_tool_v4.2.10.zip](releases/b4_ghost_tool_v4.2.10.zip?raw=1) |
 | BoneCraft 9.2.1 (optional) | [BoneCraft-BFA-9.2.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip) |
 
-**Anim Assist is an add-on.** Install `b4_anim_assist_v12.6.0.zip` through Preferences and enable it. Its quick tools use the existing Timeline header in standard Bforartists. This release does not add a second Timeline row.
-
-Anim Assist 12.6.0 passed 80 immediate tool-effect checks in standard Bforartists. Additional modal and layout results in the historical qualification report used a custom application and do not establish the same coverage for the add-on alone. See the [release notes](docs/anim_assist/releases/12.6.0/RELEASE-NOTES.md) and [qualification report](docs/anim_assist/releases/12.6.0/qualification.md).
-
-BoneCraft 9.2.1 restores the native asset shelf so starter rigs appear alongside the other libraries; its [release notes](docs/bonecraft/releases/9.2.1/RELEASE-NOTES.md) record host and GUI verification. The unpublished Ghost Tool 4.2.10 candidate is designed to widen the left Ghost shelf once to match an open N-panel, with a 240 px fallback when closed, while preserving later manual resizing. It removes the duplicate main-header button while retaining every lower-row section, the direct Ghosts On switch and View-menu toolbar recovery. It keeps the complete Object/Pose toolbar in every split viewport, with native horizontal panning for overflow. It defaults to a visible Top Toolbar and migrates saved Top Header choices. Top Header has been removed from display settings. Shared feature options and cached visibility controls remain available. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. The candidate's native left-shelf behavior is not verified because the test host did not finish starting; Bforartists rig validation is also pending.
-
-See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The unpublished 4.2.10 source candidate includes a matching repository ZIP and PDF guide; publication awaits native shelf evidence and owner approval. The regular Latest [Ghost Tool 4.2.9 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.9) remains available. Earlier releases remain available as history.
-
-The [Ghost toolbar guide](docs/ghost_tool/toolbar/README.md) covers the current 4.2.10 candidate. Earlier archives and their verification reports remain available as history.
-
-## Install
-
-1. In Bforartists, open **Edit -> Preferences -> Add-ons -> Install from Disk...**
-2. Pick the `.zip` you downloaded.
-3. Enable the add-on by ticking its checkbox.
-
-   When updating Ghost Tool to the 4.2.10 candidate, restart Bforartists after installation. Marker Targets, Capture Targets and Snapshot Targets open their full lists independently of the other tools. Saved scenes retain their existing live-update choices: turn off Live Update Markers and Live Update Skin to keep snapshots while scrubbing. Test a move with auto-key enabled; ghosts should refresh after you finish moving.
-
-   **Ghost Tool** defaults to a visible **Top Toolbar** in the native Tool Settings row. In **Edit > Preferences > Add-ons > Ghost Tool**, choose **Top Toolbar**, **Right Sidebar (N)** or **Left Tool Shelf (T)**. Saved Top Header choices migrate to the toolbar; saved sidebar, shelf and toolbar visibility choices remain intact. Its **Ghost** menu provides Hide Toolbar; **View > Show Ghost Toolbar** or its preference checkbox restores hidden controls. The duplicate main-header button is removed. Save preferences normally to retain your choice.
-
 ## Browse the source
 
 The unpacked, readable source for each tool is in this repository so you can read it on GitHub without downloading anything:
