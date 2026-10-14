@@ -15,7 +15,7 @@ The release was first published on October 13, 2026 (America/New_York;
 ## Application withdrawal
 
 The owner clarified that the requested product is an add-on. The custom Windows
-application and its checksum are scheduled for removal from the public release
+application and its checksum were removed from the public release
 with this cleanup. The application patch, build scripts and packaging script
 are removed from the current source tree. Git history and historical validation
 evidence remain available.
