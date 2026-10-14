@@ -1,0 +1,5 @@
+{
+  "id": "f91c5797f25b4e5b81687bf1ba4c7142",
+  "ok": false,
+  "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\observe_timeline_overlay.py\", line 62, in poll\n    exec(data['code'], globals())\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\check_timeline_stress.py\", line 168, in stress_active_disabled\n    assert stress_active_op._timer is None\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\5.3\\scripts\\modules\\_bpy_types.py\", line 1099, in __getattribute__\n    properties = _StructRNA.path_resolve(self, \"properties\")\nReferenceError: StructRNA of type ANIMASSIST_OT_timeline_slider has been removed\n"
+}

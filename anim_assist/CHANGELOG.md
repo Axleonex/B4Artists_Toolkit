@@ -1,4 +1,42 @@
-# 12.6.0 — Native Timeline tool access
+# 12.7.0 — Timeline toolbar overhaul
+
+- Consolidates the configurable inline/popout toolbar, per-tool settings and
+  user-named layouts as a minor overhaul release.
+- Qualifies fresh-start row visibility and an animator workflow through direct
+  gestures, settings, layout switching, native navigation and normal restart.
+- Retains the animation algorithms, 89 dispatch mappings and lifecycle repairs
+  from 12.6.2; the version consolidation changes no tool math or selection scope.
+
+# 12.6.2 — Configurable sliders and named toolbar layouts
+
+- Keeps the add-on-only second Timeline row, with Tween, Timing, Curves, Keys,
+  Pose, Bake and Motion followed by right-side Search, More and Settings.
+- Starts with Breakdown and Smooth inline; Timing Scale uses direct-drag popout
+  feedback. All eight numeric tools can be hidden, buttons, popouts or inline.
+- Adds staged Toolbar Settings and individual tool settings for supported
+  ranges, defaults, sensitivity, precision, snapping and presets.
+- Adds user-named layout Save As, Load, Update, Rename and Delete. Recommended
+  reset keeps the library. Layout changes do not edit animation or scene scope.
+- Fits the row to width without changing saved configuration or adding editors.
+- Repairs bilateral Mirror Selected source overwriting, fast object-trail spatial
+  offset, and missing committed redo state in immediate toolbar dispatch.
+- Validates layout settings before import; persists named layouts in preferences.
+
+# 12.6.1 — Add-on Timeline tool row
+
+- Adds a tool row inside the Timeline canvas in standard Bforartists; no
+  separate application, helper editor or long appended playback-header toolbar.
+- Uses native keymaps for toolbar clicks and preserves normal input outside it.
+- Keeps seven families, 89 searchable/pinnable actions and 13 default quick tools.
+- Fits quick tools to the available width; More contains overflow actions.
+- Preserves the frame ruler when the native header is at the top.
+- Gives a collapsed Timeline space once on initial startup when native resizing
+  is available. Later manual resizing is preserved; there is no layout-repair loop.
+- Adds hover help, reversible visibility and saved quick selection.
+
+# 12.6.0 — Historical native Timeline experiment
+
+The custom application was withdrawn; 12.6.1 is an add-on-only implementation.
 
 - Supplies an Anim Assist TOOL_HEADER in the patched Bforartists Timeline.
 - Adds 19 existing action presets for clipboard, reference bookmarks, object

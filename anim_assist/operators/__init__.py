@@ -1,6 +1,7 @@
 """Operator class collection for registration."""
 
 from .settings_ops import AA_OT_export_settings, AA_OT_import_settings
+from .timeline_slider_ops import CLASSES as _timeline_slider_classes
 from .diagnostics_ops import AA_OT_copy_diagnostics, AA_OT_refresh_diagnostics
 from .keymanager_ops import classes as _keymanager_classes
 from .anim_offset_ops import classes as _anim_offset_classes
@@ -92,6 +93,7 @@ from .lifecycle_ops import CLASSES as _lifecycle_classes
 from .home_ops import CLASSES as _home_classes
 
 CLASSES: tuple[type, ...] = (
+    *_timeline_slider_classes,
     *_home_classes,
     *_p3_property_classes,
     *_p4_property_classes,

@@ -1,0 +1,355 @@
+{
+  "scale": 1.5,
+  "items": [
+    [
+      "SEARCH",
+      "",
+      "Search",
+      [
+        5.7,
+        2,
+        78.6,
+        34
+      ]
+    ],
+    [
+      "SETTINGS",
+      "",
+      "Settings",
+      [
+        90.0,
+        2,
+        86.6,
+        34
+      ]
+    ],
+    [
+      "MENU",
+      "tween",
+      "Tween",
+      [
+        182.3,
+        2,
+        76.6,
+        34
+      ]
+    ],
+    [
+      "ACTION",
+      "B25",
+      "25%",
+      [
+        264.6,
+        2,
+        61.599999999999994,
+        34
+      ]
+    ],
+    [
+      "ACTION",
+      "B50",
+      "50%",
+      [
+        331.90000000000003,
+        2,
+        61.599999999999994,
+        34
+      ]
+    ],
+    [
+      "ACTION",
+      "B75",
+      "75%",
+      [
+        399.20000000000005,
+        2,
+        61.599999999999994,
+        34
+      ]
+    ],
+    [
+      "ACTION",
+      "DRAG",
+      "Drag",
+      [
+        466.50000000000006,
+        2,
+        63.599999999999994,
+        34
+      ]
+    ],
+    [
+      "MENU",
+      "curves",
+      "Curves",
+      [
+        535.8000000000001,
+        2,
+        79.6,
+        34
+      ]
+    ],
+    [
+      "MENU",
+      "timing",
+      "Timing",
+      [
+        621.1,
+        2,
+        77.6,
+        34
+      ]
+    ],
+    [
+      "ACTION",
+      "NUDGE_LEFT",
+      "-1f",
+      [
+        704.4,
+        2,
+        52.599999999999994,
+        34
+      ]
+    ],
+    [
+      "MENU",
+      "keys",
+      "Keys",
+      [
+        762.6999999999999,
+        2,
+        63.599999999999994,
+        34
+      ]
+    ],
+    [
+      "MENU",
+      "pose",
+      "Pose",
+      [
+        831.9999999999999,
+        2,
+        63.599999999999994,
+        34
+      ]
+    ],
+    [
+      "MENU",
+      "bake",
+      "Bake",
+      [
+        901.2999999999998,
+        2,
+        63.599999999999994,
+        34
+      ]
+    ],
+    [
+      "MENU",
+      "motion",
+      "Motion",
+      [
+        970.5999999999998,
+        2,
+        78.6,
+        34
+      ]
+    ],
+    [
+      "MORE",
+      "",
+      "More",
+      [
+        1054.8999999999999,
+        2,
+        65.6,
+        34
+      ]
+    ]
+  ],
+  "band": [
+    0,
+    0,
+    1161,
+    38
+  ],
+  "state": {
+    "binary": "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+    "build_hash": "0a1ca45552db",
+    "windows": [
+      {
+        "width": 1400,
+        "height": 900,
+        "areas": [
+          {
+            "type": "PROPERTIES",
+            "mode": "",
+            "x": 1169,
+            "y": 35,
+            "width": 228,
+            "height": 589,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1169,
+                "y": 586,
+                "width": 228,
+                "height": 38
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 1169,
+                "y": 35,
+                "width": 44,
+                "height": 551
+              },
+              {
+                "type": "WINDOW",
+                "x": 1213,
+                "y": 35,
+                "width": 184,
+                "height": 551
+              }
+            ]
+          },
+          {
+            "type": "OUTLINER",
+            "mode": "",
+            "x": 1169,
+            "y": 629,
+            "width": 228,
+            "height": 188,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1169,
+                "y": 779,
+                "width": 228,
+                "height": 38
+              },
+              {
+                "type": "WINDOW",
+                "x": 1169,
+                "y": 629,
+                "width": 228,
+                "height": 150
+              }
+            ]
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "mode": "TIMELINE",
+            "x": 3,
+            "y": 35,
+            "width": 1161,
+            "height": 246,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 3,
+                "y": 35,
+                "width": 1161,
+                "height": 38
+              },
+              {
+                "type": "FOOTER",
+                "x": 3,
+                "y": 73,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "CHANNELS",
+                "x": 3,
+                "y": 73,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 1163,
+                "y": 73,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 3,
+                "y": 73,
+                "width": 1161,
+                "height": 208
+              }
+            ]
+          },
+          {
+            "type": "VIEW_3D",
+            "mode": "",
+            "x": 3,
+            "y": 286,
+            "width": 1161,
+            "height": 531,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 3,
+                "y": 779,
+                "width": 1161,
+                "height": 38
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 3,
+                "y": 741,
+                "width": 1161,
+                "height": 38
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 3,
+                "y": 286,
+                "width": 1161,
+                "height": 108
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 3,
+                "y": 394,
+                "width": 1161,
+                "height": 33
+              },
+              {
+                "type": "TOOLS",
+                "x": 3,
+                "y": 427,
+                "width": 198,
+                "height": 314
+              },
+              {
+                "type": "UI",
+                "x": 834,
+                "y": 427,
+                "width": 330,
+                "height": 314
+              },
+              {
+                "type": "HUD",
+                "x": 201,
+                "y": 427,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 3,
+                "y": 286,
+                "width": 1161,
+                "height": 531
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "frame": 10
+  }
+}

@@ -4,7 +4,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 
 | Tool | Version | What it does |
 |---|---|---|
-| **Anim Assist** | 12.6.0 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 89 searchable and pinnable actions. Configurable quick buttons, Search and Pin are available in the existing Timeline header. Inspired by Maya's AnimBot. |
+| **Anim Assist** | 12.7.0 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 89 searchable actions. Eight configurable numeric tools offer inline or popout sliders beside the native Timeline header, with per-tool settings and user-named layouts. Inspired by Maya's AnimBot. |
 | **Ghost Tool** | 4.2.11 | Defers viewport initialization during startup. Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
 | **BoneCraft** | 9.2.4 | Auto-rigging for humanoid characters (VRoid/VRM and similar): a Rig Builder wizard that finds the joints on the mesh, generates a skeleton and skin weights, then builds an animator control rig: IK/FK arms and legs with no-pop switching, a Control Picker, twist bones, joint corrective shapes, skirt/dress bones, and face controls (eye aim, blinks, jaw with lip follow). Also retargets walk/run clips and exports to VRChat, Unity and Unreal, with an optional T-pose export. Manual: [bonecraft/docs](bonecraft/docs/README.md). |
 
@@ -22,9 +22,17 @@ BoneCraft 9.2.4 is the current repository build: [changes and checks](docs/bonec
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.6.0 | [b4_anim_assist_v12.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/b4_anim_assist_v12.6.0.zip) |
+| Anim Assist 12.7.0 (repository build) | [b4_anim_assist_v12.7.0.zip](releases/b4_anim_assist_v12.7.0.zip?raw=true) |
 | Ghost Tool 4.2.11 | [b4_ghost_tool_v4.2.11.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip) |
 | BoneCraft 9.2.4 (optional; repository build) | [BoneCraft-BFA-9.2.4.zip](https://github.com/Axleonex/B4Artists_Toolkit/raw/refs/heads/main/releases/BoneCraft-BFA-9.2.4.zip) |
+
+**Anim Assist:** install the ZIP through Preferences and restart after updating.
+Its tool row appears inside the Timeline above a bottom header; with a top
+header, the frame ruler stays above the tool row. Breakdown and Smooth start
+as inline sliders. Right-click numeric tools for their settings; Settings
+chooses modes and saves named layouts. Search pins tools and More contains
+overflow. **View > Show Anim
+Assist Tool Row** restores a hidden row. No separate application is required.
 
 ## Browse the source
 
@@ -39,7 +47,7 @@ The unpacked, readable source for each tool is in this repository so you can rea
 
 Human-readable manuals are in [`docs/`](docs/):
 
-- [Anim Assist 12.6.0 add-on](docs/anim_assist/releases/12.6.0/RELEASE-NOTES.md) — installation, quick tools and validation; [tool access coverage](docs/anim_assist/releases/12.6.0/tool-access-coverage.md) records the actions and gestures. [Suite manuals](docs/anim_assist/) cover the other animation tools.
+- [Anim Assist 12.7.0 add-on](docs/anim_assist/releases/12.7.0/RELEASE-NOTES.md) — installation, sliders and named layouts; [qualification and screenshots](docs/anim_assist/releases/12.7.0/qualification.md) records the current checks. [Suite manuals](docs/anim_assist/) cover the other animation tools.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.11 guide, PDF and toolbar notes
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.4 source manual and translation status
 
