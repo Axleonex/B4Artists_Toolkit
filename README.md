@@ -18,7 +18,7 @@ If you hit an issue, please open an [issue](https://github.com/Axleonex/B4Artist
 
 Install add-on ZIPs directly in your existing Bforartists installation.
 
-BoneCraft 9.2.4 is the current repository build: [changes and checks](docs/bonecraft/releases/9.2.4/RELEASE-NOTES.md). Its latest tagged GitHub Release remains 9.2.3.
+The rebuilt BoneCraft 9.2.4 ZIP includes the Grab/tool-cycling correction. BoneCraft 9.2.4 is the current repository build: [changes and checks](docs/bonecraft/releases/9.2.4/RELEASE-NOTES.md). Its latest tagged GitHub Release remains 9.2.3.
 
 | Add-on | Direct download |
 |---|---|

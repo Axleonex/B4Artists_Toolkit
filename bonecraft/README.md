@@ -49,6 +49,7 @@ Repository build 9.2.4: [installable ZIP](../releases/BoneCraft-BFA-9.2.4.zip). 
 
 ### 9.2.4 repository changes
 
+- The rebuilt ZIP fixes Grab/Move and native tool cycling with BoneCraft enabled in Object and Pose modes.
 - Open Health Check runs the registered validator and shows refreshable results.
 - Quick Wins and Remaining Tasks show each task once.
 - Armatures and rig-bound meshes are accepted; unavailable validator packages are explained.

@@ -3,15 +3,25 @@
   "status": "repository build; no tagged GitHub Release",
   "archive": "BoneCraft-BFA-9.2.4.zip",
   "files": 232,
-  "bytes": 1236557,
-  "sha256": "311399bf7cc7341d8125a2195ec701f5c3c485b7757820166281109ea742f0dd",
+  "bytes": 1236611,
+  "sha256": "79f8f85b4706d9761c893b2066f7b164ee31a5ea5d3124f5e43085580860b0aa",
   "crc_passed": true,
   "all_files_match_source": true,
   "addon_and_sidecar_version_match": true,
   "live_window_verified": false,
   "host": "Bforartists 5.2.0 portable; Blender core 5.3.0 Alpha 0a1ca45552db",
   "host_checks": {
-    "test_taskboard_health_host": "passed"
+    "test_taskboard_health_host": "passed from extracted ZIP",
+    "test_toolbar_cycle_host": "passed from extracted ZIP"
   },
-  "taskboard_cases": "unique cards/counts/collapse; armature, parented/modifier mesh, Pose; invalid selection; disabled/missing validator; popup dispatch/results/refresh; seven languages"
+  "taskboard_cases": "unique cards/counts/collapse; armature, parented/modifier mesh, Pose; invalid selection; disabled/missing validator; popup dispatch/results/refresh; seven languages",
+  "source_commit": "a7b0c406c985feef526c60cff169882524c45808",
+  "rebuild_reason": "Include the Grab/tool-cycling fix in the installable 9.2.4 ZIP",
+  "supersedes_archive_sha256": "311399bf7cc7341d8125a2195ec701f5c3c485b7757820166281109ea742f0dd",
+  "changed_package_files": [
+    "boneforge/autorig/tools.py",
+    "boneforge/mechanisms/tools.py"
+  ],
+  "archive_host_checks": "passed",
+  "tested_archive_sha256": "79f8f85b4706d9761c893b2066f7b164ee31a5ea5d3124f5e43085580860b0aa"
 }
