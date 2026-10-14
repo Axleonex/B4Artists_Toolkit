@@ -4,6 +4,8 @@
 
 ## 가이드 8: 립싱크 설정하기
 
+`CATS → VRChat Tools → Facial`
+
 > **소요 시간:** 약 10–20분
 > **결과:** VRChat에서 말할 때 아바타의 입이 올바르게 움직임
 
@@ -19,7 +21,7 @@
 
 ### 1단계 — VRChat Viseme Mapping 열기
 
-오른쪽 사이드바의 **CATS** 탭에서 **VRChat** → **VRChat Viseme Mapping**(VRChat 비세임 매핑)을 펼칩니다.
+오른쪽 사이드바의 **CATS → VRChat Tools → Facial** → VRChat Viseme Mapping.
 
 ---
 
@@ -63,6 +65,8 @@
 
 ## 가이드 9: 아바타 성능 개선하기
 
+`CATS → VRChat Tools → Check Performance`
+
 > **소요 시간:** 약 15–25분
 > **결과:** 더 좋은 VRChat 성능 등급, 다른 플레이어에게 더 빠른 로딩
 
@@ -76,7 +80,7 @@
 
 ### 1단계 — 현재 등급 확인하기
 
-**CATS** 탭에서 **VRChat** → **성능 확인**을 펼칩니다. **Calculate Performance Rank**(성능 등급 계산)를 클릭합니다. BoneCraft가 전체 등급과 세부 항목(폴리곤, 스킨 메시, 머티리얼 슬롯, 본, PhysBone, 콘택트)을 보여 주고, 각 항목이 다음 등급까지 얼마나 남았는지 알려 줍니다.
+**CATS** 탭에서 **VRChat Tools** → **성능 확인**을 펼칩니다. **Calculate Performance Rank**(성능 등급 계산)를 클릭합니다. BoneCraft가 전체 등급과 세부 항목(폴리곤, 스킨 메시, 머티리얼 슬롯, 본, PhysBone, 콘택트)을 보여 주고, 각 항목이 다음 등급까지 얼마나 남았는지 알려 줍니다.
 
 ---
 
@@ -120,6 +124,8 @@
 ---
 
 ## 가이드 10: 포즈 저장하고 다시 쓰기
+
+`BoneCraft → Review → Pose Library`
 
 > **소요 시간:** 약 5–10분
 > **결과:** 한 번의 클릭으로 적용할 수 있는 저장된 포즈 라이브러리
@@ -169,6 +175,8 @@
 
 ## 가이드 11: 두 리그를 하나로 합치기
 
+`BoneCraft → Setup Rigging → Bone Merge`
+
 > **소요 시간:** 복잡도에 따라 약 25–40분
 > **결과:** 두 스켈레톤이 하나로 합쳐지고 모든 웨이트가 유지됨
 
@@ -182,7 +190,7 @@
 
 ### 1단계 — 본 병합 열기
 
-**BoneCraft** 탭에서 **본 병합** 섹션을 펼칩니다. 세 단계로 진행되며, 앞 단계를 마치면 다음 단계가 열립니다.
+**BoneCraft → Setup Rigging** 탭에서 **본 병합** 섹션을 펼칩니다. 세 단계로 진행되며, 앞 단계를 마치면 다음 단계가 열립니다.
 
 ---
 

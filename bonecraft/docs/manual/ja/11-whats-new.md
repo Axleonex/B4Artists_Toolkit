@@ -4,6 +4,15 @@
 
 新しい順に並べています。
 
+## 9.2.2 — 現在のインターフェース
+
+タブで機能グループを選びます。Setup Rigging、Skin、Review、Avatar Tools、Facial はタブ内の展開可能なセクションで、独立したタブではありません。以下は英語 UI のラベルです。翻訳名は Language 設定に従います。
+
+- Bone Merge → BoneCraft → Setup Rigging
+- Delta Mush / Proximity Wrap → BoneCraft → Skin
+- Viseme Library / Lip Sync → CATS → Avatar Tools
+- VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
+
 ## 9.1.2（2026年10月）
 
 - **シーンプロパティのスイッチ:** プリファレンス > タブに「シーンプロパティ」の行が加わりました。その「表示」ボタン（オンの間は青）で、プロパティ > シーンタブにある BoneCraft のすべてのセクション（リグビルダー、メカニズム、CATS、VRChat、インポート / エクスポート）を、アドオンを無効にせずに表示・非表示にできます。最初はオンで、3D ビューのタブとアーマチュアタブには影響しません。

@@ -17,14 +17,7 @@ BoneCraft is an add-on for Bforartists that helps you rig characters and props, 
 
 BoneCraft runs only in Bforartists (the Blender fork). For standard Blender there is a separate add-on, BoneForge, with a smaller set of tools. Install one or the other, never both. In standard Blender, BoneCraft does not load: it shows one notice with a button to get Bforartists.
 
-| Area | BoneForge (standard Blender) | BoneCraft (Bforartists) |
-| --- | --- | --- |
-| CATS avatar cleanup, Material Combiner, UVToolkit-derived controls | Included | Included |
-| Basic avatar helpers (Mixamo-style) | Included | Included |
-| Rig Builder: joint detection, wizard, control rig, Basic Humanoid asset | Not included | Included |
-| Animator controls and the Control Picker | Not included | Included |
-| Mechanisms for props and machines | Not included | Included |
-| Advanced retargeting and profile-driven game export | Not included | Included |
+BoneForge 9.0.0 and later target standard Blender. BoneCraft is the separate Bforartists add-on. Both have Auto-Rig Wizard, Quick Rig, Mannequin and the shared CATS/Material Atlas tools. BoneCraft also has Mechanisms, the Control Picker and its production control-rig, joint-detection and profile-export tools. Similar placement does not add those tools to BoneForge.
 
 ## Installing BoneCraft
 
@@ -44,13 +37,27 @@ BoneCraft runs only in Bforartists (the Blender fork). For standard Blender ther
 
 ## Where things are
 
-BoneCraft adds three tabs to the 3D Viewport:
+Tab names select a workspace group. Setup Rigging, Skin, Review, Avatar Tools and Facial are expandable sections inside those tabs, not separate tabs. The paths below use the English UI labels; translated labels depend on the Language preference.
 
-| Tab | Default side | Sections |
+| Tab | Default location | Sections |
 | --- | --- | --- |
-| BoneCraft | Left Tool Shelf (press T) | Overview, Setup Rigging, Skin, Mechanisms, Review |
-| Rig Builder | Left Tool Shelf (press T) | Rig Builder: Auto-Rig Wizard, Quick Rig, Mannequin |
-| CATS | Right sidebar (press N) | CATS, Avatar Tools, VRChat Tools, Import / Export |
+| Rig Builder | Left Tool Shelf (T) | Auto-Rig Wizard, Quick Rig - premade armatures, Mannequin |
+| BoneCraft | Left Tool Shelf (T) | Overview, Setup Rigging, Skin, Mechanisms, Review |
+| CATS | Right sidebar (N) | CATS, Avatar Tools, VRChat Tools, Import / Export |
+
+| Tool | Open this path |
+| --- | --- |
+| Bone Merge | BoneCraft → Setup Rigging → Bone Merge |
+| Delta Mush / Proximity Wrap | BoneCraft → Skin → Delta Mush / Proximity Wrap |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library → Lip Sync |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Humanoid / Hair / VRChat export | CATS → Avatar Tools → Set Up Humanoid Bones / Add Hair Physics / Export to VRChat |
+| VRM / MMD / I/O Hub | CATS → Import / Export → VRM / VRoid, MMD / PMX, Game Engine Export |
+| Performance / Clothing / Naming | CATS → VRChat Tools → Check Performance / Attach Clothing / VRChat Naming Extras |
+
+Select an armature for rig and viseme-library controls; select a mesh in Object Mode for Delta Mush and Proximity Wrap. Lip Sync requires an armature in Pose Mode. Expand the section triangle to show its buttons. Options folds hold optional settings; tools that run immediately can be adjusted in Adjust Last Operation before running another operation.
+
+These are three different facial workflows: CATS viseme generation creates mouth shape keys, Viseme Library / Lip Sync stores poses and keys animation, and Facial maps existing shape keys for VRChat or configures face tracking. UVToolkit-derived controls are in CATS → Material Atlas → Override Inherited Settings → UV Packing; this is the shared atlas workflow, not the full standalone UVToolkit add-on.
 
 **Move a tab:** open **Edit** → **Preferences** → **Add-ons** → BoneCraft → **Tabs**. Each tab has a show switch and two buttons, Left and Right. A change applies at once. While a tab is hidden, its Left and Right buttons turn grey, but they still work.
 
@@ -58,7 +65,7 @@ BoneCraft adds three tabs to the 3D Viewport:
 
 **Shelf Width:** Widen Narrow Shelves starts on. It widens shelves holding BoneCraft tabs once if they are below the Left or Right minimum: 240 and 260 pixels by default, at 1× UI scale. A shelf you drag narrower afterwards stays at your chosen width. Turn the switch off to manage widths yourself; its width fields become inactive.
 
-**Menus and built-in Tool Shelf tabs:** in 9.1, you can also reach tools from the 3D Viewport's header menus:
+**Menus and built-in Tool Shelf tabs:** you can also reach tools from the 3D Viewport's header menus:
 
 | Location | Tools |
 | --- | --- |

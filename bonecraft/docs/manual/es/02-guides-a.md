@@ -17,7 +17,7 @@
 
 ### Paso 1 — Abrir el Constructor de Rig
 
-Abre la pestaña **Rig Builder** en la Tool Shelf izquierda (pulsa **T** en la vista 3D). El mismo Constructor de Rig está siempre también en la pestaña **Escena** del editor de **Propiedades**. Tiene tres partes: Quick Rig (armaduras ya hechas), el **Asistente Auto-Rig** y **Maniquí**.
+Abre Rig Builder en la Tool Shelf izquierda (T). Orden: Auto-Rig Wizard, Quick Rig, Mannequin. La copia en Properties → Scene aparece cuando Preferences → Tabs → Scene Properties → Show está activado.
 
 Despliega **Asistente Auto-Rig** y haz clic en **Iniciar Auto-Rig**.
 
@@ -77,7 +77,7 @@ El paso de revisión enumera los avisos y las opciones de generación. Haz clic 
 
 ### Paso 8 — Mapear a los huesos humanoides de VRChat
 
-Abre la pestaña **CATS** en la barra lateral derecha (pulsa **N**), despliega **VRChat** y luego **Configurar Huesos Humanoides**. Haz clic en **Mapear Todo Automáticamente**: BoneCraft conecta tus huesos con las ranuras del cuerpo que VRChat usa para mover un avatar contigo. Haz clic en **Normalize Names** (normalizar nombres) para dar a los huesos mapeados los nombres que espera VRChat y luego en **Validar**.
+Abre la pestaña **CATS** en la barra lateral derecha (pulsa **N**), despliega **Avatar Tools** y luego **Configurar Huesos Humanoides**. Haz clic en **Mapear Todo Automáticamente**: BoneCraft conecta tus huesos con las ranuras del cuerpo que VRChat usa para mover un avatar contigo. Haz clic en **Normalize Names** (normalizar nombres) para dar a los huesos mapeados los nombres que espera VRChat y luego en **Validar**.
 
 **Lo que deberías ver:** las ranuras obligatorias (Hips, Spine, Head, LeftUpperArm, etc.) muestran cada una un hueso. La guía 5 explica las ranuras.
 
@@ -85,7 +85,7 @@ Abre la pestaña **CATS** en la barra lateral derecha (pulsa **N**), despliega *
 
 ### Paso 9 — Exportar para VRChat
 
-En la pestaña **CATS**, despliega **VRChat** → **Exportar a VRChat**. Indica la **Folder** (carpeta) y el nombre del **Avatar**, y haz clic en **Exportar a VRChat (Unity)**.
+En la pestaña **CATS**, despliega **Avatar Tools** → **Exportar a VRChat**. Indica la **Folder** (carpeta) y el nombre del **Avatar**, y haz clic en **Exportar a VRChat (Unity)**.
 
 **Lo que deberías ver:** el avatar exportado en la carpeta elegida, listo para el VRChat Creator Companion y el SDK de VRChat en Unity.
 
@@ -124,7 +124,7 @@ Si eliges un archivo de proyecto de VRoid Studio (`.vroid`), BoneCraft muestra e
 
 ### Paso 3 — Mapear a los huesos humanoides de VRChat
 
-En la pestaña **CATS** → **VRChat** → **Configurar Huesos Humanoides**, haz clic en **Mapear Todo Automáticamente**. Los esqueletos de VRoid siguen una distribución estándar, así que esto suele rellenar todas las ranuras. Si una ranura está mal, **Fix Humanoid Map** (corregir mapa humanoide) en la sección **VRM / VRoid** (bajo Lint) repara las confusiones de nombres habituales de VRoid.
+En la pestaña **CATS** → **Avatar Tools** → **Configurar Huesos Humanoides**, haz clic en **Mapear Todo Automáticamente**. Los esqueletos de VRoid siguen una distribución estándar, así que esto suele rellenar todas las ranuras. Si una ranura está mal, **Fix Humanoid Map** (corregir mapa humanoide) en la sección **VRM / VRoid** (bajo Lint) repara las confusiones de nombres habituales de VRoid.
 
 ---
 
@@ -193,7 +193,7 @@ Los modelos de MMD suelen tener geometría de más y muchas piezas separadas. En
 
 ### Paso 5 — Mapear a los huesos humanoides de VRChat
 
-En la pestaña **CATS** → **VRChat** → **Configurar Huesos Humanoides**, haz clic en **Mapear Todo Automáticamente**. Los esqueletos de MMD se parecen a los de VRChat, así que la mayoría de las ranuras se rellenan solas. Para una ranura vacía, haz clic en su botón y elige el hueso.
+En la pestaña **CATS** → **Avatar Tools** → **Configurar Huesos Humanoides**, haz clic en **Mapear Todo Automáticamente**. Los esqueletos de MMD se parecen a los de VRChat, así que la mayoría de las ranuras se rellenan solas. Para una ranura vacía, haz clic en su botón y elige el hueso.
 
 ---
 
@@ -207,6 +207,8 @@ En la pestaña **CATS** → **VRChat** → **Configurar Huesos Humanoides**, haz
 
 ## Guía 4: corrige los nombres de los huesos de tu avatar
 
+`CATS → VRChat Tools → VRChat Naming Extras`
+
 > **Tiempo:** unos 5–15 minutos
 > **Resultado:** los huesos que necesita VRChat renombrados con nombres compatibles con VRChat
 
@@ -217,7 +219,7 @@ En la pestaña **CATS** → **VRChat** → **Configurar Huesos Humanoides**, haz
 
 ### Paso 1 — Detectar el estilo de nombres actual
 
-En la pestaña **CATS**, despliega **VRChat** → **VRChat Naming Extras** (extras de nombres de VRChat) y haz clic en **Detectar**. BoneCraft muestra el estilo de nombres que ha encontrado (por ejemplo Mixamo, VRoid o Unity) y una puntuación; **Forzar Nuevo Escaneo** vuelve a comprobar después de cambiar nombres.
+En la pestaña **CATS**, despliega **VRChat Tools** → **VRChat Naming Extras** (extras de nombres de VRChat) y haz clic en **Detectar**. BoneCraft muestra el estilo de nombres que ha encontrado (por ejemplo Mixamo, VRoid o Unity) y una puntuación; **Forzar Nuevo Escaneo** vuelve a comprobar después de cambiar nombres.
 
 Para nombres de huesos en japonés, chino, coreano, portugués, español o francés, usa en su lugar la pestaña **CATS** → **CATS** → **Traducir Nombres de Huesos**: elige el **Idioma** y ejecútalo. Convierte los nombres al inglés en un solo paso.
 
@@ -246,6 +248,8 @@ Mapea primero los huesos (guía 5, paso 2) y luego haz clic en **Normalize Names
 
 ## Guía 5: mapea tu avatar al sistema corporal de VRChat
 
+`CATS → Avatar Tools → Set Up Humanoid Bones`
+
 > **Tiempo:** unos 10–15 minutos
 > **Resultado:** el esqueleto de tu avatar conectado al sistema de movimiento humanoide de VRChat
 
@@ -258,7 +262,7 @@ Mapea primero los huesos (guía 5, paso 2) y luego haz clic en **Normalize Names
 
 ### Paso 1 — Abrir Configurar Huesos Humanoides
 
-En la pestaña **CATS**, despliega **VRChat** → **Configurar Huesos Humanoides**.
+En la pestaña **CATS**, despliega **Avatar Tools** → **Configurar Huesos Humanoides**.
 
 ---
 
@@ -294,6 +298,8 @@ Si tu avatar tiene huesos de ojos, usa la pestaña **CATS** → **CATS** → **S
 
 ## Guía 6: añade física de cabello
 
+`CATS → Avatar Tools → Add Hair Physics`
+
 > **Tiempo:** unos 15–25 minutos
 > **Resultado:** el cabello de tu avatar (y otras partes blandas) moviéndose con naturalidad en VRChat
 
@@ -307,7 +313,7 @@ Si tu avatar tiene huesos de ojos, usa la pestaña **CATS** → **CATS** → **S
 
 ### Paso 1 — Abrir Añadir Física de Cabello
 
-En la pestaña **CATS**, despliega **VRChat** → **Añadir Física de Cabello**. Tiene cuatro partes: Hair Chain Detection (detección de cadenas de cabello), Hair Chain Generation (generación de cadenas de cabello), PhysBone Configuration (configuración de PhysBone) y Hair Physics Colliders (colisionadores de física de cabello).
+En la pestaña **CATS**, despliega **Avatar Tools** → **Añadir Física de Cabello**. Tiene cuatro partes: Hair Chain Detection (detección de cadenas de cabello), Hair Chain Generation (generación de cadenas de cabello), PhysBone Configuration (configuración de PhysBone) y Hair Physics Colliders (colisionadores de física de cabello).
 
 ---
 
@@ -343,6 +349,8 @@ Los colisionadores son formas invisibles que impiden que el cabello atraviese la
 
 ## Guía 7: adjunta ropa que se mueva con tu cuerpo
 
+`CATS → VRChat Tools → Attach Clothing`
+
 > **Tiempo:** unos 20–30 minutos
 > **Resultado:** una prenda unida al esqueleto de tu avatar, que se mueve con tu cuerpo
 
@@ -355,7 +363,7 @@ Los colisionadores son formas invisibles que impiden que el cabello atraviese la
 
 ### Paso 1 — Abrir Adjuntar Ropa
 
-En la pestaña **CATS**, despliega **VRChat** → **Adjuntar Ropa**. Tiene tres partes: Bone Matching (emparejamiento de huesos), Collision Detection (detección de colisiones) y Clothing Merge (combinación de ropa).
+En la pestaña **CATS**, despliega **VRChat Tools** → **Adjuntar Ropa**. Tiene tres partes: Bone Matching (emparejamiento de huesos), Collision Detection (detección de colisiones) y Clothing Merge (combinación de ropa).
 
 ---
 

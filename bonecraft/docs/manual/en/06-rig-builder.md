@@ -2,7 +2,7 @@
 
 [← Contents](index.md)
 
-For a narrated demonstration of both rig types, see the [IK/FK beginner walkthrough and practice file](../../tutorials/ikfk-beginner.md).
+For a narrated demonstration of both rig types, see the [IK/FK beginner walkthrough and practice file](https://github.com/Axleonex/B4Artists_Toolkit/blob/main/bonecraft/docs/tutorials/ikfk-beginner.md).
 
 ## Building a New Rig
 
@@ -477,6 +477,6 @@ Moving animation from one skeleton to another is covered in [Rig Tools: Retarget
 - **Run Merge Preview** — reports what the merge would do, without changing anything
 - **Merge Armatures** — backs up both armatures and merges them
 
-**Where to find it:** BoneCraft tab → Bone Merge
+**Where to find it:** BoneCraft → Setup Rigging → Bone Merge
 
 Next: [Mechanisms](07-mechanisms.md)
