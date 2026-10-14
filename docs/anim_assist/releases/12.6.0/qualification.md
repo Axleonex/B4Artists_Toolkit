@@ -1,3 +1,5 @@
+> Historical record: the custom Windows application described here is withdrawn. The current download is the Anim Assist add-on for existing Bforartists, using its existing Timeline header. See [current installation instructions](RELEASE-NOTES.md).
+
 # Native Timeline qualification — 12.6.0
 
 Status: the available-host validation matrix passed after the repairs below.

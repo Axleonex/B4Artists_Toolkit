@@ -1,40 +1,42 @@
 # Anim Assist 12.6.0
 
-## Native Timeline toolbar
+Anim Assist is an animation add-on for Bforartists, the Blender fork. Install it
+in your existing Bforartists application. Standard Blender remains unsupported.
 
-The matching custom Bforartists Windows application provides a genuine second
-Timeline row above playback and keyframing. Seven inline families contain
-configurable quick buttons, Search, Pin and nearby settings for 89 existing
-Anim Assist actions.
+## Timeline tools
 
-Enabling the add-on shows the row automatically in a fresh Timeline. Explicit
-hiding and saved quick selections are retained. The separate Text Editor strip
-and recurring layout repair are removed.
+The existing Timeline header provides seven tool families: Tween, Curves,
+Timing, Keys, Pose, Bake and Motion. Configurable quick buttons, Search, Pin
+and nearby options expose 89 existing actions. Pin an action for direct access;
+use the Gear to configure quick selections or Reset.
 
-## Downloads and installation
+This add-on does not create a second native Timeline row. It no longer creates
+a separate Text Editor strip or repeatedly repairs editor geometry.
+The custom Windows application has been withdrawn from distribution.
 
-- For the native second row, download and extract
-  `Bforartists_5.2.0_AnimAssist_12.6.0_Windows_x64.zip`. Run
-  `Launch Anim Assist (isolated).cmd`, then install and enable the included
-  `AnimAssist/b4_anim_assist_v12.6.0.zip`.
-- For an existing unpatched Bforartists installation, install
-  `b4_anim_assist_v12.6.0.zip`. Tools appear in the existing Timeline header.
+## Download and install
 
-These are two downloads for the same 12.6.0 release. The native row requires
-the custom application. Both downloads target Bforartists.
+Download [b4_anim_assist_v12.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/b4_anim_assist_v12.6.0.zip).
+
+1. Open **Edit > Preferences > Add-ons > Install from Disk** in Bforartists.
+2. Select the ZIP without extracting it.
+3. Enable Anim Assist and restart Bforartists after updating.
+4. Open a Timeline and use its Anim Assist controls.
+
+The ZIP is 577,101 bytes. SHA256:
+`60d4c7f10d9f14adde17e0cd5269bb07d4a4fc8f96810a4cd6e67903e5e73193`.
 
 ## Fixes and validation
 
-- Fixed toolbar re-enable while the Timeline is maximized.
 - Explained and enforced Ease's two-key prerequisite.
 - Fixed Action Offset package preferences, handle translation and cancellation
   of keys, selection and custom easing settings.
-- All 80 immediate tool effects passed in patched and unpatched Bforartists.
-- All nine native modal tools passed live changes, commit and cancellation.
-- Restart, saved layouts, migration, multiple windows, visibility lifecycle,
-  playback, scrubbing, key insertion and native Undo/Redo passed.
+- All 80 immediate tool effects passed in standard Bforartists.
+- Nine modal commit/cancel pairs and additional layout checks passed in the
+  withdrawn custom application. Those results are historical and do not claim
+  equivalent modal or layout coverage in standard Bforartists.
 
-Editor-border resizing has sampled in-drag evidence at 100% and 150% UI scale.
-Window resizing has before/after render coverage. Windows display-DPI
-transitions, universal absence of flicker and full production-rig or AnimBot
-algorithm parity are not certified. See the bundled qualification report.
+The add-on ZIP is unchanged by this distribution cleanup. Historical
+[qualification](qualification.md) and [tool access coverage](tool-access-coverage.md)
+retain the original host-specific evidence. Full AnimBot algorithm parity and
+exhaustive production-rig coverage are not established.
