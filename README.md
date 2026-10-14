@@ -4,7 +4,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 
 | Tool | Version | What it does |
 |---|---|---|
-| **Anim Assist** | 12.6.0 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 89 searchable and pinnable actions. The matching custom Bforartists application supplies a native second toolbar row above playback and keyframing. Inspired by Maya's AnimBot. |
+| **Anim Assist** | 12.6.0 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 89 searchable and pinnable actions. Configurable quick buttons, Search and Pin are available in the existing Timeline header. Inspired by Maya's AnimBot. |
 | **Ghost Tool** | 4.2.10 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
 
 ### Optional add-on: BoneCraft (rigging)
@@ -21,18 +21,17 @@ If you hit an issue, please open an [issue](https://github.com/Axleonex/B4Artist
 
 ## Download
 
-Install add-on ZIPs directly in Bforartists. Extract the native application ZIP before using its launcher.
+Install add-on ZIPs directly in your existing Bforartists installation.
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.6.0 add-on | [b4_anim_assist_v12.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/b4_anim_assist_v12.6.0.zip) |
-| Native application for Anim Assist 12.6.0 — Windows x64 | [Custom Bforartists application with the matching add-on](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/Bforartists_5.2.0_AnimAssist_12.6.0_Windows_x64.zip) |
+| Anim Assist 12.6.0 | [b4_anim_assist_v12.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/b4_anim_assist_v12.6.0.zip) |
 | Ghost Tool 4.2.10 candidate | [b4_ghost_tool_v4.2.10.zip](releases/b4_ghost_tool_v4.2.10.zip?raw=1) |
 | BoneCraft 9.2.1 (optional) | [BoneCraft-BFA-9.2.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip) |
 
-**The native second row requires the custom application download.** Extract that application ZIP, run `Launch Anim Assist (isolated).cmd`, and install its included `AnimAssist/b4_anim_assist_v12.6.0.zip`. Enabling Anim Assist shows the row automatically in a fresh Timeline. The add-on alone uses the existing header in unpatched Bforartists.
+**Anim Assist is an add-on.** Install `b4_anim_assist_v12.6.0.zip` through Preferences and enable it. Its quick tools use the existing Timeline header in standard Bforartists. This release does not add a second Timeline row.
 
-Anim Assist 12.6.0 passed 80 immediate tool-effect checks in patched and unpatched Bforartists, plus commit/cancel checks for all nine modal tools in the custom application. Restart, saved layouts, migration, multiple windows and native animation controls passed. Windows display-DPI transitions and continuous window-resize rendering remain unverified. See the [release notes](docs/anim_assist/releases/12.6.0/RELEASE-NOTES.md) and [qualification report](docs/anim_assist/releases/12.6.0/qualification.md).
+Anim Assist 12.6.0 passed 80 immediate tool-effect checks in standard Bforartists. Additional modal and layout results in the historical qualification report used a custom application and do not establish the same coverage for the add-on alone. See the [release notes](docs/anim_assist/releases/12.6.0/RELEASE-NOTES.md) and [qualification report](docs/anim_assist/releases/12.6.0/qualification.md).
 
 BoneCraft 9.2.1 restores the native asset shelf so starter rigs appear alongside the other libraries; its [release notes](docs/bonecraft/releases/9.2.1/RELEASE-NOTES.md) record host and GUI verification. The unpublished Ghost Tool 4.2.10 candidate is designed to widen the left Ghost shelf once to match an open N-panel, with a 240 px fallback when closed, while preserving later manual resizing. It removes the duplicate main-header button while retaining every lower-row section, the direct Ghosts On switch and View-menu toolbar recovery. It keeps the complete Object/Pose toolbar in every split viewport, with native horizontal panning for overflow. It defaults to a visible Top Toolbar and migrates saved Top Header choices. Top Header has been removed from display settings. Shared feature options and cached visibility controls remain available. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. The candidate's native left-shelf behavior is not verified because the test host did not finish starting; Bforartists rig validation is also pending.
 
@@ -64,7 +63,7 @@ The ZIPs package their recorded release source for one-click installation. The u
 
 Human-readable manuals are in [`docs/`](docs/):
 
-- [Anim Assist 12.6.0 native Timeline toolbar](docs/anim_assist/releases/12.6.0/RELEASE-NOTES.md) — installation, quick tools and validation; [tool access coverage](docs/anim_assist/releases/12.6.0/tool-access-coverage.md) records the actions and gestures. [Suite manuals](docs/anim_assist/) cover the other animation tools.
+- [Anim Assist 12.6.0 add-on](docs/anim_assist/releases/12.6.0/RELEASE-NOTES.md) — installation, quick tools and validation; [tool access coverage](docs/anim_assist/releases/12.6.0/tool-access-coverage.md) records the actions and gestures. [Suite manuals](docs/anim_assist/) cover the other animation tools.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.10 candidate guide, PDF and toolbar notes
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.1 English manual and translation status
 

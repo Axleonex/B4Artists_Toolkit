@@ -1,6 +1,6 @@
 {
-  "release": "Anim Assist 12.6.0 local Windows x64",
-  "status": "published regular release; available-host validation matrix passed with documented render/DPI limits",
+  "release": "Historical Anim Assist 12.6.0 custom Windows application",
+  "status": "historical custom application; withdrawn from the public release; not the current add-on installation",
   "application": "Custom Bforartists 5.2.0",
   "application_source_baseline": "v5.2.0",
   "native_patch_commit": "f5f550195e2299239f020f8e5b3cc5c391dadb43",
@@ -30,7 +30,7 @@
     "Representative fixtures do not establish exhaustive production-rig or full AnimBot parity"
   ],
   "formal_tests": "Native GUI integration assertions plus actual input; tests/summarize_native_validation.py audited evidence",
-  "published": true,
+  "published": false,
   "validation_summary": "native-evidence/full-validation/summary.json",
   "release_url": "https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/v12.6.0",
   "published_at": "2026-10-14T00:48:17Z"
