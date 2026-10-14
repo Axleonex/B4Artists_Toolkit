@@ -39,7 +39,8 @@ TOOLS = (BC_WT_build_mechanism, BC_WT_build_mechanism_pose)
 def register():
     from boneforge.core import toolbar
     for tool in TOOLS:
-        toolbar.register(tool, after={"builtin.relax"}, separator=True, group=False)
+        # Keep the separator outside native groups so their tools remain safe to cycle.
+        toolbar.register(tool, separator=True, group=False)
 
 
 def unregister():
