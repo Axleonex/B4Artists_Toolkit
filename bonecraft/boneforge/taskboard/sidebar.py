@@ -15,8 +15,6 @@ in Properties > Scene tab (see RB_CLASSES and autorig/rb_placement.py):
                    Cluster B — Body & Physics: B-Add Hair Physics,
                                                B-Attach Clothing,
                                                B-Viseme Library
-                   Cluster C — Finalize:       C-Check Performance,
-                                               C-Export to VRChat
 
   [Import/Export]  (order=50, bl_category=CATS — moved to CATS tab,
                    registered by io_hub/panel.py)
@@ -56,7 +54,6 @@ BF_PT_sb_vrchat        "VRChat"      order=35
     BF_PT_sb_vrc_humanoid  "Set Up Humanoid Bones" order=2  (cluster A)
     BF_PT_sb_vrc_hair      "Add Hair Physics"      order=4  (cluster B)
     BONEFORGE_PT_p2c_viseme_library "Viseme Library" order=6 (advanced_rigging/viseme.py)
-    BF_PT_sb_vrc_export    "Export to VRChat"      order=8  (cluster C)
 
 BF_PT_sb_animate       "Review"      order=40   (bl_idname kept for child links)
     BF_PT_sb_collections  "Collections"
@@ -939,10 +936,9 @@ class BF_PT_sb_correctives(Panel):
 
 # =============================================================
 # HUB: VRChat  (order=35)
-# 3 clusters communicated through panel naming and explainer text:
+# Avatar setup groups communicated through panel naming and explainer text:
 #   A — VRChat Setup (panels ordered 1-2)
 #   B — Body & Physics (panels ordered 4-6)
-#   C — Finalize     (panels ordered 7-8)
 # =============================================================
 
 def _cats_armature(context):
@@ -1002,7 +998,6 @@ class BF_PT_sb_vrchat(Panel):
         # wrapped to the sidebar's width, on either side of the viewport
         for text, icon in (("A — VRChat setup: humanoid bones.", 'STRIP_COLOR_01'),
                            ("B — Body & Physics: hair, visemes.", 'STRIP_COLOR_04'),
-                           ("C — Finalize: export.", 'STRIP_COLOR_05'),
                            ("Performance, clothing, facial tools and naming: VRChat Tools, below.", 'TOOL_SETTINGS')):
             draw_wrapped(col, context, T(text), icon=icon)
 
@@ -1087,8 +1082,6 @@ class BF_PT_sb_vrc_hair(Panel):
             _delegate_draw(self, context, module_path, class_name)
 
 
-# ── Cluster C — Finalize ───────────────────────────────────────
-
 # ── VRChat Tools — the embedded VRChat utilities in one section ──────
 
 VRC_TOOL_GROUPS = (
@@ -1167,81 +1160,6 @@ class BF_PT_cats_vrc_tools(Panel):
                              else "Face Tracking")
                     layout.label(text=T(title))
                 _delegate_draw(self, context, module_path, class_name)
-
-
-class BF_PT_sb_vrc_export(Panel):
-    """VRChat export: FBX to Unity + sidecar generation."""
-    bl_label       = " "
-    bl_idname      = "BF_PT_sb_vrc_export"
-    bl_space_type  = _SPACE
-    bl_region_type = _REGION
-    bl_category    = _CATS_CAT
-    bl_parent_id   = "BF_PT_sb_vrchat"
-    bl_order       = 8
-    bl_options     = {'DEFAULT_CLOSED'}
-
-    def draw_header(self, context):
-        self.layout.label(text=T("Export to VRChat"))
-
-    @classmethod
-    def poll(cls, context):
-        return _cats_armature(context) is not None
-
-    def draw(self, context):
-        layout = self.layout
-        _draw_explainer(
-            layout, context,
-            "Packages your avatar for VRChat SDK upload. Final step.",
-            "Complete needed VRChat setup and body/physics steps first.",
-        )
-
-        layout.separator(factor=0.3)
-
-        try:
-            from boneforge.vrchat.export.vrchat_export import draw_export_settings
-            draw_export_settings(layout, context)
-        except Exception:
-            layout.label(text=T("Export settings unavailable"), icon='INFO')
-
-        layout.separator(factor=0.3)
-
-        col = layout.column(align=True)
-        col.scale_y = 1.2
-        try:
-            col.operator(
-                "boneforge.vrc_export_to_unity",
-                text=T("Export to VRChat (Unity)"),
-                icon='EXPORT',
-            )
-        except Exception:
-            col.label(text=T("Export operator unavailable"), icon='ERROR')
-
-        layout.separator(factor=0.5)
-
-        col2 = layout.column(align=True)
-        try:
-            col2.operator(
-                "boneforge.vrc_generate_sidecar",
-                text=T("Generate Sidecar"),
-                icon='FILE_SCRIPT',
-            )
-            col2.operator(
-                "boneforge.vrc_copy_unity_script_path",
-                text=T("Copy Importer Path"),
-                icon='COPYDOWN',
-            )
-        except Exception:
-            col2.label(text=T("Sidecar operators unavailable"), icon='INFO')
-
-        layout.separator(factor=0.4)
-
-        mtoon_col = layout.column(align=True)
-        mtoon_col.label(text=T("Material Check:"))
-        mtoon_col.operator(
-            "boneforge.vrc_check_mtoon",
-            text=T("Check / Preserve MToon"),
-            icon='SHADING_RENDERED',
-        )
 
 
 # =============================================================
@@ -1496,11 +1414,10 @@ _CLASSES = (
     BF_PT_sb_skin,
     BF_PT_sb_weights,
     BF_PT_sb_correctives,
-    # VRChat hub — parent before children (A then B then C)
+    # Avatar Tools hub — parent before children (setup, then body/physics)
     BF_PT_sb_vrchat,
     BF_PT_sb_vrc_humanoid,   # A-2
     BF_PT_sb_vrc_hair,       # B-4
-    BF_PT_sb_vrc_export,     # C-8
     BF_PT_cats_vrc_tools,    # CATS section, order 36
     # Review hub — parent before children (animate + inspect merged)
     BF_PT_sb_animate,

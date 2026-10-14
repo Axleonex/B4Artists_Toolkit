@@ -52,6 +52,8 @@ def run():
         assert orders == {"BF_PT_mech": 2, "CATS_PT_main": 3, "BF_PT_sb_vrchat": 4, "BF_PT_cats_vrc_tools": 5,
                           "BF_PT_sb_io": 6}, orders
         assert bpy.types.BF_PT_rb_setup.bl_order == 1, "Rig Builder stays first"
+        assert getattr(bpy.types, "BF_PT_sb_vrc_export", None) is None, "export lives only in Import / Export"
+        assert getattr(bpy.types, "BF_PT_sb_vrc_export" + stm.SUFFIX, None) is None
 
         # Tools have explicit workflow homes; there is no catch-all section.
         curated = {"BF_PT_sb_overview", "BF_PT_sb_setup", "BF_PT_sb_skin", "BF_PT_mech", "BF_PT_sb_animate"}
@@ -106,6 +108,14 @@ def run():
         assert "Face Tracking" in _texts(shim.layout.log)
         assert not [k for k in heads if k.get("icon", 'NONE') != 'NONE'], "headings carry no topic icon"
         assert not [k.get("text") for n, a_, k in shim.layout.log if n == "label" and k.get("icon") in ('ERROR', 'QUESTION')]
+        shim = Shim()
+        bpy.types.BF_PT_sb_vrchat.draw(shim, bpy.context)
+        assert "C — Finalize: export." not in _texts(shim.layout.log)
+        shim = Shim()
+        bpy.types.BF_PT_sb_io.draw(shim, bpy.context)
+        assert any(n == "operator" and a_ and a_[0] == "boneforge.vrc_export_to_unity"
+                   for n, a_, k in shim.layout.log), "Import / Export retains VRChat export"
+
         drawn = []                                         # every enabled tool draws once, in group order
         real = {idn: getattr(bpy.types, idn).draw for idn in tools}
         try:
@@ -147,7 +157,7 @@ def run():
         bpy.context.view_layer.objects.active = empty
         try:
             for idn in ("BF_PT_sb_vrchat", "BF_PT_cats_vrc_tools", "BF_PT_sb_vrc_humanoid", "BF_PT_sb_vrc_hair",
-                        "BONEFORGE_PT_p2c_viseme_library", "BF_PT_sb_vrc_export"):
+                        "BONEFORGE_PT_p2c_viseme_library"):
                 assert getattr(bpy.types, idn).poll(Ctx()), (idn, "hidden while the picker has an armature")
             shim = Shim()
             vrc.draw(shim, bpy.context)
@@ -349,7 +359,7 @@ def run():
         library = bpy.types.BONEFORGE_PT_p2c_viseme_library
         assert library.bl_parent_id == "BF_PT_sb_vrchat"
         assert library.bl_category == lip.bl_category == "CATS"
-        assert bpy.types.BF_PT_sb_vrc_hair.bl_order < library.bl_order < bpy.types.BF_PT_sb_vrc_export.bl_order
+        assert bpy.types.BF_PT_sb_vrc_hair.bl_order < library.bl_order
         mirrored = getattr(bpy.types, library.bl_idname + stm.SUFFIX)
         assert mirrored.bl_parent_id == "BF_PT_sb_vrchat" + stm.SUFFIX
 
