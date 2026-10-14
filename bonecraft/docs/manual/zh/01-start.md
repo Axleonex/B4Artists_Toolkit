@@ -17,14 +17,7 @@ BoneCraft 是 Bforartists 的一个插件，帮助你为角色和道具绑定骨
 
 BoneCraft 只能在 Bforartists（Blender 的分支）中运行。标准 Blender 有一个单独的插件 BoneForge，工具较少。两者只安装其一，切勿同时安装。在标准 Blender 中，BoneCraft 不会加载：它只显示一条提示，并附带一个获取 Bforartists 的按钮。
 
-| 方面 | BoneForge（标准 Blender） | BoneCraft（Bforartists） |
-| --- | --- | --- |
-| CATS 虚拟形象清理、Material Combiner、源自 UVToolkit 的控件 | 包含 | 包含 |
-| 基本的虚拟形象辅助工具（Mixamo 风格） | 包含 | 包含 |
-| 绑定构建器：关节检测、向导、控制绑定、Basic Humanoid 资源 | 不包含 | 包含 |
-| 动画师控制和 Control Picker | 不包含 | 包含 |
-| 用于道具和机械的 Mechanisms | 不包含 | 包含 |
-| 高级重定向和基于配置文件的游戏导出 | 不包含 | 包含 |
+BoneForge 9.0.0 及以后用于标准 Blender；BoneCraft 是独立的 Bforartists 插件。两者都有 Auto-Rig Wizard、Quick Rig、Mannequin 和共享的 CATS/Material Atlas 工具。BoneCraft 另有 Mechanisms、Control Picker、生产级控制绑定、关节检测和配置文件导出工具。相似布局不会将这些工具加入 BoneForge。
 
 ## 安装 BoneCraft
 
@@ -44,25 +37,32 @@ BoneCraft 只能在 Bforartists（Blender 的分支）中运行。标准 Blender
 
 ## 各功能在哪里
 
-BoneCraft 在 3D 视口中添加了三个选项卡：
+选项卡用于选择功能组。Setup Rigging、Skin、Review、Avatar Tools 和 Facial 是选项卡内可展开的分区，不是独立选项卡。下列路径保留英文界面标签；翻译名称取决于 Language 设置。
 
-| 选项卡 | 默认位置 | 部分 |
+| 选项卡 | 默认位置 | 分区 |
 | --- | --- | --- |
-| BoneCraft | 左侧工具架（按 T） | 概览、装备设置、蒙皮、Mechanisms、审查 |
-| Rig Builder | 左侧工具架（按 T） | 绑定构建器：Quick Rig、自动绑定向导、人体模型 |
-| CATS | 右侧边栏（按 N） | CATS、VRChat、导入 / 导出 |
+| Rig Builder | 左侧工具架（T） | Auto-Rig Wizard, Quick Rig - premade armatures, Mannequin |
+| BoneCraft | 左侧工具架（T） | Overview, Setup Rigging, Skin, Mechanisms, Review |
+| CATS | 右侧边栏（N） | CATS, Avatar Tools, VRChat Tools, Import / Export |
 
-**移动选项卡：** 打开 **编辑** → **偏好设置** → **插件** → BoneCraft → **Tabs**。每个选项卡都有一个显示开关和两个按钮：Left（左）和 Right（右）。更改会立即生效。选项卡被隐藏时，它的 Left 和 Right 按钮会变灰，但仍然可以使用。
+| 工具 | 打开路径 |
+| --- | --- |
+| Bone Merge | BoneCraft → Setup Rigging → Bone Merge |
+| Delta Mush / Proximity Wrap | BoneCraft → Skin → Delta Mush / Proximity Wrap |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library → Lip Sync |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Humanoid / Hair | CATS → Avatar Tools → Set Up Humanoid Bones / Add Hair Physics |
+| VRChat export | CATS → Import / Export → Unity / VRChat |
+| VRM / MMD / I/O Hub | CATS → Import / Export → VRM / VRoid, MMD / PMX, Game Engine Export |
+| Performance / Clothing / Naming | CATS → VRChat Tools → Check Performance / Attach Clothing / VRChat Naming Extras |
 
-**始终在属性编辑器中：** 无论选中什么，绑定构建器、Mechanisms、CATS、VRChat 和导入 / 导出也都显示在属性编辑器的场景选项卡中。选中骨架时，BoneCraft 的各部分还会显示在骨架数据选项卡中。显示开关永远不会隐藏这些副本。要在所有位置移除某个工具，请在 **工具** 列表中关闭它的工具包，或停用插件。
+绑定和口型库需要选择骨架；Delta Mush 和 Proximity Wrap 需要在对象模式选择网格。Lip Sync 需要姿势模式的骨架。点击三角形展开分区；Options 保存可选设置。立即执行的工具可在运行下一个操作前通过“调整上一步操作”修改。
 
-**Show Helpers（显示帮助）：** BoneCraft 用简短的"做什么 / 何时用"说明和"How this works"（工作原理）注释来解释它的各个部分。在插件的偏好设置中取消勾选 **Show Helpers** 即可隐藏它们。在 VRChat 部分中，**紧凑模式** 是同一个开关的快捷方式。
+偏好设置：Edit → Preferences → Add-ons → BoneCraft → Tabs 控制选项卡显示。Scene Properties 独立控制 Properties → Scene 中的 Rig Builder、Mechanisms 和 CATS 面板。Show Helpers 隐藏说明；Language 更改界面语言；Tools 启用各工具包。Ctrl+Shift+R 打开快捷绑定面板。
 
-**语言：** 插件偏好设置中的 **Language**（语言）设置可以把 BoneCraft 自己的面板切换为 English、日本語、한국어、中文、Français、Português 或 Español。
+BoneCraft 可通过 Preferences → Tabs 的 Left / Right 移动选项卡。Scene Properties → Show 默认开启。它还提供骨架数据面板以及原生 Pose / Weights 工具架按钮。这些 Bforartists 入口与标准 Blender 的 Blender 布局不同。
 
-**每次都先运行修复模型：** 在 CATS 选项卡中，始终先运行 **修复模型**，再使用其他 CATS 工具。CATS 流程用一份记录来跟踪你完成了哪些步骤，如果你不按顺序运行某个工具，它会发出警告。参见 [CATS 流程](04-cats-pipeline.md)。
-
-**快捷面板：** 在 3D 视口中按 **Ctrl+Shift+R**，可以在光标下方以弹出窗口打开 BoneCraft 的绑定面板。
+三种面部流程各有用途：CATS 口型生成创建嘴部形态键；Viseme Library / Lip Sync 保存姿态并生成动画关键帧；Facial 将现有形态键映射到 VRChat 或配置面部追踪。源自 UVToolkit 的控件位于 CATS → Material Atlas → Override Inherited Settings → UV Packing；这是共享的图集流程，并非完整的独立 UVToolkit 插件。
 
 ---
 

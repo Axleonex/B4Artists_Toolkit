@@ -762,6 +762,10 @@ STRINGS: dict[str, str] = {
     "2. Shift-click the base armature last (active)": "2. 最后按住 Shift 点击基础骨架（活动）",
     "3. Click Merge Clothing": "3. 点击合并服装",
     # CATS tab: Avatar Tools / VRChat Tools sections (2026-10-10)
+    "Facial": "面部",
+    "Face Tracking": "面部追踪",
+    "VRChat Viseme Mapping": "VRChat 口型映射",
+    "Performance, clothing, facial tools and naming: VRChat Tools, below.": "性能、服装、面部工具和命名：下方的 VRChat 工具。",
     "Avatar Tools": "虚拟形象工具",
     "VRChat Tools": "VRChat 工具",
     "Performance": "性能",
@@ -855,4 +859,15 @@ STRINGS.update({
     "Drop in the viewport to add the starter; Esc cancels": "???????????Esc ??",
     "Starter Rig Catalog": "??????",
     "Add Starter Rig": "??????"
+})
+
+# Task Board: distinct recommendations and working health results.
+STRINGS.update({
+    "Remaining Tasks": "剩余任务",
+    "Select an armature or a mesh bound to one.": "请选择骨架或绑定到骨架的网格。",
+    "Enable Advanced Rigging Systems in add-on preferences.": "请在插件偏好设置中启用 Advanced Rigging Systems。",
+    "Rig Validator failed to register. Check the console for details.": "Rig Validator 注册失败。请查看控制台了解详情。",
+    "Failed checks: {count}": "失败检查：{count}",
+    "Warnings: {count}": "警告：{count}",
+    "Refresh Results": "刷新结果",
 })

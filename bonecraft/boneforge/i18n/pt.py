@@ -762,6 +762,10 @@ STRINGS: dict[str, str] = {
     "2. Shift-click the base armature last (active)": "2. Shift+clique na armadura base por último (ativa)",
     "3. Click Merge Clothing": "3. Clique em Mesclar Roupas",
     # CATS tab: Avatar Tools / VRChat Tools sections (2026-10-10)
+    "Facial": "Rosto",
+    "Face Tracking": "Rastreamento facial",
+    "VRChat Viseme Mapping": "Mapeamento de visemas do VRChat",
+    "Performance, clothing, facial tools and naming: VRChat Tools, below.": "Desempenho, roupas, ferramentas faciais e nomes: Ferramentas VRChat, abaixo.",
     "Avatar Tools": "Ferramentas de Avatar",
     "VRChat Tools": "Ferramentas do VRChat",
     "Performance": "Desempenho",
@@ -855,4 +859,15 @@ STRINGS.update({
     "Drop in the viewport to add the starter; Esc cancels": "Solte na vista para adicionar o esqueleto; Esc cancela",
     "Starter Rig Catalog": "Cat?logo de esqueletos iniciais",
     "Add Starter Rig": "Adicionar esqueleto inicial"
+})
+
+# Task Board: distinct recommendations and working health results.
+STRINGS.update({
+    "Remaining Tasks": "Tarefas restantes",
+    "Select an armature or a mesh bound to one.": "Selecione uma armadura ou uma malha vinculada a ela.",
+    "Enable Advanced Rigging Systems in add-on preferences.": "Ative Advanced Rigging Systems nas preferências do complemento.",
+    "Rig Validator failed to register. Check the console for details.": "Rig Validator não foi registrado. Consulte o console para obter detalhes.",
+    "Failed checks: {count}": "Verificações com falha: {count}",
+    "Warnings: {count}": "Avisos: {count}",
+    "Refresh Results": "Atualizar resultados",
 })

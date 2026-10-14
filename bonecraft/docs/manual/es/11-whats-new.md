@@ -4,6 +4,19 @@
 
 Lo más reciente primero.
 
+## 9.2.3 — Ubicación de exportación VRChat
+
+Se elimina el panel duplicado Export to VRChat de Avatar Tools. La exportación permanece en CATS → Import / Export → Unity / VRChat.
+
+## 9.2.2 — Interfaz actual
+
+Las pestañas seleccionan grupos de herramientas. Setup Rigging, Skin, Review, Avatar Tools y Facial son secciones desplegables dentro de las pestañas, no pestañas distintas. Las rutas siguientes usan las etiquetas inglesas; su traducción depende de Language.
+
+- Bone Merge → BoneCraft → Setup Rigging
+- Delta Mush / Proximity Wrap → BoneCraft → Skin
+- Viseme Library / Lip Sync → CATS → Avatar Tools
+- VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
+
 ## 9.1.2 (octubre de 2026)
 
 - **Interruptor Propiedades de escena:** Preferencias > Pestañas tiene una nueva fila Propiedades de escena. Su botón Mostrar (azul mientras está activo) muestra u oculta todas las secciones de BoneCraft en Propiedades > pestaña Escena (Constructor de Rig, Mecanismos, CATS, VRChat, Importar / Exportar) sin desactivar el complemento. Empieza activado y no cambia las pestañas de la vista 3D ni la pestaña Armadura.

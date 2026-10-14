@@ -17,14 +17,7 @@ O BoneCraft é um add-on para o Bforartists que ajuda você a fazer o rig de per
 
 O BoneCraft só roda no Bforartists (o fork do Blender). Para o Blender padrão existe um add-on separado, o BoneForge, com menos ferramentas. Instale um ou outro, nunca os dois. No Blender padrão, o BoneCraft não carrega: ele mostra um único aviso com um botão para obter o Bforartists.
 
-| Área | BoneForge (Blender padrão) | BoneCraft (Bforartists) |
-| --- | --- | --- |
-| Limpeza de avatares CATS, Material Combiner, controles derivados do UVToolkit | Incluído | Incluído |
-| Ajudas básicas para avatares (estilo Mixamo) | Incluído | Incluído |
-| Construtor de Rig: detecção de articulações, assistente, rig de controle, asset Basic Humanoid | Não incluído | Incluído |
-| Controles de animador e o Control Picker | Não incluído | Incluído |
-| Mechanisms para acessórios e máquinas | Não incluído | Incluído |
-| Redirecionamento avançado e exportação para jogos por perfis | Não incluído | Incluído |
+BoneForge 9.0.0 e versões posteriores são para Blender padrão. BoneCraft é um add-on separado para Bforartists. Ambos têm Auto-Rig Wizard, Quick Rig, Mannequin e ferramentas compartilhadas CATS/Material Atlas. BoneCraft também tem Mechanisms, Control Picker, rigs de controle de produção, detecção de juntas e exportação por perfis. A disposição semelhante não adiciona essas ferramentas ao BoneForge.
 
 ## Instalar o BoneCraft
 
@@ -44,25 +37,32 @@ O BoneCraft só roda no Bforartists (o fork do Blender). Para o Blender padrão 
 
 ## Onde fica cada coisa
 
-O BoneCraft adiciona três abas à viewport 3D:
+As abas selecionam grupos de ferramentas. Setup Rigging, Skin, Review, Avatar Tools e Facial são seções expansíveis dentro das abas, não abas separadas. Os caminhos abaixo usam os nomes da interface em inglês; a tradução depende de Language.
 
-| Aba | Lado padrão | Seções |
+| Aba | Local padrão | Seções |
 | --- | --- | --- |
-| BoneCraft | Tool Shelf da esquerda (pressione T) | Visão Geral, Configurar Rigging, Skin, Mechanisms, Revisão |
-| Rig Builder | Tool Shelf da esquerda (pressione T) | Construtor de Rig: Quick Rig, Assistente Auto-Rig, Manequim |
-| CATS | Barra lateral da direita (pressione N) | CATS, VRChat, Importar / Exportar |
+| Rig Builder | Tool Shelf esquerda (T) | Auto-Rig Wizard, Quick Rig - premade armatures, Mannequin |
+| BoneCraft | Tool Shelf esquerda (T) | Overview, Setup Rigging, Skin, Mechanisms, Review |
+| CATS | Barra lateral direita (N) | CATS, Avatar Tools, VRChat Tools, Import / Export |
 
-**Mover uma aba:** abra **Editar** → **Preferências** → **Add-ons** → BoneCraft → **Tabs**. Cada aba tem um interruptor de exibição e dois botões, Left (esquerda) e Right (direita). A mudança vale na hora. Enquanto uma aba está oculta, os botões Left e Right ficam cinza, mas continuam funcionando.
+| Ferramenta | Caminho |
+| --- | --- |
+| Bone Merge | BoneCraft → Setup Rigging → Bone Merge |
+| Delta Mush / Proximity Wrap | BoneCraft → Skin → Delta Mush / Proximity Wrap |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library → Lip Sync |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Humanoid / Hair | CATS → Avatar Tools → Set Up Humanoid Bones / Add Hair Physics |
+| VRChat export | CATS → Import / Export → Unity / VRChat |
+| VRM / MMD / I/O Hub | CATS → Import / Export → VRM / VRoid, MMD / PMX, Game Engine Export |
+| Performance / Clothing / Naming | CATS → VRChat Tools → Check Performance / Attach Clothing / VRChat Naming Extras |
 
-**Sempre no editor de Propriedades:** o Construtor de Rig, Mechanisms, CATS, VRChat e Importar / Exportar também aparecem na aba Cena do editor de Propriedades, seja qual for a seleção. Com uma armadura selecionada, as seções do BoneCraft também aparecem na aba de dados da armadura. Os interruptores de exibição nunca ocultam essas cópias. Para remover uma ferramenta de todos os lugares, desative o pacote dela na lista **Ferramentas**, ou desative o add-on.
+Selecione uma armadura para o rig e a biblioteca de visemas; uma malha no Modo Objeto para Delta Mush e Proximity Wrap. Lip Sync requer uma armadura no Modo Pose. Expanda as seções pelo triângulo. Options contém opções; ajuste ferramentas de execução imediata em Ajustar última operação antes de executar outra operação.
 
-**Show Helpers (mostrar ajudas):** o BoneCraft explica suas seções com linhas curtas de "o quê / quando" e notas "How this works" (como funciona). Desmarque **Show Helpers** nas preferências do add-on para ocultá-las. Na seção VRChat, **Modo Compacto** é um atalho para o mesmo interruptor.
+Preferências: Edit → Preferences → Add-ons → BoneCraft → Tabs controla as abas. Scene Properties controla separadamente os painéis Rig Builder, Mechanisms e CATS em Properties → Scene. Show Helpers oculta explicações; Language altera os rótulos; Tools ativa os pacotes. Ctrl+Shift+R abre o painel rápido.
 
-**Idioma:** a configuração **Language** (idioma) nas preferências do add-on muda os painéis do próprio BoneCraft para English, 日本語, 한국어, 中文, Français, Português ou Español.
+BoneCraft move abas com Left / Right em Preferences → Tabs. Scene Properties → Show começa ativado. Também há painéis de dados da armadura e botões nas Tool Shelf nativas Pose / Weights. Esses acessos são específicos de Bforartists.
 
-**Corrigir Modelo primeiro, sempre:** na aba CATS, comece sempre com **Corrigir Modelo** antes de qualquer outra ferramenta do CATS. O pipeline do CATS mantém um registro dos passos que você já fez, e cada ferramenta avisa se você a executar fora de ordem. Veja [O pipeline do CATS](04-cats-pipeline.md).
-
-**Painel rápido:** pressione **Ctrl+Shift+R** na viewport 3D para abrir o painel de rig do BoneCraft como uma janela suspensa sob o cursor.
+Há três fluxos faciais: a geração CATS cria chaves de forma da boca; Viseme Library / Lip Sync salva poses e gera chaves de animação; Facial mapeia chaves existentes para VRChat ou configura rastreamento facial. Os controles derivados de UVToolkit ficam em CATS → Material Atlas → Override Inherited Settings → UV Packing; são o fluxo compartilhado de atlas, não o add-on UVToolkit completo.
 
 ---
 

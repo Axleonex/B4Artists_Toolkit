@@ -775,6 +775,10 @@ STRINGS: dict[str, str] = {
     "2. Shift-click the base armature last (active)": "2. Shift-click the base armature last (active)",
     "3. Click Merge Clothing": "3. Click Merge Clothing",
     # CATS tab: Avatar Tools / VRChat Tools sections (2026-10-10)
+    "Facial": "Facial",
+    "Face Tracking": "Face Tracking",
+    "VRChat Viseme Mapping": "VRChat Viseme Mapping",
+    "Performance, clothing, facial tools and naming: VRChat Tools, below.": "Performance, clothing, facial tools and naming: VRChat Tools, below.",
     "Avatar Tools": "Avatar Tools",
     "VRChat Tools": "VRChat Tools",
     "Performance": "Performance",
@@ -826,4 +830,15 @@ STRINGS.update({
     "Drop in the viewport to add the starter; Esc cancels": "Drop in the viewport to add the starter; Esc cancels",
     "Starter Rig Catalog": "Starter Rig Catalog",
     "Add Starter Rig": "Add Starter Rig"
+})
+
+# Task Board: distinct recommendations and working health results.
+STRINGS.update({
+    "Remaining Tasks": "Remaining Tasks",
+    "Select an armature or a mesh bound to one.": "Select an armature or a mesh bound to one.",
+    "Enable Advanced Rigging Systems in add-on preferences.": "Enable Advanced Rigging Systems in add-on preferences.",
+    "Rig Validator failed to register. Check the console for details.": "Rig Validator failed to register. Check the console for details.",
+    "Failed checks: {count}": "Failed checks: {count}",
+    "Warnings: {count}": "Warnings: {count}",
+    "Refresh Results": "Refresh Results",
 })

@@ -4,7 +4,7 @@
 
 ## VRChat Tools
 
-The VRChat tools are in the **CATS** tab on the right sidebar (press **N**), in the **Avatar Tools** section. Its subsections cover humanoid bones, hair physics, viseme mapping and export. The separate **VRChat Tools** section below it groups Performance, Clothing and Naming utilities. The same section is in the **Properties** editor's **Scene** tab while Preferences → Tabs → Scene Properties → Show is on. This switch does not hide the CATS viewport tab.
+The VRChat tools are in the **CATS** tab on the right sidebar (press **N**), in the **Avatar Tools** section. Its subsections cover humanoid bones, hair physics and Viseme Library / Lip Sync. VRChat export is under CATS → Import / Export → Unity / VRChat. The separate **VRChat Tools** section below it groups Check Performance, Attach Clothing, Facial and VRChat Naming Extras. The same section is in the **Properties** editor's **Scene** tab while Preferences → Tabs → Scene Properties → Show is on. This switch does not hide the CATS viewport tab.
 
 ---
 
@@ -48,6 +48,8 @@ See [Guide 4: Fix Your Avatar's Bone Names](02-guides-a.md#guide-4-fix-your-avat
 
 ### VRChat Viseme Mapping
 
+**Where to find it:** CATS → VRChat Tools → Facial. Face Tracking is in the same section.
+
 **What it does:** Maps your mesh's shape keys to VRChat's 15 lip-sync visemes.
 
 See [Guide 8: Set Up Lip Sync](03-guides-b.md#guide-8-set-up-lip-sync). To create visemes your avatar does not have yet, see [CATS Tools: Visemes](09-cats.md#visemes).
@@ -87,7 +89,7 @@ See [Guide 9: Improve Your Avatar's Performance](03-guides-b.md#guide-9-improve-
 - **Embed Textures** — packs the textures into the FBX, so Unity finds them
 - **Helper Meshes** — includes hidden or helper meshes; leave it off for normal avatars
 
-**Buttons:** **Export to VRChat (Unity)**, **Generate Sidecar**, **Copy Importer Path** (the path of BoneCraft's Unity import script), and **Check / Preserve MToon** for VRM materials. The section also repeats the humanoid status with **Auto-Map Humanoid**, **Normalize Names** and **Validate**.
+**Location:** CATS → Import / Export → Unity / VRChat. Use **Export to VRChat (Unity)** to write the FBX, or **Check Performance Rank** before exporting.
 
 ---
 
@@ -162,7 +164,7 @@ The MMD tools are in the **CATS** tab → **Import / Export** → **MMD / PMX**.
 
 ---
 
-## Game Export
+## Game Engine Export
 
 **What it does:** Exports for game engines with a validated profile: Unreal (humanoid or universal), Unity humanoid, Godot humanoid, and generic FBX or GLB. Every fix the profile needs is shown and applied only when you click it, never silently.
 
@@ -173,13 +175,13 @@ The MMD tools are in the **CATS** tab → **Import / Export** → **MMD / PMX**.
 - **Apply Transforms (Fix)** — one of the explicit fixes the check can offer
 - **Export (Profile)** — exports with the profile
 
-**Where to find it:** **CATS** tab → **Import / Export** → **Game Export**
+**Where to find it:** **CATS** tab → **Import / Export** → **Game Engine Export**
 
 ---
 
 ## Task Board
 
-**What it does:** A summary of the current rig: a health score, quick wins, and a list of tasks BoneCraft found (missing humanoid bones, unresolved names, missing visemes, rig validator warnings and so on), grouped by category. **Open Health Check** opens the details; **Refresh Task Board** checks again.
+**What it does:** A summary of the current rig: a health score, quick wins, and a list of tasks BoneCraft found (missing humanoid bones, unresolved names, missing visemes, rig validator warnings and so on), grouped by category. **Quick Wins** shows up to three recommended tasks; **Remaining Tasks** contains only the others. **Open Health Check** runs validation and opens its results; **Refresh Task Board** checks again.
 
 **Where to find it:** **BoneCraft** tab → **Overview** → **Task Board**
 

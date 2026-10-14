@@ -762,6 +762,10 @@ STRINGS: dict[str, str] = {
     "2. Shift-click the base armature last (active)": "2. 最後にベースのアーマチュアを Shift+クリック（アクティブ）",
     "3. Click Merge Clothing": "3. 衣装をマージをクリック",
     # CATS tab: Avatar Tools / VRChat Tools sections (2026-10-10)
+    "Facial": "顔",
+    "Face Tracking": "フェイストラッキング",
+    "VRChat Viseme Mapping": "VRChat ビジームマッピング",
+    "Performance, clothing, facial tools and naming: VRChat Tools, below.": "パフォーマンス、衣服、顔ツール、名前設定：下の VRChat ツール。",
     "Avatar Tools": "アバターツール",
     "VRChat Tools": "VRChatツール",
     "Performance": "パフォーマンス",
@@ -855,4 +859,15 @@ STRINGS.update({
     "Drop in the viewport to add the starter; Esc cancels": "??????????????????; Esc ??????",
     "Starter Rig Catalog": "???????????",
     "Add Starter Rig": "??????????"
+})
+
+# Task Board: distinct recommendations and working health results.
+STRINGS.update({
+    "Remaining Tasks": "残りのタスク",
+    "Select an armature or a mesh bound to one.": "アーマチュア、またはそれにバインドされたメッシュを選択してください。",
+    "Enable Advanced Rigging Systems in add-on preferences.": "アドオン設定で Advanced Rigging Systems を有効にしてください。",
+    "Rig Validator failed to register. Check the console for details.": "Rig Validator の登録に失敗しました。詳細はコンソールを確認してください。",
+    "Failed checks: {count}": "失敗したチェック：{count}",
+    "Warnings: {count}": "警告：{count}",
+    "Refresh Results": "結果を更新",
 })

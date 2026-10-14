@@ -17,14 +17,7 @@ BoneCraft는 Bforartists용 애드온으로, 캐릭터와 소품을 리깅하고
 
 BoneCraft는 Bforartists(Blender의 포크)에서만 실행됩니다. 일반 Blender에는 도구가 더 적은 별도의 애드온 BoneForge가 있습니다. 둘 중 하나만 설치하고, 둘 다 설치하지 마세요. 일반 Blender에서는 BoneCraft가 로드되지 않으며, Bforartists를 받을 수 있는 버튼이 있는 알림 하나만 표시합니다.
 
-| 영역 | BoneForge(일반 Blender) | BoneCraft(Bforartists) |
-| --- | --- | --- |
-| CATS 아바타 정리, Material Combiner, UVToolkit에서 유래한 컨트롤 | 포함 | 포함 |
-| 기본 아바타 도우미(Mixamo 방식) | 포함 | 포함 |
-| 리그 빌더: 관절 감지, 마법사, 컨트롤 리그, Basic Humanoid 에셋 | 미포함 | 포함 |
-| 애니메이터 컨트롤과 Control Picker | 미포함 | 포함 |
-| 소품과 기계를 위한 Mechanisms | 미포함 | 포함 |
-| 고급 리타겟팅과 프로필 기반 게임 내보내기 | 미포함 | 포함 |
+BoneForge 9.0.0 이상은 표준 Blender용입니다. BoneCraft는 별도의 Bforartists 애드온입니다. 둘 다 Auto-Rig Wizard, Quick Rig, Mannequin과 공유 CATS/Material Atlas 도구가 있습니다. BoneCraft에는 Mechanisms, Control Picker, 제작용 컨트롤 리그, 관절 감지, 프로필 기반 내보내기도 있습니다. 같은 배치로 바꿔도 이 도구가 BoneForge에 추가되지 않습니다.
 
 ## BoneCraft 설치하기
 
@@ -44,25 +37,32 @@ BoneCraft는 Bforartists(Blender의 포크)에서만 실행됩니다. 일반 Ble
 
 ## 각 기능의 위치
 
-BoneCraft는 3D 뷰포트에 탭 세 개를 추가합니다:
+탭은 기능 그룹을 선택합니다. Setup Rigging, Skin, Review, Avatar Tools, Facial은 탭 안에서 펼치는 섹션이며 별도 탭이 아닙니다. 아래 경로는 영어 UI 이름입니다. 번역된 이름은 Language 설정에 따라 달라집니다.
 
 | 탭 | 기본 위치 | 섹션 |
 | --- | --- | --- |
-| BoneCraft | 왼쪽 툴 셸프(T 키) | 개요, 리깅 설정, 스킨, Mechanisms, 리뷰 |
-| Rig Builder | 왼쪽 툴 셸프(T 키) | 리그 빌더: Quick Rig, 자동 리깅 마법사, 마네킹 |
-| CATS | 오른쪽 사이드바(N 키) | CATS, VRChat, 가져오기 / 내보내기 |
+| Rig Builder | 왼쪽 Tool Shelf (T) | Auto-Rig Wizard, Quick Rig - premade armatures, Mannequin |
+| BoneCraft | 왼쪽 Tool Shelf (T) | Overview, Setup Rigging, Skin, Mechanisms, Review |
+| CATS | 오른쪽 사이드바 (N) | CATS, Avatar Tools, VRChat Tools, Import / Export |
 
-**탭 옮기기:** **편집** → **환경 설정** → **애드온** → BoneCraft → **Tabs**를 엽니다. 각 탭에는 표시 스위치와 Left(왼쪽), Right(오른쪽) 두 버튼이 있습니다. 바꾸면 바로 적용됩니다. 탭을 숨기면 Left와 Right 버튼이 회색으로 바뀌지만 여전히 작동합니다.
+| 도구 | 열 경로 |
+| --- | --- |
+| Bone Merge | BoneCraft → Setup Rigging → Bone Merge |
+| Delta Mush / Proximity Wrap | BoneCraft → Skin → Delta Mush / Proximity Wrap |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library → Lip Sync |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Humanoid / Hair | CATS → Avatar Tools → Set Up Humanoid Bones / Add Hair Physics |
+| VRChat export | CATS → Import / Export → Unity / VRChat |
+| VRM / MMD / I/O Hub | CATS → Import / Export → VRM / VRoid, MMD / PMX, Game Engine Export |
+| Performance / Clothing / Naming | CATS → VRChat Tools → Check Performance / Attach Clothing / VRChat Naming Extras |
 
-**속성 에디터에 항상 있는 것:** 리그 빌더, Mechanisms, CATS, VRChat, 가져오기 / 내보내기는 무엇을 선택했든 속성 에디터의 장면 탭에도 표시됩니다. 아마추어를 선택하면 BoneCraft 섹션이 아마추어 데이터 탭에도 표시됩니다. 표시 스위치는 이 사본들을 숨기지 않습니다. 도구를 모든 곳에서 없애려면 **도구** 목록에서 그 패키지를 끄거나 애드온을 비활성화하세요.
+리그와 비짐 라이브러리는 아마추어를 선택합니다. Delta Mush와 Proximity Wrap은 오브젝트 모드에서 메시를 선택해야 합니다. Lip Sync는 포즈 모드의 아마추어가 필요합니다. 삼각형으로 섹션을 펼칩니다. Options는 선택 설정입니다. 바로 실행되는 도구는 다음 작업 전에 마지막 작업 조정에서 설정을 바꿀 수 있습니다.
 
-**Show Helpers(도움말 표시):** BoneCraft는 짧은 "무엇을 / 언제" 설명과 "How this works"(작동 방식) 메모로 각 섹션을 설명합니다. 애드온의 환경 설정에서 **Show Helpers**를 끄면 숨겨집니다. VRChat 섹션의 **컴팩트 모드**는 같은 스위치의 바로 가기입니다.
+설정: Edit → Preferences → Add-ons → BoneCraft → Tabs에서 탭 표시를 조정합니다. Scene Properties는 Properties → Scene의 Rig Builder, Mechanisms와 CATS 패널을 별도로 제어합니다. Show Helpers는 설명 표시, Language는 표시 언어, Tools는 패키지 활성화입니다. Ctrl+Shift+R로 빠른 패널을 엽니다.
 
-**언어:** 애드온 환경 설정의 **Language**(언어) 설정으로 BoneCraft 자체 패널을 English, 日本語, 한국어, 中文, Français, Português, Español로 바꿀 수 있습니다.
+BoneCraft 탭은 Preferences → Tabs의 Left / Right로 이동합니다. Scene Properties → Show는 기본으로 켜져 있습니다. 아마추어 데이터 패널과 기본 Pose / Weights Tool Shelf 버튼도 제공합니다. 이들은 Bforartists의 접근 경로입니다.
 
-**매번 모델 수정부터:** CATS 탭에서는 다른 CATS 도구보다 먼저 항상 **모델 수정**으로 시작하세요. CATS 파이프라인은 기록으로 어떤 단계를 마쳤는지 추적하며, 순서에 맞지 않게 도구를 실행하면 경고합니다. [CATS 파이프라인](04-cats-pipeline.md)을 보세요.
-
-**빠른 패널:** 3D 뷰포트에서 **Ctrl+Shift+R**을 누르면 BoneCraft의 리그 패널이 커서 아래에 팝업으로 열립니다.
+얼굴 작업은 세 종류입니다. CATS 비짐 생성은 입 셰이프 키를 만들고, Viseme Library / Lip Sync는 포즈 저장과 애니메이션 키 생성을 하며, Facial은 기존 키를 VRChat에 매핑하거나 얼굴 추적을 설정합니다. UVToolkit에서 가져온 설정은 CATS → Material Atlas → Override Inherited Settings → UV Packing에 있습니다. 공유 아틀라스 기능이며 독립 UVToolkit 전체가 아닙니다.
 
 ---
 

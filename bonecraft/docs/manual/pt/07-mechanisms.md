@@ -22,7 +22,7 @@ Palavras usadas nos painéis e nesta página:
 ## Onde fica
 
 - **Aba BoneCraft → Mechanisms** na viewport 3D. A aba BoneCraft fica na Tool Shelf da esquerda (pressione **T**), a menos que você a tenha movido para a barra lateral da direita (**N**) nas Preferências. Ela fica entre Skin e Revisão. Aparece quando uma malha está ativa (para começar um rig) ou quando uma armadura com mecanismos está ativa.
-- **Editor de Propriedades → aba Cena → Mechanisms**, logo depois do Construtor de Rig. Está sempre lá. Sem nada utilizável selecionado, mostra uma linha: "Select a mesh to start, or an armature with mechanisms." (selecione uma malha para começar, ou uma armadura com mecanismos). Desativar a aba BoneCraft da viewport não o remove. Só o interruptor da ferramenta `mechanisms` (**Preferências → Add-ons → BoneCraft → Ferramentas**) o remove, junto com a cópia da viewport. As seções da aba Cena começam recolhidas, então clique em **Mechanisms** para expandi-lo.
+- Properties → Scene → Mechanisms. Os painéis Cena aparecem quando Preferences → Tabs → Scene Properties → Show está ativado. Ocultar uma aba da viewport não oculta essa cópia.
 
 Dentro do Mechanisms há quatro subseções: **1. Parts** (peças), **2. Joints & Links** (articulações e ligações), **3. Sequences** (sequências) e **4. Controls** (controles). Elas aparecem assim que o rig tem peças. Antes disso você só vê **Add Parts from Selection** (adicionar peças da seleção).
 

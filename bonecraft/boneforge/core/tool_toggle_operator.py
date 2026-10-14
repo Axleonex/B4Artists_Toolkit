@@ -99,13 +99,6 @@ class BF_OT_ToggleTool(DeferredMutationOperator):
         except Exception:
             logger.warning("[BoneCraft] could not rebuild Scene-tab copies after toggle")
 
-        # A tool switched on registers fresh root panels: fold them under Other Tools again.
-        try:
-            from boneforge.core import other_tools
-            other_tools.adopt()
-        except Exception:
-            logger.warning("[BoneCraft] could not fold the new panels under Other Tools")
-
 
 _classes = (BF_OT_ToggleTool,)
 

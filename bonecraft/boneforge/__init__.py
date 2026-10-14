@@ -77,7 +77,7 @@ unchanged.
 bl_info = {
     "name": "BoneCraft",
     "author": "BoneCraft Team",
-    "version": (9, 2, 1),
+    "version": (9, 2, 4),
     "blender": (4, 0, 0),
     "location": "3D Viewport > Tool Shelf / Sidebar > BoneCraft, Rig Builder, CATS",
     "description": (
@@ -462,16 +462,6 @@ def register():
         traceback.print_exc()
         logger.error("[BoneCraft] Scene-tab copies failed to register")
 
-    # Step 6c: fold the stray root panels under one Other Tools section (spec M6).
-    try:
-        from boneforge import tab_sides
-        from boneforge.core import other_tools
-        other_tools.register()
-        tab_sides.place_all()                   # one region for the parent and everything it adopted
-    except Exception:
-        traceback.print_exc()
-        logger.error("[BoneCraft] Other Tools fold failed")
-
     # Step 6d: show, don't hide - a waiting section's sub-panels stay visible and say what to select.
     try:
         from boneforge.core import needs
@@ -566,13 +556,6 @@ def unregister():
         shelf_width.unregister()
     except Exception:
         logger.error("[BoneCraft] shelf widening failed to stop")
-
-    # 0a. Other Tools fold: restore the adopted classes before their modules unregister them.
-    try:
-        from boneforge.core import other_tools
-        other_tools.unregister()
-    except Exception:
-        logger.error("[BoneCraft] Other Tools fold failed to unregister")
 
     # 0. Scene-tab copies (registered last, removed first).
     try:

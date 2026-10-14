@@ -1,0 +1,16 @@
+{
+  "version": "9.2.3",
+  "archive": "BoneCraft-BFA-9.2.3.zip",
+  "files": 232,
+  "bytes": 1234418,
+  "sha256": "2f41145a59406995caf71bbdf391d2163a746920b3c0253afbc315e86138bd99",
+  "crc_passed": true,
+  "all_files_match_source": true,
+  "duplicate_export_panel_removed": true,
+  "import_export_controls_retained": true,
+  "live_window_verified": false,
+  "host_checks": {
+    "test_mech_ui_host": "passed",
+    "test_needs_host": "passed"
+  }
+}

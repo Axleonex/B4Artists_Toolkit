@@ -169,6 +169,8 @@ class BONEFORGE_PT_p2b_delta_mush(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "BoneCraft"
+    bl_parent_id = "BF_PT_sb_skin"
+    bl_order = 1
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):

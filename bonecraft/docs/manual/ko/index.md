@@ -1,8 +1,10 @@
 # BoneCraft 설명서
 
-BoneCraft 9.1.2. BoneCraft는 Bforartists용 리깅 및 아바타 툴킷입니다.
+BoneCraft 9.2.4. BoneCraft는 Bforartists용 리깅 및 아바타 툴킷입니다.
 
 이 설명서는 영어판을 기계 번역한 것입니다.
+
+탭은 기능 그룹을 선택합니다. Setup Rigging, Skin, Review, Avatar Tools, Facial은 탭 안에서 펼치는 섹션이며 별도 탭이 아닙니다. 아래 경로는 영어 UI 이름입니다. 번역된 이름은 Language 설정에 따라 달라집니다.
 
 ## 장
 

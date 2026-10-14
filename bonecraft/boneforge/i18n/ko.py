@@ -762,6 +762,10 @@ STRINGS: dict[str, str] = {
     "2. Shift-click the base armature last (active)": "2. 마지막으로 기본 아마추어를 Shift+클릭(활성)",
     "3. Click Merge Clothing": "3. 의상 병합 클릭",
     # CATS tab: Avatar Tools / VRChat Tools sections (2026-10-10)
+    "Facial": "얼굴",
+    "Face Tracking": "얼굴 추적",
+    "VRChat Viseme Mapping": "VRChat 비짐 매핑",
+    "Performance, clothing, facial tools and naming: VRChat Tools, below.": "성능, 의상, 얼굴 도구 및 이름 지정: 아래 VRChat 도구.",
     "Avatar Tools": "아바타 도구",
     "VRChat Tools": "VRChat 도구",
     "Performance": "성능",
@@ -855,4 +859,15 @@ STRINGS.update({
     "Drop in the viewport to add the starter; Esc cancels": "???? ?? ?? ??; Esc? ??",
     "Starter Rig Catalog": "?? ?? ????",
     "Add Starter Rig": "?? ?? ??"
+})
+
+# Task Board: distinct recommendations and working health results.
+STRINGS.update({
+    "Remaining Tasks": "남은 작업",
+    "Select an armature or a mesh bound to one.": "아마추어 또는 연결된 메시를 선택하세요.",
+    "Enable Advanced Rigging Systems in add-on preferences.": "애드온 환경설정에서 Advanced Rigging Systems를 활성화하세요.",
+    "Rig Validator failed to register. Check the console for details.": "Rig Validator 등록에 실패했습니다. 자세한 내용은 콘솔을 확인하세요.",
+    "Failed checks: {count}": "실패한 검사: {count}",
+    "Warnings: {count}": "경고: {count}",
+    "Refresh Results": "결과 새로 고침",
 })

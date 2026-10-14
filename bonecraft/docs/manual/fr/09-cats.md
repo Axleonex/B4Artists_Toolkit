@@ -2,7 +2,7 @@
 
 [← Sommaire](index.md)
 
-Les outils CATS sont dans l'onglet **CATS** de la barre latérale de droite (touche **N**), dans la section **CATS**, et toujours dans l'onglet **Scène** de l'éditeur **Propriétés**. Ils suivent le pipeline décrit dans [Le pipeline CATS](04-cats-pipeline.md). Choisissez en haut de la section l'armature sur laquelle ils travaillent.
+Les outils CATS sont dans l'onglet **CATS** de la barre latérale de droite (touche **N**), dans la section **CATS**, et  dans l'onglet **Scène** de l'éditeur **Propriétés**. Ils suivent le pipeline décrit dans [Le pipeline CATS](04-cats-pipeline.md). Choisissez en haut de la section l'armature sur laquelle ils travaillent. Les panneaux Scène sont visibles quand Preferences → Tabs → Scene Properties → Show est activé. Masquer un onglet de la vue 3D ne masque pas cette copie.
 
 ---
 

@@ -4,6 +4,19 @@
 
 Newest first.
 
+## 9.2.3 — VRChat export location
+
+Removes the duplicate Export to VRChat panel from Avatar Tools. Export remains under CATS → Import / Export → Unity / VRChat.
+
+## 9.2.2 — Current interface
+
+Tab names select a workspace group. Setup Rigging, Skin, Review, Avatar Tools and Facial are expandable sections inside those tabs, not separate tabs. The paths below use the English UI labels; translated labels depend on the Language preference.
+
+- Bone Merge → BoneCraft → Setup Rigging
+- Delta Mush / Proximity Wrap → BoneCraft → Skin
+- Viseme Library / Lip Sync → CATS → Avatar Tools
+- VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
+
 ## 9.2.0 (October 2026)
 
 - **Complete starter catalog:** all nine bundled skeletons/metarigs appear as thumbnails from the start: Basic Humanoid, Simple Human, Full Human, Basic Quadruped, Cat, Horse, Wolf, Bird and Shark. The catalog selector groups Humans, Quadrupeds and Other Animals.

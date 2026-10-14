@@ -4,6 +4,8 @@
 
 ## Guía 8: configura la sincronización labial
 
+`CATS → VRChat Tools → Facial`
+
 > **Tiempo:** unos 10–20 minutos
 > **Resultado:** la boca de tu avatar moviéndose correctamente cuando hablas en VRChat
 
@@ -19,7 +21,7 @@
 
 ### Paso 1 — Abrir VRChat Viseme Mapping
 
-En la pestaña **CATS** de la barra lateral derecha, despliega **VRChat** → **VRChat Viseme Mapping** (mapeo de visemas de VRChat).
+En la pestaña **CATS → VRChat Tools → Facial** → VRChat Viseme Mapping.
 
 ---
 
@@ -63,6 +65,8 @@ Debajo de la lista de visemas, **Seguimiento Facial (SteamVR)** prepara formas d
 
 ## Guía 9: mejora el rendimiento de tu avatar
 
+`CATS → VRChat Tools → Check Performance`
+
 > **Tiempo:** unos 15–25 minutos
 > **Resultado:** un mejor rango de rendimiento en VRChat y una carga más rápida para otros jugadores
 
@@ -76,7 +80,7 @@ Debajo de la lista de visemas, **Seguimiento Facial (SteamVR)** prepara formas d
 
 ### Paso 1 — Comprobar el rango actual
 
-En la pestaña **CATS**, despliega **VRChat** → **Verificar Rendimiento**. Haz clic en **Calculate Performance Rank** (calcular rango de rendimiento). BoneCraft muestra el rango global y un desglose (polígonos, mallas con skin, ranuras de material, huesos, PhysBones y contactos), con lo lejos que está cada uno del siguiente nivel.
+En la pestaña **CATS**, despliega **VRChat Tools** → **Verificar Rendimiento**. Haz clic en **Calculate Performance Rank** (calcular rango de rendimiento). BoneCraft muestra el rango global y un desglose (polígonos, mallas con skin, ranuras de material, huesos, PhysBones y contactos), con lo lejos que está cada uno del siguiente nivel.
 
 ---
 
@@ -120,6 +124,8 @@ Haz clic de nuevo en **Calculate Performance Rank** para ver la mejora.
 ---
 
 ## Guía 10: guarda y reutiliza poses
+
+`BoneCraft → Review → Pose Library`
 
 > **Tiempo:** unos 5–10 minutos
 > **Resultado:** una biblioteca de poses guardadas que puedes aplicar con un clic
@@ -169,6 +175,8 @@ Selecciona una pose y haz clic en **Aplicar**.
 
 ## Guía 11: une dos rigs
 
+`BoneCraft → Setup Rigging → Bone Merge`
+
 > **Tiempo:** unos 25–40 minutos según la complejidad
 > **Resultado:** dos esqueletos combinados en uno, con todos los pesos conservados
 
@@ -182,7 +190,7 @@ Selecciona una pose y haz clic en **Aplicar**.
 
 ### Paso 1 — Abrir Fusión de Huesos
 
-En la pestaña **BoneCraft**, despliega la sección **Fusión de Huesos**. Funciona en tres etapas; cada una se abre cuando termina la anterior.
+En la pestaña **BoneCraft → Setup Rigging**, despliega la sección **Fusión de Huesos**. Funciona en tres etapas; cada una se abre cuando termina la anterior.
 
 ---
 
