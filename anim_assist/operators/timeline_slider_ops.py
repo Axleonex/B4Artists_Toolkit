@@ -135,8 +135,9 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
 
     def modal(self,context,event):
         model=_model()
+        from ..ui.timeline_strip import _module_reason
         try:
-            if self._aborted or context.scene!=self._scene or not self._session.valid() or not any(a==self._area for a in self._window.screen.areas) or (self._area.width,self._area.height)!=self._area_size:
+            if self._aborted or context.scene!=self._scene or not self._session.valid() or _module_reason(context,self.action) or not any(a==self._area for a in self._window.screen.areas) or (self._area.width,self._area.height)!=self._area_size:
                 self.abort(); self._cleanup(); return {'CANCELLED'}
             if event.type in {'ESC','RIGHTMOUSE','WINDOW_DEACTIVATE'}:
                 self.abort(); self._cleanup(); return {'CANCELLED'}

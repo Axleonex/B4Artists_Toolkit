@@ -4,7 +4,7 @@ import bpy
 from bpy.props import StringProperty
 from ..core.logging import get_logger
 from .timeline_catalog import (
-    ACTIONS as _ACTIONS, EXECUTE_ACTIONS, GROUPS, QUICK_GROUPS,
+    ACTIONS as _ACTIONS, EXECUTE_ACTIONS, GROUPS, QUICK_GROUPS, FAMILY,
     command_description, command_metadata, QUICK_LABELS, search_actions,
     DEFAULT_QUICK_ACTIONS, quick_property_name, selected_quick_actions, quick_clusters,
 )
@@ -102,9 +102,28 @@ def _switch_unavailable(context, action):
     return ""
 
 
+def _module_reason(context,action):
+    from ..prefs import get_prefs
+    prefs=get_prefs(context)
+    if not prefs: return ''
+    suffix=_ACTIONS[action][0]
+    family=FAMILY[action][0]
+    module={'tween':'breakdown','curves':'transform','timing':'retime',
+            'keys':'keys','pose':'matching','bake':'controls','motion':'trajectory'}[family]
+    if suffix.startswith('anim_offset'): module='transform'
+    elif suffix in {'set_handle_type','move_keys'}: module='keys'
+    elif action in {'ALL','RANGE','ENDS','GROW_LEFT','GROW_RIGHT','GROW_BOTH','SELECT_BREAKDOWNS'}: module='selection'
+    flag='enable_'+module
+    if not getattr(prefs,flag,True):
+        return 'Enable '+prefs.bl_rna.properties[flag].name+' in add-on preferences'
+    return ''
+
+
 def _unavailable(context, target, action):
     if target is None:
         return "Use an animation tool from a Timeline"
+    reason=_module_reason(context,action)
+    if reason: return reason
     operator = _operator(action)
     if operator is None:
         return "Enable the corresponding Anim Assist tool module"
@@ -159,6 +178,17 @@ def _unavailable(context, target, action):
                 from ..operators.anim_offset_ops import _object_fcurves
                 if not _object_fcurves(context):
                     return "Select an object with editable Action curves"
+            if action in {'TRAIL_SHOW','TRAIL_REFRESH','TRAIL_DIAGNOSE'}:
+                from ..operators.p5_overlay_ops import _resolve_targets
+                from ..core.p5_properties import get_p5
+                if not _resolve_targets(context,get_p5(context)):
+                    return 'Select or configure an animated motion-trail target'
+            if action in {'SCALE_DRAG','OFFSET_DRAG'}:
+                from ..core.fcurve_compat import get_fcurves
+                obj=context.active_object
+                data=getattr(obj,'animation_data',None)
+                if data and data.action and not any(not fc.lock and not fc.hide for fc in get_fcurves(data.action,anim_data=data)):
+                    return 'Unlock and show editable Action curves'
             if not operator.poll():
                 return command_metadata(action)[1]
     except (RuntimeError, ReferenceError, StopIteration) as exc:

@@ -419,6 +419,88 @@ def ui_finish():
         recovery_assertions=len(recovery_records),passed=all(r['passed'] for r in recovery_records)),indent=2))
 
 
+def layouts_prepare():
+    global layout_animation,layout_obj_name,layout_scene_values
+    with timeline_context():
+        obj,_=fixture(); layout_obj_name=obj.name
+        layout_animation=object_snapshot(obj)
+        layout_scene_values=(bpy.context.scene.frame_current,bpy.context.scene.anim_assist.reference_frame,
+                             bpy.context.scene.anim_assist_p3.factor)
+
+
+def layout_save_open(name):
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    if name=='Polish':
+        data=settings.record(bpy.context)
+        data['active']['tools']['DRAG']['mode']='POPOUT'
+        data['active']['tools']['SMOOTH'].update(overshoot_enabled=True,range_min=-100,range_max=200,presets=[-100,0,100])
+        settings.write(bpy.context,data)
+    with timeline_context():
+        assert bpy.ops.animassist.layout_action('INVOKE_DEFAULT',operation='SAVE',layout_name=name)=={'RUNNING_MODAL'}
+
+
+def layout_saved(name):
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    data=settings.record(bpy.context)
+    assert data['active']['name']==name
+    assert any(item['name']==name for item in data['saved'])
+    assert object_snapshot(bpy.data.objects[layout_obj_name])==layout_animation
+    assert (bpy.context.scene.frame_current,bpy.context.scene.anim_assist.reference_frame,
+            bpy.context.scene.anim_assist_p3.factor)==layout_scene_values
+
+
+def layout_manage():
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    data=settings.record(bpy.context)
+    ids={item['name']:item['id'] for item in data['saved']}
+    with timeline_context():
+        assert bpy.ops.animassist.layout_action('EXEC_DEFAULT',operation='LOAD',target=ids['Blocking'])=={'FINISHED'}
+        assert settings.record(bpy.context)['active']['tools']['DRAG']['mode']=='INLINE'
+        assert bpy.ops.animassist.layout_action('EXEC_DEFAULT',operation='RENAME',target=ids['Blocking'],layout_name='ブロック')=={'FINISHED'}
+        assert bpy.ops.animassist.layout_action('EXEC_DEFAULT',operation='LOAD',target=ids['Polish'])=={'FINISHED'}
+        assert bpy.ops.animassist.layout_action('EXEC_DEFAULT',operation='DELETE',target=ids['Blocking'])=={'FINISHED'}
+        assert len(settings.record(bpy.context)['saved'])==1
+        assert bpy.ops.animassist.restore_toolbar()=={'FINISHED'}
+        assert len(settings.record(bpy.context)['saved'])==1
+        assert bpy.ops.animassist.layout_action('EXEC_DEFAULT',operation='LOAD',target=ids['Polish'])=={'FINISHED'}
+    assert object_snapshot(bpy.data.objects[layout_obj_name])==layout_animation
+
+
+def layout_transfer_and_save():
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    prefs=bpy.context.preferences.addons[PACKAGE].preferences
+    expected=prefs.timeline_layouts_json
+    with timeline_context():
+        assert bpy.ops.anim_assist.export_settings(filepath=str(ROOT/'settings.json'))=={'FINISHED'}
+        exported=json.loads((ROOT/'settings.json').read_text())
+        assert exported['timeline_layouts_json']==expected
+        bad=dict(exported); bad['timeline_layouts_json']='{"schema_version":2}'
+        bad['performance_mode']=not prefs.performance_mode
+        (ROOT/'invalid-settings.json').write_text(json.dumps(bad))
+        old_performance=prefs.performance_mode
+        try: bpy.ops.anim_assist.import_settings(filepath=str(ROOT/'invalid-settings.json'))
+        except RuntimeError: pass  # ERROR reports propagate through bpy.ops.
+        assert prefs.timeline_layouts_json==expected and prefs.performance_mode==old_performance
+        assert bpy.ops.animassist.restore_toolbar()=={'FINISHED'}
+        assert bpy.ops.anim_assist.import_settings(filepath=str(ROOT/'settings.json'))=={'FINISHED'}
+        assert prefs.timeline_layouts_json==expected
+        bpy.ops.wm.save_userpref()
+    (ROOT/'saved-layout.json').write_text(expected)
+    assert object_snapshot(bpy.data.objects[layout_obj_name])==layout_animation
+
+
+def layout_restart_check():
+    from_module=importlib.import_module(PACKAGE+'.prefs')
+    data=from_module.timeline_record(from_module.get_prefs(bpy.context))
+    expected=json.loads((ROOT/'saved-layout.json').read_text())
+    assert data==expected
+    assert data['active']['name']=='Polish' and len(data['saved'])==1
+    assert data['active']['tools']['DRAG']['mode']=='POPOUT'
+    (ROOT/'layout-coverage.json').write_text(json.dumps(dict(named_layouts_saved=True,
+        rename_delete_reset=True,export_import=True,rejected_future_schema=True,
+        animation_unchanged=True,normal_restart=True,automatically_enabled=True,passed=True),indent=2))
+
+
 def write_coverage():
     bpy.ops.screen.screenshot(filepath=str(ROOT/'baseline-window.png'))
     (ROOT/'coverage.json').write_text(json.dumps(dict(

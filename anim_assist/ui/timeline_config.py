@@ -77,6 +77,10 @@ def validate_tool(action, raw):
         raise ValueError('Use at most 12 numeric presets')
     result['presets'] = [finite(v,'Preset') for v in result['presets']]
     if any(not low <= v <= high for v in result['presets']): raise ValueError('Presets must be inside the range')
+    if not result['overshoot_enabled']:
+        standard_min,standard_max=SLIDERS[action][3:5]
+        if any(not standard_min<=v<=standard_max for v in [result['default'],*result['presets']]):
+            raise ValueError('Enable Custom Range / Overshoot for these amounts')
     return result
 
 
