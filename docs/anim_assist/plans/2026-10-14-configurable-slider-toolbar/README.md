@@ -1,6 +1,7 @@
 # Anim Assist configurable slider toolbar — GSD plan
 
-Date: 2026-10-14. **Planned, not implemented or freshly verified.**
+Date: 2026-10-14. **Implemented. Local technical qualification and owner
+checkpoint are recorded in [STATE](STATE.md) and [verification](02-VERIFICATION.md).**
 Baseline: `b05f243`, local 12.6.1. Work branch:
 `codex/anim-assist-timeline-overlay`. Leave the owner checkout untouched.
 
@@ -17,8 +18,8 @@ Baseline: `b05f243`, local 12.6.1. Work branch:
 
 Execute sequentially. Each plan has Do, Verify and Done criteria. Resolve a
 failed gate before starting a dependent wave. Local work-branch commits are
-allowed; publication requires separate confirmation. No implementation starts
-as part of this planning request.
+allowed; publication requires separate confirmation. The planning request was
+followed by the user's Execute the plan authorization; six waves are implemented.
 
 ## Start here
 
@@ -33,8 +34,9 @@ the ignored `.planning` folder is only a local execution mirror.
 
 Inline plan review: all requirements assigned, dependencies sequential, existing
 source paths inspected, each verification names a failure condition. New paths
-are labelled Create. No tests were run in this planning turn. Earlier release
-evidence is historical comparison data, not a fresh current-tool pass.
+are labelled Create. Planning ran no tests; implementation subsequently ran fresh
+baseline and final exact-package checks. Earlier release evidence remains
+historical comparison data. See each SUMMARY and 02-VERIFICATION.md.
 
 Runtime doctor: healthy, no hard blocks. Code Router classification:
 T3_PRIME_OMP (recommended and actual), policy fingerprint

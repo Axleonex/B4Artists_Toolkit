@@ -1,0 +1,5 @@
+{
+  "id": "25caac2ee1b240a4afdf6eefd0ab0b85",
+  "ok": false,
+  "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\observe_timeline_overlay.py\", line 62, in poll\n    exec(data['code'], globals())\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\check_timeline_toolbar_tools.py\", line 660, in lifecycle_enable\n    assert sum(len(w.screen.areas) for w in bpy.context.window_manager.windows)==lifecycle_area_count\n                                                                                 ^^^^^^^^^^^^^^^^^^^^\nNameError: name 'lifecycle_area_count' is not defined\n"
+}

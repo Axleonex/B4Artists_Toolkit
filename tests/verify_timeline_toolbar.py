@@ -132,6 +132,8 @@ def run(args):
         host.request("event('ESC')")  # Dismiss the first-start welcome popup before pointer tests.
         host.request('prepare_geometry()')
         host.request('expand_geometry()')
+        if args.full:
+            host.request('full_legacy_layout()')
         if args.layouts:
             host.request('ui_defaults()')
             host.request('layouts_prepare()')
@@ -226,6 +228,59 @@ def run(args):
                     host.request("assert_recovery('redo')")
         if not args.only_action:
             host.request('write_coverage()')
+        if args.full:
+            host.request('ui_defaults()')
+            for action in ('B25','B50','B75','NUDGE_LEFT','NUDGE_RIGHT','COPY_KEYS','PASTE_KEYS','MIRROR_SELECTED','BAKE_STEP','TRAIL_SHOW'):
+                host.request(f'prepare_button({action!r})')
+                host.request(f'click_action({action!r})')
+                host.request('assert_button()')
+            for action in ('DRAG','SMOOTH','NEIGHBORS','FRAME','EASE','AMPLIFY','SCALE_DRAG','OFFSET_DRAG'):
+                for mode in ('INLINE','POPOUT'):
+                    for ending in ('cancel','commit'):
+                        host.request(f'prepare_slider({action!r},{mode!r},{ending!r})')
+                        host.request('select_slider_mode()')
+                        host.request('begin_slider_ui()')
+                        host.request('move_slider()')
+                        host.request('check_slider_live()')
+                        host.request('end_slider()')
+                        host.request('check_slider_end()')
+                        if ending=='commit':
+                            host.request("recover('undo')")
+                            host.request("assert_recovery('undo')")
+                            host.request("recover('redo')")
+                            host.request("assert_recovery('redo')")
+            host.request('ui_defaults()')
+            host.request('ui_settings_open()')
+            host.request('settings_change()')
+            host.request("event('RET')")
+            host.request('settings_accepted()')
+            host.request('ui_tool_open()')
+            host.request('tool_change()')
+            host.request("ui_screenshot('tool-settings-final')")
+            host.request("event('RET')")
+            host.request('tool_accepted()')
+            for value in (-100,200):
+                host.request(f'numeric_prepare({value})')
+                host.request("event('RET')")
+                host.request('numeric_check()')
+                host.request("recover('undo')")
+                host.request("assert_recovery('undo')")
+                host.request("recover('redo')")
+                host.request("assert_recovery('redo')")
+            host.request('misuse_checks()')
+            host.request('ui_defaults()')
+            for kind,key in (('MENU','tween'),('MORE',''),('SEARCH','')):
+                host.request(f'ui_click({kind!r},{key!r})')
+                host.request(f"ui_screenshot('menu-{kind.lower()}')")
+                host.request("event('ESC')")
+            host.request('scrub_prepare()')
+            host.request('scrub_check()')
+            host.request('hide_check()')
+            host.request('lifecycle_disable()')
+            host.request('lifecycle_enable()')
+            host.request('migration_checks()')
+            host.request('write_full_coverage()')
+            print((host.root/'full-coverage.json').read_text())
         print((host.root/('bar-actions.json' if args.only_action else 'coverage.json')).read_text())
     finally:
         host.close()
@@ -243,4 +298,5 @@ if __name__ == '__main__':
     parser.add_argument('--adapters', action='store_true', help='Exercise new scalar adapters before row integration')
     parser.add_argument('--ui', action='store_true', help='Exercise actual row controls and native settings windows')
     parser.add_argument('--layouts', action='store_true', help='Verify named layouts, transfer and normal restart')
+    parser.add_argument('--full', action='store_true', help='Final legacy/default/actual-row and recovery regression')
     run(parser.parse_args())

@@ -1,3 +1,18 @@
+# 12.6.2 — Configurable sliders and named toolbar layouts
+
+- Keeps the add-on-only second Timeline row, with Tween, Timing, Curves, Keys,
+  Pose, Bake and Motion followed by right-side Search, More and Settings.
+- Starts with Breakdown and Smooth inline; Timing Scale uses direct-drag popout
+  feedback. All eight numeric tools can be hidden, buttons, popouts or inline.
+- Adds staged Toolbar Settings and individual tool settings for supported
+  ranges, defaults, sensitivity, precision, snapping and presets.
+- Adds user-named layout Save As, Load, Update, Rename and Delete. Recommended
+  reset keeps the library. Layout changes do not edit animation or scene scope.
+- Fits the row to width without changing saved configuration or adding editors.
+- Repairs bilateral Mirror Selected source overwriting, fast object-trail spatial
+  offset, and missing committed redo state in immediate toolbar dispatch.
+- Validates layout settings before import; persists named layouts in preferences.
+
 # 12.6.1 — Add-on Timeline tool row
 
 - Adds a tool row inside the Timeline canvas in standard Bforartists; no
