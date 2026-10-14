@@ -26,7 +26,7 @@ Click a link to download the add-on's `.zip`, then install it with the steps bel
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.5.1 | [b4_anim_assist_v12.5.1.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.5.1.zip) |
-| Ghost Tool 4.2.10 candidate | [b4_ghost_tool_v4.2.10.zip](releases/b4_ghost_tool_v4.2.10.zip?raw=1) |
+| Ghost Tool 4.2.10 candidate | [b4_ghost_tool_v4.2.10.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.10.zip) |
 | BoneCraft 9.2.1 (optional) | [BoneCraft-BFA-9.2.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip) |
 
 Anim Assist 12.5.1 keeps the configurable toolbar thin after resizing and reserves native Timeline key space. If the Timeline is too short, enlarge it to display the extra row. See the [layout repair and screenshots](docs/anim_assist/releases/12.5.1/RELEASE-NOTES.md). Targeted normal-GUI layout checks pass in a Blender stand-in; native Redo and trail geometry have known issues. Actual Bforartists and owner workflow acceptance remain pending. Details are in the [qualification report](docs/anim_assist/releases/12.5.1/qualification.md).

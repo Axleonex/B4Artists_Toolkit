@@ -6,7 +6,7 @@ Candidate version: 4.2.10; not yet published. Every Object/Pose viewport keeps t
 
 ## Install and find Ghost Tool
 
-Download the [4.2.10 ZIP](../../releases/b4_ghost_tool_v4.2.10.zip?raw=1). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
+Download the [4.2.10 ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.10.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
 
 Ghost Tool starts with a visible Top Toolbar beneath the main 3D Viewport header, in the native Tool Settings row. In Edit > Preferences > Add-ons > Ghost Tool, choose Top Toolbar, Right Sidebar (N), or Left Tool Shelf (T). Top Header is no longer a display choice; saved Top Header preferences migrate to a visible toolbar. Existing sidebar, shelf and toolbar visibility choices are preserved. The lower-row Ghost menu provides feature access. In Top Toolbar mode, View > Show Ghost Toolbar restores hidden controls. Save preferences normally to retain your choice.
 
