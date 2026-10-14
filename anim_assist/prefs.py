@@ -1,7 +1,7 @@
 """Addon preferences with module toggles and settings I/O hooks."""
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty, FloatProperty, IntProperty
+from bpy.props import BoolProperty, EnumProperty, FloatProperty, IntProperty, StringProperty
 
 from . import constants
 from .core.logging import get_logger, set_level
@@ -32,6 +32,22 @@ def _update_timeline_placement(_self, _context) -> None:
     _self.timeline_canvas_row_initialized = True
     from .ui.timeline_strip import reconcile_preferences
     reconcile_preferences()
+
+
+def timeline_record(prefs, *, initialize=False):
+    """Decode without scene writes; initialize preferences once after enable."""
+    from .ui import timeline_config as model
+    from .ui.timeline_catalog import ACTIONS, selected_quick_actions, quick_property_name
+    if prefs is None:
+        return model.recommended(ACTIONS)
+    raw=prefs.timeline_layouts_json
+    if raw:
+        return model.decode(raw,ACTIONS)
+    explicit=any(prefs.is_property_set(quick_property_name(action)) for action in ACTIONS)
+    record=model.from_legacy(ACTIONS,selected_quick_actions(prefs)) if explicit else model.recommended(ACTIONS)
+    if initialize:
+        prefs.timeline_layouts_json=model.encode(record,ACTIONS)
+    return record
 
 
 def prepare_timeline_quick_preferences() -> None:
@@ -85,6 +101,12 @@ def draw_timeline_quick_settings(layout, context, prefs) -> None:
 class AA_AddonPreferences(bpy.types.AddonPreferences):
     # ZIP and extension installs may use B4_anim_assist or bl_ext.<repo>.<id>.
     bl_idname = __package__
+
+    timeline_layouts_json: StringProperty(
+        name="Toolbar Layout Library",
+        description="Saved presentation and slider configurations; no animation or scene state",
+        default="", options={"HIDDEN"}, update=_update_timeline_quick,
+    )
 
     debug_mode: BoolProperty(  # type: ignore[valid-type]
         name="Debug Mode",
