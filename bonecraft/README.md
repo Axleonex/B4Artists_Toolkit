@@ -6,7 +6,7 @@ only in Bforartists: in standard Blender it does not load and shows a single "Ge
 | | |
 |---|---|
 | **Add-on** | BoneCraft |
-| **Version** | 9.2.0 |
+| **Version** | 9.2.2 (source) |
 | **Host** | Bforartists (tested on 5.2) — not standard Blender |
 | **Category** | Rigging / Animation |
 | **License** | GPL v2.0 or later |
@@ -36,14 +36,25 @@ Switching a package off unregisters its classes, so it costs nothing until you s
 
 ## Install
 
-1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([`BoneCraft-BFA-9.2.0.zip`](../releases/BoneCraft-BFA-9.2.0.zip) in the repository's `releases/` folder).
+1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([latest published ZIP: BoneCraft 9.2.1](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip)).
 2. Tick its checkbox.
 3. In the 3D Viewport, the **BoneCraft** and **Rig Builder** tabs are on the left Tool Shelf (press **T**) and the
    **CATS** tab is on the right sidebar (press **N**). Each tab's side can be changed in the add-on's preferences
    (**Tabs**). Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools and Import / Export are also in the Properties
    editor's Scene tab while **Tabs → Scene Properties → Show** is on (the default).
 
-Release changes and checks: [BoneCraft 9.2.0 release notes](../docs/bonecraft/releases/9.2.0/RELEASE-NOTES.md).
+Published release changes and checks: [BoneCraft 9.2.1 release notes](../docs/bonecraft/releases/9.2.1/RELEASE-NOTES.md).
+
+### 9.2.2 source changes
+
+- Bone Merge is under BoneCraft → Setup Rigging.
+- Delta Mush and Proximity Wrap are under BoneCraft → Skin.
+- Viseme Library is under CATS → Avatar Tools, between Hair Physics and Export.
+- VRChat Viseme Mapping and Face Tracking are under CATS → VRChat Tools → Facial.
+- Other Tools and its grouping hooks are removed.
+
+Placement, drawing, visibility and tool-toggle host checks pass. Live-window appearance is not verified.
+The 9.2.2 source is committed separately from the published 9.2.1 ZIP; no 9.2.2 archive is published yet.
 
 ## Manual
 
