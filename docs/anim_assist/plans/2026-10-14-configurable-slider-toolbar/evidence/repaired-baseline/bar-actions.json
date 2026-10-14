@@ -1,0 +1,84 @@
+[
+  {
+    "action": "B25",
+    "route": "native-row",
+    "passed": true,
+    "details": {}
+  },
+  {
+    "action": "B50",
+    "route": "native-row",
+    "passed": true,
+    "details": {}
+  },
+  {
+    "action": "B75",
+    "route": "native-row",
+    "passed": true,
+    "details": {}
+  },
+  {
+    "action": "NUDGE_LEFT",
+    "route": "native-row",
+    "passed": true,
+    "details": {}
+  },
+  {
+    "action": "NUDGE_RIGHT",
+    "route": "native-row",
+    "passed": true,
+    "details": {}
+  },
+  {
+    "action": "RIPPLE",
+    "route": "native-row",
+    "passed": true,
+    "details": {}
+  },
+  {
+    "action": "RANGE",
+    "route": "native-row",
+    "passed": true,
+    "details": {}
+  },
+  {
+    "action": "ENDS",
+    "route": "native-row",
+    "passed": true,
+    "details": {}
+  },
+  {
+    "action": "MIRROR_SELECTED",
+    "route": "native-row",
+    "passed": true,
+    "details": {
+      "Hand.L": [
+        -4.0,
+        3.0,
+        0.0
+      ],
+      "Hand.R": [
+        -1.0,
+        2.0,
+        0.0
+      ]
+    }
+  },
+  {
+    "action": "BAKE_STEP",
+    "route": "native-row",
+    "passed": true,
+    "details": {
+      "sample_error": 0.0
+    }
+  },
+  {
+    "action": "TRAIL_SHOW",
+    "route": "native-row",
+    "passed": true,
+    "details": {
+      "world_sample_error": 0.0,
+      "samples": 51
+    }
+  }
+]

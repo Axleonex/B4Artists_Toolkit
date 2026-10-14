@@ -1,4 +1,5 @@
 import math
+from types import SimpleNamespace
 
 import bpy
 from ..core.p9_properties import get_p9
@@ -224,6 +225,17 @@ class AA_OT_p9_mirror_selected(bpy.types.Operator):
 
         count = 0
         try:
+            # Capture every source before writing any opposite: selecting both
+            # sides must not read back the pose just written by the first bone.
+            sources = {bone.name: SimpleNamespace(
+                name=bone.name, location=tuple(bone.location),
+                rotation_euler=tuple(bone.rotation_euler),
+                rotation_quaternion=tuple(bone.rotation_quaternion),
+                rotation_axis_angle=tuple(bone.rotation_axis_angle),
+                rotation_mode=bone.rotation_mode, scale=tuple(bone.scale),
+            ) for bone in selected_bones}
+            worlds = {bone.name: p8mm.visual_world_matrix(bone).copy()
+                      for bone in selected_bones} if mirror_space == "VISUAL" else {}
             for bone in selected_bones:
                 opposite_name = det.find_opposite(bone.name, overrides=overrides, exceptions=exceptions)
                 if not opposite_name or opposite_name not in obj.pose.bones:
@@ -232,9 +244,10 @@ class AA_OT_p9_mirror_selected(bpy.types.Operator):
                 opposite_bone = obj.pose.bones[opposite_name]
 
                 if mirror_space == "VISUAL":
-                    mm.mirror_bone_visual(bone, opposite_bone, obj, axis=axis, channel_filter=channel_filter)
+                    mm.mirror_bone_visual(bone, opposite_bone, obj, axis=axis,
+                                          channel_filter=channel_filter, source_world=worlds[bone.name])
                 else:
-                    mm.mirror_bone_pose(bone, opposite_bone, axis, channel_filter)
+                    mm.mirror_bone_pose(sources[bone.name], opposite_bone, axis, channel_filter)
                 count += 1
 
             self.report({'INFO'}, f"Mirrored {count} bones")

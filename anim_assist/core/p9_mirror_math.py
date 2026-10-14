@@ -562,6 +562,7 @@ def mirror_bone_visual(
     armature_obj,
     axis: str = "X",
     channel_filter: mm.ChannelFilter | None = None,
+    source_world=None,
 ) -> list[str]:
     """Mirror bone transforms using evaluated (visual) matrices.
 
@@ -593,7 +594,7 @@ def mirror_bone_visual(
 
     try:
         # Get source bone's evaluated world matrix.
-        src_world = mm.visual_world_matrix(src_bone)
+        src_world = source_world if source_world is not None else mm.visual_world_matrix(src_bone)
 
         # Mirror the world matrix.
         mir_world = compute_mirror_matrix(src_world, axis=axis)
