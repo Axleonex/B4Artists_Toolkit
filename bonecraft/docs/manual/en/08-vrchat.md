@@ -181,7 +181,7 @@ The MMD tools are in the **CATS** tab → **Import / Export** → **MMD / PMX**.
 
 ## Task Board
 
-**What it does:** A summary of the current rig: a health score, quick wins, and a list of tasks BoneCraft found (missing humanoid bones, unresolved names, missing visemes, rig validator warnings and so on), grouped by category. **Open Health Check** opens the details; **Refresh Task Board** checks again.
+**What it does:** A summary of the current rig: a health score, quick wins, and a list of tasks BoneCraft found (missing humanoid bones, unresolved names, missing visemes, rig validator warnings and so on), grouped by category. **Quick Wins** shows up to three recommended tasks; **Remaining Tasks** contains only the others. **Open Health Check** runs validation and opens its results; **Refresh Task Board** checks again.
 
 **Where to find it:** **BoneCraft** tab → **Overview** → **Task Board**
 

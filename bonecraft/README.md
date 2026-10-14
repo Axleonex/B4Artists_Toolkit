@@ -6,7 +6,7 @@ only in Bforartists: in standard Blender it does not load and shows a single "Ge
 | | |
 |---|---|
 | **Add-on** | BoneCraft |
-| **Version** | 9.2.3 |
+| **Version** | 9.2.4 (source) |
 | **Host** | Bforartists (tested on 5.2) — not standard Blender |
 | **Category** | Rigging / Animation |
 | **License** | GPL v2.0 or later |
@@ -45,7 +45,15 @@ Switching a package off unregisters its classes, so it costs nothing until you s
 
 Published release changes and checks: [BoneCraft 9.2.3 release notes](../docs/bonecraft/releases/9.2.3/RELEASE-NOTES.md).
 
-### 9.2.3 changes
+Local candidate 9.2.4: [installable ZIP](../releases/BoneCraft-BFA-9.2.4.zip), [changes and checks](../docs/bonecraft/releases/9.2.4/RELEASE-NOTES.md). Not published.
+
+### 9.2.4 local source changes
+
+- Open Health Check runs the registered validator and shows refreshable results.
+- Quick Wins and Remaining Tasks show each task once.
+- Armatures and rig-bound meshes are accepted; unavailable validator packages are explained.
+
+### Previous changes (9.2.3)
 
 - Removes the duplicate Export to VRChat panel and export overview row from Avatar Tools.
 - Retains VRChat export under CATS → Import / Export → Unity / VRChat.
