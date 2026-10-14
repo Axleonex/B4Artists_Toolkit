@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "offset-rebase-start",
+    "code": "prefs.animassist_fast_offset=False\nresult=modal_start('OFFSET','cancel',elastic=True)"
+  },
+  "response": {
+    "id": "offset-rebase-start",
+    "result": {
+      "action": "OFFSET",
+      "ending": "cancel",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_anim_offset"
+      ]
+    },
+    "error": null
+  }
+}

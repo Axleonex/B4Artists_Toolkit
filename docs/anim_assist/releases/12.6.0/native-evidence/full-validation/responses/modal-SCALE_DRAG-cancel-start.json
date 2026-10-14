@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-SCALE_DRAG-cancel-start",
+    "code": "result=modal_start('SCALE_DRAG','cancel')"
+  },
+  "response": {
+    "id": "modal-SCALE_DRAG-cancel-start",
+    "result": {
+      "action": "SCALE_DRAG",
+      "ending": "cancel",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_p6_modal_scale"
+      ]
+    },
+    "error": null
+  }
+}

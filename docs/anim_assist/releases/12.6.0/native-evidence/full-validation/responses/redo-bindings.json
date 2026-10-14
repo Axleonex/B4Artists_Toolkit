@@ -1,0 +1,36 @@
+{
+  "request": {
+    "id": "redo-bindings",
+    "code": "result=[(km.name,kmi.idname,kmi.type,kmi.ctrl,kmi.shift,kmi.alt) for km in bpy.context.window_manager.keyconfigs.active.keymaps for kmi in km.keymap_items if 'redo' in kmi.idname]\n"
+  },
+  "response": {
+    "id": "redo-bindings",
+    "result": [
+      [
+        "Screen",
+        "ed.redo",
+        "Z",
+        1,
+        1,
+        0
+      ],
+      [
+        "Screen",
+        "screen.redo_last",
+        "F6",
+        0,
+        0,
+        0
+      ],
+      [
+        "Screen",
+        "asset.catalog_redo",
+        "Z",
+        1,
+        1,
+        0
+      ]
+    ],
+    "error": null
+  }
+}

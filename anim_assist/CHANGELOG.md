@@ -1,3 +1,22 @@
+# 12.6.0 — Native Timeline tool access
+
+- Supplies an Anim Assist TOOL_HEADER in the patched Bforartists Timeline.
+- Adds 19 existing action presets for clipboard, reference bookmarks, object
+  matching and configured numeric rig switches; 89 presets are searchable and
+  pinnable, retaining the previous 70 dispatch mappings and 13 quick defaults.
+- Adds nearby family options and direct access without mandatory submenus.
+- Removes Text Editor strip creation and recurring split/join height repair.
+- Respects native toolbar hiding and handles explicit preference updates across
+  workspaces. Unpatched Bforartists shows the tools in its existing header.
+- The genuine second row requires the matching custom Bforartists application.
+  Compilation and manual native qualification are recorded with the local build;
+  this source update alone does not establish runtime or AnimBot parity.
+- Fix native toolbar re-enable while the Timeline is maximized.
+- Explain Ease's two-key prerequisite before invocation.
+- Preserve handles, key types, selection and custom easing on Action Offset
+  cancellation, including newly inserted keys. Read fast-mode preferences from
+  the installed package and translate Bezier handles with offset values.
+
 # 12.5.1 — Timeline layout repair
 
 - Keep the second toolbar thin after resizing by rebuilding only its owned Timeline pair.

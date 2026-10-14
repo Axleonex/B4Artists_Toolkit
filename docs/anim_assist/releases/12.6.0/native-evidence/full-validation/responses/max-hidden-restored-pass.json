@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "max-hidden-restored-pass",
+    "code": "row_check('Explicit show after maximized hidden lifecycle')\narm_capture('final-native-rows',10)\nresult='visible'"
+  },
+  "response": {
+    "id": "max-hidden-restored-pass",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 453, in bridge\n    exec(data['code'],globals())\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 78, in row_check\n    return check(name, valid, g, 'All Timelines have two native headers and a visible WINDOW')\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 50, in check\n    raise AssertionError(name + ': ' + repr(actual) + ' expected ' + repr(expected))\nAssertionError: Explicit show after maximized hidden lifecycle: [{'window': 2258284046752, 'screen': 'Main', 'area': 2258864979744, 'x': 2, 'y': 23, 'width': 1597, 'height': 157, 'visible': False, 'hidden_by_user': True, 'regions': [{'type': 'TOOL_HEADER', 'x': 2, 'y': 179, 'width': 1, 'height': 1}, {'type': 'HEADER', 'x': 2, 'y': 154, 'width': 1597, 'height': 26}, {'type': 'FOOTER', 'x': 2, 'y': 23, 'width': 1, 'height': 1}, {'type': 'CHANNELS', 'x': 2, 'y': 23, 'width': 1, 'height': 1}, {'type': 'UI', 'x': 1598, 'y': 23, 'width': 1, 'height': 1}, {'type': 'WINDOW', 'x': 2, 'y': 23, 'width': 1597, 'height': 131}]}] expected 'All Timelines have two native headers and a visible WINDOW'\n"
+  }
+}

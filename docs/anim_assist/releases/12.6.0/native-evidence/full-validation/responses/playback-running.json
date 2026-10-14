@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "playback-running",
+    "code": "check('Native playback advances frames',bpy.context.screen.is_animation_playing and bpy.context.scene.frame_current!=1,bpy.context.scene.frame_current)\ncheck('Playback retains keys',object_snapshot(playback_obj)==playback_before)\nresult=bpy.context.scene.frame_current"
+  },
+  "response": {
+    "id": "playback-running",
+    "result": 4,
+    "error": null
+  }
+}

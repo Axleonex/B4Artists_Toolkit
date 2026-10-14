@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "workspace-switch",
+    "code": "validation_workspace=bpy.context.window.workspace\nbpy.context.window.workspace=bpy.data.workspaces['Animation']\nresult='switched'"
+  },
+  "response": {
+    "id": "workspace-switch",
+    "result": "switched",
+    "error": null
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-OFFSET_DRAG-cancel-start",
+    "code": "result=modal_start('OFFSET_DRAG','cancel')"
+  },
+  "response": {
+    "id": "modal-OFFSET_DRAG-cancel-start",
+    "result": {
+      "action": "OFFSET_DRAG",
+      "ending": "cancel",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_p6_modal_offset"
+      ]
+    },
+    "error": null
+  }
+}

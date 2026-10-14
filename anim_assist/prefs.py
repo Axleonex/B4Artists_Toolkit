@@ -18,14 +18,19 @@ def _update_pie_hotkey(self, _context: bpy.types.Context) -> None:
 
 
 def _update_timeline_quick(_self, context) -> None:
-    """Redraw existing owned rows; configuring buttons never changes layout."""
-    from .ui.timeline_strip import is_strip
+    """Redraw existing Timelines; configuring buttons never changes layout."""
+    from .ui.timeline_strip import is_timeline
     ctx = context or bpy.context
     manager = getattr(ctx, "window_manager", None)
     for window in getattr(manager, "windows", ()):
         for area in window.screen.areas:
-            if is_strip(area):
+            if is_timeline(area):
                 area.tag_redraw()
+
+
+def _update_timeline_placement(_self, _context) -> None:
+    from .ui.timeline_strip import reconcile_preferences
+    reconcile_preferences()
 
 
 def prepare_timeline_quick_preferences() -> None:
@@ -53,11 +58,16 @@ def prepare_timeline_quick_preferences() -> None:
 
 
 def draw_timeline_quick_settings(layout, context, prefs) -> None:
-    """The same native preference controls in the strip and add-on settings."""
+    """The same preference controls in the native row and add-on settings."""
     from .ui.timeline_catalog import GROUPS, quick_property_name
+    from .ui.timeline_strip import native_available
     layout.prop(prefs, "timeline_toolbar_row")
+    layout.label(text="Native second row available" if native_available()
+                 else "This application uses the existing Timeline header", icon="INFO")
+    if not native_available():
+        layout.label(text="The patched Bforartists application enables a native second row")
     layout.label(text="Saved in add-on preferences")
-    layout.label(text="Quick buttons apply to all Timeline strips")
+    layout.label(text="Quick buttons apply to all Timelines")
     layout.prop(prefs, "timeline_quick_family")
     actions = next(actions for key, _label, actions in GROUPS
                    if key == prefs.timeline_quick_family)
@@ -156,14 +166,19 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
 
     # Where Anim Assist appears (Properties > Scene > Anim Assist > Settings).
     timeline_toolbar_row: BoolProperty(  # type: ignore[valid-type]
-        name="Toolbar Above Timeline",
+        name="Native Timeline Toolbar",
         description=(
-            "Move Anim Assist shortcuts into a thin editor strip above each visible Timeline; "
-            "keep the strip thin when resized and retain the frame ruler and keys; "
-            "grow a short Timeline to make room for the extra row; "
-            "turn off to rejoin the strip and return shortcuts to the native header"
+            "Show Anim Assist in the Timeline's native second row on a patched application; "
+            "make room automatically when enabling; turn off to use the existing native header. "
+            "Applications without the native second row use the existing header"
         ),
         default=True,
+        update=_update_timeline_placement,
+    )
+    timeline_paste_offset: FloatProperty(
+        name="Paste Frame Offset",
+        description="Add this frame offset to the copied absolute key times when pasting",
+        default=0.0,
     )
     pie_hotkey_enabled: BoolProperty(  # type: ignore[valid-type]
         name="Anim Assist Pie Menu Hotkey",

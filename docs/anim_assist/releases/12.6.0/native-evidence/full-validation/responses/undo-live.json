@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "undo-live",
+    "code": "undo_live=object_snapshot(bpy.data.objects['VAL_Animated'])\ncheck('GUI nudge changes curves',undo_live!=undo_before)\nresult='nudge'"
+  },
+  "response": {
+    "id": "undo-live",
+    "result": "nudge",
+    "error": null
+  }
+}

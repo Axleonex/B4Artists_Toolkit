@@ -1,0 +1,26 @@
+{
+  "request": {
+    "id": "custom-pins-save-restart",
+    "code": "prefs=importlib.import_module(PACKAGE+'.prefs').get_prefs(bpy.context)\nsetattr(prefs,cat.quick_property_name('COPY_KEYS'),True)\nbpy.ops.wm.save_userpref()\nbpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'restart-visible-final.blend'))\nresult=list(cat.selected_quick_actions(prefs))"
+  },
+  "response": {
+    "id": "custom-pins-save-restart",
+    "result": [
+      "RANGE",
+      "COPY_KEYS",
+      "DRAG",
+      "TRAIL_SHOW",
+      "BAKE_STEP",
+      "ENDS",
+      "B25",
+      "NUDGE_LEFT",
+      "NUDGE_RIGHT",
+      "MIRROR_SELECTED",
+      "RIPPLE",
+      "SMOOTH",
+      "B75",
+      "B50"
+    ],
+    "error": null
+  }
+}

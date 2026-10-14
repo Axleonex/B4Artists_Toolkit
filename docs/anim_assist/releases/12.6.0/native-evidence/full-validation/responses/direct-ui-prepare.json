@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "direct-ui-prepare",
+    "code": "addon_utils.disable(PACKAGE,default_set=False)\nkeymod=importlib.reload(keymod)\nimportlib.reload(importlib.import_module(PACKAGE+'.operators'))\noriginal_header_draw=toolbar.ANIMASSIST_HT_timeline_tools.draw\ndef direct_header(self,context):\n self.layout.operator_context='EXEC_DEFAULT'\n op=self.layout.operator('animassist.move_keys',text='VAL Direct +1'); op.offset=1\ntoolbar.ANIMASSIST_HT_timeline_tools.draw=direct_header\naddon_utils.enable(PACKAGE,default_set=False,persistent=True)\nbpy.ops.wm.open_mainfile(filepath=str(ROOT/'undo-fixture.blend'))\nresult='direct target GUI control'"
+  },
+  "response": {
+    "id": "direct-ui-prepare",
+    "result": "direct target GUI control",
+    "error": null
+  }
+}

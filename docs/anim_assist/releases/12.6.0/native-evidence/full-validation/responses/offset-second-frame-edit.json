@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "offset-second-frame-edit",
+    "code": "modal_obj.location.x=6\nmodal_obj.keyframe_insert(data_path='location',index=0,frame=40)\nresult='edit40'"
+  },
+  "response": {
+    "id": "offset-second-frame-edit",
+    "result": "edit40",
+    "error": null
+  }
+}

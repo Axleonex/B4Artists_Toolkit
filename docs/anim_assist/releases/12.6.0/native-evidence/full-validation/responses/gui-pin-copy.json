@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "gui-pin-copy",
+    "code": "check('GUI Search pins Copy',getattr(prefs,cat.quick_property_name('COPY_KEYS')))\nresult='pin passed'"
+  },
+  "response": {
+    "id": "gui-pin-copy",
+    "result": "pin passed",
+    "error": null
+  }
+}

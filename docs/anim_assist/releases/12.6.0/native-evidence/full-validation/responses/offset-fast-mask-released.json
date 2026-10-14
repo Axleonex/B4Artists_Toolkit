@@ -1,0 +1,16 @@
+{
+  "request": {
+    "id": "offset-fast-mask-released",
+    "code": "xcurve=next(c for c in object_snapshot(modal_obj) if c['index']==0)\ncheck('fast Offset propagates on actual mouse release inside mask',[k['co'][1] for k in xcurve['keys']]==[0,5,2],xcurve,[0,5,2])\nmodal_obj.keyframe_insert(data_path='location',index=0,frame=25)\nfc=compat.get_fcurves(modal_obj.animation_data.action,anim_data=modal_obj.animation_data)[0]\nnext(k for k in fc.keyframe_points if abs(k.co.x-20)<1e-5).type='BREAKDOWN'\nresult=modal_live()"
+  },
+  "response": {
+    "id": "offset-fast-mask-released",
+    "result": {
+      "changed": true,
+      "operators": [
+        "ANIMASSIST_OT_anim_offset"
+      ]
+    },
+    "error": null
+  }
+}

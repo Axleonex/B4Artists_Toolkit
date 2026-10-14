@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "offset-repaired-cancel-edit",
+    "code": "bpy.context.preferences.addons[PACKAGE].preferences.animassist_fast_offset=False\nmodal_obj.location.x=5\nmodal_obj.keyframe_insert(data_path='location',index=0,frame=20)\nresult='Edited native location key'"
+  },
+  "response": {
+    "id": "offset-repaired-cancel-edit",
+    "result": "Edited native location key",
+    "error": null
+  }
+}

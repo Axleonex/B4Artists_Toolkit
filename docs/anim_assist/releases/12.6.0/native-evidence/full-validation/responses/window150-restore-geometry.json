@@ -1,0 +1,14 @@
+{
+  "request": {
+    "id": "window150-restore-geometry",
+    "code": "result=(bpy.context.window.width,bpy.context.window.height)"
+  },
+  "response": {
+    "id": "window150-restore-geometry",
+    "result": [
+      800,
+      800
+    ],
+    "error": null
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "unmarked-prepare",
+    "code": "addon_utils.disable(PACKAGE,default_set=False)\nleft=next(a for a in bpy.context.window.screen.areas if a.type=='VIEW_3D')\nleft.type='TEXT_EDITOR'; left.spaces.active.text=bpy.data.texts.new('VAL_UnmarkedEditor')\nright=next(a for a in bpy.context.window.screen.areas if a.type=='PROPERTIES')\nright.type='TEXT_EDITOR'; right.spaces.active.text=bpy.data.texts.new('VAL_MovedStrip'); right.spaces.active.text['animassist_timeline_toolbar']=1\nsafety_areas=len(bpy.context.window.screen.areas)\naddon_utils.enable(PACKAGE,default_set=False,persistent=True)\nresult='wait'"
+  },
+  "response": {
+    "id": "unmarked-prepare",
+    "result": "wait",
+    "error": null
+  }
+}

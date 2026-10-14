@@ -1,0 +1,2038 @@
+[
+  {
+    "name": "Actual unpatched feature detection",
+    "passed": true,
+    "actual": null,
+    "expected": null,
+    "utc": "2026-10-13T11:44:47.951581+00:00"
+  },
+  {
+    "name": "immediate action B25",
+    "passed": true,
+    "actual": {
+      "action": "B25",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "points": [
+        {
+          "co": [
+            10.0,
+            1.0
+          ],
+          "left": [
+            5.92153787612915,
+            0.10048043727874756
+          ],
+          "right": [
+            14.411534309387207,
+            1.9729795455932617
+          ],
+          "selected": true,
+          "interpolation": "BEZIER",
+          "left_type": "FREE",
+          "right_type": "FREE",
+          "type": "KEYFRAME",
+          "easing": "AUTO",
+          "amplitude": 0.800000011920929,
+          "back": 1.7015800476074219,
+          "period": 4.099999904632568,
+          "selected_left": true,
+          "selected_right": true
+        }
+      ],
+      "expected": "New frame-10 key with value 1.0",
+      "passed": true
+    },
+    "expected": "New frame-10 key with value 1.0",
+    "utc": "2026-10-13T11:44:48.048582+00:00"
+  },
+  {
+    "name": "immediate action B50",
+    "passed": true,
+    "actual": {
+      "action": "B50",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "points": [
+        {
+          "co": [
+            10.0,
+            2.0
+          ],
+          "left": [
+            5.92153787612915,
+            1.1004804372787476
+          ],
+          "right": [
+            14.411534309387207,
+            2.9729795455932617
+          ],
+          "selected": true,
+          "interpolation": "BEZIER",
+          "left_type": "FREE",
+          "right_type": "FREE",
+          "type": "KEYFRAME",
+          "easing": "AUTO",
+          "amplitude": 0.800000011920929,
+          "back": 1.7015800476074219,
+          "period": 4.099999904632568,
+          "selected_left": true,
+          "selected_right": true
+        }
+      ],
+      "expected": "New frame-10 key with value 2.0",
+      "passed": true
+    },
+    "expected": "New frame-10 key with value 2.0",
+    "utc": "2026-10-13T11:44:48.077991+00:00"
+  },
+  {
+    "name": "immediate action B75",
+    "passed": true,
+    "actual": {
+      "action": "B75",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "points": [
+        {
+          "co": [
+            10.0,
+            3.0
+          ],
+          "left": [
+            5.92153787612915,
+            2.100480556488037
+          ],
+          "right": [
+            14.411534309387207,
+            3.9729795455932617
+          ],
+          "selected": true,
+          "interpolation": "BEZIER",
+          "left_type": "FREE",
+          "right_type": "FREE",
+          "type": "KEYFRAME",
+          "easing": "AUTO",
+          "amplitude": 0.800000011920929,
+          "back": 1.7015800476074219,
+          "period": 4.099999904632568,
+          "selected_left": true,
+          "selected_right": true
+        }
+      ],
+      "expected": "New frame-10 key with value 3.0",
+      "passed": true
+    },
+    "expected": "New frame-10 key with value 3.0",
+    "utc": "2026-10-13T11:44:48.080446+00:00"
+  },
+  {
+    "name": "immediate action PUSH_PREV",
+    "passed": true,
+    "actual": {
+      "action": "PUSH_PREV",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "expected": "Added breakdown/inbetween keys",
+      "passed": true
+    },
+    "expected": "Added breakdown/inbetween keys",
+    "utc": "2026-10-13T11:44:48.089451+00:00"
+  },
+  {
+    "name": "immediate action PULL_PREV",
+    "passed": true,
+    "actual": {
+      "action": "PULL_PREV",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "expected": "Added breakdown/inbetween keys",
+      "passed": true
+    },
+    "expected": "Added breakdown/inbetween keys",
+    "utc": "2026-10-13T11:44:48.096490+00:00"
+  },
+  {
+    "name": "immediate action PULL_NEXT",
+    "passed": true,
+    "actual": {
+      "action": "PULL_NEXT",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "expected": "Added breakdown/inbetween keys",
+      "passed": true
+    },
+    "expected": "Added breakdown/inbetween keys",
+    "utc": "2026-10-13T11:44:48.106374+00:00"
+  },
+  {
+    "name": "immediate action PUSH_NEXT",
+    "passed": true,
+    "actual": {
+      "action": "PUSH_NEXT",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "expected": "Added breakdown/inbetween keys",
+      "passed": true
+    },
+    "expected": "Added breakdown/inbetween keys",
+    "utc": "2026-10-13T11:44:48.114068+00:00"
+  },
+  {
+    "name": "immediate action T80",
+    "passed": true,
+    "actual": {
+      "action": "T80",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          1.0,
+          16.200000762939453,
+          32.20000076293945
+        ],
+        [
+          1.0,
+          16.200000762939453,
+          32.20000076293945
+        ],
+        [
+          1.0,
+          16.200000762939453,
+          32.20000076293945
+        ]
+      ],
+      "expected": [
+        1,
+        16.200000000000003,
+        32.2
+      ],
+      "passed": true
+    },
+    "expected": [
+      1,
+      16.200000000000003,
+      32.2
+    ],
+    "utc": "2026-10-13T11:44:48.122569+00:00"
+  },
+  {
+    "name": "immediate action T90",
+    "passed": true,
+    "actual": {
+      "action": "T90",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          1.0,
+          18.100000381469727,
+          36.099998474121094
+        ],
+        [
+          1.0,
+          18.100000381469727,
+          36.099998474121094
+        ],
+        [
+          1.0,
+          18.100000381469727,
+          36.099998474121094
+        ]
+      ],
+      "expected": [
+        1,
+        18.1,
+        36.1
+      ],
+      "passed": true
+    },
+    "expected": [
+      1,
+      18.1,
+      36.1
+    ],
+    "utc": "2026-10-13T11:44:48.129947+00:00"
+  },
+  {
+    "name": "immediate action T110",
+    "passed": true,
+    "actual": {
+      "action": "T110",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          1.0,
+          21.899999618530273,
+          43.900001525878906
+        ],
+        [
+          1.0,
+          21.899999618530273,
+          43.900001525878906
+        ],
+        [
+          1.0,
+          21.899999618530273,
+          43.900001525878906
+        ]
+      ],
+      "expected": [
+        1,
+        21.900000000000002,
+        43.900000000000006
+      ],
+      "passed": true
+    },
+    "expected": [
+      1,
+      21.900000000000002,
+      43.900000000000006
+    ],
+    "utc": "2026-10-13T11:44:48.137261+00:00"
+  },
+  {
+    "name": "immediate action T120",
+    "passed": true,
+    "actual": {
+      "action": "T120",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          1.0,
+          23.80000114440918,
+          47.80000305175781
+        ],
+        [
+          1.0,
+          23.80000114440918,
+          47.80000305175781
+        ],
+        [
+          1.0,
+          23.80000114440918,
+          47.80000305175781
+        ]
+      ],
+      "expected": [
+        1,
+        23.8,
+        47.8
+      ],
+      "passed": true
+    },
+    "expected": [
+      1,
+      23.8,
+      47.8
+    ],
+    "utc": "2026-10-13T11:44:48.144158+00:00"
+  },
+  {
+    "name": "immediate action RIPPLE",
+    "passed": true,
+    "actual": {
+      "action": "RIPPLE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          1.0,
+          21.0,
+          41.0
+        ],
+        [
+          1.0,
+          21.0,
+          41.0
+        ],
+        [
+          1.0,
+          21.0,
+          41.0
+        ]
+      ],
+      "expected": [
+        1,
+        21,
+        41
+      ],
+      "passed": true
+    },
+    "expected": [
+      1,
+      21,
+      41
+    ],
+    "utc": "2026-10-13T11:44:48.152114+00:00"
+  },
+  {
+    "name": "immediate action RANGE",
+    "passed": true,
+    "actual": {
+      "action": "RANGE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "All fixture keys selected",
+      "passed": true
+    },
+    "expected": "All fixture keys selected",
+    "utc": "2026-10-13T11:44:48.160978+00:00"
+  },
+  {
+    "name": "immediate action ALL",
+    "passed": true,
+    "actual": {
+      "action": "ALL",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "All fixture keys selected",
+      "passed": true
+    },
+    "expected": "All fixture keys selected",
+    "utc": "2026-10-13T11:44:48.168854+00:00"
+  },
+  {
+    "name": "immediate action ENDS",
+    "passed": true,
+    "actual": {
+      "action": "ENDS",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Endpoints selected, middle not selected",
+      "passed": true
+    },
+    "expected": "Endpoints selected, middle not selected",
+    "utc": "2026-10-13T11:44:48.178267+00:00"
+  },
+  {
+    "name": "immediate action INBETWEEN",
+    "passed": true,
+    "actual": {
+      "action": "INBETWEEN",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "expected": "Added breakdown/inbetween keys",
+      "passed": true
+    },
+    "expected": "Added breakdown/inbetween keys",
+    "utc": "2026-10-13T11:44:48.187693+00:00"
+  },
+  {
+    "name": "immediate action INBETWEENS",
+    "passed": true,
+    "actual": {
+      "action": "INBETWEENS",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "expected": "Added breakdown/inbetween keys",
+      "passed": true
+    },
+    "expected": "Added breakdown/inbetween keys",
+    "utc": "2026-10-13T11:44:48.195658+00:00"
+  },
+  {
+    "name": "immediate action REFERENCE",
+    "passed": true,
+    "actual": {
+      "action": "REFERENCE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Reference frame 10",
+      "passed": true
+    },
+    "expected": "Reference frame 10",
+    "utc": "2026-10-13T11:44:48.204357+00:00"
+  },
+  {
+    "name": "immediate action HANDLE_AUTO",
+    "passed": true,
+    "actual": {
+      "action": "HANDLE_AUTO",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Both handles set to AUTO",
+      "passed": true
+    },
+    "expected": "Both handles set to AUTO",
+    "utc": "2026-10-13T11:44:48.212252+00:00"
+  },
+  {
+    "name": "immediate action HANDLE_CLAMPED",
+    "passed": true,
+    "actual": {
+      "action": "HANDLE_CLAMPED",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Both handles set to AUTO_CLAMPED",
+      "passed": true
+    },
+    "expected": "Both handles set to AUTO_CLAMPED",
+    "utc": "2026-10-13T11:44:48.220216+00:00"
+  },
+  {
+    "name": "immediate action HANDLE_VECTOR",
+    "passed": true,
+    "actual": {
+      "action": "HANDLE_VECTOR",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Both handles set to VECTOR",
+      "passed": true
+    },
+    "expected": "Both handles set to VECTOR",
+    "utc": "2026-10-13T11:44:48.226360+00:00"
+  },
+  {
+    "name": "immediate action HANDLE_ALIGNED",
+    "passed": true,
+    "actual": {
+      "action": "HANDLE_ALIGNED",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Both handles set to ALIGNED",
+      "passed": true
+    },
+    "expected": "Both handles set to ALIGNED",
+    "utc": "2026-10-13T11:44:48.235704+00:00"
+  },
+  {
+    "name": "immediate action HANDLE_FREE",
+    "passed": true,
+    "actual": {
+      "action": "HANDLE_FREE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Both handles set to FREE",
+      "passed": true
+    },
+    "expected": "Both handles set to FREE",
+    "utc": "2026-10-13T11:44:48.242640+00:00"
+  },
+  {
+    "name": "immediate action NUDGE_LEFT",
+    "passed": true,
+    "actual": {
+      "action": "NUDGE_LEFT",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          0.0,
+          19.0,
+          39.0
+        ],
+        [
+          0.0,
+          19.0,
+          39.0
+        ],
+        [
+          0.0,
+          19.0,
+          39.0
+        ]
+      ],
+      "expected": [
+        0,
+        19,
+        39
+      ],
+      "passed": true
+    },
+    "expected": [
+      0,
+      19,
+      39
+    ],
+    "utc": "2026-10-13T11:44:48.251610+00:00"
+  },
+  {
+    "name": "immediate action NUDGE_RIGHT",
+    "passed": true,
+    "actual": {
+      "action": "NUDGE_RIGHT",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          2.0,
+          21.0,
+          41.0
+        ],
+        [
+          2.0,
+          21.0,
+          41.0
+        ],
+        [
+          2.0,
+          21.0,
+          41.0
+        ]
+      ],
+      "expected": [
+        2,
+        21,
+        41
+      ],
+      "passed": true
+    },
+    "expected": [
+      2,
+      21,
+      41
+    ],
+    "utc": "2026-10-13T11:44:48.259236+00:00"
+  },
+  {
+    "name": "immediate action OFFSET_ACTION",
+    "passed": true,
+    "actual": {
+      "action": "OFFSET_ACTION",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          2.0,
+          21.0,
+          41.0
+        ],
+        [
+          2.0,
+          21.0,
+          41.0
+        ],
+        [
+          2.0,
+          21.0,
+          41.0
+        ]
+      ],
+      "expected": [
+        2,
+        21,
+        41
+      ],
+      "passed": true
+    },
+    "expected": [
+      2,
+      21,
+      41
+    ],
+    "utc": "2026-10-13T11:44:48.267471+00:00"
+  },
+  {
+    "name": "immediate action INSERT_TIME",
+    "passed": true,
+    "actual": {
+      "action": "INSERT_TIME",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          1.0,
+          21.0,
+          41.0
+        ],
+        [
+          1.0,
+          21.0,
+          41.0
+        ],
+        [
+          1.0,
+          21.0,
+          41.0
+        ]
+      ],
+      "expected": [
+        1,
+        21,
+        41
+      ],
+      "passed": true
+    },
+    "expected": [
+      1,
+      21,
+      41
+    ],
+    "utc": "2026-10-13T11:44:48.275701+00:00"
+  },
+  {
+    "name": "immediate action REMOVE_TIME",
+    "passed": true,
+    "actual": {
+      "action": "REMOVE_TIME",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          1.0,
+          19.0,
+          39.0
+        ],
+        [
+          1.0,
+          19.0,
+          39.0
+        ],
+        [
+          1.0,
+          19.0,
+          39.0
+        ]
+      ],
+      "expected": [
+        1,
+        19,
+        39
+      ],
+      "passed": true
+    },
+    "expected": [
+      1,
+      19,
+      39
+    ],
+    "utc": "2026-10-13T11:44:48.283615+00:00"
+  },
+  {
+    "name": "immediate action DISTRIBUTE_TIME",
+    "passed": true,
+    "actual": {
+      "action": "DISTRIBUTE_TIME",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          1.0,
+          20.5,
+          40.0
+        ],
+        [
+          1.0,
+          20.5,
+          40.0
+        ],
+        [
+          1.0,
+          20.5,
+          40.0
+        ]
+      ],
+      "expected": [
+        1,
+        20.5,
+        40
+      ],
+      "passed": true
+    },
+    "expected": [
+      1,
+      20.5,
+      40
+    ],
+    "utc": "2026-10-13T11:44:48.291362+00:00"
+  },
+  {
+    "name": "immediate action REVERSE",
+    "passed": true,
+    "actual": {
+      "action": "REVERSE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          1.0,
+          21.0,
+          40.0
+        ],
+        [
+          1.0,
+          21.0,
+          40.0
+        ],
+        [
+          1.0,
+          21.0,
+          40.0
+        ]
+      ],
+      "expected": [
+        1,
+        21,
+        40
+      ],
+      "passed": true
+    },
+    "expected": [
+      1,
+      21,
+      40
+    ],
+    "utc": "2026-10-13T11:44:48.299245+00:00"
+  },
+  {
+    "name": "immediate action SNAP",
+    "passed": true,
+    "actual": {
+      "action": "SNAP",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "frames": [
+        [
+          1.0,
+          21.0,
+          40.0
+        ],
+        [
+          1.0,
+          21.0,
+          40.0
+        ],
+        [
+          1.0,
+          21.0,
+          40.0
+        ]
+      ],
+      "expected": [
+        1,
+        21,
+        40
+      ],
+      "passed": true
+    },
+    "expected": [
+      1,
+      21,
+      40
+    ],
+    "utc": "2026-10-13T11:44:48.306823+00:00"
+  },
+  {
+    "name": "immediate action GROW_LEFT",
+    "passed": true,
+    "actual": {
+      "action": "GROW_LEFT",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": [
+        true,
+        true,
+        false
+      ],
+      "passed": true
+    },
+    "expected": [
+      true,
+      true,
+      false
+    ],
+    "utc": "2026-10-13T11:44:48.314916+00:00"
+  },
+  {
+    "name": "immediate action GROW_RIGHT",
+    "passed": true,
+    "actual": {
+      "action": "GROW_RIGHT",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": [
+        false,
+        true,
+        true
+      ],
+      "passed": true
+    },
+    "expected": [
+      false,
+      true,
+      true
+    ],
+    "utc": "2026-10-13T11:44:48.322305+00:00"
+  },
+  {
+    "name": "immediate action GROW_BOTH",
+    "passed": true,
+    "actual": {
+      "action": "GROW_BOTH",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": [
+        true,
+        true,
+        true
+      ],
+      "passed": true
+    },
+    "expected": [
+      true,
+      true,
+      true
+    ],
+    "utc": "2026-10-13T11:44:48.330559+00:00"
+  },
+  {
+    "name": "immediate action TYPE_KEYFRAME",
+    "passed": true,
+    "actual": {
+      "action": "TYPE_KEYFRAME",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Key types KEYFRAME",
+      "passed": true
+    },
+    "expected": "Key types KEYFRAME",
+    "utc": "2026-10-13T11:44:48.337802+00:00"
+  },
+  {
+    "name": "immediate action TYPE_BREAKDOWN",
+    "passed": true,
+    "actual": {
+      "action": "TYPE_BREAKDOWN",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Key types BREAKDOWN",
+      "passed": true
+    },
+    "expected": "Key types BREAKDOWN",
+    "utc": "2026-10-13T11:44:48.345679+00:00"
+  },
+  {
+    "name": "immediate action TYPE_HOLD",
+    "passed": true,
+    "actual": {
+      "action": "TYPE_HOLD",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Key types MOVING_HOLD",
+      "passed": true
+    },
+    "expected": "Key types MOVING_HOLD",
+    "utc": "2026-10-13T11:44:48.354857+00:00"
+  },
+  {
+    "name": "immediate action TYPE_EXTREME",
+    "passed": true,
+    "actual": {
+      "action": "TYPE_EXTREME",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Key types EXTREME",
+      "passed": true
+    },
+    "expected": "Key types EXTREME",
+    "utc": "2026-10-13T11:44:48.362716+00:00"
+  },
+  {
+    "name": "immediate action TYPE_JITTER",
+    "passed": true,
+    "actual": {
+      "action": "TYPE_JITTER",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Key types JITTER",
+      "passed": true
+    },
+    "expected": "Key types JITTER",
+    "utc": "2026-10-13T11:44:48.373306+00:00"
+  },
+  {
+    "name": "immediate action SELECT_BREAKDOWNS",
+    "passed": true,
+    "actual": {
+      "action": "SELECT_BREAKDOWNS",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Only middle breakdown keys selected",
+      "passed": true
+    },
+    "expected": "Only middle breakdown keys selected",
+    "utc": "2026-10-13T11:44:48.382180+00:00"
+  },
+  {
+    "name": "immediate action MIRROR_ACTIVE",
+    "passed": true,
+    "actual": {
+      "action": "MIRROR_ACTIVE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 18,
+      "after_key_count": 18,
+      "bone_locations": {
+        "Hand.L": [
+          1.0,
+          2.0,
+          0.0
+        ],
+        "Hand.R": [
+          -1.0,
+          2.0,
+          0.0
+        ]
+      },
+      "expected": "Configured mirrored or swapped pose differs",
+      "passed": true
+    },
+    "expected": "Configured mirrored or swapped pose differs",
+    "utc": "2026-10-13T11:44:48.394237+00:00"
+  },
+  {
+    "name": "immediate action MIRROR_SELECTED",
+    "passed": true,
+    "actual": {
+      "action": "MIRROR_SELECTED",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 18,
+      "after_key_count": 18,
+      "bone_locations": {
+        "Hand.L": [
+          1.0,
+          2.0,
+          0.0
+        ],
+        "Hand.R": [
+          -1.0,
+          2.0,
+          0.0
+        ]
+      },
+      "expected": "Configured mirrored or swapped pose differs",
+      "passed": true
+    },
+    "expected": "Configured mirrored or swapped pose differs",
+    "utc": "2026-10-13T11:44:48.401868+00:00"
+  },
+  {
+    "name": "immediate action MIRROR_FRAME",
+    "passed": true,
+    "actual": {
+      "action": "MIRROR_FRAME",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 18,
+      "after_key_count": 36,
+      "expected": "Mirrored pose keys created",
+      "passed": true
+    },
+    "expected": "Mirrored pose keys created",
+    "utc": "2026-10-13T11:44:48.411263+00:00"
+  },
+  {
+    "name": "immediate action MIRROR_RANGE",
+    "passed": true,
+    "actual": {
+      "action": "MIRROR_RANGE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 18,
+      "after_key_count": 66,
+      "expected": "Mirrored pose keys created",
+      "passed": true
+    },
+    "expected": "Mirrored pose keys created",
+    "utc": "2026-10-13T11:44:48.421336+00:00"
+  },
+  {
+    "name": "immediate action OPPOSITE",
+    "passed": true,
+    "actual": {
+      "action": "OPPOSITE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 18,
+      "after_key_count": 18,
+      "expected": "Action-specific state assertion",
+      "passed": true
+    },
+    "expected": "Action-specific state assertion",
+    "utc": "2026-10-13T11:44:48.428177+00:00"
+  },
+  {
+    "name": "immediate action SWAP",
+    "passed": true,
+    "actual": {
+      "action": "SWAP",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 18,
+      "after_key_count": 18,
+      "bone_locations": {
+        "Hand.L": [
+          -4.0,
+          3.0,
+          0.0
+        ],
+        "Hand.R": [
+          -1.0,
+          2.0,
+          0.0
+        ]
+      },
+      "expected": "Configured mirrored or swapped pose differs",
+      "passed": true
+    },
+    "expected": "Configured mirrored or swapped pose differs",
+    "utc": "2026-10-13T11:44:48.437036+00:00"
+  },
+  {
+    "name": "immediate action ALIGN",
+    "passed": true,
+    "actual": {
+      "action": "ALIGN",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          1.889711618423462
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.007344499230384827
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.007344499230384827
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": "Configured matched transform",
+      "passed": true
+    },
+    "expected": "Configured matched transform",
+    "utc": "2026-10-13T11:44:48.444695+00:00"
+  },
+  {
+    "name": "immediate action BAKE_STEP",
+    "passed": true,
+    "actual": {
+      "action": "BAKE_STEP",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 45,
+      "expected": "Bake includes configured end frame 3",
+      "passed": true
+    },
+    "expected": "Bake includes configured end frame 3",
+    "utc": "2026-10-13T11:44:48.454845+00:00"
+  },
+  {
+    "name": "immediate action SMART_BAKE",
+    "passed": true,
+    "actual": {
+      "action": "SMART_BAKE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 35,
+      "expected": "Bake includes configured end frame 3",
+      "passed": true
+    },
+    "expected": "Bake includes configured end frame 3",
+    "utc": "2026-10-13T11:44:48.462748+00:00"
+  },
+  {
+    "name": "immediate action REDUCE",
+    "passed": true,
+    "actual": {
+      "action": "REDUCE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 6,
+      "expected": "Redundant linear middle keys removed",
+      "passed": true
+    },
+    "expected": "Redundant linear middle keys removed",
+    "utc": "2026-10-13T11:44:48.472292+00:00"
+  },
+  {
+    "name": "immediate action PROXY_TRANSLATION",
+    "passed": true,
+    "actual": {
+      "action": "PROXY_TRANSLATION",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Tagged proxy created",
+      "passed": true
+    },
+    "expected": "Tagged proxy created",
+    "utc": "2026-10-13T11:44:48.490905+00:00"
+  },
+  {
+    "name": "immediate action PROXY_ORIENTATION",
+    "passed": true,
+    "actual": {
+      "action": "PROXY_ORIENTATION",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Tagged proxy created",
+      "passed": true
+    },
+    "expected": "Tagged proxy created",
+    "utc": "2026-10-13T11:44:48.495027+00:00"
+  },
+  {
+    "name": "immediate action PROXY_WORLD",
+    "passed": true,
+    "actual": {
+      "action": "PROXY_WORLD",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Tagged proxy created",
+      "passed": true
+    },
+    "expected": "Tagged proxy created",
+    "utc": "2026-10-13T11:44:48.503887+00:00"
+  },
+  {
+    "name": "immediate action PROXY_PARENT",
+    "passed": true,
+    "actual": {
+      "action": "PROXY_PARENT",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Tagged proxy created",
+      "passed": true
+    },
+    "expected": "Tagged proxy created",
+    "utc": "2026-10-13T11:44:48.514083+00:00"
+  },
+  {
+    "name": "immediate action BAKE_CLEANUP",
+    "passed": true,
+    "actual": {
+      "action": "BAKE_CLEANUP",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 28,
+      "expected": "Action-specific state assertion",
+      "passed": true
+    },
+    "expected": "Action-specific state assertion",
+    "utc": "2026-10-13T11:44:48.524824+00:00"
+  },
+  {
+    "name": "immediate action TRAIL_SHOW",
+    "passed": true,
+    "actual": {
+      "action": "TRAIL_SHOW",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Overlay state and sampled trajectory cache",
+      "passed": true
+    },
+    "expected": "Overlay state and sampled trajectory cache",
+    "utc": "2026-10-13T11:44:48.533126+00:00"
+  },
+  {
+    "name": "immediate action TRAIL_HIDE",
+    "passed": true,
+    "actual": {
+      "action": "TRAIL_HIDE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Overlay state and sampled trajectory cache",
+      "passed": true
+    },
+    "expected": "Overlay state and sampled trajectory cache",
+    "utc": "2026-10-13T11:44:48.543535+00:00"
+  },
+  {
+    "name": "immediate action TRAIL_REFRESH",
+    "passed": true,
+    "actual": {
+      "action": "TRAIL_REFRESH",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Overlay state and sampled trajectory cache",
+      "passed": true
+    },
+    "expected": "Overlay state and sampled trajectory cache",
+    "utc": "2026-10-13T11:44:48.553478+00:00"
+  },
+  {
+    "name": "immediate action TRAIL_DIAGNOSE",
+    "passed": true,
+    "actual": {
+      "action": "TRAIL_DIAGNOSE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Overlay state and sampled trajectory cache",
+      "passed": true
+    },
+    "expected": "Overlay state and sampled trajectory cache",
+    "utc": "2026-10-13T11:44:48.563756+00:00"
+  },
+  {
+    "name": "immediate action OFFSET_MASK",
+    "passed": true,
+    "actual": {
+      "action": "OFFSET_MASK",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Action-specific state assertion",
+      "passed": true
+    },
+    "expected": "Action-specific state assertion",
+    "utc": "2026-10-13T11:44:48.572081+00:00"
+  },
+  {
+    "name": "immediate action OFFSET_SCENE_RANGE",
+    "passed": true,
+    "actual": {
+      "action": "OFFSET_SCENE_RANGE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Action-specific state assertion",
+      "passed": true
+    },
+    "expected": "Action-specific state assertion",
+    "utc": "2026-10-13T11:44:48.582787+00:00"
+  },
+  {
+    "name": "immediate action COPY_KEYS",
+    "passed": true,
+    "actual": {
+      "action": "COPY_KEYS",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "clipboard_size": 9,
+      "expected": 9,
+      "passed": true
+    },
+    "expected": 9,
+    "utc": "2026-10-13T11:44:48.591903+00:00"
+  },
+  {
+    "name": "immediate action PASTE_KEYS",
+    "passed": true,
+    "actual": {
+      "action": "PASTE_KEYS",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 18,
+      "expected": "Copied key times shifted by 100",
+      "passed": true
+    },
+    "expected": "Copied key times shifted by 100",
+    "utc": "2026-10-13T11:44:48.604467+00:00"
+  },
+  {
+    "name": "immediate action BOOKMARK_ADD",
+    "passed": true,
+    "actual": {
+      "action": "BOOKMARK_ADD",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Action-specific state assertion",
+      "passed": true
+    },
+    "expected": "Action-specific state assertion",
+    "utc": "2026-10-13T11:44:48.612650+00:00"
+  },
+  {
+    "name": "immediate action BOOKMARK_REMOVE",
+    "passed": true,
+    "actual": {
+      "action": "BOOKMARK_REMOVE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Action-specific state assertion",
+      "passed": true
+    },
+    "expected": "Action-specific state assertion",
+    "utc": "2026-10-13T11:44:48.623846+00:00"
+  },
+  {
+    "name": "immediate action BOOKMARK_RECALL",
+    "passed": true,
+    "actual": {
+      "action": "BOOKMARK_RECALL",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 9,
+      "expected": "Action-specific state assertion",
+      "passed": true
+    },
+    "expected": "Action-specific state assertion",
+    "utc": "2026-10-13T11:44:48.633783+00:00"
+  },
+  {
+    "name": "immediate action MATCH_WORLD",
+    "passed": true,
+    "actual": {
+      "action": "MATCH_WORLD",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 18,
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": "Configured matched transform",
+      "passed": true
+    },
+    "expected": "Configured matched transform",
+    "utc": "2026-10-13T11:44:48.643926+00:00"
+  },
+  {
+    "name": "immediate action MATCH_PARENT",
+    "passed": true,
+    "actual": {
+      "action": "MATCH_PARENT",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 18,
+      "matrix": [
+        [
+          1.404439926147461,
+          -0.3301149606704712,
+          0.1746804267168045,
+          6.000000476837158
+        ],
+        [
+          0.43444421887397766,
+          1.147709846496582,
+          -0.02956560254096985,
+          1.9999998807907104
+        ],
+        [
+          -0.2980039417743683,
+          0.1174120381474495,
+          0.7801361680030823,
+          0.9999998211860657
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": "Configured matched transform",
+      "passed": true
+    },
+    "expected": "Configured matched transform",
+    "utc": "2026-10-13T11:44:48.653861+00:00"
+  },
+  {
+    "name": "immediate action MATCH_TARGET",
+    "passed": true,
+    "actual": {
+      "action": "MATCH_TARGET",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 18,
+      "matrix": [
+        [
+          1.4044400453567505,
+          -0.33011505007743835,
+          0.17468053102493286,
+          6.0
+        ],
+        [
+          0.43444427847862244,
+          1.1477099657058716,
+          -0.02956560254096985,
+          2.0
+        ],
+        [
+          -0.29800400137901306,
+          0.11741206794977188,
+          0.7801362872123718,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": "Configured matched transform",
+      "passed": true
+    },
+    "expected": "Configured matched transform",
+    "utc": "2026-10-13T11:44:48.663349+00:00"
+  },
+  {
+    "name": "immediate action MATCH_LOCATION",
+    "passed": true,
+    "actual": {
+      "action": "MATCH_LOCATION",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          6.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          2.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": "Configured matched transform",
+      "passed": true
+    },
+    "expected": "Configured matched transform",
+    "utc": "2026-10-13T11:44:48.673253+00:00"
+  },
+  {
+    "name": "immediate action MATCH_ROTATION",
+    "passed": true,
+    "actual": {
+      "action": "MATCH_ROTATION",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "matrix": [
+        [
+          0.936293363571167,
+          -0.2750958800315857,
+          0.21835066378116608,
+          1.889711618423462
+        ],
+        [
+          0.2896295189857483,
+          0.9564250707626343,
+          -0.03695700317621231,
+          0.007344499230384827
+        ],
+        [
+          -0.19866932928562164,
+          0.09784339368343353,
+          0.9751703143119812,
+          0.007344499230384827
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": "Configured matched transform",
+      "passed": true
+    },
+    "expected": "Configured matched transform",
+    "utc": "2026-10-13T11:44:48.683812+00:00"
+  },
+  {
+    "name": "immediate action MATCH_SCALE",
+    "passed": true,
+    "actual": {
+      "action": "MATCH_SCALE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 12,
+      "matrix": [
+        [
+          1.5,
+          0.0,
+          0.0,
+          1.889711618423462
+        ],
+        [
+          0.0,
+          1.1999999284744263,
+          0.0,
+          0.007344499230384827
+        ],
+        [
+          0.0,
+          0.0,
+          0.800000011920929,
+          0.007344499230384827
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": "Configured matched transform",
+      "passed": true
+    },
+    "expected": "Configured matched transform",
+    "utc": "2026-10-13T11:44:48.693195+00:00"
+  },
+  {
+    "name": "immediate action MATCH_TRS",
+    "passed": true,
+    "actual": {
+      "action": "MATCH_TRS",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 18,
+      "matrix": [
+        [
+          1.4044400453567505,
+          -0.33011505007743835,
+          0.17468053102493286,
+          6.0
+        ],
+        [
+          0.43444427847862244,
+          1.1477099657058716,
+          -0.02956560254096985,
+          2.0
+        ],
+        [
+          -0.29800400137901306,
+          0.11741206794977188,
+          0.7801362872123718,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": "Configured matched transform",
+      "passed": true
+    },
+    "expected": "Configured matched transform",
+    "utc": "2026-10-13T11:44:49.045267+00:00"
+  },
+  {
+    "name": "immediate action MATCH_VISUAL",
+    "passed": true,
+    "actual": {
+      "action": "MATCH_VISUAL",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 18,
+      "matrix": [
+        [
+          1.4044400453567505,
+          -0.33011505007743835,
+          0.17468053102493286,
+          6.0
+        ],
+        [
+          0.43444427847862244,
+          1.1477099657058716,
+          -0.02956560254096985,
+          2.0
+        ],
+        [
+          -0.29800400137901306,
+          0.11741206794977188,
+          0.7801362872123718,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": "Configured matched transform",
+      "passed": true
+    },
+    "expected": "Configured matched transform",
+    "utc": "2026-10-13T11:44:49.054258+00:00"
+  },
+  {
+    "name": "immediate action MATCH_LOCAL",
+    "passed": true,
+    "actual": {
+      "action": "MATCH_LOCAL",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 18,
+      "matrix": [
+        [
+          1.4044400453567505,
+          -0.33011505007743835,
+          0.17468053102493286,
+          6.0
+        ],
+        [
+          0.43444427847862244,
+          1.1477099657058716,
+          -0.02956560254096985,
+          2.0
+        ],
+        [
+          -0.29800400137901306,
+          0.11741206794977188,
+          0.7801362872123718,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "expected": "Configured matched transform",
+      "passed": true
+    },
+    "expected": "Configured matched transform",
+    "utc": "2026-10-13T11:44:49.062980+00:00"
+  },
+  {
+    "name": "immediate action SWITCH_SINGLE",
+    "passed": true,
+    "actual": {
+      "action": "SWITCH_SINGLE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 19,
+      "property_value": 1.0,
+      "expected": 1.0,
+      "passed": true
+    },
+    "expected": 1.0,
+    "utc": "2026-10-13T11:44:49.073704+00:00"
+  },
+  {
+    "name": "immediate action SWITCH_RANGE",
+    "passed": true,
+    "actual": {
+      "action": "SWITCH_RANGE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 36,
+      "property_value": 1.0,
+      "expected": 1.0,
+      "passed": true
+    },
+    "expected": 1.0,
+    "utc": "2026-10-13T11:44:49.083709+00:00"
+  },
+  {
+    "name": "immediate action SWITCH_BOOL",
+    "passed": true,
+    "actual": {
+      "action": "SWITCH_BOOL",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 19,
+      "property_value": 1,
+      "expected": 1.0,
+      "passed": true
+    },
+    "expected": 1.0,
+    "utc": "2026-10-13T11:44:49.092056+00:00"
+  },
+  {
+    "name": "immediate action SWITCH_ENUM",
+    "passed": true,
+    "actual": {
+      "action": "SWITCH_ENUM",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 19,
+      "property_value": 1,
+      "expected": 1.0,
+      "passed": true
+    },
+    "expected": 1.0,
+    "utc": "2026-10-13T11:44:49.098614+00:00"
+  },
+  {
+    "name": "immediate action SWITCH_INFLUENCE",
+    "passed": true,
+    "actual": {
+      "action": "SWITCH_INFLUENCE",
+      "status": [
+        "FINISHED"
+      ],
+      "before_key_count": 9,
+      "after_key_count": 19,
+      "property_value": 0.6000000238418579,
+      "expected": 0.6,
+      "passed": true
+    },
+    "expected": 0.6,
+    "utc": "2026-10-13T11:44:49.108422+00:00"
+  },
+  {
+    "name": "All 80 immediate fallback actions have effects",
+    "passed": true,
+    "actual": {
+      "count": 80,
+      "failed": []
+    },
+    "expected": null,
+    "utc": "2026-10-13T11:44:49.135865+00:00"
+  },
+  {
+    "name": "Fallback creates no separate editor",
+    "passed": true,
+    "actual": null,
+    "expected": null,
+    "utc": "2026-10-13T11:44:49.137809+00:00"
+  }
+]

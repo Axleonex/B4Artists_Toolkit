@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "restart-empty-prepare",
+    "code": "prefs=importlib.import_module(PACKAGE+'.prefs').get_prefs(bpy.context)\nfor action in cat.ACTIONS: setattr(prefs,cat.quick_property_name(action),False)\nprefs.timeline_toolbar_enabled=True\nbpy.ops.wm.save_userpref()\nwith timeline_context(): bpy.ops.screen.timeline_toolbar_set(visible=False,user_action=True)\nbpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'restart-hidden.blend'))\nresult='empty pins and hidden layout saved to own profile'"
+  },
+  "response": {
+    "id": "restart-empty-prepare",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 203, in bridge\n    settings=scene.anim_assist\n  File \"<string>\", line 5, in <module>\nTypeError: Converting py args to operator properties:: keyword \"visible\" unrecognized\n"
+  }
+}

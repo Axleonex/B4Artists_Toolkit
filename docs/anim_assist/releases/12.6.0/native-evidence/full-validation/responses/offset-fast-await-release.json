@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "offset-fast-await-release",
+    "code": "curves=object_snapshot(modal_obj)\nxcurve=next(c for c in curves if c['index']==0)\ncheck('packaged fast Offset waits for mouse release',[k['co'][1] for k in xcurve['keys']]==[0,5,1],xcurve,[0,5,1])\nresult='Fast-mode wait verified'"
+  },
+  "response": {
+    "id": "offset-fast-await-release",
+    "result": "Fast-mode wait verified",
+    "error": null
+  }
+}

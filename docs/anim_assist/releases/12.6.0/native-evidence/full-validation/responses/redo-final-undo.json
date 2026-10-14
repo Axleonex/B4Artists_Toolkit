@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "redo-final-undo",
+    "code": "check('Real native undo restores toolbar action',object_snapshot(bpy.data.objects['VAL_Animated'])==undo_before)\nresult='passed'"
+  },
+  "response": {
+    "id": "redo-final-undo",
+    "result": "passed",
+    "error": null
+  }
+}

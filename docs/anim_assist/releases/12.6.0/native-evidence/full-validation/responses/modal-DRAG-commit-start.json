@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-DRAG-commit-start",
+    "code": "result=modal_start('DRAG','commit')"
+  },
+  "response": {
+    "id": "modal-DRAG-commit-start",
+    "result": {
+      "action": "DRAG",
+      "ending": "commit",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_modal_drag_breakdown"
+      ]
+    },
+    "error": null
+  }
+}

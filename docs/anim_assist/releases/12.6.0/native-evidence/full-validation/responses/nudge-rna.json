@@ -1,0 +1,23 @@
+{
+  "request": {
+    "id": "nudge-rna",
+    "code": "result=dict(action=cat.ACTIONS['NUDGE_RIGHT'], flags=[p.identifier for p in toolbar._operator('NUDGE_RIGHT').get_rna_type().properties])"
+  },
+  "response": {
+    "id": "nudge-rna",
+    "result": {
+      "action": [
+        "move_keys",
+        {
+          "offset": 1
+        },
+        "Nudge Selected Keys +1 Frame"
+      ],
+      "flags": [
+        "rna_type",
+        "offset"
+      ]
+    },
+    "error": null
+  }
+}

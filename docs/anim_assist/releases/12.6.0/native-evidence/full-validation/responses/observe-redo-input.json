@@ -1,0 +1,13 @@
+{
+  "request": {
+    "id": "observe-redo-input",
+    "code": "native_events=[]\nclass WM_OT_val_event_probe(bpy.types.Operator):\n bl_idname='wm.val_event_probe'\n bl_label='Validation Event Probe'\n def invoke(self,context,event):\n  context.window_manager.modal_handler_add(self)\n  return {'RUNNING_MODAL'}\n def modal(self,context,event):\n  native_events.append(dict(type=event.type,value=event.value,ctrl=event.ctrl,shift=event.shift,alt=event.alt))\n  if event.type=='Z':\n   (ROOT/'redo-native-events.json').write_text(json.dumps(native_events,indent=2))\n   return {'FINISHED','PASS_THROUGH'}\n  return {'PASS_THROUGH'}\nbpy.utils.register_class(WM_OT_val_event_probe)\nwith timeline_context(): result=sorted(bpy.ops.wm.val_event_probe('INVOKE_DEFAULT'))"
+  },
+  "response": {
+    "id": "observe-redo-input",
+    "result": [
+      "RUNNING_MODAL"
+    ],
+    "error": null
+  }
+}

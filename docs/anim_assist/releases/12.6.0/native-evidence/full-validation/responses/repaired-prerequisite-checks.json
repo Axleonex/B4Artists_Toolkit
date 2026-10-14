@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "repaired-prerequisite-checks",
+    "code": "resolved_prefs=offset_mod._addon_prefs(bpy.context)\ncheck('packaged Offset reads actual add-on preferences',resolved_prefs is not None and resolved_prefs.as_pointer()==bpy.context.preferences.addons[PACKAGE].preferences.as_pointer(),resolved_prefs.as_pointer() if resolved_prefs else None,bpy.context.preferences.addons[PACKAGE].preferences.as_pointer())\nwith timeline_context():\n    test_obj,_=fixture()\n    for fc in compat.get_fcurves(test_obj.animation_data.action,anim_data=test_obj.animation_data):\n        for i,k in enumerate(fc.keyframe_points): k.select_control_point=i==1\n    reason=toolbar._unavailable(bpy.context,bpy.context.area,'EASE')\n    check('Ease one-key prerequisite is disabled',bool(reason),reason,'At least two on same curve')\n    for fc in compat.get_fcurves(test_obj.animation_data.action,anim_data=test_obj.animation_data):\n        for k in fc.keyframe_points:k.select_control_point=True\n    check('Ease valid multiple-key prerequisite remains available',not toolbar._unavailable(bpy.context,bpy.context.area,'EASE'),None,'Available')\nresult='Prererequisite checks passed'"
+  },
+  "response": {
+    "id": "repaired-prerequisite-checks",
+    "result": "Prererequisite checks passed",
+    "error": null
+  }
+}

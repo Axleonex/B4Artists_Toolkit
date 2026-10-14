@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "max-reveal-on",
+    "code": "prefs.timeline_toolbar_row=True\nresult='on'"
+  },
+  "response": {
+    "id": "max-reveal-on",
+    "result": "on",
+    "error": null
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-EASE-cancel-start",
+    "code": "result=modal_start('EASE','cancel')"
+  },
+  "response": {
+    "id": "modal-EASE-cancel-start",
+    "result": {
+      "action": "EASE",
+      "ending": "cancel",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_ease_to_ease"
+      ]
+    },
+    "error": null
+  }
+}

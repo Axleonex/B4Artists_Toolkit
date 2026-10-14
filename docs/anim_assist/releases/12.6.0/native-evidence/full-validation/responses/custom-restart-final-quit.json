@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "custom-restart-final-quit",
+    "code": "bpy.ops.wm.quit_blender()"
+  },
+  "response": {
+    "id": "custom-restart-final-quit",
+    "result": null,
+    "error": null
+  }
+}

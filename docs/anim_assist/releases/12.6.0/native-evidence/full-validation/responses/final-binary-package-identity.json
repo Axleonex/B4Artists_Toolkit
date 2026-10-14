@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "final-binary-package-identity",
+    "code": "import hashlib,zipfile\narchive=Path('C:/Users/AtonLotus/.codex/worktrees/anim-assist-12-3-1/B4Artists_Tools/releases/b4_anim_assist_v12.6.0.zip')\nwith zipfile.ZipFile(archive) as z:\n check('All exact ZIP bytes installed after restart',all(z.read(n)==(ROOT/'scripts/addons'/n).read_bytes() for n in z.namelist()))\ncheck('Native binary identity retained',hashlib.sha256(Path(bpy.app.binary_path).read_bytes()).hexdigest()=='f6647c50792f1be94ff1473c83cdd19c33702ea6181c2188a0d54175a898587b')\nresult='binary and all203 addon files match'"
+  },
+  "response": {
+    "id": "final-binary-package-identity",
+    "result": "binary and all203 addon files match",
+    "error": null
+  }
+}

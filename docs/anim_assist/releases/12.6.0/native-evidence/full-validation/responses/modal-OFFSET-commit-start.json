@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-OFFSET-commit-start",
+    "code": "result=modal_start('OFFSET','commit')"
+  },
+  "response": {
+    "id": "modal-OFFSET-commit-start",
+    "result": {
+      "action": "OFFSET",
+      "ending": "commit",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_anim_offset"
+      ]
+    },
+    "error": null
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "restart-hidden-save",
+    "code": "with timeline_context(): bpy.ops.screen.timeline_toolbar_set(enabled=False,user_action=True)\nbpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'restart-hidden.blend'))\nresult='saved'"
+  },
+  "response": {
+    "id": "restart-hidden-save",
+    "result": "saved",
+    "error": null
+  }
+}

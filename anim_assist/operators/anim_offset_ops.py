@@ -13,6 +13,7 @@ from ..core.anim_offset import (
     frames_outside_mask,
 )
 from ..core.fcurve_compat import get_fcurves
+from ..core.p6_retime_math import backup_fcurves, restore_fcurves
 from ..core.utils import EPSILON
 
 
@@ -35,8 +36,8 @@ def offset_session_status(scene, mask_scene=None):
 
 
 def _addon_prefs(context: bpy.types.Context):
-    addon = context.preferences.addons.get("anim_assist")
-    return addon.preferences if addon else None
+    from ..prefs import get_prefs
+    return get_prefs(context)
 
 
 def _target_object(context: bpy.types.Context):
@@ -55,6 +56,30 @@ def _object_fcurves(context: bpy.types.Context) -> list:
 
 def _snapshot_all(fcurves: list) -> dict[int, dict[float, float]]:
     return {i: {kp.co[0]: kp.co[1] for kp in fc.keyframe_points} for i, fc in enumerate(fcurves)}
+
+
+def _snapshot_for_cancel(fcurves: list) -> list[dict]:
+    """Retain curve geometry and key metadata, including user edits to handles."""
+    backups = backup_fcurves(fcurves)
+    for fc, backup in zip(fcurves, backups):
+        for key, stored in zip(fc.keyframe_points, backup["keys"]):
+            stored.update(type=key.type, amplitude=key.amplitude,
+                          back=key.back, period=key.period,
+                          sel_left=key.select_left_handle,
+                          sel_right=key.select_right_handle)
+    return backups
+
+
+def _restore_cancel_snapshot(fcurves: list, backups: list[dict]) -> None:
+    restore_fcurves(fcurves, backups)
+    for fc, backup in zip(fcurves, backups):
+        for key, stored in zip(fc.keyframe_points, backup["keys"]):
+            key.type = stored["type"]
+            key.amplitude = stored["amplitude"]
+            key.back = stored["back"]
+            key.period = stored["period"]
+            key.select_left_handle = stored["sel_left"]
+            key.select_right_handle = stored["sel_right"]
 
 
 def _key_value_at_frame(fc, frame: float):
@@ -107,6 +132,7 @@ class ANIMASSIST_OT_anim_offset(Operator):
 
             self._current_frame = float(context.scene.frame_current)
             self._snap_all = _snapshot_all(self._fcurves)
+            self._snap_cancel = _snapshot_for_cancel(self._fcurves)
             self._snap_frame = _snapshot_at_frame(self._fcurves, self._current_frame)
             self._propagating = False
             self._pending_fast_update = False
@@ -187,6 +213,7 @@ class ANIMASSIST_OT_anim_offset(Operator):
             if abs(cur - self._current_frame) > EPSILON:
                 self._current_frame = cur
                 self._snap_all = _snapshot_all(self._fcurves)
+                self._snap_cancel = _snapshot_for_cancel(self._fcurves)
                 self._snap_frame = _snapshot_at_frame(self._fcurves, cur)
                 self._pending_fast_update = False
                 return
@@ -217,7 +244,13 @@ class ANIMASSIST_OT_anim_offset(Operator):
                 for kp in fc.keyframe_points:
                     frame = kp.co[0]
                     if frame in new_vals:
+                        # Carry the handles by the actual incremental change.
+                        # The keyed edit may already have moved its own handles.
+                        dy = new_vals[frame] - kp.co[1]
+                        left_y, right_y = kp.handle_left.y, kp.handle_right.y
                         kp.co[1] = new_vals[frame]
+                        kp.handle_left.y = left_y + dy
+                        kp.handle_right.y = right_y + dy
 
                 # optional autokey outside mask
                 if prefs and prefs.animassist_autokey_outside_margins and mask.enabled:
@@ -235,13 +268,7 @@ class ANIMASSIST_OT_anim_offset(Operator):
             self._propagating = False
 
     def _restore_all(self) -> None:
-        for i, fc in enumerate(self._fcurves):
-            orig = self._snap_all.get(i, {})
-            for kp in fc.keyframe_points:
-                f = kp.co[0]
-                if f in orig:
-                    kp.co[1] = orig[f]
-            fc.update()
+        _restore_cancel_snapshot(self._fcurves, self._snap_cancel)
 
     def _cleanup(self, context: bpy.types.Context) -> None:
         context.scene.anim_assist.anim_offset_active = False
@@ -253,6 +280,7 @@ class ANIMASSIST_OT_anim_offset(Operator):
             self._timer = None
         self._fcurves = []
         self._snap_all = {}
+        self._snap_cancel = []
         self._snap_frame = {}
 
 

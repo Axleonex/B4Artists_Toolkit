@@ -1,0 +1,34 @@
+{
+  "request": {
+    "id": "native-scrub",
+    "code": "check('Native mouse scrubbing changes frame',bpy.context.scene.frame_current!=scrub_before,bpy.context.scene.frame_current)\ncheck('Scrubbing retains key geometry',object_snapshot(playback_obj)==playback_before)\nwith timeline_context():\n bpy.context.scene.frame_set(15)\n bpy.context.scene.keying_sets.active_index=-3\nresult=[k.bl_idname for k in bpy.context.scene.keying_sets_all]"
+  },
+  "response": {
+    "id": "native-scrub",
+    "result": [
+      "Available",
+      "Location",
+      "Rotation",
+      "Scaling",
+      "BUILTIN_KSI_LocRot",
+      "LocRotScale",
+      "LocRotScaleCProp",
+      "BUILTIN_KSI_LocScale",
+      "BUILTIN_KSI_RotScale",
+      "BUILTIN_KSI_DeltaLocation",
+      "BUILTIN_KSI_DeltaRotation",
+      "BUILTIN_KSI_DeltaScale",
+      "BUILTIN_KSI_VisualLoc",
+      "BUILTIN_KSI_VisualRot",
+      "BUILTIN_KSI_VisualScaling",
+      "BUILTIN_KSI_VisualLocRot",
+      "BUILTIN_KSI_VisualLocRotScale",
+      "BUILTIN_KSI_VisualLocScale",
+      "BUILTIN_KSI_VisualRotScale",
+      "BUILTIN_KSI_BendyBones",
+      "WholeCharacter",
+      "WholeCharacterSelected"
+    ],
+    "error": null
+  }
+}

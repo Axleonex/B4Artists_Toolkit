@@ -1,0 +1,25 @@
+{
+  "status": "prepared; not pushed",
+  "commit_attribution_hits": [],
+  "outgoing_text_watermark_hits": [],
+  "archives": [
+    {
+      "name": "b4_anim_assist_v12.6.0.zip",
+      "bytes": 577101,
+      "sha256": "60d4c7f10d9f14adde17e0cd5269bb07d4a4fc8f96810a4cd6e67903e5e73193",
+      "text_entries_checked": 202,
+      "watermark_hits": []
+    },
+    {
+      "name": "Bforartists_5.2.0_AnimAssist_12.6.0_Windows_x64.zip",
+      "bytes": 418370656,
+      "sha256": "40eb5bec354cb4296301aa376fc3e513d6620a9ab83ff5a4e2eb89b10cb85503",
+      "text_entries_checked": 227,
+      "watermark_hits": []
+    }
+  ],
+  "publication_tag": "v12.6.0",
+  "public_assets_currently_exist": false,
+  "publication_order": "Upload and verify assets before merging new README URLs",
+  "existing_outgoing_commits_checked": 14
+}
