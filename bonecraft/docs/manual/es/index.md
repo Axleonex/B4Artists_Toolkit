@@ -1,6 +1,6 @@
 # Manual de BoneCraft
 
-BoneCraft 9.2.3. BoneCraft es un conjunto de herramientas de rigging y avatares para Bforartists.
+BoneCraft 9.2.4. BoneCraft es un conjunto de herramientas de rigging y avatares para Bforartists.
 
 Este manual se tradujo automáticamente a partir de la edición en inglés.
 

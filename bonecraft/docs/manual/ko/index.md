@@ -1,6 +1,6 @@
 # BoneCraft 설명서
 
-BoneCraft 9.2.3. BoneCraft는 Bforartists용 리깅 및 아바타 툴킷입니다.
+BoneCraft 9.2.4. BoneCraft는 Bforartists용 리깅 및 아바타 툴킷입니다.
 
 이 설명서는 영어판을 기계 번역한 것입니다.
 

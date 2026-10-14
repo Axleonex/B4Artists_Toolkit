@@ -1,0 +1,17 @@
+{
+  "version": "9.2.4",
+  "status": "local candidate; not published",
+  "archive": "BoneCraft-BFA-9.2.4.zip",
+  "files": 232,
+  "bytes": 1236557,
+  "sha256": "311399bf7cc7341d8125a2195ec701f5c3c485b7757820166281109ea742f0dd",
+  "crc_passed": true,
+  "all_files_match_source": true,
+  "addon_and_sidecar_version_match": true,
+  "live_window_verified": false,
+  "host": "Bforartists 5.2.0 portable; Blender core 5.3.0 Alpha 0a1ca45552db",
+  "host_checks": {
+    "test_taskboard_health_host": "passed"
+  },
+  "taskboard_cases": "unique cards/counts/collapse; armature, parented/modifier mesh, Pose; invalid selection; disabled/missing validator; popup dispatch/results/refresh; seven languages"
+}

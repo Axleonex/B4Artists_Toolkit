@@ -1,6 +1,6 @@
 # BoneCraft 手册
 
-BoneCraft 9.2.3。BoneCraft 是用于 Bforartists 的绑定与虚拟形象工具包。
+BoneCraft 9.2.4。BoneCraft 是用于 Bforartists 的绑定与虚拟形象工具包。
 
 本手册由英文版机器翻译而成。
 
