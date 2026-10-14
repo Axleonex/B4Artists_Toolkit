@@ -1,3 +1,5 @@
+> Historical record: the custom Windows application described here is withdrawn. The current download is the Anim Assist add-on for existing Bforartists, using its existing Timeline header. See [current installation instructions](RELEASE-NOTES.md).
+
 ## Changes
 
 - Add the compiled native Timeline second-row application patch and Anim Assist

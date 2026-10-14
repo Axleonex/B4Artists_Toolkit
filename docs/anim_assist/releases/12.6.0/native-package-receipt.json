@@ -1,6 +1,6 @@
 {
-  "release": "Anim Assist 12.6.0 local Windows x64",
-  "status": "published regular release; available-host validation matrix passed with documented render/DPI limits",
+  "release": "Historical Anim Assist 12.6.0 custom Windows application",
+  "status": "historical custom application; public withdrawal prepared; not the current add-on installation",
   "application": "Custom Bforartists 5.2.0",
   "application_source_baseline": "v5.2.0",
   "native_patch_commit": "f5f550195e2299239f020f8e5b3cc5c391dadb43",
