@@ -2,17 +2,17 @@
 
 This guide describes Ghost Tool 4.2.11's named toolbar sections and shared controls. See the [toolbar guide](toolbar/README.md) for placement and recovery.
 
-Candidate version: 4.2.11; unpublished. This correction defers viewport access during startup. Startup and toolbar checks pass; the full shelf-width assessment remains incomplete. See Release verification below.
+Release version: 4.2.11; regular Latest release. This correction defers viewport access during startup. Startup and toolbar checks pass; the full shelf-width assessment remains incomplete. See Release verification below.
 
 ## Install and find Ghost Tool
 
-Download the [4.2.11 ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.11.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
+Download the [4.2.11 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
 
 Ghost Tool starts with a visible Top Toolbar beneath the main 3D Viewport header, in the native Tool Settings row. In Edit > Preferences > Add-ons > Ghost Tool, choose Top Toolbar, Right Sidebar (N), or Left Tool Shelf (T). Top Header is no longer a display choice; saved Top Header preferences migrate to a visible toolbar. Existing sidebar, shelf and toolbar visibility choices are preserved. The lower-row Ghost menu provides feature access. In Top Toolbar mode, View > Show Ghost Toolbar restores hidden controls. Save preferences normally to retain your choice.
 
 Ghost applies saved display preferences after the native main loop starts. Replace the problematic installed version while Ghost is disabled, then restart Bforartists before enabling the update.
 
-The candidate is designed to widen the left Ghost shelf once to match an open N-panel, or use 240 px at 1x UI scale when that panel is closed. It preserves later manual resizing. Widen Narrow Shelf in Ghost preferences defaults on; turn it off to manage widths yourself. The initial native width match and later manual resize preservation pass; preference-reset widening remains limited by the width guard. The duplicate main-header Ghost Tool button is removed; all tools remain below.
+Ghost Tool 4.2.11 is designed to widen the left Ghost shelf once to match an open N-panel, or use 240 px at 1x UI scale when that panel is closed. It preserves later manual resizing. Widen Narrow Shelf in Ghost preferences defaults on; turn it off to manage widths yourself. The initial native width match and later manual resize preservation pass; preference-reset widening remains limited by the width guard. The duplicate main-header Ghost Tool button is removed; all tools remain below.
 
 ## Use the persistent toolbar
 

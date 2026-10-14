@@ -1,4 +1,4 @@
-# Ghost Tool 4.2.11 — startup crash correction candidate
+# Ghost Tool 4.2.11 — startup crash correction
 
 The owner's crash report identifies viewport access from Ghost preferences registration while Bforartists is enabling add-ons at startup. The failing line reads `area.spaces.active`. Disabling Ghost permitted startup and opening the same blend file. This correction defers display-location and visibility preference changes until the native main loop runs, including legacy Top Header migration callbacks. It coalesces requests, uses current context, skips UI access in background registration and cancels pending work on unregister.
 
@@ -8,4 +8,4 @@ The exact 4.2.11 ZIP passes 123 focused startup and toolbar checks in Bforartist
 
 The owner report records a native read access violation at address 0x70, with the Python chain `update_display_location -> preferences.register -> addon_utils.enable` during startup. A fault-guard fixture confirms that old registration enters viewport access before readiness; the patched functions pass nine lifecycle checks. The native C crash itself was not reproduced in the disposable profile, and its unsymbolized native stack cannot identify the exact internal C function. The same build starts successfully with the correction and saved enabled Ghost preferences.
 
-This is an **unpublished candidate**, with its [source-matched ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.11.zip) and PDF prepared locally. See the [package receipt](package-receipt.json), including its explicit width-suite limitation. Published 4.2.9 and the earlier 4.2.10 repository archive retain their history. Restart Bforartists after updating; keep the problematic installed Ghost version disabled until replacing it.
+This is the **regular Latest 4.2.11 release**. The [release ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip) and PDF guide match the repository assets. See the [package receipt](package-receipt.json), including its explicit width-suite limitation. Earlier releases and archives retain their original versions and evidence. Restart Bforartists after updating; replace the problematic installed version while Ghost is disabled.

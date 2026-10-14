@@ -26,7 +26,7 @@ Install add-on ZIPs directly in your existing Bforartists installation.
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.6.0 | [b4_anim_assist_v12.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/b4_anim_assist_v12.6.0.zip) |
-| Ghost Tool 4.2.11 candidate | [b4_ghost_tool_v4.2.11.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.11.zip) |
+| Ghost Tool 4.2.11 | [b4_ghost_tool_v4.2.11.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip) |
 | BoneCraft 9.2.2 (optional) | [BoneCraft-BFA-9.2.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.2/BoneCraft-BFA-9.2.2.zip) |
 
 ## Browse the source
@@ -37,14 +37,14 @@ The unpacked, readable source for each tool is in this repository so you can rea
 - [`ghost_tool/`](ghost_tool/) — Ghost Tool source
 - [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.2.1 source
 
-The ZIPs package their recorded release source for one-click installation. The unpublished Ghost Tool 4.2.11 ZIP matches the current source modules; see its [candidate status](docs/ghost_tool/releases/4.2.11/package-receipt.json).
+The ZIPs package their recorded release source for one-click installation. The published Ghost Tool 4.2.11 ZIP matches the current source modules; see its [package receipt](docs/ghost_tool/releases/4.2.11/package-receipt.json).
 
 ## Documentation
 
 Human-readable manuals are in [`docs/`](docs/):
 
 - [Anim Assist 12.6.0 add-on](docs/anim_assist/releases/12.6.0/RELEASE-NOTES.md) — installation, quick tools and validation; [tool access coverage](docs/anim_assist/releases/12.6.0/tool-access-coverage.md) records the actions and gestures. [Suite manuals](docs/anim_assist/) cover the other animation tools.
-- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.11 candidate guide, PDF and toolbar notes
+- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.11 guide, PDF and toolbar notes
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.1 English manual and translation status
 
 ## Requirements
