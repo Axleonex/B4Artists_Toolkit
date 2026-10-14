@@ -59,8 +59,11 @@ def main():
     shutil.copyfile(package,target)
     assert hashlib.sha256(target.read_bytes()).hexdigest()==digest
     shutil.copyfile(release/'package-receipt.json',destination/'package-receipt.json')
-    shutil.copyfile(release/'RELEASE-NOTES.md',destination/'RELEASE-NOTES.md')
-    shutil.copyfile(release/'qualification.md',destination/'qualification.md')
+    notes=(release/'RELEASE-NOTES.md').read_text(encoding='utf-8').replace('../../../../releases/','./')
+    (destination/'RELEASE-NOTES.md').write_text(notes,encoding='utf-8')
+    qualification=(release/'qualification.md').read_text(encoding='utf-8').replace(
+        '../../plans/2026-10-14-configurable-slider-toolbar/',PACKET.as_posix()+'/')
+    (destination/'qualification.md').write_text(qualification,encoding='utf-8')
     state='''# State
 
 Updated: 2026-10-14. Phase 02. **Plans 02-01 through 02-06 implemented and
@@ -96,7 +99,8 @@ update after a concrete before/after review.
         if index!=12:text=text.replace(f'- [ ] ST-{index:02}:',f'- [x] ST-{index:02}:')
     text=text.replace('Fresh baseline proves expected effects for every current default bar control and all 80 immediate catalogue actions, on exact local 12.6.1 in stock Bforartists.',
         'Fresh exact 12.6.1 baseline records defects and measured repairs; repaired baseline/final ZIP prove expected effects for current default controls and all 80 immediate actions in stock Bforartists.')
-    text+='\nST-12 is partial for renamed extension installation and keyboard-only access.\nST-14 technical evidence is complete; owner usability remains pending.\nSee 02-VERIFICATION.md for per-requirement scope and unsupported cells.\n'
+    if 'ST-12 is partial for renamed extension installation' not in text:
+        text+='\nST-12 is partial for renamed extension installation and keyboard-only access.\nST-14 technical evidence is complete; owner usability remains pending.\nSee 02-VERIFICATION.md for per-requirement scope and unsupported cells.\n'
     req.write_text(text,encoding='utf-8')
     planning=ROOT/'.planning'
     mirror=planning/'phases/02-configurable-slider-toolbar'

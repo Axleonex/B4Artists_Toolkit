@@ -1,0 +1,17 @@
+test_defaults (test_timeline_config.ConfigTests.test_defaults) ... ok
+test_extended_ranges (test_timeline_config.ConfigTests.test_extended_ranges) ... ok
+test_future_and_bad_records (test_timeline_config.ConfigTests.test_future_and_bad_records) ... ok
+test_invalid_modes (test_timeline_config.ConfigTests.test_invalid_modes) ... ok
+test_invalid_numeric (test_timeline_config.ConfigTests.test_invalid_numeric) ... ok
+test_library (test_timeline_config.ConfigTests.test_library) ... ok
+test_name_errors_and_protected_defaults (test_timeline_config.ConfigTests.test_name_errors_and_protected_defaults) ... ok
+test_old_selection (test_timeline_config.ConfigTests.test_old_selection) ... ok
+test_pointer_precision_snap (test_timeline_config.ConfigTests.test_pointer_precision_snap) ... ok
+test_roundtrip (test_timeline_config.ConfigTests.test_roundtrip) ... ok
+test_unknown_records_preserved (test_timeline_config.ConfigTests.test_unknown_records_preserved) ... ok
+test_update_and_deep_copy (test_timeline_config.ConfigTests.test_update_and_deep_copy) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.012s
+
+OK
