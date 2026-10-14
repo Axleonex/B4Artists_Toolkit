@@ -69,7 +69,7 @@ class Host:
         try:
             self.await_file('state.json', min(args.timeout, 90))
         except Exception:
-            self.proc.terminate()
+            subprocess.run(['taskkill','/PID',str(self.proc.pid),'/T','/F'],capture_output=True)
             self.log.close()
             raise
 
@@ -109,7 +109,7 @@ class Host:
         try:
             self.proc.wait(timeout=15)
         except subprocess.TimeoutExpired:
-            self.proc.terminate()
+            subprocess.run(['taskkill','/PID',str(self.proc.pid),'/T','/F'],capture_output=True)
             self.proc.wait(timeout=10)
         self.log.close()
 
@@ -121,11 +121,33 @@ def run(args):
     files = install(package, profile)
     host = Host(args, profile)
     try:
+        (host.root/'package-identity.json').write_text(json.dumps(dict(
+            sha256=digest, files=files, package=str(package), profile=str(profile),
+            git_head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+            stage=args.stage), indent=2))
         source = Path(__file__).with_name('check_timeline_toolbar_tools.py').resolve()
         host.request(f"exec(compile(open({str(source)!r}, encoding='utf-8').read(), {str(source)!r}, 'exec'), globals())")
         host.request("event('ESC')")  # Dismiss the first-start welcome popup before pointer tests.
         host.request('prepare_geometry()')
         host.request('expand_geometry()')
+        if args.adapters:
+            for action in ('DRAG','SMOOTH','NEIGHBORS','FRAME','EASE','AMPLIFY','SCALE_DRAG','OFFSET_DRAG'):
+                for mode in ('INLINE','POPOUT'):
+                    for ending in ('cancel','commit'):
+                        host.request(f'prepare_slider({action!r},{mode!r},{ending!r})')
+                        host.request('begin_slider()')
+                        host.request('move_slider()')
+                        host.request('check_slider_live()')
+                        host.request('end_slider()')
+                        host.request('check_slider_end()')
+                        if ending=='commit':
+                            host.request("recover('undo')")
+                            host.request("assert_recovery('undo')")
+                            host.request("recover('redo')")
+                            host.request("assert_recovery('redo')")
+            host.request('write_slider_coverage()')
+            print((host.root/'slider-coverage.json').read_text())
+            return
         if not args.only_action:
             host.request('run_immediate_checks()')
         actions=(args.only_action,) if args.only_action else ('B25','B50','B75','NUDGE_LEFT','NUDGE_RIGHT','RIPPLE','RANGE','ENDS','MIRROR_SELECTED','BAKE_STEP','TRAIL_SHOW')
@@ -155,10 +177,6 @@ def run(args):
                     host.request("assert_recovery('redo')")
         if not args.only_action:
             host.request('write_coverage()')
-        (host.root/'package-identity.json').write_text(json.dumps(dict(
-            sha256=digest, files=files, package=str(package), profile=str(profile),
-            git_head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
-            stage=args.stage), indent=2))
         print((host.root/('bar-actions.json' if args.only_action else 'coverage.json')).read_text())
     finally:
         host.close()
@@ -173,4 +191,5 @@ if __name__ == '__main__':
     parser.add_argument('--attach', type=int, help='Attach to an already launched owned native test process')
     parser.add_argument('--only-action', help='Diagnostic single button run; not a full verification gate')
     parser.add_argument('--diagnostic-push', action='store_true', help='Diagnose missing native undo checkpoint; never use for qualification')
+    parser.add_argument('--adapters', action='store_true', help='Exercise new scalar adapters before row integration')
     run(parser.parse_args())

@@ -27,7 +27,7 @@ def tool_default(action):
         label, unit, default, low, high, _min, _max = SLIDERS[action]
         entry.update(range_min=low, range_max=high, default=default, sensitivity=200.,
                      precision=1, snap_enabled=False, snap_step=1., presets=[],
-                     overshoot_enabled=low < 0 or high > 100)
+                     overshoot_enabled=False)
     return entry
 
 
@@ -199,3 +199,11 @@ def value_from_pointer(tool,start_value,delta,precise=False,snap=False):
     value=start_value+delta*scale*(.1 if precise else 1.)
     if tool['snap_enabled'] or snap: value=round(value/tool['snap_step'])*tool['snap_step']
     return min(tool['range_max'],max(tool['range_min'],value))
+
+
+def effective_tool(action,tool):
+    result=copy.deepcopy(tool)
+    if action in SLIDERS and not tool['overshoot_enabled']:
+        result['range_min'],result['range_max']=SLIDERS[action][3:5]
+        result['default']=min(result['range_max'],max(result['range_min'],result['default']))
+    return result

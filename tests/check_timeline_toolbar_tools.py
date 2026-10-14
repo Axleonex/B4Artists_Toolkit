@@ -19,6 +19,7 @@ checks = []
 modal_records = []
 button_records = []
 recovery_records = []
+slider_records = []
 MODAL_ACTIONS = {'DRAG','NEIGHBORS','FRAME','EASE','AMPLIFY','SMOOTH','SCALE_DRAG','OFFSET_DRAG','OFFSET'}
 source = Path(__file__).with_name('native_timeline_validation.py').read_text()
 needed = {'write_results','check','object_snapshot','fixture','immediate_catalogue',
@@ -251,6 +252,91 @@ def recover(stage):
         operator=bpy.ops.ed.undo if stage=='undo' else bpy.ops.ed.redo
         assert operator.poll(), stage+' unavailable'
         assert operator()=={'FINISHED'}
+
+
+def prepare_slider(action,mode,ending):
+    global slider_obj,slider_before,slider_case,slider_xy,recovery_before,recovery_name
+    with timeline_context():
+        slider_obj,_=fixture()
+        for other in list(bpy.context.selected_objects):
+            if other!=slider_obj: other.select_set(False)
+        bpy.context.scene.anim_assist.reference_frame=1
+        bpy.context.scene.anim_assist_p3.factor=.5
+        bpy.context.scene.anim_assist_p6.anchor_mode='FIRST'
+        bpy.context.scene.anim_assist_p6.modal_snap=False
+        if action in {'SMOOTH','NEIGHBORS','FRAME','AMPLIFY'}:
+            for fc in compat.get_fcurves(slider_obj.animation_data.action,anim_data=slider_obj.animation_data):
+                for i,k in enumerate(fc.keyframe_points): k.select_control_point=i==1
+        slider_before=object_snapshot(slider_obj)
+        recovery_before=slider_before; recovery_name=slider_obj.name
+        slider_case=dict(action=action,mode=mode,ending=ending,before=slider_before)
+        module=importlib.import_module(PACKAGE+'.operators.timeline_slider_ops')
+        module._last_values.clear()
+        region=bpy.context.region
+        slider_xy=dict(x=region.x+210,y=region.y+12)
+        bpy.ops.ed.undo_push(message='Before slider '+action)
+        event('MOUSEMOVE','NOTHING',**slider_xy)
+
+
+def begin_slider():
+    with timeline_context():
+        assert bpy.ops.animassist.timeline_slider('INVOKE_DEFAULT',True,
+            action=slider_case['action'],mode=slider_case['mode'],track_x=150,track_y=2,track_width=120)=={'RUNNING_MODAL'}
+    event('LEFTMOUSE',**slider_xy)
+
+
+def move_slider():
+    dx=24 if slider_case['mode']=='INLINE' else 60
+    event('MOUSEMOVE','NOTHING',x=slider_xy['x']+dx,y=slider_xy['y'])
+
+
+def check_slider_live():
+    global slider_live
+    module=importlib.import_module(PACKAGE+'.operators.timeline_slider_ops')
+    op=module.feedback(bpy.context.window,timeline())
+    assert op, 'Slider did not start'
+    value=op.value; action=slider_case['action']; factor=value/100
+    slider_live=object_snapshot(slider_obj)
+    x=next(c for c in slider_live if c['index']==0)
+    if action=='DRAG':
+        keys=[k for k in x['keys'] if k['co'][0]==10]
+        expected=4*factor; actual=keys[0]['co'][1]
+    elif action in {'SCALE_DRAG','OFFSET_DRAG'}:
+        expected=[1+(f-1)*factor for f in (1,20,40)] if action=='SCALE_DRAG' else [f+value for f in (1,20,40)]
+        actual=[k['co'][0] for k in x['keys']]
+    else:
+        target={'SMOOTH':.5,'NEIGHBORS':19/39,'FRAME':0}.get(action)
+        if action=='EASE':
+            t=19/39; target=t*t*(3-2*t)
+        expected=4*(1+factor) if action=='AMPLIFY' else 4+(target-4)*factor
+        actual=x['keys'][1]['co'][1]
+    error=max(abs(a-e) for a,e in zip(actual,expected)) if isinstance(actual,list) else abs(actual-expected)
+    slider_case.update(value=value,actual=actual,expected=expected,error=error)
+    assert error<1e-4 and slider_live!=slider_before, slider_case
+
+
+def end_slider():
+    if slider_case['ending']=='cancel': event('ESC')
+    else: event('LEFTMOUSE','RELEASE',x=slider_xy['x']+60,y=slider_xy['y'])
+
+
+def check_slider_end():
+    global recovery_after
+    module=importlib.import_module(PACKAGE+'.operators.timeline_slider_ops')
+    after=object_snapshot(slider_obj)
+    expected=slider_before if slider_case['ending']=='cancel' else slider_live
+    passed=after==expected and not module.busy()
+    slider_case.update(after=after,passed=passed)
+    slider_records.append(slider_case.copy())
+    (ROOT/'slider-actions.json').write_text(json.dumps(slider_records,indent=2))
+    assert passed, slider_case
+    recovery_after=after
+
+
+def write_slider_coverage():
+    assert len(slider_records)==32 and all(r['passed'] for r in slider_records)
+    (ROOT/'slider-coverage.json').write_text(json.dumps(dict(cases=len(slider_records),
+        recovery_assertions=len(recovery_records),passed=all(r['passed'] for r in recovery_records)),indent=2))
 
 
 def write_coverage():

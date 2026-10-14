@@ -15,8 +15,8 @@ _DEFAULT_DRAG_SENSITIVITY: int = 200
 
 
 def _addon_prefs(context: bpy.types.Context):
-    addon = context.preferences.addons.get("anim_assist")
-    return addon.preferences if addon else None
+    from ..prefs import get_prefs
+    return get_prefs(context)
 
 
 def _drag_sensitivity(context: bpy.types.Context) -> int:
