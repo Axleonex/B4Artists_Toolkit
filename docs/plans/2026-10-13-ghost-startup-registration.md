@@ -14,3 +14,8 @@ Initial evidence: before patch, nine lifecycle fixture tests yielded eight failu
 The exact 4.2.11 ZIP passes 123 focused startup and toolbar checks in Bforartists 5.2.0 (Blender runtime 5.3.0 Alpha), build hash 0a1ca45552db: 80 background checks, 35 native split-view checks and eight saved-preference startup checks. The startup isolation profile disables width writes. A separate width run passes ten preliminary checks for the initial N-panel match and manual resize preservation, but its preference-reset check fails when displayed and stored widths disagree; the guard declines the write. Later fallback and scale checks were not reached. JellyTest.blend has not been tested.
 
 The startup and toolbar correction is verified within this profile. The separate width assessment remains incomplete: at a displayed 150 px width, native sizex is 132 px, so the existing guard finds no verified write offset. No guard was relaxed and no extra width write introduced. This inherited limitation is recorded rather than folded into the startup pass count. Current guides and PDF identify 4.2.11; prior artifacts remain unchanged. Merge, push and release require owner confirmation.
+
+
+## 2026-10-14 publication
+
+The owner confirmed the 4.2.11 merge update, then requested all current GitHub version labels reflect it. Ghost Tool 4.2.11 is published as the regular Latest release (not a draft or prerelease), targeting approved source commit `731e04dc59cf3b0da06aff16edcd07d1fbfabcf5`. Both downloaded release assets exactly match the repository ZIP and updated three-page PDF. The description, current guides and release index identify 4.2.11. The separate width-suite limitation remains explicit; historical releases keep their original versions.

@@ -163,12 +163,12 @@
   },
   "pdf": {
     "path": "docs/ghost_tool/GhostTool_User_Manual.pdf",
-    "sha256": "f9de82b53981ffc9d343e15e72f6202fd1a09277c0bee89faeedacc5a5838749",
-    "bytes": 10809,
+    "sha256": "ae91cb0efee998a9c22b70181a33fb656b1aaccd1048e491111d73ab06b8531c",
+    "bytes": 10835,
     "pages": 3,
     "author": "GoingGhost"
   },
-  "published": false,
+  "published": true,
   "qualification": "Startup and toolbar checks pass; full shelf-width suite remains incomplete.",
   "width_guard_diagnostic": {
     "displayed_pixels": 150,
@@ -179,5 +179,28 @@
   },
   "owner_file_tested": false,
   "original_native_crash_reproduced_locally": false,
-  "verification_completed_date": "2026-10-14"
+  "verification_completed_date": "2026-10-14",
+  "publication": {
+    "tag": "ghost-v4.2.11",
+    "name": "Ghost Tool 4.2.11 \u2014 Startup crash fix",
+    "url": "https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.11",
+    "published_at": "2026-10-14T04:19:21Z",
+    "target_commitish": "731e04dc59cf3b0da06aff16edcd07d1fbfabcf5",
+    "latest": true,
+    "draft": false,
+    "prerelease": false,
+    "assets": {
+      "b4_ghost_tool_v4.2.11.zip": {
+        "bytes": 221461,
+        "sha256": "62f44f4809928a3be947989027e362ae2d6aded0125730d4be7f465dfd552f69",
+        "downloaded_bytes_match": true
+      },
+      "GhostTool_User_Manual.pdf": {
+        "bytes": 10835,
+        "sha256": "ae91cb0efee998a9c22b70181a33fb656b1aaccd1048e491111d73ab06b8531c",
+        "downloaded_bytes_match": true
+      }
+    },
+    "repository_description_verified": true
+  }
 }

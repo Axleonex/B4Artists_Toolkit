@@ -1,4 +1,4 @@
-"""Build/check the unpublished 4.2.11 candidate in disposable native sessions.
+"""Build/check the Ghost Tool 4.2.11 package in disposable native sessions.
 
 [PowerShell] python docs/ghost_tool/releases/4.2.11/package.py --startup-focus
 Requires background, split-view and saved-preference startup checks to pass;
