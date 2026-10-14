@@ -241,7 +241,7 @@ Ces outils règlent la façon dont votre maillage se déforme quand les os bouge
 
 **Contrôles principaux :** itérations, force du lissage, bords épinglés, lissage de la déformation seule, et s'il passe avant l'armature. Le bouton d'ajout ajoute le modificateur et le lie à la forme de repos.
 
-**Où le trouver :** onglet BoneCraft, en Mode Objet avec un maillage sélectionné → Delta Mush
+**Où le trouver :** BoneCraft → Skin → Delta Mush (Object Mode; Mesh)
 
 ---
 
@@ -251,7 +251,7 @@ Ces outils règlent la façon dont votre maillage se déforme quand les os bouge
 
 **Contrôles principaux :** le maillage pilote à suivre, le type d'atténuation et la distance maximale ; le bouton de liaison attache le maillage.
 
-**Où le trouver :** onglet BoneCraft, en Mode Objet avec un maillage sélectionné → Enveloppe par Proximité
+**Où le trouver :** BoneCraft → Skin → Proximity Wrap (Object Mode; Mesh)
 
 ---
 
@@ -312,7 +312,7 @@ Ces outils apparaissent dans l'onglet BoneCraft en Mode Pose.
 - Dans chaque ensemble, un bouton par visème (icône de haut-parleur) le prévisualise
 - Synchronisation Labiale — du texte vers des clés de visèmes, avec images par phonème et lissage
 
-**Où la trouver :** onglet BoneCraft, avec une armature sélectionnée → Bibliothèque de Visèmes
+**Où la trouver :** CATS → Avatar Tools → Viseme Library (Armature); Lip Sync (Pose Mode)
 
 ---
 

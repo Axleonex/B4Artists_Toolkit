@@ -4,6 +4,8 @@
 
 ## 指南 8：设置口型同步
 
+`CATS → VRChat Tools → Facial`
+
 > **时间：** 约 10–20 分钟
 > **结果：** 你在 VRChat 中说话时，虚拟形象的嘴能正确地动
 
@@ -19,7 +21,7 @@
 
 ### 步骤 1 — 打开 VRChat Viseme Mapping
 
-在右侧边栏的 **CATS** 选项卡中，展开 **VRChat** → **VRChat Viseme Mapping**（VRChat 口型映射）。
+在右侧边栏的 **CATS → VRChat Tools → Facial** → VRChat Viseme Mapping.
 
 ---
 
@@ -63,6 +65,8 @@
 
 ## 指南 9：提升虚拟形象的性能
 
+`CATS → VRChat Tools → Check Performance`
+
 > **时间：** 约 15–25 分钟
 > **结果：** 更好的 VRChat 性能等级，其他玩家加载更快
 
@@ -76,7 +80,7 @@
 
 ### 步骤 1 — 查看当前等级
 
-在 **CATS** 选项卡中，展开 **VRChat** → **检查性能**。点击 **Calculate Performance Rank**（计算性能等级）。BoneCraft 会显示总体等级和细分项（多边形、蒙皮网格、材质槽、骨骼、PhysBone 和接触），以及每一项离下一个等级还差多少。
+在 **CATS** 选项卡中，展开 **VRChat Tools** → **检查性能**。点击 **Calculate Performance Rank**（计算性能等级）。BoneCraft 会显示总体等级和细分项（多边形、蒙皮网格、材质槽、骨骼、PhysBone 和接触），以及每一项离下一个等级还差多少。
 
 ---
 
@@ -120,6 +124,8 @@
 ---
 
 ## 指南 10：保存并重复使用姿势
+
+`BoneCraft → Review → Pose Library`
 
 > **时间：** 约 5–10 分钟
 > **结果：** 一个可以一键应用的已保存姿势库
@@ -169,6 +175,8 @@
 
 ## 指南 11：将两个骨架合并为一个
 
+`BoneCraft → Setup Rigging → Bone Merge`
+
 > **时间：** 约 25–40 分钟，取决于复杂程度
 > **结果：** 两副骨架合并为一副，所有权重都得到保留
 
@@ -182,7 +190,7 @@
 
 ### 步骤 1 — 打开骨骼合并
 
-在 **BoneCraft** 选项卡中，展开 **骨骼合并** 部分。它分三个阶段进行；前一个阶段完成后，下一个阶段才会打开。
+在 **BoneCraft → Setup Rigging** 选项卡中，展开 **骨骼合并** 部分。它分三个阶段进行；前一个阶段完成后，下一个阶段才会打开。
 
 ---
 

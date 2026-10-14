@@ -252,7 +252,7 @@ Click a mirror button first, then set the axis, direction, topology mode and sea
 
 **How to use:** Click **Add Delta Mush** to add the modifier and bind it to the rest shape. Immediately afterwards, set **Iterations**, **Smooth Strength**, **Pin Borders** and **Only Smooth Deform** in Adjust Last Operation. Once the modifier exists, the panel shows **Rebind** and **Remove**, with a Settings fold containing the modifier's iterations, smoothing strength and border pinning controls.
 
-**Where to find it:** BoneCraft tab, in Object Mode with a mesh selected → Delta Mush
+**Where to find it:** BoneCraft → Skin → Delta Mush (Object Mode; Mesh)
 
 ---
 
@@ -262,7 +262,7 @@ Click a mirror button first, then set the axis, direction, topology mode and sea
 
 **How to use:** select the target mesh, choose a different **Driver Mesh**, then click **Bind Proximity Wrap**. Keep the driver's armature in its rest pose when binding. The Options fold below the button lists **Falloff Type** and **Max Distance**; in 9.1.2 these values are stored with the setup but do not change its Surface Deform binding. Once bound, the panel shows **Rebind** and **Unbind**. Unbind disables the modifier in the viewport and render; it does not remove it.
 
-**Where to find it:** BoneCraft tab, in Object Mode with a mesh selected → Proximity Wrap
+**Where to find it:** BoneCraft → Skin → Proximity Wrap (Object Mode; Mesh)
 
 ---
 
@@ -323,7 +323,7 @@ These tools appear in the BoneCraft tab in Pose Mode.
 - In each set, one button per viseme (with a speaker icon) previews it
 - Lip Sync — text to viseme keys, with frames per phoneme and smoothing
 
-**Where to find it:** BoneCraft tab, with an armature selected → Viseme Library
+**Where to find it:** CATS → Avatar Tools → Viseme Library (Armature); Lip Sync (Pose Mode)
 
 ---
 

@@ -4,8 +4,8 @@ BoneCraft rigs a humanoid character so you can animate it with Anim Assist,
 and Ghost Tool. It is optional: the animation tools work on any
 rig, and BoneCraft does not need them.
 
-- **Version:** 9.2.0
-- **Download:** [`releases/BoneCraft-BFA-9.2.0.zip`](../../releases/BoneCraft-BFA-9.2.0.zip)
+- **Version:** 9.2.2
+- **Download:** [BoneCraft-BFA-9.2.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.2/BoneCraft-BFA-9.2.2.zip)
 - **Requires:** Bforartists (it refuses to run on standard Blender)
 
 ## BoneCraft and BoneForge
@@ -45,6 +45,8 @@ not both).
    is enabled (the default). That switch hides the Scene sections without
    disabling the add-on. The individual viewport tab switches remain separate.
 
+
+For the current 9.2.2 interface map, moved-tool paths and visibility settings, see the [manual: Getting Started](../../bonecraft/docs/manual/en/01-start.md#where-things-are). Bone Merge is under BoneCraft → Setup Rigging; Delta Mush and Proximity Wrap are under Skin; Viseme Library / Lip Sync is under CATS → Avatar Tools; VRChat viseme mapping and face tracking are under CATS → VRChat Tools → Facial.
 
 ## Rig a character
 

@@ -17,7 +17,7 @@
 
 ### Étape 1 — Ouvrir le Constructeur de Rig
 
-Ouvrez l'onglet **Rig Builder** sur la Tool Shelf de gauche (touche **T** dans la vue 3D). Le même Constructeur de Rig se trouve aussi toujours dans l'onglet **Scène** de l'éditeur **Propriétés**. Il a trois parties : Quick Rig (armatures toutes prêtes), l'**Assistant Auto-Rig** et **Mannequin**.
+Ouvrez Rig Builder dans la Tool Shelf gauche (T). Ordre : Auto-Rig Wizard, Quick Rig, Mannequin. Sa copie dans Properties → Scene est visible quand Preferences → Tabs → Scene Properties → Show est activé.
 
 Dépliez **Assistant Auto-Rig** et cliquez sur **Démarrer l'auto-rig**.
 
@@ -77,7 +77,7 @@ L'étape de vérification liste les avertissements éventuels et les options de 
 
 ### Étape 8 — Mapper vers les os humanoïdes de VRChat
 
-Ouvrez l'onglet **CATS** dans la barre latérale de droite (touche **N**), dépliez **VRChat** puis **Configurer les Os Humanoïdes**. Cliquez sur **Tout mapper automatiquement** : BoneCraft relie vos os aux emplacements du corps que VRChat utilise pour faire bouger un avatar avec vous. Cliquez sur **Normalize Names** (normaliser les noms) pour donner aux os mappés les noms attendus par VRChat, puis sur **Valider**.
+Ouvrez l'onglet **CATS** dans la barre latérale de droite (touche **N**), dépliez **Avatar Tools** puis **Configurer les Os Humanoïdes**. Cliquez sur **Tout mapper automatiquement** : BoneCraft relie vos os aux emplacements du corps que VRChat utilise pour faire bouger un avatar avec vous. Cliquez sur **Normalize Names** (normaliser les noms) pour donner aux os mappés les noms attendus par VRChat, puis sur **Valider**.
 
 **Ce que vous devriez voir :** les emplacements obligatoires (Hips, Spine, Head, LeftUpperArm, etc.) affichent chacun un os. Le guide 5 explique les emplacements.
 
@@ -85,7 +85,7 @@ Ouvrez l'onglet **CATS** dans la barre latérale de droite (touche **N**), dépl
 
 ### Étape 9 — Exporter pour VRChat
 
-Dans l'onglet **CATS**, dépliez **VRChat** → **Exporter vers VRChat**. Réglez le **Folder** (dossier) et le nom de l'**Avatar**, puis cliquez sur **Exporter vers VRChat (Unity)**.
+Dans l'onglet **CATS**, dépliez **Avatar Tools** → **Exporter vers VRChat**. Réglez le **Folder** (dossier) et le nom de l'**Avatar**, puis cliquez sur **Exporter vers VRChat (Unity)**.
 
 **Ce que vous devriez voir :** l'avatar exporté dans le dossier choisi, prêt pour le VRChat Creator Companion et le SDK VRChat dans Unity.
 
@@ -124,7 +124,7 @@ Si vous choisissez un fichier de projet VRoid Studio (`.vroid`), BoneCraft affic
 
 ### Étape 3 — Mapper vers les os humanoïdes de VRChat
 
-Dans l'onglet **CATS** → **VRChat** → **Configurer les Os Humanoïdes**, cliquez sur **Tout mapper automatiquement**. Les squelettes VRoid suivent une disposition standard, donc cela remplit généralement tous les emplacements. Si un emplacement est faux, **Fix Humanoid Map** (corriger la carte humanoïde) dans la section **VRM / VRoid** (sous Lint) répare les confusions de noms VRoid habituelles.
+Dans l'onglet **CATS** → **Avatar Tools** → **Configurer les Os Humanoïdes**, cliquez sur **Tout mapper automatiquement**. Les squelettes VRoid suivent une disposition standard, donc cela remplit généralement tous les emplacements. Si un emplacement est faux, **Fix Humanoid Map** (corriger la carte humanoïde) dans la section **VRM / VRoid** (sous Lint) répare les confusions de noms VRoid habituelles.
 
 ---
 
@@ -193,7 +193,7 @@ Les modèles MMD ont souvent de la géométrie en trop et de nombreuses pièces 
 
 ### Étape 5 — Mapper vers les os humanoïdes de VRChat
 
-Dans l'onglet **CATS** → **VRChat** → **Configurer les Os Humanoïdes**, cliquez sur **Tout mapper automatiquement**. Les squelettes MMD sont proches de ceux de VRChat, donc la plupart des emplacements se remplissent automatiquement. Pour un emplacement vide, cliquez sur son bouton et choisissez l'os.
+Dans l'onglet **CATS** → **Avatar Tools** → **Configurer les Os Humanoïdes**, cliquez sur **Tout mapper automatiquement**. Les squelettes MMD sont proches de ceux de VRChat, donc la plupart des emplacements se remplissent automatiquement. Pour un emplacement vide, cliquez sur son bouton et choisissez l'os.
 
 ---
 
@@ -207,6 +207,8 @@ Dans l'onglet **CATS** → **VRChat** → **Configurer les Os Humanoïdes**, cli
 
 ## Guide 4 : corriger les noms d'os de votre avatar
 
+`CATS → VRChat Tools → VRChat Naming Extras`
+
 > **Durée :** environ 5 à 15 minutes
 > **Résultat :** les os dont VRChat a besoin renommés avec des noms compatibles VRChat
 
@@ -217,7 +219,7 @@ Dans l'onglet **CATS** → **VRChat** → **Configurer les Os Humanoïdes**, cli
 
 ### Étape 1 — Détecter le style de nommage actuel
 
-Dans l'onglet **CATS**, dépliez **VRChat** → **VRChat Naming Extras** (extras de nommage VRChat) et cliquez sur **Détecter**. BoneCraft affiche le style de nommage trouvé (par exemple Mixamo, VRoid ou Unity) et un score ; **Forcer une nouvelle analyse** vérifie à nouveau après un changement de noms.
+Dans l'onglet **CATS**, dépliez **VRChat Tools** → **VRChat Naming Extras** (extras de nommage VRChat) et cliquez sur **Détecter**. BoneCraft affiche le style de nommage trouvé (par exemple Mixamo, VRoid ou Unity) et un score ; **Forcer une nouvelle analyse** vérifie à nouveau après un changement de noms.
 
 Pour des noms d'os en japonais, chinois, coréen, portugais, espagnol ou français, utilisez plutôt l'onglet **CATS** → **CATS** → **Traduire les Noms d'Os** : choisissez la **Langue** et lancez-le. Il convertit les noms en anglais en une seule étape.
 
@@ -246,6 +248,8 @@ Mappez d'abord les os (guide 5, étape 2), puis cliquez sur **Normalize Names** 
 
 ## Guide 5 : mapper votre avatar sur le système corporel de VRChat
 
+`CATS → Avatar Tools → Set Up Humanoid Bones`
+
 > **Durée :** environ 10 à 15 minutes
 > **Résultat :** le squelette de votre avatar relié au système de mouvement humanoïde de VRChat
 
@@ -258,7 +262,7 @@ Mappez d'abord les os (guide 5, étape 2), puis cliquez sur **Normalize Names** 
 
 ### Étape 1 — Ouvrir Configurer les Os Humanoïdes
 
-Dans l'onglet **CATS**, dépliez **VRChat** → **Configurer les Os Humanoïdes**.
+Dans l'onglet **CATS**, dépliez **Avatar Tools** → **Configurer les Os Humanoïdes**.
 
 ---
 
@@ -294,6 +298,8 @@ Si votre avatar a des os d'yeux, utilisez l'onglet **CATS** → **CATS** → **S
 
 ## Guide 6 : ajouter la physique des cheveux
 
+`CATS → Avatar Tools → Add Hair Physics`
+
 > **Durée :** environ 15 à 25 minutes
 > **Résultat :** les cheveux de votre avatar (et d'autres parties souples) qui se balancent naturellement dans VRChat
 
@@ -307,7 +313,7 @@ Si votre avatar a des os d'yeux, utilisez l'onglet **CATS** → **CATS** → **S
 
 ### Étape 1 — Ouvrir Ajouter la Physique des Cheveux
 
-Dans l'onglet **CATS**, dépliez **VRChat** → **Ajouter la Physique des Cheveux**. Il a quatre parties : Hair Chain Detection (détection des chaînes de cheveux), Hair Chain Generation (génération des chaînes de cheveux), PhysBone Configuration (configuration des PhysBones) et Hair Physics Colliders (colliders de physique des cheveux).
+Dans l'onglet **CATS**, dépliez **Avatar Tools** → **Ajouter la Physique des Cheveux**. Il a quatre parties : Hair Chain Detection (détection des chaînes de cheveux), Hair Chain Generation (génération des chaînes de cheveux), PhysBone Configuration (configuration des PhysBones) et Hair Physics Colliders (colliders de physique des cheveux).
 
 ---
 
@@ -343,6 +349,8 @@ Les colliders sont des formes invisibles qui empêchent les cheveux de traverser
 
 ## Guide 7 : attacher des vêtements qui bougent avec votre corps
 
+`CATS → VRChat Tools → Attach Clothing`
+
 > **Durée :** environ 20 à 30 minutes
 > **Résultat :** un vêtement attaché au squelette de votre avatar, qui bouge avec votre corps
 
@@ -355,7 +363,7 @@ Les colliders sont des formes invisibles qui empêchent les cheveux de traverser
 
 ### Étape 1 — Ouvrir Attacher les Vêtements
 
-Dans l'onglet **CATS**, dépliez **VRChat** → **Attacher les Vêtements**. Il a trois parties : Bone Matching (correspondance des os), Collision Detection (détection des collisions) et Clothing Merge (fusion des vêtements).
+Dans l'onglet **CATS**, dépliez **VRChat Tools** → **Attacher les Vêtements**. Il a trois parties : Bone Matching (correspondance des os), Collision Detection (détection des collisions) et Clothing Merge (fusion des vêtements).
 
 ---
 

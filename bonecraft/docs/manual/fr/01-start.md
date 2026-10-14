@@ -17,14 +17,7 @@ BoneCraft est un add-on pour Bforartists qui vous aide à rigger des personnages
 
 BoneCraft ne fonctionne que dans Bforartists (le fork de Blender). Pour Blender standard, il existe un add-on séparé, BoneForge, avec moins d'outils. Installez l'un ou l'autre, jamais les deux. Dans Blender standard, BoneCraft ne se charge pas : il affiche un seul avis avec un bouton pour obtenir Bforartists.
 
-| Domaine | BoneForge (Blender standard) | BoneCraft (Bforartists) |
-| --- | --- | --- |
-| Nettoyage d'avatar CATS, Material Combiner, contrôles dérivés d'UVToolkit | Inclus | Inclus |
-| Aides de base pour avatars (style Mixamo) | Inclus | Inclus |
-| Constructeur de Rig : détection des articulations, assistant, rig de contrôle, asset Basic Humanoid | Non inclus | Inclus |
-| Contrôles d'animateur et Control Picker | Non inclus | Inclus |
-| Mechanisms pour accessoires et machines | Non inclus | Inclus |
-| Reciblage avancé et export pour jeux par profil | Non inclus | Inclus |
+BoneForge 9.0.0 et les versions suivantes ciblent Blender standard. BoneCraft est un add-on distinct pour Bforartists. Les deux proposent Auto-Rig Wizard, Quick Rig, Mannequin et les outils partagés CATS/Material Atlas. BoneCraft ajoute Mechanisms, Control Picker, les rigs de contrôle de production, la détection des articulations et les exports par profil. La disposition similaire ne les ajoute pas à BoneForge.
 
 ## Installer BoneCraft
 
@@ -44,25 +37,31 @@ BoneCraft ne fonctionne que dans Bforartists (le fork de Blender). Pour Blender 
 
 ## Où trouver chaque chose
 
-BoneCraft ajoute trois onglets à la vue 3D :
+Les onglets sélectionnent un groupe. Setup Rigging, Skin, Review, Avatar Tools et Facial sont des sections à déplier dans ces onglets, pas des onglets distincts. Les chemins ci-dessous conservent les labels anglais ; leur traduction dépend du réglage Language.
 
-| Onglet | Côté par défaut | Sections |
+| Onglet | Position par défaut | Sections |
 | --- | --- | --- |
-| BoneCraft | Tool Shelf de gauche (touche T) | Vue d'ensemble, Configurer le Rigging, Peau, Mechanisms, Révision |
-| Rig Builder | Tool Shelf de gauche (touche T) | Constructeur de Rig : Quick Rig, Assistant Auto-Rig, Mannequin |
-| CATS | Barre latérale de droite (touche N) | CATS, VRChat, Importer / Exporter |
+| Rig Builder | Tool Shelf gauche (T) | Auto-Rig Wizard, Quick Rig - premade armatures, Mannequin |
+| BoneCraft | Tool Shelf gauche (T) | Overview, Setup Rigging, Skin, Mechanisms, Review |
+| CATS | Barre latérale droite (N) | CATS, Avatar Tools, VRChat Tools, Import / Export |
 
-**Déplacer un onglet :** ouvrez **Édition** → **Préférences** → **Add-ons** → BoneCraft → **Tabs**. Chaque onglet a un interrupteur d'affichage et deux boutons, Left (gauche) et Right (droite). Un changement s'applique tout de suite. Quand un onglet est masqué, ses boutons Left et Right deviennent gris, mais ils fonctionnent toujours.
+| Outil | Chemin à ouvrir |
+| --- | --- |
+| Bone Merge | BoneCraft → Setup Rigging → Bone Merge |
+| Delta Mush / Proximity Wrap | BoneCraft → Skin → Delta Mush / Proximity Wrap |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library → Lip Sync |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Humanoid / Hair / VRChat export | CATS → Avatar Tools → Set Up Humanoid Bones / Add Hair Physics / Export to VRChat |
+| VRM / MMD / I/O Hub | CATS → Import / Export → VRM / VRoid, MMD / PMX, Game Engine Export |
+| Performance / Clothing / Naming | CATS → VRChat Tools → Check Performance / Attach Clothing / VRChat Naming Extras |
 
-**Toujours dans l'éditeur Propriétés :** le Constructeur de Rig, Mechanisms, CATS, VRChat et Importer / Exporter sont aussi affichés dans l'onglet Scène de l'éditeur Propriétés, quelle que soit la sélection. Avec une armature sélectionnée, les sections de BoneCraft sont aussi affichées dans l'onglet Données de l'armature. Les interrupteurs d'affichage ne masquent jamais ces copies. Pour retirer un outil partout, désactivez son paquet dans la liste **Outils**, ou désactivez l'add-on.
+Sélectionnez une armature pour le rig et la bibliothèque de visèmes ; un maillage en Mode Objet pour Delta Mush et Proximity Wrap. Lip Sync exige une armature en Mode Pose. Dépliez les sections avec leur triangle. Options contient les réglages facultatifs ; réglez les outils exécutés immédiatement dans Ajuster la dernière opération avant toute autre opération.
 
-**Show Helpers (afficher les aides) :** BoneCraft explique ses sections avec de courtes lignes « quoi / quand » et des notes « How this works » (comment ça marche). Décochez **Show Helpers** dans les préférences de l'add-on pour les masquer. Dans la section VRChat, **Mode Compact** est un raccourci vers le même interrupteur.
+Préférences : Edit → Preferences → Add-ons → BoneCraft → Tabs contrôle les onglets. Scene Properties contrôle séparément les panneaux Rig Builder, Mechanisms et CATS dans Properties → Scene. Show Helpers masque les explications ; Language change les labels ; Tools active les paquets. Ctrl+Shift+R ouvre le panneau rapide.
 
-**Langue :** le réglage **Language** (langue) dans les préférences de l'add-on change les panneaux propres à BoneCraft en English, 日本語, 한국어, 中文, Français, Português ou Español.
+BoneCraft déplace les onglets avec Left / Right dans Preferences → Tabs. Scene Properties → Show est activé par défaut. Il propose aussi des panneaux de données d’armature et des boutons dans les Tool Shelf natives Pose / Weights. Ces accès Bforartists diffèrent de ceux de Blender dans Blender standard.
 
-**Corriger le modèle d'abord, à chaque fois :** dans l'onglet CATS, commencez toujours par **Corriger le modèle** avant tout autre outil CATS. Le pipeline CATS tient un registre des étapes que vous avez faites, et chaque outil vous avertit si vous le lancez dans le désordre. Voir [Le pipeline CATS](04-cats-pipeline.md).
-
-**Panneau rapide :** appuyez sur **Ctrl+Shift+R** dans la vue 3D pour ouvrir le panneau de rig de BoneCraft en fenêtre contextuelle sous le curseur.
+Trois fonctions faciales distinctes : la génération CATS crée les clés de forme de la bouche ; Viseme Library / Lip Sync conserve les poses et crée les clés d’animation ; Facial associe les clés existantes à VRChat ou configure le suivi du visage. Les contrôles dérivés de UVToolkit sont dans CATS → Material Atlas → Override Inherited Settings → UV Packing ; il s’agit du flux d’atlas partagé, pas de l’add-on UVToolkit complet.
 
 ---
 

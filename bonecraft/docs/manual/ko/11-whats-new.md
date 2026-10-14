@@ -4,6 +4,15 @@
 
 최신 항목이 먼저 옵니다.
 
+## 9.2.2 — 현재 인터페이스
+
+탭은 기능 그룹을 선택합니다. Setup Rigging, Skin, Review, Avatar Tools, Facial은 탭 안에서 펼치는 섹션이며 별도 탭이 아닙니다. 아래 경로는 영어 UI 이름입니다. 번역된 이름은 Language 설정에 따라 달라집니다.
+
+- Bone Merge → BoneCraft → Setup Rigging
+- Delta Mush / Proximity Wrap → BoneCraft → Skin
+- Viseme Library / Lip Sync → CATS → Avatar Tools
+- VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
+
 ## 9.1.2(2026년 10월)
 
 - **씬 속성 스위치:** 환경설정 > 탭에 씬 속성 행이 새로 생겼습니다. 이 행의 표시 버튼(켜져 있는 동안 파란색)은 애드온을 끄지 않고도 속성 > 씬 탭에 있는 BoneCraft의 모든 섹션(리그 빌더, 메커니즘, CATS, VRChat, 가져오기 / 내보내기)을 보이거나 숨깁니다. 처음에는 켜져 있으며, 3D 뷰포트 탭과 아마추어 탭은 건드리지 않습니다.
