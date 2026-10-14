@@ -19,7 +19,7 @@ Current repository packages and their publication status.
 | Ghost Tool (4.2.2) | 4.2.2 | [b4_ghost_tool_v4.2.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.2/b4_ghost_tool_v4.2.2.zip) | 214,338 | `d74c692e4c6e` | Prerelease; 230 background checks and five native auto-key cases pass on Blender stand-in; Bforartists rig validation pending |
 | Ghost Tool (4.2.1) | 4.2.1 | [b4_ghost_tool_v4.2.1.zip](b4_ghost_tool_v4.2.1.zip?raw=1) | 212,103 | `dc5e374a8d7e` | Prerelease; 13 authoring checks pass on Blender stand-in; Bforartists viewport validation pending |
 | Ghost Tool (4.2.0) | 4.2.0 | [b4_ghost_tool_v4.2.0.zip](b4_ghost_tool_v4.2.0.zip) | 211,099 | `16a354dc92d6` | Published prerelease; recorded Bforartists checks pass; owner usability acceptance pending |
-| BoneCraft | 9.2.4 | [BoneCraft-BFA-9.2.4.zip](BoneCraft-BFA-9.2.4.zip) | 1,236,557 | `311399bf7cc7` | Local candidate; Health Check validator/popup repaired; Quick Wins and Remaining Tasks contain distinct cards; not published |
+| BoneCraft | 9.2.4 | [BoneCraft-BFA-9.2.4.zip](BoneCraft-BFA-9.2.4.zip) | 1,236,557 | `311399bf7cc7` | Repository build; Health Check validator/popup repaired; Quick Wins and Remaining Tasks contain distinct cards; no tagged GitHub Release |
 | BoneCraft (published 9.2.3) | 9.2.3 | [BoneCraft-BFA-9.2.3.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.3/BoneCraft-BFA-9.2.3.zip) | 1,234,418 | `2f41145a5940` | Verified package; removes duplicate Avatar Tools export; VRChat export stays in Import / Export |
 | BoneCraft (historical 9.2.2) | 9.2.2 | [BoneCraft-BFA-9.2.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.2/BoneCraft-BFA-9.2.2.zip) | 1,234,931 | `72e31873d144` | Published release; five tools relocated into workflow sections; Other Tools removed; host UI and package checks pass |
 | BoneCraft (historical 9.2.1) | 9.2.1 | [BoneCraft-BFA-9.2.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip) | 1,237,105 | `0903581df305` | Published release; shared asset shelf bug fix; targeted Bforartists host and GUI checks pass |
@@ -28,7 +28,7 @@ Anim Assist uses the package root `B4_anim_assist`; Ghost Tool uses `ghost_tool`
 
 ## Checks and notes
 
-- [BoneCraft 9.2.4 local candidate notes](../docs/bonecraft/releases/9.2.4/RELEASE-NOTES.md) and [package receipt](../docs/bonecraft/releases/9.2.4/package-receipt.json). Health Check and duplicate Task Board cards fixed; not published.
+- [BoneCraft 9.2.4 repository build notes](../docs/bonecraft/releases/9.2.4/RELEASE-NOTES.md) and [package receipt](../docs/bonecraft/releases/9.2.4/package-receipt.json). Health Check and duplicate Task Board cards fixed; no tagged GitHub Release.
 - [BoneCraft 9.2.3 release notes](../docs/bonecraft/releases/9.2.3/RELEASE-NOTES.md) and [package receipt](../docs/bonecraft/releases/9.2.3/package-receipt.json). Duplicate export removed from Avatar Tools; retained in Import / Export.
 - [BoneCraft 9.2.2 release notes](../docs/bonecraft/releases/9.2.2/RELEASE-NOTES.md) and [package receipt](../docs/bonecraft/releases/9.2.2/package-receipt.json). Five tool relocations and removal of Other Tools.
 - [BoneCraft 9.2.1 release notes](../docs/bonecraft/releases/9.2.1/RELEASE-NOTES.md). The normal bottom asset shelf retains the existing libraries alongside BoneCraft rigs.

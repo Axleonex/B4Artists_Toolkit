@@ -6,7 +6,7 @@ only in Bforartists: in standard Blender it does not load and shows a single "Ge
 | | |
 |---|---|
 | **Add-on** | BoneCraft |
-| **Version** | 9.2.4 (source) |
+| **Version** | 9.2.4 |
 | **Host** | Bforartists (tested on 5.2) — not standard Blender |
 | **Category** | Rigging / Animation |
 | **License** | GPL v2.0 or later |
@@ -36,18 +36,18 @@ Switching a package off unregisters its classes, so it costs nothing until you s
 
 ## Install
 
-1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([latest published ZIP: BoneCraft 9.2.3](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.3/BoneCraft-BFA-9.2.3.zip)).
+1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([current repository ZIP: BoneCraft 9.2.4](https://github.com/Axleonex/B4Artists_Toolkit/raw/refs/heads/main/releases/BoneCraft-BFA-9.2.4.zip)).
 2. Tick its checkbox.
 3. In the 3D Viewport, the **BoneCraft** and **Rig Builder** tabs are on the left Tool Shelf (press **T**) and the
    **CATS** tab is on the right sidebar (press **N**). Each tab's side can be changed in the add-on's preferences
    (**Tabs**). Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools and Import / Export are also in the Properties
    editor's Scene tab while **Tabs → Scene Properties → Show** is on (the default).
 
-Published release changes and checks: [BoneCraft 9.2.3 release notes](../docs/bonecraft/releases/9.2.3/RELEASE-NOTES.md).
+Current repository changes and checks: [BoneCraft 9.2.4 notes](../docs/bonecraft/releases/9.2.4/RELEASE-NOTES.md).
 
-Local candidate 9.2.4: [installable ZIP](../releases/BoneCraft-BFA-9.2.4.zip), [changes and checks](../docs/bonecraft/releases/9.2.4/RELEASE-NOTES.md). Not published.
+Repository build 9.2.4: [installable ZIP](../releases/BoneCraft-BFA-9.2.4.zip). The latest tagged GitHub Release remains 9.2.3.
 
-### 9.2.4 local source changes
+### 9.2.4 repository changes
 
 - Open Health Check runs the registered validator and shows refreshable results.
 - Quick Wins and Remaining Tasks show each task once.
@@ -67,7 +67,7 @@ Local candidate 9.2.4: [installable ZIP](../releases/BoneCraft-BFA-9.2.4.zip), [
 - Other Tools and its grouping hooks are removed.
 
 Placement, drawing, visibility and tool-toggle host checks pass. Live-window appearance is not verified.
-The 9.2.3 ZIP is verified for installation from disk.
+The 9.2.4 ZIP passes CRC and source/version parity checks. Host regression checks pass; native popup appearance has not been visually verified.
 
 ## Manual
 
