@@ -4,7 +4,16 @@
 
 ## VRChat ツール
 
-VRChat のツールは、右のサイドバー（**N** キー）の **CATS** タブにある **VRChat** セクションにあります。サブセクションは必要になる順に並んでいます。VRChat の設定（命名の追加機能とヒューマノイドボーン）、体と物理（髪、衣装、ビジェーム）、最後にパフォーマンスとエクスポートです。同じセクションは **プロパティ** エディターの **シーン** タブにも常にあります。
+タブで機能グループを選びます。Setup Rigging、Skin、Review、Avatar Tools、Facial はタブ内の展開可能なセクションで、独立したタブではありません。以下は英語 UI のラベルです。翻訳名は Language 設定に従います。
+
+| ツール | 開く場所 |
+| --- | --- |
+| Humanoid / Hair / Export | CATS → Avatar Tools |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Performance / Clothing / Naming | CATS → VRChat Tools |
+
+設定：Edit → Preferences → Add-ons → BoneCraft → Tabs でタブの表示を変更します。Scene Properties は Properties → Scene の Rig Builder と CATS パネルを個別に制御します。Show Helpers は説明表示、Language は表示言語、Tools は各パッケージの有効化です。Ctrl+Shift+R でクイックパネルを開きます。
 
 ---
 
@@ -156,7 +165,7 @@ MMD のツールは **CATS** タブ → **インポート / エクスポート**
 
 ---
 
-## Game Export（ゲーム用エクスポート）
+## Game Engine Export（ゲーム用エクスポート）
 
 **できること：** 検証済みのプロファイルで、ゲームエンジン向けにエクスポートします。Unreal（ヒューマノイドまたはユニバーサル）、Unity のヒューマノイド、Godot のヒューマノイド、汎用の FBX や GLB があります。プロファイルが必要とする修正はすべて表示され、クリックしたときにだけ適用されます。何も言わずに適用されることはありません。
 
@@ -167,7 +176,7 @@ MMD のツールは **CATS** タブ → **インポート / エクスポート**
 - **Apply Transforms (Fix)**（トランスフォームを適用（修正））— 確認が示すことのある、明示的な修正の 1 つ
 - **Export (Profile)**（エクスポート（プロファイル））— プロファイルでエクスポートする
 
-**場所：** **CATS** タブ → **インポート / エクスポート** → **Game Export**
+**場所：** **CATS** タブ → **インポート / エクスポート** → **Game Engine Export**
 
 ---
 

@@ -17,14 +17,7 @@ BoneCraft は Bforartists 用のアドオンで、キャラクターや小道具
 
 BoneCraft は Bforartists（Blender のフォーク）でのみ動作します。通常の Blender 向けには、ツールの少ない別のアドオン BoneForge があります。どちらか一方だけをインストールし、両方は入れないでください。通常の Blender では BoneCraft は読み込まれず、Bforartists を入手するためのボタンが付いたお知らせを 1 つ表示するだけです。
 
-| 項目 | BoneForge（通常の Blender） | BoneCraft（Bforartists） |
-| --- | --- | --- |
-| CATS によるアバターの整理、Material Combiner、UVToolkit 由来の操作 | あり | あり |
-| 基本的なアバター補助（Mixamo 形式） | あり | あり |
-| リグビルダー：関節検出、ウィザード、コントロールリグ、Basic Humanoid アセット | なし | あり |
-| アニメーター用コントロールと Control Picker | なし | あり |
-| 小道具や機械のための Mechanisms | なし | あり |
-| 高度なリターゲットとプロファイルによるゲーム向けエクスポート | なし | あり |
+BoneForge 9.0.0 以降は標準 Blender 用です。BoneCraft は独立した Bforartists 用アドオンです。両方に Auto-Rig Wizard、Quick Rig、Mannequin、共有 CATS/Material Atlas ツールがあります。BoneCraft にはさらに Mechanisms、Control Picker、制作向け制御リグ、関節検出、プロファイル別エクスポートがあります。同じ配置にしてもこれらは BoneForge に追加されません。
 
 ## BoneCraft のインストール
 
@@ -44,25 +37,32 @@ BoneCraft は Bforartists（Blender のフォーク）でのみ動作します�
 
 ## 各機能の場所
 
-BoneCraft は 3D ビューポートに 3 つのタブを追加します：
+タブで機能グループを選びます。Setup Rigging、Skin、Review、Avatar Tools、Facial はタブ内の展開可能なセクションで、独立したタブではありません。以下は英語 UI のラベルです。翻訳名は Language 設定に従います。
 
-| タブ | 初期の位置 | セクション |
+| タブ | 初期位置 | セクション |
 | --- | --- | --- |
-| BoneCraft | 左のツールシェルフ（T キー） | 概要、リギング設定、スキン、Mechanisms、レビュー |
-| Rig Builder | 左のツールシェルフ（T キー） | リグビルダー：Quick Rig、オートリグウィザード、マネキン |
-| CATS | 右のサイドバー（N キー） | CATS、VRChat、インポート / エクスポート |
+| Rig Builder | 左ツールシェルフ（T） | Auto-Rig Wizard, Quick Rig - premade armatures, Mannequin |
+| BoneCraft | 左ツールシェルフ（T） | Overview, Setup Rigging, Skin, Mechanisms, Review |
+| CATS | 右サイドバー（N） | CATS, Avatar Tools, VRChat Tools, Import / Export |
 
-**タブを移動する：** **編集** → **プリファレンス** → **アドオン** → BoneCraft → **Tabs** を開きます。各タブには表示スイッチと、Left（左）と Right（右）の 2 つのボタンがあります。変更はすぐに反映されます。タブを非表示にしている間は Left と Right のボタンが灰色になりますが、操作はできます。
+| ツール | 開く場所 |
+| --- | --- |
+| Bone Merge | BoneCraft → Setup Rigging → Bone Merge |
+| Delta Mush / Proximity Wrap | BoneCraft → Skin → Delta Mush / Proximity Wrap |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library → Lip Sync |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Humanoid / Hair | CATS → Avatar Tools → Set Up Humanoid Bones / Add Hair Physics |
+| VRChat export | CATS → Import / Export → Unity / VRChat |
+| VRM / MMD / I/O Hub | CATS → Import / Export → VRM / VRoid, MMD / PMX, Game Engine Export |
+| Performance / Clothing / Naming | CATS → VRChat Tools → Check Performance / Attach Clothing / VRChat Naming Extras |
 
-**プロパティエディターに常に表示されるもの：** リグビルダー、Mechanisms、CATS、VRChat、インポート / エクスポートは、何を選択していても、プロパティエディターのシーンタブにも表示されます。アーマチュアを選択すると、BoneCraft のセクションはアーマチュアデータのタブにも表示されます。表示スイッチでこれらのコピーが隠れることはありません。ツールをすべての場所から消すには、**ツール** の一覧でそのパッケージをオフにするか、アドオンを無効にしてください。
+リグとビジェームライブラリにはアーマチュアを選択します。Delta Mush と Proximity Wrap にはオブジェクトモードのメッシュが必要です。Lip Sync はポーズモードのアーマチュアで使います。三角を押して展開します。Options は任意設定です。即時実行ツールは、次の操作の前に「最後の操作を調整」で設定を変更できます。
 
-**Show Helpers（ヘルパーを表示）：** BoneCraft は各セクションを「何をするか / いつ使うか」の短い説明と「How this works（仕組み）」のメモで説明します。アドオンのプリファレンスで **Show Helpers** のチェックを外すと非表示になります。VRChat セクションの **コンパクトモード** は同じスイッチのショートカットです。
+設定：Edit → Preferences → Add-ons → BoneCraft → Tabs でタブの表示を変更します。Scene Properties は Properties → Scene の Rig Builder、Mechanisms と CATS パネルを個別に制御します。Show Helpers は説明表示、Language は表示言語、Tools は各パッケージの有効化です。Ctrl+Shift+R でクイックパネルを開きます。
 
-**言語：** アドオンのプリファレンスにある **Language**（言語）の設定で、BoneCraft 自身のパネルを English、日本語、한국어、中文、Français、Português、Español に切り替えられます。
+BoneCraft のタブは Preferences → Tabs の Left / Right で移動できます。Scene Properties → Show は初期状態でオンです。アーマチュアデータのパネルと、標準 Pose / Weights ツールシェルフ内のボタンもあります。これらは Bforartists 固有の入口です。
 
-**毎回、まず モデルを修正：** CATS タブでは、ほかの CATS ツールより先に必ず **モデルを修正** を実行してください。CATS パイプラインは、どの手順を済ませたかを記録し、順番どおりでないツールを実行すると警告します。[CATS パイプライン](04-cats-pipeline.md)を参照してください。
-
-**クイックパネル：** 3D ビューポートで **Ctrl+Shift+R** を押すと、カーソルの下に BoneCraft のリグパネルがポップアップで開きます。
+顔の操作は三種類です。CATS のビジェーム生成は口のシェイプキーを作成し、Viseme Library / Lip Sync はポーズ保存とアニメーションキー生成を行い、Facial は既存キーの VRChat 対応付けと顔トラッキング設定を行います。UVToolkit 由来の設定は CATS → Material Atlas → Override Inherited Settings → UV Packing にあります。共有アトラス機能であり、独立した UVToolkit 全体ではありません。
 
 ---
 

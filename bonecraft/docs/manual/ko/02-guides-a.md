@@ -17,7 +17,7 @@
 
 ### 1단계 — 리그 빌더 열기
 
-왼쪽 툴 셸프(3D 뷰포트에서 **T** 키)에서 **Rig Builder** 탭을 엽니다. 같은 리그 빌더는 **속성** 에디터의 **장면** 탭에도 항상 있습니다. 세 부분으로 되어 있습니다: Quick Rig(미리 만들어진 아마추어), **자동 리깅 마법사**, **마네킹**.
+왼쪽 Tool Shelf (T)에서 Rig Builder를 엽니다. 순서는 Auto-Rig Wizard, Quick Rig, Mannequin입니다. Properties → Scene의 같은 패널은 Preferences → Tabs → Scene Properties → Show가 켜져 있을 때 표시됩니다.
 
 **자동 리깅 마법사**를 펼치고 **오토 리그 시작**을 클릭합니다.
 
@@ -77,7 +77,7 @@
 
 ### 8단계 — VRChat 휴머노이드 본에 매핑하기
 
-오른쪽 사이드바(**N** 키)의 **CATS** 탭을 열고 **VRChat**을, 이어서 **휴머노이드 본 설정**을 펼칩니다. **전체 자동 맵핑**을 클릭합니다: BoneCraft가 본을 VRChat이 아바타를 여러분과 함께 움직이는 데 쓰는 몸 슬롯에 연결합니다. **Normalize Names**(이름 정규화)를 클릭해 매핑된 본에 VRChat이 기대하는 이름을 붙인 다음 **검증**을 클릭합니다.
+오른쪽 사이드바(**N** 키)의 **CATS** 탭을 열고 **Avatar Tools**을, 이어서 **휴머노이드 본 설정**을 펼칩니다. **전체 자동 맵핑**을 클릭합니다: BoneCraft가 본을 VRChat이 아바타를 여러분과 함께 움직이는 데 쓰는 몸 슬롯에 연결합니다. **Normalize Names**(이름 정규화)를 클릭해 매핑된 본에 VRChat이 기대하는 이름을 붙인 다음 **검증**을 클릭합니다.
 
 **보여야 하는 것:** 필수 슬롯(Hips, Spine, Head, LeftUpperArm 등)마다 본이 하나씩 표시됩니다. 슬롯은 가이드 5에서 설명합니다.
 
@@ -85,7 +85,7 @@
 
 ### 9단계 — VRChat용으로 내보내기
 
-**CATS** 탭에서 **VRChat** → **VRChat로 내보내기**를 펼칩니다. **Folder**(폴더)와 **Avatar**(아바타) 이름을 설정한 다음 **VRChat로 내보내기 (Unity)** 버튼을 클릭합니다.
+**CATS** 탭에서 **Avatar Tools** → **VRChat로 내보내기**를 펼칩니다. **Folder**(폴더)와 **Avatar**(아바타) 이름을 설정한 다음 **VRChat로 내보내기 (Unity)** 버튼을 클릭합니다.
 
 **보여야 하는 것:** 선택한 폴더에 내보낸 아바타가 생기며, VRChat Creator Companion과 Unity의 VRChat SDK에서 쓸 수 있습니다.
 
@@ -124,7 +124,7 @@ VRoid Studio 프로젝트 파일(`.vroid`)을 고르면 BoneCraft는 대신 "VRo
 
 ### 3단계 — VRChat 휴머노이드 본에 매핑하기
 
-**CATS** 탭 → **VRChat** → **휴머노이드 본 설정**에서 **전체 자동 맵핑**을 클릭합니다. VRoid 스켈레톤은 표준 구성을 따르므로 보통 모든 슬롯이 채워집니다. 슬롯이 잘못되었다면 **VRM / VRoid** 섹션(Lint 아래)의 **Fix Humanoid Map**(휴머노이드 맵 수정)이 흔한 VRoid 이름 혼동을 고칩니다.
+**CATS** 탭 → **Avatar Tools** → **휴머노이드 본 설정**에서 **전체 자동 맵핑**을 클릭합니다. VRoid 스켈레톤은 표준 구성을 따르므로 보통 모든 슬롯이 채워집니다. 슬롯이 잘못되었다면 **VRM / VRoid** 섹션(Lint 아래)의 **Fix Humanoid Map**(휴머노이드 맵 수정)이 흔한 VRoid 이름 혼동을 고칩니다.
 
 ---
 
@@ -193,7 +193,7 @@ MMD 모델에는 여분의 지오메트리와 따로 떨어진 부분이 많은 
 
 ### 5단계 — VRChat 휴머노이드 본에 매핑하기
 
-**CATS** 탭 → **VRChat** → **휴머노이드 본 설정**에서 **전체 자동 맵핑**을 클릭합니다. MMD 스켈레톤은 VRChat 스켈레톤과 비슷해서 대부분의 슬롯이 자동으로 채워집니다. 빈 슬롯은 그 버튼을 클릭하고 본을 고릅니다.
+**CATS** 탭 → **Avatar Tools** → **휴머노이드 본 설정**에서 **전체 자동 맵핑**을 클릭합니다. MMD 스켈레톤은 VRChat 스켈레톤과 비슷해서 대부분의 슬롯이 자동으로 채워집니다. 빈 슬롯은 그 버튼을 클릭하고 본을 고릅니다.
 
 ---
 
@@ -207,6 +207,8 @@ MMD 모델에는 여분의 지오메트리와 따로 떨어진 부분이 많은 
 
 ## 가이드 4: 아바타의 본 이름 고치기
 
+`CATS → VRChat Tools → VRChat Naming Extras`
+
 > **소요 시간:** 약 5–15분
 > **결과:** VRChat에 필요한 본의 이름이 VRChat과 호환되는 이름으로 바뀜
 
@@ -217,7 +219,7 @@ MMD 모델에는 여분의 지오메트리와 따로 떨어진 부분이 많은 
 
 ### 1단계 — 현재 이름 규칙 감지하기
 
-**CATS** 탭에서 **VRChat** → **VRChat Naming Extras**(VRChat 이름 추가 도구)를 펼치고 **감지**를 클릭합니다. BoneCraft가 찾은 이름 규칙(예: Mixamo, VRoid, Unity)과 점수를 보여 줍니다. 이름을 바꾼 뒤에는 **강제 재스캔**으로 다시 확인합니다.
+**CATS** 탭에서 **VRChat Tools** → **VRChat Naming Extras**(VRChat 이름 추가 도구)를 펼치고 **감지**를 클릭합니다. BoneCraft가 찾은 이름 규칙(예: Mixamo, VRoid, Unity)과 점수를 보여 줍니다. 이름을 바꾼 뒤에는 **강제 재스캔**으로 다시 확인합니다.
 
 본 이름이 일본어, 중국어, 한국어, 포르투갈어, 스페인어, 프랑스어라면 대신 **CATS** 탭 → **CATS** → **본 이름 번역**을 사용하세요: **언어**를 고르고 실행합니다. 이름을 한 번에 영어로 바꿉니다.
 
@@ -246,6 +248,8 @@ MMD 모델에는 여분의 지오메트리와 따로 떨어진 부분이 많은 
 
 ## 가이드 5: 아바타를 VRChat의 몸 시스템에 매핑하기
 
+`CATS → Avatar Tools → Set Up Humanoid Bones`
+
 > **소요 시간:** 약 10–15분
 > **결과:** 아바타의 스켈레톤이 VRChat의 휴머노이드 움직임 시스템에 연결됨
 
@@ -258,7 +262,7 @@ MMD 모델에는 여분의 지오메트리와 따로 떨어진 부분이 많은 
 
 ### 1단계 — 휴머노이드 본 설정 열기
 
-**CATS** 탭에서 **VRChat** → **휴머노이드 본 설정**을 펼칩니다.
+**CATS** 탭에서 **Avatar Tools** → **휴머노이드 본 설정**을 펼칩니다.
 
 ---
 
@@ -294,6 +298,8 @@ MMD 모델에는 여분의 지오메트리와 따로 떨어진 부분이 많은 
 
 ## 가이드 6: 헤어 피직스 추가하기
 
+`CATS → Avatar Tools → Add Hair Physics`
+
 > **소요 시간:** 약 15–25분
 > **결과:** VRChat에서 아바타의 머리카락(과 다른 부드러운 부분)이 자연스럽게 흔들림
 
@@ -307,7 +313,7 @@ MMD 모델에는 여분의 지오메트리와 따로 떨어진 부분이 많은 
 
 ### 1단계 — 헤어 피직스 추가 열기
 
-**CATS** 탭에서 **VRChat** → **헤어 피직스 추가**를 펼칩니다. 네 부분으로 되어 있습니다: Hair Chain Detection(헤어 체인 감지), Hair Chain Generation(헤어 체인 생성), PhysBone Configuration(PhysBone 구성), Hair Physics Colliders(헤어 피직스 콜라이더).
+**CATS** 탭에서 **Avatar Tools** → **헤어 피직스 추가**를 펼칩니다. 네 부분으로 되어 있습니다: Hair Chain Detection(헤어 체인 감지), Hair Chain Generation(헤어 체인 생성), PhysBone Configuration(PhysBone 구성), Hair Physics Colliders(헤어 피직스 콜라이더).
 
 ---
 
@@ -343,6 +349,8 @@ MMD 모델에는 여분의 지오메트리와 따로 떨어진 부분이 많은 
 
 ## 가이드 7: 몸과 함께 움직이는 의상 부착하기
 
+`CATS → VRChat Tools → Attach Clothing`
+
 > **소요 시간:** 약 20–30분
 > **결과:** 아바타의 스켈레톤에 부착되어 몸과 함께 움직이는 의상
 
@@ -355,7 +363,7 @@ MMD 모델에는 여분의 지오메트리와 따로 떨어진 부분이 많은 
 
 ### 1단계 — 의상 부착 열기
 
-**CATS** 탭에서 **VRChat** → **의상 부착**을 펼칩니다. 세 부분으로 되어 있습니다: Bone Matching(본 매칭), Collision Detection(충돌 감지), Clothing Merge(의상 병합).
+**CATS** 탭에서 **VRChat Tools** → **의상 부착**을 펼칩니다. 세 부분으로 되어 있습니다: Bone Matching(본 매칭), Collision Detection(충돌 감지), Clothing Merge(의상 병합).
 
 ---
 

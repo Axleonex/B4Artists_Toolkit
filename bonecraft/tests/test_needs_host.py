@@ -233,7 +233,7 @@ def run():
         bpy.ops.mesh.primitive_cube_add()
         bpy.context.view_layer.objects.active = bpy.context.active_object
         p_mesh_only = {c.bl_idname: _poll(c) for c in panels}
-        for idn in ("BF_PT_sb_vrc_humanoid", "BF_PT_sb_vrc_hair", "BF_PT_sb_vrc_visemes", "BF_PT_sb_vrc_export"):
+        for idn in ("BF_PT_sb_vrc_humanoid", "BF_PT_sb_vrc_hair"):
             assert shown(p_mesh_only, idn), (idn, "vanished with only a mesh")
             assert "Select an armature to use this." in _texts(_draw(idn, bpy.context)), idn
     finally:

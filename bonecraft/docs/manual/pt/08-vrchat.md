@@ -4,7 +4,16 @@
 
 ## Ferramentas do VRChat
 
-As ferramentas do VRChat ficam na aba **CATS** da barra lateral da direita (pressione **N**), na seção **VRChat**. As subseções seguem a ordem em que você precisa delas: configuração do VRChat (extras de nomes e ossos humanoides), corpo e física (cabelo, roupas, visemas), e depois desempenho e exportação. A mesma seção fica sempre também na aba **Cena** do editor de **Propriedades**.
+As abas selecionam grupos de ferramentas. Setup Rigging, Skin, Review, Avatar Tools e Facial são seções expansíveis dentro das abas, não abas separadas. Os caminhos abaixo usam os nomes da interface em inglês; a tradução depende de Language.
+
+| Ferramenta | Caminho |
+| --- | --- |
+| Humanoid / Hair / Export | CATS → Avatar Tools |
+| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library |
+| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
+| Performance / Clothing / Naming | CATS → VRChat Tools |
+
+Preferências: Edit → Preferences → Add-ons → BoneCraft → Tabs controla as abas. Scene Properties controla separadamente os painéis Rig Builder e CATS em Properties → Scene. Show Helpers oculta explicações; Language altera os rótulos; Tools ativa os pacotes. Ctrl+Shift+R abre o painel rápido.
 
 ---
 
@@ -156,7 +165,7 @@ As ferramentas de MMD ficam na aba **CATS** → **Importar / Exportar** → **MM
 
 ---
 
-## Game Export (exportação para jogos)
+## Game Engine Export (exportação para jogos)
 
 **O que faz:** exporta para engines de jogo com um perfil validado: Unreal (humanoide ou universal), humanoide do Unity, humanoide do Godot, e FBX ou GLB genéricos. Cada correção de que o perfil precisa é mostrada e só é aplicada quando você clica nela, nunca em silêncio.
 
@@ -167,7 +176,7 @@ As ferramentas de MMD ficam na aba **CATS** → **Importar / Exportar** → **MM
 - **Apply Transforms (Fix)** (aplicar transformações (correção)) — uma das correções explícitas que a verificação pode oferecer
 - **Export (Profile)** (exportar (perfil)) — exporta com o perfil
 
-**Onde fica:** aba **CATS** → **Importar / Exportar** → **Game Export**
+**Onde fica:** aba **CATS** → **Importar / Exportar** → **Game Engine Export**
 
 ---
 

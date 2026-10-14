@@ -175,6 +175,9 @@ def main():
     import test_scene_switch_host
     test_scene_switch_host.run()
 
+    import test_taskboard_health_host
+    test_taskboard_health_host.run()
+
     import test_crescent_rose_host       # last: it opens another .blend
     test_crescent_rose_host.run()
 

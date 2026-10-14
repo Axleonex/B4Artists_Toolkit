@@ -19,7 +19,7 @@
 
 ### Step 1 — Open VRChat Viseme Mapping
 
-In the **CATS** tab on the right sidebar, expand **Avatar Tools** → **VRChat Viseme Mapping**.
+In the **CATS → VRChat Tools → Facial** → VRChat Viseme Mapping.
 
 ---
 
@@ -182,7 +182,7 @@ Select a pose and click **Apply**.
 
 ### Step 1 — Open Bone Merge
 
-In the **BoneCraft** tab, expand the **Bone Merge** section. It works in three stages; each opens when the one before it is done.
+In the **BoneCraft → Setup Rigging** tab, expand the **Bone Merge** section. It works in three stages; each opens when the one before it is done.
 
 ---
 

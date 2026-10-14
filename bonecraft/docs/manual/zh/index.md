@@ -1,8 +1,10 @@
 # BoneCraft 手册
 
-BoneCraft 9.1.2。BoneCraft 是用于 Bforartists 的绑定与虚拟形象工具包。
+BoneCraft 9.2.4。BoneCraft 是用于 Bforartists 的绑定与虚拟形象工具包。
 
 本手册由英文版机器翻译而成。
+
+选项卡用于选择功能组。Setup Rigging、Skin、Review、Avatar Tools 和 Facial 是选项卡内可展开的分区，不是独立选项卡。下列路径保留英文界面标签；翻译名称取决于 Language 设置。
 
 ## 章节
 

@@ -4,6 +4,19 @@
 
 最新的在前。
 
+## 9.2.3 — VRChat 导出位置
+
+移除 Avatar Tools 中重复的 Export to VRChat 面板。导出功能保留在 CATS → Import / Export → Unity / VRChat。
+
+## 9.2.2 — 当前界面
+
+选项卡用于选择功能组。Setup Rigging、Skin、Review、Avatar Tools 和 Facial 是选项卡内可展开的分区，不是独立选项卡。下列路径保留英文界面标签；翻译名称取决于 Language 设置。
+
+- Bone Merge → BoneCraft → Setup Rigging
+- Delta Mush / Proximity Wrap → BoneCraft → Skin
+- Viseme Library / Lip Sync → CATS → Avatar Tools
+- VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
+
 ## 9.1.2（2026年10月）
 
 - **场景属性开关：** 偏好设置 > 选项卡中新增了“场景属性”一行。它的“显示”按钮（开启时为蓝色）可以在不停用插件的情况下，显示或隐藏属性 > 场景选项卡中 BoneCraft 的所有部分（绑定构建器、机构、CATS、VRChat、导入 / 导出）。它默认开启，不影响 3D 视图的选项卡和骨架选项卡。

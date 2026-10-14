@@ -241,7 +241,7 @@ Estas herramientas controlan cómo se deforma tu malla cuando se mueven los hues
 
 **Controles principales:** iteraciones, fuerza del suavizado, bordes fijados, suavizar solo la deformación, y si se ejecuta antes que la armadura. El botón de añadir agrega el modificador y lo vincula a la forma de reposo.
 
-**Dónde está:** pestaña BoneCraft, en Modo Objeto con una malla seleccionada → Delta Mush
+**Dónde está:** BoneCraft → Skin → Delta Mush (Object Mode; Mesh)
 
 ---
 
@@ -251,7 +251,7 @@ Estas herramientas controlan cómo se deforma tu malla cuando se mueven los hues
 
 **Controles principales:** la malla conductora a seguir, el tipo de atenuación y la distancia máxima; el botón de vincular une la malla.
 
-**Dónde está:** pestaña BoneCraft, en Modo Objeto con una malla seleccionada → Envoltura por Proximidad
+**Dónde está:** BoneCraft → Skin → Proximity Wrap (Object Mode; Mesh)
 
 ---
 
@@ -312,7 +312,7 @@ Estas herramientas aparecen en la pestaña BoneCraft en Modo Pose.
 - En cada conjunto, un botón por visema (icono de altavoz) lo previsualiza
 - Sincronización Labial — de texto a claves de visemas, con fotogramas por fonema y suavizado
 
-**Dónde está:** pestaña BoneCraft, con una armadura seleccionada → Biblioteca de Visemas
+**Dónde está:** CATS → Avatar Tools → Viseme Library (Armature); Lip Sync (Pose Mode)
 
 ---
 

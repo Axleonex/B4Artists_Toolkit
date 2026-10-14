@@ -4,6 +4,19 @@
 
 Les plus récentes d'abord.
 
+## 9.2.3 — Emplacement de l’export VRChat
+
+Le panneau Export to VRChat en double est supprimé d’Avatar Tools. L’export reste dans CATS → Import / Export → Unity / VRChat.
+
+## 9.2.2 — Interface actuelle
+
+Les onglets sélectionnent un groupe. Setup Rigging, Skin, Review, Avatar Tools et Facial sont des sections à déplier dans ces onglets, pas des onglets distincts. Les chemins ci-dessous conservent les labels anglais ; leur traduction dépend du réglage Language.
+
+- Bone Merge → BoneCraft → Setup Rigging
+- Delta Mush / Proximity Wrap → BoneCraft → Skin
+- Viseme Library / Lip Sync → CATS → Avatar Tools
+- VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
+
 ## 9.1.2 (octobre 2026)
 
 - **Interrupteur Propriétés de la scène :** Préférences > Onglets a une nouvelle ligne Propriétés de la scène. Son bouton Afficher (bleu quand il est actif) affiche ou masque toutes les sections de BoneCraft dans Propriétés > onglet Scène (Constructeur de Rig, Mécanismes, CATS, VRChat, Import / Export) sans désactiver l'extension. Il est actif au départ et ne touche ni aux onglets de la vue 3D ni à l'onglet Armature.

@@ -22,7 +22,7 @@ Les mots utilisés dans les panneaux et dans cette page :
 ## Où il se trouve
 
 - **Onglet BoneCraft → Mechanisms** dans la vue 3D. L'onglet BoneCraft est sur la Tool Shelf de gauche (touche **T**), sauf si vous l'avez déplacé dans la barre latérale de droite (**N**) dans les Préférences. Il se place entre Peau et Révision. Il s'affiche quand un maillage est actif (pour commencer un rig) ou quand une armature avec des mécanismes est active.
-- **Éditeur Propriétés → onglet Scène → Mechanisms**, juste après le Constructeur de Rig. Il y est toujours. Sans rien d'utilisable sélectionné, il affiche une ligne : « Select a mesh to start, or an armature with mechanisms. » (sélectionnez un maillage pour commencer, ou une armature avec des mécanismes). Désactiver l'onglet BoneCraft de la vue ne le retire pas. Seul l'interrupteur d'outil `mechanisms` (**Préférences → Add-ons → BoneCraft → Outils**) le retire, avec la copie de la vue. Les sections de l'onglet Scène sont repliées au départ : cliquez sur **Mechanisms** pour le déplier.
+- Properties → Scene → Mechanisms. Les panneaux Scène sont visibles quand Preferences → Tabs → Scene Properties → Show est activé. Masquer un onglet de la vue 3D ne masque pas cette copie.
 
 Dans Mechanisms, il y a quatre sous-sections : **1. Parts** (pièces), **2. Joints & Links** (articulations et liens), **3. Sequences** (séquences) et **4. Controls** (contrôles). Elles apparaissent dès que le rig a des pièces. Avant cela, vous ne voyez que **Add Parts from Selection** (ajouter des pièces depuis la sélection).
 

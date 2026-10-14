@@ -998,6 +998,45 @@ def _display_windows():
     return bpy.context.window_manager.windows
 
 
+_pending_display_update = None
+
+
+def schedule_display_location_update(*, visibility_only=False):
+    """Defer preference-driven native viewport access until the main loop runs.
+
+    Add-on registration also runs before startup windows are initialized.
+    Migration can invoke these callbacks recursively. Coalesce requests and
+    fetch fresh context when executing, rather than retaining startup RNA.
+    """
+    global _pending_display_update
+    if bpy.app.background:
+        return
+    if not visibility_only or _pending_display_update is None:
+        _pending_display_update = 'visibility' if visibility_only else 'location'
+    if not bpy.app.timers.is_registered(_apply_display_location_update):
+        bpy.app.timers.register(_apply_display_location_update,
+                                first_interval=0.1, persistent=True)
+
+
+def _apply_display_location_update():
+    global _pending_display_update
+    requested = _pending_display_update
+    _pending_display_update = None
+    if not bpy.app.background and requested is not None:
+        if requested == 'visibility':
+            update_toolbar_visibility(bpy.context)
+        else:
+            update_display_location(bpy.context)
+    return None
+
+
+def cancel_display_location_update():
+    global _pending_display_update
+    _pending_display_update = None
+    if bpy.app.timers.is_registered(_apply_display_location_update):
+        bpy.app.timers.unregister(_apply_display_location_update)
+
+
 def _ordinary_viewports(context):
     from .settings_editor import is_editor
     from types import SimpleNamespace
@@ -1005,7 +1044,10 @@ def _ordinary_viewports(context):
     for window in getattr(manager, 'windows', ()):
         if window.as_pointer() in _ghost_windows or is_editor(SimpleNamespace(window=window)):
             continue
-        for area in window.screen.areas:
+        screen = window.screen
+        if screen is None:
+            continue
+        for area in screen.areas:
             if area.type == 'VIEW_3D':
                 yield window, area
 
@@ -1041,6 +1083,8 @@ def update_display_location(context) -> None:
         forget_all()
     for window, area in _ordinary_viewports(context):
         space = area.spaces.active
+        if space is None:
+            continue
         if location == 'SIDEBAR':
             space.show_region_ui = True
         elif location == 'TOOLS':
@@ -1547,6 +1591,7 @@ def register() -> None:
 
 def unregister() -> None:
     """Unregister all UI classes and remove header extensions."""
+    cancel_display_location_update()
     if bpy.app.timers.is_registered(_select_display_tabs):
         bpy.app.timers.unregister(_select_display_tabs)
     _pending_display_tabs.clear()

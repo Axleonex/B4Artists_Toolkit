@@ -1013,6 +1013,8 @@ class BONEFORGE_PT_bone_merge(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "BoneCraft"
+    bl_parent_id = "BF_PT_sb_setup"
+    bl_order = 2
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw_header(self, context):
