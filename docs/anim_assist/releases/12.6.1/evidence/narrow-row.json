@@ -1,0 +1,315 @@
+{
+  "items": [
+    [
+      "SEARCH",
+      "",
+      "Search",
+      [
+        3.9,
+        2,
+        54.2,
+        22
+      ]
+    ],
+    [
+      "SETTINGS",
+      "",
+      "Settings",
+      [
+        62.0,
+        2,
+        62.2,
+        22
+      ]
+    ],
+    [
+      "MENU",
+      "tween",
+      "Tween",
+      [
+        128.10000000000002,
+        2,
+        53.2,
+        22
+      ]
+    ],
+    [
+      "ACTION",
+      "B25",
+      "25%",
+      [
+        185.20000000000002,
+        2,
+        43.2,
+        22
+      ]
+    ],
+    [
+      "ACTION",
+      "B50",
+      "50%",
+      [
+        232.3,
+        2,
+        43.2,
+        22
+      ]
+    ],
+    [
+      "MENU",
+      "curves",
+      "Curves",
+      [
+        279.40000000000003,
+        2,
+        55.2,
+        22
+      ]
+    ],
+    [
+      "MENU",
+      "timing",
+      "Timing",
+      [
+        338.50000000000006,
+        2,
+        55.2,
+        22
+      ]
+    ],
+    [
+      "MENU",
+      "keys",
+      "Keys",
+      [
+        397.6000000000001,
+        2,
+        43.2,
+        22
+      ]
+    ],
+    [
+      "MENU",
+      "pose",
+      "Pose",
+      [
+        444.7000000000001,
+        2,
+        44.2,
+        22
+      ]
+    ],
+    [
+      "MENU",
+      "bake",
+      "Bake",
+      [
+        492.8000000000001,
+        2,
+        43.2,
+        22
+      ]
+    ],
+    [
+      "MENU",
+      "motion",
+      "Motion",
+      [
+        539.9000000000001,
+        2,
+        56.2,
+        22
+      ]
+    ],
+    [
+      "MORE",
+      "",
+      "More",
+      [
+        600.0000000000001,
+        2,
+        45.2,
+        22
+      ]
+    ]
+  ],
+  "state": {
+    "binary": "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+    "build_hash": "0a1ca45552db",
+    "windows": [
+      {
+        "width": 1400,
+        "height": 900,
+        "areas": [
+          {
+            "type": "PROPERTIES",
+            "mode": "",
+            "x": 668,
+            "y": 23,
+            "width": 730,
+            "height": 621,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 668,
+                "y": 618,
+                "width": 730,
+                "height": 26
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 668,
+                "y": 23,
+                "width": 29,
+                "height": 595
+              },
+              {
+                "type": "WINDOW",
+                "x": 697,
+                "y": 23,
+                "width": 701,
+                "height": 595
+              }
+            ]
+          },
+          {
+            "type": "OUTLINER",
+            "mode": "",
+            "x": 668,
+            "y": 647,
+            "width": 730,
+            "height": 198,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 668,
+                "y": 819,
+                "width": 730,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 668,
+                "y": 647,
+                "width": 730,
+                "height": 172
+              }
+            ]
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "mode": "TIMELINE",
+            "x": 2,
+            "y": 23,
+            "width": 663,
+            "height": 260,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 23,
+                "width": 663,
+                "height": 26
+              },
+              {
+                "type": "FOOTER",
+                "x": 2,
+                "y": 49,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "CHANNELS",
+                "x": 2,
+                "y": 49,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 664,
+                "y": 49,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 49,
+                "width": 663,
+                "height": 234
+              }
+            ]
+          },
+          {
+            "type": "VIEW_3D",
+            "mode": "",
+            "x": 2,
+            "y": 286,
+            "width": 663,
+            "height": 559,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 819,
+                "width": 663,
+                "height": 26
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 2,
+                "y": 793,
+                "width": 663,
+                "height": 26
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 2,
+                "y": 286,
+                "width": 663,
+                "height": 75
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 2,
+                "y": 361,
+                "width": 663,
+                "height": 24
+              },
+              {
+                "type": "TOOLS",
+                "x": 2,
+                "y": 385,
+                "width": 132,
+                "height": 408
+              },
+              {
+                "type": "UI",
+                "x": 445,
+                "y": 385,
+                "width": 220,
+                "height": 408
+              },
+              {
+                "type": "HUD",
+                "x": 134,
+                "y": 385,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 286,
+                "width": 663,
+                "height": 559
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "frame": 10
+  }
+}

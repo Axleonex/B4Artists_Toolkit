@@ -1,0 +1,697 @@
+{
+  "actions": {
+    "B25": [
+      "breakdown_percentage",
+      {
+        "percent": 25
+      },
+      "25% Breakdown"
+    ],
+    "B50": [
+      "breakdown_percentage",
+      {
+        "percent": 50
+      },
+      "50% Breakdown"
+    ],
+    "B75": [
+      "breakdown_percentage",
+      {
+        "percent": 75
+      },
+      "75% Breakdown"
+    ],
+    "DRAG": [
+      "modal_drag_breakdown",
+      {},
+      "Drag Breakdown"
+    ],
+    "PUSH_PREV": [
+      "breakdown_push_prev",
+      {},
+      "Push Previous"
+    ],
+    "PULL_PREV": [
+      "breakdown_pull_prev",
+      {},
+      "Pull Previous"
+    ],
+    "PULL_NEXT": [
+      "breakdown_pull_next",
+      {},
+      "Pull Next"
+    ],
+    "PUSH_NEXT": [
+      "breakdown_push_next",
+      {},
+      "Push Next"
+    ],
+    "T80": [
+      "p6_scale_keys",
+      {
+        "scale_factor": 0.8
+      },
+      "Scale Key Spacing to 80%"
+    ],
+    "T90": [
+      "p6_scale_keys",
+      {
+        "scale_factor": 0.9
+      },
+      "Scale Key Spacing to 90%"
+    ],
+    "T110": [
+      "p6_scale_keys",
+      {
+        "scale_factor": 1.1
+      },
+      "Scale Key Spacing to 110%"
+    ],
+    "T120": [
+      "p6_scale_keys",
+      {
+        "scale_factor": 1.2
+      },
+      "Scale Key Spacing to 120%"
+    ],
+    "RIPPLE": [
+      "p6_ripple_forward",
+      {},
+      "Ripple Forward"
+    ],
+    "RANGE": [
+      "select_frame_range",
+      {},
+      "Select Frame Range"
+    ],
+    "ALL": [
+      "select_all_visible",
+      {},
+      "Select All Visible Keys"
+    ],
+    "ENDS": [
+      "select_first_last",
+      {},
+      "Select First and Last Keys"
+    ],
+    "OFFSET": [
+      "anim_offset",
+      {},
+      "Offset Active Action"
+    ],
+    "INBETWEEN": [
+      "inbetween_selected_gap",
+      {},
+      "Add Inbetween in Selected Gap"
+    ],
+    "INBETWEENS": [
+      "inbetween_distribute",
+      {},
+      "Distribute Inbetweens in Selected Gap"
+    ],
+    "NEIGHBORS": [
+      "blend_neighbor",
+      {},
+      "Blend to Neighbors (Drag)"
+    ],
+    "FRAME": [
+      "blend_frame",
+      {},
+      "Blend to Frame (Drag)"
+    ],
+    "EASE": [
+      "ease_to_ease",
+      {},
+      "Blend to Ease (Drag)"
+    ],
+    "AMPLIFY": [
+      "push_pull",
+      {},
+      "Scale Values from Reference (Drag)"
+    ],
+    "SMOOTH": [
+      "smooth_keys",
+      {},
+      "Smooth Keys (Drag)"
+    ],
+    "REFERENCE": [
+      "set_reference_frame",
+      {},
+      "Set Reference Frame from Playhead"
+    ],
+    "HANDLE_AUTO": [
+      "set_handle_type",
+      {
+        "handle_type": "AUTO"
+      },
+      "Auto Handles"
+    ],
+    "HANDLE_CLAMPED": [
+      "set_handle_type",
+      {
+        "handle_type": "AUTO_CLAMPED"
+      },
+      "Auto Clamped Handles"
+    ],
+    "HANDLE_VECTOR": [
+      "set_handle_type",
+      {
+        "handle_type": "VECTOR"
+      },
+      "Vector Handles"
+    ],
+    "HANDLE_ALIGNED": [
+      "set_handle_type",
+      {
+        "handle_type": "ALIGNED"
+      },
+      "Aligned Handles"
+    ],
+    "HANDLE_FREE": [
+      "set_handle_type",
+      {
+        "handle_type": "FREE"
+      },
+      "Free Handles"
+    ],
+    "NUDGE_LEFT": [
+      "move_keys",
+      {
+        "offset": -1
+      },
+      "Nudge Selected Keys -1 Frame"
+    ],
+    "NUDGE_RIGHT": [
+      "move_keys",
+      {
+        "offset": 1
+      },
+      "Nudge Selected Keys +1 Frame"
+    ],
+    "SCALE_DRAG": [
+      "p6_modal_scale",
+      {},
+      "Scale Key Timing (Drag)"
+    ],
+    "OFFSET_DRAG": [
+      "p6_modal_offset",
+      {},
+      "Offset Action Timing (Drag)"
+    ],
+    "OFFSET_ACTION": [
+      "p6_offset_keys",
+      {},
+      "Offset Action Timing"
+    ],
+    "INSERT_TIME": [
+      "p6_insert_time",
+      {},
+      "Insert Time at Playhead"
+    ],
+    "REMOVE_TIME": [
+      "p6_remove_time",
+      {},
+      "Remove Time and Keys at Playhead"
+    ],
+    "DISTRIBUTE_TIME": [
+      "p6_distribute_keys",
+      {},
+      "Distribute Key Timing in Range"
+    ],
+    "REVERSE": [
+      "p6_reverse_keys",
+      {},
+      "Reverse Key Timing in Range"
+    ],
+    "SNAP": [
+      "p6_snap_to_frames",
+      {},
+      "Round Key Times"
+    ],
+    "GROW_LEFT": [
+      "select_neighbors",
+      {
+        "direction": "LEFT"
+      },
+      "Grow Key Selection Left"
+    ],
+    "GROW_RIGHT": [
+      "select_neighbors",
+      {
+        "direction": "RIGHT"
+      },
+      "Grow Key Selection Right"
+    ],
+    "GROW_BOTH": [
+      "select_neighbors",
+      {
+        "direction": "BOTH"
+      },
+      "Grow Key Selection Both Sides"
+    ],
+    "TYPE_KEYFRAME": [
+      "set_key_type",
+      {
+        "key_type": "KEYFRAME"
+      },
+      "Mark as Keyframe"
+    ],
+    "TYPE_BREAKDOWN": [
+      "set_key_type",
+      {
+        "key_type": "BREAKDOWN"
+      },
+      "Mark as Breakdown"
+    ],
+    "TYPE_HOLD": [
+      "set_key_type",
+      {
+        "key_type": "MOVING_HOLD"
+      },
+      "Mark as Moving Hold"
+    ],
+    "TYPE_EXTREME": [
+      "set_key_type",
+      {
+        "key_type": "EXTREME"
+      },
+      "Mark as Extreme"
+    ],
+    "TYPE_JITTER": [
+      "set_key_type",
+      {
+        "key_type": "JITTER"
+      },
+      "Mark as Jitter"
+    ],
+    "SELECT_BREAKDOWNS": [
+      "select_by_key_type",
+      {
+        "key_type": "BREAKDOWN"
+      },
+      "Select Breakdown Keys"
+    ],
+    "MIRROR_ACTIVE": [
+      "p9_mirror_pose",
+      {},
+      "Mirror Active Bone to Opposite"
+    ],
+    "MIRROR_SELECTED": [
+      "p9_mirror_selected",
+      {},
+      "Mirror Selected Bones"
+    ],
+    "MIRROR_FRAME": [
+      "p9_mirror_frame",
+      {},
+      "Mirror and Key Current Frame"
+    ],
+    "MIRROR_RANGE": [
+      "p9_mirror_range",
+      {},
+      "Mirror and Key Preview or Playback Range"
+    ],
+    "OPPOSITE": [
+      "p9_select_opposite",
+      {},
+      "Select Opposite of Active Bone"
+    ],
+    "SWAP": [
+      "p9_swap_poses",
+      {},
+      "Swap Left/Right Poses"
+    ],
+    "ALIGN": [
+      "p8_match_selected_to_active",
+      {},
+      "Align Selected Objects to Active"
+    ],
+    "BAKE_STEP": [
+      "p7_bake_step",
+      {},
+      "Bake Object Transforms"
+    ],
+    "SMART_BAKE": [
+      "p7_smart_bake",
+      {},
+      "Bake Object Transforms and Reduce"
+    ],
+    "REDUCE": [
+      "p7_reduce_keys",
+      {},
+      "Reduce Keys"
+    ],
+    "PROXY_TRANSLATION": [
+      "p7_create_proxy",
+      {
+        "proxy_type": "TRANSLATION"
+      },
+      "Create Object Translation Proxy"
+    ],
+    "PROXY_ORIENTATION": [
+      "p7_create_proxy",
+      {
+        "proxy_type": "ORIENTATION"
+      },
+      "Create Object Orientation Proxy"
+    ],
+    "PROXY_WORLD": [
+      "p7_create_proxy",
+      {
+        "proxy_type": "WORLD_SPACE"
+      },
+      "Create Object World-Space Proxy"
+    ],
+    "PROXY_PARENT": [
+      "p7_create_proxy",
+      {
+        "proxy_type": "PARENT_SPACE"
+      },
+      "Create Object Parent-Space Proxy"
+    ],
+    "BAKE_CLEANUP": [
+      "p7_one_click_cleanup",
+      {},
+      "Bake Session and Remove Proxies"
+    ],
+    "TRAIL_SHOW": [
+      "p5_enable_overlay",
+      {},
+      "Show World Motion Trails"
+    ],
+    "TRAIL_HIDE": [
+      "p5_disable_overlay",
+      {},
+      "Hide World Motion Trails"
+    ],
+    "TRAIL_REFRESH": [
+      "p5_refresh_overlay",
+      {},
+      "Refresh World Motion Trails"
+    ],
+    "TRAIL_DIAGNOSE": [
+      "p5_run_diagnostics",
+      {},
+      "Diagnose Motion Arcs"
+    ],
+    "OFFSET_MASK": [
+      "anim_offset_toggle_mask",
+      {},
+      "Toggle Anim Offset Mask"
+    ],
+    "OFFSET_SCENE_RANGE": [
+      "anim_offset_range_from_scene",
+      {},
+      "Set Offset Mask from Scene Range"
+    ],
+    "COPY_KEYS": [
+      "copy_selected_keys",
+      {},
+      "Copy Selected Keys with Handles"
+    ],
+    "PASTE_KEYS": [
+      "paste_keys_at_frame",
+      {},
+      "Paste Keys at Copied Times"
+    ],
+    "BOOKMARK_ADD": [
+      "add_bookmark",
+      {},
+      "Save Reference Bookmark"
+    ],
+    "BOOKMARK_REMOVE": [
+      "remove_bookmark",
+      {},
+      "Remove Active Reference Bookmark"
+    ],
+    "BOOKMARK_RECALL": [
+      "recall_bookmark",
+      {},
+      "Set Reference from Active Bookmark"
+    ],
+    "MATCH_WORLD": [
+      "p8_match_to_world",
+      {},
+      "Match Object to World Origin"
+    ],
+    "MATCH_PARENT": [
+      "p8_match_to_parent",
+      {},
+      "Match Object to Parent"
+    ],
+    "MATCH_TARGET": [
+      "p8_match_to_target",
+      {},
+      "Match Active Object to Selected Target"
+    ],
+    "MATCH_LOCATION": [
+      "p8_match_location",
+      {},
+      "Match Object Location to Selected Target"
+    ],
+    "MATCH_ROTATION": [
+      "p8_match_rotation",
+      {},
+      "Match Object Rotation to Selected Target"
+    ],
+    "MATCH_SCALE": [
+      "p8_match_scale",
+      {},
+      "Match Object Scale to Selected Target"
+    ],
+    "MATCH_TRS": [
+      "p8_match_trs",
+      {},
+      "Match Object Transforms to Selected Target"
+    ],
+    "MATCH_VISUAL": [
+      "p8_match_visual_matrix",
+      {},
+      "Match Object Evaluated Matrix"
+    ],
+    "MATCH_LOCAL": [
+      "p8_match_local_matrix",
+      {},
+      "Match Object Local Matrix"
+    ],
+    "SWITCH_SINGLE": [
+      "p8_compensate_single",
+      {},
+      "Switch Configured Rig Property and Compensate"
+    ],
+    "SWITCH_RANGE": [
+      "p8_compensate_multi",
+      {},
+      "Switch and Key Configured Rig Property in Range"
+    ],
+    "SWITCH_BOOL": [
+      "p8_switch_bool",
+      {},
+      "Toggle Configured Rig Boolean and Compensate"
+    ],
+    "SWITCH_ENUM": [
+      "p8_switch_enum",
+      {},
+      "Set Configured Rig Integer and Compensate"
+    ],
+    "SWITCH_INFLUENCE": [
+      "p8_switch_influence",
+      {},
+      "Set Configured Rig Influence and Compensate"
+    ]
+  },
+  "defaults": [
+    "B25",
+    "B50",
+    "B75",
+    "DRAG",
+    "SMOOTH",
+    "NUDGE_LEFT",
+    "NUDGE_RIGHT",
+    "RIPPLE",
+    "RANGE",
+    "ENDS",
+    "MIRROR_SELECTED",
+    "BAKE_STEP",
+    "TRAIL_SHOW"
+  ],
+  "host": {
+    "binary": "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+    "build_hash": "0a1ca45552db",
+    "windows": [
+      {
+        "width": 1920,
+        "height": 1009,
+        "areas": [
+          {
+            "type": "PROPERTIES",
+            "mode": "",
+            "x": 1602,
+            "y": 23,
+            "width": 316,
+            "height": 701,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 698,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 1602,
+                "y": 23,
+                "width": 29,
+                "height": 675
+              },
+              {
+                "type": "WINDOW",
+                "x": 1631,
+                "y": 23,
+                "width": 287,
+                "height": 675
+              }
+            ]
+          },
+          {
+            "type": "OUTLINER",
+            "mode": "",
+            "x": 1602,
+            "y": 727,
+            "width": 316,
+            "height": 227,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1602,
+                "y": 928,
+                "width": 316,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 1602,
+                "y": 727,
+                "width": 316,
+                "height": 201
+              }
+            ]
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "mode": "TIMELINE",
+            "x": 2,
+            "y": 23,
+            "width": 1597,
+            "height": 112,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 109,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "FOOTER",
+                "x": 2,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "CHANNELS",
+                "x": 2,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 1598,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 23,
+                "width": 1597,
+                "height": 86
+              }
+            ]
+          },
+          {
+            "type": "VIEW_3D",
+            "mode": "",
+            "x": 2,
+            "y": 138,
+            "width": 1597,
+            "height": 816,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 928,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 2,
+                "y": 902,
+                "width": 1597,
+                "height": 26
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 2,
+                "y": 138,
+                "width": 1597,
+                "height": 75
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 2,
+                "y": 213,
+                "width": 1597,
+                "height": 24
+              },
+              {
+                "type": "TOOLS",
+                "x": 2,
+                "y": 237,
+                "width": 132,
+                "height": 665
+              },
+              {
+                "type": "UI",
+                "x": 1379,
+                "y": 237,
+                "width": 220,
+                "height": 665
+              },
+              {
+                "type": "HUD",
+                "x": 134,
+                "y": 237,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 138,
+                "width": 1597,
+                "height": 816
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "frame": 1
+  }
+}

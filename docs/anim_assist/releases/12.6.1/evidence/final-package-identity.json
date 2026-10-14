@@ -1,0 +1,190 @@
+{
+  "version": [
+    12,
+    6,
+    1
+  ],
+  "files": 204,
+  "sha256": "4da8edac4e4be36f9fc11462aaead261ed13c81510a1afefe0c03d7e8f36146d",
+  "pins_restored": true,
+  "keymap_items": 13,
+  "state": {
+    "binary": "G:\\LapArt\\.cache\\bforartists\\5.2.0\\portable\\Bforartists-5.2.0-Windows\\bforartists.exe",
+    "build_hash": "0a1ca45552db",
+    "windows": [
+      {
+        "width": 1400,
+        "height": 900,
+        "areas": [
+          {
+            "type": "PROPERTIES",
+            "mode": "",
+            "x": 1168,
+            "y": 23,
+            "width": 230,
+            "height": 620,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1168,
+                "y": 617,
+                "width": 230,
+                "height": 26
+              },
+              {
+                "type": "NAVIGATION_BAR",
+                "x": 1168,
+                "y": 23,
+                "width": 29,
+                "height": 594
+              },
+              {
+                "type": "WINDOW",
+                "x": 1197,
+                "y": 23,
+                "width": 201,
+                "height": 594
+              }
+            ]
+          },
+          {
+            "type": "OUTLINER",
+            "mode": "",
+            "x": 1168,
+            "y": 646,
+            "width": 230,
+            "height": 199,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 1168,
+                "y": 819,
+                "width": 230,
+                "height": 26
+              },
+              {
+                "type": "WINDOW",
+                "x": 1168,
+                "y": 646,
+                "width": 230,
+                "height": 173
+              }
+            ]
+          },
+          {
+            "type": "DOPESHEET_EDITOR",
+            "mode": "TIMELINE",
+            "x": 2,
+            "y": 23,
+            "width": 1163,
+            "height": 112,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 109,
+                "width": 1163,
+                "height": 26
+              },
+              {
+                "type": "FOOTER",
+                "x": 2,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "CHANNELS",
+                "x": 2,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "UI",
+                "x": 1164,
+                "y": 23,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 23,
+                "width": 1163,
+                "height": 86
+              }
+            ]
+          },
+          {
+            "type": "VIEW_3D",
+            "mode": "",
+            "x": 2,
+            "y": 138,
+            "width": 1163,
+            "height": 707,
+            "regions": [
+              {
+                "type": "HEADER",
+                "x": 2,
+                "y": 819,
+                "width": 1163,
+                "height": 26
+              },
+              {
+                "type": "TOOL_HEADER",
+                "x": 2,
+                "y": 793,
+                "width": 1163,
+                "height": 26
+              },
+              {
+                "type": "ASSET_SHELF",
+                "x": 2,
+                "y": 138,
+                "width": 1163,
+                "height": 75
+              },
+              {
+                "type": "ASSET_SHELF_HEADER",
+                "x": 2,
+                "y": 213,
+                "width": 1163,
+                "height": 24
+              },
+              {
+                "type": "TOOLS",
+                "x": 2,
+                "y": 237,
+                "width": 132,
+                "height": 556
+              },
+              {
+                "type": "UI",
+                "x": 945,
+                "y": 237,
+                "width": 220,
+                "height": 556
+              },
+              {
+                "type": "HUD",
+                "x": 134,
+                "y": 237,
+                "width": 1,
+                "height": 1
+              },
+              {
+                "type": "WINDOW",
+                "x": 2,
+                "y": 138,
+                "width": 1163,
+                "height": 707
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "frame": 1
+  }
+}

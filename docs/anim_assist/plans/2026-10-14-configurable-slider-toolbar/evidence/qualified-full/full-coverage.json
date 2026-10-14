@@ -1,0 +1,9 @@
+{
+  "immediate": 80,
+  "original_interactive_cases": 18,
+  "native_bar_buttons": 21,
+  "native_row_scalar_cases": 32,
+  "recovery_assertions": 56,
+  "extras": 9,
+  "passed": true
+}

@@ -1,0 +1,74 @@
+"""Isolated real-GUI observation harness; never imported by the add-on."""
+import addon_utils
+import bpy
+import json
+import os
+from pathlib import Path
+import traceback
+import importlib
+
+root = Path(os.environ['AA_OVERLAY_EVIDENCE'])
+root.mkdir(parents=True, exist_ok=True)
+config = Path(os.environ['BLENDER_USER_CONFIG']).resolve()
+assert config.is_dir() and Path(bpy.utils.user_resource('CONFIG')).resolve() == config
+scripts = Path(os.environ['BLENDER_USER_SCRIPTS']).resolve()
+assert scripts.is_dir()
+if os.environ.get('AA_TOOLBAR_RESUME')=='1':
+    assert addon_utils.check('B4_anim_assist')[1], 'Saved add-on was not automatically enabled'
+else:
+    addon_utils.enable('B4_anim_assist', default_set=True, persistent=True)
+assert Path(importlib.import_module('B4_anim_assist').__file__).resolve() == (scripts/'addons/B4_anim_assist/__init__.py').resolve()
+bpy.context.preferences.use_preferences_save = False
+if hasattr(bpy.context.preferences.filepaths,'use_save_for_quit'):
+    bpy.context.preferences.filepaths.use_save_for_quit = False
+
+
+def state():
+    windows = []
+    for window in bpy.context.window_manager.windows:
+        areas = []
+        for area in window.screen.areas:
+            item = dict(type=area.type, mode=getattr(area.spaces.active, 'mode', ''),
+                        x=area.x, y=area.y, width=area.width, height=area.height,
+                        regions=[dict(type=r.type, x=r.x, y=r.y, width=r.width, height=r.height)
+                                 for r in area.regions])
+            areas.append(item)
+        windows.append(dict(width=window.width, height=window.height, areas=areas))
+    return dict(binary=bpy.app.binary_path, build_hash=bpy.app.build_hash.decode(),
+                windows=windows, frame=bpy.context.scene.frame_current)
+
+
+pending_response = None
+
+
+def poll():
+    global pending_response
+    if pending_response is not None:
+        try:
+            pending = root/'response.pending'
+            pending.write_text(json.dumps(pending_response, indent=2))
+            pending.replace(root/'response.json')
+            pending_response = None
+        except PermissionError:
+            return .25
+    request = root / 'request.json'
+    if request.exists():
+        try:
+            data = json.loads(request.read_text())
+            request.unlink()
+        except (PermissionError, FileNotFoundError, json.JSONDecodeError):
+            return .25
+        try:
+            exec(data['code'], globals())
+            result = dict(id=data['id'], ok=True, state=state())
+        except Exception:
+            result = dict(id=data['id'], ok=False, error=traceback.format_exc())
+        pending_response = result
+    try:
+        (root / 'state.json').write_text(json.dumps(state(), indent=2))
+    except PermissionError:
+        pass
+    return .25
+
+
+bpy.app.timers.register(poll, first_interval=2, persistent=True)

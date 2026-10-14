@@ -1,31 +1,15 @@
-"""Timeline tools in the native TOOL_HEADER of a patched Bforartists host.
-
-Unpatched hosts use the same controls in the existing Timeline header. No
-Text Editor is created and no resize polling or private draw hook is used.
-Marked, directly adjacent legacy strips are joined once during migration.
-"""
+"""Shared Timeline action dispatch, menus and quick-selection settings."""
 
 import bpy
-from math import ceil
-from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from ..core.logging import get_logger
 from .timeline_catalog import (
-    ACTIONS as _ACTIONS, EXECUTE_ACTIONS, GROUPS, QUICK_GROUPS,
+    ACTIONS as _ACTIONS, EXECUTE_ACTIONS, GROUPS, QUICK_GROUPS, FAMILY,
     command_description, command_metadata, QUICK_LABELS, search_actions,
     DEFAULT_QUICK_ACTIONS, quick_property_name, selected_quick_actions, quick_clusters,
 )
 
 _log = get_logger(__name__)
-_MARKER = "animassist_timeline_toolbar"
-_seen = set()
-_owned = set()
-_migration_attempted = set()
-_legacy_candidates = set()
-_capture_pending = False
-_pending_user_action = set()
-_registered = False
-_force_reconcile = False
 
 
 def is_timeline(area):
@@ -37,7 +21,7 @@ def is_strip(area):
     """Recognize legacy ownership only; never mark or create new editors."""
     return bool(area and area.type == "TEXT_EDITOR"
                 and area.spaces.active.text is not None
-                and area.spaces.active.text.get(_MARKER) == 1)
+                and area.spaces.active.text.get("animassist_timeline_toolbar") == 1)
 
 
 def native_available():
@@ -118,9 +102,28 @@ def _switch_unavailable(context, action):
     return ""
 
 
+def _module_reason(context,action):
+    from ..prefs import get_prefs
+    prefs=get_prefs(context)
+    if not prefs: return ''
+    suffix=_ACTIONS[action][0]
+    family=FAMILY[action][0]
+    module={'tween':'breakdown','curves':'transform','timing':'retime',
+            'keys':'keys','pose':'matching','bake':'controls','motion':'trajectory'}[family]
+    if suffix.startswith('anim_offset'): module='transform'
+    elif suffix in {'set_handle_type','move_keys'}: module='keys'
+    elif action in {'ALL','RANGE','ENDS','GROW_LEFT','GROW_RIGHT','GROW_BOTH','SELECT_BREAKDOWNS'}: module='selection'
+    flag='enable_'+module
+    if not getattr(prefs,flag,True):
+        return 'Enable '+prefs.bl_rna.properties[flag].name+' in add-on preferences'
+    return ''
+
+
 def _unavailable(context, target, action):
     if target is None:
         return "Use an animation tool from a Timeline"
+    reason=_module_reason(context,action)
+    if reason: return reason
     operator = _operator(action)
     if operator is None:
         return "Enable the corresponding Anim Assist tool module"
@@ -175,6 +178,17 @@ def _unavailable(context, target, action):
                 from ..operators.anim_offset_ops import _object_fcurves
                 if not _object_fcurves(context):
                     return "Select an object with editable Action curves"
+            if action in {'TRAIL_SHOW','TRAIL_REFRESH','TRAIL_DIAGNOSE'}:
+                from ..operators.p5_overlay_ops import _resolve_targets
+                from ..core.p5_properties import get_p5
+                if not _resolve_targets(context,get_p5(context)):
+                    return 'Select or configure an animated motion-trail target'
+            if action in {'SCALE_DRAG','OFFSET_DRAG'}:
+                from ..core.fcurve_compat import get_fcurves
+                obj=context.active_object
+                data=getattr(obj,'animation_data',None)
+                if data and data.action and not any(not fc.lock and not fc.hide for fc in get_fcurves(data.action,anim_data=data)):
+                    return 'Unlock and show editable Action curves'
             if not operator.poll():
                 return command_metadata(action)[1]
     except (RuntimeError, ReferenceError, StopIteration) as exc:
@@ -253,10 +267,13 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
                         and not operator.poll()):
                     context.scene.anim_assist.anim_offset_active = False
                     return {"FINISHED"}
-                # The existing target owns undo and modal lifetime. This wrapper
-                # does not add an undo step or create a second modal handler.
+                # Nested immediate calls from the canvas keymap do not retain
+                # their committed state in native redo history. Checkpoint it
+                # once here; asynchronous modals own their completion history.
                 mode = "EXEC_DEFAULT" if self.action in EXECUTE_ACTIONS else "INVOKE_DEFAULT"
                 result = operator(mode, True, **_arguments(context, self.action))
+                if "FINISHED" in result:
+                    bpy.ops.ed.undo_push(message=_ACTIONS[self.action][2])
             return {"CANCELLED"} if "CANCELLED" in result else {"FINISHED"}
         except (RuntimeError, ReferenceError, AttributeError) as exc:
             self.report({"WARNING"}, str(exc))
@@ -283,6 +300,8 @@ def _build_menu(key, label, actions):
             else:
                 _button(self.layout, context, _target(context), action, _ACTIONS[action][2])
         self.layout.separator()
+        options = self.layout.operator("wm.call_panel", text=f"{label} Options", icon="PREFERENCES")
+        options.name = f"ANIMASSIST_PT_timeline_options_{key}"
         self.layout.operator("animassist.open_home", text="Open Anim Assist Panel", icon="PROPERTIES")
     name = _menu_id(key)
     return type(name, (bpy.types.Menu,), {"bl_idname": name, "bl_label": label, "draw": draw})
@@ -305,13 +324,23 @@ class ANIMASSIST_MT_timeline_more(bpy.types.Menu):
     bl_description = "Original quick commands and all animation families"
 
     def draw(self, context):
-        for _key, label, actions in QUICK_GROUPS:
+        from . import timeline_config as model
+        from ..prefs import timeline_record, get_prefs
+        data=timeline_record(get_prefs(context))
+        families={key:(label,set(a for a in actions if a)) for key,label,actions in GROUPS}
+        for key in model.FAMILY_ORDER:
+            label,known=families[key]
+            actions=[a for a in data['active']['order'] if a in known and data['active']['tools'][a]['mode']!='HIDDEN']
+            if not actions: continue
             self.layout.separator()
             self.layout.label(text=label)
             for action in actions:
                 active = action == "OFFSET" and context.scene.anim_assist.anim_offset_active
                 _button(self.layout, context, _target(context), action, _ACTIONS[action][2],
                         icon="PAUSE" if active else "NONE", depress=active)
+                for value in data['active']['tools'][action].get('presets',[]):
+                    op=self.layout.operator('animassist.timeline_slider',text=f'{_ACTIONS[action][2]}: {value:g}')
+                    op.action=action; op.value=value; op.apply_value=True
         self.layout.separator()
         self.layout.menu("ANIMASSIST_MT_timeline_tools", text="All Tools")
 
@@ -322,7 +351,7 @@ _menus.extend([ANIMASSIST_MT_timeline_tools, ANIMASSIST_MT_timeline_more])
 class ANIMASSIST_OT_reset_timeline_quick_defaults(bpy.types.Operator):
     bl_idname = "animassist.reset_timeline_quick_defaults"
     bl_label = "Reset All Quick Buttons to Defaults"
-    bl_description = "Restore the 13 default quick buttons across all seven families"
+    bl_description = "Restore the recommended two-slider toolbar layout"
     bl_options = {"INTERNAL"}
 
     def execute(self, context):
@@ -333,6 +362,10 @@ class ANIMASSIST_OT_reset_timeline_quick_defaults(bpy.types.Operator):
             return {"CANCELLED"}
         for action in _ACTIONS:
             setattr(prefs, quick_property_name(action), action in DEFAULT_QUICK_ACTIONS)
+        from . import timeline_config as model
+        from ..prefs import timeline_record
+        data=timeline_record(prefs); model.load(data,'recommended',_ACTIONS)
+        prefs.timeline_layouts_json=model.encode(data,_ACTIONS)
         return {"FINISHED"}
 
 
@@ -349,8 +382,17 @@ class ANIMASSIST_OT_timeline_pin(bpy.types.Operator):
         if prefs is None or self.action not in _ACTIONS:
             self.report({"WARNING"}, "Enable Anim Assist and choose a known tool")
             return {"CANCELLED"}
-        name = quick_property_name(self.action)
-        setattr(prefs, name, not getattr(prefs, name))
+        from . import timeline_config as model
+        from ..prefs import timeline_record
+        from .timeline_settings import write
+        data=timeline_record(prefs)
+        tool=data['active']['tools'][self.action]
+        visible=tool['mode']!='HIDDEN'
+        tool['mode']='HIDDEN' if visible else ('POPOUT' if self.action in model.SLIDERS else 'BUTTON')
+        try: write(context,data)
+        except ValueError as exc:
+            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+        setattr(prefs, quick_property_name(self.action),not visible)
         return {"FINISHED"}
 
 
@@ -498,257 +540,31 @@ def _draw_toolbar(self, context):
         row.popover(panel=f"ANIMASSIST_PT_timeline_options_{key}", text="", icon="TRIA_DOWN")
 
 
-class ANIMASSIST_HT_timeline_tools(bpy.types.Header):
-    bl_label = "Anim Assist Timeline Toolbar"
-    bl_space_type = "DOPESHEET_EDITOR"
-    bl_region_type = "TOOL_HEADER"
-
-    @classmethod
-    def poll(cls, context):
-        return is_timeline(context.area) and _enabled()
-
-    def draw(self, context):
-        if self.poll(context):
-            _draw_toolbar(self, context)
-
-
-def _legacy_target(screen, strip):
-    scale = max(0.5, bpy.context.preferences.system.ui_scale)
-    edge, border = ceil(2 * scale), ceil(4 * scale)
-    return next((area for area in screen.areas if is_timeline(area)
-                 and abs(area.x - strip.x) <= edge
-                 and abs(area.width - strip.width) <= edge
-                 and (abs(area.y + area.height - strip.y) <= border
-                      or abs(strip.y + strip.height - area.y) <= border)), None)
-
-
-def _capture_legacy_candidates():
-    """Only editors present on enable/load are eligible for migration."""
-    screens = getattr(bpy.data, "screens", None)
-    if screens is None:
-        return False  # addon_utils.enable supplies _RestrictData during register.
-    _legacy_candidates.clear()
-    _migration_attempted.clear()
-    _legacy_candidates.update(area.as_pointer() for screen in screens
-                              for area in screen.areas if is_strip(area))
-    return True
-
-
-def _migrate_legacy(window, screen):
-    for strip in list(screen.areas):
-        if not is_strip(strip):
-            continue
-        pointer = strip.as_pointer()
-        if pointer not in _legacy_candidates or pointer in _migration_attempted:
-            continue
-        if strip.width == 0 or strip.height == 0 or any(
-                is_timeline(area) and (area.width == 0 or area.height == 0)
-                for area in screen.areas):
-            continue  # Initial layout has not supplied trustworthy geometry yet.
-        # Freeze the first valid assessment, including the decision to leave an
-        # unpaired strip alone. Moving it later must never trigger a timer join.
-        _migration_attempted.add(pointer)
-        target = _legacy_target(screen, strip)
-        if target is None:
-            # A moved legacy editor is not ours to repurpose or join.
-            continue
-        try:
-            with bpy.context.temp_override(window=window, screen=screen, area=target):
-                result = bpy.ops.screen.area_join(
-                    source_xy=(target.x + target.width // 2, target.y + target.height // 2),
-                    target_xy=(strip.x + strip.width // 2, strip.y + strip.height // 2))
-            if "FINISHED" in result:
-                _seen.discard(target.spaces.active.as_pointer())
-                return True
-        except (RuntimeError, ReferenceError) as exc:
-            _log.warning("Legacy Timeline toolbar migration could not complete: %s", exc)
-    return False
-
-
-def _apply_inactive_timeline_choice(screens):
-    """An explicit global choice includes cached Timeline spaces in other editors."""
-    if not native_available():
-        return
-    for screen in screens:
-        for area in screen.areas:
-            active = area.spaces.active
-            for space in area.spaces:
-                if (space == active or space.type != "DOPESHEET_EDITOR"
-                        or space.mode != "TIMELINE"):
-                    continue
-                try:
-                    # The host RNA setter finds this space's own region list.
-                    # This is an explicit user choice, so marking/clearing the
-                    # native user-hide flag is intended. No active area changes.
-                    space.show_region_tool_header = _enabled()
-                except (RuntimeError, ReferenceError, TypeError) as exc:
-                    _log.warning("Cached Timeline toolbar choice could not be applied: %s", exc)
-
-
+# Pixel drawing and native keymaps own the canvas row. Menu registration
+# creates no helper editor and starts no repeated geometry repair.
 def reconcile_preferences():
-    """Explicit preference changes may show/hide; ordinary resizing never does."""
-    global _force_reconcile
-    _force_reconcile = True
-    screens = getattr(bpy.data, "screens", None)
-    if screens is None:
-        return  # The first unrestricted lifecycle callback queues the choice.
-    _apply_inactive_timeline_choice(screens)
-    # Inactive workspace Timelines receive this explicit choice when opened,
-    # while ordinary workspace switching still respects their native hide flag.
-    _pending_user_action.update(area.spaces.active.as_pointer()
-        for screen in screens for area in screen.areas if is_timeline(area))
-
-
-@persistent
-def _load_post(_unused):
-    global _force_reconcile, _capture_pending
-    _seen.clear()
-    _owned.clear()
-    _capture_pending = True
-    _pending_user_action.clear()
-    # Saved explicit native hiding is honored. Only an actual preference change
-    # is an instruction to reveal an already hidden row.
-    _force_reconcile = False
-
-
-def _sync():
-    """Observe lifecycle only. Never enforce geometry or reverse a manual hide."""
-    global _force_reconcile, _capture_pending
-    if not _registered:
-        return None
-    screens = getattr(bpy.data, "screens", None)
-    if screens is None:
-        return 1.0
-    if _capture_pending:
-        if not _capture_legacy_candidates():
-            return 1.0
-        _capture_pending = False
-    force = _force_reconcile
-    _force_reconcile = False
-    try:
-        live = {area.spaces.active.as_pointer() for screen in screens
-                for area in screen.areas if is_timeline(area)}
-        if force:
-            # A preference callback may have run under _RestrictData. Reconcile
-            # cached spaces here too, without treating load/disable as user intent.
-            _apply_inactive_timeline_choice(screens)
-            _pending_user_action.update(live)
-        _seen.intersection_update(live)
-        _owned.intersection_update(live)
-        _pending_user_action.intersection_update(live)
-        for window in bpy.context.window_manager.windows:
-            screen = window.screen
-            if (not screen.is_temporary and not screen.show_fullscreen
-                    and _migrate_legacy(window, screen)):
-                _force_reconcile = force
-                return 0.25
-            for area in screen.areas:
-                if not is_timeline(area):
-                    continue
-                if area.width == 0 or area.height == 0:
-                    continue  # Wait for initial native geometry, not a resize repair.
-                pointer = area.spaces.active.as_pointer()
-                user_action = force or pointer in _pending_user_action
-                if pointer in _seen and not user_action:
-                    continue
-                _seen.add(pointer)
-                _pending_user_action.discard(pointer)
-                if not native_available():
-                    area.tag_redraw()
-                    continue
-                _owned.add(pointer)
-                if area.spaces.active.timeline_toolbar_hidden_by_user and not user_action:
-                    continue
-                try:
-                    # The owning window supplies its active screen. Explicit
-                    # screen overrides are rejected for maximized editors.
-                    with bpy.context.temp_override(window=window, area=area,
-                                                   region=_window_region(area)):
-                        result = bpy.ops.screen.timeline_toolbar_set(
-                            enabled=_enabled(), user_action=user_action)
-                    if "FINISHED" not in result:
-                        _log.warning("Native Timeline toolbar could not change visibility")
-                except (RuntimeError, ReferenceError, StopIteration) as exc:
-                    _log.warning("Native Timeline toolbar unavailable in this screen: %s", exc)
-    except (RuntimeError, ReferenceError, AttributeError) as exc:
-        _log.warning("Timeline lifecycle update deferred: %s", exc)
-    return 1.0
+    manager = getattr(bpy.context, 'window_manager', None)
+    for window in getattr(manager, 'windows', ()):
+        for area in window.screen.areas:
+            if is_timeline(area):
+                area.tag_redraw()
 
 
 def register():
-    global _registered, _capture_pending
+    from . import timeline_overlay, timeline_settings
     bpy.utils.register_class(ANIMASSIST_OT_timeline_tool)
     for cls in _settings_classes + _menus:
         bpy.utils.register_class(cls)
-    if native_available():
-        bpy.utils.register_class(ANIMASSIST_HT_timeline_tools)
-    # Registration runs under restricted data/context. Capture legacy editors
-    # only in the first unrestricted callback after enable/load.
-    _capture_pending = True
-    _registered = True
-    if _load_post not in bpy.app.handlers.load_post:
-        bpy.app.handlers.load_post.append(_load_post)
-    if not bpy.app.background and not bpy.app.timers.is_registered(_sync):
-        bpy.app.timers.register(_sync, first_interval=0.1, persistent=True)
-
-
-def _hide_native_rows():
-    manager = getattr(bpy.context, "window_manager", None)
-    windows = list(getattr(manager, "windows", ()))
-    screens = getattr(bpy.data, "screens", None)
-    if not windows or screens is None:
-        return
-    ordinary = next((window for window in windows
-                     if not window.screen.is_temporary and not window.screen.show_fullscreen), None)
-    for screen in screens:
-        owner = next((window for window in windows if window.screen == screen), None)
-        # Active windows use their own implicit screen, including maximized
-        # editors. Only ordinary inactive workspaces receive a screen override.
-        if owner is None and (ordinary is None or screen.is_temporary or screen.show_fullscreen):
-            continue
-        for area in screen.areas:
-            if not (is_timeline(area) and (area.spaces.active.as_pointer() in _owned
-                    or area.spaces.active.show_region_tool_header)):
-                continue
-            try:
-                override = {"window": owner or ordinary, "area": area,
-                            "region": _window_region(area)}
-                if owner is None:
-                    override["screen"] = screen
-                with bpy.context.temp_override(**override):
-                    bpy.ops.screen.timeline_toolbar_set(enabled=False, user_action=False)
-                area.tag_redraw()
-            except (RuntimeError, ReferenceError, StopIteration, TypeError) as exc:
-                _log.warning("Native Timeline toolbar could not be hidden: %s", exc)
+    timeline_settings.register()
+    timeline_overlay.register()
+    reconcile_preferences()
 
 
 def unregister():
-    global _registered, _force_reconcile, _capture_pending
-    _registered = False
-    try:
-        if bpy.app.timers.is_registered(_sync):
-            bpy.app.timers.unregister(_sync)
-        if _load_post in bpy.app.handlers.load_post:
-            bpy.app.handlers.load_post.remove(_load_post)
-        if native_available():
-            _hide_native_rows()
-    except (RuntimeError, ReferenceError, AttributeError, TypeError) as exc:
-        _log.warning("Native Timeline toolbar cleanup context unavailable: %s", exc)
-    finally:
-        # A rejected window/screen override must never leave operators, menus,
-        # panels or the Header registered and break the next enable operation.
-        _seen.clear()
-        _owned.clear()
-        _migration_attempted.clear()
-        _legacy_candidates.clear()
-        _pending_user_action.clear()
-        _force_reconcile = False
-        _capture_pending = False
-        classes = [ANIMASSIST_HT_timeline_tools, *reversed(_settings_classes + _menus),
-                   ANIMASSIST_OT_timeline_tool]
-        for cls in classes:
-            if getattr(cls, "is_registered", False):
-                try:
-                    bpy.utils.unregister_class(cls)
-                except (RuntimeError, ReferenceError, TypeError) as exc:
-                    _log.warning("Could not unregister Timeline toolbar class %s: %s", cls.__name__, exc)
+    from . import timeline_overlay, timeline_settings
+    timeline_overlay.unregister()
+    timeline_settings.unregister()
+    for cls in reversed(_settings_classes + _menus + [ANIMASSIST_OT_timeline_tool]):
+        if cls.is_registered:
+            bpy.utils.unregister_class(cls)
+    reconcile_preferences()

@@ -162,8 +162,6 @@ def _draw_dopesheet_toolbar(self, context: bpy.types.Context) -> None:
     so the animator can hide categories to save header space.
     """
     if timeline_strip.is_timeline(context.area):
-        if not timeline_strip.native_visible(context.area):
-            timeline_strip._draw_toolbar(self, context)
         return
     props = context.scene.anim_assist
     layout = self.layout

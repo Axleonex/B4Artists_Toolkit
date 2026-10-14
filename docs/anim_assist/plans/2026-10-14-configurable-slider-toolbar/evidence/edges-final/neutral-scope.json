@@ -1,0 +1,37 @@
+[
+  {
+    "action": "SMOOTH",
+    "neutral": true,
+    "locked_hidden_preserved": true
+  },
+  {
+    "action": "NEIGHBORS",
+    "neutral": true,
+    "locked_hidden_preserved": true
+  },
+  {
+    "action": "FRAME",
+    "neutral": true,
+    "locked_hidden_preserved": true
+  },
+  {
+    "action": "EASE",
+    "neutral": true,
+    "locked_hidden_preserved": true
+  },
+  {
+    "action": "AMPLIFY",
+    "neutral": true,
+    "locked_hidden_preserved": true
+  },
+  {
+    "action": "SCALE_DRAG",
+    "neutral": true,
+    "locked_hidden_preserved": true
+  },
+  {
+    "action": "OFFSET_DRAG",
+    "neutral": true,
+    "locked_hidden_preserved": true
+  }
+]

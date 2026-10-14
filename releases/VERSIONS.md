@@ -4,7 +4,10 @@ Current repository packages and their publication status.
 
 | Tool | Version | Archive | Bytes | SHA256 prefix | Status |
 |---|---|---|---:|---|---|
-| Anim Assist | 12.6.0 | [b4_anim_assist_v12.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/b4_anim_assist_v12.6.0.zip) | 577,101 | `60d4c7f10d9f` | Published add-on; 80 immediate effects pass in standard Bforartists; uses the existing Timeline header |
+| Anim Assist | 12.7.0 | [b4_anim_assist_v12.7.0.zip](b4_anim_assist_v12.7.0.zip) | 599,297 | `47d25fe0568e` | Repository build; delegated native workflow passed; standalone GitHub Release pending |
+| Anim Assist (historical 12.6.2) | 12.6.2 | [b4_anim_assist_v12.6.2.zip](b4_anim_assist_v12.6.2.zip) | 599,156 | `5492e94a773a` | Earlier local slider/layout release; retained archive |
+| Anim Assist (historical 12.6.1) | 12.6.1 | [b4_anim_assist_v12.6.1.zip](b4_anim_assist_v12.6.1.zip) | 579,836 | `4da8edac4e4b` | Earlier local release; add-on-only canvas row and unmodified-host qualification |
+| Anim Assist (historical 12.6.0) | 12.6.0 | [b4_anim_assist_v12.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/b4_anim_assist_v12.6.0.zip) | 577,101 | `60d4c7f10d9f` | Published add-on; 80 immediate effects pass in standard Bforartists; uses the existing Timeline header |
 | Anim Assist (historical 12.5.1) | 12.5.1 | [b4_anim_assist_v12.5.1.zip](b4_anim_assist_v12.5.1.zip) | 572,004 | `7dbe61a35f01` | Earlier repository release; separate-strip layout repair |
 | Anim Assist (historical 12.1.3) | 12.1.3 | [b4_anim_assist_v12.1.3.zip](b4_anim_assist_v12.1.3.zip) | 556,067 | `b30547b2afac` | Earlier GitHub release; actual Bforartists regression checks pass for that version |
 | Ghost Tool | 4.2.11 | [b4_ghost_tool_v4.2.11.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip) | 221,461 | `62f44f480992` | Published regular Latest release; startup crash correction; 123 startup/toolbar checks pass in native Bforartists; full width suite incomplete |
@@ -27,6 +30,12 @@ Current repository packages and their publication status.
 Anim Assist uses the package root `B4_anim_assist`; Ghost Tool uses `ghost_tool`; BoneCraft uses `boneforge`.
 
 ## Checks and notes
+
+- [Anim Assist 12.7.0 toolbar overhaul](../docs/anim_assist/releases/12.7.0/RELEASE-NOTES.md), [workspace qualification](../docs/anim_assist/releases/12.7.0/qualification.md) and [receipt](../docs/anim_assist/releases/12.7.0/package-receipt.json). Local add-on only; no GitHub publication.
+
+- [Anim Assist 12.6.2 configurable toolbar](../docs/anim_assist/releases/12.6.2/RELEASE-NOTES.md), [qualification](../docs/anim_assist/releases/12.6.2/qualification.md) and [package receipt](../docs/anim_assist/releases/12.6.2/package-receipt.json). Local add-on package; inline/popout tools and named layouts; public release unchanged pending approval.
+
+- [Anim Assist 12.6.1 tool-row release](../docs/anim_assist/releases/12.6.1/RELEASE-NOTES.md), [qualification](../docs/anim_assist/releases/12.6.1/qualification.md) and [package receipt](../docs/anim_assist/releases/12.6.1/package-receipt.json). Uses the Timeline canvas and native keymaps; keeps playback/keyframing in its existing row. No Windows application download.
 
 - [BoneCraft 9.2.4 repository build notes](../docs/bonecraft/releases/9.2.4/RELEASE-NOTES.md) and [package receipt](../docs/bonecraft/releases/9.2.4/package-receipt.json). Health Check and duplicate Task Board cards fixed; no tagged GitHub Release.
 - [BoneCraft 9.2.3 release notes](../docs/bonecraft/releases/9.2.3/RELEASE-NOTES.md) and [package receipt](../docs/bonecraft/releases/9.2.3/package-receipt.json). Duplicate export removed from Avatar Tools; retained in Import / Export.
