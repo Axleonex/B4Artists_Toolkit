@@ -1,6 +1,11 @@
-# Anim Assist 12.6.0 publication preparation
+# Anim Assist 12.6.0 publication
 
-Status: prepared locally; push, merge and publication await owner confirmation.
+Status: published as a regular release on 2026-10-14 UTC after owner confirmation.
+
+[GitHub release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/v12.6.0).
+Both public download URLs returned HTTP 206 for unauthenticated range requests.
+GitHub asset sizes and SHA256 digests match the local packages below.
+The temporary transfer parts were removed after the native archive was verified.
 
 ## Assets
 
@@ -16,16 +21,14 @@ The application and checksum are in
 `G:/LapArt/Local-Releases/AnimAssist/12.6.0/`. The add-on is also tracked in
 `releases/`. The application archive belongs in GitHub Release assets, not Git.
 
-## Publication order after confirmation
+## Publication record
 
-1. Recheck the remote branch and exact asset hashes.
-2. Push the prepared work branch and create the release pull request.
-3. Create the `v12.6.0` release at the reviewed work-branch commit and upload
-   all three assets. Use `GITHUB-RELEASE-NOTES.md` as the exact release body.
-4. Verify both public download URLs and the uploaded asset sizes/hashes before
-   merging the README links into `main`.
-5. Record actual publication URLs and status, merge the reviewed pull request,
-   then check the README links again.
+1. Published the reviewed branch through [PR #4](https://github.com/Axleonex/B4Artists_Toolkit/pull/4).
+2. Created `v12.6.0` at `b04f6b69ec67ac757de130a7ed449dcc02dae7d9`.
+3. Uploaded both ZIPs and the application checksum, using
+   `GITHUB-RELEASE-NOTES.md` as the exact release body.
+4. Verified uploaded sizes, digests and both public download URLs before merge.
+5. Recorded publication status for the authorized PR merge.
 
 The prepared README lists only Anim Assist 12.6.0 as current. Historical builds
 remain in the versions ledger. Source/runtime limitations stay documented.
