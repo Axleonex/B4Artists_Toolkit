@@ -1,18 +1,18 @@
-# Ghost Tool 4.2.10 user guide
+# Ghost Tool 4.2.11 user guide
 
-This guide describes Ghost Tool 4.2.10's named toolbar sections and shared controls. See the [toolbar guide](toolbar/README.md) for placement and recovery.
+This guide describes Ghost Tool 4.2.11's named toolbar sections and shared controls. See the [toolbar guide](toolbar/README.md) for placement and recovery.
 
-Candidate version: 4.2.10; not yet published. Every Object/Pose viewport keeps the complete named toolbar. Narrow rows scroll horizontally. The 15 pure width-policy checks pass. Two Bforartists GUI launches timed out before the native shelf test began, so shelf width behavior and screenshots remain unverified. See the [verification status](releases/4.2.10/verification-status.json).
+Candidate version: 4.2.11; unpublished. This correction defers viewport access during startup. Startup and toolbar checks pass; the full shelf-width assessment remains incomplete. See Release verification below.
 
 ## Install and find Ghost Tool
 
-Download the [4.2.10 ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.10.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
+Download the [4.2.11 ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.11.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk, select the ZIP and enable Ghost Tool. The internal package name is `ghost_tool`. When updating, restart Bforartists after installation. Existing saved scenes retain their live-update choices; turn off Live Update Markers and Live Update Skin once if you want snapshots while scrubbing.
 
 Ghost Tool starts with a visible Top Toolbar beneath the main 3D Viewport header, in the native Tool Settings row. In Edit > Preferences > Add-ons > Ghost Tool, choose Top Toolbar, Right Sidebar (N), or Left Tool Shelf (T). Top Header is no longer a display choice; saved Top Header preferences migrate to a visible toolbar. Existing sidebar, shelf and toolbar visibility choices are preserved. The lower-row Ghost menu provides feature access. In Top Toolbar mode, View > Show Ghost Toolbar restores hidden controls. Save preferences normally to retain your choice.
 
-The published 4.2.9 package passed its focused background and native split-view checks in Bforartists 5.2.0. The 4.2.10 candidate retains those toolbar changes; its new native shelf-width test could not start because the host timed out during startup. Production rigs, keyboard navigation and alternate themes remain unverified.
+Ghost applies saved display preferences after the native main loop starts. Replace the problematic installed version while Ghost is disabled, then restart Bforartists before enabling the update.
 
-The candidate is designed to widen the left Ghost shelf once to match an open N-panel, or use 240 px at 1x UI scale when that panel is closed. It preserves later manual resizing. Widen Narrow Shelf in Ghost preferences defaults on; turn it off to manage widths yourself. Native shelf behavior remains unverified because the test host timed out before running the test. The duplicate main-header Ghost Tool button is removed; all tools remain below.
+The candidate is designed to widen the left Ghost shelf once to match an open N-panel, or use 240 px at 1x UI scale when that panel is closed. It preserves later manual resizing. Widen Narrow Shelf in Ghost preferences defaults on; turn it off to manage widths yourself. The initial native width match and later manual resize preservation pass; preference-reset widening remains limited by the width guard. The duplicate main-header Ghost Tool button is removed; all tools remain below.
 
 ## Use the persistent toolbar
 
@@ -32,7 +32,7 @@ Leave Ghost Tool enabled and move, rotate or scale your object or pose control. 
 
 Live Update Markers controls whether markers follow timeline changes; Live Update Skin controls onion skins. Both default off, and Show Markers or Show Onion Skin preserves your choices. With these controls off, scrubbing shows the last refreshed snapshot. Finishing an animation edit still refreshes existing ghosts. Freeze pauses these automatic refreshes too.
 
-After installing 4.2.10, test a new pose on your rig, wait for a ghost refresh, and insert the key. Seek away and return to confirm it saved correctly. Repeat with auto-key enabled and with mesh ghosts or a pinned motion path visible. Record any jitter or lost pose in the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues).
+After installing 4.2.11, test a new pose on your rig, wait for a ghost refresh, and insert the key. Seek away and return to confirm it saved correctly. Repeat with auto-key enabled and with mesh ghosts or a pinned motion path visible. Record any jitter or lost pose in the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues).
 
 ## Show and inspect motion
 
@@ -84,6 +84,4 @@ For final review, test marker discovery, handle dragging and Escape, snapshot vi
 
 ## Release verification
 
-The published 4.2.9 package passed 89 focused checks in Bforartists 5.2.0. For 4.2.10, 15 pure width-policy checks pass, but two native GUI launches timed out before the shelf test ran. The new shelf behavior and screenshots remain unverified, and the full 4.2.10 package suite has not run. See the [verification status](releases/4.2.10/verification-status.json) and [release notes](releases/4.2.10/RELEASE-NOTES.md).
-
-Full keyboard navigation, theme variants and production rigs remain unverified. This patch changes toolbar placement and the left shelf width; existing display defaults, preference migration and animation sampling are retained. Historical builds and their original evidence remain listed in the [release index](../../releases/VERSIONS.md).
+The exact 4.2.11 ZIP passes 123 startup and toolbar checks in Bforartists 5.2.0 (runtime 5.3.0 Alpha, build 0a1ca45552db): 80 background, 35 native split-view and eight saved-preference startup checks. Startup isolation disables width writes. A separate shelf assessment passes ten initial-match and manual-resize checks. Preference-reset widening fails when displayed and stored widths disagree; the guard declines writing. Fallback and scale checks were not reached. JellyTest.blend, production rigs, alternate themes and full keyboard navigation remain untested. See the [package receipt](releases/4.2.11/package-receipt.json) and [release index](../../releases/VERSIONS.md).

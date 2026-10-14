@@ -5,7 +5,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 | Tool | Version | What it does |
 |---|---|---|
 | **Anim Assist** | 12.6.0 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 89 searchable and pinnable actions. Configurable quick buttons, Search and Pin are available in the existing Timeline header. Inspired by Maya's AnimBot. |
-| **Ghost Tool** | 4.2.10 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
+| **Ghost Tool** | 4.2.11 | Defers viewport initialization during startup. Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
 
 ### Optional add-on: BoneCraft (rigging)
 
@@ -26,7 +26,7 @@ Install add-on ZIPs directly in your existing Bforartists installation.
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.6.0 | [b4_anim_assist_v12.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/b4_anim_assist_v12.6.0.zip) |
-| Ghost Tool 4.2.10 candidate | [b4_ghost_tool_v4.2.10.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.10.zip) |
+| Ghost Tool 4.2.11 candidate | [b4_ghost_tool_v4.2.11.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.11.zip) |
 | BoneCraft 9.2.1 (optional) | [BoneCraft-BFA-9.2.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip) |
 
 ## Browse the source
@@ -37,21 +37,21 @@ The unpacked, readable source for each tool is in this repository so you can rea
 - [`ghost_tool/`](ghost_tool/) — Ghost Tool source
 - [`bonecraft/boneforge/`](bonecraft/boneforge/) — BoneCraft 9.2.1 source
 
-The ZIPs package their recorded release source for one-click installation. The unpublished Ghost Tool 4.2.10 ZIP matches the current source modules; see its [candidate status](docs/ghost_tool/releases/4.2.10/verification-status.json).
+The ZIPs package their recorded release source for one-click installation. The unpublished Ghost Tool 4.2.11 ZIP matches the current source modules; see its [candidate status](docs/ghost_tool/releases/4.2.11/package-receipt.json).
 
 ## Documentation
 
 Human-readable manuals are in [`docs/`](docs/):
 
 - [Anim Assist 12.6.0 add-on](docs/anim_assist/releases/12.6.0/RELEASE-NOTES.md) — installation, quick tools and validation; [tool access coverage](docs/anim_assist/releases/12.6.0/tool-access-coverage.md) records the actions and gestures. [Suite manuals](docs/anim_assist/) cover the other animation tools.
-- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.10 candidate guide, PDF and toolbar notes
+- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.11 candidate guide, PDF and toolbar notes
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.1 English manual and translation status
 
 ## Requirements
 
 - Anim Assist, Ghost Tool and BoneCraft require Bforartists.
 
-- Ghost Tool 4.2.10 candidate's 15 pure width-policy checks pass. Two native GUI starts timed out before the shelf test script ran, so native width evidence and screenshots are missing. See the [verification status](docs/ghost_tool/releases/4.2.10/verification-status.json) and [release notes](docs/ghost_tool/releases/4.2.10/RELEASE-NOTES.md).
+- The exact 4.2.11 ZIP passes 123 focused startup and toolbar checks in Bforartists 5.2.0 (Blender runtime 5.3.0 Alpha), build hash 0a1ca45552db: 80 background checks, 35 native split-view checks and eight saved-preference startup checks. The startup isolation profile disables width writes. A separate width run passes ten preliminary checks for the initial N-panel match and manual resize preservation, but its preference-reset check fails when displayed and stored widths disagree; the guard declines the write. Later fallback and scale checks were not reached. JellyTest.blend has not been tested. See the [package receipt](docs/ghost_tool/releases/4.2.11/package-receipt.json).
 
 - Historical Ghost Tool 4.2.9 passed **89 focused tests/checks in Bforartists 5.2.0** from its exact ZIP: 54 background tests and 35 native split-view checks. Named options, the master switch, full-row consistency, panning and cached-state preservation pass. See the [package receipt](docs/ghost_tool/releases/4.2.9/package-receipt.json).
 
