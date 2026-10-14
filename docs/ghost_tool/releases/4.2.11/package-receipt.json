@@ -1,0 +1,183 @@
+{
+  "version": "4.2.11",
+  "status": "PASS_WITH_WIDTH_LIMITATION",
+  "archive": "b4_ghost_tool_v4.2.11.zip",
+  "bytes": 221461,
+  "sha256": "62f44f4809928a3be947989027e362ae2d6aded0125730d4be7f465dfd552f69",
+  "source_modules": 30,
+  "extracted_bytes_match": true,
+  "host": "Bforartists 5.2.0 (Blender runtime 5.3.0 Alpha)",
+  "native_gui_host_gate_patched": false,
+  "native_output_capture": "files",
+  "native_thread_limit": 2,
+  "results": [
+    {
+      "suite": "background",
+      "exit_code": 0,
+      "status": "PASS",
+      "log_sha256": "2556328d8d58b03702e3ed6cefbec78f30d123548568e4f2d0152c8a7a88dd37",
+      "tests": 80
+    },
+    {
+      "suite": "native-shelf",
+      "exit_code": 0,
+      "status": "INCOMPLETE",
+      "log_sha256": "2dbb3641cf0166d4beee29931a19f9b190d77efd29a6f00119772e97a7bace0e",
+      "tests": 0,
+      "passed_subchecks": 10,
+      "evidence": {
+        "status": "FAIL",
+        "checks": [
+          "Native host gate remains unpatched",
+          "Auto widening defaults on",
+          "Reference fixture uses verified native width field",
+          "Narrow baseline uses verified native width field",
+          "Before: left shelf is narrower than open N-panel",
+          "Default timer matches open N-panel width",
+          "Ghost shelf panel is available in selected left home",
+          "Actual widened Ghost shelf category is visible",
+          "Manual resize fixture can narrow the shelf",
+          "Timer preserves later manually narrowed shelf"
+        ],
+        "step": 7,
+        "error": "Traceback (most recent call last):\n  File \"G:\\Temp\\AtonLotus\\ghost-release-4.2.11-6w4ukv40\\tests\\test_ghost_shelf_width_native.py\", line 107, in tick\n    if await_width(tools, sidebar.width):\n       ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\Temp\\AtonLotus\\ghost-release-4.2.11-6w4ukv40\\tests\\test_ghost_shelf_width_native.py\", line 45, in await_width\n    assert state['waits'] <= 10, f\"width {tools.width} did not reach {expected}; done={sw._done}\"\n           ^^^^^^^^^^^^^^^^^^^^\nAssertionError: width 150 did not reach 360; done=set()\n"
+      }
+    },
+    {
+      "suite": "native-split",
+      "exit_code": 0,
+      "status": "PASS",
+      "log_sha256": "e7f4fafdf402e4eb2651b8dca2b102f01c2ad106acab731febda9f1001774547",
+      "tests": 35,
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Actual native Bforartists host",
+          "Default is visible Top Toolbar",
+          "Multiple native 3D viewports",
+          "Split viewports exercise the old collapsing widths",
+          "Object mode: viewport 1 has every feature in order",
+          "Object mode: viewport 1 names sections and shows the master switch",
+          "Object mode: viewport 2 has every feature in order",
+          "Object mode: viewport 2 names sections and shows the master switch",
+          "Native Tool Settings remains visible in every viewport",
+          "Pose mode: viewport 1 has every feature in order",
+          "Pose mode: viewport 1 names sections and shows the master switch",
+          "Pose mode: viewport 2 has every feature in order",
+          "Pose mode: viewport 2 names sections and shows the master switch",
+          "Scaled Pose mode: viewport 1 has every feature in order",
+          "Scaled Pose mode: viewport 1 names sections and shows the master switch",
+          "Scaled Pose mode: viewport 2 has every feature in order",
+          "Scaled Pose mode: viewport 2 names sections and shows the master switch",
+          "Hide applies to every viewport",
+          "Hide keeps native Tool Settings",
+          "Show recovery: viewport 1 has every feature in order",
+          "Show recovery: viewport 1 names sections and shows the master switch",
+          "Show recovery: viewport 2 has every feature in order",
+          "Show recovery: viewport 2 names sections and shows the master switch",
+          "Native horizontal panning exposes overflowing controls",
+          "Newly split viewport inherits visible native row",
+          "New split: viewport 1 has every feature in order",
+          "New split: viewport 1 names sections and shows the master switch",
+          "New split: viewport 2 has every feature in order",
+          "New split: viewport 2 names sections and shows the master switch",
+          "New split: viewport 3 has every feature in order",
+          "New split: viewport 3 names sections and shows the master switch",
+          "Drawing and layout actions preserve the frame",
+          "Drawing and hide/show preserve cached marker identities",
+          "Layout does not enable live updates",
+          "Native header append remains registered exactly once"
+        ],
+        "geometry": [
+          {
+            "width": 791,
+            "height": 585
+          },
+          {
+            "width": 803,
+            "height": 585
+          }
+        ],
+        "pan_before": 0.0,
+        "pan_after": 576.0,
+        "host": "5.3.0 Alpha"
+      }
+    },
+    {
+      "suite": "native-startup",
+      "exit_code": 0,
+      "status": "PASS",
+      "log_sha256": "67ff64aa206c6c7ad7f167fc106cc5033c30938b4c37159e81cafa58b4a0d109",
+      "tests": 8,
+      "evidence": {
+        "status": "PASS",
+        "checks": [
+          "Ghost enabled automatically from saved startup preferences",
+          "Native host gate is unchanged",
+          "Saved Tools location applied after startup",
+          "Deferred startup callback completed",
+          "Sidebar preference still reveals the native panel",
+          "Hidden toolbar choice does not reopen the row",
+          "Explicit show reveals the row after deferral",
+          "Disabling addon cancels queued UI access"
+        ],
+        "host": "5.3.0 Alpha",
+        "build_hash": "0a1ca45552db",
+        "startup_auto_enabled": true,
+        "shelf_memory_writes_disabled_for_isolation": true
+      }
+    }
+  ],
+  "total_checks": 123,
+  "source_manifest": {
+    "__init__.py": "e86e83f77d7d9a6762226a780c7ac9785e7f1ee260b2824a6d747262bdd5bce9",
+    "api.py": "1de83ca8b563bcd03ae05a4a16adf8b31c76b7a257eb136220b9926de743898a",
+    "diff_mode.py": "f8439fce15da8475b93563070d76cd0789d5dddef00574b83f77ae57edc17966",
+    "draw_to_keys.py": "8d1422a9334ad6b2dbd1272024a80ddbe31bd4e7162138c7715fdb0d7ecb68e3",
+    "draw_to_keys_math.py": "eb2d0be5f455859f54d9c1651b15a17cea5b6e1907d7664c04e20138448e6084",
+    "easing_presets.py": "f8644da32ad619bf648739f168d0eaad791c9f52e92cab193661ba730680e257",
+    "export_import.py": "be0aa66295f830d25d7bb971c07569132f029865f443528494f331a4974e77cc",
+    "fcurve_utils.py": "cc379ff5b89b3696657329904c4120ff374ccdb0160497553eb0c86dbb28e3b6",
+    "ghost_cache.py": "e728bfa32e2d14cfcd525b64e3f420e941bc9bb720eb0b28bd2d9bacc0d79f39",
+    "ghost_data.py": "5cf59a7b758edff8a189f0a012bdcdfbbb2c4ff108c6448d2888f0862e446b4d",
+    "ghost_pipeline.py": "24122f070cc55684bcb80b0447d49181ec3e885f2326104dc86e2009eca2ba44",
+    "mesh_ghosts.py": "521bab6c7bddf3e638c192dad922583b9d5fab520639b1aadb48975ffd39d35f",
+    "modal_operator.py": "6cb2952ff5b2135a9961cd511d9baff284466ac0b0d69f2b71f9894b7f52cb19",
+    "motion_channels.py": "69053e9bcb49576b145418153e7dda02bb8d3fd2ba81c5d36085e08d6e2af190",
+    "motion_paths.py": "5710908fe9512e7b45a02e1a8b33f42a4c58d2a22fd192aa9d3ffa5bd00739d7",
+    "path_fast_sampler.py": "e0275f56838bb7e82e32d1027c67e34bbd25a4fccf5b33aa4a12e4d9493632fd",
+    "path_handle_drag.py": "e86f7fb9862d8417ab2c7abf309969fc5732971d20db463acd17abf4de7e10ec",
+    "physics_archetypes.py": "7dbf69ef8caea3226f98e21a2d0b498ef304bb333baf75af45bf03cabbc07e3d",
+    "physics_suggest.py": "487cd63e34eff7fe16066c6549d182a30c773c7df8b57e07fdccfe9246d74ef5",
+    "preferences.py": "5a57e09715a10c00542c8335a1e878ba4121969cb6405775129add1d12399b82",
+    "selection_operators.py": "facbf44f3366790f1d082189beb4ce031a7fe32d26e3d8e613f25fa8cb742998",
+    "session_state.py": "bd98c1aa30382fe5357749fa4a3e06710a2850e62d8b619129e1f74cd4146b07",
+    "settings_editor.py": "11c2b9efbd1689b1de52ce7a1d283825deda8f67a867d1c1c1bc689842af44cd",
+    "shelf_width.py": "f8c85a7ce5c6edbe274e3686044bfb8b1c1edd78e1ab12a861daa2ff0700dfee",
+    "snapshot.py": "e0cb0bc5ed0896273d0d9799e52ae43d53abd2b8a84b5f20feeea29ee4f73ab6",
+    "snapshot_storage.py": "061c16926ce8ed82f63ea001d34a52c326db5e12db2656fd36cdabc164947660",
+    "target_binding.py": "8be5467cf10ec649bd220dbe4f7708e2dd46eba9dc59149e2c6900219cdcf6fb",
+    "ui_panel.py": "ab5d908623d012d1c869b4714aadaadfe406c2bacd50a6ca8f4fe94e9fdceb52",
+    "utils.py": "7fe35ccf95b0ec6abad19c7fca07aab2423e6cd4bbaac7051a8cd3b39b1fa265",
+    "viewport_draw.py": "9062d8c839f55ff36c7cc346c1dad70fa50ff9d806c40c695c8035759e48d867"
+  },
+  "pdf": {
+    "path": "docs/ghost_tool/GhostTool_User_Manual.pdf",
+    "sha256": "f9de82b53981ffc9d343e15e72f6202fd1a09277c0bee89faeedacc5a5838749",
+    "bytes": 10809,
+    "pages": 3,
+    "author": "GoingGhost"
+  },
+  "published": false,
+  "qualification": "Startup and toolbar checks pass; full shelf-width suite remains incomplete.",
+  "width_guard_diagnostic": {
+    "displayed_pixels": 150,
+    "stored_pixels": 132,
+    "verified_offset": null,
+    "outcome": "WRITE_DECLINED",
+    "later_fallback_and_scale_checks": "NOT_REACHED"
+  },
+  "owner_file_tested": false,
+  "original_native_crash_reproduced_locally": false,
+  "verification_completed_date": "2026-10-14"
+}
