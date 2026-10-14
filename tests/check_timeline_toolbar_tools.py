@@ -339,6 +339,86 @@ def write_slider_coverage():
         recovery_assertions=len(recovery_records),passed=all(r['passed'] for r in recovery_records)),indent=2))
 
 
+def ui_screenshot(name):
+    with timeline_context():
+        operator=bpy.ops.screen.screenshot if 'settings' in name or 'layout' in name else bpy.ops.screen.screenshot_area
+        operator(filepath=str(ROOT/(name+'.png')))
+
+
+def ui_defaults():
+    global ui_original_config
+    model=importlib.import_module(PACKAGE+'.ui.timeline_config')
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    with timeline_context():
+        settings.write(bpy.context,model.recommended(cat.ACTIONS))
+        items,band=overlay._items(bpy.context)
+        assert [i[1] for i in items if i[0]=='MENU']==list(model.FAMILY_ORDER)
+        assert {i[1] for i in items if i[0]=='SLIDER'}=={'DRAG','SMOOTH'}, items
+        assert [i[0] for i in items[-3:]]==['SEARCH','MORE','SETTINGS']
+        ui_original_config=bpy.context.preferences.addons[PACKAGE].preferences.timeline_layouts_json
+    ui_screenshot('default-row')
+
+
+def begin_slider_ui():
+    global slider_xy
+    with timeline_context():
+        region=bpy.context.region
+        items,_=overlay._items(bpy.context)
+        kind='SLIDER' if slider_case['mode']=='INLINE' else 'POPOUT'
+        item=next(i for i in items if i[:2]==(kind,slider_case['action']))
+        x,y,w,h=item[3]
+        if kind=='SLIDER':
+            track,_,_=overlay._parts(item[3],item[2],bpy.context.preferences.system.ui_scale)
+            x,y,w,h=track
+        slider_xy=dict(x=round(region.x+x+w/2),y=round(region.y+y+h/2))
+        event('MOUSEMOVE','NOTHING',**slider_xy)
+        event('LEFTMOUSE',**slider_xy)
+
+
+def ui_settings_open():
+    global ui_before_config,ui_before_animation
+    with timeline_context():
+        ui_before_config=bpy.context.preferences.addons[PACKAGE].preferences.timeline_layouts_json
+        ui_before_animation=object_snapshot(bpy.context.active_object)
+        items,_=overlay._items(bpy.context)
+        kind,key,label,(x,y,w,h)=next(i for i in items if i[0]=='SETTINGS')
+        r=bpy.context.region; position=dict(x=round(r.x+x+w/2),y=round(r.y+y+h/2))
+        event('MOUSEMOVE','NOTHING',**position); event('LEFTMOUSE',**position); event('LEFTMOUSE','RELEASE',**position)
+
+
+def ui_settings_check():
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    current=settings.editor(bpy.context)
+    assert current and len(current.entries)==89, 'Settings dialog did not open'
+    current.entries[0].mode='HIDDEN'
+    ui_screenshot('toolbar-settings')
+
+
+def ui_settings_cancelled():
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    assert settings.editor(bpy.context) is None
+    assert bpy.context.preferences.addons[PACKAGE].preferences.timeline_layouts_json==ui_before_config
+    assert object_snapshot(bpy.context.active_object)==ui_before_animation
+
+
+def ui_tool_open():
+    with timeline_context():
+        assert bpy.ops.animassist.tool_settings('INVOKE_DEFAULT',action='SMOOTH')=={'RUNNING_MODAL'}
+
+
+def ui_tool_cancelled():
+    settings=importlib.import_module(PACKAGE+'.ui.timeline_settings')
+    assert not settings._tool_editors
+    assert bpy.context.preferences.addons[PACKAGE].preferences.timeline_layouts_json==ui_before_config
+
+
+def ui_finish():
+    assert len(slider_records)==6 and all(r['passed'] for r in slider_records)
+    (ROOT/'ui-coverage.json').write_text(json.dumps(dict(row_slider_cases=6,
+        settings_cancelled_without_mutation=True,tool_settings_opened=True,
+        recovery_assertions=len(recovery_records),passed=all(r['passed'] for r in recovery_records)),indent=2))
+
+
 def write_coverage():
     bpy.ops.screen.screenshot(filepath=str(ROOT/'baseline-window.png'))
     (ROOT/'coverage.json').write_text(json.dumps(dict(

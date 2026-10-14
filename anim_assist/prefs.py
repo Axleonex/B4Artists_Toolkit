@@ -81,17 +81,9 @@ def draw_timeline_quick_settings(layout, context, prefs) -> None:
     layout.label(text="Tool row inside the Timeline, beside its header", icon="INFO")
     layout.label(text="No separate editor or application required")
     layout.label(text="Saved in add-on preferences")
-    layout.label(text="Quick buttons apply to all Timelines")
-    layout.prop(prefs, "timeline_quick_family")
-    actions = next(actions for key, _label, actions in GROUPS
-                   if key == prefs.timeline_quick_family)
-    column = layout.column(align=True)
-    for action in actions:
-        if action is not None:
-            column.prop(prefs, quick_property_name(action))
-    layout.separator()
-    layout.operator("animassist.reset_timeline_quick_defaults",
-                    text="Reset All Quick Buttons to Defaults", icon="LOOP_BACK")
+    layout.label(text="Layouts apply to all Timelines")
+    layout.operator("animassist.toolbar_settings",text="Toolbar Settings",icon="PREFERENCES")
+    layout.operator("animassist.restore_toolbar",text="Restore Recommended Layout",icon="LOOP_BACK")
     layout.label(text="More contains quick tools that do not fit this width")
     if not context.preferences.use_preferences_save:
         layout.label(text="Save Preferences to keep choices after restart", icon="INFO")

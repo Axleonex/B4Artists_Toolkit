@@ -294,13 +294,23 @@ class ANIMASSIST_MT_timeline_more(bpy.types.Menu):
     bl_description = "Original quick commands and all animation families"
 
     def draw(self, context):
-        for _key, label, actions in QUICK_GROUPS:
+        from . import timeline_config as model
+        from ..prefs import timeline_record, get_prefs
+        data=timeline_record(get_prefs(context))
+        families={key:(label,set(a for a in actions if a)) for key,label,actions in GROUPS}
+        for key in model.FAMILY_ORDER:
+            label,known=families[key]
+            actions=[a for a in data['active']['order'] if a in known and data['active']['tools'][a]['mode']!='HIDDEN']
+            if not actions: continue
             self.layout.separator()
             self.layout.label(text=label)
             for action in actions:
                 active = action == "OFFSET" and context.scene.anim_assist.anim_offset_active
                 _button(self.layout, context, _target(context), action, _ACTIONS[action][2],
                         icon="PAUSE" if active else "NONE", depress=active)
+                for value in data['active']['tools'][action].get('presets',[]):
+                    op=self.layout.operator('animassist.timeline_slider',text=f'{_ACTIONS[action][2]}: {value:g}')
+                    op.action=action; op.value=value; op.apply_value=True
         self.layout.separator()
         self.layout.menu("ANIMASSIST_MT_timeline_tools", text="All Tools")
 
@@ -311,7 +321,7 @@ _menus.extend([ANIMASSIST_MT_timeline_tools, ANIMASSIST_MT_timeline_more])
 class ANIMASSIST_OT_reset_timeline_quick_defaults(bpy.types.Operator):
     bl_idname = "animassist.reset_timeline_quick_defaults"
     bl_label = "Reset All Quick Buttons to Defaults"
-    bl_description = "Restore the 13 default quick buttons across all seven families"
+    bl_description = "Restore the recommended two-slider toolbar layout"
     bl_options = {"INTERNAL"}
 
     def execute(self, context):
@@ -322,6 +332,10 @@ class ANIMASSIST_OT_reset_timeline_quick_defaults(bpy.types.Operator):
             return {"CANCELLED"}
         for action in _ACTIONS:
             setattr(prefs, quick_property_name(action), action in DEFAULT_QUICK_ACTIONS)
+        from . import timeline_config as model
+        from ..prefs import timeline_record
+        data=timeline_record(prefs); model.load(data,'recommended',_ACTIONS)
+        prefs.timeline_layouts_json=model.encode(data,_ACTIONS)
         return {"FINISHED"}
 
 
@@ -338,8 +352,17 @@ class ANIMASSIST_OT_timeline_pin(bpy.types.Operator):
         if prefs is None or self.action not in _ACTIONS:
             self.report({"WARNING"}, "Enable Anim Assist and choose a known tool")
             return {"CANCELLED"}
-        name = quick_property_name(self.action)
-        setattr(prefs, name, not getattr(prefs, name))
+        from . import timeline_config as model
+        from ..prefs import timeline_record
+        from .timeline_settings import write
+        data=timeline_record(prefs)
+        tool=data['active']['tools'][self.action]
+        visible=tool['mode']!='HIDDEN'
+        tool['mode']='HIDDEN' if visible else ('POPOUT' if self.action in model.SLIDERS else 'BUTTON')
+        try: write(context,data)
+        except ValueError as exc:
+            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+        setattr(prefs, quick_property_name(self.action),not visible)
         return {"FINISHED"}
 
 
@@ -498,17 +521,19 @@ def reconcile_preferences():
 
 
 def register():
-    from . import timeline_overlay
+    from . import timeline_overlay, timeline_settings
     bpy.utils.register_class(ANIMASSIST_OT_timeline_tool)
     for cls in _settings_classes + _menus:
         bpy.utils.register_class(cls)
+    timeline_settings.register()
     timeline_overlay.register()
     reconcile_preferences()
 
 
 def unregister():
-    from . import timeline_overlay
+    from . import timeline_overlay, timeline_settings
     timeline_overlay.unregister()
+    timeline_settings.unregister()
     for cls in reversed(_settings_classes + _menus + [ANIMASSIST_OT_timeline_tool]):
         if cls.is_registered:
             bpy.utils.unregister_class(cls)

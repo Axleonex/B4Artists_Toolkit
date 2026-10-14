@@ -130,6 +130,33 @@ def run(args):
         host.request("event('ESC')")  # Dismiss the first-start welcome popup before pointer tests.
         host.request('prepare_geometry()')
         host.request('expand_geometry()')
+        if args.ui:
+            host.request('ui_defaults()')
+            for action,mode in (('DRAG','INLINE'),('SMOOTH','INLINE'),('SCALE_DRAG','POPOUT')):
+                for ending in ('cancel','commit'):
+                    host.request(f'prepare_slider({action!r},{mode!r},{ending!r})')
+                    host.request('begin_slider_ui()')
+                    host.request('move_slider()')
+                    host.request('check_slider_live()')
+                    host.request("ui_screenshot('drag-'+slider_case['action'])")
+                    host.request('end_slider()')
+                    host.request('check_slider_end()')
+                    if ending=='commit':
+                        host.request("recover('undo')")
+                        host.request("assert_recovery('undo')")
+                        host.request("recover('redo')")
+                        host.request("assert_recovery('redo')")
+            host.request('ui_settings_open()')
+            host.request('ui_settings_check()')
+            host.request("event('ESC')")
+            host.request('ui_settings_cancelled()')
+            host.request('ui_tool_open()')
+            host.request("ui_screenshot('tool-settings')")
+            host.request("event('ESC')")
+            host.request('ui_tool_cancelled()')
+            host.request('ui_finish()')
+            print((host.root/'ui-coverage.json').read_text())
+            return
         if args.adapters:
             for action in ('DRAG','SMOOTH','NEIGHBORS','FRAME','EASE','AMPLIFY','SCALE_DRAG','OFFSET_DRAG'):
                 for mode in ('INLINE','POPOUT'):
@@ -192,4 +219,5 @@ if __name__ == '__main__':
     parser.add_argument('--only-action', help='Diagnostic single button run; not a full verification gate')
     parser.add_argument('--diagnostic-push', action='store_true', help='Diagnose missing native undo checkpoint; never use for qualification')
     parser.add_argument('--adapters', action='store_true', help='Exercise new scalar adapters before row integration')
+    parser.add_argument('--ui', action='store_true', help='Exercise actual row controls and native settings windows')
     run(parser.parse_args())
