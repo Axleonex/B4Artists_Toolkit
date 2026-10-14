@@ -5,7 +5,10 @@ Approved by the owner: "okay do that" after the in-Timeline row explanation.
 Anim Assist draws a narrow toolbar in the Timeline canvas beside the native
 header, below a top header or above a bottom header. This is an add-on overlay,
 not a new header region. Native header controls remain in their original row.
-No application patch, helper editor, geometry mutation or resize-repair timer.
+No application patch, helper editor or resize-repair timer. A collapsed Timeline
+gets room once during initialization when native border resizing is available;
+later manual resizing is retained. A completely collapsed canvas cannot display
+the band. This is a physical layout limit, not a hidden preference.
 
 ## Experience and visual contract
 
@@ -20,10 +23,13 @@ into More rather than extend the native header or draw inaccessible controls.
 All family menus remain reachable. Explicit hide is reversible through the
 Anim Assist menu and preferences; enabled by default. Saved pins remain intact.
 
-Use native Gizmo hit testing and operator dispatch in the Timeline WINDOW
-region, rather than an always-running modal mouse interceptor. Hover provides
+Use the supported POST_PIXEL draw handler and native Dopesheet keymaps for
+operator dispatch, rather than an always-running modal mouse interceptor.
+Bforartists' required 2D Gizmo flag is not exposed to Python. Hover provides
 operator help and unavailable reasons. Input outside the band remains native.
 The band covers a narrow part of the canvas; it does not move frame/key geometry.
+With a top header, the frame ruler sits between the native header and the band
+so Bforartists' native frame indicator cannot obscure a button.
 
 ## Acceptance
 

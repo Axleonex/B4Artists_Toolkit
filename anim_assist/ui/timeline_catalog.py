@@ -1,4 +1,4 @@
-"""Existing actions exposed in the native Timeline toolbar, grouped by task.
+"""Existing actions exposed in the add-on Timeline toolbar, grouped by task.
 
 Concept mapping: docs/anim_assist/releases/12.3.0/animbot-matches.md.
 Names describe our actual scope; they do not promise animBot feature parity.

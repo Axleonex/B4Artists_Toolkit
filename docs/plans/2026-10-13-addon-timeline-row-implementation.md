@@ -1,12 +1,13 @@
 # Add-on Timeline row implementation plan
 
 **Goal:** The approved second visible tool row in existing Bforartists, delivered
-only as an add-on. Architecture: theme-derived custom Gizmos in Timeline WINDOW,
-existing catalogue and operators, event-driven drawing with no editor mutations.
-Tech stack: bpy Gizmo/GizmoGroup, gpu, blf and the existing tool catalogue.
+only as an add-on. Architecture: theme-derived pixel drawing and native keymaps,
+existing catalogue and operators, event-driven drawing with no helper editor.
+Tech stack: bpy draw handlers/keymaps, gpu, blf and the existing tool catalogue.
+The real-host probe ruled out Python Gizmos: Bforartists' 2D UI flag is unexposed.
 
 1. Add `anim_assist/ui/timeline_overlay.py`: pure width/layout function, native
-   hit-tested controls, menu/panel dispatcher, theme rendering and lifecycle.
+   keymap controls, menu/panel dispatcher, theme rendering and lifecycle.
 2. Integrate `ui/timeline_strip.py` registration and remove its native-host
    dependency and legacy joining/sync timers. Keep menus, action guard and settings.
 3. Change `ui/header_toolbars.py`, `ui/headers.py` and `prefs.py`: stop appending

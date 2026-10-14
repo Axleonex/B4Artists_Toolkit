@@ -1,0 +1,34 @@
+[
+  {
+    "label": "disable removes row and keymaps",
+    "ok": true
+  },
+  {
+    "label": "re-enable exactly one row/keymap set",
+    "ok": true
+  },
+  {
+    "label": "move to border",
+    "ok": true
+  },
+  {
+    "label": "native border press",
+    "ok": true
+  },
+  {
+    "label": "native drag",
+    "ok": true
+  },
+  {
+    "label": "in-gesture row bounds and render",
+    "ok": true
+  },
+  {
+    "label": "release native drag",
+    "ok": true
+  },
+  {
+    "label": "manual height retained",
+    "ok": true
+  }
+]
