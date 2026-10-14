@@ -51,26 +51,6 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - Anim Assist, Ghost Tool and BoneCraft require Bforartists.
 
-- The exact 4.2.11 ZIP passes 123 focused startup and toolbar checks in Bforartists 5.2.0 (Blender runtime 5.3.0 Alpha), build hash 0a1ca45552db: 80 background checks, 35 native split-view checks and eight saved-preference startup checks. The startup isolation profile disables width writes. A separate width run passes ten preliminary checks for the initial N-panel match and manual resize preservation, but its preference-reset check fails when displayed and stored widths disagree; the guard declines the write. Later fallback and scale checks were not reached. JellyTest.blend has not been tested. See the [package receipt](docs/ghost_tool/releases/4.2.11/package-receipt.json).
-
-- Historical Ghost Tool 4.2.9 passed **89 focused tests/checks in Bforartists 5.2.0** from its exact ZIP: 54 background tests and 35 native split-view checks. Named options, the master switch, full-row consistency, panning and cached-state preservation pass. See the [package receipt](docs/ghost_tool/releases/4.2.9/package-receipt.json).
-
-- Historical Ghost Tool 4.2.8 passed **77 focused tests/checks in Bforartists 5.2.0** from the exact ZIP: 53 background tests and 24 native split-view checks. Object/Pose, UI scale, new splits, horizontal panning, hide/show and frame/cache preservation pass. See the [package receipt](docs/ghost_tool/releases/4.2.8/package-receipt.json). Production rigs, full keyboard navigation and alternate themes remain unverified.
-
-- Historical Ghost Tool 4.2.7 passed **148 checks/cases in actual Bforartists 5.2.0** from the exact ZIP: 118 background checks and 30 GUI checks for fresh defaults and legacy-header migration. See the [package receipt](docs/ghost_tool/releases/4.2.7/package-receipt.json). Production-rig acceptance and a complete visual check of every display location remain pending.
-
-- **Bforartists 4.2+** (Anim Assist) / **Bforartists 4.x** (Ghost Tool). None of these add-ons are compatible with standard Blender.
-- Historical Ghost Tool 4.2.6 passed **178 checks/cases** on a **Blender 5.1.2 stand-in**, including four native toolbar layouts and five native auto-key cases. See the [4.2.6 package receipt](docs/ghost_tool/releases/4.2.6/package-receipt.json). Native Bforartists validation remains pending. The older results below belong to their named builds.
-- Historical Ghost Tool 4.2.0 r4 and BoneCraft 9.1.2 checks passed on **Bforartists 5.2.0**, with Blender runtime 5.3.0 Alpha, build `0a1ca45552db`. See the [verification summary](docs/releases/2026-10-11/VERIFICATION.md) for scope and limits.
-- Historical Ghost Tool 4.2.1 had 229 passing checks on a **Blender 5.1.2 stand-in**, including 13 authoring regressions. Ten supplemental cases fail the same way on 4.2.0 because of stand-in host limitations. See the [4.2.1 verification report](docs/ghost_tool/authoring-fix/verification.md). Bforartists viewport validation was pending for that release.
-
-- Historical Ghost Tool 4.2.2 passed **230 background checks across nine suites** and **five native auto-key cases** on a Blender 5.1.2 stand-in. See the [4.2.2 verification report](docs/ghost_tool/authoring-pause/verification.md). These include actual native object/pose moves with live updates off and on, plus cancellation; Bforartists production-rig validation remained pending for that release.
-- Historical Ghost Tool 4.2.3 passed **50 of 51 focused checks** on the Blender stand-in, including all six target-fold checks and all 20 authoring regressions. The remaining native Tool Shelf assertion fails identically on 4.2.2 because it requires Bforartists. See the [4.2.3 verification report](docs/ghost_tool/marker-targets/verification.md).
-- Historical Ghost Tool 4.2.5 passed **96 of 96 focused checks** from the exact ZIP on the Blender stand-in, including location switching, Compare/marker folds, header, authoring and snapshot targets. Preference persistence and rendered header/right-sidebar layouts passed separate checks. Native Bforartists left Tool Shelf validation remained pending for that release. See the [location report](docs/ghost_tool/display-location/verification.md) and [Compare report](docs/ghost_tool/compare-targets/verification.md).
-
-- Historical Ghost Tool 4.2.4 passed **54 focused checks** on the Blender stand-in, including header UI, gesture regressions, all six target-fold checks and all 20 authoring regressions. See the [4.2.4 verification report](docs/ghost_tool/releases/4.2.4/VERIFICATION.md). Native Bforartists UI validation remained pending for that release.
-- BoneCraft 9.2.0 adds nine visible starter thumbnails, category filters, a shelf switch and dependency-aware Rigify activation. Native click/drop, cancellation and undo/redo pass on Bforartists 5.2.0; see the [starter catalog evidence](docs/bonecraft/starter-shelf-implementation/README.md).
-
 ## License
 
 Released under the **GNU General Public License v2.0 or later** — see [`LICENSE`](LICENSE).
