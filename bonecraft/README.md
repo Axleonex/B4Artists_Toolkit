@@ -47,6 +47,8 @@ Release changes and checks: [BoneCraft 9.2.0 release notes](../docs/bonecraft/re
 
 ## Manual
 
+New to rig controls? [IK/FK beginner walkthrough](docs/tutorials/ikfk-beginner.md) includes a narrated video and a practice file for Rigify Quick Rig and Auto-Rig Wizard controls. Captured with BoneCraft 9.1.3; see the guide for version details and the observed Rigify snapping limitation.
+
 The current English manual and six translated editions: [docs/README.md](docs/README.md). The translations have 9.1.2 release notes, but their usage chapters are not yet synchronized with the current English interface guide.
 
 Example file: [examples/crescent-rose](examples/crescent-rose/README.md) — Crescent Rose rigged with Mechanisms, built step by step in the manual's chapter 12.

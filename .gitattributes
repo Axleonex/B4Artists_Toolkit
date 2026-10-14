@@ -9,6 +9,7 @@
 *.blend binary
 *.png   binary
 *.jpg   binary
+*.mp4   binary
 
 # Python sources are text.
 *.py    text
