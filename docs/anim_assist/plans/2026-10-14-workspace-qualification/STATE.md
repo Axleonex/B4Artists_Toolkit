@@ -9,5 +9,7 @@ remain unverified; see REVIEW.md and release qualification.
 Local endpoint: addon-only 12.7.0, 53 workflow steps, 80 immediate effects,
 18 original modal cases, 21 native buttons, 32 slider cases, 56 recovery checks,
 23 pure tests. Package SHA256 47d25fe0568e7685ca46c58fe7cc5310bd34411f76debaf1839d312d61828027.
-No push, merge or publication. Next action only if requested: publication review
-and exact Confirm merge update after a before/after table.
+Branch pushed after exact approval; draft PR #6 is open and attached to this chat.
+Remote ZIP download matches the qualified hash. Main merge, v12.7.0 tag and
+standalone GitHub Release are not performed. Next action only if requested:
+review/merge with exact Confirm merge update after a before/after table.
