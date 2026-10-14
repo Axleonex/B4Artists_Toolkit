@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "undo-assert",
+    "code": "check('Single native undo restores toolbar action',object_snapshot(bpy.data.objects['VAL_Animated'])==undo_before)\nrow_check('Native rows after undo')\nresult='undone'"
+  },
+  "response": {
+    "id": "undo-assert",
+    "result": "undone",
+    "error": null
+  }
+}

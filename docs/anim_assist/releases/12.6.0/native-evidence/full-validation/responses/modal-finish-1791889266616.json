@@ -1,0 +1,15 @@
+{
+  "request": {
+    "id": "modal-finish-1791889266616",
+    "code": "result=modal_finish()"
+  },
+  "response": {
+    "id": "modal-finish-1791889266616",
+    "result": {
+      "action": "AMPLIFY",
+      "ending": "cancel",
+      "passed": true
+    },
+    "error": null
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "request": {
+    "id": "offset-cancel-live",
+    "code": "result=modal_live()\nxcurve=next(c for c in modal_live_snapshot if c['index']==0)\ncheck('live Action Offset propagates delta', [k['co'][1] for k in xcurve['keys']]==[1,5,2],[k['co'][1] for k in xcurve['keys']],[1,5,2])"
+  },
+  "response": {
+    "id": "offset-cancel-live",
+    "result": {
+      "changed": true,
+      "operators": [
+        "ANIMASSIST_OT_anim_offset"
+      ]
+    },
+    "error": null
+  }
+}

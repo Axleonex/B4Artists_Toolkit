@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "hidden-load-ui-assert",
+    "code": "check('Saved hidden layout loaded with UI',all(not a.spaces.active.show_region_tool_header and a.spaces.active.timeline_toolbar_hidden_by_user for w,a in timelines()),geometry())\nprefs=importlib.import_module(PACKAGE+'.prefs').get_prefs(bpy.context)\nprefs.timeline_toolbar_row=False; prefs.timeline_toolbar_row=True\nresult='explicit reveal'"
+  },
+  "response": {
+    "id": "hidden-load-ui-assert",
+    "result": "explicit reveal",
+    "error": null
+  }
+}

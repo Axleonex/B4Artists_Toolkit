@@ -1,0 +1,15 @@
+{
+  "request": {
+    "id": "native-hide-schema",
+    "code": "result=[p.identifier for p in bpy.ops.screen.timeline_toolbar_set.get_rna_type().properties]"
+  },
+  "response": {
+    "id": "native-hide-schema",
+    "result": [
+      "rna_type",
+      "enabled",
+      "user_action"
+    ],
+    "error": null
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "request": {
+    "id": "offset-commit-finish",
+    "code": "result=modal_finish()"
+  },
+  "response": {
+    "id": "offset-commit-finish",
+    "result": {
+      "action": "OFFSET",
+      "ending": "commit",
+      "passed": true
+    },
+    "error": null
+  }
+}

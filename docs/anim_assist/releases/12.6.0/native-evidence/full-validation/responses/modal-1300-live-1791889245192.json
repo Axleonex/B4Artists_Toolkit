@@ -1,0 +1,16 @@
+{
+  "request": {
+    "id": "modal-1300-live-1791889245192",
+    "code": "result=modal_live()"
+  },
+  "response": {
+    "id": "modal-1300-live-1791889245192",
+    "result": {
+      "changed": true,
+      "operators": [
+        "ANIMASSIST_OT_ease_to_ease"
+      ]
+    },
+    "error": null
+  }
+}

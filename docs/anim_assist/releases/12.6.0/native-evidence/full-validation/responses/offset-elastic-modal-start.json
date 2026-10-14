@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "offset-elastic-modal-start",
+    "code": "result=modal_start('OFFSET','cancel',elastic=True)"
+  },
+  "response": {
+    "id": "offset-elastic-modal-start",
+    "result": {
+      "action": "OFFSET",
+      "ending": "cancel",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_anim_offset"
+      ]
+    },
+    "error": null
+  }
+}

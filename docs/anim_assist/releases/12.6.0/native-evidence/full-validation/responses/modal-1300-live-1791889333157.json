@@ -1,0 +1,16 @@
+{
+  "request": {
+    "id": "modal-1300-live-1791889333157",
+    "code": "result=modal_live()"
+  },
+  "response": {
+    "id": "modal-1300-live-1791889333157",
+    "result": {
+      "changed": true,
+      "operators": [
+        "ANIMASSIST_OT_p6_modal_offset"
+      ]
+    },
+    "error": null
+  }
+}

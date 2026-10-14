@@ -1,0 +1,15 @@
+{
+  "request": {
+    "id": "modal-finish-1791889238120",
+    "code": "result=modal_finish()"
+  },
+  "response": {
+    "id": "modal-finish-1791889238120",
+    "result": {
+      "action": "EASE",
+      "ending": "cancel",
+      "passed": true
+    },
+    "error": null
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "redo-retest-prepare",
+    "code": "with timeline_context():\n undo_obj,_=fixture()\n bpy.context.scene.frame_set(10)\n undo_before=object_snapshot(undo_obj)\n bpy.ops.ed.undo_push(message='VAL clean baseline')\nresult='fresh'"
+  },
+  "response": {
+    "id": "redo-retest-prepare",
+    "result": "fresh",
+    "error": null
+  }
+}

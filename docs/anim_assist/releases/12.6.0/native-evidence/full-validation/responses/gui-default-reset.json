@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "gui-default-reset",
+    "code": "check('GUI Reset restores 13 defaults',set(cat.selected_quick_actions(prefs))==set(cat.DEFAULT_QUICK_ACTIONS),list(cat.selected_quick_actions(prefs)),list(cat.DEFAULT_QUICK_ACTIONS))\nresult='all families reset'"
+  },
+  "response": {
+    "id": "gui-default-reset",
+    "result": "all families reset",
+    "error": null
+  }
+}

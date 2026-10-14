@@ -1,0 +1,37 @@
+{
+  "release": "Historical Anim Assist 12.6.0 custom Windows application",
+  "status": "historical custom application; withdrawn from the public release; not the current add-on installation",
+  "application": "Custom Bforartists 5.2.0",
+  "application_source_baseline": "v5.2.0",
+  "native_patch_commit": "f5f550195e2299239f020f8e5b3cc5c391dadb43",
+  "native_patch_sha256": "4a5e5d80402c55104621f49e625a94ac7adeec629317c3b4d58e87661c5050d2",
+  "application_archive": "Bforartists_5.2.0_AnimAssist_12.6.0_Windows_x64.zip",
+  "application_archive_location": "G:\\LapArt\\Local-Releases\\AnimAssist\\12.6.0\\Bforartists_5.2.0_AnimAssist_12.6.0_Windows_x64.zip",
+  "application_archive_bytes": 418370656,
+  "application_archive_sha256": "40eb5bec354cb4296301aa376fc3e513d6620a9ab83ff5a4e2eb89b10cb85503",
+  "application_executable_bytes": 122898944,
+  "application_executable_sha256": "f6647c50792f1be94ff1473c83cdd19c33702ea6181c2188a0d54175a898587b",
+  "addon_archive": "b4_anim_assist_v12.6.0.zip",
+  "addon_archive_bytes": 577101,
+  "addon_archive_sha256": "60d4c7f10d9f14adde17e0cd5269bb07d4a4fc8f96810a4cd6e67903e5e73193",
+  "runtime_file_count": 8818,
+  "excluded_pdb_symbol_files": 3,
+  "observed": [
+    "All80 immediate action effects in patched and genuine unpatched hosts",
+    "All9 native modal actions with live geometry, commit and cancellation",
+    "Fresh row, pin/search/reset/empty/custom process persistence",
+    "Editor resize in-gesture framebuffer samples at100%/150%; settled window resizing",
+    "Migration, saved layouts, workspaces, multiple windows and maximized visibility lifecycle",
+    "Native playback/scrub/keying/Undo/Redo; exact203 installed archive files"
+  ],
+  "limits": [
+    "Window-border native renders cover before/after only; universal absence of flicker not certified",
+    "Windows global display DPI transitions unrun pending authorization",
+    "Representative fixtures do not establish exhaustive production-rig or full AnimBot parity"
+  ],
+  "formal_tests": "Native GUI integration assertions plus actual input; tests/summarize_native_validation.py audited evidence",
+  "published": false,
+  "validation_summary": "native-evidence/full-validation/summary.json",
+  "release_url": "https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/v12.6.0",
+  "published_at": "2026-10-14T00:48:17Z"
+}

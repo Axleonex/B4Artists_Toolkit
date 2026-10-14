@@ -1,0 +1,62 @@
+{
+  "binary": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\portable\\bforartists.exe",
+  "build_hash": "f5f550195e22",
+  "config": "C:\\Users\\AtonLotus\\AppData\\Local\\Temp\\aa-native-build\\validation-20261013-full\\config",
+  "geometry": [
+    {
+      "window": 2540248978848,
+      "screen": "Main",
+      "area": 2540252630304,
+      "x": 2,
+      "y": 23,
+      "width": 997,
+      "height": 99,
+      "visible": true,
+      "hidden_by_user": false,
+      "regions": [
+        {
+          "type": "TOOL_HEADER",
+          "x": 2,
+          "y": 96,
+          "width": 997,
+          "height": 26
+        },
+        {
+          "type": "HEADER",
+          "x": 2,
+          "y": 70,
+          "width": 997,
+          "height": 26
+        },
+        {
+          "type": "FOOTER",
+          "x": 2,
+          "y": 23,
+          "width": 1,
+          "height": 1
+        },
+        {
+          "type": "CHANNELS",
+          "x": 2,
+          "y": 23,
+          "width": 1,
+          "height": 1
+        },
+        {
+          "type": "UI",
+          "x": 998,
+          "y": 23,
+          "width": 1,
+          "height": 1
+        },
+        {
+          "type": "WINDOW",
+          "x": 2,
+          "y": 23,
+          "width": 997,
+          "height": 47
+        }
+      ]
+    }
+  ]
+}

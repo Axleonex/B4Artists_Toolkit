@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "redo-instrument",
+    "code": "addon_utils.disable(PACKAGE,default_set=False)\nkeymod=importlib.import_module(PACKAGE+'.operators.keymanager_ops')\noriginal_move_execute=keymod.ANIMASSIST_OT_move_keys.execute\ndef tagged_move_execute(self,context):\n result=original_move_execute(self,context)\n if 'FINISHED' in result: context.object.animation_data.action.update_tag()\n return result\nkeymod.ANIMASSIST_OT_move_keys.execute=tagged_move_execute\naddon_utils.enable(PACKAGE,default_set=False,persistent=True)\nbpy.ops.wm.open_mainfile(filepath=str(ROOT/'undo-fixture.blend'))\nresult='instrumented tag only'"
+  },
+  "response": {
+    "id": "redo-instrument",
+    "result": "instrumented tag only",
+    "error": null
+  }
+}

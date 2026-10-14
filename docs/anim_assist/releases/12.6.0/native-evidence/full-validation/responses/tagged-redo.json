@@ -1,0 +1,18 @@
+{
+  "request": {
+    "id": "tagged-redo",
+    "code": "result=dict(equal=object_snapshot(bpy.data.objects['VAL_Animated'])==undo_live,frames=[k['co'][0] for k in object_snapshot(bpy.data.objects['VAL_Animated'])[0]['keys']])"
+  },
+  "response": {
+    "id": "tagged-redo",
+    "result": {
+      "equal": false,
+      "frames": [
+        1,
+        20,
+        40
+      ]
+    },
+    "error": null
+  }
+}

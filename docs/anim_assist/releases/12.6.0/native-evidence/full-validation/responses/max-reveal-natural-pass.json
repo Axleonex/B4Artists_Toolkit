@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "max-reveal-natural-pass",
+    "code": "row_check('Explicit show after settled maximized return')\nresult='passed'"
+  },
+  "response": {
+    "id": "max-reveal-natural-pass",
+    "result": "passed",
+    "error": null
+  }
+}

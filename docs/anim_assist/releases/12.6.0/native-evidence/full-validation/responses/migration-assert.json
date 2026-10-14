@@ -1,0 +1,67 @@
+{
+  "request": {
+    "id": "migration-assert",
+    "code": "check('Legacy adjacent strip joined once',len(bpy.context.window.screen.areas)==original_areas-1, len(bpy.context.window.screen.areas),original_areas-1)\ncheck('Legacy migration retains Timeline',timelines()[0][1].as_pointer()==original_timeline)\ncheck('Legacy migration retains curves',object_snapshot(migration_obj)==migration_before)\nrow_check('Migrated native rows visible')\nresult=geometry()"
+  },
+  "response": {
+    "id": "migration-assert",
+    "result": [
+      {
+        "window": 2192258377504,
+        "screen": "Main",
+        "area": 2191846185504,
+        "x": 2,
+        "y": 23,
+        "width": 1597,
+        "height": 923,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 2,
+            "y": 920,
+            "width": 1597,
+            "height": 26
+          },
+          {
+            "type": "HEADER",
+            "x": 2,
+            "y": 894,
+            "width": 1597,
+            "height": 26
+          },
+          {
+            "type": "FOOTER",
+            "x": 2,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 2,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "UI",
+            "x": 1598,
+            "y": 23,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 2,
+            "y": 23,
+            "width": 1597,
+            "height": 871
+          }
+        ]
+      }
+    ],
+    "error": null
+  }
+}

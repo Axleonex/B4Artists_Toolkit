@@ -1,0 +1,19 @@
+{
+  "request": {
+    "id": "window100-assert",
+    "code": "row_check('Native rows after real window resize 100%')\nresult=flush_capture('window100-pixels')"
+  },
+  "response": {
+    "id": "window100-assert",
+    "result": {
+      "samples": 12,
+      "kind_counts": {
+        "TOOL_HEADER": 4,
+        "HEADER": 4,
+        "WINDOW": 4
+      },
+      "errors": []
+    },
+    "error": null
+  }
+}

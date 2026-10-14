@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "preference-identity-probe",
+    "code": "a=offset_mod._addon_prefs(bpy.context)\nb=bpy.context.preferences.addons[PACKAGE].preferences\nresult={'resolved':repr(a),'direct':repr(b),'resolved_pointer':a.as_pointer() if a else None,'direct_pointer':b.as_pointer(),'equal':a==b}"
+  },
+  "response": {
+    "id": "preference-identity-probe",
+    "result": {
+      "resolved": "<bpy_struct, AA_AddonPreferences at 0x000001FE578D2518>",
+      "direct": "<bpy_struct, AA_AddonPreferences at 0x000001FE578D2518>",
+      "resolved_pointer": 2191902188824,
+      "direct_pointer": 2191902188824,
+      "equal": true
+    },
+    "error": null
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "request": {
+    "id": "window100-valid-pass",
+    "code": "check('Actual window width resize 100%',bpy.context.window.width!=window_dims[0],bpy.context.window.width,window_dims[0])\nrow_check('Rows after actual window resize 100%')\nresult=flush_capture('window100-valid-pixels')"
+  },
+  "response": {
+    "id": "window100-valid-pass",
+    "result": {
+      "samples": 6,
+      "kind_counts": {
+        "TOOL_HEADER": 2,
+        "HEADER": 2,
+        "WINDOW": 2
+      },
+      "errors": []
+    },
+    "error": null
+  }
+}

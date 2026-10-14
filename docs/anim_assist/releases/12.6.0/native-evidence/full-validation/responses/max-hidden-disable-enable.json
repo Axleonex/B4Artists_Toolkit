@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "max-hidden-disable-enable",
+    "code": "with timeline_context():\n bpy.ops.screen.timeline_toolbar_set(enabled=False,user_action=True)\n bpy.ops.screen.screen_full_area(use_hide_panels=False)\naddon_utils.disable(PACKAGE,default_set=False)\naddon_utils.enable(PACKAGE,default_set=False,persistent=True)\nresult='maximized hidden reenable'"
+  },
+  "response": {
+    "id": "max-hidden-disable-enable",
+    "result": "maximized hidden reenable",
+    "error": null
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "request": {
+    "id": "offset-commit-live",
+    "code": "result=modal_live()"
+  },
+  "response": {
+    "id": "offset-commit-live",
+    "result": {
+      "changed": true,
+      "operators": [
+        "ANIMASSIST_OT_anim_offset"
+      ]
+    },
+    "error": null
+  }
+}

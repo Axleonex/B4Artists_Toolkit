@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "offset-first-frame-edit",
+    "code": "modal_obj.location.x=5\nmodal_obj.keyframe_insert(data_path='location',index=0,frame=20)\nresult='edit20'"
+  },
+  "response": {
+    "id": "offset-first-frame-edit",
+    "result": "edit20",
+    "error": null
+  }
+}

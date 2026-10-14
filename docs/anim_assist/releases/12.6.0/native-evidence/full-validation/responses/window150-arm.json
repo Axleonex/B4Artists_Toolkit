@@ -1,0 +1,14 @@
+{
+  "request": {
+    "id": "window150-arm",
+    "code": "arm_capture('window150-valid-pixels',30)\nwindow_dims=(bpy.context.window.width,bpy.context.window.height)\nresult=window_dims"
+  },
+  "response": {
+    "id": "window150-arm",
+    "result": [
+      800,
+      800
+    ],
+    "error": null
+  }
+}

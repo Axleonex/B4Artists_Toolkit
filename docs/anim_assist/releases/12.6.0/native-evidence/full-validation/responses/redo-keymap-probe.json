@@ -1,0 +1,19 @@
+{
+  "request": {
+    "id": "redo-keymap-probe",
+    "code": "result=[(km.name,kmi.type,kmi.ctrl,kmi.shift,kmi.alt) for km in bpy.context.window_manager.keyconfigs.active.keymaps for kmi in km.keymap_items if kmi.idname=='ed.redo']"
+  },
+  "response": {
+    "id": "redo-keymap-probe",
+    "result": [
+      [
+        "Screen",
+        "Z",
+        1,
+        1,
+        0
+      ]
+    ],
+    "error": null
+  }
+}

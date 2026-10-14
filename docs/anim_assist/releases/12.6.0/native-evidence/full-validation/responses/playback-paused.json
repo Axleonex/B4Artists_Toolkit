@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "playback-paused",
+    "code": "check('Native pause works',not bpy.context.screen.is_animation_playing)\nscrub_before=bpy.context.scene.frame_current\nresult=scrub_before"
+  },
+  "response": {
+    "id": "playback-paused",
+    "result": 16,
+    "error": null
+  }
+}

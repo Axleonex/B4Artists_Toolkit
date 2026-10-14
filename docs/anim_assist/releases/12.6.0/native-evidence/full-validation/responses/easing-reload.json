@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "easing-reload",
+    "code": "addon_utils.disable(PACKAGE,default_set=False)\noffset_mod=importlib.reload(importlib.import_module(PACKAGE+'.operators.anim_offset_ops'))\nimportlib.reload(importlib.import_module(PACKAGE+'.operators'))\naddon_utils.enable(PACKAGE,default_set=False,persistent=True)\nbpy.context.preferences.use_preferences_save=False\nresult='reloaded'"
+  },
+  "response": {
+    "id": "easing-reload",
+    "result": "reloaded",
+    "error": null
+  }
+}

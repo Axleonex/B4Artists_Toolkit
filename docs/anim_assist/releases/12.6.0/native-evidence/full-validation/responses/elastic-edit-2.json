@@ -1,0 +1,10 @@
+{
+  "request": {
+    "id": "elastic-edit-2",
+    "code": "curves=offset_mod.get_fcurves(modal_obj.animation_data.action,modal_obj)\nfor fc in curves: fc.keyframe_points.insert(25,-5)\nmodal_obj.location.x=5\nmodal_obj.keyframe_insert(data_path='location',index=0,frame=20)\nresult='edited'"
+  },
+  "response": {
+    "id": "elastic-edit-2",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\AtonLotus\\.codex\\worktrees\\anim-assist-12-3-1\\B4Artists_Tools\\tests\\native_timeline_validation.py\", line 203, in bridge\n    if action=='BAKE_CLEANUP': bpy.ops.animassist.p7_create_proxy(proxy_type='WORLD_SPACE')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 1, in <module>\nTypeError: get_fcurves() takes 1 positional argument but 2 were given\n"
+  }
+}
