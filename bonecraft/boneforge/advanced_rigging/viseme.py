@@ -370,12 +370,14 @@ class BONEFORGE_UL_visemes(UIList):
 
 
 class BONEFORGE_PT_p2c_viseme_library(Panel):
-    """Viseme Library panel in Animation tab."""
+    """General facial pose library in CATS > Avatar Tools."""
     bl_label = " "
     bl_idname = "BONEFORGE_PT_p2c_viseme_library"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "BoneCraft"
+    bl_category = "CATS"
+    bl_parent_id = "BF_PT_sb_vrchat"
+    bl_order = 6
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
@@ -431,7 +433,7 @@ class BONEFORGE_PT_p2c_lip_sync(Panel):
     bl_idname = "BONEFORGE_PT_p2c_lip_sync"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "BoneCraft"
+    bl_category = "CATS"
     bl_parent_id = "BONEFORGE_PT_p2c_viseme_library"
     bl_options = {'DEFAULT_CLOSED'}
 

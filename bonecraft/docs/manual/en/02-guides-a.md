@@ -4,6 +4,8 @@
 
 ## Guide 1: Get Your First Avatar Into VRChat
 
+For a practice mesh before using your own avatar, follow the [illustrated mannequin workshop](06-rig-builder.md#illustrated-mannequin-workshop): Simple Human, a rigless mannequin, Auto-Rig, then IK/FK.
+
 > **Time:** About 45–60 minutes for a complete first run
 > **Result:** A rigged, VRChat-ready avatar exported for the VRChat SDK
 

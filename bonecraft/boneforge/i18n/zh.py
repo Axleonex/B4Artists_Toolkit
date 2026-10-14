@@ -762,6 +762,10 @@ STRINGS: dict[str, str] = {
     "2. Shift-click the base armature last (active)": "2. 最后按住 Shift 点击基础骨架（活动）",
     "3. Click Merge Clothing": "3. 点击合并服装",
     # CATS tab: Avatar Tools / VRChat Tools sections (2026-10-10)
+    "Facial": "面部",
+    "Face Tracking": "面部追踪",
+    "VRChat Viseme Mapping": "VRChat 口型映射",
+    "Performance, clothing, facial tools and naming: VRChat Tools, below.": "性能、服装、面部工具和命名：下方的 VRChat 工具。",
     "Avatar Tools": "虚拟形象工具",
     "VRChat Tools": "VRChat 工具",
     "Performance": "性能",

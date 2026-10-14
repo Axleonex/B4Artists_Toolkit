@@ -762,6 +762,10 @@ STRINGS: dict[str, str] = {
     "2. Shift-click the base armature last (active)": "2. Mayús+clic en la armadura base al final (activa)",
     "3. Click Merge Clothing": "3. Haz clic en Combinar Ropa",
     # CATS tab: Avatar Tools / VRChat Tools sections (2026-10-10)
+    "Facial": "Rostro",
+    "Face Tracking": "Seguimiento facial",
+    "VRChat Viseme Mapping": "Asignación de visemas de VRChat",
+    "Performance, clothing, facial tools and naming: VRChat Tools, below.": "Rendimiento, ropa, herramientas faciales y nombres: Herramientas VRChat, abajo.",
     "Avatar Tools": "Herramientas de Avatar",
     "VRChat Tools": "Herramientas de VRChat",
     "Performance": "Rendimiento",

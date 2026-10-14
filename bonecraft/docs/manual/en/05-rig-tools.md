@@ -98,6 +98,8 @@ Blend applies immediately. Set the blend strength in Adjust Last Operation after
 
 ### Control Layer (IK/FK)
 
+For an illustrated hands-on comparison, follow [Test weights and use IK/FK](06-rig-builder.md#part-c-test-weights-and-use-ikfk).
+
 **What it does:** Animator controls for the limbs of a rig made by **Build Control Rig**: switch a limb between IK and FK without the limb jumping, and bake one into the other over a frame range.
 
 **Key controls:**

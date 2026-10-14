@@ -1,0 +1,13 @@
+{
+  "version": "9.2.2",
+  "commit": "bc91de5e0848add8d43e560de99c5d90a05e6da9",
+  "archive": "BoneCraft-BFA-9.2.2.zip",
+  "files": 232,
+  "bytes": 1234931,
+  "sha256": "72e31873d144f8411addf296bfb3dc1f96c1aafcfb6fac95921d6d7e79059bb6",
+  "crc_passed": true,
+  "all_files_match_source": true,
+  "five_placements_passed": true,
+  "other_tools_removed": true,
+  "live_window_verified": false
+}
