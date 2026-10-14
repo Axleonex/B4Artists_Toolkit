@@ -30,7 +30,7 @@ Location and Ghost-control visibility apply across ordinary viewports. Save pref
 
 ## Source and release status
 
-The current source and matching candidate ZIP are **4.2.10**. Install [b4_ghost_tool_v4.2.10.zip](../../../releases/b4_ghost_tool_v4.2.10.zip?raw=1). The published regular 4.2.9 release remains available. Pure width-policy checks pass; native shelf verification is blocked because Bforartists timed out during startup before the test script ran. See the [verification status](../releases/4.2.10/verification-status.json) and [release notes](../releases/4.2.10/RELEASE-NOTES.md). Earlier archives and the [original toolbar verification](verification.md) retain their tested versions.
+The current source and matching candidate ZIP are **4.2.10**. Install [b4_ghost_tool_v4.2.10.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.10.zip). The published regular 4.2.9 release remains available. Pure width-policy checks pass; native shelf verification is blocked because Bforartists timed out during startup before the test script ran. See the [verification status](../releases/4.2.10/verification-status.json) and [release notes](../releases/4.2.10/RELEASE-NOTES.md). Earlier archives and the [original toolbar verification](verification.md) retain their tested versions.
 
 ## Left shelf width and header placement
 

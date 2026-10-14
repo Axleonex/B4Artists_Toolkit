@@ -10,7 +10,7 @@ The guides describe the current interface. Detailed tool help remains available 
 
 Choose **Display Location** in Edit > Preferences > Add-ons > Ghost Tool. Switching reveals the selected region and chooses its Ghost Tool tab when supported. Save preferences normally to retain the choice. Other native panels stay available. A left-shelf choice on a host without Bforartists shelf tabs uses Top Toolbar and shows an explanation in preferences.
 
-Install the [4.2.10 candidate ZIP](../../releases/b4_ghost_tool_v4.2.10.zip?raw=1). Restart Bforartists after installation. Live updates default off; existing scenes retain their saved choices.
+Install the [4.2.10 candidate ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.10.zip). Restart Bforartists after installation. Live updates default off; existing scenes retain their saved choices.
 
 The earlier 3.3.0 PDF is retained under [archive/](archive/) for historical reference. It does not describe the current interface.
 

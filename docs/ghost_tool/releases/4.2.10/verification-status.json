@@ -8,8 +8,8 @@
   "source_archive_match": true,
   "candidate_manual_pdf": {
     "path": "docs/ghost_tool/GhostTool_User_Manual.pdf",
-    "bytes": 12321,
-    "sha256": "c6dab02d342072ee7a6a057dc5b916570f93e4fb134ad4e32ac1006963f88915",
+    "bytes": 12325,
+    "sha256": "a33854ba43ddb17676f266b22ec11fbbf20560f9beb394fbd1724a37b13c0aec",
     "pages": 4,
     "author": "GoingGhost"
   },
