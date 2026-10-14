@@ -1,0 +1,14 @@
+{
+  "request": {
+    "id": "window-height150-arm",
+    "code": "arm_capture('windowheight150-pixels',30)\nwindow_dims=(bpy.context.window.width,bpy.context.window.height)\nresult=window_dims"
+  },
+  "response": {
+    "id": "window-height150-arm",
+    "result": [
+      650,
+      800
+    ],
+    "error": null
+  }
+}

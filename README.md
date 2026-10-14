@@ -4,7 +4,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 
 | Tool | Version | What it does |
 |---|---|---|
-| **Anim Assist** | 12.5.1 | An animation workflow suite (~400 operators across 11 feature phases): key editing, breakdowns, trajectory polish, retiming, proxies, IK/FK matching, mirroring, animation layers, and a hybrid PREVIEW/SHIPPED lipsync system. Seven inline Timeline toolbar families provide configurable direct buttons for 70 existing presets. Repairs toolbar resizing and preserves native Timeline key space. Inspired by Maya's AnimBot. |
+| **Anim Assist** | 12.6.0 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 89 searchable and pinnable actions. Configurable quick buttons, Search and Pin are available in the existing Timeline header. Inspired by Maya's AnimBot. |
 | **Ghost Tool** | 4.2.10 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
 
 ### Optional add-on: BoneCraft (rigging)
@@ -17,35 +17,17 @@ BoneCraft is the **advanced version of [BoneForge](https://github.com/Axleonex/B
 
 See [`docs/bonecraft/`](docs/bonecraft/) for a short guide.
 
-> These tools were built with heavy AI assistance and are under active bug-fixing. If you hit an issue, a screenshot or a note about what you were doing helps a lot — please open an [issue](https://github.com/Axleonex/B4Artists_Toolkit/issues).
+If you hit an issue, please open an [issue](https://github.com/Axleonex/B4Artists_Toolkit/issues) with a screenshot and the steps that caused it.
 
 ## Download
 
-Click a link to download the add-on's `.zip`, then install it with the steps below. Don't unzip it — Bforartists installs directly from the `.zip`.
+Install add-on ZIPs directly in your existing Bforartists installation.
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.5.1 | [b4_anim_assist_v12.5.1.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.5.1.zip) |
+| Anim Assist 12.6.0 | [b4_anim_assist_v12.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/b4_anim_assist_v12.6.0.zip) |
 | Ghost Tool 4.2.10 candidate | [b4_ghost_tool_v4.2.10.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.10.zip) |
 | BoneCraft 9.2.1 (optional) | [BoneCraft-BFA-9.2.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip) |
-
-Anim Assist 12.5.1 keeps the configurable toolbar thin after resizing and reserves native Timeline key space. If the Timeline is too short, enlarge it to display the extra row. See the [layout repair and screenshots](docs/anim_assist/releases/12.5.1/RELEASE-NOTES.md). Targeted normal-GUI layout checks pass in a Blender stand-in; native Redo and trail geometry have known issues. Actual Bforartists and owner workflow acceptance remain pending. Details are in the [qualification report](docs/anim_assist/releases/12.5.1/qualification.md).
-
-BoneCraft 9.2.1 restores the native asset shelf so starter rigs appear alongside the other libraries; its [release notes](docs/bonecraft/releases/9.2.1/RELEASE-NOTES.md) record host and GUI verification. The unpublished Ghost Tool 4.2.10 candidate is designed to widen the left Ghost shelf once to match an open N-panel, with a 240 px fallback when closed, while preserving later manual resizing. It removes the duplicate main-header button while retaining every lower-row section, the direct Ghosts On switch and View-menu toolbar recovery. It keeps the complete Object/Pose toolbar in every split viewport, with native horizontal panning for overflow. It defaults to a visible Top Toolbar and migrates saved Top Header choices. Top Header has been removed from display settings. Shared feature options and cached visibility controls remain available. Marker Targets, Capture Targets and each saved reference's Snapshot Targets fold independently. Live updates default off and ghosts pause during native gestures. The candidate's native left-shelf behavior is not verified because the test host did not finish starting; Bforartists rig validation is also pending.
-
-See [`releases/VERSIONS.md`](releases/VERSIONS.md) for status and checksums. The unpublished 4.2.10 source candidate includes a matching repository ZIP and PDF guide; publication awaits native shelf evidence and owner approval. The regular Latest [Ghost Tool 4.2.9 release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/ghost-v4.2.9) remains available. Earlier releases remain available as history.
-
-The [Ghost toolbar guide](docs/ghost_tool/toolbar/README.md) covers the current 4.2.10 candidate. Earlier archives and their verification reports remain available as history.
-
-## Install
-
-1. In Bforartists, open **Edit -> Preferences -> Add-ons -> Install from Disk...**
-2. Pick the `.zip` you downloaded.
-3. Enable the add-on by ticking its checkbox.
-
-   When updating Ghost Tool to the 4.2.10 candidate, restart Bforartists after installation. Marker Targets, Capture Targets and Snapshot Targets open their full lists independently of the other tools. Saved scenes retain their existing live-update choices: turn off Live Update Markers and Live Update Skin to keep snapshots while scrubbing. Test a move with auto-key enabled; ghosts should refresh after you finish moving.
-
-   **Ghost Tool** defaults to a visible **Top Toolbar** in the native Tool Settings row. In **Edit > Preferences > Add-ons > Ghost Tool**, choose **Top Toolbar**, **Right Sidebar (N)** or **Left Tool Shelf (T)**. Saved Top Header choices migrate to the toolbar; saved sidebar, shelf and toolbar visibility choices remain intact. Its **Ghost** menu provides Hide Toolbar; **View > Show Ghost Toolbar** or its preference checkbox restores hidden controls. The duplicate main-header button is removed. Save preferences normally to retain your choice.
 
 ## Browse the source
 
@@ -61,7 +43,7 @@ The ZIPs package their recorded release source for one-click installation. The u
 
 Human-readable manuals are in [`docs/`](docs/):
 
-- [Anim Assist 12.5.1 toolbar layout repair](docs/anim_assist/releases/12.5.1/RELEASE-NOTES.md) — resizing, recovery and screenshots; the [quick-tool guide](docs/anim_assist/releases/12.5.0/USAGE.md) covers unchanged configuration and Breakdown anchors. [Suite manuals](docs/anim_assist/) cover the other animation tools.
+- [Anim Assist 12.6.0 add-on](docs/anim_assist/releases/12.6.0/RELEASE-NOTES.md) — installation, quick tools and validation; [tool access coverage](docs/anim_assist/releases/12.6.0/tool-access-coverage.md) records the actions and gestures. [Suite manuals](docs/anim_assist/) cover the other animation tools.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.10 candidate guide, PDF and toolbar notes
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.1 English manual and translation status
 

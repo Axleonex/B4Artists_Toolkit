@@ -1,0 +1,14 @@
+{
+  "request": {
+    "id": "final-catalogue-restart-run",
+    "code": "result=immediate_catalogue()"
+  },
+  "response": {
+    "id": "final-catalogue-restart-run",
+    "result": {
+      "count": 80,
+      "failed": []
+    },
+    "error": null
+  }
+}

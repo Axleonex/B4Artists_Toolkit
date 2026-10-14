@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "unmarked-assert",
+    "code": "check('Unmarked and nonadjacent editors preserved',len(bpy.context.window.screen.areas)==safety_areas)\ncheck('Nonadjacent marked assessment frozen',right.as_pointer() in toolbar._migration_attempted)\nleft.spaces.active.text['animassist_timeline_toolbar']=1\ntoolbar._sync()\ncheck('Later marked editor not migrated',len(bpy.context.window.screen.areas)==safety_areas)\nbpy.ops.wm.open_mainfile(filepath=str(ROOT/'validation-baseline.blend'))\nresult='restored'"
+  },
+  "response": {
+    "id": "unmarked-assert",
+    "result": "restored",
+    "error": null
+  }
+}

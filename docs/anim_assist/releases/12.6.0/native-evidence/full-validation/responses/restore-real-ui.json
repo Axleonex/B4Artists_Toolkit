@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "restore-real-ui",
+    "code": "bpy.utils.unregister_class(WM_OT_val_event_probe)\naddon_utils.disable(PACKAGE,default_set=False)\ntoolbar.ANIMASSIST_HT_timeline_tools.draw=original_header_draw\naddon_utils.enable(PACKAGE,default_set=False,persistent=True)\nbpy.ops.wm.open_mainfile(filepath=str(ROOT/'undo-fixture.blend'))\nresult='original unmodified Move Keys and toolbar restored'"
+  },
+  "response": {
+    "id": "restore-real-ui",
+    "result": "original unmodified Move Keys and toolbar restored",
+    "error": null
+  }
+}

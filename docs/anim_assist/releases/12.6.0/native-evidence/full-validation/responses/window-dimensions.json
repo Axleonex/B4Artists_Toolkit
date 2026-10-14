@@ -1,0 +1,71 @@
+{
+  "request": {
+    "id": "window-dimensions",
+    "code": "result=dict(width=bpy.context.window.width,height=bpy.context.window.height,geometry=geometry())"
+  },
+  "response": {
+    "id": "window-dimensions",
+    "result": {
+      "width": 1920,
+      "height": 1001,
+      "geometry": [
+        {
+          "window": 2192256327264,
+          "screen": "Main",
+          "area": 2192261187872,
+          "x": 2,
+          "y": 23,
+          "width": 1597,
+          "height": 156,
+          "visible": true,
+          "hidden_by_user": false,
+          "regions": [
+            {
+              "type": "TOOL_HEADER",
+              "x": 2,
+              "y": 153,
+              "width": 1597,
+              "height": 26
+            },
+            {
+              "type": "HEADER",
+              "x": 2,
+              "y": 127,
+              "width": 1597,
+              "height": 26
+            },
+            {
+              "type": "FOOTER",
+              "x": 2,
+              "y": 23,
+              "width": 1,
+              "height": 1
+            },
+            {
+              "type": "CHANNELS",
+              "x": 2,
+              "y": 23,
+              "width": 1,
+              "height": 1
+            },
+            {
+              "type": "UI",
+              "x": 1598,
+              "y": 23,
+              "width": 1,
+              "height": 1
+            },
+            {
+              "type": "WINDOW",
+              "x": 2,
+              "y": 23,
+              "width": 1597,
+              "height": 104
+            }
+          ]
+        }
+      ]
+    },
+    "error": null
+  }
+}

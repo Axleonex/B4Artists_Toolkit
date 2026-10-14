@@ -1,0 +1,434 @@
+[
+  {
+    "monotonic": 66487.1460378,
+    "epoch": 1791891708.2877994,
+    "label": "windowheight150-pixels",
+    "kind": "TOOL_HEADER",
+    "geometry": [
+      {
+        "window": 2258868203168,
+        "screen": "Main",
+        "area": 2258269059360,
+        "x": 3,
+        "y": 35,
+        "width": 536,
+        "height": 146,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 3,
+            "y": 143,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "HEADER",
+            "x": 3,
+            "y": 105,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "FOOTER",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "UI",
+            "x": 538,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 3,
+            "y": 35,
+            "width": 536,
+            "height": 70
+          }
+        ]
+      }
+    ],
+    "region": {
+      "x": 3,
+      "y": 143,
+      "width": 536,
+      "height": 38
+    },
+    "pixel_sha256": "5781d3da6a0fd92af78aa7349efda5555688d96ed1b99883f5d2aab11d414243",
+    "distinct_byte_values": 246,
+    "image": "000-TOOL_HEADER.png"
+  },
+  {
+    "monotonic": 66487.1492057,
+    "epoch": 1791891708.2909656,
+    "label": "windowheight150-pixels",
+    "kind": "HEADER",
+    "geometry": [
+      {
+        "window": 2258868203168,
+        "screen": "Main",
+        "area": 2258269059360,
+        "x": 3,
+        "y": 35,
+        "width": 536,
+        "height": 146,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 3,
+            "y": 143,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "HEADER",
+            "x": 3,
+            "y": 105,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "FOOTER",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "UI",
+            "x": 538,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 3,
+            "y": 35,
+            "width": 536,
+            "height": 70
+          }
+        ]
+      }
+    ],
+    "region": {
+      "x": 3,
+      "y": 105,
+      "width": 536,
+      "height": 38
+    },
+    "pixel_sha256": "9f8f82b9ffa119144a18183e1f25a30fb5da6bd8d3d921def607515a5ce96e3c",
+    "distinct_byte_values": 206,
+    "image": "001-HEADER.png"
+  },
+  {
+    "monotonic": 66487.1514071,
+    "epoch": 1791891708.2931643,
+    "label": "windowheight150-pixels",
+    "kind": "WINDOW",
+    "geometry": [
+      {
+        "window": 2258868203168,
+        "screen": "Main",
+        "area": 2258269059360,
+        "x": 3,
+        "y": 35,
+        "width": 536,
+        "height": 146,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 3,
+            "y": 143,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "HEADER",
+            "x": 3,
+            "y": 105,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "FOOTER",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "UI",
+            "x": 538,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 3,
+            "y": 35,
+            "width": 536,
+            "height": 70
+          }
+        ]
+      }
+    ],
+    "region": {
+      "x": 3,
+      "y": 35,
+      "width": 536,
+      "height": 70
+    },
+    "pixel_sha256": "9a0ea79b322a38c77da70951b4962a49c8405f0075ba2c1a9b1cc1791f1beeb0",
+    "distinct_byte_values": 141,
+    "image": "002-WINDOW.png"
+  },
+  {
+    "monotonic": 66487.3404363,
+    "epoch": 1791891708.482194,
+    "label": "windowheight150-pixels",
+    "kind": "TOOL_HEADER",
+    "geometry": [
+      {
+        "window": 2258868203168,
+        "screen": "Main",
+        "area": 2258269059360,
+        "x": 3,
+        "y": 35,
+        "width": 536,
+        "height": 146,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 3,
+            "y": 143,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "HEADER",
+            "x": 3,
+            "y": 105,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "FOOTER",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "UI",
+            "x": 538,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 3,
+            "y": 35,
+            "width": 536,
+            "height": 70
+          }
+        ]
+      }
+    ],
+    "region": {
+      "x": 3,
+      "y": 143,
+      "width": 536,
+      "height": 38
+    },
+    "pixel_sha256": "5781d3da6a0fd92af78aa7349efda5555688d96ed1b99883f5d2aab11d414243",
+    "distinct_byte_values": 246,
+    "image": "003-TOOL_HEADER.png"
+  },
+  {
+    "monotonic": 66487.3427662,
+    "epoch": 1791891708.484523,
+    "label": "windowheight150-pixels",
+    "kind": "HEADER",
+    "geometry": [
+      {
+        "window": 2258868203168,
+        "screen": "Main",
+        "area": 2258269059360,
+        "x": 3,
+        "y": 35,
+        "width": 536,
+        "height": 146,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 3,
+            "y": 143,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "HEADER",
+            "x": 3,
+            "y": 105,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "FOOTER",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "UI",
+            "x": 538,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 3,
+            "y": 35,
+            "width": 536,
+            "height": 70
+          }
+        ]
+      }
+    ],
+    "region": {
+      "x": 3,
+      "y": 105,
+      "width": 536,
+      "height": 38
+    },
+    "pixel_sha256": "9f8f82b9ffa119144a18183e1f25a30fb5da6bd8d3d921def607515a5ce96e3c",
+    "distinct_byte_values": 206,
+    "image": "004-HEADER.png"
+  },
+  {
+    "monotonic": 66487.3444375,
+    "epoch": 1791891708.4861946,
+    "label": "windowheight150-pixels",
+    "kind": "WINDOW",
+    "geometry": [
+      {
+        "window": 2258868203168,
+        "screen": "Main",
+        "area": 2258269059360,
+        "x": 3,
+        "y": 35,
+        "width": 536,
+        "height": 146,
+        "visible": true,
+        "hidden_by_user": false,
+        "regions": [
+          {
+            "type": "TOOL_HEADER",
+            "x": 3,
+            "y": 143,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "HEADER",
+            "x": 3,
+            "y": 105,
+            "width": 536,
+            "height": 38
+          },
+          {
+            "type": "FOOTER",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "CHANNELS",
+            "x": 3,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "UI",
+            "x": 538,
+            "y": 35,
+            "width": 1,
+            "height": 1
+          },
+          {
+            "type": "WINDOW",
+            "x": 3,
+            "y": 35,
+            "width": 536,
+            "height": 70
+          }
+        ]
+      }
+    ],
+    "region": {
+      "x": 3,
+      "y": 35,
+      "width": 536,
+      "height": 70
+    },
+    "pixel_sha256": "9a0ea79b322a38c77da70951b4962a49c8405f0075ba2c1a9b1cc1791f1beeb0",
+    "distinct_byte_values": 141,
+    "image": "005-WINDOW.png"
+  }
+]

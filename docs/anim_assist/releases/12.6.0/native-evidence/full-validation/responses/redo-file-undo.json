@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "redo-file-undo",
+    "code": "check('Saved fixture single undo',object_snapshot(bpy.data.objects['VAL_Animated'])==undo_before)\nresult='passed'"
+  },
+  "response": {
+    "id": "redo-file-undo",
+    "result": "passed",
+    "error": null
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "request": {
+    "id": "modal-DRAG-cancel-start",
+    "code": "result=modal_start('DRAG','cancel')"
+  },
+  "response": {
+    "id": "modal-DRAG-cancel-start",
+    "result": {
+      "action": "DRAG",
+      "ending": "cancel",
+      "native_modal_operators": [
+        "ANIMASSIST_OT_modal_drag_breakdown"
+      ]
+    },
+    "error": null
+  }
+}

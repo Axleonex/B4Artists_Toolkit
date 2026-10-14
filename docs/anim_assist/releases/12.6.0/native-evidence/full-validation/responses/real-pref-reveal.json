@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "real-pref-reveal",
+    "code": "row_check('Explicit reveal saved hidden layout')\nresult='passed'"
+  },
+  "response": {
+    "id": "real-pref-reveal",
+    "result": "passed",
+    "error": null
+  }
+}

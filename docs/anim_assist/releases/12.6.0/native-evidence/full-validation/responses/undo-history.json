@@ -1,0 +1,13 @@
+{
+  "request": {
+    "id": "undo-history",
+    "code": "with timeline_context(): result=sorted(bpy.ops.ed.undo_history('INVOKE_DEFAULT'))"
+  },
+  "response": {
+    "id": "undo-history",
+    "result": [
+      "FINISHED"
+    ],
+    "error": null
+  }
+}

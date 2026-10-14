@@ -1,0 +1,16 @@
+{
+  "request": {
+    "id": "modal-400-live-1791889349576",
+    "code": "result=modal_live()"
+  },
+  "response": {
+    "id": "modal-400-live-1791889349576",
+    "result": {
+      "changed": true,
+      "operators": [
+        "ANIMASSIST_OT_modal_drag_breakdown"
+      ]
+    },
+    "error": null
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "window100-arm",
+    "code": "arm_capture('window100-pixels',30)\nwindow_resize_before=geometry()\nresult='armed'"
+  },
+  "response": {
+    "id": "window100-arm",
+    "result": "armed",
+    "error": null
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "offset-fast-mask-edit",
+    "code": "prefs=bpy.context.preferences.addons[PACKAGE].preferences\nprefs.animassist_fast_offset=True\nmask=bpy.context.scene.anim_assist.mask\nmask.enabled=True; mask.start_frame=20; mask.end_frame=40; mask.blend_left=0; mask.blend_right=0\nmodal_obj.location.x=5\nmodal_obj.keyframe_insert(data_path='location',index=0,frame=20)\nresult='Edited native key with packaged fast mode and range mask'"
+  },
+  "response": {
+    "id": "offset-fast-mask-edit",
+    "result": "Edited native key with packaged fast mode and range mask",
+    "error": null
+  }
+}

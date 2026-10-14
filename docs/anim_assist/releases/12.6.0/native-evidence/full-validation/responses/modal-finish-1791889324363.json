@@ -1,0 +1,15 @@
+{
+  "request": {
+    "id": "modal-finish-1791889324363",
+    "code": "result=modal_finish()"
+  },
+  "response": {
+    "id": "modal-finish-1791889324363",
+    "result": {
+      "action": "OFFSET_DRAG",
+      "ending": "cancel",
+      "passed": true
+    },
+    "error": null
+  }
+}

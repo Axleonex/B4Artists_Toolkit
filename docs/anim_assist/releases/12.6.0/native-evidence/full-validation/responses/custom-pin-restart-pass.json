@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "custom-pin-restart-pass",
+    "code": "prefs=importlib.import_module(PACKAGE+'.prefs').get_prefs(bpy.context)\ncheck('Custom pins persist across full process restart',set(cat.selected_quick_actions(prefs))==set(cat.DEFAULT_QUICK_ACTIONS)|{'COPY_KEYS'},list(cat.selected_quick_actions(prefs)))\nrow_check('Fresh process default row with custom pins')\nresult='restart passed'"
+  },
+  "response": {
+    "id": "custom-pin-restart-pass",
+    "result": "restart passed",
+    "error": null
+  }
+}

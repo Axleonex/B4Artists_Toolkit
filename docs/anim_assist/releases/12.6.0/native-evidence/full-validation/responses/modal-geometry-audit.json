@@ -1,0 +1,11 @@
+{
+  "request": {
+    "id": "modal-geometry-audit",
+    "code": "def curve_geometry(s): return [[(k['co'],k['left'],k['right']) for k in c['keys']] for c in s]\nfor case in modal_records: check('Geometry effect '+case['action']+' '+case['ending'],curve_geometry(case['before'])!=curve_geometry(case['live']))\nresult=len(modal_records)"
+  },
+  "response": {
+    "id": "modal-geometry-audit",
+    "result": 21,
+    "error": null
+  }
+}

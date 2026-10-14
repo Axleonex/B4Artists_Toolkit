@@ -1,0 +1,13 @@
+{
+  "request": {
+    "id": "restart-hidden-save-corrected",
+    "code": "with timeline_context(): hide_status=sorted(bpy.ops.screen.timeline_toolbar_set(enabled=False,user_action=True))\ncheck('Hidden fixture stored flag before save',all(not a.spaces.active.show_region_tool_header and a.spaces.active.timeline_toolbar_hidden_by_user for w,a in timelines()),geometry())\nbpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'restart-hidden-confirmed.blend'))\nresult=hide_status"
+  },
+  "response": {
+    "id": "restart-hidden-save-corrected",
+    "result": [
+      "FINISHED"
+    ],
+    "error": null
+  }
+}
