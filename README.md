@@ -4,7 +4,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 
 | Tool | Version | What it does |
 |---|---|---|
-| **Anim Assist** | 12.6.2 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 89 searchable actions. Eight configurable numeric tools offer inline or popout sliders beside the native Timeline header, with per-tool settings and user-named layouts. Inspired by Maya's AnimBot. |
+| **Anim Assist** | 12.7.0 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 89 searchable actions. Eight configurable numeric tools offer inline or popout sliders beside the native Timeline header, with per-tool settings and user-named layouts. Inspired by Maya's AnimBot. |
 | **Ghost Tool** | 4.2.10 | Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
 
 ### Optional add-on: BoneCraft (rigging)
@@ -25,7 +25,7 @@ Install add-on ZIPs directly in your existing Bforartists installation.
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.6.2 (local release; publication pending) | [b4_anim_assist_v12.6.2.zip](releases/b4_anim_assist_v12.6.2.zip) |
+| Anim Assist 12.7.0 (local release; publication pending) | [b4_anim_assist_v12.7.0.zip](releases/b4_anim_assist_v12.7.0.zip) |
 | Ghost Tool 4.2.10 candidate | [b4_ghost_tool_v4.2.10.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_ghost_tool_v4.2.10.zip) |
 | BoneCraft 9.2.1 (optional) | [BoneCraft-BFA-9.2.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.1/BoneCraft-BFA-9.2.1.zip) |
 
@@ -51,7 +51,7 @@ The ZIPs package their recorded release source for one-click installation. The u
 
 Human-readable manuals are in [`docs/`](docs/):
 
-- [Anim Assist 12.6.2 add-on](docs/anim_assist/releases/12.6.2/RELEASE-NOTES.md) — installation, sliders and named layouts; [qualification and screenshots](docs/anim_assist/releases/12.6.2/qualification.md) records the current checks. [Suite manuals](docs/anim_assist/) cover the other animation tools.
+- [Anim Assist 12.7.0 add-on](docs/anim_assist/releases/12.7.0/RELEASE-NOTES.md) — installation, sliders and named layouts; [qualification and screenshots](docs/anim_assist/releases/12.7.0/qualification.md) records the current checks. [Suite manuals](docs/anim_assist/) cover the other animation tools.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.10 candidate guide, PDF and toolbar notes
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.1 English manual and translation status
 

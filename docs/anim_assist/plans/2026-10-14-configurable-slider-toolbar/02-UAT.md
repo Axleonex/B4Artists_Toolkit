@@ -1,6 +1,11 @@
 # Owner usability checkpoint
 
-Status: **Pending owner use**. Automated checks do not complete this checkpoint.
+Status: **Superseded by the delegated agent usability check**. The user explicitly
+asked Codex to perform the checkpoint and prepare a new local overhaul version
+after success. The agent workflow/review passed on exact 12.7.0; see
+[workspace review](../2026-10-14-workspace-qualification/REVIEW.md).
+No independent blind user study or personal-workspace acceptance is claimed.
+The original steps below remain an optional personal review, not a blocking gate.
 
 Install the local 12.6.2 ZIP in your existing Bforartists and restart. Use an
 animated object or rig with eligible keys selected.

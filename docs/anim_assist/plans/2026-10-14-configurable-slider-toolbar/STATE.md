@@ -1,5 +1,10 @@
 # State
 
+Successor checkpoint, 2026-10-14: the user delegated the usability review to Codex.
+The native default/saved workspace workflow passed; local overhaul 12.7.0 is
+recorded in [workspace state](../2026-10-14-workspace-qualification/STATE.md).
+The 12.6.2 checkpoint below is retained as history, not the active pending gate.
+
 Updated: 2026-10-14. Phase 02. **Plans 02-01 through 02-06 implemented and
 technically qualified locally. Owner usability checkpoint pending.**
 Local release 12.6.2; not pushed.

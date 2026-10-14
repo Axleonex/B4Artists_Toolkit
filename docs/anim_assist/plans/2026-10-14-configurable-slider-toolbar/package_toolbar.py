@@ -28,17 +28,19 @@ def literal(text,name):
     raise ValueError('Missing '+name)
 
 
-def package(next_version=False):
+def package(next_version=False,release_version=None,evidence_directory=None):
     constants=(SOURCE/'constants.py').read_text()
     version=literal(constants,'ADDON_VERSION_STRING')
     baseline=ROOT/'releases/b4_anim_assist_v12.6.1.zip'
-    if next_version:
+    if next_version or release_version:
         known=[tuple(map(int,version.split('.')))]
         for path in (ROOT/'releases').glob('b4_anim_assist_v*.zip'):
             match=re.fullmatch(r'b4_anim_assist_v(\d+)\.(\d+)\.(\d+)\.zip',path.name)
             if match: known.append(tuple(map(int,match.groups())))
         major,minor,patch=max(known)
-        resolved=f'{major}.{minor}.{patch+1}'
+        resolved=release_version or f'{major}.{minor}.{patch+1}'
+        if not re.fullmatch(r'\d+\.\d+\.\d+',resolved) or tuple(map(int,resolved.split('.')))<=max(known):
+            raise ValueError('Choose an unused version newer than all existing Anim Assist versions')
         # Read-only remote identity check; never publish or move branches here.
         occupied=subprocess.check_output(['git','ls-remote','--tags','origin','refs/tags/v'+resolved],cwd=ROOT,text=True).strip()
         if occupied: raise ValueError('The proposed release tag is already occupied: '+resolved)
@@ -55,7 +57,8 @@ def package(next_version=False):
     assert info['version']==literal(constants,'ADDON_VERSION')==tuple_version
     assert literal(constants,'ADDON_VERSION_STRING')==manifest['version']==version
     output=ROOT/'releases'/f'b4_anim_assist_v{version}.zip'
-    receipt=PACKET/'evidence/final/artifact.json'; receipt.parent.mkdir(parents=True,exist_ok=True)
+    receipt=(Path(evidence_directory).resolve() if evidence_directory else PACKET/'evidence/final')/'artifact.json'
+    receipt.parent.mkdir(parents=True,exist_ok=True)
     if output.exists():
         previous=json.loads(receipt.read_text())
         if previous['version']!=version or previous['sha256']!=hashlib.sha256(output.read_bytes()).hexdigest():
@@ -93,5 +96,10 @@ def package(next_version=False):
 
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser(description=__doc__); parser.add_argument('--next-version',action='store_true')
-    package(parser.parse_args().next_version)
+    parser=argparse.ArgumentParser(description=__doc__)
+    versions=parser.add_mutually_exclusive_group()
+    versions.add_argument('--next-version',action='store_true')
+    versions.add_argument('--release-version',help='Explicit newer minor/major version for an approved overhaul')
+    parser.add_argument('--evidence-directory',help='New qualification receipt directory; historical receipts remain intact')
+    args=parser.parse_args()
+    package(args.next_version,args.release_version,args.evidence_directory)

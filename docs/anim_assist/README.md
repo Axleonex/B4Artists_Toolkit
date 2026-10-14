@@ -1,8 +1,8 @@
-# Anim Assist 12.6.2 documentation
+# Anim Assist 12.7.0 documentation
 
-[Download the local add-on](../../releases/b4_anim_assist_v12.6.2.zip) | [Installation and Timeline tools](releases/12.6.2/RELEASE-NOTES.md)
+[Download the local add-on](../../releases/b4_anim_assist_v12.7.0.zip) | [Installation and Timeline tools](releases/12.7.0/RELEASE-NOTES.md)
 
-The current version is **12.6.2**, a local release installed as an add-on in existing Bforartists. Publication is pending.
+The current version is **12.7.0**, a local release installed as an add-on in existing Bforartists. Publication is pending.
 Quick tools occupy a row inside the Timeline beside its native header. The
 frame ruler is preserved when the header is at the top. Standard Blender is
 unsupported. Breakdown and Smooth start inline; Settings configures all eight
@@ -18,4 +18,4 @@ The [core suite guide](AnimAssist_User_Manual.md) and
 The earlier 12.0.1 PDF is retained under [archive/](archive/).
 
 See the [release index](../../releases/VERSIONS.md) for publication status and
-the [qualification](releases/12.6.2/qualification.md) for host-specific evidence.
+the [qualification](releases/12.7.0/qualification.md) for host-specific evidence.
