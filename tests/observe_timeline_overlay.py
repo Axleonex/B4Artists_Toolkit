@@ -31,18 +31,36 @@ def state():
                 windows=windows, frame=bpy.context.scene.frame_current)
 
 
+pending_response = None
+
+
 def poll():
+    global pending_response
+    if pending_response is not None:
+        try:
+            pending = root/'response.pending'
+            pending.write_text(json.dumps(pending_response, indent=2))
+            pending.replace(root/'response.json')
+            pending_response = None
+        except PermissionError:
+            return .25
     request = root / 'request.json'
     if request.exists():
-        data = json.loads(request.read_text())
-        request.unlink()
+        try:
+            data = json.loads(request.read_text())
+            request.unlink()
+        except (PermissionError, FileNotFoundError, json.JSONDecodeError):
+            return .25
         try:
             exec(data['code'], globals())
             result = dict(id=data['id'], ok=True, state=state())
         except Exception:
             result = dict(id=data['id'], ok=False, error=traceback.format_exc())
-        (root / 'response.json').write_text(json.dumps(result, indent=2))
-    (root / 'state.json').write_text(json.dumps(state(), indent=2))
+        pending_response = result
+    try:
+        (root / 'state.json').write_text(json.dumps(state(), indent=2))
+    except PermissionError:
+        pass
     return .25
 
 
