@@ -44,14 +44,14 @@ MENUS: dict[str, tuple[str, str, tuple[tuple[str, str, str, tuple[str | None, ..
             "isolate_selected_channels", "show_all_channels")),
         ("shape", "Shape Curves", "IPO_BEZIER", (
             "blend_neighbor", "blend_offset", "blend_frame", "ease_to_ease",
-            "push_pull", "smooth_keys")),
+            "push_pull", "smooth_keys", "batch_interpolation", "select_handles", "set_handle_type")),
         ("retime", "Retime", "TIME", (
             "p6_insert_time", "p6_remove_time", "p6_scale_keys", "p6_offset_keys",
             "p6_ripple_forward", "p6_snap_to_frames", None, "anim_offset")),
         ("clean", "Clean Up", "BRUSH_DATA", (
             "scan_redundant_keys", "scan_spike_keys", "scan_dense_keys",
             "snap_keys_to_integer_frames", None, "safe_delete_selected_keys")),
-        ("poserig", "Pose & Rig", "ARMATURE_DATA", (
+        ("poserig", "Pose & Bake", "ARMATURE_DATA", (
             "mirror_selected_keys", "p8_quick_match", "p7_bake_range")),
     )),
     "DOPESHEET_EDITOR": ("DOPESHEET_MT_editor_menus", "header_menu_dopesheet", (
@@ -65,7 +65,7 @@ MENUS: dict[str, tuple[str, str, tuple[tuple[str, str, str, tuple[str | None, ..
         ("time", "Time", "TIME", (
             "p6_insert_time", "p6_remove_time", "p6_scale_keys", "p6_ripple_forward", None,
             "p6_detect_gaps", "p6_fill_gaps", None, "anim_offset")),
-        ("mirror", "Mirror & Match", "MOD_MIRROR", (
+        ("mirror", "Pose & Match", "MOD_MIRROR", (
             "p9_mirror_pose", "p9_swap_poses", "p9_select_opposite", None,
             "p8_quick_match", "p7_smart_bake")),
         ("keys", "Keys & Channels", "KEYFRAME_HLT", (
@@ -75,7 +75,12 @@ MENUS: dict[str, tuple[str, str, tuple[tuple[str, str, str, tuple[str | None, ..
     )),
 }
 
-_SPACE_SLUG = {"VIEW_3D": "v3d", "GRAPH_EDITOR": "ge", "DOPESHEET_EDITOR": "ds"}
+MENUS["NLA_EDITOR"] = ("NLA_MT_editor_menus", "header_menu_nla", tuple(
+    (key, label, "NONE", ()) for key, label in (
+        ("arrange", "Arrange & Time"), ("blend", "Blend & Corrections"),
+        ("actions", "Actions & Tracks"), ("bake", "Bake & Finish"))))
+
+_SPACE_SLUG = {"NLA_EDITOR": "nla", "VIEW_3D": "v3d", "GRAPH_EDITOR": "ge", "DOPESHEET_EDITOR": "ds"}
 
 #: Pie slots in Blender's order: W, E, S, N, NW, NE, SW, SE.
 PIE_SLOTS: tuple[tuple[str, str, str], ...] = (
@@ -111,6 +116,39 @@ def menu_idname(space: str, key: str = "") -> str:
 def _submenu(space: str, key: str, label: str, ops: tuple[str | None, ...]) -> type[Menu]:
     def draw(self, _context: bpy.types.Context) -> None:
         layout = self.layout
+        if space == "NLA_EDITOR":
+            from .nla_panels import native, timing
+            if key == "arrange":
+                timing(layout, "NUDGE", "Nudge Back 1 Frame", -1)
+                timing(layout, "NUDGE", "Nudge Forward 1 Frame", 1)
+                native(layout, "MOVE", "Move Selected Clips")
+                timing(layout, "START", "Align Starts")
+                timing(layout, "END", "Align Ends")
+                timing(layout, "SEQUENCE", "Sequence Clips")
+            elif key == "blend":
+                layout.operator("animassist.nla_correction")
+                layout.operator("animassist.nla_influence")
+                from ..core.nla_context import active_target, is_correction
+                item = active_target(_context)
+                edit = layout.column()
+                edit.enabled = bool(item and is_correction(item.strip))
+                native(edit, "CORRECTION", "Edit Correction")
+                native(layout, "EDIT", "Edit Action")
+                native(layout, "FINISH", "Finish Editing")
+                for editor, label in (("DOPESHEET_EDITOR", "Open Dope Sheet"), ("GRAPH_EDITOR", "Open Graph Editor")):
+                    layout.operator("animassist.nla_open_editor", text=label).editor = editor
+            elif key == "actions":
+                layout.operator("animassist.nla_add_clip")
+                native(layout, "DUPLICATE", "Duplicate Independent")
+                native(layout, "LINKED", "Duplicate Linked")
+                layout.operator("animassist.nla_unique")
+                for command, label in (("UP", "Move Selected Tracks Up"), ("DOWN", "Move Selected Tracks Down"), ("PUSHDOWN", "Push Down Action"), ("STASH", "Stash Action")):
+                    native(layout, command, label)
+            else:
+                layout.operator("animassist.nla_bake")
+                layout.operator("animassist.nla_activate_bake")
+                layout.operator("animassist.nla_empty_tracks")
+            return
         for op in ops:
             if op is None:
                 layout.separator()
@@ -124,8 +162,9 @@ def _submenu(space: str, key: str, label: str, ops: tuple[str | None, ...]) -> t
 def _top_menu(space: str, submenus) -> type[Menu]:
     def draw(self, _context: bpy.types.Context) -> None:
         layout = self.layout
-        layout.operator("animassist.p10_search_tools", text="Search Anim Assist Tools...", icon="VIEWZOOM")
-        layout.operator("animassist.p10_repeat_last", text="Repeat Last Tool", icon="RECOVER_LAST")
+        if space != "NLA_EDITOR":
+            layout.operator("animassist.p10_search_tools", text="Search Anim Assist Tools...", icon="VIEWZOOM")
+            layout.operator("animassist.p10_repeat_last", text="Repeat Last Tool", icon="RECOVER_LAST")
         layout.separator()
         for key, _label, icon, _ops in submenus:
             layout.menu(menu_idname(space, key), icon=icon)

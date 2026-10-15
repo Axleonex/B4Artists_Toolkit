@@ -78,11 +78,6 @@ class ANIMASSIST_PT_p3_breakdown(PanelAnatomyMixin, DopeSheetSidebarPanel):
             return
         p3 = get_p3(context)
 
-        uh.section_header(layout, "Factor & Mode", icon="IPO_EASE_IN_OUT")
-        row = layout.row(align=True)
-        row.prop(p3, "factor", slider=True)
-        layout.prop(p3, "mode", text="")
-
         uh.section_header(layout, "Quick Breakdowns", icon="KEYFRAME_HLT")
         row = layout.row(align=True)
         op = row.operator("animassist.breakdown_percentage", text="25%")
@@ -94,14 +89,26 @@ class ANIMASSIST_PT_p3_breakdown(PanelAnatomyMixin, DopeSheetSidebarPanel):
 
         col = layout.column(align=True)
         uh.explained_op(col, context, "animassist.breakdown_current_frame",
-                        icon="KEY_HLT")
-        uh.explained_op(col, context, "animassist.breakdown_weighted")
+                        text="Breakdown Here", icon="KEY_HLT")
+        uh.explained_op(col, context, "animassist.breakdown_weighted", text="Weighted Breakdown")
         uh.explained_op(col, context, "animassist.breakdown_midpoint")
         row = col.row(align=True)
         uh.explained_op(row, context, "animassist.breakdown_favor_prev",
                         text="Favor Prev")
         uh.explained_op(row, context, "animassist.breakdown_favor_next",
                         text="Favor Next")
+
+    def draw_scope(self, context):
+        p3 = get_p3(context)
+        if p3 is None:
+            return
+        header, body = self.layout.panel("aa_breakdown_factor", default_closed=True)
+        header.label(text="Breakdown Options")
+        if body:
+            body.prop(p3, "factor", slider=True)
+            body.prop(p3, "mode", text="Mode")
+            for name in ("quaternion_aware", "euler_wrap_aware", "match_tangents", "auto_key_missing"):
+                body.prop(p3, name)
 
     def draw_advanced(self, context):
         layout = self.layout
@@ -220,16 +227,17 @@ class ANIMASSIST_PT_p3_inbetween(PanelAnatomyMixin, DopeSheetSidebarPanel):
             return
         p3 = get_p3(context)
 
-        uh.explained_prop(layout, context, p3, "inbetween_count",
-                          help_id="prop.p3_inbetween_count")
-
         col = layout.column(align=True)
         uh.explained_op(col, context, "animassist.inbetween_selected_gap",
-                        icon="KEYTYPE_BREAKDOWN_VEC")
+                        text="Inbetween Gap", icon="KEYTYPE_BREAKDOWN_VEC")
         uh.explained_op(col, context, "animassist.inbetween_distribute",
-                        icon="MOD_ARRAY")
+                        text="Distribute Inbetweens", icon="MOD_ARRAY")
         uh.explained_op(col, context, "animassist.inbetween_on_clusters",
-                        icon="STICKY_UVS_LOC")
+                        text="Inbetween Clusters", icon="STICKY_UVS_LOC")
+        header, body = layout.panel("aa_inbetween_options", default_closed=True)
+        header.label(text="Inbetween Options")
+        if body:
+            body.prop(p3, "inbetween_count")
 
 
 # ---------------------------------------------------------------------------
@@ -401,7 +409,7 @@ class ANIMASSIST_PT_p3_interpolation(PanelAnatomyMixin, GraphEditorSidebarPanel)
     bl_category = "Keys"
     bl_order = 40
     bl_idname = "ANIMASSIST_PT_p3_interpolation"
-    bl_label = "Interpolation Options"
+    bl_label = "Breakdown Options"
 
     def draw_primary(self, context):
         layout = self.layout
@@ -445,6 +453,21 @@ class ANIMASSIST_PT_p3_interpolation(PanelAnatomyMixin, GraphEditorSidebarPanel)
 # Registration tuple
 # ---------------------------------------------------------------------------
 
+class ANIMASSIST_PT_graph_breakdown(GraphEditorSidebarPanel):
+    bl_idname = "ANIMASSIST_PT_graph_breakdown"
+    bl_label = "Breakdown"
+
+    def draw(self, context):
+        self.layout.operator("animassist.breakdown_current_frame", text="Breakdown at Current Frame")
+        self.layout.operator("animassist.breakdown_midpoint", text="Midpoint Breakdown")
+
+
+class ANIMASSIST_PT_p3_options_dope(PanelAnatomyMixin, DopeSheetSidebarPanel):
+    bl_idname = "ANIMASSIST_PT_p3_options_dope"
+    bl_label = "Visual Breakdown Options"
+    draw_primary = ANIMASSIST_PT_p3_interpolation.draw_advanced
+
+
 CLASSES: tuple[type, ...] = (
     ANIMASSIST_PT_p3_breakdown,
     ANIMASSIST_PT_p3_subsets,
@@ -453,4 +476,6 @@ CLASSES: tuple[type, ...] = (
     ANIMASSIST_PT_p3_presets,
     ANIMASSIST_PT_p3_modal,
     ANIMASSIST_PT_p3_interpolation,
+    ANIMASSIST_PT_graph_breakdown,
+    ANIMASSIST_PT_p3_options_dope,
 )

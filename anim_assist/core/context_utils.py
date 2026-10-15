@@ -28,33 +28,36 @@ def in_anim_editor(context: bpy.types.Context) -> bool:
 
 
 def iter_visible_fcurves(context: bpy.types.Context, only_selected: bool = False):
-    """Yield FCurves visible in the current animation editor.
+    """Yield editable object-Action FCurves in the current editor.
 
     Filters by visibility (``fc.hide``), mute, and editability. When
     *only_selected* is ``True`` also restricts to selected channels.
     """
-    animated_objects = []
-    scene = getattr(context, "scene", None)
-    view_layer = getattr(context, "view_layer", None)
-    if view_layer is None or scene is None:
+    space = getattr(context, "space_data", None)
+    if space is None or space.type not in ANIM_EDITOR_SPACES:
         return
-
-    seen_ids: set[int] = set()
-    for obj in view_layer.objects:
+    if space.type == "GRAPH_EDITOR" and getattr(space, "mode", "") == "DRIVERS":
+        return  # Drivers are not Action keys.
+    # Native collections honor editor filters and channel visibility.
+    # Detached pinned Actions and non-object sources have no supported owner here;
+    # the sidebar explicitly identifies excluded source channels.
+    # An empty collection is meaningful: never broaden it to an object's Action.
+    native = getattr(context, "editable_fcurves", ()) or ()
+    visible = {fc.as_pointer() for fc in native
+               if not fc.hide and not fc.lock and not fc.mute
+               and (not only_selected or fc.select)}
+    seen = set()
+    for obj in context.view_layer.objects:
         ad = obj.animation_data
-        if ad and ad.action and id(ad.action) not in seen_ids:
-            seen_ids.add(id(ad.action))
-            animated_objects.append((obj, ad))
-
-    for obj, ad in animated_objects:
+        if not ad or not ad.action or not ad.action.is_editable:
+            continue
+        # Resolve each bound slot before deduplication: shared Actions may have
+        # distinct slots and must not be deduplicated by Action identity alone.
         for fc in get_fcurves(ad.action, anim_data=ad):
-            if fc.hide or fc.mute:
-                continue
-            if only_selected and not fc.select:
-                continue
-            if fc.lock:
-                continue
-            yield obj, ad.action, fc
+            ptr = fc.as_pointer()
+            if ptr in visible and ptr not in seen:
+                seen.add(ptr)
+                yield obj, ad.action, fc
 
 
 def iter_selected_keys(context: bpy.types.Context):

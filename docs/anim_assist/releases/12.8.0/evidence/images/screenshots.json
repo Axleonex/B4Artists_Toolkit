@@ -1,0 +1,74 @@
+[
+  {
+    "editor": "NLA_EDITOR",
+    "requested_width": 220,
+    "measured_width": 220,
+    "ui_scale": 1.0,
+    "width_matches": true,
+    "image": "nla_editor-220.png"
+  },
+  {
+    "editor": "NLA_EDITOR",
+    "requested_width": 280,
+    "measured_width": 280,
+    "ui_scale": 1.0,
+    "width_matches": true,
+    "image": "nla_editor-280.png"
+  },
+  {
+    "editor": "NLA_EDITOR",
+    "requested_width": 360,
+    "measured_width": 360,
+    "ui_scale": 1.0,
+    "width_matches": true,
+    "image": "nla_editor-360.png"
+  },
+  {
+    "editor": "GRAPH_EDITOR",
+    "requested_width": 220,
+    "measured_width": 220,
+    "ui_scale": 1.0,
+    "width_matches": true,
+    "image": "graph_editor-220.png"
+  },
+  {
+    "editor": "GRAPH_EDITOR",
+    "requested_width": 280,
+    "measured_width": 280,
+    "ui_scale": 1.0,
+    "width_matches": true,
+    "image": "graph_editor-280.png"
+  },
+  {
+    "editor": "GRAPH_EDITOR",
+    "requested_width": 360,
+    "measured_width": 360,
+    "ui_scale": 1.0,
+    "width_matches": true,
+    "image": "graph_editor-360.png"
+  },
+  {
+    "editor": "DOPESHEET_EDITOR",
+    "requested_width": 220,
+    "measured_width": 220,
+    "ui_scale": 1.0,
+    "width_matches": true,
+    "image": "dopesheet_editor-220.png"
+  },
+  {
+    "editor": "DOPESHEET_EDITOR",
+    "requested_width": 280,
+    "measured_width": 280,
+    "ui_scale": 1.0,
+    "width_matches": true,
+    "image": "dopesheet_editor-280.png"
+  },
+  {
+    "editor": "DOPESHEET_EDITOR",
+    "requested_width": 360,
+    "measured_width": 360,
+    "ui_scale": 1.0,
+    "width_matches": true,
+    "image": "dopesheet_editor-360.png"
+  }
+]

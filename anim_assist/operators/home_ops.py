@@ -13,7 +13,7 @@ from ..core.logging import get_logger
 _log = get_logger(__name__)
 
 WORKSPACE_NAME: str = constants.ANIMASSIST_CATEGORY
-SIDEBAR_SPACES: frozenset[str] = frozenset({"GRAPH_EDITOR", "DOPESHEET_EDITOR"})
+SIDEBAR_SPACES: frozenset[str] = frozenset({"GRAPH_EDITOR", "DOPESHEET_EDITOR", "NLA_EDITOR"})
 
 
 def _region(area: bpy.types.Area, kind: str) -> bpy.types.Region | None:

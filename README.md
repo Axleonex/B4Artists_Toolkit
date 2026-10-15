@@ -4,7 +4,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 
 | Tool | Version | What it does |
 |---|---|---|
-| **Anim Assist** | 12.7.1 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 89 searchable actions. Eight configurable numeric tools offer inline or popout sliders beside the native Timeline header, with per-tool settings and user-named layouts. Inspired by Maya's AnimBot. |
+| **Anim Assist** | 12.8.0 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 89 searchable actions. Eight configurable numeric tools offer inline or popout sliders beside the native Timeline header, with per-tool settings and user-named layouts. Includes editor-specific NLA, Graph and Dope Sheet sidebars. Inspired by Maya's AnimBot. |
 | **Ghost Tool** | 4.2.11 | Defers viewport initialization during startup. Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
 | **BoneCraft** | 9.2.4 | Auto-rigging for humanoid characters (VRoid/VRM and similar): a Rig Builder wizard that finds the joints on the mesh, generates a skeleton and skin weights, then builds an animator control rig: IK/FK arms and legs with no-pop switching, a Control Picker, twist bones, joint corrective shapes, skirt/dress bones, and face controls (eye aim, blinks, jaw with lip follow). Also retargets walk/run clips and exports to VRChat, Unity and Unreal, with an optional T-pose export. Manual: [bonecraft/docs](bonecraft/docs/README.md). |
 
@@ -22,7 +22,7 @@ The rebuilt BoneCraft 9.2.4 ZIP includes the Grab/tool-cycling correction. BoneC
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.7.1 (repository build) | [b4_anim_assist_v12.7.1.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.7.1.zip) |
+| Anim Assist 12.8.0 (repository build) | [b4_anim_assist_v12.8.0.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.8.0.zip) |
 | Ghost Tool 4.2.11 | [b4_ghost_tool_v4.2.11.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip) |
 | BoneCraft 9.2.4 (optional; repository build) | [BoneCraft-BFA-9.2.4.zip](https://github.com/Axleonex/B4Artists_Toolkit/raw/refs/heads/main/releases/BoneCraft-BFA-9.2.4.zip) |
 
@@ -47,7 +47,7 @@ The unpacked, readable source for each tool is in this repository so you can rea
 
 Human-readable manuals are in [`docs/`](docs/):
 
-- [Anim Assist 12.7.1 fix](docs/anim_assist/releases/12.7.1/RELEASE-NOTES.md) restores Timeline keyframing; [12.7.0 add-on](docs/anim_assist/releases/12.7.0/RELEASE-NOTES.md) — installation, sliders and named layouts; [qualification and screenshots](docs/anim_assist/releases/12.7.0/qualification.md) records the current checks. [Suite manuals](docs/anim_assist/) cover the other animation tools.
+- [Anim Assist 12.8.0](docs/anim_assist/releases/12.8.0/RELEASE-NOTES.md) — NLA clip arrangement and corrections, Graph/Dope Sheet refinements, preserved baking and selected-key scope fixes. [Qualification and screenshots](docs/anim_assist/releases/12.8.0/qualification.md) records the checks and limits. [Suite manuals](docs/anim_assist/) cover the other animation tools.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.2.11 guide, PDF and toolbar notes
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.4 source manual and translation status
 

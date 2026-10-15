@@ -406,22 +406,19 @@ class ANIMASSIST_PT_p7_bake_ds(DopeSheetSidebarPanel):
             session = p7s.get_session(p7.active_session_id)
             layout.label(text=_session_info_label(p7, session), icon="KEYINGSET")
 
-        layout.prop(p7, "bake_range_mode", text="Range")
-        if p7.bake_range_mode == "CUSTOM":
-            row = layout.row(align=True)
-            row.prop(p7, "bake_range_start", text="Start")
-            row.prop(p7, "bake_range_end", text="End")
-
-        layout.prop(p7, "bake_channels", text="Channels")
-        layout.prop(p7, "bake_step", text="Step")
-        layout.prop(p7, "smart_bake_tolerance", text="Tolerance")
-
-        layout.separator(factor=0.5)
-
-        row2 = layout.row(align=True)
-        row2.operator("animassist.p7_smart_bake", text="Smart", icon="MOD_SIMPLIFY")
-        row2.operator("animassist.p7_bake_range", text="Range", icon="PREVIEW_RANGE")
-        row2.operator("animassist.p7_bake_preview", text="Preview", icon="PLAY")
+        layout.label(text=f"Range: {p7.bake_range_mode.title()}")
+        for op, label in (("p7_smart_bake", "Smart Bake"), ("p7_bake_range", "Bake Range"), ("p7_bake_preview", "Preview Bake")):
+            layout.operator(f"animassist.{op}", text=label)
+        header, body = layout.panel("aa_key_bake_options", default_closed=True)
+        header.label(text="Bake Options")
+        if body:
+            body.prop(p7, "bake_range_mode", text="Range")
+            if p7.bake_range_mode == "CUSTOM":
+                body.prop(p7, "bake_range_start", text="Start")
+                body.prop(p7, "bake_range_end", text="End")
+            body.prop(p7, "bake_channels", text="Channels")
+            body.prop(p7, "bake_step", text="Step")
+            body.prop(p7, "smart_bake_tolerance", text="Tolerance")
 
 
 # ---------------------------------------------------------------------------

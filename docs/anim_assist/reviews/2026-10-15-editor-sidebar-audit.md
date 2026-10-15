@@ -190,3 +190,9 @@ No runtime pass or universal usability claim is made.
 - [Graph Editor curve editing](https://docs.blender.org/manual/en/5.0/editors/graph_editor/fcurves/editing.html).
 - [Dope Sheet timing and selection](https://docs.blender.org/manual/en/5.0/editors/dope_sheet/editing.html).
 - [NLA clips, shared actions and Tweak Mode](https://docs.blender.org/manual/en/dev/editors/nla/editing/strip.html).
+
+## Implementation follow-up
+
+The owner approved and requested these changes. Local release 12.8.0 fixes selected-key interpolation and editor scope, provides direct primary actions, moves real curve interpolation/handles into Shape Curves, relabels Breakdown Options, separates Dope Sheet baking and relocates procedure panels to Scene Properties. New NLA tools have their own strip/track sidebar. The historical findings above refer to the 12.7.1 baseline, not the updated implementation.
+
+See [12.8.0 qualification](../releases/12.8.0/qualification.md) for actual native-host checks and explicit unsupported-source limits.

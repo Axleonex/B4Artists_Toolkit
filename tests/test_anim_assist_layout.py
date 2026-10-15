@@ -82,7 +82,7 @@ def main() -> None:
         # 4. The three homes are organised differently.
         orders = [tuple(g.label for g in groups) for _s, groups in layout_homes.SIDEBARS.values()]
         orders.append(tuple(g.label for g in layout_homes.PROPERTIES_GROUPS))
-        assert len(set(orders)) == 3, orders
+        assert len(set(orders)) == 4, orders
 
         # 5. Every menu and pie entry points at a real operator.
         ops = set(dir(bpy.ops.animassist))
@@ -98,7 +98,7 @@ def main() -> None:
 
         # 6. Every new preference has a tooltip.
         prefs_rna = anim_assist.AA_AddonPreferences.bl_rna.properties
-        for name in ("pie_hotkey_enabled", "header_menu_view3d", "header_menu_graph", "header_menu_dopesheet"):
+        for name in ("pie_hotkey_enabled", "header_menu_view3d", "header_menu_graph", "header_menu_dopesheet", "header_menu_nla"):
             assert prefs_rna[name].description, name
 
         print(f"LAYOUT OK: {len(panels)} panels, 0 in the 3D Viewport sidebar")

@@ -1,3 +1,12 @@
+# 12.8.0 — Editor-specific sidebars
+
+- Adds an NLA sidebar for clip arrangement, neutral Combine transform corrections,
+  source editing, shared Actions, track ordering and preserved evaluated baking.
+- Refines Graph and Dope Sheet groups and exposes common actions directly.
+- Fixes selected-key interpolation scope and editor filtering for Key Manager
+  timing commands. Identifies unsupported pinned/non-object sources explicitly.
+- Retains the bottom-only Timeline implementation and saved toolbar layouts.
+
 # 12.7.1 — Timeline keyframes no longer hidden
 
 - Fixes keyframing in the Timeline: with the header on top (the Bforartists

@@ -1,6 +1,6 @@
 # Anim Assist: NLA sidebar design
 
-Status: proposed design for review; not implemented.
+Status: owner approved; implemented in local Anim Assist 12.8.0. See the release qualification for tested support and limits.
 Baseline: Anim Assist 12.7.1, bottom-only Timeline toolbar.
 Owner requirement: support both arranging motion clips and layering additive
 corrections in the same NLA sidebar. Review Graph and Dope Sheet separately.
@@ -221,11 +221,11 @@ Architectural touchpoints for a later implementation plan:
   timing mapping; drawing is read-only and never creates actions or tracks.
 - Do not add a new NLA or Timeline canvas overlay. The Timeline stays bottom-only.
 
-This section identifies design dependencies, not an authorization to implement.
+The owner approved these dependencies for implementation. See docs/anim_assist/releases/12.8.0/qualification.md for resulting checks.
 
-## 7. Acceptance requirements for a future implementation
+## 7. Acceptance requirements
 
-These are proposed checks, not tests added or executed in this design task.
+The approved requirements below informed the implementation and focused native-host checks. Production-rig coverage remains limited as documented in the release qualification.
 
 1. Clip movement changes only stated strips; source keys are unchanged.
 2. Influence/blend controls affect the named active clip, not another selection.
@@ -251,6 +251,4 @@ These are proposed checks, not tests added or executed in this design task.
 
 ## Review status
 
-The owner confirmed that both NLA workflows belong in the design. This written
-proposal still needs review before an implementation plan or code change.
-No runtime behavior, action compatibility or usability pass is claimed.
+The owner approved both NLA workflows and implementation, including native Bforartists validation. The local 12.8.0 implementation follows this design with conservative transform correction support. See [release qualification](../../anim_assist/releases/12.8.0/qualification.md) for measured checks, screenshots and limitations.

@@ -44,22 +44,23 @@ def _object_fcurves(context: bpy.types.Context) -> list:
 
 
 def _visible_fcurves(context: bpy.types.Context) -> list:
-    if hasattr(context, "selected_editable_fcurves"):
-        fcs = list(context.selected_editable_fcurves)
-        if fcs:
-            return fcs
-    return _object_fcurves(context)
+    from ..core.context_utils import in_anim_editor, iter_visible_fcurves
+    if in_anim_editor(context):
+        return [fc for _obj, _action, fc in iter_visible_fcurves(context)]
+    if getattr(getattr(context, "space_data", None), "type", "") == "NLA_EDITOR":
+        return []
+    return [fc for fc in _object_fcurves(context) if not fc.lock and not fc.hide]
 
 
 class ANIMASSIST_OT_batch_interpolation(Operator):
-    """Set the interpolation type on every keyframe of the active object's F-Curves."""
+    """Set interpolation only on selected, editable, visible keys."""
 
     bl_idname = "animassist.batch_interpolation"
     bl_label = "Batch Set Interpolation"
     bl_description = "Set all selected keyframes to the chosen interpolation type (Constant, Linear, or Bezier)"
     bl_options = {"REGISTER", "UNDO"}
 
-    interp_type: EnumProperty(name="Interpolation", items=_INTERPOLATION_ITEMS, default="BEZIER")  # type: ignore[assignment]
+    interp_type: EnumProperty(name="Interpolation", description="Interpolation to assign to selected editable keys", items=_INTERPOLATION_ITEMS, default="BEZIER")  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -67,18 +68,23 @@ class ANIMASSIST_OT_batch_interpolation(Operator):
 
     def execute(self, context: bpy.types.Context):
         # ACCESS_GATE_HERE
-        fcs = _object_fcurves(context)
+        fcs = _visible_fcurves(context)
         if not fcs:
-            self.report({"WARNING"}, "No animation data on active object")
+            self.report({"WARNING"}, "Show editable Action channels in this editor")
             return {"CANCELLED"}
 
         count = 0
         for fc in fcs:
             for kp in fc.keyframe_points:
+                if not kp.select_control_point:
+                    continue
                 kp.interpolation = self.interp_type
                 count += 1
             fc.update()
 
+        if not count:
+            self.report({"WARNING"}, "Select editable keys in this editor")
+            return {"CANCELLED"}
         self.report({"INFO"}, f"{count} keys → {self.interp_type}")
         return {"FINISHED"}
 
@@ -145,7 +151,7 @@ class ANIMASSIST_OT_set_key_type(Operator):
     def execute(self, context: bpy.types.Context):
         # ACCESS_GATE_HERE
         count = 0
-        for fc in _object_fcurves(context):
+        for fc in _visible_fcurves(context):
             for kp in fc.keyframe_points:
                 if kp.select_control_point:
                     kp.type = self.key_type
@@ -196,7 +202,7 @@ class ANIMASSIST_OT_select_by_key_type(Operator):
     def execute(self, context: bpy.types.Context):
         # ACCESS_GATE_HERE
         count = 0
-        for fc in _object_fcurves(context):
+        for fc in _visible_fcurves(context):
             for kp in fc.keyframe_points:
                 if kp.type == self.key_type:
                     kp.select_control_point = not self.deselect
@@ -224,7 +230,7 @@ class ANIMASSIST_OT_delete_by_key_type(Operator):
     def execute(self, context: bpy.types.Context):
         # ACCESS_GATE_HERE
         total = 0
-        for fc in _object_fcurves(context):
+        for fc in _visible_fcurves(context):
             indices = [i for i, kp in enumerate(fc.keyframe_points) if kp.type == self.key_type]
             for i in reversed(indices):
                 fc.keyframe_points.remove(fc.keyframe_points[i])
@@ -259,11 +265,11 @@ class ANIMASSIST_OT_insert_frames(Operator):
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event):
         # ACCESS_GATE_HERE
-        return context.window_manager.invoke_props_dialog(self)
+        return self.execute(context)
 
     def execute(self, context: bpy.types.Context):
         # ACCESS_GATE_HERE
-        fcs = _object_fcurves(context)
+        fcs = _visible_fcurves(context)
         if not fcs:
             self.report({"WARNING"}, "No animation data")
             return {"CANCELLED"}
@@ -315,11 +321,11 @@ class ANIMASSIST_OT_move_keys(Operator):
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event):
         # ACCESS_GATE_HERE
-        return context.window_manager.invoke_props_dialog(self)
+        return self.execute(context)
 
     def execute(self, context: bpy.types.Context):
         # ACCESS_GATE_HERE
-        fcs = _object_fcurves(context)
+        fcs = _visible_fcurves(context)
         if not fcs:
             self.report({"WARNING"}, "No animation data")
             return {"CANCELLED"}

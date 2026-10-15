@@ -1,0 +1,11 @@
+{
+  "package_sha256": "08a904c7dae13de72ee1171aca5494866882b2ea5963a3daeed7bf7bbb1b9ce6",
+  "host_build": "0a1ca45552db",
+  "version": "12.8.0",
+  "behavior_groups": 11,
+  "interaction_groups": 5,
+  "source_files_matched": 211,
+  "measured_screenshots": 9,
+  "timeline_files_unchanged": true,
+  "synthetic_fixtures": true
+}

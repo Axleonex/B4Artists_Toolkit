@@ -71,85 +71,22 @@ class ANIMASSIST_PT_p6_retime(PanelAnatomyMixin, DopeSheetSidebarPanel):
             _draw_no_action_warning(layout, context)
             return
 
-        # --- Retiming ---
-        uh.section_header(layout, "Retiming", icon="TIME")
-
-        # Anchor mode
-        row = layout.row(align=True)
-        row.prop(p6, "anchor_mode", text="")
-
-        # Pivot frame (only shown for CUSTOM anchor)
-        if p6.anchor_mode == "CUSTOM":
-            layout.prop(p6, "pivot_frame")
-        else:
-            uh.explained_op(
-                layout, context,
-                "animassist.p6_set_pivot",
-                text="Set Pivot from Playhead",
-                icon="CURSOR",
-                help_id="op.animassist.p6_set_pivot",
-            )
-
-        uh.separator(layout)
-
-        # Scale
-        uh.section_header(layout, "Scale", icon="DRIVER_TRANSFORM")
-        row = layout.row(align=True)
-        row.prop(p6, "scale_factor", text="Factor")
-        uh.explained_op(
-            layout, context,
-            "animassist.p6_scale_keys",
-            text="Scale Keys",
-            icon="CON_SIZELIKE",
-            help_id="op.animassist.p6_scale_keys",
-        )
-        row2 = layout.row(align=True)
-        uh.explained_op(
-            row2, context,
-            "animassist.p6_modal_scale",
-            text="Interactive Scale",
-            icon="MOUSE_LMB_DRAG",
-            help_id="op.animassist.p6_modal_scale",
-        )
-        uh.explained_op(
-            row2, context,
-            "animassist.p6_time_warp",
-            text="Warp %",
-            icon="MOD_TIME",
-            help_id="op.animassist.p6_time_warp",
-        )
-
-        uh.separator(layout)
-
-        # Offset
-        uh.section_header(layout, "Offset", icon="ARROW_LEFTRIGHT")
-        layout.prop(p6, "offset_frames", text="Frames")
-        row3 = layout.row(align=True)
-        uh.explained_op(
-            row3, context,
-            "animassist.p6_offset_keys",
-            text="Offset Keys",
-            icon="NEXT_KEYFRAME",
-            help_id="op.animassist.p6_offset_keys",
-        )
-        uh.explained_op(
-            row3, context,
-            "animassist.p6_modal_offset",
-            text="Interactive",
-            icon="MOUSE_LMB_DRAG",
-            help_id="op.animassist.p6_modal_offset",
-        )
-
-        uh.separator(layout)
-
-        # Misc retime
-        row4 = layout.row(align=True)
-        row4.operator("animassist.p6_reverse_keys",   text="Reverse",  icon="LOOP_BACK")
-        row4.operator("animassist.p6_bake_timing",    text="Bake",     icon="SNAP_ON")
-        row4.operator("animassist.p6_match_timing",   text="Match",    icon="CON_FOLLOWPATH")
-        if get_p6(context) is not None:
-            # Reset only shown when a snapshot exists.
-            layout.operator("animassist.p6_reset_timing", text="Reset Timing", icon="RECOVER_LAST")
+        layout.label(text=f"Target: {context.active_object.name} · {p6.range_mode.title()} range")
+        for op, label in (("p6_scale_keys", "Scale Keys"), ("p6_modal_scale", "Interactive Scale"),
+                          ("p6_time_warp", "Time Warp"), ("p6_offset_keys", "Offset Keys"),
+                          ("p6_modal_offset", "Interactive Offset"), ("p6_reverse_keys", "Reverse Keys"),
+                          ("p6_bake_timing", "Bake Timing"), ("p6_match_timing", "Match Timing"),
+                          ("p6_reset_timing", "Reset Timing")):
+            layout.operator(f"animassist.{op}", text=label)
+        header, body = layout.panel("aa_retime_options", default_closed=True)
+        header.label(text="Retime Options")
+        if body:
+            body.prop(p6, "anchor_mode", text="Anchor")
+            if p6.anchor_mode == "CUSTOM":
+                body.prop(p6, "pivot_frame")
+            body.operator("animassist.p6_set_pivot", text="Set Pivot from Playhead")
+            body.prop(p6, "scale_factor", text="Scale Factor")
+            body.prop(p6, "offset_frames", text="Offset Frames")
 
     # ---- Scope: timing range ----
 
@@ -164,7 +101,7 @@ class ANIMASSIST_PT_p6_retime(PanelAnatomyMixin, DopeSheetSidebarPanel):
             "p6_retime", "timing_range",
             "Timing Range",
             icon="MOD_LINEART",
-            default_open=True,
+            default_open=False,
         )
         if not expanded:
             return
