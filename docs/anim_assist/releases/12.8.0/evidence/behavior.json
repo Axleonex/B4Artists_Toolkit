@@ -1,0 +1,46 @@
+[
+  {
+    "name": "timing: multi-owner, sequence, alignment, locked atomicity, source preservation",
+    "passed": true
+  },
+  {
+    "name": "timing: overlap and empty selection reject without mutation",
+    "passed": true
+  },
+  {
+    "name": "shared Actions: Make Unique preserves the assigned slot",
+    "passed": true
+  },
+  {
+    "name": "correction: neutral, authored delta, zero influence (Euler)",
+    "passed": true
+  },
+  {
+    "name": "correction: neutral, authored delta, zero influence (quaternion)",
+    "passed": true
+  },
+  {
+    "name": "correction: constrained owner blocked without creating data",
+    "passed": true
+  },
+  {
+    "name": "correction: quaternion pose-bone neutral, authored offset and zero weight",
+    "passed": true
+  },
+  {
+    "name": "bake: retained output, preserved stack, activation and evaluated motion",
+    "passed": true
+  },
+  {
+    "name": "bake: invalid output slot rejects without partial assignment",
+    "passed": true
+  },
+  {
+    "name": "Graph: native owner filters, selected-only interpolation, empty scope and drivers",
+    "passed": true
+  },
+  {
+    "name": "native mesh keying: three frames visible in Graph and Dope Sheet with add-on enabled",
+    "passed": true
+  }
+]

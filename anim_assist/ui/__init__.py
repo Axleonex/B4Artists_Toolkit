@@ -56,7 +56,10 @@ from . import layout_homes                          # noqa: E402
 from . import header_menus                         # noqa: E402
 
 
+from .nla_panels import CLASSES as _nla_classes
+
 CLASSES: tuple[type, ...] = layout_homes.arrange((
+    *_nla_classes,
     *_ui_state_mod.CLASSES,
     AA_PT_diagnostics,
     *_panel_classes,

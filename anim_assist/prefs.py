@@ -223,6 +223,10 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         default=True,
     )
 
+    header_menu_nla: BoolProperty(
+        name="NLA Editor", description="Show the Anim Assist menu in the NLA Editor header", default=True,
+    )
+
     # Feature module toggles.
     enable_selection: BoolProperty(name="Selection Tools", description="Enable keyframe and channel selection tools", default=True)  # type: ignore[valid-type]
     enable_keys: BoolProperty(name="Key Utilities", description="Enable key editing and metadata utilities", default=True)  # type: ignore[valid-type]
@@ -269,6 +273,7 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         col.prop(self, "header_menu_view3d")
         col.prop(self, "header_menu_graph")
         col.prop(self, "header_menu_dopesheet")
+        col.prop(self, "header_menu_nla")
 
         box = layout.box()
         box.label(text="Timeline Quick Tools", icon='PREFERENCES')

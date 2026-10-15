@@ -25,14 +25,15 @@ def _drag_sensitivity(context: bpy.types.Context) -> int:
 
 
 def _editable_fcurves(context: bpy.types.Context) -> list:
-    if hasattr(context, "selected_editable_fcurves"):
-        fcs = list(context.selected_editable_fcurves)
-        if fcs:
-            return fcs
-
+    from ..core.context_utils import in_anim_editor, iter_visible_fcurves
+    if in_anim_editor(context):
+        return [fc for _obj, _action, fc in iter_visible_fcurves(context, only_selected=True)]
+    if getattr(getattr(context, "space_data", None), "type", "") == "NLA_EDITOR":
+        return []
     obj = context.object
     if obj and obj.animation_data and obj.animation_data.action:
-        return [fc for fc in get_fcurves(obj.animation_data.action, anim_data=obj.animation_data) if not fc.lock and not fc.hide]
+        return [fc for fc in get_fcurves(obj.animation_data.action, anim_data=obj.animation_data)
+                if not fc.lock and not fc.hide]
     return []
 
 

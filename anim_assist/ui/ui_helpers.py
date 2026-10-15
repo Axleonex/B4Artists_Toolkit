@@ -30,6 +30,16 @@ Public API:
 
 from __future__ import annotations
 
+
+def wrapped_label(layout, context, text, *, icon="NONE"):
+    """Fit explanatory text and target names to a native sidebar's width."""
+    import textwrap
+    width = getattr(getattr(context, "region", None), "width", 280)
+    scale = context.preferences.system.ui_scale
+    chars = max(18, int((width - 40) / (7 * max(scale, .5))))
+    for index, line in enumerate(textwrap.wrap(text, width=chars) or [""]):
+        layout.label(text=line, icon=icon if index == 0 else "NONE")
+
 from typing import Iterable, Optional
 
 import bpy

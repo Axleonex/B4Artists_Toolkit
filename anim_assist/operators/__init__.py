@@ -92,7 +92,10 @@ from .lifecycle_ops import CLASSES as _lifecycle_classes
 # --- ANIM ASSIST HOMES ---
 from .home_ops import CLASSES as _home_classes
 
+from .nla_ops import CLASSES as _nla_classes
+
 CLASSES: tuple[type, ...] = (
+    *_nla_classes,
     *_timeline_slider_classes,
     *_home_classes,
     *_p3_property_classes,

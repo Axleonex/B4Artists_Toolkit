@@ -45,41 +45,28 @@ class Group:
 
 #: Graph Editor and Dope Sheet sidebars: (subtitle, groups top to bottom).
 SIDEBARS: dict[str, tuple[str, tuple[Group, ...]]] = {
-    "GRAPH_EDITOR": ("Curves: select, shape, retime, clean up", (
-        Group("select", "Select", "RESTRICT_SELECT_OFF",
-              ("ANIMASSIST_PT_p2_selection", "ANIMASSIST_PT_p2_channels")),
-        Group("shape", "Shape Curves", "IPO_BEZIER",
-              ("ANIMASSIST_PT_curve_tools", "ANIMASSIST_PT_p3_interpolation"), open=True),
-        Group("retime", "Retime", "TIME",
-              ("ANIMASSIST_PT_p6_retime_GE", "ANIMASSIST_PT_anim_offset")),
-        Group("clean", "Clean Up", "BRUSH_DATA",
-              ("ANIMASSIST_PT_p2_keyutils", "ANIMASSIST_PT_p2_diagnostics",
-               "ANIMASSIST_PT_key_manager", "ANIMASSIST_PT_p2_metadata")),
-        Group("poserig", "Pose & Rig", "ARMATURE_DATA",
-              ("ANIMASSIST_PT_p9_mirror_GE", "ANIMASSIST_PT_p8_matching_GE",
-               "ANIMASSIST_PT_p7_bake_ds_GE")),
-        Group("shelf", "Quick Shelf", "SOLO_ON", ("ANIMASSIST_PT_p10_shelf_GE",)),
+    "GRAPH_EDITOR": ("Selected visible Action keys", (
+        Group("select", "Select & Channels", "NONE", ("ANIMASSIST_PT_p2_selection", "ANIMASSIST_PT_p2_channels")),
+        Group("shape", "Shape Curves", "NONE", ("ANIMASSIST_PT_curve_tools", "ANIMASSIST_PT_curve_interpolation"), open=True),
+        Group("retime", "Retime", "NONE", ("ANIMASSIST_PT_p6_retime_GE", "ANIMASSIST_PT_anim_offset")),
+        Group("clean", "Clean Up", "NONE", ("ANIMASSIST_PT_p2_keyutils", "ANIMASSIST_PT_p2_diagnostics", "ANIMASSIST_PT_key_manager", "ANIMASSIST_PT_p2_metadata")),
+        Group("poserig", "Pose & Bake", "NONE", ("ANIMASSIST_PT_p9_mirror_GE", "ANIMASSIST_PT_p8_matching_GE", "ANIMASSIST_PT_graph_breakdown", "ANIMASSIST_PT_p3_interpolation", "ANIMASSIST_PT_p7_bake_ds_GE")),
+        Group("shelf", "Quick Shelf", "NONE", ("ANIMASSIST_PT_p10_shelf_GE",)),
     )),
-    "DOPESHEET_EDITOR": ("Timing: block, inbetween, time, finish", (
-        Group("block", "Block", "POSE_HLT",
-              ("ANIMASSIST_PT_p3_breakdown", "ANIMASSIST_PT_p3_presets",
-               "ANIMASSIST_PT_p3_modal", "ANIMASSIST_PT_p3_pose_compare"), open=True),
-        Group("inbetween", "Inbetween", "KEYFRAME",
-              ("ANIMASSIST_PT_p3_inbetween", "ANIMASSIST_PT_p3_subsets",
-               "ANIMASSIST_PT_p4_offset")),
-        Group("time", "Time", "TIME",
-              ("ANIMASSIST_PT_p6_retime", "ANIMASSIST_PT_anim_offset_dope")),
-        Group("mirror", "Mirror & Match", "MOD_MIRROR",
-              ("ANIMASSIST_PT_p9_mirror", "ANIMASSIST_PT_p8_matching",
-               "ANIMASSIST_PT_p7_bake_ds")),
-        Group("keys", "Keys & Channels", "KEYFRAME_HLT",
-              ("ANIMASSIST_PT_p2_selection_ds", "ANIMASSIST_PT_p2_channels_ds",
-               "ANIMASSIST_PT_p2_keyutils_ds", "ANIMASSIST_PT_key_manager_dope",
-               "ANIMASSIST_PT_key_manager_timeline", "ANIMASSIST_PT_p2_metadata_ds",
-               "ANIMASSIST_PT_p2_diagnostics_ds")),
-        Group("shelf", "Shelf & Macros", "SOLO_ON",
-              ("ANIMASSIST_PT_p10_shelf", "ANIMASSIST_PT_p10_macros",
-               "ANIMASSIST_PT_p10_system")),
+    "DOPESHEET_EDITOR": ("Pose and key timing", (
+        Group("block", "Block & Tween", "NONE", ("ANIMASSIST_PT_p3_breakdown", "ANIMASSIST_PT_p3_inbetween", "ANIMASSIST_PT_p3_presets", "ANIMASSIST_PT_p3_modal", "ANIMASSIST_PT_p3_pose_compare", "ANIMASSIST_PT_p3_subsets", "ANIMASSIST_PT_p4_offset", "ANIMASSIST_PT_p3_options_dope"), open=True),
+        Group("time", "Timing", "NONE", ("ANIMASSIST_PT_p6_retime", "ANIMASSIST_PT_anim_offset_dope")),
+        Group("keys", "Keys & Channels", "NONE", ("ANIMASSIST_PT_p2_selection_ds", "ANIMASSIST_PT_p2_channels_ds", "ANIMASSIST_PT_p2_keyutils_ds", "ANIMASSIST_PT_key_manager_dope", "ANIMASSIST_PT_key_manager_timeline", "ANIMASSIST_PT_p2_metadata_ds")),
+        Group("mirror", "Pose & Match", "NONE", ("ANIMASSIST_PT_p9_mirror", "ANIMASSIST_PT_p8_matching")),
+        Group("bake", "Bake & Finish", "NONE", ("ANIMASSIST_PT_p7_bake_ds", "ANIMASSIST_PT_p2_diagnostics_ds")),
+        Group("shelf", "Quick Shelf", "NONE", ("ANIMASSIST_PT_p10_shelf",)),
+    )),
+    "NLA_EDITOR": ("Clips, tracks and corrections", (
+        Group("arrange", "Arrange & Time", "NONE", ("ANIMASSIST_PT_nla_arrange",), open=True),
+        Group("blend", "Blend & Corrections", "NONE", ("ANIMASSIST_PT_nla_blend",), open=True),
+        Group("actions", "Actions & Tracks", "NONE", ("ANIMASSIST_PT_nla_actions",)),
+        Group("bake", "Bake & Finish", "NONE", ("ANIMASSIST_PT_nla_bake",)),
+        Group("shelf", "Quick Shelf", "NONE", ("ANIMASSIST_PT_nla_shelf",)),
     )),
 }
 
@@ -98,8 +85,8 @@ PROPERTIES_GROUPS: tuple[Group, ...] = (
            "ANIMASSIST_PT_p11_layers_v3d")),
     Group("rig", "Rig", "ARMATURE_DATA", ("ANIMASSIST_PT_p7_proxy_bake",)),
     Group("face", "Face", "SHAPEKEY_DATA", ("ANIMASSIST_PT_p12_lipsync_v3d",)),
-    Group("setup", "Setup (once per rig)", "PREFERENCES", ("ANIMASSIST_PT_home_setup_body",)),
-    Group("settings", "Settings", "SETTINGS", ("ANIMASSIST_PT_home_settings_body",)),
+    Group("setup", "Setup (once per rig)", "PREFERENCES", ("ANIMASSIST_PT_home_setup_body", "ANIMASSIST_PT_p10_system")),
+    Group("settings", "Settings", "SETTINGS", ("ANIMASSIST_PT_home_settings_body", "ANIMASSIST_PT_p10_macros")),
     Group("help", "Help & Diagnostics", "HELP", ("AA_PT_help_browser", "AA_PT_diagnostics")),
 )
 
@@ -107,7 +94,7 @@ HOME_ROOT_IDNAME: str = "ANIMASSIST_PT_home"
 
 
 def sidebar_group_idname(space: str, key: str) -> str:
-    return f"ANIMASSIST_PT_{'ge' if space == 'GRAPH_EDITOR' else 'ds'}_{key}"
+    return f"ANIMASSIST_PT_{dict(GRAPH_EDITOR='ge', DOPESHEET_EDITOR='ds', NLA_EDITOR='nla_group')[space]}_{key}"
 
 
 def home_group_idname(key: str) -> str:
@@ -129,12 +116,34 @@ def _draw_nothing(self, _context: bpy.types.Context) -> None:
 
 
 def _sidebar_title(space: str, subtitle: str) -> type[Panel]:
-    def draw(self, _context: bpy.types.Context) -> None:
+    def draw(self, context: bpy.types.Context) -> None:
+        if space == "NLA_EDITOR":
+            from .nla_panels import draw_target
+            draw_target(self.layout, context)
+            return
+        from ..core.context_utils import iter_visible_fcurves
         col = self.layout.column(align=True)
-        col.label(text=HOME_LABEL, icon="ANIM")
-        row = col.row()
-        row.enabled = False
-        row.label(text=subtitle)
+        if space == "GRAPH_EDITOR" and getattr(context.space_data, "mode", "") == "DRIVERS":
+            col.label(text="Drivers: Action tools unavailable")
+            return
+        curves = list(iter_visible_fcurves(context))
+        owners = {obj.name for obj, _action, _fc in curves}
+        count = sum(k.select_control_point for _o, _a, fc in curves for k in fc.keyframe_points)
+        col.label(text=f"Scope: {len(owners)} visible owners")
+        col.label(text=f"Selected keys: {count}")
+        col.label(text=f"Editable curves: {len(curves)}")
+        supported = {fc.as_pointer() for _o, _a, fc in curves}
+        if any(fc.as_pointer() not in supported for fc in (getattr(context, "editable_fcurves", ()) or ())
+               if not fc.hide and not fc.mute and not fc.lock):
+            from .ui_helpers import wrapped_label
+            wrapped_label(col, context, "Unsupported source channels excluded. Object Actions only; pinned sources need an owner.", icon="INFO")
+        if not curves:
+            col.label(text="Show editable Action channels in this editor")
+        if space == "DOPESHEET_EDITOR":
+            row = col.row(align=True)
+            row.operator("action.select_all", text="All").action = "SELECT"
+            row.operator("action.select_all", text="None").action = "DESELECT"
+            row.operator("action.select_all", text="Invert").action = "INVERT"
 
     name = f"{sidebar_group_idname(space, 'title')}"
     return type(name, (Panel,), {
@@ -149,7 +158,7 @@ def _group_panel(idname: str, group: Group, order: int, space: str, region: str,
     ns = {
         "bl_idname": idname, "bl_label": group.label, "bl_space_type": space,
         "bl_region_type": region, "bl_order": order,
-        "draw_header": _icon_header(group.icon), "draw": _draw_nothing,
+        "draw": _draw_nothing,
     }
     if region == "UI":
         ns["bl_category"] = HOME_LABEL
@@ -247,6 +256,7 @@ class ANIMASSIST_PT_home_settings_body(Panel):
         col.prop(prefs, "header_menu_view3d")
         col.prop(prefs, "header_menu_graph")
         col.prop(prefs, "header_menu_dopesheet")
+        col.prop(prefs, "header_menu_nla")
 
         layout.separator()
         col = layout.column(align=True)
@@ -264,7 +274,15 @@ def _dock_in_sidebar(cls: type[Panel], parent: str, order: int) -> None:
     cls.bl_parent_id = parent
     cls.bl_category = HOME_LABEL
     cls.bl_order = order
-    cls.bl_options = set(getattr(cls, "bl_options", set())) | {"DEFAULT_CLOSED"}
+    options = set(getattr(cls, "bl_options", set()))
+    direct = {"ANIMASSIST_PT_curve_tools", "ANIMASSIST_PT_curve_interpolation",
+              "ANIMASSIST_PT_p3_breakdown", "ANIMASSIST_PT_p3_inbetween",
+              "ANIMASSIST_PT_p6_retime", "ANIMASSIST_PT_p6_retime_GE",
+              "ANIMASSIST_PT_p7_bake_ds", "ANIMASSIST_PT_p7_bake_ds_GE"}
+    if cls.__name__ in direct or cls.__name__.startswith("ANIMASSIST_PT_nla_"):
+        cls.bl_options = (options - {"DEFAULT_CLOSED"}) | {"HIDE_HEADER"}
+    else:
+        cls.bl_options = options | {"DEFAULT_CLOSED"}
 
 
 def _move_to_properties(cls: type[Panel], parent: str, order: int | None, closed: bool = True) -> None:

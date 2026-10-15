@@ -38,3 +38,4 @@ DIAGNOSTICS_REPORT_*.md
 # Local evidence and planning products
 /.goalposts/
 /.planning/
+/.cache/nla-validation/

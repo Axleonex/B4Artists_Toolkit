@@ -1,0 +1,22 @@
+[
+  {
+    "name": "native Tweak Mode: shifted/scaled/repeated/reversed clips and arrangement guard",
+    "passed": true
+  },
+  {
+    "name": "native track reordering works with no selected clips",
+    "passed": true
+  },
+  {
+    "name": "native linked and independent duplication have distinct Action ownership",
+    "passed": true
+  },
+  {
+    "name": "native Push Down and preserved muted Stash",
+    "passed": true
+  },
+  {
+    "name": "empty-owner existing Action clip creation",
+    "passed": true
+  }
+]

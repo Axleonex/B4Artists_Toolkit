@@ -12,21 +12,25 @@ class _GraphEditorMixin:
     bl_category = "Keys"
 
 
-def _draw_key_manager(layout: bpy.types.UILayout) -> None:
-    box = layout.box()
-    box.label(text="Batch Interpolation", icon="IPO_BEZIER")
-    row = box.row(align=True)
+def _draw_interpolation(layout, *, handles=False):
+    layout.label(text="Selected keys · interpolation")
     for itype, label in (("CONSTANT", "Constant"), ("LINEAR", "Linear"), ("BEZIER", "Bezier")):
-        op = row.operator("animassist.batch_interpolation", text=label)
-        op.interp_type = itype
+        layout.operator("animassist.batch_interpolation", text=label).interp_type = itype
+    if handles:
+        layout.label(text="Select handles")
+        row = layout.row(align=True)
+        for side, label in (("LEFT", "Left"), ("RIGHT", "Right"), ("BOTH", "Both")):
+            row.operator("animassist.select_handles", text=label).side = side
+        _draw_handle_types(layout)
 
-    box = layout.box()
-    box.label(text="Handle Selection", icon="HANDLE_ALIGNED")
-    row = box.row(align=True)
-    for side, label in (("LEFT", "Left"), ("RIGHT", "Right"), ("BOTH", "Both")):
-        op = row.operator("animassist.select_handles", text=label)
-        op.side = side
 
+def _draw_handle_types(layout):
+    layout.label(text="Selected keys · handle type")
+    for ht, label in (("AUTO_CLAMPED", "Auto Clamped"), ("AUTO", "Auto"), ("VECTOR", "Vector"), ("ALIGNED", "Aligned"), ("FREE", "Free")):
+        layout.operator("animassist.set_handle_type", text=label).handle_type = ht
+
+
+def _draw_key_manager(layout, *, dope=False):
     box = layout.box()
     box.label(text="Key Types", icon="KEYTYPE_KEYFRAME_VEC")
     col = box.column(align=True)
@@ -50,23 +54,22 @@ def _draw_key_manager(layout: bpy.types.UILayout) -> None:
         op = row.operator("animassist.delete_by_key_type", text="", icon="TRASH")
         op.key_type = kt_id
 
-    box = layout.box()
-    box.label(text="Set Handle Type", icon="HANDLE_AUTO")
-    row = box.row(align=True)
-    for ht, label in (
-        ("AUTO_CLAMPED", "Clamp"),
-        ("AUTO", "Auto"),
-        ("VECTOR", "Vec"),
-        ("ALIGNED", "Align"),
-        ("FREE", "Free"),
-    ):
-        op = row.operator("animassist.set_handle_type", text=label)
-        op.handle_type = ht
+    layout.operator("animassist.insert_frames", text="Insert Frames…")
+    layout.operator("animassist.move_keys", text="Move Keys…")
+    if dope:
+        _draw_interpolation(layout)
+        header, body = layout.panel("aa_dope_handles", default_closed=True)
+        header.label(text="Advanced Handle Type")
+        if body:
+            _draw_handle_types(body)
 
-    box = layout.box()
-    box.label(text="Key Operations", icon="NLA_PUSHDOWN")
-    box.operator("animassist.insert_frames", text="Insert Frames…")
-    box.operator("animassist.move_keys", text="Move Keys…")
+
+class ANIMASSIST_PT_curve_interpolation(_GraphEditorMixin, Panel):
+    bl_idname = "ANIMASSIST_PT_curve_interpolation"
+    bl_label = "Interpolation & Handles"
+
+    def draw(self, context):
+        _draw_interpolation(self.layout, handles=True)
 
 
 class ANIMASSIST_PT_curve_tools(_GraphEditorMixin, Panel):
@@ -78,18 +81,17 @@ class ANIMASSIST_PT_curve_tools(_GraphEditorMixin, Panel):
         layout = self.layout
         settings = context.scene.anim_assist
 
-        # A plain checkbox: the old triangle + "Curve Tools" label repeated the
-        # panel title and looked like a collapse control.
-        layout.prop(settings, "panel_compact", text="Compact buttons")
-
-        if settings.panel_compact:
-            col = layout.column(align=True)
-            col.operator("animassist.blend_neighbor", text="Blend to Neighbor")
-            col.operator("animassist.blend_frame", text="Blend Frame")
-            col.operator("animassist.blend_offset", text="Blend Offset")
-            col.operator("animassist.push_pull", text="Push / Pull")
-            col.operator("animassist.ease_to_ease", text="Ease To Ease")
-            col.operator("animassist.smooth_keys", text="Smooth Keys")
+        col = layout.column(align=True)
+        for op, label in (("smooth_keys", "Smooth Keys"), ("push_pull", "Push / Pull"),
+                          ("ease_to_ease", "Ease To Ease"), ("blend_neighbor", "Blend to Neighbor"),
+                          ("blend_frame", "Blend Frame"), ("blend_offset", "Blend Offset")):
+            col.operator(f"animassist.{op}", text=label)
+        header, body = layout.panel("aa_curve_reference", default_closed=True)
+        header.label(text="Reference Options")
+        if body:
+            body.prop(settings, "reference_frame", text="Reference Frame")
+            body.operator("animassist.set_reference_frame", text="Use Current Frame")
+            ANIMASSIST_PT_bookmarks.draw(type("DrawBody", (), {"layout": body})(), context)
 
 
 class ANIMASSIST_PT_blend_neighbor(_GraphEditorMixin, Panel):
@@ -100,7 +102,7 @@ class ANIMASSIST_PT_blend_neighbor(_GraphEditorMixin, Panel):
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        return not context.scene.anim_assist.panel_compact
+        return False  # Primary actions and reference options are directly in Shape Curves.
 
     def draw(self, context: bpy.types.Context) -> None:
         self.layout.operator(
@@ -118,7 +120,7 @@ class ANIMASSIST_PT_blend_frame(_GraphEditorMixin, Panel):
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        return not context.scene.anim_assist.panel_compact
+        return False  # Primary actions and reference options are directly in Shape Curves.
 
     def draw(self, context: bpy.types.Context) -> None:
         layout = self.layout
@@ -159,7 +161,7 @@ class ANIMASSIST_PT_blend_offset(_GraphEditorMixin, Panel):
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        return not context.scene.anim_assist.panel_compact
+        return False  # Primary actions and reference options are directly in Shape Curves.
 
     def draw(self, context: bpy.types.Context) -> None:
         self.layout.operator("animassist.blend_offset", text="Blend Offset", icon="ARROW_LEFTRIGHT")
@@ -173,7 +175,7 @@ class ANIMASSIST_PT_push_pull(_GraphEditorMixin, Panel):
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        return not context.scene.anim_assist.panel_compact
+        return False  # Primary actions and reference options are directly in Shape Curves.
 
     def draw(self, context: bpy.types.Context) -> None:
         layout = self.layout
@@ -193,7 +195,7 @@ class ANIMASSIST_PT_ease_to_ease(_GraphEditorMixin, Panel):
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        return not context.scene.anim_assist.panel_compact
+        return False  # Primary actions and reference options are directly in Shape Curves.
 
     def draw(self, context: bpy.types.Context) -> None:
         self.layout.operator("animassist.ease_to_ease", text="Ease To Ease", icon="IPO_EASE_IN_OUT")
@@ -207,7 +209,7 @@ class ANIMASSIST_PT_smooth_keys(_GraphEditorMixin, Panel):
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
-        return not context.scene.anim_assist.panel_compact
+        return False  # Primary actions and reference options are directly in Shape Curves.
 
     def draw(self, context: bpy.types.Context) -> None:
         self.layout.operator("animassist.smooth_keys", text="Smooth Keys", icon="SMOOTHCURVE")
@@ -282,7 +284,7 @@ class ANIMASSIST_PT_key_manager_dope(Panel):
         return getattr(context.space_data, "mode", "") != "TIMELINE"
 
     def draw(self, context: bpy.types.Context) -> None:
-        _draw_key_manager(self.layout)
+        _draw_key_manager(self.layout, dope=True)
 
 
 class ANIMASSIST_PT_key_manager_timeline(Panel):
@@ -298,7 +300,7 @@ class ANIMASSIST_PT_key_manager_timeline(Panel):
         return getattr(context.space_data, "mode", "") == "TIMELINE"
 
     def draw(self, context: bpy.types.Context) -> None:
-        _draw_key_manager(self.layout)
+        _draw_key_manager(self.layout, dope=True)
 
 
 class ANIMASSIST_PT_anim_offset_3d(Panel):
@@ -315,13 +317,7 @@ class ANIMASSIST_PT_anim_offset_3d(Panel):
 
 classes: list[type] = [
     ANIMASSIST_PT_curve_tools,
-    ANIMASSIST_PT_blend_neighbor,
-    ANIMASSIST_PT_blend_frame,
-    ANIMASSIST_PT_bookmarks,
-    ANIMASSIST_PT_blend_offset,
-    ANIMASSIST_PT_push_pull,
-    ANIMASSIST_PT_ease_to_ease,
-    ANIMASSIST_PT_smooth_keys,
+    ANIMASSIST_PT_curve_interpolation,
     ANIMASSIST_PT_anim_offset,
     ANIMASSIST_PT_key_manager,
     ANIMASSIST_PT_anim_offset_dope,
