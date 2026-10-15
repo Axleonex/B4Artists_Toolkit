@@ -1,7 +1,8 @@
 """Add-on-only Timeline tool band, using the supported pixel draw handler.
 
 A collapsed Timeline receives space once when first enabled. The band covers
-one header-height of the WINDOW region; later resizing is never repaired.
+one header-height at the bottom of the WINDOW region; later resizing is never
+repaired. The native scrub ruler and keyframe row stay at the top.
 """
 
 import bpy
@@ -137,18 +138,23 @@ def _items(context):
     scale = context.preferences.system.ui_scale
     h = max(28 * scale, header.height if header else 0)
     blf.size(0, round(11 * scale))
-    top = bool(header and header.y > context.region.y)
-    # Bforartists draws its frame indicator after pixel callbacks. Preserve
-    # the native scrub ruler at the top, so it cannot cover an action button.
-    ruler = 24 * scale if top else 0
-    usable_height = max(0, context.region.height-ruler)
+    # The native scrub ruler and keyframe summary row are always drawn at the
+    # top of the canvas, whichever side the header is on. Anchor the band at
+    # the bottom so it never hides or intercepts clicks on keyframes. Markers
+    # use a bottom strip; sit above it when the canvas has room for both.
+    usable_height = context.region.height
+    space = context.space_data
+    markers = bool(context.scene.timeline_markers) and getattr(space, "show_markers", True)
+    marker_strip = 42 * scale if markers else 0
+    keys_at_top = 46 * scale
+    y = marker_strip if usable_height - keys_at_top - h >= marker_strip else 0
     try: record=timeline_record(get_prefs(context))
     except ValueError: record=model.recommended(ACTIONS)
     labels={**QUICK_LABELS,'COPY_KEYS':'Copy','PASTE_KEYS':'Paste',
             'MIRROR_SELECTED':'Mirror','BAKE_STEP':'Bake Object','TRAIL_SHOW':'Trails'}
-    items = model.toolbar_layout(context.region.width, usable_height, h, top,
+    items = model.toolbar_layout(context.region.width, usable_height, h, False,
                        record,GROUPS,labels,lambda text: blf.dimensions(0, text)[0])
-    y = max(0, usable_height-h) if top else 0
+    items = [(kind, key, label, (x, iy+y, w, ih)) for kind, key, label, (x, iy, w, ih) in items]
     return items, (0, y, context.region.width, min(h, context.region.height))
 
 
@@ -274,8 +280,8 @@ def _draw():
             else:
                 _text(rect,label,(*accent[:3],ink[3]) if kind=='MENU' else ink,scale)
                 if kind=='POPOUT': _quad((rect[0]+3*scale,rect[1]+2*scale,rect[2]-6*scale,1*scale),accent)
-        # Thin separator, respecting top and bottom header placement.
-        _quad((band[0], band[1], band[2], 1), (*widgets.outline[:3], 1))
+        # Thin separator on the edge facing the animation canvas.
+        _quad((band[0], band[1]+band[3]-1, band[2], 1), (*widgets.outline[:3], 1))
         if active and active.mode=='POPOUT' and active._moved:
             width=min(280*scale,context.region.width); height=min(44*scale,context.region.height)
             x=max(0,min(active.track_x,context.region.width-width))

@@ -102,6 +102,31 @@ def show():
     prefs_mod.get_prefs().timeline_toolbar_row = True
 
 
+def key_row_click():
+    """With the header on top, the band must leave the native key row clickable."""
+    a, r = area_region()
+    h = next(r for r in a.regions if r.type == 'HEADER')
+    assert h.y > r.y
+    scale = bpy.context.preferences.system.ui_scale
+    with bpy.context.temp_override(area=a, region=r):
+        items, band = overlay._items(bpy.context)
+    assert band[1]+band[3] <= r.height-46*scale, (band, r.height)
+    for curve in compat.get_fcurves(obj.animation_data.action, anim_data=obj.animation_data):
+        for key in curve.keyframe_points:
+            key.select_control_point = False
+    x = r.x+r.view2d.view_to_region(11, 0, clip=False)[0]
+    y = r.y+r.height-round(34*scale)
+    event('MOUSEMOVE', 'NOTHING', x=x, y=y)
+    event('LEFTMOUSE', x=x, y=y)
+    event('LEFTMOUSE', 'RELEASE', x=x, y=y)
+
+
+def key_row_check():
+    selected = {round(k.co.x) for c in compat.get_fcurves(obj.animation_data.action, anim_data=obj.animation_data)
+                for k in c.keyframe_points if k.select_control_point}
+    assert selected == {11}, selected
+
+
 def flip_header():
     a, _r = area_region()
     h = next(r for r in a.regions if r.type == 'HEADER')
@@ -182,6 +207,8 @@ steps = [
     ('hidden render', lambda: screenshot('hidden')),
     ('show row', show),
     ('top header render', lambda: screenshot('top-header')),
+    ('click native key under top header', key_row_click),
+    ('native key row selection', key_row_check),
     ('flip native header', lambda: flip_header() if next(r for r in area_region()[0].regions if r.type=='HEADER').y > area_region()[1].y else None),
     ('bottom alignment', bottom_check),
     ('bottom header render', lambda: screenshot('bottom-header')),
