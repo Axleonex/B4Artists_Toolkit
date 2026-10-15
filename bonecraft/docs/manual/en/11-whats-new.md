@@ -4,6 +4,12 @@
 
 Newest first.
 
+## 9.2.4 — Task Board and native tools
+
+**Open Health Check** now runs rig validation and opens its results. Select an armature or its bound mesh. **Quick Wins** shows up to three recommendations; **Remaining Tasks** excludes those cards. **Refresh Task Board** checks again.
+
+Place Rig Markers and Build Mechanism remain available as viewport tools. Their registration no longer breaks native Grab/Move or tool cycling in Object and Pose modes.
+
 ## 9.2.3 — VRChat export location
 
 Removes the duplicate Export to VRChat panel from Avatar Tools. Export remains under CATS → Import / Export → Unity / VRChat.

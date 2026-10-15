@@ -16,7 +16,9 @@ Start with the [IK/FK beginner walkthrough](tutorials/ikfk-beginner.md): a narra
 
 The translations are machine-translated from the English edition.
 
-The interface maps and moved-tool paths in all seven editions cover BoneCraft 9.2.4. Start with chapter 1 for tabs, nested sections, selection requirements and Scene Properties visibility. BoneForge has its own standard-Blender manual in the [BoneForge repository](https://github.com/Axleonex/BoneForge_ALTERNATIVE_CATS_for_5.0_Blender/blob/main/docs/BoneForge_Documentation.md).
+See the [October 15 manual review](../../docs/releases/2026-10-15/manual-review.md) for the source comparisons and documentation checks across all three add-ons.
+
+Reviewed October 15, 2026 against BoneCraft 9.2.4: the interface maps, moved-tool paths, Task Board instructions and chapter 11 release notes in all seven editions cover the current version. Start with chapter 1 for tabs, nested sections, selection requirements and Scene Properties visibility. BoneForge has its own standard-Blender manual in the [BoneForge repository](https://github.com/Axleonex/BoneForge_ALTERNATIVE_CATS_for_5.0_Blender/blob/main/docs/BoneForge_Documentation.md).
 
 The illustrated English workshops retain screenshots captured with 9.1.2; their capture labels are historical, and the current navigation map gives the 9.2.4 locations. The six translated editions still lack the illustrated chapter 6 expansion and chapter 12 (Crescent Rose). Their interface guidance is updated, but use English for those workshops. See the [earlier English interface audit](reviews/english-manual-interface-9.1.2.md) for the scope of the original workshop checks.
 

@@ -4,6 +4,12 @@
 
 최신 항목이 먼저 옵니다.
 
+## 9.2.4 — 작업 보드와 기본 도구
+
+**건강 검사 열기**는 이제 리그 검증을 실행하고 결과를 엽니다. 아마추어 또는 연결된 메시를 선택하세요. **Quick Wins**는 최대 세 개의 권장 작업을 표시하고, **Remaining Tasks**는 해당 카드를 중복 표시하지 않습니다. **작업 보드 새로 고침**으로 다시 검사합니다.
+
+Place Rig Markers와 Build Mechanism은 뷰포트 도구로 계속 사용할 수 있습니다. 도구 등록이 오브젝트 및 포즈 모드에서 기본 Grab/Move와 도구 순환 전환을 방해하던 문제를 수정했습니다.
+
 ## 9.2.3 — VRChat 내보내기 위치
 
 Avatar Tools에서 중복된 Export to VRChat 패널을 제거했습니다. 내보내기는 CATS → Import / Export → Unity / VRChat에 유지됩니다.

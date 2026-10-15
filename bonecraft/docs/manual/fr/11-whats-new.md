@@ -4,6 +4,12 @@
 
 Les plus récentes d'abord.
 
+## 9.2.4 — Tableau des tâches et outils natifs
+
+**Ouvrir la vérification de santé** lance maintenant la validation du rig et ouvre les résultats. Sélectionnez une armature ou son maillage lié. **Quick Wins** affiche au plus trois recommandations ; **Remaining Tasks** exclut ces fiches. **Actualiser le tableau des tâches** relance la vérification.
+
+Place Rig Markers et Build Mechanism restent des outils de la vue 3D. Leur enregistrement ne perturbe plus Grab/Move ni le changement cyclique des outils natifs en modes Objet et Pose.
+
 ## 9.2.3 — Emplacement de l’export VRChat
 
 Le panneau Export to VRChat en double est supprimé d’Avatar Tools. L’export reste dans CATS → Import / Export → Unity / VRChat.

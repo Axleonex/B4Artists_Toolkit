@@ -182,7 +182,9 @@ Les outils MMD sont dans l'onglet **CATS** → **Importer / Exporter** → **MMD
 
 ## Tableau des tâches
 
-**Ce qu'il fait :** un résumé du rig actuel : un score de santé, des gains rapides, et une liste des tâches trouvées par BoneCraft (os humanoïdes manquants, noms non résolus, visèmes manquants, avertissements du validateur de rig, etc.), regroupées par catégorie. **Ouvrir la vérification de santé** ouvre le détail ; **Actualiser le tableau des tâches** vérifie de nouveau.
+**Ce qu'il fait :** un résumé du rig actuel : un score de santé, des gains rapides, et une liste des tâches trouvées par BoneCraft (os humanoïdes manquants, noms non résolus, visèmes manquants, avertissements du validateur de rig, etc.), regroupées par catégorie.
+
+**Ouvrir la vérification de santé** lance maintenant la validation du rig et ouvre les résultats. Sélectionnez une armature ou son maillage lié. **Quick Wins** affiche au plus trois recommandations ; **Remaining Tasks** exclut ces fiches. **Actualiser le tableau des tâches** relance la vérification.
 
 **Où le trouver :** onglet **BoneCraft** → **Vue d'ensemble** → **Tableau des tâches**
 
