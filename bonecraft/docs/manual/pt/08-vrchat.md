@@ -182,7 +182,9 @@ As ferramentas de MMD ficam na aba **CATS** → **Importar / Exportar** → **MM
 
 ## Quadro de Tarefas
 
-**O que faz:** um resumo do rig atual: uma pontuação de saúde, ganhos rápidos e uma lista das tarefas que o BoneCraft encontrou (ossos humanoides faltando, nomes não resolvidos, visemas faltando, avisos do validador de rig etc.), agrupadas por categoria. **Abrir verificação de saúde** abre os detalhes; **Atualizar Quadro de Tarefas** verifica de novo.
+**O que faz:** um resumo do rig atual: uma pontuação de saúde, ganhos rápidos e uma lista das tarefas que o BoneCraft encontrou (ossos humanoides faltando, nomes não resolvidos, visemas faltando, avisos do validador de rig etc.), agrupadas por categoria.
+
+**Abrir verificação de saúde** agora executa a validação do rig e abre os resultados. Selecione uma armature ou sua malha vinculada. **Quick Wins** mostra até três recomendações; **Remaining Tasks** não repete esses cartões. **Atualizar Quadro de Tarefas** verifica novamente.
 
 **Onde fica:** aba **BoneCraft** → **Visão Geral** → **Quadro de Tarefas**
 

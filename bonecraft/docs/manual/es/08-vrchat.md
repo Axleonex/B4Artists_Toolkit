@@ -182,7 +182,9 @@ Las herramientas de MMD están en la pestaña **CATS** → **Importar / Exportar
 
 ## Tablero de Tareas
 
-**Qué hace:** un resumen del rig actual: una puntuación de salud, mejoras rápidas y una lista de tareas que BoneCraft ha encontrado (huesos humanoides que faltan, nombres sin resolver, visemas que faltan, avisos del validador de rig, etc.), agrupadas por categoría. **Abrir verificación de salud** abre los detalles; **Actualizar Tablero de Tareas** vuelve a comprobar.
+**Qué hace:** un resumen del rig actual: una puntuación de salud, mejoras rápidas y una lista de tareas que BoneCraft ha encontrado (huesos humanoides que faltan, nombres sin resolver, visemas que faltan, avisos del validador de rig, etc.), agrupadas por categoría.
+
+**Abrir verificación de salud** ahora ejecuta la validación del rig y abre los resultados. Selecciona una armadura o su malla vinculada. **Quick Wins** muestra hasta tres recomendaciones; **Remaining Tasks** no repite esas tarjetas. **Actualizar Tablero de Tareas** vuelve a comprobar.
 
 **Dónde está:** pestaña **BoneCraft** → **Resumen** → **Tablero de Tareas**
 

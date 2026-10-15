@@ -4,6 +4,12 @@
 
 最新的在前。
 
+## 9.2.4 — 任务板与原生工具
+
+**打开健康检查**现在会运行绑定验证并打开结果。请选择骨架或与其绑定的网格。**快速改进项（Quick Wins）**最多显示三项建议；**其余任务（Remaining Tasks）**不再重复这些卡片。**刷新任务板**可重新检查。
+
+Place Rig Markers 和 Build Mechanism 仍可作为视口工具使用。它们的注册不再影响物体模式和姿态模式下的原生 Grab/Move 或工具循环切换。
+
 ## 9.2.3 — VRChat 导出位置
 
 移除 Avatar Tools 中重复的 Export to VRChat 面板。导出功能保留在 CATS → Import / Export → Unity / VRChat。

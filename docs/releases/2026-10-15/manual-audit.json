@@ -1,0 +1,103 @@
+{
+  "versions": {
+    "Anim Assist": "12.8.0",
+    "Ghost Tool": "4.2.11",
+    "BoneCraft": "9.2.4"
+  },
+  "checks": [
+    {
+      "name": "Anim Assist manual/PDF version",
+      "status": "VERIFIED",
+      "detail": "Anim Assist 12.8.0 user guide"
+    },
+    {
+      "name": "Anim Assist PDF content",
+      "status": "VERIFIED",
+      "detail": {
+        "pages": 5,
+        "missing_blocks": [],
+        "sha256": "fb83463dd9541ca43e4534b35a4aefdf1861b7fa4c8575e23b45ac70d6a90eeb"
+      }
+    },
+    {
+      "name": "Ghost Tool manual/PDF version",
+      "status": "VERIFIED",
+      "detail": "Ghost Tool 4.2.11 user guide"
+    },
+    {
+      "name": "Ghost Tool PDF content",
+      "status": "VERIFIED",
+      "detail": {
+        "pages": 3,
+        "missing_blocks": [],
+        "sha256": "ae91cb0efee998a9c22b70181a33fb656b1aaccd1048e491111d73ab06b8531c"
+      }
+    },
+    {
+      "name": "BoneCraft en index/changelog version",
+      "status": "VERIFIED",
+      "detail": {
+        "version": "9.2.4",
+        "chapters": 13
+      }
+    },
+    {
+      "name": "BoneCraft zh index/changelog version",
+      "status": "VERIFIED",
+      "detail": {
+        "version": "9.2.4",
+        "chapters": 12
+      }
+    },
+    {
+      "name": "BoneCraft fr index/changelog version",
+      "status": "VERIFIED",
+      "detail": {
+        "version": "9.2.4",
+        "chapters": 12
+      }
+    },
+    {
+      "name": "BoneCraft ja index/changelog version",
+      "status": "VERIFIED",
+      "detail": {
+        "version": "9.2.4",
+        "chapters": 12
+      }
+    },
+    {
+      "name": "BoneCraft ko index/changelog version",
+      "status": "VERIFIED",
+      "detail": {
+        "version": "9.2.4",
+        "chapters": 12
+      }
+    },
+    {
+      "name": "BoneCraft pt index/changelog version",
+      "status": "VERIFIED",
+      "detail": {
+        "version": "9.2.4",
+        "chapters": 12
+      }
+    },
+    {
+      "name": "BoneCraft es index/changelog version",
+      "status": "VERIFIED",
+      "detail": {
+        "version": "9.2.4",
+        "chapters": 12
+      }
+    },
+    {
+      "name": "Current manual local links and Markdown anchors",
+      "status": "VERIFIED",
+      "detail": {
+        "files": 91,
+        "links": 915,
+        "broken": []
+      }
+    }
+  ],
+  "status": "VERIFIED"
+}
