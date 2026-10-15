@@ -4,7 +4,7 @@ Current repository packages and their publication status.
 
 | Tool | Version | Archive | Bytes | SHA256 prefix | Status |
 |---|---|---|---:|---|---|
-| Anim Assist | 12.7.0 | [b4_anim_assist_v12.7.0.zip](b4_anim_assist_v12.7.0.zip) | 599,297 | `47d25fe0568e` | Repository build; delegated native workflow passed; standalone GitHub Release pending |
+| Anim Assist | 12.7.1 | [b4_anim_assist_v12.7.1.zip](b4_anim_assist_v12.7.1.zip) | 599,623 | `191702741840` | Repository build; Timeline keyframe-row fix over 12.7.0; standalone GitHub Release pending |
 | Anim Assist (historical 12.6.2) | 12.6.2 | [b4_anim_assist_v12.6.2.zip](b4_anim_assist_v12.6.2.zip) | 599,156 | `5492e94a773a` | Earlier local slider/layout release; retained archive |
 | Anim Assist (historical 12.6.1) | 12.6.1 | [b4_anim_assist_v12.6.1.zip](b4_anim_assist_v12.6.1.zip) | 579,836 | `4da8edac4e4b` | Earlier local release; add-on-only canvas row and unmodified-host qualification |
 | Anim Assist (historical 12.6.0) | 12.6.0 | [b4_anim_assist_v12.6.0.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/v12.6.0/b4_anim_assist_v12.6.0.zip) | 577,101 | `60d4c7f10d9f` | Published add-on; 80 immediate effects pass in standard Bforartists; uses the existing Timeline header |
@@ -31,6 +31,7 @@ Anim Assist uses the package root `B4_anim_assist`; Ghost Tool uses `ghost_tool`
 
 ## Checks and notes
 
+- [Anim Assist 12.7.1 Timeline keyframe fix](../docs/anim_assist/releases/12.7.1/RELEASE-NOTES.md) and [receipt](../docs/anim_assist/releases/12.7.1/package-receipt.json). Supersedes 12.7.0, whose tool row hid Timeline keys.
 - [Anim Assist 12.7.0 toolbar overhaul](../docs/anim_assist/releases/12.7.0/RELEASE-NOTES.md), [workspace qualification](../docs/anim_assist/releases/12.7.0/qualification.md) and [receipt](../docs/anim_assist/releases/12.7.0/package-receipt.json). Local add-on only; no GitHub publication.
 
 - [Anim Assist 12.6.2 configurable toolbar](../docs/anim_assist/releases/12.6.2/RELEASE-NOTES.md), [qualification](../docs/anim_assist/releases/12.6.2/qualification.md) and [package receipt](../docs/anim_assist/releases/12.6.2/package-receipt.json). Local add-on package; inline/popout tools and named layouts; public release unchanged pending approval.

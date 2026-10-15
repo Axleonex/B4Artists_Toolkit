@@ -1,3 +1,12 @@
+# 12.7.1 — Timeline keyframes no longer hidden
+
+- Fixes keyframing in the Timeline: with the header on top (the Bforartists
+  default), the tool row covered the keyframe row, hid the keys and turned
+  clicks on them into tool presses. The row now sits at the bottom of the
+  Timeline canvas, below the scrub ruler and keys, and above the marker strip
+  when there is room.
+- No tool, dispatch, setting or layout changes.
+
 # 12.7.0 — Timeline toolbar overhaul
 
 - Consolidates the configurable inline/popout toolbar, per-tool settings and
