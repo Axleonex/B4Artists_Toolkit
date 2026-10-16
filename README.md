@@ -18,21 +18,11 @@ If you hit an issue, please open an [issue](https://github.com/Axleonex/B4Artist
 
 Install add-on ZIPs directly in your existing Bforartists installation.
 
-The rebuilt BoneCraft 9.2.4 ZIP includes the Grab/tool-cycling correction. BoneCraft 9.2.4 is the current repository build: [changes and checks](docs/bonecraft/releases/9.2.4/RELEASE-NOTES.md). Its latest tagged GitHub Release remains 9.2.3.
-
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.8.0 (repository build) | [b4_anim_assist_v12.8.0.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.8.0.zip) |
 | Ghost Tool 4.2.11 | [b4_ghost_tool_v4.2.11.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip) |
 | BoneCraft 9.2.4 (optional; repository build) | [BoneCraft-BFA-9.2.4.zip](https://github.com/Axleonex/B4Artists_Toolkit/raw/refs/heads/main/releases/BoneCraft-BFA-9.2.4.zip) |
-
-**Anim Assist:** install the ZIP through Preferences and restart after updating.
-Its tool row appears inside the Timeline above a bottom header; with a top
-header, the frame ruler stays above the tool row. Breakdown and Smooth start
-as inline sliders. Right-click numeric tools for their settings; Settings
-chooses modes and saves named layouts. Search pins tools and More contains
-overflow. **View > Show Anim
-Assist Tool Row** restores a hidden row. No separate application is required.
 
 ## Browse the source
 
