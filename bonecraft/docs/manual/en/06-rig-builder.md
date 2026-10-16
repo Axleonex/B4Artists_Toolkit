@@ -54,7 +54,7 @@ The Rig Builder makes a new rig for a character. It is in its own **Rig Builder*
 - Expand Troubleshooting for **Diagnose Quick Rig (print to console)**. With a non-metarig armature active it also shows **Inspect Active Rig Controls**
 - With a Rigify metarig active, Troubleshooting shows **Generate Control Rig (active metarig)** instead of Inspect Active Rig Controls; it generates the Rigify control rig
 
-**The BoneCraft Rigs starter catalog:** the viewport asset shelf starts with all nine bundled starters visible, grouped into Humans, Quadrupeds and Other Animals. **Starter Rigs** in the viewport header switches between this collection and the regular Bforartists asset shelf. The adjacent catalog button, or **Add → Armature → Starter Rig Catalog**, opens the same collection as a popup. Your shelf choice is stored in BoneCraft's preferences.
+**The BoneCraft Rigs starter catalog:** all nine bundled starters share a **Starter Rigs** catalog in the native bottom asset shelf. Open the shelf's catalog menu at the left, choose **All** libraries, and enable **Starter Rigs** once to add its tab beside the existing catalog tabs. Select that tab to browse the starters. **Add → Armature → Starter Rig Catalog** opens the dependency-aware popup for fitting and adding a starter.
 
 Basic Humanoid needs no Rigify. The other thumbnails are labelled **Rigify**. If Rigify is inactive, choosing or dropping one offers **Enable Rigify & Add Rig** and Cancel. Accepting enables the installed Rigify and continues with that starter; cancelling adds nothing. The viewport header also has a single **Enable Rigify** button. A missing dependency or a preset absent from your installed version produces an explanation without adding a substitute rig.
 

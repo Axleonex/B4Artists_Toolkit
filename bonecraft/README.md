@@ -6,7 +6,7 @@ only in Bforartists: in standard Blender it does not load and shows a single "Ge
 | | |
 |---|---|
 | **Add-on** | BoneCraft |
-| **Version** | 9.2.4 |
+| **Version** | 9.2.5 |
 | **Host** | Bforartists (tested on 5.2) — not standard Blender |
 | **Category** | Rigging / Animation |
 | **License** | GPL v2.0 or later |
@@ -36,18 +36,23 @@ Switching a package off unregisters its classes, so it costs nothing until you s
 
 ## Install
 
-1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([current repository ZIP: BoneCraft 9.2.4](https://github.com/Axleonex/B4Artists_Toolkit/raw/refs/heads/main/releases/BoneCraft-BFA-9.2.4.zip)).
+1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([current repository ZIP: BoneCraft 9.2.5](../releases/BoneCraft-BFA-9.2.5.zip)).
 2. Tick its checkbox.
 3. In the 3D Viewport, the **BoneCraft** and **Rig Builder** tabs are on the left Tool Shelf (press **T**) and the
    **CATS** tab is on the right sidebar (press **N**). Each tab's side can be changed in the add-on's preferences
    (**Tabs**). Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools and Import / Export are also in the Properties
    editor's Scene tab while **Tabs → Scene Properties → Show** is on (the default).
 
-Current repository changes and checks: [BoneCraft 9.2.4 notes](../docs/bonecraft/releases/9.2.4/RELEASE-NOTES.md).
+Current repository changes and checks: [BoneCraft 9.2.5 notes](../docs/bonecraft/releases/9.2.5/RELEASE-NOTES.md).
 
-Repository build 9.2.4: [installable ZIP](../releases/BoneCraft-BFA-9.2.4.zip). The latest tagged GitHub Release remains 9.2.3.
+Repository build 9.2.5: [installable ZIP](../releases/BoneCraft-BFA-9.2.5.zip). The latest tagged GitHub Release remains 9.2.3.
 
-### 9.2.4 repository changes
+### 9.2.5 local changes
+
+- Starter Rigs uses one native catalog tab; its top-left header controls are removed.
+- Enable Starter Rigs once from the bottom shelf catalog menu to display its tab.
+
+### Previous changes (9.2.4)
 
 - The rebuilt ZIP fixes Grab/Move and native tool cycling with BoneCraft enabled in Object and Pose modes.
 - Open Health Check runs the registered validator and shows refreshable results.
@@ -68,7 +73,7 @@ Repository build 9.2.4: [installable ZIP](../releases/BoneCraft-BFA-9.2.4.zip). 
 - Other Tools and its grouping hooks are removed.
 
 Placement, drawing, visibility and tool-toggle host checks pass. Live-window appearance is not verified.
-The 9.2.4 ZIP passes CRC and source/version parity checks. Host regression checks pass; native popup appearance has not been visually verified.
+See the current release notes and package receipt for archive and host checks.
 
 ## Manual
 
