@@ -1,7 +1,4 @@
-# BoneCraft starter rig catalogs
+# BoneCraft starter rig catalog
 VERSION 1
 
-3f6a0d2e-6b8e-4c1a-9a57-2f0c1b7d4e11:BoneCraft/Starter Rigs/Humans:Humans
-b1e5f700-d93b-4a57-851f-f639b9e64dd2:BoneCraft/Starter Rigs/Quadrupeds:Quadrupeds
-72b1e50f-fbbf-453f-aafa-eb405cb16df9:BoneCraft/Starter Rigs/Other Animals:Other Animals
-ac47a626-3eda-44f5-91d2-1c0f78884699:BoneCraft/Starter Rigs/Other:Other
+3f6a0d2e-6b8e-4c1a-9a57-2f0c1b7d4e11:Starter Rigs:Starter Rigs

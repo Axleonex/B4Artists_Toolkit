@@ -116,8 +116,8 @@ def main():
         f.write('\n')
     with open(os.path.join(ra.assets_dir(), 'blender_assets.cats.txt'), 'w', encoding='utf-8') as f:
         f.write('# BoneCraft starter rig catalogs\nVERSION 1\n\n')
-        for catalog_id, label in ra.CATALOGS.values():
-            f.write(f'{catalog_id}:BoneCraft/Starter Rigs/{label}:{label}\n')
+        for catalog_id, label in dict.fromkeys(ra.CATALOGS.values()):
+            f.write(f'{catalog_id}:{label}:{label}\n')
     bpy.context.preferences.filepaths.save_version = 0
     bpy.ops.wm.save_as_mainfile(filepath=ra.asset_file(), compress=True)
     print('WROTE', ra.asset_file(), 'STARTERS', len(starters))
