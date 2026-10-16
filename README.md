@@ -20,9 +20,9 @@ Install add-on ZIPs directly in your existing Bforartists installation.
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.8.0 (repository build) | [b4_anim_assist_v12.8.0.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.8.0.zip) |
+| Anim Assist 12.8.0 | [b4_anim_assist_v12.8.0.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.8.0.zip) |
 | Ghost Tool 4.2.11 | [b4_ghost_tool_v4.2.11.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip) |
-| BoneCraft 9.2.4 (optional; repository build) | [BoneCraft-BFA-9.2.4.zip](https://github.com/Axleonex/B4Artists_Toolkit/raw/refs/heads/main/releases/BoneCraft-BFA-9.2.4.zip) |
+| BoneCraft 9.2.4 | [BoneCraft-BFA-9.2.4.zip](https://github.com/Axleonex/B4Artists_Toolkit/raw/refs/heads/main/releases/BoneCraft-BFA-9.2.4.zip) |
 
 ## Browse the source
 
