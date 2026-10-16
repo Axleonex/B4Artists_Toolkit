@@ -1,0 +1,34 @@
+{
+  "version": "9.2.5",
+  "archive": "BoneCraft-BFA-9.2.5.zip",
+  "status": "local unpublished build",
+  "files": 232,
+  "bytes": 1236975,
+  "sha256": "96cf4a38ff5af26820f7ec6a65a56f72b55ce0683edf359fe5faa0133618b1fb",
+  "crc_passed": true,
+  "all_files_match_source": true,
+  "all_python_syntax_passed": true,
+  "addon_and_sidecar_version_match": true,
+  "catalog_assets": 9,
+  "manual_catalog_tab_enable_required": true,
+  "host": "Bforartists 5.2.0 / Blender 5.3.0 Alpha, 0a1ca45552db",
+  "host_checks": {
+    "starter_suite": "PASS all five modules: starter actions, catalog assets, library ownership, dropped rig fitting, UI access",
+    "native_callbacks": "PASS original poll and asset_poll preserved, legacy callbacks restored",
+    "native_header": "PASS screenshot: Starter Rigs controls removed"
+  },
+  "routing": {
+    "recommended_lane": "T3_PRIME_OMP",
+    "actual_lane": "T3_PRIME_OMP",
+    "policy_fingerprint": "29fa965cada3128ffe57b5d85d3b9f8e5d749d780954ea14ba5f45dcca1ad8b8",
+    "outcome": "pre-host-apply failure: DESKTOP_PACKET_T4_REQUIRED_FOR_DECOMPOSITION",
+    "continuation": "native continuation under shared infrastructure recovery rule",
+    "escalation_count": 0
+  },
+  "native_gui": {
+    "passed": true,
+    "setup": "one-time Starter Rigs checkbox in the native catalog selector",
+    "result": "Starter Rigs is the rightmost catalog tab; selected tab displays all nine starters; top-left header controls are absent",
+    "evidence": "ui/starter-rigs-selected.png"
+  }
+}

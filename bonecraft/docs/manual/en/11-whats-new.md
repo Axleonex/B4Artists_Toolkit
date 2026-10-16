@@ -4,6 +4,10 @@
 
 Newest first.
 
+## 9.2.5 — Starter Rigs catalog tab
+
+Starter Rigs now uses one catalog tab in the native bottom asset shelf. The top-left viewport controls have been removed. Enable **Starter Rigs** once in the shelf's catalog menu to show its tab beside the other catalogs. Native asset import and **Add → Armature → Starter Rig Catalog** remain available.
+
 ## 9.2.4 — Task Board and native tools
 
 **Open Health Check** now runs rig validation and opens its results. Select an armature or its bound mesh. **Quick Wins** shows up to three recommendations; **Remaining Tasks** excludes those cards. **Refresh Task Board** checks again.

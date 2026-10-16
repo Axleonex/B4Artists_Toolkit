@@ -29,19 +29,25 @@ def run():
         for operator in (bpy.ops.boneforge.add_starter_asset, bpy.ops.boneforge.drag_starter_asset):
             own_enum = operator.get_rna_type().properties['asset_library_type'].enum_items
             assert {(e.identifier, e.value) for e in own_enum} == {(e.identifier, e.value) for e in native_enum}
-        assert ops.draw_starter_header in bpy.types.VIEW3D_HT_header.draw._draw_funcs
+        assert not hasattr(bpy.types, 'BONEFORGE_OT_toggle_starter_shelf')
+        assert not any(getattr(draw, '__name__', '') == 'draw_starter_header'
+                       and getattr(draw, '__module__', '') == ops.__name__
+                       for draw in getattr(bpy.types.VIEW3D_HT_header.draw, '_draw_funcs', ()))
         if native:
             assert native.__dict__['poll'] is native_poll
+            assert native.__dict__['asset_poll'] is native_asset_poll
             assert native.poll(bpy.context) and shelf.poll(bpy.context)
             asset = SimpleNamespace(id_type='OBJECT', metadata=SimpleNamespace(tags=[SimpleNamespace(name=ra.ASSET_TAG)]))
             assert native.asset_poll(asset)
             # An in-place reload from the previous release must restore both
             # the native shelf and rig visibility without losing its callbacks.
             setattr(native, ra._NATIVE_POLL_KEY, native_poll)
+            setattr(native, ra._NATIVE_ASSET_POLL_KEY, native_asset_poll)
             native.poll = classmethod(lambda cls, context: False)
             native.asset_poll = classmethod(lambda cls, asset: False)
-            ra.route_native_shelf(True)
+            ra.restore_native_shelf()
             assert native.__dict__['poll'] is native_poll
+            assert native.__dict__['asset_poll'] is native_asset_poll
             assert native.asset_poll(asset)
             for kind in ('OBJECT', 'MATERIAL', 'COLLECTION', 'WORLD', 'NODETREE'):
                 tags = Tags(SimpleNamespace(name=name) for name in
@@ -49,11 +55,9 @@ def run():
                 ordinary = SimpleNamespace(id_type=kind, metadata=SimpleNamespace(tags=tags))
                 assert native.asset_poll(ordinary)
                 assert not shelf.asset_poll(ordinary)
-            assert bpy.ops.boneforge.toggle_starter_shelf() == {'FINISHED'}
             assert native.poll(bpy.context) and shelf.poll(bpy.context)
-            assert not native.asset_poll(asset)
+            assert native.asset_poll(asset)
             assert native.asset_poll(ordinary)
-            assert bpy.ops.boneforge.toggle_starter_shelf() == {'FINISHED'}
         starter = next(r for r in ra.starter_manifest() if r['requires_rigify'])
         identifier = 'quick_rigs.blend/Object/' + starter['asset_name']
         assert ra.starter_from_reference(identifier) == starter
@@ -141,7 +145,7 @@ def run():
         ra.unregister()
         qh.unregister()
     assert not hasattr(bpy.types, 'BONEFORGE_OT_add_starter_asset')
-    assert ops.draw_starter_header not in bpy.types.VIEW3D_HT_header.draw._draw_funcs
+    assert not hasattr(bpy.types, 'BONEFORGE_OT_toggle_starter_shelf')
     if native:
         assert native.__dict__['poll'] is native_poll
         assert native.__dict__['asset_poll'] is native_asset_poll
