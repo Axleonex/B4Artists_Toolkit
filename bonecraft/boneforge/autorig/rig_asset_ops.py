@@ -220,36 +220,6 @@ class BONEFORGE_OT_drag_starter_asset(Operator):
         return {'RUNNING_MODAL'}
 
 
-def draw_starter_header(self, context):
-    """The native shelf header is drawn in C++; use the supported viewport hook."""
-    if context.mode != 'OBJECT':
-        return
-    row = self.layout.row(align=True)
-    row.operator('boneforge.toggle_starter_shelf', text=T("Starter Rigs"), depress=ra.shelf_enabled())
-    row.operator('boneforge.starter_catalog', text="", icon='ASSET_MANAGER')
-    if ra.shelf_enabled() and not qh.is_rigify_available():
-        row.operator("boneforge.enable_rigify", text=T("Enable Rigify"))
-
-
-class BONEFORGE_OT_toggle_starter_shelf(Operator):
-    bl_idname = 'boneforge.toggle_starter_shelf'
-    bl_label = 'Starter Rigs'
-    bl_description = "Show BoneCraft starter rigs alongside the other assets in the bottom shelf"
-
-    def execute(self, context):
-        enabled = not ra.shelf_enabled()
-        prefs = ra._addon_prefs()
-        if prefs is not None:
-            prefs.show_starter_shelf = enabled
-        else:
-            ra._session_store()['bonecraft_starter_shelf_enabled'] = enabled
-        for window in context.window_manager.windows:
-            for area in window.screen.areas:
-                if area.type == 'VIEW_3D':
-                    area.tag_redraw()
-        return {'FINISHED'}
-
-
 class BONEFORGE_OT_starter_catalog(Operator):
     bl_idname = "boneforge.starter_catalog"
     bl_label = "Starter Rig Catalog"
@@ -269,19 +239,17 @@ def draw_add_menu(self, context):
 
 
 _CLASSES = (BONEFORGE_OT_add_starter_asset, BONEFORGE_OT_drag_starter_asset,
-            BONEFORGE_OT_starter_catalog, BONEFORGE_OT_toggle_starter_shelf)
+            BONEFORGE_OT_starter_catalog)
 
 
 def register():
     for cls in _CLASSES:
         bpy.utils.register_class(cls)
     bpy.types.VIEW3D_MT_armature_add.append(draw_add_menu)
-    bpy.types.VIEW3D_HT_header.prepend(draw_starter_header)
 
 
 def unregister():
     bpy.types.VIEW3D_MT_armature_add.remove(draw_add_menu)
-    bpy.types.VIEW3D_HT_header.remove(draw_starter_header)
     for cls in reversed(_CLASSES):
         live = getattr(bpy.types, cls.__name__, None)
         if live is not None:

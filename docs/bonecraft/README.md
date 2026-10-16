@@ -4,9 +4,9 @@ BoneCraft rigs a humanoid character so you can animate it with Anim Assist,
 and Ghost Tool. It is optional: the animation tools work on any
 rig, and BoneCraft does not need them.
 
-- **Version:** 9.2.4 (repository build)
-- **Download:** [BoneCraft-BFA-9.2.4.zip](https://github.com/Axleonex/B4Artists_Toolkit/raw/refs/heads/main/releases/BoneCraft-BFA-9.2.4.zip)
-- **Changes and checks:** [9.2.4 notes](releases/9.2.4/RELEASE-NOTES.md). The latest tagged GitHub Release remains 9.2.3.
+- **Version:** 9.2.5 (repository build)
+- **Download:** [BoneCraft-BFA-9.2.5.zip](../../releases/BoneCraft-BFA-9.2.5.zip)
+- **Changes and checks:** [9.2.5 notes](releases/9.2.5/RELEASE-NOTES.md). The latest tagged GitHub Release remains 9.2.3.
 - **Requires:** Bforartists (it refuses to run on standard Blender)
 
 ## BoneCraft and BoneForge
@@ -47,7 +47,7 @@ not both).
    disabling the add-on. The individual viewport tab switches remain separate.
 
 
-For the current 9.2.4 interface map, moved-tool paths and visibility settings, see the [manual: Getting Started](../../bonecraft/docs/manual/en/01-start.md#where-things-are). Bone Merge is under BoneCraft → Setup Rigging; Delta Mush and Proximity Wrap are under Skin; Viseme Library / Lip Sync is under CATS → Avatar Tools; VRChat viseme mapping and face tracking are under CATS → VRChat Tools → Facial.
+For the current 9.2.5 interface map, moved-tool paths and visibility settings, see the [manual: Getting Started](../../bonecraft/docs/manual/en/01-start.md#where-things-are). Bone Merge is under BoneCraft → Setup Rigging; Delta Mush and Proximity Wrap are under Skin; Viseme Library / Lip Sync is under CATS → Avatar Tools; VRChat viseme mapping and face tracking are under CATS → VRChat Tools → Facial.
 
 ## Rig a character
 

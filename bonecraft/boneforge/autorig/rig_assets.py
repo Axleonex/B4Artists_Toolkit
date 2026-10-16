@@ -8,6 +8,7 @@ import json
 LIB_NAME = "BoneCraft Rigs"
 LIB_FALLBACK_NAME = "BoneCraft Rigs (BoneCraft)"
 CATALOG_ID = "3f6a0d2e-6b8e-4c1a-9a57-2f0c1b7d4e11"
+CATALOG_NAME = "Starter Rigs"
 ASSET_TAG = "bonecraft_rig"
 ASSET_NAME = "Basic Humanoid"
 SHELF_IDNAME = "BF_AST_bonecraft_rigs"
@@ -15,46 +16,25 @@ _NATIVE_POLL_KEY = '_bonecraft_original_object_shelf_poll'
 _NATIVE_ASSET_POLL_KEY = '_bonecraft_original_object_asset_poll'
 
 
-def shelf_enabled():
-    prefs = _addon_prefs()
-    if prefs is not None:
-        return getattr(prefs, 'show_starter_shelf', True)
-    return _session_store().get('bonecraft_starter_shelf_enabled', True)
+def restore_native_shelf():
+    """Remove legacy shelf overrides when upgrading a live installation.
 
-
-def _native_asset_poll(cls, asset):
-    # The switch controls only our rigs, never the host's other assets.
-    if any(t.name == ASSET_TAG for t in asset.metadata.tags):
-        return asset.id_type == 'OBJECT' and shelf_enabled()
-    return cls.__dict__[_NATIVE_ASSET_POLL_KEY].__get__(None, cls)(asset)
-
-
-def route_native_shelf(enable):
-    """Include starters in the native shelf without replacing its drag/drop.
-
-    Other assets retain the host's filter. The dedicated starter popup keeps
-    dependency-aware activation and dragging independently of the shared shelf.
+    The host accepts armature objects directly. Catalog tabs filter starters,
+    so neither its poll nor its asset filter needs an override anymore.
     """
     import bpy
     native = getattr(bpy.types, 'VIEW3D_AST_object', None)
     if native is None:
         return
-    # Restore the old exclusive routing if this module was reloaded in-place.
-    if hasattr(native, _NATIVE_POLL_KEY):
-        native.poll = native.__dict__[_NATIVE_POLL_KEY]
-        delattr(native, _NATIVE_POLL_KEY)
-    if enable:
-        if not hasattr(native, _NATIVE_ASSET_POLL_KEY):
-            setattr(native, _NATIVE_ASSET_POLL_KEY, native.__dict__['asset_poll'])
-        native.asset_poll = classmethod(_native_asset_poll)
-    elif not enable and hasattr(native, _NATIVE_ASSET_POLL_KEY):
-        native.asset_poll = native.__dict__[_NATIVE_ASSET_POLL_KEY]
-        delattr(native, _NATIVE_ASSET_POLL_KEY)
+    for method, key in (('poll', _NATIVE_POLL_KEY), ('asset_poll', _NATIVE_ASSET_POLL_KEY)):
+        if key in native.__dict__:
+            setattr(native, method, native.__dict__[key])
+            delattr(native, key)
+
+
 CATALOGS = {
-    "humans": (CATALOG_ID, "Humans"),
-    "quadrupeds": ("b1e5f700-d93b-4a57-851f-f639b9e64dd2", "Quadrupeds"),
-    "other": ("72b1e50f-fbbf-453f-aafa-eb405cb16df9", "Other Animals"),
-    "unknown": ("ac47a626-3eda-44f5-91d2-1c0f78884699", "Other"),
+    group: (CATALOG_ID, CATALOG_NAME)
+    for group in ("humans", "quadrupeds", "other", "unknown")
 }
 
 
@@ -224,14 +204,14 @@ def register():
     _shelf_cls = _make_shelf()
     bpy.utils.register_class(_shelf_cls)
     register_library()
-    route_native_shelf(True)
+    restore_native_shelf()
 
 
 def unregister():
     global _shelf_cls
     import bpy
     from . import rig_asset_ops
-    route_native_shelf(False)
+    restore_native_shelf()
     unregister_library()
     live = getattr(bpy.types, SHELF_IDNAME, None)
     if live is not None:
