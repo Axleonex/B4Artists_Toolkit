@@ -75,6 +75,16 @@ class TimelineLayoutTests(unittest.TestCase):
                         self.assertEqual(controls[0][0],'STAGE_CYCLE',(stage,width))
                     break
 
+    def test_hidden_family_note(self):
+        self.assertEqual(config.hidden_family_note('ALL','pose','Pose'),'')
+        self.assertEqual(config.hidden_family_note('POLISH','pose','Pose'),'')
+        self.assertEqual(config.hidden_family_note('BLOCK','pose','Pose'),
+                         'Pose is hidden in the Block stage; choose All or Polish to see it.')
+        for family in config.FAMILY_ORDER:
+            owner=config.stage_for_family(family)
+            self.assertIn(family,config.stage_families(owner))
+            self.assertNotEqual(owner,'ALL')
+
     def test_narrow_band_cycles_stage(self):
         controls=self.controls(250,stage='POLISH')
         self.assertEqual(controls[0][:3],('STAGE_CYCLE','POLISH','Polish'))

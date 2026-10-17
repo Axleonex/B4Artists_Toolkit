@@ -1,4 +1,4 @@
-# Unreleased — Timeline stage tabs
+# 12.9.0 — Timeline stage tabs
 
 - Adds stage tabs to the bottom Timeline band: All, Block (Tween, Keys),
   Spline (Curves), Polish (Timing, Pose) and Deliver (Bake, Motion). A stage
@@ -8,6 +8,11 @@
   Ctrl+Wheel over the tabs, or use View > Anim Assist Stage.
 - When the band is tight, the tabs collapse into one button that cycles stages
   before any slider is compacted.
+- Toolbar Settings (the row's Settings button) shows a Row Stage dropdown and
+  says when the family being configured is hidden by the current stage. Add-on
+  Preferences note that each workspace picks its stage with the row's tabs.
+- Settings text and the Timeline Tool Row preference now say the row sits at
+  the bottom of the Timeline.
 - Timing tooltips now describe key spacing: 80%/90% sit keys closer (faster),
   110%/120% spread them apart (slower). Timing Scale says the same.
 

@@ -233,6 +233,18 @@ def stage_families(stage):
     return FAMILY_ORDER if families is None else tuple(f for f in FAMILY_ORDER if f in families)
 
 
+def stage_for_family(family):
+    """The single stage that shows a family; All when no stage lists it."""
+    return next((key for key,_,families in STAGES if families and family in families),'ALL')
+
+
+def hidden_family_note(stage,family,family_label):
+    """Explain why a configured family is absent from the row, or ''."""
+    if family in stage_families(stage): return ''
+    return (f'{family_label} is hidden in the {stage_label(stage)} stage; '
+            f'choose All or {stage_label(stage_for_family(family))} to see it.')
+
+
 def next_stage(stage,step):
     index=STAGE_IDS.index(stage) if stage in STAGE_IDS else 0
     return STAGE_IDS[(index+step)%len(STAGE_IDS)]

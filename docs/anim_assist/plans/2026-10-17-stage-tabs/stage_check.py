@@ -51,6 +51,64 @@ try:
     check("Spacing wording in T80 tooltip", "keys sit closer together" in command_description("T80", ""))
     check("Spacing wording in Timing Scale tooltip", "spacing" in command_description("SCALE_DRAG", ""))
 
+    # Settings surfaces: Stage dropdown, hidden-family note and current wording.
+    class Rec:
+        def __init__(self):
+            object.__setattr__(self, "events", [])
+
+        def __getattr__(self, name):
+            def call(*args, **kwargs):
+                self.events.append((name, args, kwargs))
+                return SimpleNamespace() if name in {"operator", "popover"} else self
+            return call
+
+        def __setattr__(self, name, value):
+            pass
+
+    def stage_prop(rec):
+        return any(n == "prop" and len(a) > 1 and a[1] == PROP and k.get("text") == "Row Stage"
+                   for n, a, k in rec.events)
+
+    def labels(rec):
+        return [k.get("text", a[0] if a else "") for n, a, k in rec.events if n == "label"]
+
+    from anim_assist.ui import timeline_settings, timeline_config as model
+    from anim_assist import prefs as prefs_module
+    from anim_assist.ui.timeline_catalog import ACTIONS
+    tl_screen, timeline_area = next(
+        (s, a) for s in bpy.data.screens for a in s.areas
+        if a.type == "DOPESHEET_EDITOR" and a.spaces.active.mode == "TIMELINE")
+    stage_op(tl_screen, stage="BLOCK")
+    with bpy.context.temp_override(screen=tl_screen, area=timeline_area):
+        rec = Rec()
+        overlay.draw_stage_controls(rec, bpy.context, "pose")
+        check("Stage dropdown drawn", stage_prop(rec))
+        check("Hidden-family note for Pose in Block",
+              "Pose is hidden in the Block stage; choose All or Polish to see it." in labels(rec))
+        rec = Rec()
+        overlay.draw_stage_controls(rec, bpy.context, "tween")
+        check("No note for a family the stage shows", not any("hidden" in t for t in labels(rec)))
+        record = model.recommended(ACTIONS)
+        fake = SimpleNamespace(_record=record, serialize=lambda: record, layout_choice="recommended",
+                               family="bake", entries=[], active_index=0, layout=Rec())
+        timeline_settings.ANIMASSIST_OT_toolbar_settings.draw(fake, bpy.context)
+        check("Toolbar Settings shows Row Stage", stage_prop(fake.layout))
+        check("Toolbar Settings notes Bake hidden in Block",
+              "Bake is hidden in the Block stage; choose All or Deliver to see it." in labels(fake.layout))
+        prefs = SimpleNamespace(timeline_toolbar_row=True)
+        rec = Rec()
+        prefs_module.draw_timeline_quick_settings(rec, bpy.context, prefs)
+        check("Quick Tools panel (legacy, not on the row) shows Row Stage on a Timeline", stage_prop(rec))
+        check("Quick Tools text says bottom of the Timeline", "Tool row at the bottom of the Timeline" in labels(rec))
+        check("Quick Tools text drops stale header text", not any("beside its header" in t for t in labels(rec)))
+    rec = Rec()
+    prefs_module.draw_timeline_quick_settings(rec, bpy.context, SimpleNamespace(timeline_toolbar_row=True))
+    check("Preferences (no Timeline) explain stage tabs instead",
+          not stage_prop(rec) and "Each workspace picks its stage with the row's tabs" in labels(rec))
+    check("Preference description updated",
+          "bottom of the Timeline" in prefs_module.AA_AddonPreferences.bl_rna.properties["timeline_toolbar_row"].description
+          if hasattr(prefs_module.AA_AddonPreferences, "bl_rna") else True)
+
     path = Path(tempfile.mkdtemp()) / "stage.blend"
     stage_op(screen, stage="POLISH")
     name = screen.name

@@ -78,7 +78,14 @@ def draw_timeline_quick_settings(layout, context, prefs) -> None:
     """Shared quick-selection controls in the tool row and preferences."""
     from .ui.timeline_catalog import GROUPS, quick_property_name
     layout.prop(prefs, "timeline_toolbar_row")
-    layout.label(text="Tool row inside the Timeline, beside its header", icon="INFO")
+    layout.label(text="Tool row at the bottom of the Timeline", icon="INFO")
+    from .ui.timeline_strip import is_timeline
+    if is_timeline(context.area):
+        from .ui.timeline_overlay import draw_stage_controls
+        draw_stage_controls(layout, context)
+        layout.label(text="Stage applies to this workspace; layouts are unchanged")
+    else:
+        layout.label(text="Each workspace picks its stage with the row's tabs")
     layout.label(text="No separate editor or application required")
     layout.label(text="Saved in add-on preferences")
     layout.label(text="Layouts apply to all Timelines")
@@ -187,7 +194,7 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
     timeline_toolbar_row: BoolProperty(  # type: ignore[valid-type]
         name="Timeline Tool Row",
         description=(
-            "Show an Anim Assist tool row inside the Timeline beside its header; "
+            "Show an Anim Assist tool row at the bottom of the Timeline; "
             "uses a narrow band of canvas without resizing or creating editors"
         ),
         default=True,
