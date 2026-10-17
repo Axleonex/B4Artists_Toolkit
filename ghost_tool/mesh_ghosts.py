@@ -1403,12 +1403,28 @@ class GHOST_OT_clear_mesh_ghosts(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class GHOST_OT_toggle_mesh_visibility(bpy.types.Operator):
+    """Show or hide onion skins without changing their shading."""
+
+    bl_idname = "ghost_tool.toggle_mesh_visibility"
+    bl_label = "Show Mesh Ghosts"
+    bl_description = "Show or hide mesh onion skins, preserving the Solid/Wireframe setting"
+    bl_options = {'REGISTER'}
+
+    def execute(self, context: bpy.types.Context) -> set[str]:
+        settings = context.scene.ghost_tool
+        settings.show_mesh_ghosts = not settings.show_mesh_ghosts
+        if context.area:
+            context.area.tag_redraw()
+        return {'FINISHED'}
+
+
 class GHOST_OT_toggle_mesh_mode(bpy.types.Operator):
-    """Cycle mesh ghost display: Solid → Wire → Off."""
+    """Switch Solid/Wireframe without changing onion skin visibility."""
 
     bl_idname = "ghost_tool.toggle_mesh_mode"
-    bl_label = "Toggle Mesh Ghost Mode"
-    bl_description = "Cycle through mesh ghost display modes: Solid, Wireframe, Off"
+    bl_label = "Wireframe Mesh Ghosts"
+    bl_description = "Switch mesh ghosts between Solid and Wireframe, preserving visibility"
     bl_options = {'REGISTER'}
 
     @classmethod
@@ -1424,7 +1440,7 @@ class GHOST_OT_toggle_mesh_mode(bpy.types.Operator):
         return True
 
     def execute(self, context: bpy.types.Context) -> set[str]:
-        """Cycle display mode.
+        """Toggle shading independently of visibility.
 
         Args:
             context: Current Blender context.
@@ -1433,25 +1449,9 @@ class GHOST_OT_toggle_mesh_mode(bpy.types.Operator):
             set[str]: {'FINISHED'}.
         """
         settings = context.scene.ghost_tool
-        current = settings.mesh_ghost_mode
-
-        if current == 'SOLID':
-            settings.mesh_ghost_mode = 'WIRE'
-            set_mesh_ghost_display_mode('WIRE')
-            self.report({'INFO'}, "Mesh ghosts: Wireframe")
-        elif current == 'WIRE':
-            settings.show_mesh_ghosts = False
-            update_mesh_ghost_visibility(
-                context.scene, show_past=False, show_future=False
-            )
-            self.report({'INFO'}, "Mesh ghosts: Hidden")
-        else:
-            settings.mesh_ghost_mode = 'SOLID'
-            settings.show_mesh_ghosts = True
-            set_mesh_ghost_display_mode('SOLID')
-            update_mesh_ghost_visibility(context.scene)
-            self.report({'INFO'}, "Mesh ghosts: Solid")
-
+        # The RNA update callback applies the style to existing ghost objects.
+        settings.mesh_ghost_mode = 'WIRE' if settings.mesh_ghost_mode == 'SOLID' else 'SOLID'
+        self.report({'INFO'}, f"Mesh ghost shading: {'Wireframe' if settings.mesh_ghost_mode == 'WIRE' else 'Solid'}")
         if context.area:
             context.area.tag_redraw()
         return {'FINISHED'}
@@ -1464,6 +1464,7 @@ class GHOST_OT_toggle_mesh_mode(bpy.types.Operator):
 _classes = (
     GHOST_OT_generate_mesh_ghosts,
     GHOST_OT_clear_mesh_ghosts,
+    GHOST_OT_toggle_mesh_visibility,
     GHOST_OT_toggle_mesh_mode,
 )
 

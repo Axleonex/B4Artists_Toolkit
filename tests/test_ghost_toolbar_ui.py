@@ -38,6 +38,12 @@ class Layout:
         self.calls.append(('operator', name, kwargs, self.enabled, result))
         return result
 
+    def operator_menu_hold(self, name, **kwargs):
+        return self.operator(name, **kwargs)
+
+    def prop_enum(self, data, name, value, **kwargs):
+        self.calls.append(('prop_enum', name, dict(kwargs, value=value), self.enabled))
+
     def popover(self, **kwargs):
         self.calls.append(('popover', kwargs['panel'], kwargs, self.enabled))
 
@@ -84,13 +90,13 @@ class ToolbarUI(unittest.TestCase):
     def test_full_toolbar_keeps_same_controls_at_every_width_and_scale(self):
         wide = self.draw(context_for())
         panels = [c[1] for c in wide if c[0] == 'popover']
-        self.assertEqual(panels, ['GHOST_PT_toolbar_menu', 'GHOST_PT_marker_options',
-            'GHOST_PT_skin_options', 'GHOST_PT_paths_popover', 'GHOST_PT_edit_popover',
-            'GHOST_PT_compare_popover', 'GHOST_PT_physics_popover',
-            'GHOST_PT_look_popover', 'GHOST_PT_settings_popover'])
+        self.assertEqual(panels, ['GHOST_PT_header_menu'])
+        self.assertEqual([c[1] for c in wide if c[0] == 'prop'], [
+            'mesh_ghost_past_count', 'mesh_ghost_future_count',
+            'paths_markers_before', 'paths_markers_after'])
         def controls(calls):
             return [(c[0], c[1], c[2], c[3]) for c in calls
-                    if c[0] in {'operator', 'popover', 'prop'}]
+                    if c[0] in {'operator', 'popover', 'prop', 'menu'}]
         for mode in ('OBJECT', 'POSE'):
             for width, scale in ((2400, 1), (1400, 1), (1050, 1),
                                  (530, 1), (530, 1.5), (2400, 2)):
@@ -99,37 +105,46 @@ class ToolbarUI(unittest.TestCase):
                                      controls(wide))
         menu = Layout()
         ui._draw_toolbar_menu(menu, context_for(600))
-        self.assertEqual([c[1] for c in menu.calls if c[0] == 'popover'], panels[1:])
+        self.assertEqual([c[1] for c in menu.calls if c[0] == 'popover'], [
+            'GHOST_PT_marker_options', 'GHOST_PT_skin_options', 'GHOST_PT_paths_popover',
+            'GHOST_PT_edit_popover', 'GHOST_PT_compare_popover', 'GHOST_PT_physics_popover',
+            'GHOST_PT_look_popover', 'GHOST_PT_settings_popover'])
         self.assertNotIn('ghost_tool.restore_snapshot', [c[1] for c in menu.calls])
 
-    def test_other_modes_keep_the_existing_minimal_layout(self):
+    def test_other_modes_keep_direct_tools_reachable(self):
         self.assertEqual(ui._toolbar_tier(context_for(2400)), 'FULL')
         self.assertEqual(ui._toolbar_tier(context_for(2400, 1, 'SCULPT')), 'MINIMAL')
         self.assertEqual([c[1] for c in self.draw(context_for(530, 2, 'SCULPT'))
-                          if c[0] == 'popover'], ['GHOST_PT_toolbar_menu'])
+                          if c[0] == 'popover'], ['GHOST_PT_header_menu'])
+        self.assertEqual([c[1] for c in self.draw(context_for(530, 2, 'SCULPT'))
+                          if c[0] == 'operator'],
+                         [c[1] for c in self.draw(context_for()) if c[0] == 'operator'])
 
-    def test_named_sections_and_direct_master_state_match_the_menu(self):
-        for active, label in ((True, 'Ghosts On'), (False, 'Turn On Ghosts')):
+    def test_named_tools_and_direct_master_state_match_the_menu(self):
+        for active in (True, False):
             bpy.context.scene.ghost_tool['is_active'] = active
             calls = self.draw(context_for())
-            sections = {c[1]: c[2].get('text') for c in calls if c[0] == 'popover'}
-            self.assertEqual(sections['GHOST_PT_marker_options'], 'Marker options')
-            self.assertEqual(sections['GHOST_PT_skin_options'], 'Onion Skin options')
-            masters = [c for c in calls if c[0] == 'prop' and c[1] == 'is_active']
+            masters = [c for c in calls if c[0] == 'operator' and c[1] == 'ghost_tool.header_master']
             self.assertEqual(len(masters), 1)
-            self.assertEqual(masters[0][2]['text'], label)
-            self.assertTrue(masters[0][2]['toggle'])
+            self.assertEqual(masters[0][2]['depress'], active)
+            self.assertEqual(masters[0][2]['menu'], 'GHOST_MT_header_master')
             menu = Layout()
             ui._draw_toolbar_menu(menu, context_for())
-            self.assertEqual(masters[0][2], next(c[2] for c in menu.calls
-                             if c[0] == 'prop' and c[1] == 'is_active'))
-            self.assertEqual([c[1] for c in calls if c[0] == 'operator'],
-                             ['ghost_tool.generate_ghosts', 'ghost_tool.generate_mesh_ghosts'])
+            self.assertEqual(next(c[2]['text'] for c in menu.calls
+                             if c[0] == 'prop' and c[1] == 'is_active'),
+                             'Ghosts On' if active else 'Turn On Ghosts')
+            operators = [c[1] for c in calls if c[0] == 'operator']
+            self.assertNotIn('ghost_tool.generate_ghosts', operators)
+            self.assertNotIn('ghost_tool.clear_ghosts', operators)
+            self.assertNotIn('ghost_tool.header_toggle', operators)
+        for name, title in (('header_markers_display', 'Markers Display'),
+                            ('header_spacing', 'Spacing Ticks'), ('header_follow', 'Follow Selection')):
+            self.assertEqual(getattr(bpy.ops.ghost_tool, name).get_rna_type().name, title)
 
     def test_missing_targets_keep_options_enabled_and_options_do_not_generate(self):
         calls = self.draw(context_for(active=None))
-        arrows = [c for c in calls if c[0] == 'popover' and c[1] in
-                  {'GHOST_PT_marker_options', 'GHOST_PT_skin_options'}]
+        arrows = [c for c in calls if c[0] == 'operator' and c[1] in
+                  {'ghost_tool.header_ghosts_display', 'ghost_tool.header_paths_display'}]
         self.assertEqual(len(arrows), 2)
         self.assertTrue(all(c[3] for c in arrows))
         for cls, flag in ((ui.GHOST_PT_marker_options, 'show_cached_markers'),
@@ -141,6 +156,29 @@ class ToolbarUI(unittest.TestCase):
             self.assertFalse(any(c[0] == 'operator' and c[1] in {
                 'ghost_tool.generate_ghosts', 'ghost_tool.generate_mesh_ghosts'}
                 for c in panel.layout.calls))
+
+    def test_arc_styles_are_direct_choices_in_one_menu(self):
+        calls = self.draw(context_for())
+        self.assertEqual([c[1] for c in calls if c[0] == 'menu'], ['GHOST_MT_header_arc'])
+        self.assertEqual(ui.GHOST_MT_header_arc.bl_label, 'Arc Style')
+        layout = Layout()
+        ui.GHOST_MT_header_arc.draw(NS(layout=layout, target='ARC'), context_for())
+        self.assertEqual([c[2]['value'] for c in layout.calls], ['SOLID', 'SPEED', 'FADE'])
+        self.assertTrue(all(c[0:2] == ('prop_enum', 'arc_line_style') for c in layout.calls))
+
+    def test_count_buttons_change_only_the_requested_side_and_clamp_at_zero(self):
+        settings = bpy.context.scene.ghost_tool
+        settings.mesh_ghost_past_count, settings.mesh_ghost_future_count = 2, 4
+        bpy.ops.ghost_tool.header_count_step(field='mesh_ghost_past_count', delta=1)
+        self.assertEqual((settings.mesh_ghost_past_count, settings.mesh_ghost_future_count), (3, 4))
+        bpy.ops.ghost_tool.header_count_step(field='mesh_ghost_past_count', delta=-1)
+        self.assertEqual((settings.mesh_ghost_past_count, settings.mesh_ghost_future_count), (2, 4))
+        settings.mesh_ghost_past_count = 0
+        bpy.ops.ghost_tool.header_count_step(field='mesh_ghost_past_count', delta=-1)
+        self.assertEqual(settings.mesh_ghost_past_count, 0)
+        settings.paths_markers_before, settings.paths_markers_after = 2, 5
+        bpy.ops.ghost_tool.header_count_step(field='paths_markers_after', delta=1)
+        self.assertEqual((settings.paths_markers_before, settings.paths_markers_after), (2, 6))
 
     def test_hidden_location_and_inactive_recovery(self):
         context = context_for()

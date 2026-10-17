@@ -1572,6 +1572,124 @@ class GHOST_OT_select_ghost(bpy.types.Operator):
 # Registration
 # ---------------------------------------------------------------------------
 
+class GHOST_OT_pick_marker(bpy.types.Operator):
+    """Choose a viewport target after clicking a toolbar action."""
+
+    bl_idname = 'ghost_tool.pick_marker'
+    bl_label = 'Pick Ghost Marker'
+    bl_description = 'Drag mode stays active for repeated marker edits; select Drag again or press Escape to exit'
+
+    action: bpy.props.EnumProperty(items=[
+        ('DRAG', 'Drag', 'Drag the clicked marker'),
+        ('PIN', 'Pin', 'Pin or unpin the clicked marker'),
+        ('SELECT', 'Select', 'Select the clicked marker'),
+        ('BOX', 'Box Select', 'Drag a selection box in the viewport')],
+        default='DRAG', options={'HIDDEN', 'SKIP_SAVE'})
+
+    _active_drag_mode = None
+
+    @classmethod
+    def drag_mode_active(cls):
+        return cls._active_drag_mode is not None
+
+    @classmethod
+    def poll(cls, context):
+        return GhostDragOperator.poll(context) or cls._active_drag_mode is not None
+
+    def _finish(self):
+        if getattr(self, '_persistent_drag_mode', False):
+            if type(self)._active_drag_mode is self:
+                type(self)._active_drag_mode = None
+        else:
+            SessionState.end_gesture(self)
+        try:
+            self._window.cursor_modal_restore()
+        except (AttributeError, ReferenceError):
+            pass
+        try:
+            self._window.workspace.status_text_set(None)
+        except (AttributeError, ReferenceError):
+            pass
+
+    def invoke(self, context, event):
+        if self.action == 'DRAG' and type(self)._active_drag_mode is not None:
+            type(self)._active_drag_mode._finish()
+            return {'CANCELLED'}
+        if not SessionState.available(self):
+            return {'CANCELLED'}
+        if context.window is None or not any(area.type == 'VIEW_3D' for area in context.window.screen.areas):
+            self.report({'WARNING'}, 'Open a 3D Viewport to pick markers')
+            return {'CANCELLED'}
+        self._window = context.window
+        self._persistent_drag_mode = self.action == 'DRAG'
+        if self._persistent_drag_mode:
+            type(self)._active_drag_mode = self
+        else:
+            SessionState.begin_gesture(self, context.scene, context=context, cancel=self._finish)
+        try:
+            context.window.cursor_modal_set('CROSSHAIR')
+            context.workspace.status_text_set(
+                'Drag mode: click markers to edit; Esc or select Drag again to exit'
+                if self._persistent_drag_mode else
+                f'{self.action.title()}: click a marker in the viewport; Esc cancels')
+            context.window_manager.modal_handler_add(self)
+        except Exception:
+            self._finish()
+            raise
+        return {'RUNNING_MODAL'}
+
+    def modal(self, context, event):
+        try:
+            return self._pick(context, event)
+        except Exception as exc:
+            self._finish()
+            self.report({'WARNING'}, f'Marker pick cancelled: {exc}')
+            return {'CANCELLED'}
+
+    def _pick(self, context, event):
+        if self._persistent_drag_mode and type(self)._active_drag_mode is not self:
+            return {'CANCELLED'}
+        if not self._persistent_drag_mode and not SessionState.owns_gesture(self, context.scene):
+            self._finish()
+            return {'CANCELLED'}
+        if event.type in {'ESC', 'RIGHTMOUSE'}:
+            self._finish()
+            return {'CANCELLED'}
+        if event.type != 'LEFTMOUSE' or event.value != 'PRESS':
+            return {'RUNNING_MODAL'}
+        if self._persistent_drag_mode and not SessionState.available():
+            return {'RUNNING_MODAL'}
+        for area in context.window.screen.areas:
+            if area.type != 'VIEW_3D':
+                continue
+            for region in area.regions:
+                if region.type != 'WINDOW' or not (
+                        region.x <= event.mouse_x < region.x + region.width and
+                        region.y <= event.mouse_y < region.y + region.height):
+                    continue
+                with context.temp_override(area=area, region=region):
+                    if self.action != 'BOX' and _find_ghost_under_cursor(
+                            context, event.mouse_x - region.x, event.mouse_y - region.y,
+                            context.scene.ghost_tool.grab_radius) is None:
+                        self.report({'INFO'}, 'Click closer to a visible marker; Esc cancels')
+                        return {'RUNNING_MODAL'}
+                    action = self.action
+                    if not self._persistent_drag_mode:
+                        self._finish()
+                    if action == 'PIN':
+                        result = bpy.ops.ghost_tool.pin_ghost('INVOKE_DEFAULT')
+                    elif action == 'SELECT':
+                        result = bpy.ops.ghost_tool.select_ghost('INVOKE_DEFAULT')
+                    elif action == 'BOX':
+                        result = bpy.ops.ghost_tool.box_select('INVOKE_DEFAULT')
+                    else:
+                        result = bpy.ops.ghost_tool.drag_ghost('INVOKE_DEFAULT')
+                    if self._persistent_drag_mode:
+                        return {'RUNNING_MODAL'}
+                    return {'CANCELLED'} if 'CANCELLED' in result else {'FINISHED'}
+        return {'RUNNING_MODAL'}
+
+
 CLASSES: tuple[type, ...] = (
     GhostDragOperator,
     GHOST_OT_generate,
@@ -1580,6 +1698,7 @@ CLASSES: tuple[type, ...] = (
     GHOST_OT_unpin_all,
     GHOST_OT_hover_detect,
     GHOST_OT_select_ghost,
+    GHOST_OT_pick_marker,
 )
 
 

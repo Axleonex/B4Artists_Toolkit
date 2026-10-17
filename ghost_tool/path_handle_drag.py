@@ -154,6 +154,8 @@ class GHOST_OT_path_handle_drag(bpy.types.Operator):
         name="Pick Handle", default=False, options={'HIDDEN', 'SKIP_SAVE'},
         description="Click a visible handle after choosing this action from the header")
 
+    _active_wait_mode = None
+
     @classmethod
     def poll(cls, context):
         settings = getattr(context.scene, "ghost_tool", None)
@@ -171,20 +173,28 @@ class GHOST_OT_path_handle_drag(bpy.types.Operator):
         if reason:
             cls.poll_message_set(reason)
             return False
-        return SessionState.poll_available(cls)
+        return cls._active_wait_mode is not None or SessionState.poll_available(cls)
 
     def invoke(self, context, event):
+        if self.wait_for_click and type(self)._active_wait_mode is not None:
+            active = type(self)._active_wait_mode
+            active._abort()
+            active._finish(context)
+            return {'CANCELLED'}
         if not SessionState.available(self):
             return {'CANCELLED'}
         self._region = next((r for r in context.area.regions if r.type == 'WINDOW'), None)
         self._rv3d = context.space_data.region_3d
         self._scene = context.scene
         self._drag = None
+        self._persistent_wait_mode = self.wait_for_click
         if self._region is None or self._rv3d is None:
             self.report({'WARNING'}, "Open a 3D Viewport to drag handles")
             return {'CANCELLED'}
         if not self.wait_for_click and not self._pick(context, event):
             return {'PASS_THROUGH'}
+        if self._persistent_wait_mode:
+            type(self)._active_wait_mode = self
         SessionState.begin_gesture(self, context.scene, context=context,
             cancel=self._abort, validate=lambda: self._drag is None or self._drag.transaction.valid())
         try:
@@ -200,6 +210,9 @@ class GHOST_OT_path_handle_drag(bpy.types.Operator):
         return event.mouse_x - self._region.x, event.mouse_y - self._region.y
 
     def _pick(self, context, event):
+        if not (self._region.x <= event.mouse_x < self._region.x + self._region.width and
+                self._region.y <= event.mouse_y < self._region.y + self._region.height):
+            return False
         pick = handle_under_cursor(context, self._region, self._rv3d, *self._coordinates(event))
         if pick is None:
             return False
@@ -249,6 +262,10 @@ class GHOST_OT_path_handle_drag(bpy.types.Operator):
             tag_viewport_redraw(context)
         elif event.type == 'LEFTMOUSE' and event.value == ('RELEASE' if self._via_click else 'PRESS'):
             drag.confirm(context)
+            if self._persistent_wait_mode:
+                self._drag = None
+                context.workspace.status_text_set("Drag Path Handle: click another handle; Esc or select again to exit")
+                return {'RUNNING_MODAL'}
             self._finish(context)
             return {'FINISHED'}
         elif event.type in {'RIGHTMOUSE', 'ESC'} and event.value == 'PRESS':
@@ -265,6 +282,8 @@ class GHOST_OT_path_handle_drag(bpy.types.Operator):
 
     def _finish(self, context):
         SessionState.end_gesture(self)
+        if type(self)._active_wait_mode is self:
+            type(self)._active_wait_mode = None
         context.workspace.status_text_set(None)
         tag_viewport_redraw(context)
 

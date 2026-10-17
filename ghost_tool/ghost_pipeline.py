@@ -798,6 +798,11 @@ def _defer_to_path_markers(scene, ghosts: list) -> tuple[list, list]:
     owned = motion_paths.owned_markers(scene)
     taken = {(g.object_name, g.bone_name, g.channel, g.frame) for g in owned}
     fresh = [g for g in ghosts if (g.object_name, g.bone_name, g.channel, g.frame) not in taken]
+    pinned = {(g.object_name, g.bone_name, g.channel, g.frame)
+              for g in GhostStore.get(scene).get_pinned()}
+    for ghost in fresh + owned:
+        if (ghost.object_name, ghost.bone_name, ghost.channel, ghost.frame) in pinned:
+            ghost.is_pinned = True
     return fresh, owned
 
 
