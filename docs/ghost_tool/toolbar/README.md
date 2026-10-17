@@ -1,39 +1,41 @@
-# Ghost Tool 4.2.11 viewport toolbar
+# Ghost Tool 4.3.1 toolbar reference
 
-The toolbar keeps Ghost actions in the native viewport **Tool Settings** row beneath the main header. Ghost Tool defaults to **Top Toolbar**, with **Show Ghost Toolbar** enabled. **Top Header** has been removed from Display Location; saved Top Header choices migrate to a visible toolbar. Right Sidebar (N), Left Tool Shelf (T), and their saved choices remain available. Existing toolbar visibility choices are retained.
+The main Ghost toolbar occupies the native 3D Viewport Tool Settings row. With headers at the top, it is the row beneath the main header. Choose Top Toolbar in Ghost preferences. Right Sidebar (N) and Left Tool Shelf (T) remain alternative locations.
 
-With native headers aligned at the top, the toolbar appears beneath the main viewport header. Native tool and mode controls retain their position and behavior. The toolbar follows the viewport's native header alignment.
+## Top row: direct actions
 
-## Generate and inspect
+Read left to right: **Ghost Tool on/off; Ghosts; Before/Ahead ghost counts; Wire; Solid; Paths; Before/Ahead path counts; Add Selected Path; Follow Selection; Drag; Pin; Markers Display; Arc Style; Spacing Ticks; Settings.**
 
-The toolbar directly exposes Ghosts On / Turn On Ghosts, Marker options, Onion Skin options, Motion Paths, Edit Motion, Compare, Physics, Look and Settings. Each named section button opens its existing dropdown. Show Markers and Show Onion Skin remain adjacent one-click actions. Ghost retains the overall menu and Hide/Show Toolbar recovery.
+The first ghost icon controls the whole tool. Ghosts separately shows/hides mesh ghosts. Before and Ahead are independent counts relative to the playhead; each top-toolbar number has minus and plus actions. Paths has a separate pair of sample counts. Wire and Solid explicitly select mesh style and do not replace mesh visibility.
 
-**Show Markers** generates and displays markers from your animation. **Show Onion Skin** generates and displays mesh previews. These are actions, so clicking either can refresh its preview. The adjacent arrows open **Marker options** and **Onion Skin options** without generating anything.
+Add Selected Path retains a target in the path list. Follow Selection displays the current selection without removing explicitly added targets. Pin instead fixes an editable marker while reshaping. Click Pin and pick a marker; invoke it again for another marker. Hold Pin for Unpin All Markers.
 
-The first checkbox in each options popover is **Show cached markers** or **Show cached skin**. Use it to hide or show the existing preview without rebuilding it. Hidden markers cannot be picked or box-selected. Other displays, such as motion paths and saved comparison references, retain their own controls.
+Drag Markers stays active after a confirmed move. Pick another marker in the 3D Viewport, select Drag again to stop, or press Escape. Escape during a move restores that move's starting data, not earlier confirmed edits. Path-handle drag mode also supports repeated picks.
 
-**Clear All Ghosts** in Marker options removes both markers and onion skins. Use the cached visibility checkbox when you only want to hide markers.
+Markers Display is the diamond immediately right of Pin. It shows/hides editable path points and has its own tool-name hover label. Arc Style is a single-click dropdown containing Solid, Speed Colored and Fade directly. It is separate from mesh Wire/Solid and Paths Line Style.
 
-Marker options retain **Marker Targets**, frame range and **Live Update Markers**. Skin options retain the character sources, frame counts, fade and **Live Update Skin**. Live updates remain disabled by default. Existing scene choices are preserved. This toolbar does not change the animation sampling or settled-refresh behavior.
+## Hold menus
 
-**Motion Paths**, **Edit Motion**, **Compare**, **Physics**, **Look** and **Settings** open their shared feature controls. Compare keeps Save Snapshot and each named reference's Restore action together. Marker Targets, Capture Targets and Snapshot Targets remain independent folds.
+Click for the main action; press and hold a supported action for parameters. Arc Style and Settings open on an ordinary click.
 
-## Keep the viewport clear
+**Ghost Tool:** mesh/marker updates while scrubbing and Freeze Updates. **Ghosts:** frame-step or keyframe sampling, interval, Opacity, In Front and Fade. **Paths:** sampling, interval, Line Style, Frame Numbers and Bezier Handles.
 
-Ghost Tool 4.2.11 keeps the complete Object/Pose toolbar in every viewport, at every width and UI scale. Buttons keep the same labels and order as the wide layout. When a row overflows, middle-mouse drag it horizontally to reach the remaining buttons. Resizing or splitting a viewport does not move tools into **More** or a Ghost-only layout. Other modes retain their existing Ghost menu.
+**Drag:** When Released, Curve Shape or Smooth Neighbours, Nearby Frame Reach and Falloff. **Pin:** pin instructions and Unpin All Markers. **Markers Display:** shared Paths sampling, Keyframe Dots and Marker Frame Numbers. **Follow Selection:** Highlight Active Path. **Spacing Ticks:** Acceleration Indicators.
 
-Earlier 4.2.7 used width-based layouts. The complete split-view toolbar was introduced in 4.2.8; see its [verification](split-view-verification.md).
+Settings retains marker generation, range, targets, onion skins, Edit Motion, Compare, Physics, Look and other advanced options. The redundant top-row Generate/Clear icons are removed. Clear All Ghosts remains in advanced controls for deliberate removal of markers and onion skins.
 
-Choose **Hide Toolbar** in Ghost to hide its controls while keeping previews, targets, settings and the native Tool Settings row. To restore it, choose **View > Show Ghost Toolbar** or enable **Show Ghost Toolbar** in preferences. This also reveals Tool Settings if you hid that native region through View controls. Hiding the native region later remains your choice until you explicitly show the toolbar again. Leaving Top Toolbar does not close native regions.
+## Bottom Timeline strip
 
-Location and Ghost-control visibility apply across ordinary viewports. Save preferences normally to retain them. Each viewport keeps its own native region alignment and visibility.
+The compact strip sits inline beside native Timeline controls. Its order remains overall on/off, mesh display, earlier/later mesh counts, Wire/Solid, Drag Markers, marker diamond, Paths display and earlier/later path counts. This update does not redesign it or add a second row.
 
-## Source and release status
+Hold the bottom Ghosts or Paths button for Frame by Frame / By Keyframe, intervals and display settings. More Ghost Settings opens the full options. The bottom marker diamond is a direct toggle; its separate hold menu is on the top toolbar. Snapshot controls live in advanced Compare rather than the bottom strip.
 
-The current source and regular Latest release are **4.2.11**. Install [b4_ghost_tool_v4.2.11.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip). The exact 4.2.11 ZIP passes 123 focused startup and toolbar checks in Bforartists 5.2.0 (Blender runtime 5.3.0 Alpha), build hash 0a1ca45552db: 80 background checks, 35 native split-view checks and eight saved-preference startup checks. The startup isolation profile disables width writes. A separate width run passes ten preliminary checks for the initial N-panel match and manual resize preservation, but its preference-reset check fails when displayed and stored widths disagree; the guard declines the write. Later fallback and scale checks were not reached. JellyTest.blend has not been tested. See the [package receipt](../releases/4.2.11/package-receipt.json).
+## Visibility, space and recovery
 
-## Left shelf width and header placement
+Narrow and split viewports retain the full native row and tool order. Middle-mouse drag horizontally to reach offscreen controls. View > Show Ghost Toolbar or Show Ghost Toolbar in preferences recovers hidden Ghost controls and explicitly reveals the native row when needed. Leaving Top Toolbar preserves native region visibility.
 
-Ghost Tool 4.2.11 is designed to widen a narrow Ghost shelf once to match an already open right N-panel. With the N-panel closed, its intended default is 240 px at 1x UI scale. It leaves wider shelves and later manual resizing alone. Widen Narrow Shelf in Ghost preferences defaults on; turn it off to manage the width yourself. Changing that switch or relocating the display permits another default-width check. Initial matching and manual resize preservation pass, but the full width suite is incomplete; see the [verification status](../releases/4.2.11/package-receipt.json).
+The left shelf width preference is retained. The 4.2.11 width/scale assessment was incomplete; this update makes no new width-fix claim. The duplicate Ghost button in the main viewport header remains removed.
 
-The standalone Ghost Tool button in the main viewport header is removed. The Ghost menu, master switch, generation actions and all section dropdowns remain in the Tool Settings row below. In Top Toolbar mode, use View > Show Ghost Toolbar or its preference checkbox to recover hidden controls.
+## Version status
+
+This reference describes source version **4.3.1**. The published 4.2.11 ZIP is not renamed or replaced here. See the [user guide](../GhostTool_User_Manual.md) and [4.3.1 release notes](../releases/4.3.1/RELEASE-NOTES.md) for workflows and publication status.
