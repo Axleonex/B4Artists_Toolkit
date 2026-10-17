@@ -42,7 +42,7 @@ Tabs at the left of the row choose a stage: **All**, **Block** (Tween, Keys), **
 
 Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. When the row is tight, the tabs collapse into one button that cycles stages before any slider is shortened. Tools outside the stage remain in More and Search.
 
-**Toolbar Settings** and the gear popover also show **Row Stage**. If you configure a family the current stage hides, a note names the stage that shows it; choose that stage or **All** to see your change on the row.
+**Toolbar Settings** (the row's **Settings** button) also shows **Row Stage**. If you configure a family the current stage hides, a note names the stage that shows it; choose that stage or **All** to see your change on the row. Add-on Preferences have no stage control; there, Anim Assist notes that each workspace picks its stage with the row's tabs.
 
 ## Dope Sheet: poses and key timing
 

@@ -10,9 +10,9 @@ Host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`. C
 
 | Check | Result |
 |---|---|
-| Stage behavior in background Bforartists ([stage_check.py](../../plans/2026-10-17-stage-tabs/stage_check.py)): property registration, tab and cycle operator, unknown stage rejected, per-screen value, tooltips, Row Stage dropdown and hidden-family note in Toolbar Settings and the gear popover, updated row wording, save/reopen persistence, two unregister/register cycles | 27/27 pass in 5 consecutive runs |
+| Stage behavior in background Bforartists ([stage_check.py](../../plans/2026-10-17-stage-tabs/stage_check.py)): property registration, tab and cycle operator, unknown stage rejected, per-screen value, tooltips, Row Stage dropdown and hidden-family note in Toolbar Settings, the Add-on Preferences stage note, updated row wording, save/reopen persistence, two unregister/register cycles | 27/27 pass in 5 consecutive runs |
 | `tests/test_anim_assist_layout.py` against the extracted package | 98 panels, none in the 3D Viewport sidebar; unregister clean |
-| Real-GUI Bforartists with the ZIP installed in a clean profile ([stage_gui.py](../../plans/2026-10-17-stage-tabs/stage_gui.py)) | Band drawn for every stage at 1330 px; [Toolbar Settings](evidence/images/settings-dialog.png) and [gear popover](evidence/images/gear-popover.png) show Row Stage, and the band follows a dropdown change |
+| Real-GUI Bforartists with the ZIP installed in a clean profile ([stage_gui.py](../../plans/2026-10-17-stage-tabs/stage_gui.py)) | Band drawn for every stage at 1330 px; [Toolbar Settings](evidence/images/settings-dialog.png) opened from the row shows Row Stage, and the band follows a dropdown change |
 
 ## Source checks
 
@@ -27,4 +27,5 @@ Host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`. C
 - The PDF manual was regenerated from the Markdown with `docs/anim_assist/build_manual_pdf.py` (ReportLab 5.0.1); its text was checked for the 12.9.0 title and stage-tab sections, but its layout was not visually inspected.
 - One earlier background run stalled before printing output and was stopped at the time limit; it did not recur in five later runs of the same ZIP.
 - The hidden-family note is checked in background drawing; the GUI capture shows a family the stage includes (no note).
+- The legacy Timeline Quick Tools panel (`ANIMASSIST_PT_timeline_quick_settings`) is not reachable from the 12.9.0 row; its contents appear only in Add-on Preferences, which show the stage note rather than a Row Stage dropdown. An earlier draft of these notes wrongly described it as a gear popover on the row.
 - External production files, other rigs and other host builds are not covered.

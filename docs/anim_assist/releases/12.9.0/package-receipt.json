@@ -4,10 +4,10 @@
   "package_root": "B4_anim_assist",
   "files": 211,
   "python_files": 209,
-  "bytes": 616222,
-  "sha256": "86573624a89db0335bcda25a64ef00ac0dc5c563c48f0698d6c27be48d86f8f7",
+  "bytes": 616250,
+  "sha256": "6ce15f609ca3388fe1a46b2fa5559892831c9dcc6b96f73a6c806f0dfdc21f0e",
   "source_files_sha256": {
-    "B4_anim_assist/CHANGELOG.md": "5f26414dcfd56bba2866508ed5d0f9fd60aaa812a815b2b4514bff1e7248b45b",
+    "B4_anim_assist/CHANGELOG.md": "af2303bcee16b7d83fb61fe23e195418434cf5f2574c6812348dc93f969835de",
     "B4_anim_assist/__init__.py": "e6e179565c82e03fbe4cee28d25b1e2474c3179e1d1052b02d660b41345e4296",
     "B4_anim_assist/blender_manifest.toml": "87e9d49c8894f6f629819d7feec34f28769c02b5175ccd3e41a2b99f1619215c",
     "B4_anim_assist/constants.py": "be1ce63c8d340b462192d89c6544ed44eda4a114c92fb881b705c269b0d2f04d",

@@ -60,7 +60,7 @@ def step():
             state["i"] = 0
             return 1.5
         if state["i"] >= len(STAGES):
-            # Settings surfaces with the Block stage: dialog, then gear popover.
+            # Toolbar Settings, opened as the row's Settings button does, with Block.
             phase = state.setdefault("settings", 0)
             region = next(r for r in area.regions if r.type == "WINDOW")
             override = dict(window=window, screen=window.screen, area=area, region=region)
@@ -78,12 +78,6 @@ def step():
                 with bpy.context.temp_override(window=window, screen=window.screen):
                     bpy.ops.screen.screenshot(filepath=str(OUT / "settings-dialog.png"))
                 log.write("captured settings dialog\n")
-                with bpy.context.temp_override(**override):
-                    bpy.ops.wm.call_panel(name="ANIMASSIST_PT_timeline_quick_settings", keep_open=True)
-            elif phase == 2:
-                with bpy.context.temp_override(window=window, screen=window.screen):
-                    bpy.ops.screen.screenshot(filepath=str(OUT / "gear-popover.png"))
-                log.write("captured gear popover\n")
             else:
                 log.write("done\n"); log.close()
                 bpy.ops.wm.quit_blender()

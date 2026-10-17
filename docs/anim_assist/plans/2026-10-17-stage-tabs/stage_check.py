@@ -98,9 +98,9 @@ try:
         prefs = SimpleNamespace(timeline_toolbar_row=True)
         rec = Rec()
         prefs_module.draw_timeline_quick_settings(rec, bpy.context, prefs)
-        check("Gear popover on a Timeline shows Row Stage", stage_prop(rec))
-        check("Gear popover says bottom of the Timeline", "Tool row at the bottom of the Timeline" in labels(rec))
-        check("Gear popover drops stale header text", not any("beside its header" in t for t in labels(rec)))
+        check("Quick Tools panel (legacy, not on the row) shows Row Stage on a Timeline", stage_prop(rec))
+        check("Quick Tools text says bottom of the Timeline", "Tool row at the bottom of the Timeline" in labels(rec))
+        check("Quick Tools text drops stale header text", not any("beside its header" in t for t in labels(rec)))
     rec = Rec()
     prefs_module.draw_timeline_quick_settings(rec, bpy.context, SimpleNamespace(timeline_toolbar_row=True))
     check("Preferences (no Timeline) explain stage tabs instead",

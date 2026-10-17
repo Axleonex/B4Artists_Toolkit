@@ -8,7 +8,7 @@ The bottom Timeline row now starts with stage tabs: **All**, **Block** (Tween, K
 - Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**.
 - Each workspace keeps its own stage, saved with the .blend file.
 - When the row is tight, the tabs collapse into one button that cycles stages before any slider is shortened. Tools outside the stage remain in More and Search.
-- **Toolbar Settings** and the Timeline gear popover show a **Row Stage** dropdown. When the family you are configuring is hidden by the current stage, a note names the stage that shows it.
+- **Toolbar Settings** (the row's **Settings** button) shows a **Row Stage** dropdown. When the family you are configuring is hidden by the current stage, a note names the stage that shows it. Add-on Preferences note that each workspace picks its stage with the row's tabs.
 
 ## Timing tooltips
 
