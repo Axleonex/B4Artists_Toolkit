@@ -1,5 +1,7 @@
 # Anim Assist 12.9.0 qualification
 
+> **Superseded before publication (2026-10-17).** This ZIP was never pushed. A later bug review found that the All tab could act as Select All Visible, that tabs could swap for the cycle button when changing stage (moving controls under the cursor), that the cycle button lost hover after use, that Row Stage opened from Preferences edited the wrong screen, and that the stage was lost in maximized views and new windows. Those fixes, and stage toolsets, ship in 12.10.0. The checks below describe this ZIP only.
+
 Host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`. Checks use new files and isolated configuration/scripts directories. The personal installed add-on and preferences were not modified.
 
 ## Package

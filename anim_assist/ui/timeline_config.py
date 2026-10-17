@@ -15,6 +15,8 @@ STAGES = (
     ('DELIVER', 'Deliver', ('bake', 'motion')),
 )
 STAGE_IDS = tuple(key for key, _label, _families in STAGES)
+# Saved enum numbers; never renumber an existing stage.
+STAGE_NUMBERS = {'ALL': 0, 'BLOCK': 1, 'SPLINE': 2, 'POLISH': 3, 'DELIVER': 4}
 MODES = ('HIDDEN', 'BUTTON', 'POPOUT', 'INLINE')
 # (label, unit, neutral/default, display minimum, display maximum, hard minimum, hard maximum)
 SLIDERS = {
@@ -264,16 +266,17 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
         utilities=[(kind,key,'') for kind,key,_ in utilities]
         utility_widths=[24*scale]*3
     budget=max(0,width-sum(utility_widths)-4*gap)
-    # Stage tabs lead the band. They give way first: before the layout itself is
-    # compacted, the tabs collapse into one button that cycles stages.
+    # Stage tabs lead the band. The choice between tabs and the single cycle
+    # button never depends on the selected stage, so switching stages cannot
+    # swap one for the other under the cursor. The cycle button keeps one key.
     tabs=[('STAGE',key,label,max(24*scale,measure(label)+2*pad)) for key,label,_ in STAGES]
     label=stage_label(stage)
     if measure(label)+2*pad>budget*.5: label=label[0]
-    cycle=[('STAGE_CYCLE',stage if stage in STAGE_IDS else 'ALL',label,max(24*scale,measure(label)+2*pad))]
+    cycle=[('STAGE_CYCLE','CYCLE',label,max(24*scale,measure(label)+2*pad))]
 
-    def compose(compact=False,demote=False,no_families=False):
+    def compose(shown,compact=False,demote=False,no_families=False):
         specs=[]
-        for family in stage_families(stage):
+        for family in stage_families(shown):
             label,known=families[family]
             selected=[a for a in order if a in known and tools[a]['mode']!='HIDDEN']
             if not no_families:
@@ -296,10 +299,14 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
                         specs.append(('PRESET',action+':'+text,text,max(24*scale,measure(text)+2*pad)))
         return specs
 
-    candidates=[lead+body for body in (compose(),compose(compact=True),compose(compact=True,demote=True),
-                                       compose(compact=True,demote=True,no_families=True))
-                for lead in (tabs,cycle)]
-    specs=next((s for s in candidates if sum(i[3]+gap for i in s)<=budget),candidates[-1])
+    fits=lambda specs:sum(i[3]+gap for i in specs)<=budget
+    # Tabs only when every stage's full layout fits beside them ("tabs give way
+    # first"); otherwise every stage uses the cycle button.
+    lead=tabs if all(fits(tabs+compose(key)) for key in STAGE_IDS) else cycle
+    candidates=[lead+body for body in (compose(stage),compose(stage,compact=True),
+                                       compose(stage,compact=True,demote=True),
+                                       compose(stage,compact=True,demote=True,no_families=True))]
+    specs=next((c for c in candidates if fits(c)),candidates[-1])
     controls=[]; x=gap
     for kind,key,label,w in specs:
         if x+w>budget: continue

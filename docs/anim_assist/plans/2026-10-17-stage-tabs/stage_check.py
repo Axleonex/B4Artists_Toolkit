@@ -20,28 +20,31 @@ def check(name, condition):
     print(("PASS " if condition else "FAIL ") + name)
 
 
-def stage_op(screen, **kw):
-    with bpy.context.temp_override(screen=screen):
+def stage_op(workspace, **kw):
+    with bpy.context.temp_override(workspace=workspace):
         return bpy.ops.animassist.timeline_stage(**kw)
 
 
 try:
     anim_assist.register()
-    check("Screen stage property registered", hasattr(bpy.types.Screen, PROP))
-    screen = bpy.data.screens[0]
-    check("Default stage is All", getattr(screen, PROP) == "ALL")
-    check("Click tab sets Block", stage_op(screen, stage="BLOCK") == {"FINISHED"} and getattr(screen, PROP) == "BLOCK")
-    stage_op(screen, step=1)
-    check("Cycle forward reaches Spline", getattr(screen, PROP) == "SPLINE")
-    stage_op(screen, step=-1); stage_op(screen, step=-1)
-    check("Cycle back reaches All", getattr(screen, PROP) == "ALL")
-    stage_op(screen, step=-1)
-    check("Cycle wraps to Deliver", getattr(screen, PROP) == "DELIVER")
-    check("Unknown stage cancelled", stage_op(screen, stage="BOGUS") == {"CANCELLED"}
-          and getattr(screen, PROP) == "DELIVER")
-    other = bpy.data.screens[1] if len(bpy.data.screens) > 1 else None
+    check("Workspace stage property registered", hasattr(bpy.types.WorkSpace, PROP)
+          and not hasattr(bpy.types.Screen, PROP))
+    numbers = {i.identifier: i.value for i in bpy.types.WorkSpace.bl_rna.properties[PROP].enum_items}
+    check("Stage enum numbers are fixed", numbers == {"ALL": 0, "BLOCK": 1, "SPLINE": 2, "POLISH": 3, "DELIVER": 4})
+    space = bpy.data.workspaces[0]
+    check("Default stage is All", getattr(space, PROP) == "ALL")
+    check("Click tab sets Block", stage_op(space, stage="BLOCK") == {"FINISHED"} and getattr(space, PROP) == "BLOCK")
+    stage_op(space, step=1)
+    check("Cycle forward reaches Spline", getattr(space, PROP) == "SPLINE")
+    stage_op(space, step=-1); stage_op(space, step=-1)
+    check("Cycle back reaches All", getattr(space, PROP) == "ALL")
+    stage_op(space, step=-1)
+    check("Cycle wraps to Deliver", getattr(space, PROP) == "DELIVER")
+    check("Unknown stage cancelled", stage_op(space, stage="BOGUS") == {"CANCELLED"}
+          and getattr(space, PROP) == "DELIVER")
+    other = bpy.data.workspaces[1] if len(bpy.data.workspaces) > 1 else None
     if other is not None:
-        check("Stage is per screen", getattr(other, PROP) == "ALL")
+        check("Stage is per workspace", getattr(other, PROP) == "ALL")
 
     from anim_assist.ui import timeline_overlay as overlay
     text = overlay.ANIMASSIST_OT_overlay_control.description(
@@ -50,6 +53,13 @@ try:
     from anim_assist.ui.timeline_catalog import command_description
     check("Spacing wording in T80 tooltip", "keys sit closer together" in command_description("T80", ""))
     check("Spacing wording in Timing Scale tooltip", "spacing" in command_description("SCALE_DRAG", ""))
+
+    # The All tab and the Keys action Select All Visible share the key 'ALL'.
+    check("All tab is not treated as the Select All action", overlay._tool_action("STAGE", "ALL") == ""
+          and overlay._tool_action("STAGE_CYCLE", "ALL") == "")
+    check("Tool kinds still resolve their action", overlay._tool_action("ACTION", "ALL") == "ALL"
+          and overlay._tool_action("PRESET", "DRAG:25") == "DRAG"
+          and overlay._tool_action("MENU", "keys") == "" and overlay._tool_action("SEARCH", "") == "")
 
     # Settings surfaces: Stage dropdown, hidden-family note and current wording.
     class Rec:
@@ -75,11 +85,14 @@ try:
     from anim_assist.ui import timeline_settings, timeline_config as model
     from anim_assist import prefs as prefs_module
     from anim_assist.ui.timeline_catalog import ACTIONS
-    tl_screen, timeline_area = next(
-        (s, a) for s in bpy.data.screens for a in s.areas
+    tl_space, tl_screen, timeline_area = next(
+        (w, s, a) for w in bpy.data.workspaces for s in w.screens for a in s.areas
         if a.type == "DOPESHEET_EDITOR" and a.spaces.active.mode == "TIMELINE")
-    stage_op(tl_screen, stage="BLOCK")
-    with bpy.context.temp_override(screen=tl_screen, area=timeline_area):
+    stage_op(tl_space, stage="BLOCK")
+    with bpy.context.temp_override(workspace=tl_space, screen=tl_screen, area=timeline_area):
+        text = overlay.ANIMASSIST_OT_overlay_control.description(
+            bpy.context, SimpleNamespace(kind="STAGE_CYCLE", key="CYCLE"))
+        check("Cycle button tooltip names the current stage", text.startswith("Stage: Block."))
         rec = Rec()
         overlay.draw_stage_controls(rec, bpy.context, "pose")
         check("Stage dropdown drawn", stage_prop(rec))
@@ -101,6 +114,13 @@ try:
         check("Quick Tools panel (legacy, not on the row) shows Row Stage on a Timeline", stage_prop(rec))
         check("Quick Tools text says bottom of the Timeline", "Tool row at the bottom of the Timeline" in labels(rec))
         check("Quick Tools text drops stale header text", not any("beside its header" in t for t in labels(rec)))
+    plain = next((w, s) for w in bpy.data.workspaces for s in w.screens
+                 if not any(a.type == "DOPESHEET_EDITOR" and a.spaces.active.mode == "TIMELINE" for a in s.areas))
+    with bpy.context.temp_override(workspace=plain[0], screen=plain[1]):
+        rec = Rec()
+        overlay.draw_stage_controls(rec, bpy.context, "pose")
+        check("No Row Stage without a Timeline (e.g. from Preferences)",
+              not stage_prop(rec) and "Open from a Timeline to change its row stage" in labels(rec))
     rec = Rec()
     prefs_module.draw_timeline_quick_settings(rec, bpy.context, SimpleNamespace(timeline_toolbar_row=True))
     check("Preferences (no Timeline) explain stage tabs instead",
@@ -110,18 +130,18 @@ try:
           if hasattr(prefs_module.AA_AddonPreferences, "bl_rna") else True)
 
     path = Path(tempfile.mkdtemp()) / "stage.blend"
-    stage_op(screen, stage="POLISH")
-    name = screen.name
+    stage_op(space, stage="POLISH")
+    name = space.name
     bpy.ops.wm.save_as_mainfile(filepath=str(path))
     bpy.ops.wm.open_mainfile(filepath=str(path))
-    check("Stage persists through save and reopen", getattr(bpy.data.screens[name], PROP) == "POLISH")
+    check("Stage persists through save and reopen", getattr(bpy.data.workspaces[name], PROP) == "POLISH")
 
     for cycle in range(2):
         anim_assist.unregister()
-        check(f"Property removed on unregister #{cycle + 1}", not hasattr(bpy.types.Screen, PROP))
+        check(f"Property removed on unregister #{cycle + 1}", not hasattr(bpy.types.WorkSpace, PROP))
         anim_assist.register()
-        check(f"Property restored on register #{cycle + 1}", hasattr(bpy.types.Screen, PROP))
-    check("Saved stage still readable after re-register", getattr(bpy.data.screens[name], PROP) == "POLISH")
+        check(f"Property restored on register #{cycle + 1}", hasattr(bpy.types.WorkSpace, PROP))
+    check("Saved stage still readable after re-register", getattr(bpy.data.workspaces[name], PROP) == "POLISH")
     anim_assist.unregister()
 except Exception:
     traceback.print_exc()

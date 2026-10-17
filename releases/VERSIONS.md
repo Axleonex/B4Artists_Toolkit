@@ -4,7 +4,7 @@ Current repository packages and their publication status.
 
 | Tool | Version | Archive | Bytes | SHA256 prefix | Status |
 |---|---|---|---:|---|---|
-| Anim Assist | 12.9.0 | [b4_anim_assist_v12.9.0.zip](b4_anim_assist_v12.9.0.zip) | 616,250 | `6ce15f609ca3` | Repository build; Timeline stage tabs filter the bottom row by animation stage; exact ZIP checked in native Bforartists; no standalone GitHub Release |
+| Anim Assist | 12.9.0 | [b4_anim_assist_v12.9.0.zip](b4_anim_assist_v12.9.0.zip) | 616,250 | `6ce15f609ca3` | Unpublished candidate, superseded by 12.10.0 before release; Timeline stage tabs; see its qualification for the bugs fixed later |
 | Anim Assist (historical 12.8.0) | 12.8.0 | [b4_anim_assist_v12.8.0.zip](b4_anim_assist_v12.8.0.zip) | 613,678 | `08a904c7dae1` | Earlier published repository build; editor-specific NLA/Graph/Dope Sheet sidebars; bottom-only Timeline row retained |
 | Anim Assist (historical 12.6.2) | 12.6.2 | [b4_anim_assist_v12.6.2.zip](b4_anim_assist_v12.6.2.zip) | 599,156 | `5492e94a773a` | Earlier local slider/layout release; retained archive |
 | Anim Assist (historical 12.6.1) | 12.6.1 | [b4_anim_assist_v12.6.1.zip](b4_anim_assist_v12.6.1.zip) | 579,836 | `4da8edac4e4b` | Earlier local release; add-on-only canvas row and unmodified-host qualification |

@@ -64,16 +64,28 @@ class TimelineLayoutTests(unittest.TestCase):
         self.assertEqual(tools(self.controls(1920)),tools(self.controls(1920,stage='ALL')))
         self.assertEqual([c[1] for c in self.controls(1920) if c[0]=='STAGE'],list(config.STAGE_IDS))
 
-    def test_tabs_give_way_before_sliders_demote(self):
-        # At the narrowest width that keeps the inline sliders, only the cycle
-        # button leads: full tabs never cost the layout its own presentation.
-        for stage in config.STAGE_IDS:
-            for width in range(300,1921,10):
+    def test_lead_never_depends_on_stage(self):
+        # Switching stage at a fixed width must not swap tabs for the cycle
+        # button (that would move controls under the cursor).
+        for scale in (1,1.5,2):
+            for width in range(250,1921,10):
+                leads={self.controls(width,scale,stage=s)[0][:2] for s in config.STAGE_IDS}
+                kinds={kind for kind,_key in leads}
+                self.assertEqual(len(kinds),1,(scale,width,leads))
+                if kinds=={'STAGE_CYCLE'}:
+                    self.assertEqual({key for _k,key in leads},{'CYCLE'})
+
+    def test_tabs_only_when_every_stage_fits_in_full(self):
+        # "Tabs give way first": with tabs shown, no stage loses family menus
+        # or demotes an inline slider.
+        for width in range(250,1921,10):
+            for stage,_label,families in config.STAGES:
                 controls=self.controls(width,stage=stage)
-                if any(c[0]=='SLIDER' for c in controls):
-                    if stage in {'ALL','BLOCK','SPLINE'}:
-                        self.assertEqual(controls[0][0],'STAGE_CYCLE',(stage,width))
-                    break
+                if controls[0][0]!='STAGE': continue
+                expected=[f for f in config.FAMILY_ORDER if families is None or f in families]
+                self.assertEqual([c[1] for c in controls if c[0]=='MENU'],expected,(width,stage))
+                inline={'DRAG','SMOOTH'}&{a for f in expected for k,_l,acts in values['GROUPS'] if k==f for a in acts if a}
+                self.assertEqual({c[1] for c in controls if c[0]=='SLIDER'},inline,(width,stage))
 
     def test_hidden_family_note(self):
         self.assertEqual(config.hidden_family_note('ALL','pose','Pose'),'')
@@ -87,7 +99,7 @@ class TimelineLayoutTests(unittest.TestCase):
 
     def test_narrow_band_cycles_stage(self):
         controls=self.controls(250,stage='POLISH')
-        self.assertEqual(controls[0][:3],('STAGE_CYCLE','POLISH','Polish'))
+        self.assertEqual(controls[0][:3],('STAGE_CYCLE','CYCLE','Polish'))
 
     def test_stage_cycle_wraps_and_tolerates_unknown(self):
         self.assertEqual(config.next_stage('DELIVER',1),'ALL')

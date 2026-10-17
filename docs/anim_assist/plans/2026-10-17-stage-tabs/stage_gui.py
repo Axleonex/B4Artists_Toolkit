@@ -65,7 +65,7 @@ def step():
             region = next(r for r in area.regions if r.type == "WINDOW")
             override = dict(window=window, screen=window.screen, area=area, region=region)
             if phase == 0:
-                setattr(window.screen, "animassist_timeline_stage", "BLOCK")
+                setattr(window.workspace, "animassist_timeline_stage", "BLOCK")
                 return_after = 1.0
                 state["settings"] = 0.5
                 return return_after
@@ -86,7 +86,7 @@ def step():
             return 1.2
         stage = STAGES[state["i"]]
         if state["ticks"] == 0:
-            setattr(window.screen, "animassist_timeline_stage", stage)
+            setattr(window.workspace, "animassist_timeline_stage", stage)
             area.tag_redraw()
             state["ticks"] = 1
             return 0.6
