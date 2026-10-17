@@ -25,6 +25,18 @@ def current_stage(context):
     return stage if stage in model.STAGE_IDS else "ALL"
 
 
+def draw_stage_controls(layout, context, family=None):
+    """Row stage selector for settings surfaces, plus a hidden-family note."""
+    if context.screen is None or not hasattr(context.screen, STAGE_PROPERTY):
+        return
+    layout.prop(context.screen, STAGE_PROPERTY, text="Row Stage")
+    if family:
+        labels = {key: label for key, label, _actions in GROUPS}
+        note = model.hidden_family_note(current_stage(context), family, labels.get(family, family))
+        if note:
+            layout.label(text=note, icon="INFO")
+
+
 def _family_labels(stage):
     labels = {key: label for key, label, _actions in GROUPS}
     return ", ".join(labels[family] for family in model.stage_families(stage))
@@ -533,6 +545,15 @@ _CLASSES = (ANIMASSIST_OT_overlay_control, ANIMASSIST_OT_timeline_stage,
             ANIMASSIST_OT_timeline_overlay_events, ANIMASSIST_OT_clear_timeline_hover)
 
 
+def _stage_update(screen, _context):
+    # Dropdowns (Settings, gear popover, View menu) change the stage outside the
+    # band; redraw this screen's Timelines so the row follows immediately.
+    from . import timeline_strip as tools
+    for area in screen.areas:
+        if tools.is_timeline(area):
+            area.tag_redraw()
+
+
 def _stage_items():
     return [(key, label, "Show every tool family in the active layout" if families is None
              else f"Show only {_family_labels(key)} tools")
@@ -546,7 +567,7 @@ def register():
         bpy.utils.register_class(cls)
     setattr(bpy.types.Screen, STAGE_PROPERTY, EnumProperty(
         name="Anim Assist Stage", description="Tool families the Timeline band shows in this workspace",
-        items=_stage_items(), default="ALL"))
+        items=_stage_items(), default="ALL", update=_stage_update))
     if not bpy.app.background:
         _handle = bpy.types.SpaceDopeSheetEditor.draw_handler_add(_draw, (), "WINDOW", "POST_PIXEL")
         bpy.types.DOPESHEET_MT_view.append(_view_menu)

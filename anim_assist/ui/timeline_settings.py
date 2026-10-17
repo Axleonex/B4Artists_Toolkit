@@ -135,6 +135,8 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
         for operation,label in (('RENAME','Rename'),('DELETE','Delete')):
             op=row.operator('animassist.layout_action',text=label); op.operation=operation; op.target=self.layout_choice
         layout.prop(self,'family')
+        from .timeline_overlay import draw_stage_controls
+        draw_stage_controls(layout,context,self.family)
         layout.template_list('AA_UL_toolbar_tools','',self,'entries',self,'active_index',rows=8)
         if 0<=self.active_index<len(self.entries):
             entry=self.entries[self.active_index]

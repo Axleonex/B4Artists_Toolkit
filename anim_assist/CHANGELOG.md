@@ -8,6 +8,10 @@
   Ctrl+Wheel over the tabs, or use View > Anim Assist Stage.
 - When the band is tight, the tabs collapse into one button that cycles stages
   before any slider is compacted.
+- Toolbar Settings and the Timeline gear popover show a Row Stage dropdown and
+  say when the family being configured is hidden by the current stage.
+- Settings text and the Timeline Tool Row preference now say the row sits at
+  the bottom of the Timeline.
 - Timing tooltips now describe key spacing: 80%/90% sit keys closer (faster),
   110%/120% spread them apart (slower). Timing Scale says the same.
 

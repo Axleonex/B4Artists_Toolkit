@@ -4,25 +4,27 @@ Host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`. C
 
 ## Package
 
-`releases/b4_anim_assist_v12.9.0.zip` was built by [package.py](package.py) from the unchanged 12.8.0 inventory (211 files, root `B4_anim_assist`). The [receipt](package-receipt.json) records size, SHA256 and per-file hashes. Compared with the 12.8.0 ZIP, after normalising line endings, exactly seven files change: `CHANGELOG.md`, `__init__.py`, `blender_manifest.toml`, `constants.py`, `ui/timeline_catalog.py`, `ui/timeline_config.py` and `ui/timeline_overlay.py`. Other byte differences are CRLF/LF line endings only.
+`releases/b4_anim_assist_v12.9.0.zip` was built by [package.py](package.py) from the unchanged 12.8.0 inventory (211 files, root `B4_anim_assist`). The [receipt](package-receipt.json) records size, SHA256 and per-file hashes. Compared with the 12.8.0 ZIP, after normalising line endings, exactly nine files change: `CHANGELOG.md`, `__init__.py`, `blender_manifest.toml`, `constants.py`, `prefs.py`, `ui/timeline_catalog.py`, `ui/timeline_config.py`, `ui/timeline_overlay.py` and `ui/timeline_settings.py`. Other byte differences are CRLF/LF line endings only.
 
 ## Checks on the exact ZIP contents
 
 | Check | Result |
 |---|---|
-| Stage behavior in background Bforartists ([stage_check.py](../../plans/2026-10-17-stage-tabs/stage_check.py)): property registration, tab and cycle operator, unknown stage rejected, per-screen value, tooltips, save/reopen persistence, two unregister/register cycles | 17/17 pass |
+| Stage behavior in background Bforartists ([stage_check.py](../../plans/2026-10-17-stage-tabs/stage_check.py)): property registration, tab and cycle operator, unknown stage rejected, per-screen value, tooltips, Row Stage dropdown and hidden-family note in Toolbar Settings and the gear popover, updated row wording, save/reopen persistence, two unregister/register cycles | 27/27 pass in 5 consecutive runs |
 | `tests/test_anim_assist_layout.py` against the extracted package | 98 panels, none in the 3D Viewport sidebar; unregister clean |
-| Real-GUI Bforartists with the ZIP installed in a clean profile ([stage_gui.py](../../plans/2026-10-17-stage-tabs/stage_gui.py)) | Band drawn for every stage; [screenshots](evidence/images/) at 1330 px |
+| Real-GUI Bforartists with the ZIP installed in a clean profile ([stage_gui.py](../../plans/2026-10-17-stage-tabs/stage_gui.py)) | Band drawn for every stage at 1330 px; [Toolbar Settings](evidence/images/settings-dialog.png) and [gear popover](evidence/images/gear-popover.png) show Row Stage, and the band follows a dropdown change |
 
 ## Source checks
 
-- `tests/test_timeline_overlay_layout.py` and `tests/test_timeline_config.py`: 22 pass, including bounds at three UI scales × five widths × five stages, family filtering, wrap-around cycling and tabs giving way before sliders demote.
+- `tests/test_timeline_overlay_layout.py` and `tests/test_timeline_config.py`: 23 pass, including the hidden-family note, bounds at three UI scales × five widths × five stages, family filtering, wrap-around cycling and tabs giving way before sliders demote.
 - Full `tests/test_*.py` discovery: the same 34 failures/errors as 12.8.0 `main`; none new.
-- Owner previewed the build in Bforartists on 2026-10-17 and approved it.
+- Owner previewed the stage tabs in Bforartists on 2026-10-17 and approved them. The Row Stage dropdown, hidden-family note and wording fixes were then added at the owner's request and have not been previewed by the owner yet.
 
 ## Limits
 
 - Tab clicks and Ctrl+Wheel were exercised through the operator, not through recorded pointer events.
 - The screenshots use an unselected default scene, so most tools are shown unavailable.
 - The PDF manual was not regenerated for this release; the Markdown manual is current.
+- One earlier background run stalled before printing output and was stopped at the time limit; it did not recur in five later runs of the same ZIP.
+- The hidden-family note is checked in background drawing; the GUI capture shows a family the stage includes (no note).
 - External production files, other rigs and other host builds are not covered.

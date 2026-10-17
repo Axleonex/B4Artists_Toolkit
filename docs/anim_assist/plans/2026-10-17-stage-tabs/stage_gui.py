@@ -60,9 +60,36 @@ def step():
             state["i"] = 0
             return 1.5
         if state["i"] >= len(STAGES):
-            log.write("done\n"); log.close()
-            bpy.ops.wm.quit_blender()
-            return None
+            # Settings surfaces with the Block stage: dialog, then gear popover.
+            phase = state.setdefault("settings", 0)
+            region = next(r for r in area.regions if r.type == "WINDOW")
+            override = dict(window=window, screen=window.screen, area=area, region=region)
+            if phase == 0:
+                setattr(window.screen, "animassist_timeline_stage", "BLOCK")
+                return_after = 1.0
+                state["settings"] = 0.5
+                return return_after
+            elif phase == 0.5:
+                with bpy.context.temp_override(**override):
+                    bpy.ops.animassist.toolbar_settings("INVOKE_DEFAULT")
+                state["settings"] = 1
+                return 1.2
+            elif phase == 1:
+                with bpy.context.temp_override(window=window, screen=window.screen):
+                    bpy.ops.screen.screenshot(filepath=str(OUT / "settings-dialog.png"))
+                log.write("captured settings dialog\n")
+                with bpy.context.temp_override(**override):
+                    bpy.ops.wm.call_panel(name="ANIMASSIST_PT_timeline_quick_settings", keep_open=True)
+            elif phase == 2:
+                with bpy.context.temp_override(window=window, screen=window.screen):
+                    bpy.ops.screen.screenshot(filepath=str(OUT / "gear-popover.png"))
+                log.write("captured gear popover\n")
+            else:
+                log.write("done\n"); log.close()
+                bpy.ops.wm.quit_blender()
+                return None
+            state["settings"] = phase + 1
+            return 1.2
         stage = STAGES[state["i"]]
         if state["ticks"] == 0:
             setattr(window.screen, "animassist_timeline_stage", stage)

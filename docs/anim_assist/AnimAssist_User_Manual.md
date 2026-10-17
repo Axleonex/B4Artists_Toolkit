@@ -42,6 +42,8 @@ Tabs at the left of the row choose a stage: **All**, **Block** (Tween, Keys), **
 
 Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. When the row is tight, the tabs collapse into one button that cycles stages before any slider is shortened. Tools outside the stage remain in More and Search.
 
+**Toolbar Settings** and the gear popover also show **Row Stage**. If you configure a family the current stage hides, a note names the stage that shows it; choose that stage or **All** to see your change on the row.
+
 ## Dope Sheet: poses and key timing
 
 The summary counts visible owners, editable curves and selected keys, with All/None selection. **Block & Tween** starts open. The remaining groups are **Timing, Keys & Channels, Pose & Match, Bake & Finish and Quick Shelf**.
@@ -129,6 +131,7 @@ The [12.9.0 qualification](releases/12.9.0/qualification.md) covers the stage ta
 Actual 12.8.0 qualification captures. Open full size; selection determines enabled controls.
 
 - [Timeline stage tabs: Block stage (12.9.0)](releases/12.9.0/evidence/images/stage-block.png)
+- [Toolbar Settings with Row Stage (12.9.0)](releases/12.9.0/evidence/images/settings-dialog.png)
 - [NLA sidebar: arrangement and corrections, 280 px](releases/12.8.0/evidence/images/nla_editor-280.png)
 - [Graph sidebar: curve shaping, 280 px](releases/12.8.0/evidence/images/graph_editor-280.png)
 - [Dope Sheet sidebar: poses and timing, 280 px](releases/12.8.0/evidence/images/dopesheet_editor-280.png)
