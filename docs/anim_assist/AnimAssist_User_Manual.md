@@ -128,7 +128,7 @@ The [12.9.0 qualification](releases/12.9.0/qualification.md) covers the stage ta
 
 ## Actual interface screenshots
 
-Actual 12.8.0 qualification captures. Open full size; selection determines enabled controls.
+Actual qualification captures: Timeline stage tabs and settings from 12.9.0, editor sidebars from 12.8.0. Open full size; selection determines enabled controls.
 
 - [Timeline stage tabs: Block stage (12.9.0)](releases/12.9.0/evidence/images/stage-block.png)
 - [Toolbar Settings with Row Stage (12.9.0)](releases/12.9.0/evidence/images/settings-dialog.png)
