@@ -393,7 +393,7 @@ def _draw_edit_motion(layout, context) -> None:
 
     row = layout.row()
     row.scale_y = 1.4
-    row.operator("ghost_tool.drag_ghost", text="Drag Marker  (Shift G)", icon='ORIENTATION_CURSOR')
+    _draw_marker_drag_button(row, text="Drag Marker  (Shift G)", icon='ORIENTATION_CURSOR')
     row = layout.row(align=True)
     row.operator("ghost_tool.select_ghost", text="Select", icon='RESTRICT_SELECT_OFF')
     row.operator("ghost_tool.box_select", text="Box Select", icon='SELECT_SET')
@@ -752,7 +752,7 @@ def _draw_motion_paths(layout, context) -> None:
     row.prop(settings, "paths_active_glow", text="Glow", toggle=True)
     row.prop(settings, "paths_show_handles", text="Handles", toggle=True)
     layout.operator("ghost_tool.paths_draw_to_keys", text="Draw to Keys…", icon='GREASEPENCIL')
-    layout.operator("ghost_tool.path_handle_drag", text="Drag Path Handle").wait_for_click = True
+    layout.operator("ghost_tool.path_handle_drag", text="Drag Path Handle", depress=_path_handle_drag_mode_active()).wait_for_click = True
 
 
 #: (key, label, icon, draw function, help topic, open by default)
@@ -1323,73 +1323,32 @@ def _draw_paths_segment(row, settings) -> None:
 
 
 def _draw_timeline_header_extension(self, context: bpy.types.Context) -> None:
-    """Append a compact ghost toggle strip to the Timeline/Dopesheet header.
-
-    This function is appended to Blender's built-in header draw lists
-    so Ghost Tool controls are always visible when animating.
-
-    Args:
-        self: The header panel instance.
-        context: The current Blender context.
-    """
+    """The owner's revised sketch, inline beside native Timeline controls."""
     scene = context.scene
     if not hasattr(scene, 'ghost_tool'):
         return
-
     settings = scene.ghost_tool
-    store = GhostStore.get(scene)
-    layout = self.layout
-
-    # Separator from Blender's built-in header items
-    layout.separator_spacer()
-
-    # Compact ghost strip in the header
-    row = layout.row(align=True)
-
-    # On/off toggle — the most important button
-    icon = 'GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED'
-    row.prop(settings, "is_active", text="", icon=icon, toggle=True)
-
-    # Only show the rest when ghosts are active
-    if settings.is_active:
-        # Generate / Clear
-        row.operator("ghost_tool.generate_ghosts", text="", icon='ADD')
-        row.operator("ghost_tool.clear_ghosts", text="", icon='TRASH')
-
-        # Subdivision level (compact)
-        sub = row.row(align=True)
-        sub.scale_x = 0.6
-        sub.prop(settings, "subdivision_level", text="")
-
-        row.separator(factor=0.5)
-
-        # Drag mode
-        row.operator("ghost_tool.drag_ghost", text="", icon='ORIENTATION_CURSOR')
-
-        # Pin
-        row.operator("ghost_tool.pin_ghost", text="", icon='PINNED')
-
-        # Snapshot
-        row.operator("ghost_tool.take_snapshot", text="", icon='CAMERA_DATA')
-
-        # Display toggles
-        row.separator(factor=0.5)
-        row.prop(settings, "show_arc_lines", text="", icon='CURVE_PATH', toggle=True)
-        row.prop(settings, "show_spacing_ticks", text="", icon='TIME', toggle=True)
-
-        # Mesh onion skin toggle
-        row.separator(factor=0.5)
-        icon_mesh = 'MOD_MESHDEFORM' if settings.show_mesh_ghosts else 'MESH_DATA'
-        row.prop(settings, "show_mesh_ghosts", text="", icon=icon_mesh, toggle=True)
-        _draw_paths_segment(row, settings)
-
-        # Ghost count
-        if len(store) > 0:
-            row.label(text=f" {len(store)}")
-
-    # Pop-out button (opens floating toolbar for full controls)
-    row.separator(factor=0.5)
-    row.operator("ghost_tool.floating_toolbar", text="", icon='WINDOW')
+    self.layout.separator()
+    row = self.layout.row(align=True)
+    row.prop(settings, "is_active", text="", icon='GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED', toggle=True)
+    icon = 'GHOST_ENABLED' if settings.show_mesh_ghosts else 'GHOST_DISABLED'
+    row.operator_menu_hold("ghost_tool.timeline_display", text="", icon=icon,
+                           depress=settings.show_mesh_ghosts, menu='GHOST_MT_timeline_ghost_display').target = 'GHOST'
+    _draw_timeline_counts(row, settings, 'GHOST')
+    row.separator(factor=0.3)
+    for mode, icon in (('WIRE', 'SHADING_WIRE'), ('SOLID', 'SHADING_SOLID')):
+        op = row.operator("ghost_tool.timeline_mesh_style", text="", icon=icon,
+                          depress=settings.mesh_ghost_mode == mode)
+        op.mode = mode
+    row.separator(factor=0.3)
+    edit = row.row(align=True)
+    edit.operator_context = 'INVOKE_DEFAULT'
+    _draw_marker_drag_button(edit, text="", icon='ORIENTATION_CURSOR')
+    edit.prop(settings, "paths_show_markers", text="", icon='KEYFRAME_HLT', toggle=True)
+    row.separator(factor=0.3)
+    row.operator_menu_hold("ghost_tool.timeline_display", text="", icon='CURVE_PATH',
+                           depress=settings.paths_enabled, menu='GHOST_MT_timeline_path_display').target = 'PATH'
+    _draw_timeline_counts(row, settings, 'PATH')
 
 
 def _draw_graph_header_extension(self, context: bpy.types.Context) -> None:
@@ -1428,23 +1387,50 @@ def _toolbar_tier(context):
 
 
 def _draw_viewport_tool_header(self, context):
-    """Append Ghost controls without replacing native Tool Settings drawing."""
+    """Direct tools with adjacent counts; hold a tool for its own parameters."""
     if not _main_home(context, 'TOOLBAR') or not toolbar_visible(context):
         return
+    settings = context.scene.ghost_tool
     row = self.layout.row(align=True)
+    row.operator_context = 'INVOKE_DEFAULT'
     row.separator(factor=0.5)
-    row.popover(panel='GHOST_PT_toolbar_menu', text='Ghost', icon='GHOST_ENABLED')
-    tier = _toolbar_tier(context)
-    if tier == 'MINIMAL':
-        return
-    row.separator(factor=0.4)
-    _draw_ghosts_toggle(row, context)
-    for key in ('show', 'onion'):
-        row.separator(factor=0.4)
-        _draw_generation_pair(row, key)
-    for key, label, icon, _draw, _topic, _open in GHOST_SECTIONS[2:]:
-        row.separator(factor=0.4)
-        _draw_feature_destination(row, key, label, icon)
+    _draw_header_toggle(row, settings, 'MASTER', '',
+                        'GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED',
+                        'GHOST_MT_header_master')
+
+    row.separator(factor=0.5)
+    row.operator_menu_hold('ghost_tool.header_ghosts_display', text='Ghosts', icon='GHOST_ENABLED',
+                           depress=settings.show_mesh_ghosts,
+                           menu='GHOST_MT_header_ghosts')
+    _draw_header_counts(row, settings, 'GHOST')
+    for mode, icon in (('WIRE', 'SHADING_WIRE'), ('SOLID', 'SHADING_SOLID')):
+        row.operator('ghost_tool.header_wire' if mode == 'WIRE' else 'ghost_tool.header_solid',
+                     text='', icon=icon, depress=settings.mesh_ghost_mode == mode)
+
+    row.separator(factor=0.5)
+    row.operator_menu_hold('ghost_tool.header_paths_display', text='Paths', icon='CURVE_PATH',
+                           depress=settings.paths_enabled,
+                           menu='GHOST_MT_header_paths')
+    _draw_header_counts(row, settings, 'PATH')
+    row.operator('ghost_tool.paths_add_selected', text='', icon='ADD')
+    _draw_header_toggle(row, settings, 'FOLLOW', '', 'RESTRICT_SELECT_OFF',
+                        'GHOST_MT_header_follow')
+
+    row.separator(factor=0.5)
+    row.operator_menu_hold('ghost_tool.header_drag', text='Drag', icon='ORIENTATION_CURSOR',
+                           depress=_marker_drag_mode_active(),
+                           menu='GHOST_MT_header_drag')
+    row.operator_menu_hold('ghost_tool.header_pin', text='Pin', icon='PINNED',
+                           menu='GHOST_MT_header_pin')
+    _draw_header_toggle(row, settings, 'MARKERS', '', 'KEYFRAME_HLT',
+                        'GHOST_MT_header_markers')
+
+    row.separator(factor=0.5)
+    row.menu('GHOST_MT_header_arc', text='', icon='IPO_BEZIER')
+    _draw_header_toggle(row, settings, 'SPACING', '', 'TIME', 'GHOST_MT_header_spacing')
+
+    row.separator(factor=0.5)
+    row.popover(panel='GHOST_PT_header_menu', text='Settings', icon='PREFERENCES')
 
 
 # ---------------------------------------------------------------------------
@@ -1454,7 +1440,7 @@ def _draw_viewport_tool_header(self, context):
 def _draw_native_actions(layout, context):
     entries = (
         ("ghost_tool.generate_ghosts", "Show Markers", 'GHOST_ENABLED'),
-        ("ghost_tool.drag_ghost", "Drag Marker", 'ORIENTATION_CURSOR'),
+        ("ghost_tool.pick_marker", "Drag Marker", 'ORIENTATION_CURSOR'),
         ("ghost_tool.take_snapshot", "Save Snapshot", 'CAMERA_DATA'),
     )
     try:
@@ -1466,7 +1452,10 @@ def _draw_native_actions(layout, context):
     col.scale_y = 2
     if columns == 4:
         for idname, label, icon in entries:
-            col.operator(idname, text=label, icon=icon)
+            if idname == "ghost_tool.pick_marker":
+                _draw_marker_drag_button(col, text=label, icon=icon)
+            else:
+                col.operator(idname, text=label, icon=icon)
     else:
         columns = max(1, columns)
         for start in range(0, len(entries), columns):
@@ -1474,7 +1463,10 @@ def _draw_native_actions(layout, context):
             row.alignment = 'LEFT'
             row.scale_x = 2
             for idname, label, icon in entries[start:start + columns]:
-                row.operator(idname, text="", icon=icon)
+                if idname == "ghost_tool.pick_marker":
+                    _draw_marker_drag_button(row, text="", icon=icon)
+                else:
+                    row.operator(idname, text="", icon=icon)
 
 
 class GHOST_PT_shelf_object(bpy.types.Panel):
@@ -1511,6 +1503,815 @@ class GHOST_PT_shelf_pose(bpy.types.Panel):
 _shelf_registered = []
 
 
+_HEADER_TOGGLES = {
+    'MASTER': ('is_active', 'Ghost Tool', 'live updates'),
+    'MARKERS': ('paths_show_markers', 'editable path markers', 'marker sampling and labels'),
+    'FOLLOW': ('paths_follow_selection', 'following the current selection', 'path target settings'),
+    'ARC': ('show_arc_lines', 'the ghost motion arc', 'arc appearance'),
+    'SPACING': ('show_spacing_ticks', 'frame spacing ticks', 'spacing indicators'),
+}
+
+
+def _draw_marker_drag_button(layout, *, text="Drag", icon='ORIENTATION_CURSOR'):
+    from .modal_operator import GHOST_OT_pick_marker
+    op = layout.operator("ghost_tool.pick_marker", text=text, icon=icon,
+                         depress=GHOST_OT_pick_marker.drag_mode_active())
+    op.action = 'DRAG'
+    return op
+
+
+def _path_handle_drag_mode_active():
+    from .path_handle_drag import GHOST_OT_path_handle_drag
+    return GHOST_OT_path_handle_drag._active_wait_mode is not None
+
+
+def _marker_drag_mode_active():
+    from .modal_operator import GHOST_OT_pick_marker
+    return GHOST_OT_pick_marker.drag_mode_active()
+
+
+def _draw_m2_range(layout, settings, *, mode=True):
+    """Label values at their input; leave irrelevant mode fields out."""
+    if mode:
+        layout.prop(settings, 'ghost_range_mode', text='Range')
+    if settings.ghost_range_mode == 'AROUND_CURSOR':
+        layout.prop(settings, 'ghosts_before', text='Previous (Frames)')
+        layout.prop(settings, 'ghosts_after', text='Ahead (Frames)')
+    elif settings.ghost_range_mode == 'CUSTOM':
+        layout.prop(settings, 'custom_range_start', text='Start Frame')
+        layout.prop(settings, 'custom_range_end', text='End Frame')
+
+
+def _draw_m2_sampling(layout, settings, *, mode=True):
+    if mode:
+        layout.prop(settings, 'ghost_mode', text='Sampling')
+    if settings.ghost_mode == 'FRAME_STEP':
+        layout.prop(settings, 'frame_step', text='Every (Frames)')
+    elif settings.ghost_mode == 'SUBDIVISION':
+        layout.prop(settings, 'subdivision_level', text='Detail')
+
+
+def _draw_m2_path_sampling(layout, settings):
+    if settings.paths_sampling_mode == 'KEYFRAMES':
+        layout.prop(settings, 'paths_keyframe_skip', text='Path Every (Keys)')
+    else:
+        layout.prop(settings, 'paths_step', text='Path Every (Frames)')
+
+
+class _GhostM2Popover:
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 20
+
+    @classmethod
+    def poll(cls, context):
+        return _feature_context(context)
+
+
+class GHOST_PT_m2_range(_GhostM2Popover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_m2_range'
+    bl_label = 'Ghost Range'
+    bl_description = 'Choose the frame range for generated ghost markers'
+
+    def draw(self, context):
+        self.layout.use_property_split = True
+        self.layout.use_property_decorate = False
+        _draw_m2_range(self.layout.column(align=True), context.scene.ghost_tool)
+
+
+class GHOST_PT_m2_sampling(_GhostM2Popover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_m2_sampling'
+    bl_label = 'Ghost Sampling'
+    bl_description = 'Choose frame spacing, subdivision detail or keyframes for ghost markers'
+
+    def draw(self, context):
+        settings = context.scene.ghost_tool
+        self.layout.use_property_split = True
+        self.layout.use_property_decorate = False
+        _draw_m2_sampling(self.layout.column(align=True), settings)
+        self.layout.separator()
+        self.layout.prop(settings, 'live_point_ghosts', text='Update While Scrubbing')
+        if settings.live_point_ghosts or settings.live_mesh_ghosts:
+            self.layout.prop(settings, 'live_freeze', text='Freeze Updates')
+
+
+class GHOST_PT_m2_markers(_GhostM2Popover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_m2_markers'
+    bl_label = 'Marker Tools'
+    bl_description = 'Select, drag or pin ghost markers and adjust motion editing'
+
+    def draw(self, context):
+        layout = self.layout
+        settings = context.scene.ghost_tool
+        layout.operator_context = 'INVOKE_DEFAULT'
+        row = layout.row(align=True)
+        row.operator('ghost_tool.pick_marker', text='Select', icon='RESTRICT_SELECT_OFF').action = 'SELECT'
+        row.operator('ghost_tool.pick_marker', text='Box Select', icon='SELECT_SET').action = 'BOX'
+        row = layout.row(align=True)
+        _draw_marker_drag_button(row)
+        row.operator('ghost_tool.pick_marker', text='Pin', icon='PINNED').action = 'PIN'
+        layout.prop(settings, 'paths_show_markers', text='Path Markers')
+        if settings.paths_use_marker_counts:
+            layout.label(text='Path Marker Window')
+            row = layout.row(align=True)
+            row.prop(settings, 'paths_markers_before', text='Previous')
+            row.prop(settings, 'paths_markers_after', text='Ahead')
+        layout.popover(panel='GHOST_PT_edit_popover', text='Motion Editing Settings')
+
+
+class GHOST_PT_m2_display(_GhostM2Popover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_m2_display'
+    bl_label = 'Ghost Display'
+    bl_description = 'Show or hide mesh ghosts independently of Solid/Wire style and motion paths'
+
+    def draw(self, context):
+        settings = context.scene.ghost_tool
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        layout.prop(settings, 'show_mesh_ghosts', text='Meshes')
+        layout.prop(settings, 'mesh_ghost_mode', text='Style')
+        layout.label(text='Hiding meshes keeps the selected style.')
+        layout.separator()
+        layout.prop(settings, 'show_arc_lines', text='Motion Arc')
+        layout.prop(settings, 'show_spacing_ticks', text='Spacing Ticks')
+        layout.separator()
+        layout.popover(panel='GHOST_PT_skin_options', text='Mesh Ghost Settings')
+        layout.popover(panel='GHOST_PT_look_popover', text='Marker Appearance')
+
+
+class GHOST_PT_m2_paths(_GhostM2Popover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_m2_paths'
+    bl_label = 'Motion Paths'
+    bl_description = 'Show paths for selected objects or bones and edit labeled path sampling'
+
+    def draw(self, context):
+        settings = context.scene.ghost_tool
+        layout = self.layout
+        layout.operator('ghost_tool.paths_add_selected', text='Add Selected Path', icon='ADD')
+        layout.prop(settings, 'paths_enabled', text='Show Paths')
+        layout.prop(settings, 'paths_follow_selection', text='Follow Selection')
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        layout.prop(settings, 'paths_sampling_mode', text='Sampling')
+        _draw_m2_path_sampling(layout, settings)
+        layout.popover(panel='GHOST_PT_paths_popover', text='All Path Settings')
+
+
+class GHOST_PT_m2_status(_GhostM2Popover, bpy.types.Panel):
+    bl_idname = 'GHOST_PT_m2_status'
+    bl_label = 'Generated Ghosts'
+    bl_description = ('Read-only count of generated ghost markers. Adjust Range and Sampling '
+                      'to change density; Generate refreshes paused updates')
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text=f'{len(GhostStore.get(context.scene))} Ghosts', icon='INFO')
+        layout.label(text='Computed from generated marker data.')
+        layout.label(text='One frame may contain several channel markers.')
+        layout.label(text='Mesh ghosts and motion paths are separate displays.')
+        layout.label(text='Adjust Range and Sampling to change density.')
+        layout.label(text='Use Generate when live updates are paused.')
+
+
+class GHOST_OT_header_toggle(bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_toggle'
+    bl_label = 'Toggle Ghost Tool Display'
+    bl_options = {'UNDO', 'INTERNAL'}
+
+    target: bpy.props.EnumProperty(
+        items=[(key, values[1], values[2]) for key, values in _HEADER_TOGGLES.items()],
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    @classmethod
+    def poll(cls, context):
+        if not hasattr(getattr(context, 'scene', None), 'ghost_tool'):
+            cls.poll_message_set('Open a scene with Ghost Tool enabled')
+            return False
+        return True
+
+    @classmethod
+    def description(cls, context, properties):
+        _, subject, options = _HEADER_TOGGLES.get(properties.target, _HEADER_TOGGLES['MASTER'])
+        return f'Click to turn {subject} on/off; hold for {options}'
+
+    def execute(self, context):
+        settings = context.scene.ghost_tool
+        name = _HEADER_TOGGLES[self.target][0]
+        setattr(settings, name, not getattr(settings, name))
+        from .utils import tag_viewport_redraw
+        tag_viewport_redraw(context)
+        return {'FINISHED'}
+
+
+class _GhostHeaderNamedToggle:
+    bl_options = {'UNDO', 'INTERNAL'}
+    target = 'MARKERS'
+
+    @classmethod
+    def poll(cls, context):
+        return GHOST_OT_header_toggle.poll(context)
+
+    def execute(self, context):
+        return GHOST_OT_header_toggle.execute(self, context)
+
+
+class GHOST_OT_header_markers_display(_GhostHeaderNamedToggle, bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_markers_display'
+    bl_label = 'Markers Display'
+    bl_description = 'Show or hide editable path markers; hold for marker sampling and labels'
+
+
+class GHOST_OT_header_master(_GhostHeaderNamedToggle, bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_master'
+    bl_label = 'Ghost Tool'
+    bl_description = 'Turn Ghost Tool on or off; hold for live update settings'
+    target = 'MASTER'
+
+
+class GHOST_OT_header_follow(_GhostHeaderNamedToggle, bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_follow'
+    bl_label = 'Follow Selection'
+    bl_description = 'Show a motion path for the current selection; hold for target settings'
+    target = 'FOLLOW'
+
+
+class GHOST_OT_header_spacing(_GhostHeaderNamedToggle, bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_spacing'
+    bl_label = 'Spacing Ticks'
+    bl_description = 'Show or hide frame spacing ticks; hold for spacing indicators'
+    target = 'SPACING'
+
+
+class _GhostHeaderDisplayAction:
+    bl_options = {'UNDO', 'INTERNAL'}
+    target = 'GHOST'
+
+    @classmethod
+    def poll(cls, context):
+        return GHOST_OT_header_toggle.poll(context)
+
+    def execute(self, context):
+        return GHOST_OT_timeline_display.execute(self, context)
+
+
+class GHOST_OT_header_ghosts_display(_GhostHeaderDisplayAction, bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_ghosts_display'
+    bl_label = 'Ghosts Display'
+    bl_description = 'Show or hide ghost meshes; hold for sampling and appearance settings'
+
+
+class GHOST_OT_header_paths_display(_GhostHeaderDisplayAction, bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_paths_display'
+    bl_label = 'Motion Paths Display'
+    bl_description = 'Show or hide motion paths; hold for sampling and line settings'
+    target = 'PATH'
+
+
+class _GhostHeaderStyleAction:
+    bl_options = {'UNDO', 'INTERNAL'}
+    mode = 'WIRE'
+
+    @classmethod
+    def poll(cls, context):
+        return GHOST_OT_header_toggle.poll(context)
+
+    def execute(self, context):
+        return GHOST_OT_timeline_mesh_style.execute(self, context)
+
+
+class GHOST_OT_header_wire(_GhostHeaderStyleAction, bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_wire'
+    bl_label = 'Wire Ghosts'
+    bl_description = 'Display ghost meshes as wireframes'
+
+
+class GHOST_OT_header_solid(_GhostHeaderStyleAction, bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_solid'
+    bl_label = 'Solid Ghosts'
+    bl_description = 'Display ghost meshes as solid silhouettes'
+    mode = 'SOLID'
+
+
+class _GhostHeaderMarkerAction:
+    bl_options = {'INTERNAL'}
+    action = 'DRAG'
+
+    @classmethod
+    def poll(cls, context):
+        from .modal_operator import GHOST_OT_pick_marker
+        return GHOST_OT_pick_marker.poll(context)
+
+    def invoke(self, context, event):
+        result = bpy.ops.ghost_tool.pick_marker('INVOKE_DEFAULT', action=self.action)
+        # The picker owns the modal handler; this header launcher is complete.
+        return {'CANCELLED'} if 'CANCELLED' in result else {'FINISHED'}
+
+
+class GHOST_OT_header_drag(_GhostHeaderMarkerAction, bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_drag'
+    bl_label = 'Drag Markers'
+    bl_description = 'Edit markers until selected again or Escape; hold for motion editing settings'
+
+
+class GHOST_OT_header_pin(_GhostHeaderMarkerAction, bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_pin'
+    bl_label = 'Pin Markers'
+    bl_description = 'Pick a marker to pin or unpin; hold for pin tools'
+    action = 'PIN'
+
+
+def _draw_header_sampling_options(layout, settings, target):
+    """Parameters only: the display action and counts already have one header home."""
+    if target == 'GHOST':
+        layout.prop(settings, 'mesh_ghost_frame_mode', text='Sampling')
+        if settings.mesh_ghost_frame_mode == 'STEP':
+            layout.prop(settings, 'mesh_ghost_step', text='Every (Frames)')
+        else:
+            layout.prop(settings, 'mesh_ghost_keyframe_skip', text='Keyframe Interval')
+            if settings.mesh_ghost_keyframe_skip == 'CUSTOM':
+                layout.prop(settings, 'mesh_ghost_keyframe_skip_custom', text='Every Nth Keyframe')
+    else:
+        layout.prop(settings, 'paths_sampling_mode', text='Sampling')
+        _draw_m2_path_sampling(layout, settings)
+
+
+class _GhostHeaderToolMenu:
+    target = ''
+
+    def draw(self, context):
+        settings = context.scene.ghost_tool
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        if self.target == 'MASTER':
+            layout.prop(settings, 'live_mesh_ghosts', text='Update Meshes While Scrubbing')
+            layout.prop(settings, 'live_point_ghosts', text='Update Markers While Scrubbing')
+            layout.prop(settings, 'live_freeze', text='Freeze Updates')
+        elif self.target == 'GHOST':
+            _draw_header_sampling_options(layout, settings, 'GHOST')
+            layout.separator()
+            layout.prop(settings, 'mesh_ghost_opacity', text='Opacity')
+            layout.prop(settings, 'mesh_ghost_xray', text='In Front')
+            layout.prop(settings, 'mesh_ghost_falloff', text='Fade')
+        elif self.target == 'PATH':
+            _draw_header_sampling_options(layout, settings, 'PATH')
+            layout.separator()
+            layout.prop(settings, 'paths_style', text='Line Style')
+            layout.prop(settings, 'paths_show_frame_numbers', text='Frame Numbers')
+            layout.prop(settings, 'paths_show_handles', text='Bezier Handles')
+        elif self.target == 'MARKERS':
+            layout.label(text='Sampling is shared with Motion Paths.')
+            _draw_header_sampling_options(layout, settings, 'PATH')
+            layout.separator()
+            layout.prop(settings, 'paths_show_key_dots', text='Keyframe Dots')
+            layout.prop(settings, 'show_frame_numbers', text='Marker Frame Numbers')
+        elif self.target == 'DRAG':
+            layout.prop(settings, 'editing_mode', text='When Released')
+            if settings.editing_mode == 'RESHAPE':
+                layout.prop(settings, 'curve_mode', text='Curve Shape')
+            else:
+                layout.prop(settings, 'smooth_neighbors_on_commit', text='Smooth Neighbours')
+            layout.prop(settings, 'sculpt_falloff_radius', text='Nearby Frame Reach')
+            layout.prop(settings, 'sculpt_falloff_curve', text='Falloff')
+            layout.separator()
+            layout.label(text='Drag stays active; select again or Esc to exit.')
+        elif self.target == 'PIN':
+            layout.label(text='Click a marker to pin or unpin it.')
+            layout.label(text='Pinned markers stay fixed while reshaping.')
+            layout.operator('ghost_tool.unpin_all', text='Unpin All Markers', icon='UNPINNED')
+        elif self.target == 'FOLLOW':
+            layout.label(text='Follow shows a path for the current selection.')
+            layout.label(text='Added paths remain when the selection changes.')
+            layout.prop(settings, 'paths_active_glow', text='Highlight Active Path')
+        elif self.target == 'ARC':
+            for style, label in (('SOLID', 'Solid'), ('SPEED', 'Speed Colored'), ('FADE', 'Fade')):
+                layout.prop_enum(settings, 'arc_line_style', style, text=label)
+        elif self.target == 'SPACING':
+            layout.prop(settings, 'show_acceleration_markers', text='Acceleration Indicators')
+        elif self.target == 'GENERATE':
+            _draw_m2_range(layout, settings)
+            _draw_m2_sampling(layout, settings)
+
+
+class GHOST_MT_header_master(_GhostHeaderToolMenu, bpy.types.Menu):
+    bl_label = 'Ghost Tool Updates'
+    target = 'MASTER'
+
+
+class GHOST_MT_header_ghosts(_GhostHeaderToolMenu, bpy.types.Menu):
+    bl_label = 'Ghost Display Settings'
+    target = 'GHOST'
+
+
+class GHOST_MT_header_paths(_GhostHeaderToolMenu, bpy.types.Menu):
+    bl_label = 'Motion Path Settings'
+    target = 'PATH'
+
+
+class GHOST_MT_header_markers(_GhostHeaderToolMenu, bpy.types.Menu):
+    bl_label = 'Path Marker Settings'
+    target = 'MARKERS'
+
+
+class GHOST_MT_header_drag(_GhostHeaderToolMenu, bpy.types.Menu):
+    bl_label = 'Drag Marker Settings'
+    target = 'DRAG'
+
+
+class GHOST_MT_header_pin(_GhostHeaderToolMenu, bpy.types.Menu):
+    bl_label = 'Pinned Markers'
+    target = 'PIN'
+
+
+class GHOST_MT_header_follow(_GhostHeaderToolMenu, bpy.types.Menu):
+    bl_label = 'Follow Selection Settings'
+    target = 'FOLLOW'
+
+
+class GHOST_MT_header_arc(_GhostHeaderToolMenu, bpy.types.Menu):
+    bl_label = 'Arc Style'
+    bl_description = 'Choose Solid, Speed Colored or Fade'
+    target = 'ARC'
+
+
+class GHOST_MT_header_spacing(_GhostHeaderToolMenu, bpy.types.Menu):
+    bl_label = 'Frame Spacing Settings'
+    target = 'SPACING'
+
+
+class GHOST_MT_header_generate(_GhostHeaderToolMenu, bpy.types.Menu):
+    bl_label = 'Generate Marker Settings'
+    target = 'GENERATE'
+
+
+class GHOST_OT_header_count_step(bpy.types.Operator):
+    bl_idname = 'ghost_tool.header_count_step'
+    bl_label = 'Adjust Before or Ahead Count'
+    bl_options = {'UNDO', 'INTERNAL'}
+
+    field: bpy.props.EnumProperty(items=[
+        ('mesh_ghost_past_count', 'Ghosts Before', 'Ghost meshes before the playhead'),
+        ('mesh_ghost_future_count', 'Ghosts Ahead', 'Ghost meshes ahead of the playhead'),
+        ('paths_markers_before', 'Path Samples Before', 'Motion path samples before the playhead'),
+        ('paths_markers_after', 'Path Samples Ahead', 'Motion path samples ahead of the playhead'),
+    ], options={'HIDDEN', 'SKIP_SAVE'})
+    delta: bpy.props.IntProperty(default=1, min=-1, max=1, options={'HIDDEN', 'SKIP_SAVE'})
+
+    @classmethod
+    def poll(cls, context):
+        if not hasattr(getattr(context, 'scene', None), 'ghost_tool'):
+            cls.poll_message_set('Open a scene with Ghost Tool enabled')
+            return False
+        return True
+
+    @classmethod
+    def description(cls, context, properties):
+        subject = 'ghost' if properties.field.startswith('mesh_ghost_') else 'motion path sample'
+        side = 'before' if properties.field.endswith(('past_count', 'before')) else 'ahead of'
+        verb = 'Add' if properties.delta > 0 else 'Remove'
+        return f'{verb} one {subject} {side} the current frame'
+
+    def execute(self, context):
+        settings = context.scene.ghost_tool
+        prop = settings.bl_rna.properties[self.field]
+        value = max(prop.hard_min, min(prop.hard_max, getattr(settings, self.field) + self.delta))
+        setattr(settings, self.field, value)
+        from .utils import tag_viewport_redraw
+        tag_viewport_redraw(context)
+        return {'FINISHED'}
+
+
+def _draw_header_counts(layout, settings, target):
+    """Keep labeled native steppers beside the display they control at every width."""
+    names = (('mesh_ghost_past_count', 'mesh_ghost_future_count') if target == 'GHOST'
+             else ('paths_markers_before', 'paths_markers_after'))
+    for name, label in zip(names, ('Before', 'Ahead')):
+        stepper = layout.row(align=True)
+        op = stepper.operator('ghost_tool.header_count_step', text='', icon='REMOVE')
+        op.field, op.delta = name, -1
+        field = stepper.row(align=True)
+        field.ui_units_x = 5.0
+        field.prop(settings, name, text=label)
+        op = stepper.operator('ghost_tool.header_count_step', text='', icon='ADD')
+        op.field, op.delta = name, 1
+
+
+def _draw_header_toggle(layout, settings, target, text, icon, menu):
+    name = _HEADER_TOGGLES[target][0]
+    operator = {
+        'MASTER': 'ghost_tool.header_master',
+        'MARKERS': 'ghost_tool.header_markers_display',
+        'FOLLOW': 'ghost_tool.header_follow',
+        'SPACING': 'ghost_tool.header_spacing',
+    }[target]
+    layout.operator_menu_hold(operator, text=text, icon=icon,
+                              depress=getattr(settings, name), menu=menu)
+
+
+def _draw_timeline_range(layout, settings, *, show_mode=True) -> None:
+    """Keep each range label attached to its editable scene property."""
+    if show_mode:
+        layout.prop(settings, "ghost_range_mode", text="Range")
+    if settings.ghost_range_mode == 'AROUND_CURSOR':
+        layout.prop(settings, "ghosts_before", text="Before")
+        layout.prop(settings, "ghosts_after", text="After")
+    elif settings.ghost_range_mode == 'CUSTOM':
+        layout.prop(settings, "custom_range_start", text="Start Frame")
+        layout.prop(settings, "custom_range_end", text="End Frame")
+
+
+def _draw_timeline_sampling(layout, settings, *, show_mode=True) -> None:
+    if show_mode:
+        layout.prop(settings, "ghost_mode", text="Sampling")
+    if settings.ghost_mode == 'FRAME_STEP':
+        layout.prop(settings, "frame_step", text="Every (Frames)")
+    elif settings.ghost_mode == 'SUBDIVISION':
+        layout.prop(settings, "subdivision_level", text="Detail")
+
+
+def _draw_timeline_marker_tools(layout) -> None:
+    layout.operator_context = 'INVOKE_DEFAULT'
+    _draw_marker_drag_button(layout)
+    layout.operator("ghost_tool.pick_marker", text="Pin", icon='PINNED').action = 'PIN'
+
+
+def _draw_timeline_display(layout, settings) -> None:
+    row = layout.row(align=True)
+    row.prop(settings, "show_arc_lines", text="Arc", icon='CURVE_PATH', toggle=True)
+    row.prop(settings, "show_spacing_ticks", text="Spacing", icon='TIME', toggle=True)
+    row = layout.row(align=True)
+    row.operator("ghost_tool.toggle_mesh_visibility", text="Meshes", icon='HIDE_OFF',
+                 depress=settings.show_mesh_ghosts)
+    row.separator(factor=0.3)
+    row.operator("ghost_tool.toggle_mesh_mode", text="Wire", icon='SHADING_WIRE',
+                 depress=settings.mesh_ghost_mode == 'WIRE')
+
+
+class GHOST_PT_timeline_status(bpy.types.Panel):
+    """Read-only generated output, with an explanation instead of a fake input."""
+
+    bl_idname = "GHOST_PT_timeline_status"
+    bl_label = "Generated Ghosts"
+    bl_description = (
+        "Read-only count of generated ghost markers, not an editable frame count. "
+        "Change Range and Sampling to control density; Generate refreshes paused updates"
+    )
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 18
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text=f"{len(GhostStore.get(context.scene))} Ghosts", icon='INFO')
+        layout.label(text="Computed from generated marker data.")
+        layout.label(text="One frame can contain several channel markers.")
+        layout.label(text="Adjust Range and Sampling to change density.")
+        layout.label(text="Use Generate when live updates are paused.")
+
+
+class GHOST_PT_timeline_options(bpy.types.Panel):
+    """Watchkeeper groups in the same order at every header width."""
+
+    bl_idname = "GHOST_PT_timeline_options"
+    bl_label = "Ghost Timeline Settings"
+    bl_description = "Ghost range, sampling, marker tools, display and motion paths"
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 20
+
+    def draw(self, context):
+        layout = self.layout
+        settings = context.scene.ghost_tool
+        layout.label(text="Ghosts", icon='GHOST_ENABLED')
+        row = layout.row(align=True)
+        row.operator("ghost_tool.generate_ghosts", text="Generate", icon='ADD')
+        row.operator("ghost_tool.clear_ghosts", text="Clear Ghosts", icon='TRASH')
+
+        layout.separator()
+        col = layout.column(align=True)
+        col.label(text="Ghost Meshes")
+        col.prop(settings, "show_mesh_ghosts", text="Show Ghosts")
+        col.prop(settings, "mesh_ghost_frame_mode", text="Sampling")
+        if settings.mesh_ghost_frame_mode == 'STEP':
+            col.prop(settings, "mesh_ghost_step", text="Ghost Every (Frames)")
+        else:
+            col.prop(settings, "mesh_ghost_keyframe_skip", text="Every Keyframe")
+            if settings.mesh_ghost_keyframe_skip == 'CUSTOM':
+                col.prop(settings, "mesh_ghost_keyframe_skip_custom", text="Every Nth Keyframe")
+        col.prop(settings, "mesh_ghost_past_count", text="Ghosts Before")
+        col.prop(settings, "mesh_ghost_future_count", text="Ghosts After")
+
+        layout.separator()
+        col = layout.column(align=True)
+        col.label(text="Range")
+        _draw_timeline_range(col, settings)
+        col = layout.column(align=True)
+        col.label(text="Sampling")
+        _draw_timeline_sampling(col, settings)
+        col.prop(settings, "live_point_ghosts", text="Update While Scrubbing")
+        if settings.live_point_ghosts or settings.live_mesh_ghosts:
+            col.prop(settings, "live_freeze", text="Freeze Updates")
+
+        layout.separator()
+        layout.label(text="Marker Tools")
+        _draw_timeline_marker_tools(layout.row(align=True))
+        layout.label(text="Display")
+        _draw_timeline_display(layout, settings)
+
+        layout.separator()
+        layout.label(text="Paths", icon='CURVE_PATH')
+        row = layout.row(align=True)
+        row.prop(settings, "paths_enabled", text="Paths", toggle=True)
+        row.prop(settings, "paths_follow_selection", text="Follow Selection", toggle=True)
+        layout.operator("ghost_tool.paths_add_selected", text="Add Selected Path", icon='ADD')
+        layout.prop(settings, "paths_step", text="Path Every")
+        layout.popover(panel="GHOST_PT_paths_popover", text="Path Settings")
+
+        layout.separator()
+        layout.label(text="Status")
+        layout.popover(panel="GHOST_PT_timeline_status",
+                       text=f"{len(GhostStore.get(context.scene))} Ghosts", icon='INFO')
+        layout.separator()
+        layout.operator("ghost_tool.floating_toolbar", text="Full Ghost Tools", icon='WINDOW')
+
+
+def _draw_timeline_counts(layout, settings, target) -> None:
+    """Two native numeric selectors: previous first, ahead second."""
+    names = (('mesh_ghost_past_count', 'mesh_ghost_future_count') if target == 'GHOST'
+             else ('paths_markers_before', 'paths_markers_after'))
+    group = layout.row(align=True)
+    for name, direction in zip(names, ('TRIA_LEFT', 'TRIA_RIGHT')):
+        field = group.row(align=True)
+        field.ui_units_x = 2.3
+        field.prop(settings, name, text="", icon=direction)
+
+
+class GHOST_OT_timeline_display(bpy.types.Operator):
+    bl_idname = "ghost_tool.timeline_display"
+    bl_label = "Toggle Ghost Display"
+    bl_options = {'UNDO', 'INTERNAL'}
+
+    target: bpy.props.EnumProperty(items=[('GHOST', "Ghosts", "Mesh ghosts"),
+                                          ('PATH', "Motion Path", "Motion paths")],
+                                   options={'HIDDEN', 'SKIP_SAVE'})
+
+    @classmethod
+    def description(cls, context, properties):
+        subject = "ghost meshes" if properties.target == 'GHOST' else "motion paths"
+        return f"Click to show/hide {subject}; hold to choose frame/keyframe sampling and display options"
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(getattr(context, 'scene', None), 'ghost_tool')
+
+    def execute(self, context):
+        settings = context.scene.ghost_tool
+        name = 'show_mesh_ghosts' if self.target == 'GHOST' else 'paths_enabled'
+        if self.target == 'PATH' and not settings.paths_enabled:
+            from .motion_paths import all_targets
+            if not all_targets(context) and bpy.ops.ghost_tool.paths_add_selected.poll():
+                bpy.ops.ghost_tool.paths_add_selected()
+                return {'FINISHED'}
+        setattr(settings, name, not getattr(settings, name))
+        return {'FINISHED'}
+
+
+class GHOST_OT_timeline_sampling(bpy.types.Operator):
+    bl_idname = "ghost_tool.timeline_sampling"
+    bl_label = "Set Sampling Mode"
+    bl_options = {'UNDO', 'INTERNAL'}
+
+    target: bpy.props.EnumProperty(items=[('GHOST', "Ghosts", "Mesh ghosts"),
+                                          ('PATH', "Motion Path", "Motion paths")],
+                                   options={'HIDDEN', 'SKIP_SAVE'})
+    mode: bpy.props.EnumProperty(items=[('STEP', "Frame by Frame", "Sample every N frames"),
+                                        ('KEYFRAMES', "By Keyframe", "Sample animation keys")],
+                                 options={'HIDDEN', 'SKIP_SAVE'})
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(getattr(context, 'scene', None), 'ghost_tool')
+
+    def execute(self, context):
+        settings = context.scene.ghost_tool
+        if self.target == 'GHOST':
+            settings.mesh_ghost_frame_mode = self.mode
+        else:
+            # Keep the two header numbers meaningful when choosing keys in a
+            # scene that still uses an older frame-based window.
+            before, after = settings.paths_markers_before, settings.paths_markers_after
+            settings.paths_markers_before, settings.paths_markers_after = before, after
+            settings.paths_sampling_mode = self.mode
+        return {'FINISHED'}
+
+
+def _draw_timeline_sampling_menu(layout, settings, target):
+    current = settings.mesh_ghost_frame_mode if target == 'GHOST' else settings.paths_sampling_mode
+    for mode, label in (('STEP', "Frame by Frame"), ('KEYFRAMES', "By Keyframe")):
+        op = layout.operator("ghost_tool.timeline_sampling", text=label,
+                             icon='RADIOBUT_ON' if current == mode else 'RADIOBUT_OFF')
+        op.target, op.mode = target, mode
+    layout.separator()
+    if target == 'GHOST':
+        if current == 'STEP':
+            layout.prop(settings, "mesh_ghost_step", text="Every (Frames)")
+        else:
+            layout.prop(settings, "mesh_ghost_keyframe_skip", text="Keyframe Interval")
+            if settings.mesh_ghost_keyframe_skip == 'CUSTOM':
+                layout.prop(settings, "mesh_ghost_keyframe_skip_custom", text="Every Nth Keyframe")
+        layout.prop(settings, "mesh_ghost_opacity", text="Opacity")
+        layout.prop(settings, "mesh_ghost_xray", text="In Front")
+    else:
+        if current == 'STEP':
+            layout.prop(settings, "paths_step", text="Every (Frames)")
+        else:
+            layout.prop(settings, "paths_keyframe_skip", text="Every Nth Keyframe")
+        layout.prop(settings, "paths_show_markers", text="Editable Markers")
+        layout.prop(settings, "paths_show_frame_numbers", text="Frame Numbers")
+    layout.separator()
+    layout.operator("wm.call_panel", text="More Ghost Settings", icon='PREFERENCES').name = 'GHOST_PT_timeline_options'
+
+
+class GHOST_MT_timeline_ghost_display(bpy.types.Menu):
+    bl_label = "Ghost Display"
+
+    def draw(self, context):
+        _draw_timeline_sampling_menu(self.layout, context.scene.ghost_tool, 'GHOST')
+
+
+class GHOST_MT_timeline_path_display(bpy.types.Menu):
+    bl_label = "Motion Path Display"
+
+    def draw(self, context):
+        _draw_timeline_sampling_menu(self.layout, context.scene.ghost_tool, 'PATH')
+
+
+def _prepare_timeline_markers(context):
+    """Make the drawn path's editable markers available before starting a pick."""
+    from . import motion_paths
+    settings = context.scene.ghost_tool
+    if not motion_paths.pinned_targets(context.scene):
+        if not bpy.ops.ghost_tool.paths_add_selected.poll():
+            return 0
+        bpy.ops.ghost_tool.paths_add_selected()
+    settings.paths_enabled = True
+    settings.paths_show_markers = True
+    motion_paths.refresh_paths(context)
+    return motion_paths.sync_markers(context)
+
+
+class GHOST_OT_timeline_edit_markers(bpy.types.Operator):
+    bl_idname = "ghost_tool.timeline_edit_markers"
+    bl_label = "Edit Motion-Line Markers"
+    bl_description = "Select and drag a motion-line marker in the 3D Viewport; Escape cancels"
+
+    @classmethod
+    def poll(cls, context):
+        from .session_state import SessionState
+        settings = getattr(getattr(context, 'scene', None), 'ghost_tool', None)
+        return bool(settings and settings.is_active and SessionState.poll_available(cls))
+
+    def invoke(self, context, event):
+        if not context.window or not any(a.type == 'VIEW_3D' for a in context.window.screen.areas):
+            self.report({'WARNING'}, "Open a 3D Viewport to edit motion-line markers")
+            return {'CANCELLED'}
+        if not _prepare_timeline_markers(context):
+            self.report({'INFO'}, "No editable markers on this path; select an animated object or extend the marker counts")
+            return {'CANCELLED'}
+        return bpy.ops.ghost_tool.pick_marker('INVOKE_DEFAULT', action='DRAG')
+
+
+class GHOST_OT_timeline_mesh_style(bpy.types.Operator):
+    """Choose an explicit style independently of the Show/Hide Ghosts toggle."""
+
+    bl_idname = "ghost_tool.timeline_mesh_style"
+    bl_label = "Set Ghost Mesh Style"
+    bl_options = {'UNDO', 'INTERNAL'}
+
+    mode: bpy.props.EnumProperty(
+        items=[('WIRE', 'Wire Ghosts', 'Show ghost meshes as wireframes'),
+               ('SOLID', 'Solid Ghosts', 'Show ghost meshes as solid silhouettes')],
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(getattr(context, 'scene', None), 'ghost_tool')
+
+    @classmethod
+    def description(cls, context, properties):
+        return ('Use wireframe ghost meshes; preserve Show/Hide Ghosts' if properties.mode == 'WIRE'
+                else 'Use solid ghost meshes; preserve Show/Hide Ghosts')
+
+    def execute(self, context):
+        settings = context.scene.ghost_tool
+        if settings.mesh_ghost_mode != self.mode:
+            settings.mesh_ghost_mode = self.mode
+        return {'FINISHED'}
+
+
 CLASSES: tuple[type, ...] = (
     GhostToolEasingSettings,
     GHOST_OT_show_help_popup,
@@ -1532,6 +2333,42 @@ CLASSES: tuple[type, ...] = (
     GHOST_PT_window,
     GHOST_OT_open_window,
     GHOST_OT_floating_toolbar,
+    GHOST_PT_timeline_status,
+    GHOST_PT_timeline_options,
+    GHOST_OT_timeline_mesh_style,
+    GHOST_OT_timeline_edit_markers,
+    GHOST_OT_timeline_display,
+    GHOST_OT_timeline_sampling,
+    GHOST_MT_timeline_ghost_display,
+    GHOST_MT_timeline_path_display,
+    GHOST_OT_header_toggle,
+    GHOST_OT_header_markers_display,
+    GHOST_OT_header_master,
+    GHOST_OT_header_follow,
+    GHOST_OT_header_spacing,
+    GHOST_OT_header_ghosts_display,
+    GHOST_OT_header_paths_display,
+    GHOST_OT_header_wire,
+    GHOST_OT_header_solid,
+    GHOST_OT_header_drag,
+    GHOST_OT_header_pin,
+    GHOST_OT_header_count_step,
+    GHOST_MT_header_master,
+    GHOST_MT_header_ghosts,
+    GHOST_MT_header_paths,
+    GHOST_MT_header_markers,
+    GHOST_MT_header_drag,
+    GHOST_MT_header_pin,
+    GHOST_MT_header_follow,
+    GHOST_MT_header_arc,
+    GHOST_MT_header_spacing,
+    GHOST_MT_header_generate,
+    GHOST_PT_m2_range,
+    GHOST_PT_m2_sampling,
+    GHOST_PT_m2_markers,
+    GHOST_PT_m2_display,
+    GHOST_PT_m2_paths,
+    GHOST_PT_m2_status,
 )
 
 # Track header appends for clean unregistration

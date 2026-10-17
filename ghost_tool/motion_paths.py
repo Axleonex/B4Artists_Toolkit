@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import time
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Optional
 
 import blf
@@ -96,6 +96,12 @@ RANGE_PROPS = ("use_own_range", "own_range_mode", "own_before", "own_after", "ow
 
 def desired_frames(settings, scene: bpy.types.Scene, entry=None) -> list[float]:
     """Frames of the global range, or of ``entry``'s own range when it overrides it."""
+    if settings.paths_use_marker_counts and not (entry is not None and entry.use_own_range):
+        step = max(1, settings.paths_step)
+        current = scene.frame_current
+        return [float(current + i * step)
+                for i in range(-settings.paths_markers_before, settings.paths_markers_after + 1)
+                if scene.frame_start <= current + i * step <= scene.frame_end]
     if entry is not None and entry.use_own_range:
         mode, before, after, step = entry.own_range_mode, entry.own_before, entry.own_after, entry.own_step
         custom = (entry.own_start, entry.own_end)
@@ -118,6 +124,12 @@ def own_range_seed(settings, entry) -> dict:
     from the global range, so ticking Own Range changes nothing until a field is edited."""
     if entry.use_own_range:
         return {}
+    if settings.paths_use_marker_counts:
+        return {"own_range_mode": 'AROUND_CURSOR',
+                "own_before": settings.paths_markers_before * settings.paths_step,
+                "own_after": settings.paths_markers_after * settings.paths_step,
+                "own_step": settings.paths_step,
+                "own_start": settings.custom_range_start, "own_end": settings.custom_range_end}
     return {"own_range_mode": settings.paths_range_mode, "own_before": settings.paths_before,
             "own_after": settings.paths_after, "own_step": settings.paths_step,
             "own_start": settings.custom_range_start, "own_end": settings.custom_range_end}
@@ -212,10 +224,11 @@ def pinned_targets(scene: bpy.types.Scene) -> list[PathTarget]:
         if obj is None:
             continue
         frames = tuple(desired_frames(settings, scene, entry)) if entry.use_own_range else shared
-        targets.append(PathTarget(entry_key(entry), obj, entry.anchor,
+        target = PathTarget(entry_key(entry), obj, entry.anchor,
                                   tuple(entry.color), entry.thickness, True,
                                   color_before=tuple(entry.color_before), dot_size=entry.dot_size,
-                                  in_front=entry.in_front, frames=frames))
+                                  in_front=entry.in_front, frames=frames)
+        targets.append(_with_sampling_mode(target, settings, scene, entry))
     return targets
 
 
@@ -256,7 +269,8 @@ def follow_targets(context: bpy.types.Context, pinned_keys: set[PathKey]) -> lis
         if key in seen or key[2] >= 0:   # Follow is for bones and objects: an Edit Mode selection can be thousands
             continue
         seen.add(key)
-        targets.append(PathTarget(key, obj, 'HEAD', FOLLOW_COLOR, 1, False, frames=frames))
+        target = PathTarget(key, obj, 'HEAD', FOLLOW_COLOR, 1, False, frames=frames)
+        targets.append(_with_sampling_mode(target, settings, context.scene))
     return targets
 
 
@@ -488,6 +502,24 @@ def key_frames(target: PathTarget) -> list[float]:
         if fc.data_path in paths:
             frames.update(float(k.co.x) for k in fc.keyframe_points)
     return sorted(frames)
+
+
+def _with_sampling_mode(target, settings, scene, entry=None):
+    """Key counts walk keys on each side; frame spacing never filters out keys."""
+    if settings.paths_sampling_mode != 'KEYFRAMES':
+        return target
+    keys = [f for f in key_frames(target) if scene.frame_start <= f <= scene.frame_end]
+    skip = settings.paths_keyframe_skip
+    if settings.paths_use_marker_counts and not (entry is not None and entry.use_own_range):
+        current = scene.frame_current
+        past = [f for f in reversed(keys) if f < current][::skip][:settings.paths_markers_before]
+        ahead = [f for f in keys if f > current][::skip][:settings.paths_markers_after]
+        frames = sorted(past + [f for f in keys if f == current] + ahead)
+    elif target.frames:
+        frames = [f for f in keys if target.frames[0] <= f <= target.frames[-1]][::skip]
+    else:
+        frames = []
+    return replace(target, frames=tuple(frames))
 
 
 def handle_eligible(target: PathTarget) -> bool:
@@ -771,10 +803,12 @@ def sync_markers(context) -> int:
     still wanted keeps its uid, pin and selection and only takes the new position; a
     pinned marker that left the window stays until Markers on Paths is turned off.
 
-    Markers sit on the path: only keys on sampled frames, at the path's anchor. A bone's
+    Markers sit on the path: keys on sampled frames in a legacy frame window,
+    all sampled frames in a count window, at the path's anchor. A bone's
     own rotation never moves its head, and a rotation drag aims the tail, so a HEAD path
     carries location markers only and a TAIL path carries location and rotation markers."""
-    from .ghost_data import GhostStore, generate_ghosts_at_keyframes, LOCATION_CHANNELS, MOTION_CHANNELS
+    from .ghost_data import (GhostStore, generate_ghosts_at_keyframes,
+                             generate_ghosts_frame_step, LOCATION_CHANNELS, MOTION_CHANNELS)
     scene = context.scene
     settings = scene.ghost_tool
     store = GhostStore.get(scene)
@@ -808,10 +842,17 @@ def sync_markers(context) -> int:
     jobs += [(name, [], None, None, MOTION_CHANNELS, frames) for name, frames in object_paths]
     moved = relevelled = False
     for object_name, bones, armature, anchor, channels, frames in jobs:
-        window = (int(frames[0]), int(frames[-1]))   # keys on the drawn stretch
+        window = (frames[0], frames[-1])   # fractional animation keys are valid too
         sampled = set(frames)   # with Every > 1 a key between samples has no point on the path
         ghosts = generate_ghosts_at_keyframes(bpy.data.objects[object_name], armature, bones, channels,
                                               frame_range=window, anchor=anchor, frames=sampled)
+        if settings.paths_use_marker_counts:
+            # Counts include in-between samples, not just keys that happen to
+            # fall on the line. Keep the current-frame pose out of this pair.
+            samples = [f for f in frames if f != scene.frame_current]
+            ghosts = [g for g in ghosts if g.frame != scene.frame_current]
+            ghosts += generate_ghosts_frame_step(bpy.data.objects[object_name], armature, bones,
+                                                 channels, samples, anchor=anchor)
         for g in ghosts:
             identity = (g.object_name, g.bone_name, g.channel, g.frame)
             kept = by_identity.get(identity) or others.get(identity)

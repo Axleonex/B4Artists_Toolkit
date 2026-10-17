@@ -386,6 +386,7 @@ class SnapshotStore:
             self._refresh(scene)
             return False
         self._refresh(scene)
+        self._restore_snapshot_markers(snapshot, scene)
         if scene == bpy.context.scene:
             # Live updates may be off or frozen: recompute marker positions.
             from .api import refresh_ghosts
@@ -535,6 +536,44 @@ class SnapshotStore:
         if len({snapshot.uid for snapshot in snapshots}) != len(snapshots):
             raise ValueError("Duplicate snapshot IDs")
         self.replace_snapshots(snapshots)
+
+
+    @staticmethod
+    def _restore_snapshot_markers(snapshot, scene):
+        """Restore the captured marker records for the snapshot's channels."""
+        if not snapshot.ghost_data:
+            return
+
+        bindings = {}
+        if snapshot.curve_data and len(snapshot.curve_data) == len(snapshot.bindings):
+            for entry, binding in zip(snapshot.curve_data, snapshot.bindings):
+                bindings[(entry['object_name'], entry['bone_name'], entry['channel'])] = binding
+        else:
+            keys = list(dict.fromkeys((ghost.get('object_name', ''), ghost.get('bone_name', ''), ghost['channel'])
+                                      for ghost in snapshot.ghost_data))
+            bindings = dict(zip(keys, snapshot.bindings))
+
+        restored = []
+        channels = set()
+        for value in snapshot.ghost_data:
+            data = copy.deepcopy(value)
+            key = (data.get('object_name', ''), data.get('bone_name', ''), data['channel'])
+            channels.add(key)
+            binding = bindings.get(key)
+            if binding is not None:
+                try:
+                    data['object_name'] = binding.obj.name
+                    data['bone_name'] = binding.bone_name
+                except (AttributeError, ReferenceError):
+                    pass
+            channels.add((data.get('object_name', ''), data.get('bone_name', ''), data['channel']))
+            restored.append(Ghost.from_dict(data))
+
+        store = GhostStore.get(scene)
+        keep = [ghost for ghost in store
+                if (ghost.object_name, ghost.bone_name, ghost.channel) not in channels]
+        store.replace_all(keep + restored)
+
 
 
 # ---------------------------------------------------------------------------

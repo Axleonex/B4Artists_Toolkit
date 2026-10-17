@@ -633,12 +633,39 @@ def _update_custom_range_start(self, context):
     if self.custom_range_start >= self.custom_range_end:
         # Use direct RNA override to avoid triggering the other callback
         self["custom_range_end"] = self.custom_range_start + 1
+    _on_ghost_sampling_changed(self, context)
 
 
 def _update_custom_range_end(self, context):
     """Ensure custom_range_end is greater than custom_range_start."""
     if self.custom_range_end <= self.custom_range_start:
         self["custom_range_start"] = self.custom_range_end - 1
+    _on_ghost_sampling_changed(self, context)
+
+
+def _on_ghost_sampling_changed(self, context):
+    """Regenerate point ghosts after sampling controls change in live mode."""
+    if not context or not context.scene or not hasattr(context.scene, 'ghost_tool'):
+        return
+    settings = context.scene.ghost_tool
+    if not settings.is_active or not settings.live_point_ghosts or settings.live_freeze:
+        return
+    try:
+        from .ghost_pipeline import _schedule_deferred_update
+        _schedule_deferred_update()
+    except Exception as exc:
+        warn(f"Failed to schedule ghost sampling update: {exc}")
+
+
+def _on_arc_lines_changed(self, context):
+    # Keep the original public flag in sync with the toolbar's newer flag.
+    self['show_motion_arc'] = self.show_arc_lines
+    tag_viewport_redraw(context)
+
+
+def _on_motion_arc_changed(self, context):
+    self['show_arc_lines'] = self.show_motion_arc
+    tag_viewport_redraw(context)
 
 
 def _on_ghost_feature_enabled(self, context):
@@ -661,6 +688,23 @@ def _on_ghost_feature_enabled(self, context):
 
     # Detect if we're turning OFF — clear everything
     if not settings.is_active:
+        # Visibility is an interlock: do not leave a persistent marker edit
+        # mode or an in-progress marker drag armed behind hidden ghosts.
+        try:
+            from .modal_operator import GHOST_OT_pick_marker
+            from .path_handle_drag import GHOST_OT_path_handle_drag
+            from .session_state import SessionState
+            active_path_mode = GHOST_OT_path_handle_drag._active_wait_mode
+            if SessionState._gesture_owner is not None:
+                SessionState.cancel_active()
+            if active_path_mode is not None:
+                active_path_mode._finish(context)
+            if GHOST_OT_pick_marker._active_drag_mode is not None:
+                active = GHOST_OT_pick_marker._active_drag_mode
+                if active is not None:
+                    active._finish()
+        except Exception as exc:
+            warn(f"Failed to exit ghost marker edit mode: {exc}")
         try:
             from .mesh_ghosts import clear_mesh_ghosts
             clear_mesh_ghosts(context)
@@ -739,9 +783,12 @@ def _on_cached_skin_changed(self, context):
 
 def _on_mesh_ghost_mode_changed(self, context):
     """Instantly switch all existing mesh ghosts between solid and wireframe."""
+    scene = getattr(context, 'scene', None) if context else None
+    if scene is None:
+        return
     try:
         from .mesh_ghosts import set_mesh_ghost_display_mode
-        set_mesh_ghost_display_mode(self.mesh_ghost_mode)
+        set_mesh_ghost_display_mode(self.mesh_ghost_mode, scene=scene)
         tag_viewport_redraw(context)
     except Exception as exc:
         warn(f"Failed to change mesh ghost display mode: {exc}")
@@ -806,6 +853,17 @@ def _schedule_path_refresh(context, clear: bool) -> None:
 def _on_path_setting_changed(self, context):
     """Paths turned on or off: key edits made while off were never marked dirty,
     so drop the cache and re-sample everything."""
+    if not self.paths_enabled:
+        # Turning paths off exits the persistent path-handle picker and rolls
+        # back any handle edit that is still in progress.
+        try:
+            from .path_handle_drag import GHOST_OT_path_handle_drag
+            active = GHOST_OT_path_handle_drag._active_wait_mode
+            if active is not None:
+                active._abort()
+                active._finish(context)
+        except Exception as exc:
+            warn(f"Failed to exit path marker edit mode: {exc}")
     _schedule_path_refresh(context, clear=True)
 
 
@@ -824,6 +882,40 @@ def _on_path_window_changed(self, context):
     keyed by frame; refresh_paths re-samples an anchor change), so only the frames
     that entered the window are sampled."""
     _schedule_path_refresh(context, clear=False)
+
+
+def _get_path_marker_count(self, side):
+    name = 'paths_markers_' + side
+    if self.paths_use_marker_counts:
+        return self.get(name, getattr(self, 'paths_' + side) // max(1, self.paths_step))
+    from .motion_paths import desired_frames
+    scene = self.id_data
+    frames = desired_frames(self, scene)
+    return sum(f < scene.frame_current if side == 'before' else f > scene.frame_current for f in frames)
+
+
+def _set_path_marker_count(self, value, side):
+    # Preserve the effective opposite count when switching a saved frame range.
+    other = 'after' if side == 'before' else 'before'
+    self['paths_markers_' + other] = _get_path_marker_count(self, other)
+    self['paths_markers_' + side] = max(0, min(500, value))
+    self['paths_use_marker_counts'] = True
+
+
+def _get_path_markers_before(self):
+    return _get_path_marker_count(self, 'before')
+
+
+def _get_path_markers_after(self):
+    return _get_path_marker_count(self, 'after')
+
+
+def _set_path_markers_before(self, value):
+    _set_path_marker_count(self, value, 'before')
+
+
+def _set_path_markers_after(self, value):
+    _set_path_marker_count(self, value, 'after')
 
 
 def _on_paths_show_markers_changed(self, context):
@@ -990,6 +1082,7 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         default=1,
         min=1,
         max=MAX_SUBDIVISION_LEVEL,
+        update=_on_ghost_sampling_changed,
     )  # type: ignore[assignment]
 
     show_level_1: bpy.props.BoolProperty(
@@ -1022,6 +1115,7 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         name="Show Motion Arc",
         description="Draw a line connecting ghosts and keyframes",
         default=True,
+        update=_on_motion_arc_changed,
     )  # type: ignore[assignment]
 
     show_spacing_ticks: bpy.props.BoolProperty(
@@ -1272,8 +1366,8 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
     )  # type: ignore[assignment]
     paths_show_markers: bpy.props.BoolProperty(
         name="Markers on Paths",
-        description="Generate draggable ghost markers on the pinned paths. Head paths show location keys; "
-                    "Tail paths also show rotation keys",
+        description="Generate draggable markers on pinned paths: sampled points in count mode, keyframes in frame-range mode. "
+                    "Head paths show location markers; Tail paths also show rotation markers",
         default=False,
         update=_on_paths_show_markers_changed,
     )  # type: ignore[assignment]
@@ -1306,6 +1400,32 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         name="Every", description="Sample every Nth frame along the paths",
         default=1, min=1, max=24, update=_on_path_window_changed,
     )  # type: ignore[assignment]
+    paths_sampling_mode: bpy.props.EnumProperty(
+        name="Sampling",
+        description="Place motion-line samples at regular frame intervals or at animation keyframes",
+        items=[('STEP', "Frame by Frame", "Sample every N frames"),
+               ('KEYFRAMES', "By Keyframe", "Sample animation keys; counts mean previous and ahead keyframes")],
+        default='STEP', update=_on_path_window_changed,
+    )
+    paths_keyframe_skip: bpy.props.IntProperty(
+        name="Every Nth Keyframe", description="Sample every Nth animation key, starting with the nearest on each side",
+        default=1, min=1, max=24, update=_on_path_window_changed,
+    )
+    paths_use_marker_counts: bpy.props.BoolProperty(
+        name="Before/After Marker Counts",
+        description="Use sampled marker counts around the playhead instead of the frame range; individual path range overrides still apply",
+        default=False, update=_on_path_window_changed,
+    )
+    paths_markers_before: bpy.props.IntProperty(
+        name="Previous Markers", description="Number of sampled motion-line markers before the current frame; editing selects the count window",
+        min=0, max=500, get=_get_path_markers_before,
+        set=_set_path_markers_before, update=_on_path_window_changed,
+    )
+    paths_markers_after: bpy.props.IntProperty(
+        name="Ahead Markers", description="Number of sampled motion-line markers after the current frame; editing selects the count window",
+        min=0, max=500, get=_get_path_markers_after,
+        set=_set_path_markers_after, update=_on_path_window_changed,
+    )
     paths_style: bpy.props.EnumProperty(
         name="Style",
         description="How the path line is coloured",
@@ -1340,6 +1460,7 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
             ("KEYFRAMES_ONLY", "Keyframes Only", "Ghost only at keyframe positions"),
         ],
         default="FRAME_STEP",
+        update=_on_ghost_sampling_changed,
     )  # type: ignore[assignment]
 
     ghost_range_mode: bpy.props.EnumProperty(
@@ -1356,6 +1477,7 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
             ("CUSTOM", "Custom Range", "User-specified start/end frame"),
         ],
         default="AROUND_CURSOR",
+        update=_on_ghost_sampling_changed,
     )  # type: ignore[assignment]
 
     frame_step: bpy.props.IntProperty(
@@ -1364,6 +1486,7 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         default=2,
         min=1,
         max=24,
+        update=_on_ghost_sampling_changed,
     )  # type: ignore[assignment]
 
     ghosts_before: bpy.props.IntProperty(
@@ -1372,6 +1495,7 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         default=8,
         min=0,
         max=64,
+        update=_on_ghost_sampling_changed,
     )  # type: ignore[assignment]
 
     ghosts_after: bpy.props.IntProperty(
@@ -1380,6 +1504,7 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         default=8,
         min=0,
         max=64,
+        update=_on_ghost_sampling_changed,
     )  # type: ignore[assignment]
 
     ghost_color_mode: bpy.props.EnumProperty(
@@ -1619,6 +1744,7 @@ class GhostToolSceneSettings(bpy.types.PropertyGroup):
         name="Show Arc Lines",
         description="Draw continuous trajectory lines through ghost positions across the timeline",
         default=True,
+        update=_on_arc_lines_changed,
     )  # type: ignore[assignment]
 
     arc_line_style: bpy.props.EnumProperty(
@@ -2286,6 +2412,7 @@ def generate_ghosts_frame_step(
     bones: list[str],
     channels: list[str],
     frame_list: list[float],
+    anchor: Optional[str] = None,
 ) -> list[Ghost]:
     """Generate ghosts at explicit frame positions (frame-by-frame mode).
 
@@ -2298,6 +2425,7 @@ def generate_ghosts_frame_step(
         bones: List of pose bone names.
         channels: List of channel identifiers.
         frame_list: Explicit list of frame numbers to generate ghosts at.
+        anchor: Optional HEAD/TAIL override for markers on a motion path.
 
     Returns:
         list[Ghost]: All generated ghosts.
@@ -2330,7 +2458,7 @@ def generate_ghosts_frame_step(
                 local_value = fcurve.evaluate(frame)
                 world_pos = _get_world_position_cached(
                     depsgraph, scene, target_obj, bone_name, frame, position_cache,
-                    tail=is_rotation_channel(channel),
+                    tail=is_rotation_channel(channel) if anchor is None else anchor == 'TAIL',
                 )
 
                 # Determine which two keyframes this frame sits between.
