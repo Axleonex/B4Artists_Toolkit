@@ -24,7 +24,7 @@ Host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`. C
 
 - Tab clicks and Ctrl+Wheel were exercised through the operator, not through recorded pointer events.
 - The screenshots use an unselected default scene, so most tools are shown unavailable.
-- The PDF manual was not regenerated for this release; the Markdown manual is current.
+- The PDF manual was regenerated from the Markdown with `docs/anim_assist/build_manual_pdf.py` (ReportLab 5.0.1); its text was checked for the 12.9.0 title and stage-tab sections, but its layout was not visually inspected.
 - One earlier background run stalled before printing output and was stopped at the time limit; it did not recur in five later runs of the same ZIP.
 - The hidden-family note is checked in background drawing; the GUI capture shows a family the stage includes (no note).
 - External production files, other rigs and other host builds are not covered.
