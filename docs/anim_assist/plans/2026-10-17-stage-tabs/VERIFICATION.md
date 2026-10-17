@@ -31,4 +31,6 @@ modifies saved layouts.
 
 - Ctrl+Wheel cycling and tab clicks were exercised through the operator, not
   through real pointer events in the GUI.
-- Owner walkthrough in daily use has not happened.
+- Owner previewed the build in Bforartists on 2026-10-17 and approved it; extended daily use is not yet recorded.
+
+Released as 12.9.0; see `docs/anim_assist/releases/12.9.0/qualification.md`.

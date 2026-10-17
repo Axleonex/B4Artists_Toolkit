@@ -1,4 +1,4 @@
-# Unreleased — Timeline stage tabs
+# 12.9.0 — Timeline stage tabs
 
 - Adds stage tabs to the bottom Timeline band: All, Block (Tween, Keys),
   Spline (Curves), Polish (Timing, Pose) and Deliver (Bake, Motion). A stage

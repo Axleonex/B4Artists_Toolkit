@@ -1,10 +1,10 @@
-# Anim Assist 12.8.0 user guide
+# Anim Assist 12.9.0 user guide
 
-Reviewed against 12.8.0 on October 15, 2026. Use Dope Sheet for poses/timing, Graph Editor for curves, and NLA Editor for clips/corrections. Help controls explain individual tools.
+Reviewed against 12.9.0 on October 17, 2026. Use Dope Sheet for poses/timing, Graph Editor for curves, and NLA Editor for clips/corrections. Help controls explain individual tools.
 
 ## Install and find the tools
 
-Download the [12.8.0 add-on ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.8.0.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk. Select the ZIP and enable Anim Assist. Its package is `B4_anim_assist`. Restart after updating.
+Download the [12.9.0 add-on ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.9.0.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk. Select the ZIP and enable Anim Assist. Its package is `B4_anim_assist`. Restart after updating.
 
 Validated host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`, OpenGL. Standard Blender is unsupported; other builds were not validated.
 
@@ -22,7 +22,7 @@ The row groups tools into **Tween, Timing, Curves, Keys, Pose, Bake and Motion**
 
 Press and drag. Release applies; Esc/right-click restores the captured animation. Shift gives finer movement; Ctrl uses the snap step. Type a value and press Enter for numeric input. Clicking without dragging applies nothing. Watch the status bar.
 
-Eight tools support numeric display: Breakdown, Smooth, Neighbors, Reference, Ease, Push/Pull, Timing Scale and Timing Offset. Reference blends toward the configured reference frame; Push/Pull changes amplitude around that reference. Timing Scale changes spacing; Timing Offset shifts the active object's Action timing. Check tooltips and scene options before editing a whole Action.
+Eight tools support numeric display: Breakdown, Smooth, Neighbors, Reference, Ease, Push/Pull, Timing Scale and Timing Offset. Reference blends toward the configured reference frame; Push/Pull changes amplitude around that reference. Timing Scale changes key spacing: below 100% keys sit closer (faster), above 100% they spread apart (slower); Timing Offset shifts the active object's Action timing. Check tooltips and scene options before editing a whole Action.
 
 ### Customize and save layouts
 
@@ -35,6 +35,12 @@ Use **Tool Settings**, or right-click an idle numeric tool, to set label/icon, r
 On a narrow Timeline, tools that do not fit remain available in More and Search. Shorten the row by reducing inline widths or changing occasional sliders to popout/button mode. If hidden, use **Timeline > View > Show Anim Assist Tool Row**. Give the Timeline enough height for its keys and tool row.
 
 The **bottom-only canvas overlay** retains 12.7.1 placement, away from the top keyframe diamonds. It adds no native header/editor region or workspace split. There is no top/bottom placement setting.
+
+### Stage tabs
+
+Tabs at the left of the row choose a stage: **All**, **Block** (Tween, Keys), **Spline** (Curves), **Polish** (Timing, Pose) and **Deliver** (Bake, Motion). A stage shows only those families from your active layout. It never edits saved layouts, tool modes or slider settings. **All** shows every family.
+
+Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. When the row is tight, the tabs collapse into one button that cycles stages before any slider is shortened. Tools outside the stage remain in More and Search.
 
 ## Dope Sheet: poses and key timing
 
@@ -116,14 +122,15 @@ If a key operation does nothing, check active editor, selected editable keys, vi
 
 For unavailable NLA actions, check track locks, mute/Solo exclusion, missing Action, disabled NLA evaluation or active Tweak Mode. Finish Editing before arranging clips. Read the unsupported-rig/channel explanation for correction creation. Inspect motion after timing/bake changes; use native Undo if needed, then save/reopen before relying on the result.
 
-The [12.8.0 qualification](releases/12.8.0/qualification.md) records 16 native behavioral/interaction groups, Undo/Redo, workspace reload, 98 panel registration checks and five Timeline layout regression checks. Native mesh key insertion was visible in Graph/Dope Sheet. All three sidebars were captured at 220, 280 and 360 px. These synthetic fixtures do not certify every existing tool, production rig or host build. Earlier slider/lipsync evidence is historical, not a fresh full-suite pass for 12.8.0.
+The [12.9.0 qualification](releases/12.9.0/qualification.md) covers the stage tabs added in this release. The [12.8.0 qualification](releases/12.8.0/qualification.md) records 16 native behavioral/interaction groups, Undo/Redo, workspace reload, 98 panel registration checks and five Timeline layout regression checks. Native mesh key insertion was visible in Graph/Dope Sheet. All three sidebars were captured at 220, 280 and 360 px. These synthetic fixtures do not certify every existing tool, production rig or host build. Earlier slider/lipsync evidence is historical, not a fresh full-suite pass for 12.8.0.
 
 ## Actual interface screenshots
 
 Actual 12.8.0 qualification captures. Open full size; selection determines enabled controls.
 
+- [Timeline stage tabs: Block stage (12.9.0)](releases/12.9.0/evidence/images/stage-block.png)
 - [NLA sidebar: arrangement and corrections, 280 px](releases/12.8.0/evidence/images/nla_editor-280.png)
 - [Graph sidebar: curve shaping, 280 px](releases/12.8.0/evidence/images/graph_editor-280.png)
 - [Dope Sheet sidebar: poses and timing, 280 px](releases/12.8.0/evidence/images/dopesheet_editor-280.png)
 
-See [release notes](releases/12.8.0/RELEASE-NOTES.md) and the [documentation index](README.md). The 12.5.0 separate-strip screenshots and checkbox-only quick-tool instructions are historical; use this guide for current settings.
+See [release notes](releases/12.9.0/RELEASE-NOTES.md) and the [documentation index](README.md). The 12.5.0 separate-strip screenshots and checkbox-only quick-tool instructions are historical; use this guide for current settings.
