@@ -38,4 +38,4 @@ The left shelf width preference is retained. The 4.2.11 width/scale assessment w
 
 ## Version status
 
-This reference describes source version **4.3.1**. The published 4.2.11 ZIP is not renamed or replaced here. See the [user guide](../GhostTool_User_Manual.md) and [4.3.1 release notes](../releases/4.3.1/RELEASE-NOTES.md) for workflows and publication status.
+This reference describes **4.3.1**, distributed as [b4_ghost_tool_v4.3.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/b4_ghost_tool_v4.3.1.zip). Historical releases retain their original numbers and archives. See the [user guide](../GhostTool_User_Manual.md) and [4.3.1 release notes](../releases/4.3.1/RELEASE-NOTES.md) for workflows and publication status.

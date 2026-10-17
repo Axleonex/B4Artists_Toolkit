@@ -20,6 +20,10 @@ The [user guide](../../GhostTool_User_Manual.md), [PDF](../../GhostTool_User_Man
 
 ## Verification and publication status
 
-The existing implementation passed 188 targeted background checks before the metadata/manual update. This includes toolbar, authoring, paths, snapshot, startup and display checks. No new functional test run or native 4.3.1 package qualification is claimed by this documentation change. The previous shelf-width verification limitation remains.
+The existing implementation passed 188 targeted background checks before the metadata/manual update. This includes toolbar, authoring, paths, snapshot, startup and display checks. No new functional test run or native 4.3.1 package qualification is claimed by this packaging change. The previous shelf-width verification limitation remains.
 
-The source and manual are **4.3.1**. No new installation ZIP or standalone GitHub Release is created here. The published **4.2.11** download keeps its original version, checksum and historical receipt. Install a package built from the complete current source to use 4.3.1.
+Download [b4_ghost_tool_v4.3.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/b4_ghost_tool_v4.3.1.zip) and the [4.3.1 manual PDF](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/GhostTool_User_Manual.pdf). Install the ZIP through Edit > Preferences > Add-ons > Install from Disk and restart Bforartists. Source, ZIP metadata, descriptions and manual identify **4.3.1**. The earlier **4.2.11** release keeps its original number and assets.
+
+The [4.3.1 package receipt](package-receipt.json) records ZIP integrity, version metadata and byte-for-byte matching with all 30 source modules. These are artifact checks, not a new functional test run.
+
+ZIP SHA256: `8471c86ac12168bac6d44e2abedb64a6509a979cbb02ba6d72c0829835e12863`.

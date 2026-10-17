@@ -14,10 +14,10 @@ Compare retains scoped snapshots, independent variants, binding, JSON transfer a
 
 ## Installation and publication status
 
-The current source and guide version is **4.3.1**. No 4.3.1 installation archive or standalone GitHub Release is produced by this documentation update. The [last published 4.2.11 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip) retains its original version and does not install the latest toolbar update. Install a package built from the complete current `ghost_tool` folder to use 4.3.1; restart Bforartists after replacing an installed add-on.
+Download the [Ghost Tool 4.3.1 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/b4_ghost_tool_v4.3.1.zip), install it through Edit > Preferences > Add-ons > Install from Disk and restart Bforartists. Source, archive and manual all identify version **4.3.1**. The [package receipt](releases/4.3.1/package-receipt.json) records its checksum and byte-for-byte source manifest. Historical 4.2.11 downloads keep their original version.
 
 ## Evidence and history
 
-The direct-tool implementation passed 188 targeted background checks before this metadata/manual update. These are implementation results, not qualification of a newly packaged 4.3.1 ZIP. No new functional tests are claimed here.
+The direct-tool implementation passed 188 targeted background checks before this metadata/manual update. The 4.3.1 archive has separate integrity, version and source-matching checks. The earlier 188 results are implementation evidence; no new functional tests are claimed by the packaging step.
 
 Earlier release notes, downloads and receipts keep their original versions and checksums. The [4.2.11 receipt](releases/4.2.11/package-receipt.json) records that build's startup checks and incomplete shelf-width verification; this update makes no new shelf-width fix claim. See the [release index](../../releases/VERSIONS.md) for historical archives.

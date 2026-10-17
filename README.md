@@ -21,7 +21,7 @@ Install add-on ZIPs directly in your existing Bforartists installation.
 | Add-on | Direct download |
 |---|---|
 | Anim Assist 12.9.0 | [b4_anim_assist_v12.9.0.zip](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.9.0.zip) |
-| Ghost Tool (last published ZIP: 4.2.11) | [b4_ghost_tool_v4.2.11.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.2.11/b4_ghost_tool_v4.2.11.zip) |
+| Ghost Tool 4.3.1 | [b4_ghost_tool_v4.3.1.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/b4_ghost_tool_v4.3.1.zip) |
 | BoneCraft 9.2.5 | [BoneCraft-BFA-9.2.5.zip](https://github.com/Axleonex/B4Artists_Toolkit/raw/refs/heads/main/releases/BoneCraft-BFA-9.2.5.zip) |
 
 ## Browse the source
@@ -39,7 +39,7 @@ Human-readable manuals are in [`docs/`](docs/):
 
 - [Anim Assist 12.9.0](docs/anim_assist/releases/12.9.0/RELEASE-NOTES.md) — Timeline stage tabs filter the bottom row by animation stage without changing saved layouts. [Qualification](docs/anim_assist/releases/12.9.0/qualification.md).
 - [Anim Assist 12.8.0](docs/anim_assist/releases/12.8.0/RELEASE-NOTES.md) — NLA clip arrangement and corrections, Graph/Dope Sheet refinements, preserved baking and selected-key scope fixes. [Qualification and screenshots](docs/anim_assist/releases/12.8.0/qualification.md) records the checks and limits. [Suite manuals](docs/anim_assist/) cover the other animation tools.
-- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.3.1 guide, PDF and toolbar notes; 4.3.1 source is not yet packaged as a standalone release
+- [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.3.1 guide, PDF, toolbar reference and installation archive
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.5 source manual and translation status
 
 ## Requirements

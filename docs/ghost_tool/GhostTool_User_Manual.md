@@ -2,11 +2,11 @@
 
 Ghost Tool for Bforartists displays ghost meshes, motion paths and editable motion markers. Version 4.3.1 brings the direct viewport toolbar, separate Before/Ahead counts, hold-open tool settings, persistent marker dragging and refreshed snapshot marker restoration into the versioned guide.
 
-This guide describes the 4.3.1 source. A version number in the source does not update an installed add-on automatically. The last published standalone download remains 4.2.11 until a 4.3.1 package is published. See the [release notes](releases/4.3.1/RELEASE-NOTES.md) and [release index](../../releases/VERSIONS.md) for package status.
+This guide accompanies the [Ghost Tool 4.3.1 installation ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/b4_ghost_tool_v4.3.1.zip). Updating repository source does not update an installed add-on automatically: install the new ZIP and restart Bforartists. See the [release notes](releases/4.3.1/RELEASE-NOTES.md) and [package receipt](releases/4.3.1/package-receipt.json) for the packaged version and checksum.
 
 ## Install and find Ghost Tool
 
-Install a ZIP built from the complete 4.3.1 `ghost_tool` folder through Edit > Preferences > Add-ons > Install from Disk. Enable Ghost Tool and restart Bforartists after replacing an installed version. Check that Preferences reports version 4.3.1. An older ZIP still installs its original version.
+Download `b4_ghost_tool_v4.3.1.zip` and install it through Edit > Preferences > Add-ons > Install from Disk. Enable Ghost Tool and restart Bforartists after replacing an installed version. Check that Preferences reports version 4.3.1. An older ZIP still installs its original version.
 
 Ghost Tool defaults to Top Toolbar in the native 3D Viewport Tool Settings row. With native headers at the top, this row sits just beneath the main viewport header. It follows native header alignment. Preferences also offer Right Sidebar (N) and Left Tool Shelf (T). Older saved Top Header choices migrate to the visible toolbar; the preference is now called Top Toolbar.
 
@@ -114,4 +114,4 @@ If nothing appears, confirm the first ghost icon is enabled, the target is anima
 
 If the toolbar is missing, select Top Toolbar in Ghost preferences and use View > Show Ghost Toolbar. If it is cut off in a split viewport, scroll the native row horizontally. Left shelf width preferences remain available; their full width/scale verification was incomplete in 4.2.11, so this release does not promise that all shelf-width cases were fixed.
 
-The direct-tool implementation received 188 targeted background checks before this version/documentation update, covering toolbar UI, authoring, paths, snapshots, startup, display location and cached display. Those results describe the tested implementation, not a newly qualified 4.3.1 installation ZIP. No new functional test run is claimed for the version/manual changes. Use the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues) to report the target, operation and failed step.
+The direct-tool implementation received 188 targeted background checks before this version/documentation update, covering toolbar UI, authoring, paths, snapshots, startup, display location and cached display. Those results describe the previously tested implementation. The 4.3.1 archive has separately checked ZIP integrity, version metadata and byte-for-byte source matching; no new functional test run is claimed for this packaging step. Use the [issue tracker](https://github.com/Axleonex/B4Artists_Toolkit/issues) to report the target, operation and failed step.
