@@ -12,9 +12,33 @@ import textwrap
 import time
 from types import SimpleNamespace
 from gpu_extras.batch import batch_for_shader
-from bpy.props import StringProperty
+from bpy.props import EnumProperty, IntProperty, StringProperty
 from .timeline_catalog import ACTIONS, GROUPS, FAMILY, QUICK_LABELS, command_metadata
 from . import timeline_config as model
+
+# Per screen, so each workspace keeps its own stage; saved with the file.
+STAGE_PROPERTY = "animassist_timeline_stage"
+
+
+def current_stage(context):
+    stage = getattr(context.screen, STAGE_PROPERTY, "ALL") if context.screen else "ALL"
+    return stage if stage in model.STAGE_IDS else "ALL"
+
+
+def _family_labels(stage):
+    labels = {key: label for key, label, _actions in GROUPS}
+    return ", ".join(labels[family] for family in model.stage_families(stage))
+
+
+def _stage_description(kind, stage):
+    label = model.stage_label(stage)
+    if kind == "STAGE_CYCLE":
+        return (f"Stage: {label}. Click for the next stage; Ctrl+Wheel cycles. "
+                "Stages filter this band only; saved layouts are unchanged")
+    if stage == "ALL":
+        return "Show every tool family in your active layout. Ctrl+Wheel over the tabs cycles stages"
+    return (f"{label} stage: show only {_family_labels(stage)} tools from your active layout. "
+            "Saved layouts are unchanged. Ctrl+Wheel over the tabs cycles stages")
 
 
 def row_layout(width, height, row_height, at_top, clusters, measure):
@@ -91,6 +115,8 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
     @classmethod
     def description(cls, context, properties):
         from . import timeline_strip as tools
+        if properties.kind in {'STAGE','STAGE_CYCLE'}:
+            return _stage_description(properties.kind, properties.key)
         action=properties.key.split(':',1)[0]
         if properties.kind in {'SLIDER','POPOUT','PRESET'} and action in ACTIONS:
             operator=tools._operator(action)
@@ -121,6 +147,35 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
             return bpy.ops.wm.call_menu("INVOKE_DEFAULT", name=tools._menu_id(self.key))
         if self.kind == "MORE":
             return bpy.ops.wm.call_menu("INVOKE_DEFAULT", name="ANIMASSIST_MT_timeline_more")
+        if self.kind == "STAGE":
+            return bpy.ops.animassist.timeline_stage(stage=self.key)
+        if self.kind == "STAGE_CYCLE":
+            return bpy.ops.animassist.timeline_stage(step=1)
+        return {"FINISHED"}
+
+
+class ANIMASSIST_OT_timeline_stage(bpy.types.Operator):
+    bl_idname = "animassist.timeline_stage"
+    bl_label = "Anim Assist Stage"
+    bl_description = "Show one animation stage's tool families in the Timeline band"
+    bl_options = {"INTERNAL"}
+    stage: StringProperty(options={"HIDDEN", "SKIP_SAVE"})
+    step: IntProperty(options={"HIDDEN", "SKIP_SAVE"})
+
+    @classmethod
+    def poll(cls, context):
+        return context.screen is not None and hasattr(context.screen, STAGE_PROPERTY)
+
+    def execute(self, context):
+        stage = model.next_stage(current_stage(context), self.step) if self.step else self.stage
+        if stage not in model.STAGE_IDS:
+            self.report({"WARNING"}, "Choose a known stage")
+            return {"CANCELLED"}
+        setattr(context.screen, STAGE_PROPERTY, stage)
+        from . import timeline_strip as tools
+        for area in context.screen.areas:
+            if tools.is_timeline(area):
+                area.tag_redraw()
         return {"FINISHED"}
 
 
@@ -153,7 +208,8 @@ def _items(context):
     labels={**QUICK_LABELS,'COPY_KEYS':'Copy','PASTE_KEYS':'Paste',
             'MIRROR_SELECTED':'Mirror','BAKE_STEP':'Bake Object','TRAIL_SHOW':'Trails'}
     items = model.toolbar_layout(context.region.width, usable_height, h, False,
-                       record,GROUPS,labels,lambda text: blf.dimensions(0, text)[0])
+                       record,GROUPS,labels,lambda text: blf.dimensions(0, text)[0],
+                       current_stage(context))
     items = [(kind, key, label, (x, iy+y, w, ih)) for kind, key, label, (x, iy, w, ih) in items]
     return items, (0, y, context.region.width, min(h, context.region.height))
 
@@ -251,6 +307,7 @@ def _draw():
     try: record=timeline_record(get_prefs(context))
     except ValueError: record=model.recommended(ACTIONS)
     active=sliders.feedback(context.window,context.area)
+    stage=current_stage(context)
     old_blend = gpu.state.blend_get()
     try:
         gpu.state.blend_set("ALPHA")
@@ -265,6 +322,16 @@ def _draw():
             text_color = widgets.text_sel if highlighted else widgets.text
             ink=(*text_color[:3],.45 if reason else 1)
             accent=_COLORS.get(FAMILY[action][0] if action in FAMILY else key,ink)
+            if kind in {'STAGE','STAGE_CYCLE'}:
+                current = kind=='STAGE_CYCLE' or key==stage
+                if current and kind=='STAGE' and not highlighted:
+                    _quad(rect,tuple(widgets.inner_sel))
+                if current and key!='ALL':
+                    # Underline in the colour of the stage's first family.
+                    _quad((rect[0]+3*scale,rect[1]+2*scale,rect[2]-6*scale,2*scale),
+                          _COLORS[model.stage_families(key)[0]])
+                _text(rect,label,(*widgets.text_sel[:3],1) if current or highlighted else ink,scale)
+                continue
             if kind=='SLIDER':
                 tool=model.effective_tool(action,record['active']['tools'][action])
                 value=active.value if active and active.action==action else sliders.last_value(context.window,context.area,action,tool['default'])
@@ -353,6 +420,10 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
                 bpy.app.timers.register(tooltip_redraw, first_interval=.65)
         if event.type == "MOUSEMOVE" or not hit:
             return {"CANCELLED", "PASS_THROUGH"}
+        if (event.type in {'WHEELUPMOUSE','WHEELDOWNMOUSE'} and event.ctrl and found
+                and found[0] in {'STAGE','STAGE_CYCLE'}):
+            bpy.ops.animassist.timeline_stage(step=1 if event.type=='WHEELDOWNMOUSE' else -1)
+            return {'FINISHED'}
         if event.type=='RIGHTMOUSE' and found:
             action=found[1].split(':',1)[0]
             if action in ACTIONS:
@@ -444,6 +515,8 @@ def _view_menu(self, context):
         if prefs:
             self.layout.separator()
             self.layout.prop(prefs, "timeline_toolbar_row", text="Show Anim Assist Tool Row")
+            if hasattr(context.screen, STAGE_PROPERTY):
+                self.layout.prop_menu_enum(context.screen, STAGE_PROPERTY, text="Anim Assist Stage")
             self.layout.menu("ANIMASSIST_MT_timeline_tools", text="Anim Assist Tools")
 
 
@@ -456,8 +529,14 @@ def _load_post(_unused):
     _initialized.clear()
 
 
-_CLASSES = (ANIMASSIST_OT_overlay_control, ANIMASSIST_OT_timeline_overlay_events,
-            ANIMASSIST_OT_clear_timeline_hover)
+_CLASSES = (ANIMASSIST_OT_overlay_control, ANIMASSIST_OT_timeline_stage,
+            ANIMASSIST_OT_timeline_overlay_events, ANIMASSIST_OT_clear_timeline_hover)
+
+
+def _stage_items():
+    return [(key, label, "Show every tool family in the active layout" if families is None
+             else f"Show only {_family_labels(key)} tools")
+            for key, label, families in model.STAGES]
 
 
 def register():
@@ -465,6 +544,9 @@ def register():
     _epoch = object()
     for cls in _CLASSES:
         bpy.utils.register_class(cls)
+    setattr(bpy.types.Screen, STAGE_PROPERTY, EnumProperty(
+        name="Anim Assist Stage", description="Tool families the Timeline band shows in this workspace",
+        items=_stage_items(), default="ALL"))
     if not bpy.app.background:
         _handle = bpy.types.SpaceDopeSheetEditor.draw_handler_add(_draw, (), "WINDOW", "POST_PIXEL")
         bpy.types.DOPESHEET_MT_view.append(_view_menu)
@@ -507,6 +589,8 @@ def unregister():
     for keymap, item in _keymaps:
         keymap.keymap_items.remove(item)
     _keymaps.clear()
+    if hasattr(bpy.types.Screen, STAGE_PROPERTY):
+        delattr(bpy.types.Screen, STAGE_PROPERTY)
     for cls in reversed(_CLASSES):
         if "bl_rna" in cls.__dict__:
             bpy.utils.unregister_class(cls)
