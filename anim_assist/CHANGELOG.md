@@ -1,3 +1,16 @@
+# Unreleased — Timeline stage tabs
+
+- Adds stage tabs to the bottom Timeline band: All, Block (Tween, Keys),
+  Spline (Curves), Polish (Timing, Pose) and Deliver (Bake, Motion). A stage
+  filters the families shown from the active layout; saved layouts, tool modes
+  and slider settings are unchanged. All shows every family.
+- Each workspace keeps its own stage, saved with the file. Click a tab,
+  Ctrl+Wheel over the tabs, or use View > Anim Assist Stage.
+- When the band is tight, the tabs collapse into one button that cycles stages
+  before any slider is compacted.
+- Timing tooltips now describe key spacing: 80%/90% sit keys closer (faster),
+  110%/120% spread them apart (slower). Timing Scale says the same.
+
 # 12.8.0 — Editor-specific sidebars
 
 - Adds an NLA sidebar for clip arrangement, neutral Combine transform corrections,

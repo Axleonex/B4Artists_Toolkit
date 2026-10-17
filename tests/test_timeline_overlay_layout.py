@@ -20,13 +20,14 @@ layout=config.toolbar_layout
 
 
 class TimelineLayoutTests(unittest.TestCase):
-    def controls(self,width,scale=1,top=False,all_actions=False):
+    def controls(self,width,scale=1,top=False,all_actions=False,stage='ALL'):
         record=config.recommended(values['ACTIONS'])
         if all_actions:
             for action,tool in record['active']['tools'].items():
                 tool['mode']='INLINE' if action in config.SLIDERS else 'BUTTON'
         before=copy.deepcopy(record)
-        result=layout(width,120*scale,28*scale,top,record,values['GROUPS'],values['QUICK_LABELS'],lambda text:len(text)*6*scale)
+        result=layout(width,120*scale,28*scale,top,record,values['GROUPS'],values['QUICK_LABELS'],
+                      lambda text:len(text)*6*scale,stage)
         self.assertEqual(record,before)
         return result
 
@@ -35,15 +36,56 @@ class TimelineLayoutTests(unittest.TestCase):
             for width in (250,480,800,1164,1920):
                 for top in (True,False):
                     for all_actions in (True,False):
-                        controls=self.controls(width,scale,top,all_actions)
-                        previous=0
-                        for kind,key,label,(x,y,w,h) in controls:
-                            self.assertGreaterEqual(x,previous)
-                            self.assertLessEqual(x+w,width)
-                            self.assertGreaterEqual(y,0)
-                            self.assertLessEqual(y+h,120*scale)
-                            previous=x+w
-                        self.assertEqual([c[0] for c in controls[-3:]],['SEARCH','MORE','SETTINGS'])
+                        for stage in config.STAGE_IDS:
+                            controls=self.controls(width,scale,top,all_actions,stage)
+                            previous=0
+                            for kind,key,label,(x,y,w,h) in controls:
+                                self.assertGreaterEqual(x,previous)
+                                self.assertLessEqual(x+w,width)
+                                self.assertGreaterEqual(y,0)
+                                self.assertLessEqual(y+h,120*scale)
+                                previous=x+w
+                            self.assertEqual([c[0] for c in controls[-3:]],['SEARCH','MORE','SETTINGS'])
+                            self.assertIn(controls[0][0],{'STAGE','STAGE_CYCLE'})
+
+    def test_stage_filters_families_only(self):
+        for stage,_label,families in config.STAGES:
+            controls=self.controls(1920,stage=stage)
+            menus=[c[1] for c in controls if c[0]=='MENU']
+            self.assertEqual(menus,list(families and [f for f in config.FAMILY_ORDER if f in families]
+                                        or config.FAMILY_ORDER))
+            shown={c[1].split(':')[0] for c in controls if c[0] in {'ACTION','SLIDER','POPOUT','PRESET'}}
+            groups={key:{a for a in actions if a} for key,_l,actions in values['GROUPS']}
+            self.assertTrue(all(any(a in groups[f] for f in menus) for a in shown))
+
+    def test_all_stage_matches_unstaged_toolbar(self):
+        strip=lambda cs:[c for c in cs if c[0] not in {'STAGE','STAGE_CYCLE'}]
+        tools=lambda cs:[(c[0],c[1]) for c in strip(cs)]
+        self.assertEqual(tools(self.controls(1920)),tools(self.controls(1920,stage='ALL')))
+        self.assertEqual([c[1] for c in self.controls(1920) if c[0]=='STAGE'],list(config.STAGE_IDS))
+
+    def test_tabs_give_way_before_sliders_demote(self):
+        # At the narrowest width that keeps the inline sliders, only the cycle
+        # button leads: full tabs never cost the layout its own presentation.
+        for stage in config.STAGE_IDS:
+            for width in range(300,1921,10):
+                controls=self.controls(width,stage=stage)
+                if any(c[0]=='SLIDER' for c in controls):
+                    if stage in {'ALL','BLOCK','SPLINE'}:
+                        self.assertEqual(controls[0][0],'STAGE_CYCLE',(stage,width))
+                    break
+
+    def test_narrow_band_cycles_stage(self):
+        controls=self.controls(250,stage='POLISH')
+        self.assertEqual(controls[0][:3],('STAGE_CYCLE','POLISH','Polish'))
+
+    def test_stage_cycle_wraps_and_tolerates_unknown(self):
+        self.assertEqual(config.next_stage('DELIVER',1),'ALL')
+        self.assertEqual(config.next_stage('ALL',-1),'DELIVER')
+        self.assertEqual(config.next_stage('BOGUS',1),'BLOCK')
+        self.assertEqual(config.stage_families('BOGUS'),config.FAMILY_ORDER)
+        staged=[f for _k,_l,fs in config.STAGES if fs for f in fs]
+        self.assertEqual(sorted(staged),sorted(config.FAMILY_ORDER))
 
     def test_wide_defaults_and_order(self):
         controls=self.controls(1920)

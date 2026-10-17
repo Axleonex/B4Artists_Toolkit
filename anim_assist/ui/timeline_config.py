@@ -5,6 +5,16 @@ import math
 import uuid
 
 FAMILY_ORDER = ('tween', 'timing', 'curves', 'keys', 'pose', 'bake', 'motion')
+# One table drives the stage tabs and the family filter. A stage only filters
+# what the band shows; the saved layout and its tool settings never change.
+STAGES = (
+    ('ALL', 'All', None),
+    ('BLOCK', 'Block', ('tween', 'keys')),
+    ('SPLINE', 'Spline', ('curves',)),
+    ('POLISH', 'Polish', ('timing', 'pose')),
+    ('DELIVER', 'Deliver', ('bake', 'motion')),
+)
+STAGE_IDS = tuple(key for key, _label, _families in STAGES)
 MODES = ('HIDDEN', 'BUTTON', 'POPOUT', 'INLINE')
 # (label, unit, neutral/default, display minimum, display maximum, hard minimum, hard maximum)
 SLIDERS = {
@@ -213,7 +223,22 @@ def effective_tool(action,tool):
     return result
 
 
-def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure):
+def stage_label(stage):
+    return next((label for key,label,_ in STAGES if key==stage),'All')
+
+
+def stage_families(stage):
+    """Families a stage shows, in permanent order; unknown stages show all."""
+    families=next((f for key,_,f in STAGES if key==stage),None)
+    return FAMILY_ORDER if families is None else tuple(f for f in FAMILY_ORDER if f in families)
+
+
+def next_stage(stage,step):
+    index=STAGE_IDS.index(stage) if stage in STAGE_IDS else 0
+    return STAGE_IDS[(index+step)%len(STAGE_IDS)]
+
+
+def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,stage='ALL'):
     """Bounded presentation only; never modify the saved layout on overflow."""
     scale=row_height/28.
     gap=3*scale; pad=5*scale
@@ -227,10 +252,16 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure):
         utilities=[(kind,key,'') for kind,key,_ in utilities]
         utility_widths=[24*scale]*3
     budget=max(0,width-sum(utility_widths)-4*gap)
+    # Stage tabs lead the band. They give way first: before the layout itself is
+    # compacted, the tabs collapse into one button that cycles stages.
+    tabs=[('STAGE',key,label,max(24*scale,measure(label)+2*pad)) for key,label,_ in STAGES]
+    label=stage_label(stage)
+    if measure(label)+2*pad>budget*.5: label=label[0]
+    cycle=[('STAGE_CYCLE',stage if stage in STAGE_IDS else 'ALL',label,max(24*scale,measure(label)+2*pad))]
 
     def compose(compact=False,demote=False,no_families=False):
         specs=[]
-        for family in FAMILY_ORDER:
+        for family in stage_families(stage):
             label,known=families[family]
             selected=[a for a in order if a in known and tools[a]['mode']!='HIDDEN']
             if not no_families:
@@ -253,8 +284,9 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure):
                         specs.append(('PRESET',action+':'+text,text,max(24*scale,measure(text)+2*pad)))
         return specs
 
-    candidates=[compose(),compose(compact=True),compose(compact=True,demote=True),
-                compose(compact=True,demote=True,no_families=True)]
+    candidates=[lead+body for body in (compose(),compose(compact=True),compose(compact=True,demote=True),
+                                       compose(compact=True,demote=True,no_families=True))
+                for lead in (tabs,cycle)]
     specs=next((s for s in candidates if sum(i[3]+gap for i in s)<=budget),candidates[-1])
     controls=[]; x=gap
     for kind,key,label,w in specs:
