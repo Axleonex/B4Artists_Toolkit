@@ -4,7 +4,7 @@ Host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`. C
 
 ## Package
 
-`releases/b4_anim_assist_v12.10.0.zip` (622,184 bytes, SHA256 `7ad19e35e857e56a68d63297425341eebb3496e9717534f446821e9258f1c3ee`), built by [package.py](package.py) from the unchanged 12.9.1 inventory (211 files, root `B4_anim_assist`); see the [receipt](package-receipt.json). After normalising line endings, 9 files differ from 12.9.1: `CHANGELOG.md`, `__init__.py`, `blender_manifest.toml`, `constants.py`, `ui/timeline_catalog.py`, `ui/timeline_config.py`, `ui/timeline_overlay.py`, `ui/timeline_settings.py`, `ui/timeline_strip.py`.
+`releases/b4_anim_assist_v12.10.0.zip` (623,384 bytes, SHA256 `c640095a03a9ee5789b717e6a2dab41d4d841f10ea88cd454eb468a839bc076b`), built by [package.py](package.py) from the unchanged 12.9.1 inventory (211 files, root `B4_anim_assist`); see the [receipt](package-receipt.json). After normalising line endings, 9 files differ from 12.9.1: `CHANGELOG.md`, `__init__.py`, `blender_manifest.toml`, `constants.py`, `ui/timeline_catalog.py`, `ui/timeline_config.py`, `ui/timeline_overlay.py`, `ui/timeline_settings.py`, `ui/timeline_strip.py`.
 
 ## Checks on the exact ZIP contents
 
@@ -12,6 +12,7 @@ Host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`. C
 |---|---|
 | [toolset_check.py](../../plans/2026-10-17-stage-toolsets/toolset_check.py), background, ZIP installed as an add-on: fresh schema 2 record; Toolbar Settings lists only a stage's families, keeps edits when switching stage, applies them; Reset Stage; Restore Recommended; Save As / Load carry stages; Search pin in a stage and into All; Tool Settings changes stage display with shared amounts; two disable/enable cycles | 20/20 pass |
 | [stage_check.py](../../plans/2026-10-17-stage-tabs/stage_check.py), background: stage tabs, cycle, per-workspace value, tooltips, settings stage controls, save/reopen, register cycles | 33/33 pass (includes the stage dropdown menu) |
+| [dropdown_pointer_check.py](../../plans/2026-10-17-stage-toolsets/dropdown_pointer_check.py), real GUI with simulated mouse and keyboard events (`--enable-event-simulate`): one click opens the stage list and it stays open; hover highlights; clicking a stage switches and closes; clicking the stage button again, the Timeline (no scrubbing), another editor, or pressing Esc closes it | 8/8 pass; [list open with hover](evidence/images/stage-dropdown-hover.png) |
 | `tests/test_anim_assist_layout.py` against the extracted package | 98 panels, none in the 3D Viewport sidebar; unregister clean |
 | Real-GUI Bforartists with the ZIP installed | Every stage drawn with its toolset; [Block](evidence/images/stage-block.png), [Spline](evidence/images/stage-spline.png), [Polish](evidence/images/stage-polish.png), [Deliver](evidence/images/stage-deliver.png), [All](evidence/images/stage-all.png), [Toolbar Settings editing Block](evidence/images/settings-dialog.png), [stage dropdown open](evidence/images/stage-dropdown.png) |
 
@@ -24,7 +25,8 @@ Host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`. C
 
 ## Limits
 
-- Pointer gestures (tab clicks, Ctrl+Wheel, dialog clicks) were exercised through operators and drawing code, not recorded pointer events.
+- The stage list was driven with simulated pointer events; tab clicks on the wide row, Ctrl+Wheel and Toolbar Settings dialog clicks were exercised through operators and drawing code. The short-Timeline row form of the stage list was not pointer-tested.
+- The stage list is drawn by the add-on inside the Timeline (Blender's own menu opened over the stage button, so a second click picked a stage instead of closing it). A click in a region that consumes it, such as a button in another editor, may leave the list open until the next click in the Timeline or Esc.
 - A 12.9.x install cannot read a record saved by 12.10.0 (it falls back to Recommended); documented in the release notes.
 - After the owner's first preview, Deliver gained the four proxy tools and the compact stage button became a dropdown; both were re-checked on this ZIP.
 - Screenshots use an unselected default scene, so most tools are shown unavailable; at 1,600 px Block overflows into More by design.

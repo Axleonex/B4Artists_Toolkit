@@ -165,9 +165,9 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
     @classmethod
     def description(cls, context, properties):
         from . import timeline_strip as tools
-        if properties.kind in {'STAGE','STAGE_CYCLE'}:
+        if properties.kind in {'STAGE','STAGE_CYCLE','STAGE_ITEM'}:
             shown = current_stage(context) if properties.kind == 'STAGE_CYCLE' else properties.key
-            return _stage_description(properties.kind, shown)
+            return _stage_description('STAGE' if properties.kind == 'STAGE_ITEM' else properties.kind, shown)
         action=properties.key.split(':',1)[0]
         if properties.kind in {'SLIDER','POPOUT','PRESET'} and action in ACTIONS:
             operator=tools._operator(action)
@@ -201,7 +201,9 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
         if self.kind == "STAGE":
             return bpy.ops.animassist.timeline_stage(stage=self.key)
         if self.kind == "STAGE_CYCLE":
-            return bpy.ops.wm.call_menu("INVOKE_DEFAULT", name=ANIMASSIST_MT_timeline_stage.bl_idname)
+            _stage_menu[context.window.as_pointer()] = context.area.as_pointer()
+            context.area.tag_redraw()
+            return {"FINISHED"}
         return {"FINISHED"}
 
 
@@ -243,6 +245,9 @@ _epoch = object()
 _keymaps = []
 _initialized = set()
 _hover = {}
+# Window -> area pointer whose stage dropdown is open (drawn by this band, not a Blender menu,
+# so it never opens over the stage button and a second click on the button closes it).
+_stage_menu = {}
 _hover_started = {}
 
 
@@ -270,6 +275,44 @@ def _items(context):
                        current_stage(context))
     items = [(kind, key, label, (x, iy+y, w, ih)) for kind, key, label, (x, iy, w, ih) in items]
     return items, (0, y, context.region.width, min(h, context.region.height))
+
+
+def _menu_open(context):
+    window, area = context.window, context.area
+    return bool(window and area and _stage_menu.get(window.as_pointer()) == area.as_pointer())
+
+
+def _close_stage_menu(context):
+    if context.window and _stage_menu.pop(context.window.as_pointer(), None):
+        for area in context.window.screen.areas:
+            area.tag_redraw()
+
+
+def _menu_items(context, items, band):
+    """Rects of the open stage dropdown: a list above the stage button, or one
+    row of the five stages when the Timeline is too short for the list."""
+    button = next((item for item in items if item[0] == 'STAGE_CYCLE'), None)
+    if button is None:
+        return []
+    scale = context.preferences.system.ui_scale
+    bx, _by, bw, bh = button[3]
+    gap, pad = 2 * scale, 8 * scale
+    blf.size(0, round(11 * scale))
+    stages = [(key, label) for key, label, _families in model.STAGES]
+    top = band[1] + band[3] + gap
+    region_w, region_h = context.region.width, context.region.height
+    if top + len(stages) * (bh + gap) <= region_h:
+        width = max(bw, max(blf.dimensions(0, label)[0] for _key, label in stages) + 2 * pad)
+        x = max(0, min(bx, region_w - width))
+        return [('STAGE_ITEM', key, label, (x, top + (len(stages) - 1 - index) * (bh + gap), width, bh))
+                for index, (key, label) in enumerate(stages)]
+    result, x = [], bx
+    for key, label in stages:
+        width = blf.dimensions(0, label)[0] + 2 * pad
+        result.append(('STAGE_ITEM', key, label, (x, top, width, bh)))
+        x += width + gap
+    shift = max(0, x - region_w)
+    return [(kind, key, label, (rx - shift, ry, rw, rh)) for kind, key, label, (rx, ry, rw, rh) in result]
 
 
 def _inside(rect, location):
@@ -418,6 +461,20 @@ def _draw():
             else:
                 _text(rect,label,(*accent[:3],ink[3]) if kind=='MENU' else ink,scale)
                 if kind=='POPOUT': _quad((rect[0]+3*scale,rect[1]+2*scale,rect[2]-6*scale,1*scale),accent)
+        if _menu_open(context):
+            menu = _menu_items(context, items, band)
+            if menu:
+                xs = [r[0] for *_k, r in menu]; ys = [r[1] for *_k, r in menu]
+                x1 = max(r[0] + r[2] for *_k, r in menu); y1 = max(r[1] + r[3] for *_k, r in menu)
+                _quad((min(xs) - 2 * scale, min(ys) - 2 * scale, x1 - min(xs) + 4 * scale, y1 - min(ys) + 4 * scale),
+                      (.08, .08, .08, .97))
+                for _kind, key, label, rect in menu:
+                    lit = key == stage or hover == (context.area.as_pointer(), 'STAGE_ITEM', key)
+                    _quad(rect, tuple(widgets.inner_sel) if lit else tuple(widgets.inner))
+                    if key == stage and key != 'ALL':
+                        _quad((rect[0] + 3 * scale, rect[1] + 2 * scale, rect[2] - 6 * scale, 2 * scale),
+                              _COLORS[model.stage_families(key)[0]])
+                    _text(rect, label, (*(widgets.text_sel if lit else widgets.text)[:3], 1), scale)
         # Thin separator on the edge facing the animation canvas.
         _quad((band[0], band[1]+band[3]-1, band[2], 1), (*widgets.outline[:3], 1))
         if active and active.mode=='POPOUT' and active._moved:
@@ -431,7 +488,7 @@ def _draw():
             _text((x+5*scale,y+23*scale,width-10*scale,18*scale),model.SLIDERS[active.action][0],(*widgets.text[:3],1),scale,left=True)
             _track((x+10*scale,y+5*scale,max(1,width-70*scale),16*scale),active.value,active._tool,accent)
             _text((x+width-60*scale,y+3*scale,55*scale,20*scale),f'{active.value:.{active._tool["precision"]}f}'+model.SLIDERS[active.action][1],(*widgets.text[:3],1),scale,font=10)
-        if not active and hover and time.monotonic() - _hover_started.get(context.window.as_pointer(), float("inf")) > .6:
+        if not active and hover and not _menu_open(context) and time.monotonic() - _hover_started.get(context.window.as_pointer(), float("inf")) > .6:
             item = next((item for item in items if (item[0], item[1]) == hover[1:]), None)
             if item:
                 description = ANIMASSIST_OT_overlay_control.description(
@@ -469,8 +526,10 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
         items, band = _items(context)
         point = (event.mouse_region_x, event.mouse_region_y)
         hit = _inside(band, point)
-        found = next((item for item in items if _inside(item[3], point)), None) if hit else None
         pointer = context.window.as_pointer()
+        menu = _menu_items(context, items, band) if _menu_open(context) else []
+        in_menu = next((item for item in menu if _inside(item[3], point)), None)
+        found = in_menu or (next((item for item in items if _inside(item[3], point)), None) if hit else None)
         hover = (context.area.as_pointer(), found[0], found[1]) if found else None
         if _hover.get(pointer) != hover:
             _hover[pointer] = hover
@@ -489,6 +548,18 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
                             pass
                     return None
                 bpy.app.timers.register(tooltip_redraw, first_interval=.65)
+        if menu and event.type == "ESC":
+            _close_stage_menu(context)
+            return {"FINISHED"}
+        if menu and event.type in {"LEFTMOUSE", "RIGHTMOUSE"}:
+            # While open: pick a stage, or close on any other click in this Timeline
+            # (including the stage button itself) without acting on what is underneath.
+            _close_stage_menu(context)
+            if in_menu and event.type == "LEFTMOUSE":
+                bpy.ops.animassist.timeline_stage(stage=in_menu[1])
+            return {"FINISHED"}
+        if event.type == "ESC":
+            return {"CANCELLED", "PASS_THROUGH"}
         if event.type == "MOUSEMOVE" or not hit:
             return {"CANCELLED", "PASS_THROUGH"}
         if (event.type in {'WHEELUPMOUSE','WHEELDOWNMOUSE'} and event.ctrl and found
@@ -500,6 +571,10 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
             if action:
                 bpy.ops.animassist.tool_settings('INVOKE_DEFAULT',action=action)
                 return {'FINISHED'}
+        if event.type == "LEFTMOUSE" and found and found[0] == 'STAGE_CYCLE':
+            _stage_menu[pointer] = context.area.as_pointer()  # one click opens; stays open
+            context.area.tag_redraw()
+            return {"FINISHED"}
         if event.type == "LEFTMOUSE" and found:
             action=_tool_action(found[0],found[1])
             from . import timeline_strip as tools
@@ -526,16 +601,35 @@ class ANIMASSIST_OT_clear_timeline_hover(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         from . import timeline_strip as tools
-        if not context.window or not _hover.get(context.window.as_pointer()):
+        if not context.window:
+            return False
+        pointer = context.window.as_pointer()
+        if not (_hover.get(pointer) or _stage_menu.get(pointer)):
             return False
         return not (tools.is_timeline(context.area) and context.region
                     and context.region.type == "WINDOW")
 
-    def invoke(self, context, _event):
+    def invoke(self, context, event):
         _hover.pop(context.window.as_pointer(), None)
+        if event.type == "LEFTMOUSE":
+            _stage_menu.pop(context.window.as_pointer(), None)
         for area in context.window.screen.areas:
             area.tag_redraw()
         return {"CANCELLED", "PASS_THROUGH"}
+
+
+class ANIMASSIST_OT_close_stage_menu(bpy.types.Operator):
+    bl_idname = "animassist.close_stage_menu"
+    bl_label = "Close Anim Assist Stage List"
+    bl_options = {"INTERNAL"}
+
+    @classmethod
+    def poll(cls, context):
+        return bool(context.window and _stage_menu.get(context.window.as_pointer()))
+
+    def invoke(self, context, _event):
+        _close_stage_menu(context)
+        return {"FINISHED"}
 
 
 def _start_windows():
@@ -596,11 +690,13 @@ def _load_post(_unused):
     global _epoch
     _epoch = object()
     _hover.clear()
+    _stage_menu.clear()
     _hover_started.clear()
     _initialized.clear()
 
 
 _CLASSES = (ANIMASSIST_OT_overlay_control, ANIMASSIST_MT_timeline_stage, ANIMASSIST_OT_timeline_stage,
+            ANIMASSIST_OT_close_stage_menu,
             ANIMASSIST_OT_timeline_overlay_events, ANIMASSIST_OT_clear_timeline_hover)
 
 
@@ -642,12 +738,21 @@ def register():
             item = screen.keymap_items.new(ANIMASSIST_OT_clear_timeline_hover.bl_idname,
                                            type="MOUSEMOVE", value="ANY")
             _keymaps.append((screen, item))
+            item = screen.keymap_items.new(ANIMASSIST_OT_clear_timeline_hover.bl_idname,
+                                           type="LEFTMOUSE", value="PRESS", any=True)
+            _keymaps.append((screen, item))
+            # Esc closes an open stage list from anywhere in the window.
+            item = screen.keymap_items.new(ANIMASSIST_OT_close_stage_menu.bl_idname, type="ESC", value="PRESS")
+            _keymaps.append((screen, item))
             for name in ("Dopesheet", "Dopesheet Generic"):
                 keymap = config.keymaps.new(name=name, space_type="DOPESHEET_EDITOR", region_type="WINDOW")
                 for event_type in ("MOUSEMOVE", "LEFTMOUSE", "RIGHTMOUSE", "MIDDLEMOUSE", "WHEELUPMOUSE", "WHEELDOWNMOUSE"):
                     item = keymap.keymap_items.new(ANIMASSIST_OT_timeline_overlay_events.bl_idname,
                                                   type=event_type, value="ANY" if event_type=="MOUSEMOVE" else "PRESS", any=True)
                     _keymaps.append((keymap, item))
+                item = keymap.keymap_items.new(ANIMASSIST_OT_timeline_overlay_events.bl_idname,
+                                              type="ESC", value="PRESS")
+                _keymaps.append((keymap, item))
         bpy.app.handlers.load_post.append(_load_post)
         from ..operators.timeline_slider_ops import cancel_active
         bpy.app.handlers.load_pre.append(cancel_active)
@@ -672,6 +777,7 @@ def unregister():
             bpy.app.timers.unregister(_start_windows)
     _initialized.clear()
     _hover.clear()
+    _stage_menu.clear()
     _hover_started.clear()
     for keymap, item in _keymaps:
         keymap.keymap_items.remove(item)

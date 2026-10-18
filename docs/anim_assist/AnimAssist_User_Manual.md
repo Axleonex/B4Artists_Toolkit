@@ -40,7 +40,7 @@ The **bottom-only canvas overlay** retains 12.7.1 placement, away from the top k
 
 Tabs at the left of the row choose a stage: **All**, **Block** (Tween, Keys), **Spline** (Curves), **Polish** (Timing, Pose) and **Deliver** (Bake, Motion). **All** is the condensed overview of every family. Each other stage has its own toolset for its families.
 
-Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. When All does not fit beside the tabs, they collapse into one stage button: click it to choose a stage from its dropdown, or hold Ctrl and scroll over it. Tools that do not fit remain in More and Search.
+Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. When All does not fit beside the tabs, they collapse into one stage button. Click it once to open the stage list (it stays open while you hover), then click a stage. Clicking the button again, clicking anywhere else or pressing Esc closes the list. In a short Timeline the five stages appear as a row above the button. Ctrl+Wheel over the button also cycles stages. Tools that do not fit remain in More and Search.
 
 ### Stage toolsets
 

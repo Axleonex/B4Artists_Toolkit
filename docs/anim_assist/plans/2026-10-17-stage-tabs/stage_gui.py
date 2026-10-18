@@ -67,8 +67,10 @@ def step():
             override = dict(window=window, screen=window.screen, area=area, region=region)
             if os.environ.get("AA_CAPTURE_DROPDOWN") == "1" and phase == 0:
                 # Open the compact stage button's dropdown and capture the window.
-                with bpy.context.temp_override(**override):
-                    bpy.ops.wm.call_menu(name="ANIMASSIST_MT_timeline_stage")
+                import sys as _sys
+                _ov = _sys.modules["B4_anim_assist.ui.timeline_overlay"]
+                _ov._stage_menu[window.as_pointer()] = area.as_pointer()  # the band's own stage list
+                area.tag_redraw()
                 state["settings"] = 9
                 return 1.2
             if phase == 9:

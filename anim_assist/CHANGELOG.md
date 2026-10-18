@@ -6,8 +6,11 @@
   in Block; Neighbors, Ease, Reference and handle types in Spline; spacing
   presets, Timing Offset, Ripple and Snap in Polish; Smart Bake, Reduce, the
   four proxy types, proxy bake and trail tools in Deliver). All is unchanged.
-- When the row is tight, the single stage button opens a dropdown of all five
-  stages (Ctrl+Wheel still cycles).
+- When the row is tight, the single stage button opens a stage list: one click
+  opens it and it stays open while you hover; click a stage to switch. Clicking
+  the button again, clicking elsewhere or pressing Esc closes it. A short
+  Timeline shows the five stages as one row above the button instead. Ctrl+Wheel
+  still cycles.
 - Toolbar Settings edits the stage the row shows: choose it with Row Stage,
   then set each tool Hidden, Button, Popout or Inline and reorder it. Reset
   Stage to Defaults restores one stage; Restore Recommended restores all.
