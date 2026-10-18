@@ -1,6 +1,6 @@
 # Anim Assist 12.10.0 user guide
 
-Reviewed against 12.10.0 on October 17, 2026. Use Dope Sheet for poses/timing, Graph Editor for curves, and NLA Editor for clips/corrections. Help controls explain individual tools.
+Reviewed against 12.10.0 on October 18, 2026. Use Dope Sheet for poses/timing, Graph Editor for curves, and NLA Editor for clips/corrections. Help controls explain individual tools.
 
 ## Install and find the tools
 
@@ -8,56 +8,130 @@ Download the [12.10.0 add-on ZIP](https://raw.githubusercontent.com/Axleonex/B4A
 
 Validated host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`, OpenGL. Standard Blender is unsupported; other builds were not validated.
 
-- **Timeline:** Anim Assist's tool row sits at the bottom of the canvas. Playback and keyframing controls remain in the existing native header.
+- **Timeline:** Anim Assist's tool row sits at the bottom of the canvas; see **Timeline: the bottom tool row** below. Playback and keyframing controls remain in the existing native header.
 - **Dope Sheet, Graph Editor and NLA Editor:** point into the editor, press N, then choose the Anim Assist tab. The header's Anim Assist menu provides additional access.
 - **Scene Properties > Anim Assist:** character setup, broader animation tools, macros, settings and help. There is no Anim Assist tab in the 3D Viewport sidebar.
 
 Scene Properties > Anim Assist > Setup (once per rig) > First Run Setup creates the general Quick Shelf. Setup also offers a workspace. The optional Shift Alt D pie starts off; enable/rebind it in Settings.
 
-## Timeline: buttons and sliders
+## Timeline: the bottom tool row
 
-The row groups tools into **Tween, Timing, Curves, Keys, Pose, Bake and Motion**. Click an action to run it; use family menus or **Find** (the magnifier) for others. Find searches all 96 tools as you type; with nothing typed it shows family tabs to browse every tool. Click a tool to run it, or its pin to add it to the row or take it off. Find and Toolbar Settings share the same layout, so a pin shows in Toolbar Settings and a Settings change shows on the pins. Tooltips explain prerequisites and scope. Action-wide offset affects more than selected-key nudging.
+The tool row sits along the bottom of the Timeline, just above its horizontal scrollbar. It adds no header, region or workspace split, and the Timeline's own playback and keying controls stay in the native header. To show or hide the row, use **Timeline > View > Show Anim Assist Tool Row**. Give the Timeline enough height for its keys and the row.
 
-**Recommended** starts with two inline sliders: **Breakdown**, whose track has ticks at 25%, 50% and 75% (click a tick to apply it), and **Smooth**. **Timing Scale** uses a temporary popout slider. Quick icons: -1f/+1f nudges, Copy/Paste Keys, Mirror Selected, Bake Object Transforms and Trails (the eye shows or hides world motion trails). Hover an icon for its name. In Tool Settings, **Presets as Ticks** switches any slider between ticks on its track and preset buttons, in All or in a stage.
+From left to right the row holds:
 
-Press and drag. Release applies; Esc/right-click restores the captured animation. Shift gives finer movement; Ctrl uses the snap step. Type a value and press Enter for numeric input. Clicking without dragging applies nothing. Watch the status bar. A popout slider (such as Timing Scale in All) can also be clicked: it then stays open, you drag on its track to adjust, and a double-click or a click anywhere else applies; Esc cancels.
+| Control | What it does |
+|---|---|
+| **Stage button** (for example **All**, with a small arrow) | Shows the current stage; click it to choose another. |
+| **Family buttons** (Tween, Timing, Curves, Keys, Pose, Bake, Motion) | Coloured names that open the full tool list of that family. The row's tools follow each family name. |
+| **Tools** | Buttons, icons and sliders. Click to run; hover for an explanation. |
+| **+N** | Appears only when N of the row's tools do not fit; click it to use them. |
+| **Find** (magnifier) | Search or browse all 96 tools; run one, or pin it to the row. |
+| **Settings** | Toolbar Settings: choose what each row shows. |
 
-A stage can show a slider's presets as ticks on its track instead of buttons: click a tick to apply that preset exactly (the drag snaps onto ticks). If the row is too tight and the slider becomes a popout, its presets show as buttons again. Ten tools support numeric display: Breakdown, Smooth, Neighbors, To Reference, Ease, Amplify, Timing Scale, Timing Offset, Ripple and Reduce. Ripple shifts every key after the playhead by the dragged number of frames (earlier stops one frame after the playhead). Reduce removes keys whose deletion changes a curve by less than the dragged tolerance; drag to watch keys disappear, Esc brings them back. To Reference blends toward the configured reference frame; Amplify changes amplitude around that reference. Timing Scale changes key spacing: below 100% keys sit closer (faster), above 100% they spread apart (slower); Timing Offset shifts the active object's Action timing. Check tooltips and scene options before editing a whole Action.
+Every list on the row (the stage list, family lists and **+N**) opens with one click and stays open while you move the pointer, even over another editor. Click an item to use it. Click the same button again, click anywhere else or press Esc to close the list; clicking another family button switches to that family.
 
-### Customize and save layouts
+### Choose a stage
 
-Open row **Settings**, choose a family/tool, then **Hidden, Button, Popout slider or Inline slider**. Ordinary actions offer Hidden/Button only. Hidden tools remain in Find. Move Up/Down orders tools within their family; Slider Width controls inline width.
+A stage is a set of tools for one phase of the work:
 
-Use **Tool Settings**, or right-click an idle numeric tool, to set display, range, default, width, precision, drag sensitivity, snapping and presets. **Custom Range / Overshoot** permits supported amounts outside the standard range. Masks, targets and breakdown anchors remain scene settings; **Scene Tool Options** opens those separately.
+- **All:** the condensed overview, with tools from every family.
+- **Block:** Tween and Keys tools for blocking poses.
+- **Spline:** Curves and Motion tools for splining and checking arcs.
+- **Polish:** Timing and Pose tools for spacing and symmetry.
+- **Deliver:** Bake tools for finishing and export.
 
-**Save As** names an arrangement. **Load** restores one; **Update Saved** replaces its saved settings. Rename/Delete manage saved layouts. Recommended is protected. **Restore Recommended Layout** resets the working arrangement while retaining saved layouts. Confirm the main Settings dialog to apply staged changes. Save Preferences after applying if automatic preference saving is off.
+To change the stage:
 
-On a narrow Timeline, a **+N** button appears before Find (for example +3): it lists the row's tools that did not fit. When everything fits, there is no More button. Shorten the row by reducing inline widths or changing occasional sliders to popout/button mode. If hidden, use **Timeline > View > Show Anim Assist Tool Row**. Give the Timeline enough height for its keys and tool row.
+1. Click the stage button at the left of the row. The list of five stages opens above it (on a short Timeline, as one row of buttons).
+2. Click a stage. The row switches and the list closes.
 
-The **bottom-only canvas overlay** retains 12.7.1 placement, away from the top keyframe diamonds. It adds no native header/editor region or workspace split. There is no top/bottom placement setting.
+You can also hold Ctrl and scroll over the stage button to step through the stages, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file.
 
-### Stages
+### Use the tools
 
-The stage button at the left of the row chooses a stage: **All**, **Block** (Tween, Keys), **Spline** (Curves, Motion), **Polish** (Timing, Pose) and **Deliver** (Bake). **All** is the condensed overview of every family. Each other stage has its own toolset for its families.
+- **Buttons and icons** run a tool on click. A greyed tool cannot run yet; hover it to see why (for example, no keys are selected).
+- **Icons:** key types show as diamonds in your theme's Dope Sheet key colours (Keyframe, Breakdown smaller, Extreme larger, Moving Hold); handle types use your theme's Graph Editor handle colours. Hover any icon for its name.
+- **Inline sliders** stay on the row. Press on the track and drag; release to apply. Esc or right-click while dragging restores the keys as they were. Hold Shift for finer movement and Ctrl to snap to the tool's step. While dragging, type a number and press Enter to use an exact amount. A click without a drag changes nothing.
+- **Ticks** on a slider track are presets: click a tick to apply exactly that amount. A drag snaps onto ticks when it passes close to them.
+- **The number** at the right of an inline slider opens a field for an exact value; **R** applies the tool's default amount.
+- **Popout sliders** show only their name on the row. Press and drag to open a temporary slider and release to apply. Or click once: the popout stays open, you drag on its track, and a double-click or a click anywhere else applies it; Esc cancels.
+- **Right-click** a tool to open its Tool Settings.
 
-The button shows the current stage's name. Click it, hold Ctrl and scroll over it, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. Click the button once to open the stage list (it stays open while you hover), then click a stage. Clicking the button again, clicking anywhere else or pressing Esc closes the list. In a short Timeline the five stages appear as a row above the button. Ctrl+Wheel over the button also cycles stages. Tools that do not fit appear under the **+N** button. The row sits just above the Timeline's horizontal scrollbar and keeps its end buttons clear of the Timeline's corners. The family buttons (Tween, Keys and so on) and More work the same way: one click opens the list, it stays open while you move the pointer, clicking a tool runs it, and clicking the same button, anywhere else or pressing Esc closes it. Clicking another family button switches to that family.
+Ten tools are numeric sliders: Breakdown, Smooth, Neighbors, To Reference, Ease, Amplify, Timing Scale, Timing Offset, Ripple and Reduce.
 
-### Stage toolsets
+- **Breakdown** blends the selected keys between the previous and next pose. Values below 0% or above 100% push past them.
+- **Timing Scale** changes key spacing: below 100% the keys move closer (faster), above 100% they spread apart (slower). **Timing Offset** shifts the active object's Action in time.
+- **Ripple** moves every key after the playhead by the dragged number of frames; moving earlier stops one frame after the playhead.
+- **Reduce** removes keys whose removal changes a curve by less than the dragged tolerance. You watch keys disappear as you drag; Esc brings them back.
+- **To Reference** blends toward the reference frame (set it with **Set Reference**); **Amplify** scales the motion around that reference.
 
-Each stage starts from a fixed default set, the Recommended tools for its families plus tools for that phase, left to right in workflow order:
+Action-wide tools such as Timing Offset affect more than the selected keys. Check the hover text and the scene options before you change a whole Action.
 
-- **Block:** Breakdown slider whose track runs from -25% to 125% with ticks at -25, 25, 50, 75 and 125 (click a tick to apply it: -25 and 125 push past the previous or next pose, 25 and 75 pull toward it); Inbetween and Distribute (key-plus-key icons); Select Range/All/Ends; Grow left/right (key and arrow icons); mark Keyframe/Breakdown/Extreme/Moving Hold (key-type diamonds in your theme's Dope Sheet key colours); Copy/Paste (icons). Hover any icon for its name. The 25/50/75% and Push/Pull buttons stay in More and Search.
-- **Spline:** To Spline (curve icon; To Stepped is in Find); Neighbors, Ease and Smooth sliders; Set Reference (target icon), then To Reference and Amplify sliders; Auto Clamped/Vector/Free handles (icons in your theme's Graph Editor handle colours); Trails (an eye: click to show world motion trails, again to hide them; a slash means they are off).
-- **Polish:** -1f/+1f (arrow icons); Timing Scale slider with ticks at 80, 90, 110 and 120; Timing Offset slider; Ripple slider with ticks at -1 and 1 (1 matches the old Ripple button); Snap; Select Opposite, Mirror Selected, Mirror Active and Swap as icons (Mirror Active's right-hand triangle is hollow).
-- **Deliver:** Bake Object (key-bars icon), Bake Preview Range, Smart Bake; Reduce slider with ticks at 0.001, 0.01 and 0.05 (0.01 matches the old Reduce Keys button); Bake Keys to Integer Frames (whole frames, restorable with Reset Timing); One-Click Proxy & Bake; Location, Rotation, World and Parent proxies (icons: move cross, turn arrow, globe, parent link), then Bake Session and Remove Proxies; Remove All Proxy Sessions.
+### Default rows
 
-To change a row, open **Toolbar Settings** (the row's **Settings** button). The **Row** dropdown (All, Block, Spline, Polish, Deliver) chooses the row you edit, and the Timeline switches to it. Every row lists all 96 tools, grouped under family headers (Tween, Timing, Curves, Keys, Pose, Bake, Motion). Click a header to open or close it; it shows how many of its tools are on the row, and a stage opens on its own families. Type in **Find** to filter by name. To add a tool to the row, set it to Button, Popout or Inline; to take one off, set it to Hidden. The arrows move a tool up or down within its family, and the gear opens Tool Settings. Any row can hold any tool: a tool from another family brings that family's menu onto the row. Every change shows on the row at once; there is no OK button. Click outside the panel or press Esc to close it and keep your changes, or press **Revert Changes** to undo everything since you opened it. When Preferences are not saved automatically, press **Save Preferences** to keep the changes after a restart. Tools that have an icon (key types, -1f/+1f, Copy and Paste) can also show as Label or Icon; every other tool shows its name. **Reset Block to Defaults** (named for the row you edit) restores that stage; **Restore Recommended Layout** restores All and every stage. Saved layouts store All and all four stages together.
+Each row starts from a fixed set, left to right in workflow order:
 
-**Hover Explainers** (Preferences > Add-ons > Anim Assist > General) sets how much Anim Assist explains when the pointer rests on a control: **Full** (what it does, what it works on, what it needs, how to use it), **Short** (the name and one line, plus why a tool is greyed) or **Off** (no Anim Assist hover text on the Timeline row; Bforartists' own buttons show only the tool's name, because Bforartists always prints a description line). If a key is bound to a tool, its hover text ends with a Shortcut line; no Timeline tool has a key by default, so this appears only for keys you bind in Preferences > Keymap. Where Bforartists has its own command for the same job with a key bound, a **Bforartists key** line names it, for example Ctrl C for Copy, A for All Keys, R (Scale Keys in Time) for the timing scale tools and W (Move Keys in Time) for the nudges. Those are Bforartists' commands and can differ in detail: its Paste, for instance, pastes at the playhead rather than at the copied times.
+- **All:** Breakdown slider with ticks at 25, 50 and 75%; Smooth slider; -1f/+1f nudges (icons); Timing Scale (popout); Mirror Selected, Bake Object, Trails (an eye that shows or hides world motion trails), Copy and Paste (icons).
+- **Block:** Breakdown slider from -25% to 125% with ticks at -25, 25, 50, 75 and 125 (-25 and 125 push past the previous or next pose, 25 and 75 pull toward it); Inbetween and Distribute (icons); Select Range, All Keys and Ends; Grow left and right (icons); Mark Keyframe, Breakdown, Extreme and Moving Hold (key diamonds); Copy and Paste (icons).
+- **Spline:** To Spline (curve icon); Neighbors, Ease and Smooth sliders; Set Reference (target icon), then To Reference and Amplify sliders; Auto Clamped, Vector and Free handles (icons); Trails.
+- **Polish:** -1f/+1f; Timing Scale slider with ticks at 80, 90, 110 and 120%; Timing Offset slider; Ripple slider with ticks at -1 and 1; Snap (round key times); Select Opposite, Mirror Selected, Mirror Active and Swap (icons).
+- **Deliver:** Bake Object (icon), Bake Preview Range, Smart Bake; Reduce slider with ticks at 0.001, 0.01 and 0.05; Bake Keys to Integer Frames (restorable with Reset Timing); One-Click Proxy & Bake; Location, Rotation, World and Parent proxies (icons); Bake Session and Remove Proxies; Remove All Proxy Sessions.
 
-Amounts (range, default, presets, slider width, snapping) are shared: changing them in any stage changes them everywhere. Right-click Tool Settings changes the display and label in the stage the row shows. A Search pin also goes to that row, whatever the tool's family. More lists the shown stage's tools.
+Tools that are not on a row, for example To Stepped or the 25/50/75% Breakdown buttons, are always in **Find**.
 
-Stages start from this fixed set, not from your All tools: a tool you added to All appears in a stage only after you add it there. Add-on Preferences have no stage control; there, Anim Assist notes that each workspace picks its stage with the row's stage button.
+### Find and More
+
+**Find** (the magnifier) reaches every tool:
+
+1. Click the magnifier.
+2. Type part of a name, a family or an idea (for example "spacing" or "arc"), or leave the field empty and click a family tab to browse its tools.
+3. Click a tool to run it. Click its pin to add it to the row you are viewing, or to take it off; a lit pin means the tool is on that row.
+
+A pin goes to the row shown, whatever the tool's family. Find and Toolbar Settings share the same layout, so a pin shows in Toolbar Settings and a Toolbar Settings change shows on the pins.
+
+**More** appears as **+N** just before Find only when N of the row's tools do not fit the Timeline's width. Click it to see and run those tools. When everything fits, there is no More button. To make more room, give the Timeline more width, shorten inline sliders, or change occasional sliders to popout or button.
+
+### Change what a row shows
+
+1. Click **Settings** at the right of the row. Toolbar Settings opens on the row the Timeline shows.
+2. In **Row**, choose All, Block, Spline, Polish or Deliver. The Timeline switches to that row while you edit.
+3. Open a family by clicking its header (Tween, Timing, Curves, Keys, Pose, Bake, Motion). Each header shows how many of its tools are on the row; a stage opens on its own families. To find a tool by name, type in the search field above the families.
+4. For each tool choose:
+   - **Display:** Hidden (off the row), Button, Popout slider or Inline slider. Ordinary tools offer Hidden or Button; sliders offer all four.
+   - **Label or Icon**, for tools that have an icon. For an inline slider, the second field sets its **Width** instead.
+   - The **up and down arrows** move the tool within its family.
+   - The **gear** opens the tool's Tool Settings.
+5. Close the panel by clicking outside it or pressing Esc. Your changes stay.
+
+Every change shows on the row at once; there is no OK button. **Revert Changes** undoes everything since you opened the panel. Any row can hold any tool: a tool from another family brings that family's button onto the row.
+
+Tools that can show as an icon: key types, handle types, grow selection, -1f/+1f, Inbetween and Distribute, To Spline and To Stepped, Set Reference, Copy, Paste, Mirror Selected, Mirror Active, Select Opposite, Swap, Bake Object, the four proxy types and Trails. Any other tool shows its name.
+
+**Tool Settings** (the gear, or right-click a tool on the row) sets a tool's display, slider range, default, width, precision, drag sensitivity, snapping, presets and **Presets as Ticks**. **Custom Range / Overshoot** allows amounts outside the standard range where the tool supports it. In a stage, the display, label, presets and ticks belong to that stage; the other amounts are shared by All and every stage. Masks, targets and breakdown anchors stay in the scene settings; **Scene Tool Options** opens them.
+
+### Save, load and reset layouts
+
+A layout is the whole set of rows: All and the four stages together.
+
+- **Save As** names the current layout. **Load** restores a saved one; **Update Saved** overwrites it with the current rows. **Rename** and **Delete** manage saved layouts. **Recommended** is built in and cannot be changed.
+- **Reset Block to Defaults** (named for the row you edit) restores that stage's default set. **Restore Recommended Layout** restores All and every stage, and keeps your saved layouts.
+- Layouts live in the add-on preferences and apply to every Timeline. If Preferences are not saved automatically, click **Save Preferences** in Toolbar Settings to keep your changes after a restart.
+
+Stages start from their fixed default set, not from your All row: a tool you add to All appears in a stage only after you add it there. Add-on Preferences have no stage control; each workspace picks its stage with the row's stage button.
+
+### Hover explanations and shortcuts
+
+Rest the pointer on a control for about half a second to see its explanation. **Hover Explainers** (Edit > Preferences > Add-ons > Anim Assist > General) sets how much it says:
+
+- **Full:** what the tool does, what it works on, what it needs and how to use it.
+- **Short:** the name and one line, plus why the tool is greyed if it is.
+- **Off:** no Anim Assist hover text on the row. On Bforartists' own buttons in Anim Assist panels and menus, only the tool's name remains, because Bforartists always prints a description line. Setting fields keep their own one-line tooltip. To turn off every tooltip, use **Edit > Preferences > Interface > Tooltips**.
+
+Hover text also lists keys, but only keys that exist:
+
+- **Shortcut:** a key bound to that exact Anim Assist tool. No row tool has one by default; bind one in **Edit > Preferences > Keymap** and it appears.
+- **Bforartists key:** Bforartists' own command for the same job, when Bforartists binds a key to it. By default: Ctrl C (Copy), Ctrl V (Paste), A (All Keys), Ctrl Numpad + (Grow both sides), R (Scale Keys in Time, for the timing scale tools) and W (Move Keys in Time, for timing offset and the nudges) in the Dope Sheet. These are Bforartists' commands and can differ in detail: its Paste, for example, pastes at the playhead rather than at the copied times.
 
 ## Dope Sheet: poses and key timing
 

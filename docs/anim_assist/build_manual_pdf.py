@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import Paragraph, SimpleDocTemplate
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle
 
 ROOT = Path(__file__).resolve().parent
 BASE = 'https://github.com/Axleonex/B4Artists_Toolkit/blob/main/docs/anim_assist/'
@@ -49,17 +49,31 @@ def main():
     styles['Heading3'].keepWithNext = True
     styles.add(ParagraphStyle('List', parent=styles['BodyText'], leftIndent=16,
                               firstLineIndent=0, bulletIndent=2, spaceAfter=5))
+    styles.add(ParagraphStyle('List2', parent=styles['List'], leftIndent=32, bulletIndent=18))
+    styles.add(ParagraphStyle('Cell', parent=styles['BodyText'], spaceAfter=0))
     story = []
     for block in markdown.strip().split('\n\n'):
         if not block.strip():
             continue
+        if block.startswith('|'):
+            # A Markdown table: header row, separator row, body rows.
+            rows = [[cell.strip() for cell in line.strip().strip('|').split('|')]
+                    for line in block.splitlines() if not re.fullmatch(r'\|[\s:|-]+\|', line.strip())]
+            data = [[Paragraph(inline(cell) if index else f'<b>{inline(cell)}</b>', styles['Cell']) for cell in row]
+                    for index, row in enumerate(rows)]
+            table = Table(data, colWidths=[170, letter[0] - 96 - 170], repeatRows=1, spaceAfter=10)
+            table.setStyle(TableStyle([('GRID', (0, 0), (-1, -1), .4, colors.HexColor('#c8d0d8')),
+                                       ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#eef2f5')),
+                                       ('VALIGN', (0, 0), (-1, -1), 'TOP')]))
+            story.append(table)
+            continue
         if block.startswith(('- ', '1. ')):
             for line in block.splitlines():
-                match = re.match(r'(-|\d+\.) (.*)', line)
+                match = re.match(r'( *)(-|\d+\.) (.*)', line)
                 if not match:
                     raise ValueError(f'Unsupported wrapped list: {line}')
-                prefix, content = match.groups()
-                story.append(Paragraph(inline(content), styles['List'],
+                indent, prefix, content = match.groups()
+                story.append(Paragraph(inline(content), styles['List2' if indent else 'List'],
                                        bulletText='\u2022' if prefix == '-' else prefix))
         else:
             level = re.match(r'^(#{1,3}) ', block)
