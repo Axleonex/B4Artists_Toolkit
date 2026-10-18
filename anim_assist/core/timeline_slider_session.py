@@ -39,12 +39,28 @@ def snapshot(curves):
 def restore_snapshot(saved):
     for fc, rows in saved:
         points=fc.keyframe_points
-        while len(points)>len(rows): points.remove(points[-1],fast=True)
-        while len(points)<len(rows):
-            row=rows[len(points)]; points.insert(*row['co'],options={'FAST'})
+        if len(points)!=len(rows):
+            # Key count changed (Reduce removes keys): rebuild the curve's keys in one
+            # step rather than inserting one by one, which crashed on cancel.
+            try: points.clear()
+            except AttributeError:
+                while len(points): points.remove(points[0],fast=True)
+            points.add(len(rows))
         for k,row in zip(points,rows):
             for field in KEY_FIELDS: setattr(k,field,row[field])
             k.co=row['co']; k.handle_left=row['left']; k.handle_right=row['right']
+        fc.update()
+
+
+def _reduce(curves,tolerance):
+    """Remove keys whose deletion keeps each curve within *tolerance* (same rule as Reduce Keys)."""
+    from .p7_proxy_math import reduce_keys, KeySample
+    for fc in curves:
+        points=fc.keyframe_points
+        if len(points)<=2: continue
+        keep={s.frame for s in reduce_keys([KeySample(frame=k.co.x,value=k.co.y) for k in points],tolerance)}
+        for index in reversed([i for i,k in enumerate(points) if k.co.x not in keep]):
+            points.remove(points[index])
         fc.update()
 
 
@@ -70,6 +86,17 @@ def capture(context,action):
         p6=scene.anim_assist_p6
         pivot=retime.resolve_pivot(p6.anchor_mode,retime.collect_key_frames(curves),frame,custom_frame=p6.pivot_frame)
         snap=p6.modal_snap
+    elif action=='RIPPLE':
+        # Keys after the playhead, as Ripple Forward moves them.
+        curves=[fc for fc in get_fcurves(native_action,anim_data=data) if not fc.lock and not fc.hide
+                and any(k.co.x>scene.frame_current for k in fc.keyframe_points)]
+        snap=scene.anim_assist_p6.modal_snap
+        after=[k.co.x for fc in curves for k in fc.keyframe_points if k.co.x>scene.frame_current]
+        # Moving earlier stops one frame after the playhead so keys never land on or before it.
+        earliest=-(min(after)-scene.frame_current-1.) if after else 0.
+    elif action=='REDUCE':
+        curves=[fc for fc in get_fcurves(native_action,anim_data=data) if not fc.lock and not fc.hide
+                and len(fc.keyframe_points)>2]
     else:
         curves=[fc for fc in curves_ops._editable_fcurves(context) if not fc.lock and not fc.hide]
         ref_frame=scene.anim_assist.reference_frame or frame
@@ -103,6 +130,11 @@ def capture(context,action):
             breakdown.apply_breakdown(context,obj,bones,options)
         elif action=='SCALE_DRAG': retime.apply_scale(curves,pivot,factor,snap=snap)
         elif action=='OFFSET_DRAG': retime.apply_offset(curves,value,snap=snap)
+        elif action=='RIPPLE':
+            delta=max(value,min(0.,earliest))
+            if delta: retime.apply_ripple(curves,float(scene.frame_current),delta,direction='FORWARD',snap=snap)
+        elif action=='REDUCE':
+            if value>0: _reduce(curves,value)
         else:
             for fc,keys,selected,reference in curve_data:
                 chosen=[keys[i] for i in selected]

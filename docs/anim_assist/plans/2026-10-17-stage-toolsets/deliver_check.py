@@ -202,6 +202,55 @@ try:
           model.stage_view(model.recommended(ACTIONS)["active"], "BLOCK")[1]["DRAG"]["presets"] == [-25., 25., 50., 75., 125.]
           and model.recommended(ACTIONS)["active"]["tools"]["DRAG"]["presets"] == [])
 
+    # Reduce and Ripple sliders: live preview, Esc restores, presets match the old buttons.
+    session = sys.modules["B4_anim_assist.core.timeline_slider_session"]
+    rr = bpy.data.objects.new("RR", None)
+    scene.collection.objects.link(rr)
+    for o in bpy.context.view_layer.objects:
+        o.select_set(False)
+    rr.select_set(True)
+    bpy.context.view_layer.objects.active = rr
+
+    def key_rr():
+        rr.animation_data_clear()
+        for frame in range(1, 31):
+            rr.location.x = frame * 0.1 + (0.004 if frame % 2 else 0.0)  # near-straight line with tiny noise
+            rr.keyframe_insert("location", index=0, frame=frame)
+        scene.frame_set(10)
+
+    def rr_frames():
+        fc = next(f for f in get_fcurves(rr.animation_data.action, anim_data=rr.animation_data)
+                  if f.data_path == "location" and f.array_index == 0)
+        return [round(k.co.x, 3) for k in fc.keyframe_points]
+
+    key_rr(); original = rr_frames()
+    with ctx(rr):
+        tx = session.capture(bpy.context, "REDUCE")
+        tx.preview(0.05); previewed = rr_frames(); tx.cancel()
+    check("Reduce slider previews fewer keys and Esc restores them",
+          len(previewed) < len(original) and rr_frames() == original)
+    key_rr(); run("REDUCE", rr); by_button = rr_frames()
+    key_rr()
+    with ctx(rr):
+        bpy.ops.animassist.timeline_slider("EXEC_DEFAULT", action="REDUCE", value=0.01, preset=True)
+    check("Reduce preset 0.01 matches the Reduce button", rr_frames() == by_button and len(by_button) < len(original))
+
+    key_rr()
+    with ctx(rr):
+        tx = session.capture(bpy.context, "RIPPLE")
+        tx.preview(3); moved = rr_frames(); tx.cancel()
+    check("Ripple slider previews keys after the playhead moving 3 frames and Esc restores",
+          moved[:10] == original[:10] and moved[10] == original[10] + 3 and rr_frames() == original)
+    with ctx(rr):
+        tx = session.capture(bpy.context, "RIPPLE")
+        tx.preview(-10); clamped = rr_frames(); tx.cancel()
+    check("Ripple earlier stops one frame after the playhead", clamped[10] == 11.0 and clamped[9] == 10.0)
+    key_rr(); run("RIPPLE", rr); by_ripple = rr_frames()
+    key_rr()
+    with ctx(rr):
+        bpy.ops.animassist.timeline_slider("EXEC_DEFAULT", action="RIPPLE", value=1, preset=True)
+    check("Ripple preset 1 matches the Ripple button", rr_frames() == by_ripple and by_ripple != original)
+
     # Version B: one eye button shows and hides trails.
     p5mod = sys.modules["B4_anim_assist.operators.p5_overlay_ops"]
     before_trails = p5mod.trails_shown()

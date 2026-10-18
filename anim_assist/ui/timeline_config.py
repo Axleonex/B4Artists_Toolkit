@@ -42,7 +42,9 @@ STAGE_ICON_DEFAULTS = {
 # Push/Pull Strength. All keeps the tool's own presets, so its row is unchanged.
 STAGE_PRESET_DEFAULTS = {
     'BLOCK': {'DRAG': (-25., 25., 50., 75., 125.)},
-    'POLISH': {'SCALE_DRAG': (80., 90., 110., 120.)},
+    'POLISH': {'SCALE_DRAG': (80., 90., 110., 120.), 'RIPPLE': (-1., 1.)},
+    # 0.01 is the existing Reduce/Smart Bake tolerance, so that preset equals the old button.
+    'DELIVER': {'REDUCE': (.001, .01, .05)},
 }
 _B, _P, _I = 'BUTTON', 'POPOUT', 'INLINE'
 # Fixed default toolsets, left to right in workflow order (owner decision:
@@ -57,9 +59,9 @@ STAGE_DEFAULTS = {
                ('HANDLE_CLAMPED', _B), ('HANDLE_VECTOR', _B), ('HANDLE_FREE', _B),
                ('TRAIL_TOGGLE', _B)),
     'POLISH': (('NUDGE_LEFT', _B), ('NUDGE_RIGHT', _B), ('SCALE_DRAG', _I),
-               ('OFFSET_DRAG', _I), ('RIPPLE', _B), ('SNAP', _B),
+               ('OFFSET_DRAG', _I), ('RIPPLE', _I), ('SNAP', _B),
                ('OPPOSITE', _B), ('MIRROR_SELECTED', _B), ('MIRROR_ACTIVE', _B), ('SWAP', _B)),
-    'DELIVER': (('BAKE_STEP', _B), ('BAKE_PREVIEW', _B), ('SMART_BAKE', _B), ('REDUCE', _B), ('BAKE_INTEGER', _B),
+    'DELIVER': (('BAKE_STEP', _B), ('BAKE_PREVIEW', _B), ('SMART_BAKE', _B), ('REDUCE', _I), ('BAKE_INTEGER', _B),
                 ('PROXY_BAKE', _B), ('PROXY_TRANSLATION', _B), ('PROXY_ORIENTATION', _B), ('PROXY_WORLD', _B),
                 ('PROXY_PARENT', _B), ('BAKE_CLEANUP', _B), ('CLEANUP_ALL', _B)),
 }
@@ -161,7 +163,11 @@ SLIDERS = {
     'AMPLIFY': ('Amplify', '%', 0., -100., 200., None, None),
     'SCALE_DRAG': ('Timing Scale', '%', 100., 50., 200., 1., None),
     'OFFSET_DRAG': ('Timing Offset', 'f', 0., -10., 10., None, None),
+    # Ripple: frames to shift keys after the playhead; Reduce: key-reduction tolerance.
+    'RIPPLE': ('Ripple', 'f', 0., -10., 10., -500., 500.),
+    'REDUCE': ('Reduce', '', 0., 0., .1, 0., 1.),
 }
+SLIDER_PRECISION = {'REDUCE': 3}
 RECOMMENDED_BUTTONS = {'B25', 'B50', 'B75', 'NUDGE_LEFT', 'NUDGE_RIGHT',
                        'COPY_KEYS', 'PASTE_KEYS', 'MIRROR_SELECTED', 'BAKE_STEP', 'TRAIL_SHOW'}
 
@@ -171,7 +177,8 @@ def tool_default(action):
     if action in SLIDERS:
         label, unit, default, low, high, _min, _max = SLIDERS[action]
         entry.update(range_min=low, range_max=high, default=default, sensitivity=200.,
-                     precision=1, snap_enabled=False, snap_step=1., presets=[],
+                     precision=SLIDER_PRECISION.get(action, 1), snap_enabled=False,
+                     snap_step=.001 if action == 'REDUCE' else 1., presets=[],
                      overshoot_enabled=False)
     return entry
 

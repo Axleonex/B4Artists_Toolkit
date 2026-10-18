@@ -25,7 +25,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(len(tools),96)
         self.assertEqual({k for k,v in tools.items() if v['mode']=='INLINE'},{'DRAG','SMOOTH'})
         self.assertEqual(tools['SCALE_DRAG']['mode'],'POPOUT')
-        self.assertEqual(len(config.SLIDERS),8)
+        self.assertEqual(len(config.SLIDERS),10)
         self.assertEqual(config.FAMILY_ORDER[:3],('tween','timing','curves'))
 
     def test_roundtrip(self):
@@ -349,6 +349,25 @@ class StagePresetTests(unittest.TestCase):
         self.assertEqual(icons['POLISH'], {'NUDGE_LEFT', 'NUDGE_RIGHT'})
         self.assertTrue({'GROW_LEFT', 'GROW_RIGHT', 'COPY_KEYS', 'PASTE_KEYS', 'TYPE_KEYFRAME'} <= icons['BLOCK'])
         self.assertEqual(icons['DELIVER'], set())
+
+
+class ReduceRippleTests(unittest.TestCase):
+    def test_defaults(self):
+        record = config.recommended(actions)
+        stages = record['active']['stages']
+        self.assertEqual(stages['POLISH']['tools']['RIPPLE'], {'mode': 'INLINE', 'label_mode': 'LABEL', 'presets': [-1., 1.]})
+        self.assertEqual(stages['DELIVER']['tools']['REDUCE'], {'mode': 'INLINE', 'label_mode': 'LABEL', 'presets': [.001, .01, .05]})
+        self.assertEqual(record['active']['tools']['REDUCE']['precision'], 3)
+        self.assertEqual(record['active']['tools']['RIPPLE']['precision'], 1)
+        self.assertEqual(record['active']['tools']['REDUCE']['mode'], 'HIDDEN')
+        self.assertEqual(record['active']['tools']['RIPPLE']['mode'], 'HIDDEN')
+
+    def test_older_button_records_still_load(self):
+        record = config.recommended(actions)
+        record['active']['tools']['REDUCE'] = {'action': 'REDUCE', 'mode': 'BUTTON', 'label_mode': 'LABEL', 'width': 120.}
+        result = config.validate(record, actions)
+        self.assertEqual(result['active']['tools']['REDUCE']['mode'], 'BUTTON')
+        self.assertEqual(result['active']['tools']['REDUCE']['range_max'], .1)
 
 
 if __name__=='__main__': unittest.main()

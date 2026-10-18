@@ -24,6 +24,10 @@
   own presets. Icons for grow, Copy/Paste, To Spline, handle types (theme handle
   colours) and nudges; Show/Hide Trails become one Trails eye toggle (96
   actions).
+- Reduce and Ripple become sliders with live preview (ten numeric tools): Deliver
+  shows Reduce with presets 0.001/0.01/0.05, Polish shows Ripple with -1/1; the
+  0.01 and 1 presets equal the old buttons. Fixed: cancelling a preview that had
+  removed keys crashed Bforartists; the slider now rebuilds the curve's keys.
 - Block shows Mark Key/Breakdown/Extreme/Hold as key-type diamonds in the
   theme's Dope Sheet key colours and relative sizes. Icon is offered only for
   tools that have one (key types, nudges, Copy, Paste); an Icon choice saved on
