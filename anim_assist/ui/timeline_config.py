@@ -10,9 +10,9 @@ FAMILY_ORDER = ('tween', 'timing', 'curves', 'keys', 'pose', 'bake', 'motion')
 STAGES = (
     ('ALL', 'All', None),
     ('BLOCK', 'Block', ('tween', 'keys')),
-    ('SPLINE', 'Spline', ('curves',)),
+    ('SPLINE', 'Spline', ('curves', 'motion')),
     ('POLISH', 'Polish', ('timing', 'pose')),
-    ('DELIVER', 'Deliver', ('bake', 'motion')),
+    ('DELIVER', 'Deliver', ('bake',)),
 )
 STAGE_IDS = tuple(key for key, _label, _families in STAGES)
 # Saved enum numbers; never renumber an existing stage.
@@ -33,15 +33,16 @@ STAGE_DEFAULTS = {
               ('RANGE', _B), ('ALL', _B), ('ENDS', _B), ('GROW_LEFT', _B), ('GROW_RIGHT', _B),
               ('TYPE_KEYFRAME', _B), ('TYPE_BREAKDOWN', _B), ('TYPE_EXTREME', _B), ('TYPE_HOLD', _B),
               ('COPY_KEYS', _B), ('PASTE_KEYS', _B)),
-    'SPLINE': (('REFERENCE', _B), ('FRAME', _P), ('NEIGHBORS', _I), ('EASE', _I), ('SMOOTH', _I),
-               ('AMPLIFY', _P), ('HANDLE_CLAMPED', _B), ('HANDLE_VECTOR', _B), ('HANDLE_FREE', _B)),
+    'SPLINE': (('TO_SPLINE', _B), ('NEIGHBORS', _I), ('EASE', _I), ('SMOOTH', _I),
+               ('REFERENCE', _B), ('FRAME', _P), ('AMPLIFY', _P),
+               ('HANDLE_CLAMPED', _B), ('HANDLE_VECTOR', _B), ('HANDLE_FREE', _B),
+               ('TRAIL_SHOW', _B), ('TRAIL_HIDE', _B)),
     'POLISH': (('NUDGE_LEFT', _B), ('NUDGE_RIGHT', _B), ('SCALE_DRAG', _P), ('T80', _B), ('T90', _B),
                ('T110', _B), ('T120', _B), ('OFFSET_DRAG', _I), ('RIPPLE', _B), ('SNAP', _B),
                ('OPPOSITE', _B), ('MIRROR_SELECTED', _B), ('MIRROR_ACTIVE', _B), ('SWAP', _B)),
     'DELIVER': (('BAKE_STEP', _B), ('BAKE_PREVIEW', _B), ('SMART_BAKE', _B), ('REDUCE', _B), ('BAKE_INTEGER', _B),
-                ('PROXY_TRANSLATION', _B), ('PROXY_ORIENTATION', _B), ('PROXY_WORLD', _B), ('PROXY_PARENT', _B),
-                ('PROXY_BAKE', _B), ('BAKE_CLEANUP', _B), ('CLEANUP_ALL', _B),
-                ('TRAIL_SHOW', _B), ('TRAIL_REFRESH', _B), ('TRAIL_DIAGNOSE', _B), ('TRAIL_HIDE', _B)),
+                ('PROXY_BAKE', _B), ('PROXY_TRANSLATION', _B), ('PROXY_ORIENTATION', _B), ('PROXY_WORLD', _B),
+                ('PROXY_PARENT', _B), ('BAKE_CLEANUP', _B), ('CLEANUP_ALL', _B)),
 }
 # Action -> family, registered by timeline_catalog (keeps this module bpy- and catalogue-free).
 _FAMILY = {}
@@ -86,7 +87,7 @@ def validate_stage(stage, raw, actions):
             if not isinstance(entry, dict): raise ValueError('Stage tool settings must be an object')
             result['order'].append(action); result['tools'][action] = copy.deepcopy(entry); continue
         if family_of(action) not in allowed:
-            raise ValueError(f'{action} does not belong to the {stage_label(stage)} stage')
+            continue  # Its family moved to another stage in a later version; drop it here.
         if not isinstance(entry, dict): raise ValueError('Stage tool settings must be an object')
         mode, label_mode = entry.get('mode', 'BUTTON'), entry.get('label_mode', 'LABEL')
         _check_mode(action, mode, label_mode)
@@ -102,9 +103,9 @@ SLIDERS = {
     'DRAG': ('Breakdown', '%', 50., 0., 100., -100., 200.),
     'SMOOTH': ('Smooth', '%', 0., 0., 100., None, None),
     'NEIGHBORS': ('Neighbors', '%', 0., 0., 100., None, None),
-    'FRAME': ('Reference', '%', 0., 0., 100., None, None),
+    'FRAME': ('To Reference', '%', 0., 0., 100., None, None),
     'EASE': ('Ease', '%', 0., 0., 100., None, None),
-    'AMPLIFY': ('Push/Pull', '%', 0., -100., 200., None, None),
+    'AMPLIFY': ('Amplify', '%', 0., -100., 200., None, None),
     'SCALE_DRAG': ('Timing Scale', '%', 100., 50., 200., 1., None),
     'OFFSET_DRAG': ('Timing Offset', 'f', 0., -10., 10., None, None),
 }
@@ -488,7 +489,7 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
     if gap+cycle_w>budget: cycle_w=max(24*scale,measure(label)+2*pad)  # extreme width: no arrow
     cycle=[('STAGE_CYCLE','CYCLE',label,cycle_w)]
 
-    def compose(shown,compact=False,demote=False,no_families=False):
+    def compose(shown,compact=False,demote=False,no_families=False,named=False):
         specs=[]
         order,tools=stage_view(record['active'],shown)
         for family in stage_families(shown):
@@ -500,8 +501,9 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
                 tool=tools[action]; mode=tool['mode']
                 label=SLIDERS[action][0] if action in SLIDERS else labels.get(action,action.replace('_',' ').title())
                 if mode=='INLINE' and not demote:
-                    label='' if compact or tool['label_mode']=='ICON' else label
-                    w=(80 if compact else tool['width'])*scale+measure(label)+(46 if compact else 54)*scale
+                    # named: compact track that keeps the slider's name (before names are dropped).
+                    label='' if (compact and not named) or tool['label_mode']=='ICON' else label
+                    w=((64 if named else 80) if compact else tool['width'])*scale+measure(label)+(46 if compact else 54)*scale
                     kind='SLIDER'
                 else:
                     kind='POPOUT' if mode in {'POPOUT','INLINE'} else 'ACTION'
@@ -519,7 +521,8 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
     # choice never depends on the selected stage; a wider stage toolset
     # compacts or overflows into More instead of moving the tabs.
     lead=tabs if fits(tabs+compose('ALL')) else cycle
-    candidates=[lead+body for body in (compose(stage),compose(stage,compact=True),
+    candidates=[lead+body for body in (compose(stage),compose(stage,compact=True,named=True),
+                                       compose(stage,compact=True),
                                        compose(stage,compact=True,demote=True),
                                        compose(stage,compact=True,demote=True,no_families=True))]
     specs=next((c for c in candidates if fits(c)),candidates[-1])

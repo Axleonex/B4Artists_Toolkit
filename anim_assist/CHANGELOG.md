@@ -3,12 +3,21 @@
 - Block, Spline, Polish and Deliver each have their own toolset on the bottom
   Timeline row. Each starts from a fixed default set: the Recommended tools for
   its families plus phase-specific ones (for example Inbetween, Push/Pull and key types
-  in Block; Neighbors, Ease, Reference and handle types in Spline; spacing
-  presets, Timing Offset, Ripple and Snap in Polish; Bake Preview Range, Smart
-  Bake, Reduce, Bake Keys to Integer Frames, the four proxy types, proxy bake,
-  Remove All Proxy Sessions and trail tools in Deliver). All is unchanged.
-- Bake Preview Range, Bake Keys to Integer Frames, One-Click Proxy & Bake and
-  Remove All Proxy Sessions join the Timeline catalogue (93 actions).
+  in Block; To Spline, Neighbors, Ease, reference tools, handle types and
+  Show/Hide Trails in Spline; spacing presets, Timing Offset, Ripple and Snap in
+  Polish; Bake Preview Range, Smart Bake, Reduce, Bake Keys to Integer Frames,
+  One-Click Proxy & Bake, the four proxy types and Remove All Proxy Sessions in
+  Deliver). All is unchanged.
+- Stage families: Spline shows Curves and Motion (arc checking), Deliver shows
+  Bake. A stage setup holding a tool whose family moved still loads; that tool
+  is dropped from it.
+- Bake Preview Range, Bake Keys to Integer Frames, One-Click Proxy & Bake,
+  Remove All Proxy Sessions, To Spline and To Stepped join the Timeline
+  catalogue (95 actions).
+- Row labels: Set Reference, To Reference, Amplify (was Push/Pull), Show Trails
+  (All keeps Trails), Location Proxy, Rotation Proxy and Clamped (Auto Clamped).
+- A tight row first shortens inline slider tracks and keeps their names; names
+  are dropped only when that still does not fit.
 - Fixed: hover text on the Timeline row kept only three lines, so longer
   descriptions (often the reason a tool is greyed out) were cut off. It now shows
   the full text as short lines: name, what it does, why it is unavailable (in

@@ -40,6 +40,8 @@ ACTIONS = {
     "HANDLE_VECTOR": ("set_handle_type", {"handle_type": "VECTOR"}, "Vector Handles"),
     "HANDLE_ALIGNED": ("set_handle_type", {"handle_type": "ALIGNED"}, "Aligned Handles"),
     "HANDLE_FREE": ("set_handle_type", {"handle_type": "FREE"}, "Free Handles"),
+    "TO_SPLINE": ("batch_interpolation", {"interp_type": "BEZIER"}, "Set Selected Keys to Spline (Bezier)"),
+    "TO_STEPPED": ("batch_interpolation", {"interp_type": "CONSTANT"}, "Set Selected Keys to Stepped (Constant)"),
     "NUDGE_LEFT": ("move_keys", {"offset": -1}, "Nudge Selected Keys -1 Frame"),
     "NUDGE_RIGHT": ("move_keys", {"offset": 1}, "Nudge Selected Keys +1 Frame"),
     "SCALE_DRAG": ("p6_modal_scale", {}, "Scale Key Timing (Drag)"),
@@ -114,6 +116,8 @@ TIPS = {
     "EASE": "Drag selected keys from linear spacing toward eased spacing. Esc restores the keys",
     "AMPLIFY": "Drag to scale selected key values around the reference-frame value. This changes curve amplitude, not timing",
     "SMOOTH": "Drag selected keys toward neighboring averages; negative factors roughen the curve",
+    "TO_SPLINE": "Set selected keys to Bezier interpolation so blocked poses play as smooth curves. Handle types are kept",
+    "TO_STEPPED": "Set selected keys to Constant interpolation so each pose holds until the next key, for reviewing poses",
     "T80": "Scale key spacing to 80% around the Timing pivot: keys sit closer together, so the action plays faster",
     "T90": "Scale key spacing to 90% around the Timing pivot: keys sit closer together, so the action plays faster",
     "T110": "Scale key spacing to 110% around the Timing pivot: keys spread apart, so the action plays slower",
@@ -143,7 +147,7 @@ GROUPS = (
         "B25", "B50", "B75", "DRAG", None, "INBETWEEN", "INBETWEENS", None,
         "PUSH_PREV", "PULL_PREV", "PULL_NEXT", "PUSH_NEXT")),
     ("curves", "Curves", (
-        "NEIGHBORS", "FRAME", "EASE", "AMPLIFY", "SMOOTH", "REFERENCE", None,
+        "TO_SPLINE", "TO_STEPPED", None, "NEIGHBORS", "FRAME", "EASE", "AMPLIFY", "SMOOTH", "REFERENCE", None,
         "HANDLE_AUTO", "HANDLE_CLAMPED", "HANDLE_VECTOR", "HANDLE_ALIGNED", "HANDLE_FREE", None,
         "BOOKMARK_ADD", "BOOKMARK_RECALL", "BOOKMARK_REMOVE")),
     ("timing", "Timing", (
@@ -161,8 +165,8 @@ GROUPS = (
         "MATCH_SCALE", "MATCH_TRS", "MATCH_VISUAL", "MATCH_LOCAL", None,
         "SWITCH_SINGLE", "SWITCH_RANGE", "SWITCH_BOOL", "SWITCH_ENUM", "SWITCH_INFLUENCE")),
     ("bake", "Bake", (
-        "BAKE_STEP", "BAKE_PREVIEW", "SMART_BAKE", "REDUCE", "BAKE_INTEGER", None, "PROXY_TRANSLATION",
-        "PROXY_ORIENTATION", "PROXY_WORLD", "PROXY_PARENT", "PROXY_BAKE", "BAKE_CLEANUP", "CLEANUP_ALL")),
+        "BAKE_STEP", "BAKE_PREVIEW", "SMART_BAKE", "REDUCE", "BAKE_INTEGER", None, "PROXY_BAKE", "PROXY_TRANSLATION",
+        "PROXY_ORIENTATION", "PROXY_WORLD", "PROXY_PARENT", "BAKE_CLEANUP", "CLEANUP_ALL")),
     ("motion", "Motion", (
         "TRAIL_SHOW", "TRAIL_HIDE", "TRAIL_REFRESH", "TRAIL_DIAGNOSE", None,
         "OFFSET", "OFFSET_MASK", "OFFSET_SCENE_RANGE")),
@@ -254,6 +258,8 @@ def command_metadata(action):
     if action == "EASE":
         prerequisite = "Select at least two keys on the same editable curve; include an interior key to reshape it"
     if action.startswith("HANDLE_") or action.startswith("TYPE_") or action.startswith("NUDGE_"):
+        scope, prerequisite = _SELECTED_KEY_SCOPE
+    if action in {"TO_SPLINE", "TO_STEPPED"}:
         scope, prerequisite = _SELECTED_KEY_SCOPE
     if action.startswith(("TYPE_", "NUDGE_")):
         scope = "Selected keys in the active object's Action"
@@ -361,6 +367,8 @@ SEARCH_TERMS = {
     "COPY_KEYS": "clipboard copy animation", "PASTE_KEYS": "clipboard paste animation",
     "BOOKMARK_ADD": "reference bookmark save", "BOOKMARK_RECALL": "reference bookmark load",
     "BOOKMARK_REMOVE": "reference bookmark delete",
+    "TO_SPLINE": "spline bezier interpolation smooth convert from stepped",
+    "TO_STEPPED": "stepped constant interpolation hold blocking review",
     "SWITCH_SINGLE": "space switch rig compensate", "SWITCH_RANGE": "space switch rig bake compensate",
     "SWITCH_BOOL": "space switch rig boolean", "SWITCH_ENUM": "space switch rig integer enum",
     "SWITCH_INFLUENCE": "space switch rig constraint influence",

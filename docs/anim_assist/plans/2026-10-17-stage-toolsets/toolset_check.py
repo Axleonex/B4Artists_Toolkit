@@ -79,7 +79,7 @@ try:
           and fake.family in {"timing", "pose"})
     check("Block edit kept after switching", "INBETWEEN" not in fake._record["active"]["stages"]["BLOCK"]["order"])
     cls.switch_stage(fake, "ALL")
-    check("All lists every tool", len(fake.entries) == len(ACTIONS) == 93)
+    check("All lists every tool", len(fake.entries) == len(ACTIONS) == 95)
     settings.write(bpy.context, fake.serialize())
     check("Applied settings store the Block edit", "INBETWEEN" not in rec()["active"]["stages"]["BLOCK"]["order"])
 

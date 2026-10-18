@@ -19,19 +19,22 @@ from . import timeline_config as model
 # All tab, the Breakdown slider and the Reference popout they sit beside.
 ROW_LABELS = {
     'COPY_KEYS': 'Copy', 'PASTE_KEYS': 'Paste', 'MIRROR_SELECTED': 'Mirror', 'BAKE_STEP': 'Bake Object',
-    'TRAIL_SHOW': 'Trails', 'INBETWEEN': 'Inbetween', 'INBETWEENS': 'Distribute',
+    'TRAIL_SHOW': 'Show Trails', 'INBETWEEN': 'Inbetween', 'INBETWEENS': 'Distribute',
     'PUSH_PREV': 'Push Prev', 'PULL_PREV': 'Pull Prev', 'PULL_NEXT': 'Pull Next', 'PUSH_NEXT': 'Push Next',
     'ALL': 'All Keys', 'GROW_LEFT': 'Grow Left', 'GROW_RIGHT': 'Grow Right',
     'TYPE_KEYFRAME': 'Mark Key', 'TYPE_BREAKDOWN': 'Mark Breakdown', 'TYPE_EXTREME': 'Mark Extreme',
-    'TYPE_HOLD': 'Mark Hold', 'REFERENCE': 'Set Ref', 'HANDLE_CLAMPED': 'Auto Clamped',
+    'TYPE_HOLD': 'Mark Hold', 'REFERENCE': 'Set Reference', 'HANDLE_CLAMPED': 'Clamped',
     'HANDLE_VECTOR': 'Vector', 'HANDLE_FREE': 'Free', 'T80': '80%', 'T90': '90%', 'T110': '110%',
     'T120': '120%', 'SNAP': 'Snap', 'OPPOSITE': 'Opposite', 'MIRROR_ACTIVE': 'Mirror Active',
     'SWAP': 'Swap', 'SMART_BAKE': 'Smart Bake', 'REDUCE': 'Reduce', 'BAKE_CLEANUP': 'Bake Proxies',
-    'PROXY_TRANSLATION': 'Proxy Loc', 'PROXY_ORIENTATION': 'Proxy Rot', 'PROXY_WORLD': 'Proxy World',
+    'PROXY_TRANSLATION': 'Location Proxy', 'PROXY_ORIENTATION': 'Rotation Proxy', 'PROXY_WORLD': 'Proxy World',
     'PROXY_PARENT': 'Proxy Parent', 'BAKE_PREVIEW': 'Bake Preview', 'BAKE_INTEGER': 'Whole Frames',
-    'PROXY_BAKE': 'Proxy & Bake', 'CLEANUP_ALL': 'Clean All Proxies',
+    'PROXY_BAKE': 'Proxy & Bake', 'TO_SPLINE': 'To Spline', 'TO_STEPPED': 'To Stepped', 'CLEANUP_ALL': 'Clean All Proxies',
     'TRAIL_REFRESH': 'Refresh', 'TRAIL_DIAGNOSE': 'Diagnose', 'TRAIL_HIDE': 'Hide Trails',
 }
+
+# All keeps its 12.9 row width: Hide Trails is not beside Show Trails there.
+ALL_ROW_LABELS = {'TRAIL_SHOW': 'Trails'}
 
 # Per workspace, saved with the file. Maximized views and extra windows of the
 # same workspace share it (a Screen property would be lost in those).
@@ -298,10 +301,11 @@ def _items(context):
     y = marker_strip if usable_height - keys_at_top - h >= marker_strip else 0
     try: record=timeline_record(get_prefs(context))
     except ValueError: record=model.recommended(ACTIONS)
-    labels={**QUICK_LABELS,**ROW_LABELS}
+    stage = current_stage(context)
+    labels={**QUICK_LABELS,**ROW_LABELS,**(ALL_ROW_LABELS if stage == 'ALL' else {})}
     items = model.toolbar_layout(context.region.width, usable_height, h, False,
                        record,GROUPS,labels,lambda text: blf.dimensions(0, text)[0],
-                       current_stage(context))
+                       stage)
     items = [(kind, key, label, (x, iy+y, w, ih)) for kind, key, label, (x, iy, w, ih) in items]
     return items, (0, y, context.region.width, min(h, context.region.height))
 

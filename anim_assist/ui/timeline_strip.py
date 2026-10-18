@@ -113,6 +113,7 @@ def _module_reason(context,action):
     if suffix.startswith('anim_offset'): module='transform'
     elif suffix in {'set_handle_type','move_keys'}: module='keys'
     elif suffix=='p6_bake_timing': module='retime'
+    elif suffix=='batch_interpolation': module='keys'
     elif action in {'ALL','RANGE','ENDS','GROW_LEFT','GROW_RIGHT','GROW_BOTH','SELECT_BREAKDOWNS'}: module='selection'
     flag='enable_'+module
     if not getattr(prefs,flag,True):
@@ -131,7 +132,8 @@ def _unavailable(context, target, action):
     try:
         with context.temp_override(area=target, region=_window_region(target)):
             selected_actions = {"NEIGHBORS", "FRAME", "EASE", "AMPLIFY", "SMOOTH"}
-            if action in selected_actions or action.startswith(("HANDLE_", "TYPE_", "NUDGE_")):
+            if action in selected_actions or action in {"TO_SPLINE", "TO_STEPPED"} \
+                    or action.startswith(("HANDLE_", "TYPE_", "NUDGE_")):
                 if action in selected_actions:
                     from ..operators.curve_tool_ops import _editable_fcurves
                     curves = _editable_fcurves(context)

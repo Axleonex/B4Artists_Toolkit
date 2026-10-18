@@ -1,4 +1,4 @@
-"""Background Bforartists check: the four Deliver tools added in 12.10.0 run from the
+"""Background Bforartists check: the Deliver and Spline tools added in 12.10.0 run from the
 Timeline toolbar dispatch and change the scene as described.
 
 Run with BLENDER_USER_SCRIPTS holding the package as B4_anim_assist:
@@ -24,7 +24,7 @@ try:
     p7s = sys.modules["B4_anim_assist.core.p7_session"]
     from B4_anim_assist.ui.timeline_catalog import ACTIONS
     from B4_anim_assist.ui import timeline_config as model
-    check("Catalogue has 93 actions", len(ACTIONS) == 93)
+    check("Catalogue has 95 actions", len(ACTIONS) == 95)
     check("Deliver defaults include the four tools",
           {"BAKE_PREVIEW", "BAKE_INTEGER", "PROXY_BAKE", "CLEANUP_ALL"}
           <= set(model.stage_default("DELIVER")["order"]))
@@ -58,6 +58,10 @@ try:
 
     def reason(action):
         with ctx():
+            return strip._unavailable(bpy.context, area, action)
+
+    def reason_for(action, target):
+        with ctx(target):
             return strip._unavailable(bpy.context, area, action)
 
     def frames():
@@ -135,6 +139,34 @@ try:
     check("Proxy & Bake leaves no orphan proxy Action", len(bpy.data.actions) == actions_before)
     run("CLEANUP_ALL")
     check("Clean All then removes the remaining session", not temps())
+
+    # Spline stage: To Stepped / To Spline set the selected keys' interpolation; trails moved here.
+    check("Spline shows Curves and Motion; Deliver shows Bake only",
+          model.stage_families("SPLINE") == ("curves", "motion") and model.stage_families("DELIVER") == ("bake",))
+    check("Spline defaults start with To Spline and end with the trail buttons",
+          model.stage_default("SPLINE")["order"][0] == "TO_SPLINE"
+          and model.stage_default("SPLINE")["order"][-2:] == ["TRAIL_SHOW", "TRAIL_HIDE"])
+    # The Timeline shows the selected objects' curves; select only the mover.
+    for o in bpy.context.view_layer.objects:
+        o.select_set(False)
+    mover.select_set(True)
+    bpy.context.view_layer.objects.active = mover
+    from B4_anim_assist.core.fcurve_compat import get_fcurves
+    curves = list(get_fcurves(mover.animation_data.action, anim_data=mover.animation_data))
+    for fc in curves:
+        for k in fc.keyframe_points:
+            k.select_control_point = False
+    check("To Spline explains when no keys are selected",
+          reason_for("TO_SPLINE", mover) == "Select editable keys on an animated object")
+    for fc in curves:
+        for k in fc.keyframe_points:
+            k.select_control_point = True
+    run("TO_STEPPED", mover)
+    check("To Stepped sets selected keys to Constant",
+          all(k.interpolation == "CONSTANT" for fc in curves for k in fc.keyframe_points))
+    run("TO_SPLINE", mover)
+    check("To Spline sets selected keys to Bezier",
+          all(k.interpolation == "BEZIER" for fc in curves for k in fc.keyframe_points))
     addon_utils.disable("B4_anim_assist", default_set=False)
 except Exception:
     traceback.print_exc()

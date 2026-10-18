@@ -22,7 +22,7 @@ class ConfigTests(unittest.TestCase):
 
     def test_defaults(self):
         tools=self.record['active']['tools']
-        self.assertEqual(len(tools),93)
+        self.assertEqual(len(tools),95)
         self.assertEqual({k for k,v in tools.items() if v['mode']=='INLINE'},{'DRAG','SMOOTH'})
         self.assertEqual(tools['SCALE_DRAG']['mode'],'POPOUT')
         self.assertEqual(len(config.SLIDERS),8)
@@ -108,14 +108,17 @@ class ConfigTests(unittest.TestCase):
 
     def test_stage_defaults_match_table(self):
         stages=self.record['active']['stages']
-        self.assertEqual(stages['SPLINE']['order'],['REFERENCE','FRAME','NEIGHBORS','EASE','SMOOTH','AMPLIFY',
-                                                    'HANDLE_CLAMPED','HANDLE_VECTOR','HANDLE_FREE'])
+        self.assertEqual(stages['SPLINE']['order'],['TO_SPLINE','NEIGHBORS','EASE','SMOOTH','REFERENCE','FRAME',
+                                                    'AMPLIFY','HANDLE_CLAMPED','HANDLE_VECTOR','HANDLE_FREE',
+                                                    'TRAIL_SHOW','TRAIL_HIDE'])
         self.assertEqual(stages['SPLINE']['tools']['FRAME'],{'mode':'POPOUT','label_mode':'LABEL'})
         self.assertEqual(stages['BLOCK']['tools']['DRAG']['mode'],'INLINE')
         self.assertEqual(stages['POLISH']['tools']['OFFSET_DRAG']['mode'],'INLINE')
         self.assertEqual(stages['DELIVER']['order'],['BAKE_STEP','BAKE_PREVIEW','SMART_BAKE','REDUCE','BAKE_INTEGER',
-            'PROXY_TRANSLATION','PROXY_ORIENTATION','PROXY_WORLD','PROXY_PARENT','PROXY_BAKE','BAKE_CLEANUP',
-            'CLEANUP_ALL','TRAIL_SHOW','TRAIL_REFRESH','TRAIL_DIAGNOSE','TRAIL_HIDE'])
+            'PROXY_BAKE','PROXY_TRANSLATION','PROXY_ORIENTATION','PROXY_WORLD','PROXY_PARENT','BAKE_CLEANUP',
+            'CLEANUP_ALL'])
+        self.assertEqual(config.stage_families('SPLINE'),('curves','motion'))
+        self.assertEqual(config.stage_families('DELIVER'),('bake',))
         for stage in config.STAGE_KEYS:
             allowed=set(config.stage_families(stage))
             self.assertTrue(all(family[a] in allowed for a in stages[stage]['order']),stage)
@@ -137,11 +140,18 @@ class ConfigTests(unittest.TestCase):
     def test_invalid_stage_rejected(self):
         bad=[('BLOCK',{'order':['B25','B25'],'tools':{'B25':{'mode':'BUTTON'}}}),
              ('BLOCK',{'order':['B25'],'tools':{'B25':{'mode':'INLINE'}}}),
-             ('BLOCK',{'order':['TRAIL_SHOW'],'tools':{'TRAIL_SHOW':{'mode':'BUTTON'}}}),
              ('SPLINE',{'order':[],'tools':{'SMOOTH':{'mode':'INLINE'}}})]
         for stage,setup in bad:
             record=copy.deepcopy(self.record); record['active']['stages'][stage]=setup
             with self.assertRaises(ValueError,msg=(stage,setup)): config.validate(record,actions)
+
+    def test_tool_from_a_moved_family_is_dropped(self):
+        # A Deliver setup saved while Motion belonged to Deliver still loads; the trail tool is dropped.
+        record=copy.deepcopy(self.record)
+        record['active']['stages']['DELIVER']={'order':['BAKE_STEP','TRAIL_SHOW'],
+            'tools':{'BAKE_STEP':{'mode':'BUTTON'},'TRAIL_SHOW':{'mode':'BUTTON'}}}
+        result=config.validate(record,actions)
+        self.assertEqual(result['active']['stages']['DELIVER']['order'],['BAKE_STEP'])
 
     def test_stage_roundtrip_and_modified(self):
         self.assertEqual(config.decode(config.encode(self.record,actions),actions),self.record)
@@ -195,7 +205,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(self.record['active']['tools']['DRAG']['width'],150.)
         self.assertEqual(self.record['active']['order'],before_all)
         self.assertEqual(self.record['active']['stages']['POLISH'],polish)
-        self.assertEqual(len(config.stage_entries(self.record,'ALL',actions)),93)
+        self.assertEqual(len(config.stage_entries(self.record,'ALL',actions)),95)
         config.validate(self.record,actions)
 
     def test_future_stage_tools_survive_settings(self):

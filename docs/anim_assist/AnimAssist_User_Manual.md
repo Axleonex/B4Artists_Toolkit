@@ -22,7 +22,7 @@ The row groups tools into **Tween, Timing, Curves, Keys, Pose, Bake and Motion**
 
 Press and drag. Release applies; Esc/right-click restores the captured animation. Shift gives finer movement; Ctrl uses the snap step. Type a value and press Enter for numeric input. Clicking without dragging applies nothing. Watch the status bar.
 
-Eight tools support numeric display: Breakdown, Smooth, Neighbors, Reference, Ease, Push/Pull, Timing Scale and Timing Offset. Reference blends toward the configured reference frame; Push/Pull changes amplitude around that reference. Timing Scale changes key spacing: below 100% keys sit closer (faster), above 100% they spread apart (slower); Timing Offset shifts the active object's Action timing. Check tooltips and scene options before editing a whole Action.
+Eight tools support numeric display: Breakdown, Smooth, Neighbors, To Reference, Ease, Amplify, Timing Scale and Timing Offset. To Reference blends toward the configured reference frame; Amplify changes amplitude around that reference. Timing Scale changes key spacing: below 100% keys sit closer (faster), above 100% they spread apart (slower); Timing Offset shifts the active object's Action timing. Check tooltips and scene options before editing a whole Action.
 
 ### Customize and save layouts
 
@@ -38,7 +38,7 @@ The **bottom-only canvas overlay** retains 12.7.1 placement, away from the top k
 
 ### Stage tabs
 
-Tabs at the left of the row choose a stage: **All**, **Block** (Tween, Keys), **Spline** (Curves), **Polish** (Timing, Pose) and **Deliver** (Bake, Motion). **All** is the condensed overview of every family. Each other stage has its own toolset for its families.
+Tabs at the left of the row choose a stage: **All**, **Block** (Tween, Keys), **Spline** (Curves, Motion), **Polish** (Timing, Pose) and **Deliver** (Bake). **All** is the condensed overview of every family. Each other stage has its own toolset for its families.
 
 Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. When All does not fit beside the tabs, they collapse into one stage button. Click it once to open the stage list (it stays open while you hover), then click a stage. Clicking the button again, clicking anywhere else or pressing Esc closes the list. In a short Timeline the five stages appear as a row above the button. Ctrl+Wheel over the button also cycles stages. Tools that do not fit remain in More and Search.
 
@@ -47,9 +47,9 @@ Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim
 Each stage starts from a fixed default set, the Recommended tools for its families plus tools for that phase, left to right in workflow order:
 
 - **Block:** 25/50/75%, Breakdown slider, Inbetween, Distribute Inbetweens, Push/Pull Previous/Next; Select Range/All/Ends, Grow left/right, mark Keyframe/Breakdown/Extreme/Moving Hold, Copy/Paste.
-- **Spline:** Set Reference Frame, Reference (popout), Neighbors, Ease and Smooth sliders, Push/Pull (popout), Auto Clamped/Vector/Free handles.
+- **Spline:** To Spline (selected keys from stepped to Bezier; To Stepped is in More), Neighbors, Ease and Smooth sliders; Set Reference, then To Reference and Amplify (popouts); Auto Clamped/Vector/Free handles; Show/Hide Trails to check arcs.
 - **Polish:** -1f/+1f, Timing Scale (popout), 80/90/110/120% spacing, Timing Offset slider, Ripple, Snap; Select Opposite, Mirror Selected, Mirror Active, Swap.
-- **Deliver:** Bake Object, Bake Preview Range, Smart Bake, Reduce Keys, Bake Keys to Integer Frames (whole frames, restorable with Reset Timing); create Translation, Orientation, World-Space or Parent-Space proxies, then Bake Session and Remove Proxies; One-Click Proxy & Bake (bakes the object's world motion through a temporary proxy in one step); Remove All Proxy Sessions; Show/Refresh/Diagnose/Hide Trails.
+- **Deliver:** Bake Object, Bake Preview Range, Smart Bake, Reduce Keys, Bake Keys to Integer Frames (whole frames, restorable with Reset Timing); One-Click Proxy & Bake (bakes the object's world motion through a temporary proxy in one step); or create Location, Rotation, World or Parent proxies, then Bake Session and Remove Proxies; Remove All Proxy Sessions.
 
 To change a stage, open **Toolbar Settings** (the row's **Settings** button). **Row Stage** chooses the setup you edit, and the row behind the dialog follows it. In a stage, Family offers only that stage's families; set each tool Hidden, Button, Popout or Inline, choose label or icon, and reorder it. **Reset Stage to Defaults** restores the current stage; **Restore Recommended Layout** restores All and every stage. Saved layouts store All and all four stages together.
 

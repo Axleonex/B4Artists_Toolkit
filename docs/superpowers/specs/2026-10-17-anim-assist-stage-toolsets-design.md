@@ -149,3 +149,12 @@ from `anim_assist/ui/timeline_catalog.py`; no new operators or animation code.
 Exact Toolbar Settings layout and wording within the rules above; internal helper
 names; how stage defaults are expressed in code (single table, as in 12.9.0);
 overflow ordering beyond "tabs give way first".
+
+## Revision 2026-10-18 (owner-approved, after a B4Artists UI/UX review)
+
+- Stage families: Spline = Curves, Motion; Deliver = Bake. Motion trails check arcs during the Spline pass, and the Motion family also holds Anim Offset; neither is delivery work.
+- Spline default: To Spline, Neighbors, Ease, Smooth, Set Reference, To Reference (popout), Amplify (popout), Auto Clamped/Vector/Free handles, Show Trails, Hide Trails. To Spline and To Stepped are new catalogue entries for the existing `animassist.batch_interpolation` operator; To Stepped stays in More.
+- Deliver default (12 tools, workflow order): Bake Object, Bake Preview, Smart Bake, Reduce, Whole Frames, Proxy & Bake, Location/Rotation/World/Parent proxies, Bake Proxies, Clean All Proxies. Refresh and Diagnose Trails are low-frequency troubleshooting: More and Search only.
+- Labels without abbreviations or clashes: Set Reference, To Reference, Amplify (was Push/Pull, which clashed with Block's Push/Pull buttons), Show Trails, Location Proxy, Rotation Proxy.
+- Loading: a stage setup that holds a known tool whose family no longer belongs to that stage drops the tool instead of rejecting the whole record.
+- Deviation kept: the stage dropdown and family menus are menus inside a toolbar (Bforartists DD1 advises against it). The owner asked for the dropdown and the row already used family menus.
