@@ -259,9 +259,10 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
         if properties.kind == "ACTION" and properties.key in ACTIONS:
             return explainers.raw_description(tools.ANIMASSIST_OT_timeline_tool,
                 context, SimpleNamespace(action=properties.key))
-        return {"SEARCH": "Find an animation tool; run it or pin a quick button",
+        return {"SEARCH": ("Find any Anim Assist tool by name, family or idea; run it, or pin it to this row. "
+                           "With nothing typed, browse every tool by family"),
                 "SETTINGS": "Choose visible tools, slider modes, order and named layouts",
-                "MORE": "All animation families and configured quick tools",
+                "MORE": "Tools on this row that did not fit at this width; click to use them",
                 "MENU": "Open this animation family's tools",
                 "BAND": "Anim Assist tools; the remaining Timeline keeps its normal controls"}.get(properties.kind, "Anim Assist")
 
@@ -422,10 +423,12 @@ def _list_entries(context, items, state):
         for action in actions:
             rows.append(('GAP', '', '') if action is None else ('RUN', action, ACTIONS[action][2]))
         return rows + [('GAP', '', ''), ('OPTIONS', key, f'{label} Options'), ('HOME', '', 'Open Anim Assist Panel')]
+    # More has one job: the row's tools that did not fit (owner pick "C", 2026-10-18).
+    # Every other tool is in Find.
     hidden = _row_hidden_tools(context, items)
-    rows = ([('HEAD', '', 'Did Not Fit')] + [('RUN', a, ACTIONS[a][2]) for a in hidden] + [('GAP', '', '')]
-            if hidden else [])
-    return rows + [('HEAD', '', 'Families')] + [('FAMILY', k, f'{l}  \u203a') for k, l, _a in GROUPS]
+    if not hidden:
+        return [('HEAD', '', 'Every tool on this row fits')]
+    return [('HEAD', '', 'Did Not Fit')] + [('RUN', a, ACTIONS[a][2]) for a in hidden]
 
 
 def _list_layout(context, items, band):

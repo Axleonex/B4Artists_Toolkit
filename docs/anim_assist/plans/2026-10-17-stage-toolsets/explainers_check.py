@@ -74,7 +74,9 @@ def setup():
 def item(key):
     """The row control for key, or a stand-in button when the row does not show it."""
     with bpy.context.temp_override(window=window(), area=timeline(), region=region()):
-        return next((i for i in mod("ui.timeline_overlay")._items(bpy.context)[0] if i[1] == key),
+        # Tool controls only: the All tab and the All Keys tool share the key "ALL".
+        return next((i for i in mod("ui.timeline_overlay")._items(bpy.context)[0]
+                     if i[1] == key and i[0] in {"ACTION", "SLIDER", "POPOUT"}),
                     ("ACTION", key, "", (0, 0, 24, 24)))
 
 

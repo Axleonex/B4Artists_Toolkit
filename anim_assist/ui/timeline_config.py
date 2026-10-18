@@ -594,12 +594,15 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
     y=max(0,height-row_height) if at_top else 0
     h=max(1,min(height,row_height)-4*scale)
     families={key:(label,{a for a in actions if a is not None}) for key,label,actions in groups}
-    utilities=[('SEARCH','','Find'),('MORE','','More'),('SETTINGS','','Settings')]
-    utility_widths=[max(24*scale,measure(label)+2*pad) for _,_,label in utilities]
-    if sum(utility_widths)+4*gap>width:
-        utilities=[(kind,key,'') for kind,key,_ in utilities]
-        utility_widths=[24*scale]*3
-    budget=max(0,width-sum(utility_widths)-4*gap)
+    # Each utility has one job (owner pick "C", 2026-10-18): Find is a magnifier icon
+    # that reaches every tool; More appears only when tools did not fit, as "+N".
+    settings_label='Settings'
+    utility_widths=[24*scale,max(24*scale,measure(settings_label)+2*pad)]
+    if sum(utility_widths)+3*gap>width:
+        settings_label=''; utility_widths=[24*scale,24*scale]
+    more_w=max(24*scale,measure('+99')+2*pad)
+    full_budget=max(0,width-sum(utility_widths)-3*gap)
+    budget=full_budget
     # Stage tabs lead the band. The choice between tabs and the single cycle
     # button never depends on the selected stage, so switching stages cannot
     # swap one for the other under the cursor. The cycle button keeps one key.
@@ -642,7 +645,7 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
                         specs.append(('PRESET',action+':'+text,text,max(24*scale,measure(text)+2*pad)))
         return specs
 
-    fits=lambda specs:sum(i[3]+gap for i in specs)<=budget
+    fits=lambda specs,room=None:sum(i[3]+gap for i in specs)<=(budget if room is None else room)
     # Tabs only when All's full layout fits beside them, as in 12.9.x. The
     # choice never depends on the selected stage; a wider stage toolset
     # compacts or overflows into More instead of moving the tabs.
@@ -651,14 +654,35 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
                                        compose(stage,compact=True),
                                        compose(stage,compact=True,demote=True),
                                        compose(stage,compact=True,demote=True,no_families=True))]
-    specs=next((c for c in candidates if fits(c)),candidates[-1])
-    controls=[]; x=gap
-    for kind,key,label,w in specs:
-        if x+w>budget: continue
-        controls.append((kind,key,label,(x,y+2*scale,w,h)))
-        x+=w+gap
-    x=max(x,width-sum(utility_widths)-3*gap)
-    for (kind,key,label),w in zip(utilities,utility_widths):
+    tool_kinds={'ACTION','SLIDER','POPOUT'}
+
+    def place(room):
+        specs=next((c for c in candidates if fits(c,room)),candidates[-1])
+        placed=[]; x=gap
+        for kind,key,label,w in specs:
+            if x+w>room: continue
+            placed.append((kind,key,label,(x,y+2*scale,w,h)))
+            x+=w+gap
+        shown={key for kind,key,_l,_r in placed if kind in tool_kinds}
+        hidden=[key for kind,key,_l,_w in specs if kind in tool_kinds and key not in shown]
+        return placed,x,hidden
+
+    controls,x,hidden=place(full_budget)
+    if hidden:
+        # Some tools did not fit: make room for the "+N" button and place again.
+        # The stage control always stays; on a very narrow row Settings drops its
+        # name before the stage control would be squeezed out.
+        lead_w=sum(i[3]+gap for i in lead)
+        if settings_label and full_budget-more_w-gap<lead_w:
+            settings_label=''; utility_widths=[24*scale,24*scale]
+            full_budget=max(0,width-sum(utility_widths)-3*gap)
+        controls,x,hidden=place(max(lead_w,full_budget-more_w-gap))
+    utilities=([('MORE','',f'+{len(hidden)}')] if hidden else [])+[('SEARCH','',''),('SETTINGS','',settings_label)]
+    widths=([more_w] if hidden else [])+utility_widths
+    if hidden and x+sum(widths)+len(widths)*gap>width:
+        utilities,widths=utilities[1:],widths[1:]  # extreme width: Find still reaches every tool
+    x=max(x,width-sum(widths)-(len(widths)-1)*gap-gap)
+    for (kind,key,label),w in zip(utilities,widths):
         if x+w<=width:
             controls.append((kind,key,label,(x,y+2*scale,w,h)))
         x+=w+gap

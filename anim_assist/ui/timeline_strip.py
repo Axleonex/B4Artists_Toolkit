@@ -1,7 +1,7 @@
 """Shared Timeline action dispatch, menus and quick-selection settings."""
 
 import bpy
-from bpy.props import StringProperty
+from bpy.props import EnumProperty, StringProperty
 from ..core.logging import get_logger
 from .timeline_catalog import (
     ACTIONS as _ACTIONS, EXECUTE_ACTIONS, GROUPS, QUICK_GROUPS, FAMILY,
@@ -423,10 +423,14 @@ class ANIMASSIST_OT_timeline_pin(bpy.types.Operator):
 class ANIMASSIST_OT_timeline_search(bpy.types.Operator):
     bl_idname = "animassist.timeline_search"
     bl_label = "Search Animation Tools"
-    bl_description = "Find a Timeline tool by name; run it or pin its one-click button"
+    bl_description = ("Find any Anim Assist tool by name, family or idea; run it, or pin it to this row. "
+                      "With nothing typed, browse every tool by family")
     bl_options = {"INTERNAL"}
     query: StringProperty(name="Search", description="Find tools by name, family or animation concept",
                           options={"TEXTEDIT_UPDATE", "SKIP_SAVE"})
+    family: EnumProperty(name="Family", description="Browse this family's tools",
+                         items=[(key, label, f"Browse the {label} tools") for key, label, _a in GROUPS],
+                         options={"SKIP_SAVE"})
 
     @classmethod
     def poll(cls, context):
@@ -436,6 +440,14 @@ class ANIMASSIST_OT_timeline_search(bpy.types.Operator):
         return True
 
     def invoke(self, context, _event):
+        # Browse opens on the first family of the row shown (Tween for All).
+        from . import timeline_config as model
+        from .timeline_overlay import current_stage
+        from ..prefs import get_prefs, timeline_record
+        try:
+            self.family = model.row_families(timeline_record(get_prefs(context))['active'], current_stage(context))[0]
+        except (ValueError, TypeError, AttributeError, IndexError):
+            pass
         return context.window_manager.invoke_popup(self, width=620)
 
     def draw(self, context):
@@ -456,12 +468,16 @@ class ANIMASSIST_OT_timeline_search(bpy.types.Operator):
             except ValueError:
                 pass
         matches = search_actions(self.query)
+        limit = 16
         if not self.query.strip():
-            matches = tuple(action for action in _ACTIONS if action in selected) or DEFAULT_QUICK_ACTIONS
-            self.layout.label(text="Quick tools shown. Type to search the full catalogue.")
+            # Nothing typed: browse every tool, one family at a time.
+            self.layout.row().prop(self, "family", expand=True)
+            matches = tuple(a for a in next(acts for key, _l, acts in GROUPS if key == self.family) if a)
+            limit = len(matches)
+            self.layout.label(text="Click a tool to run it; the pin adds it to this row or takes it off.")
         if not matches:
             self.layout.label(text="No matching animation tools", icon="INFO")
-        for action in matches[:16]:
+        for action in matches[:limit]:
             row = self.layout.row(align=True)
             _button(row, context, _target(context), action, _ACTIONS[action][2])
             pin = row.row(align=True)
@@ -470,7 +486,7 @@ class ANIMASSIST_OT_timeline_search(bpy.types.Operator):
                               icon="PINNED" if action in selected else "UNPINNED",
                               depress=action in selected)
             op.action = action
-        if len(matches) > 16:
+        if len(matches) > limit:
             self.layout.label(text=f"{len(matches)} matches; refine the search to see more")
 
     def execute(self, context):

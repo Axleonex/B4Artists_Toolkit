@@ -26,7 +26,7 @@
   actions).
 - Compact All row (Recommended): 25/50/75 as ticks on Breakdown; -1f/+1f,
   Copy, Paste, Mirror, Bake Object and the Trails eye as icons. Stage tabs
-  return from about 1,450 px. Tool Settings gains Presets as Ticks for any
+  return from about 1,360 px. Tool Settings gains Presets as Ticks for any
   slider, in All and in stages. Saved or edited layouts keep their All row.
 - Compact rows: stage sliders draw presets as click ticks on a wider track
   (the drag snaps onto ticks; a popout falls back to preset buttons). Icons for
@@ -80,6 +80,12 @@
   Recommended restores all.
 - Saved layouts store All and all four stages together. Amounts (range,
   default, presets, width and so on) stay shared by every stage.
+- Find and More each have one job. Find is a magnifier icon that reaches all
+  96 tools: type to search, or with nothing typed browse them by family tabs;
+  click to run, pin to add to the row. More appears only when the row's tools
+  do not fit, labelled with how many (for example +3), and lists just those.
+  The row gains about 60 px when everything fits, so the five stage tabs
+  appear from about 1,360 px (was 1,450 px).
 - Tool Settings, Search pins and More follow the shown stage. A Search pin
   goes to the shown row, whatever the tool's family.
 - Hover Explainers (Preferences > Add-ons > Anim Assist > General): Full (the

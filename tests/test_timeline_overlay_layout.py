@@ -32,6 +32,29 @@ class TimelineLayoutTests(unittest.TestCase):
         self.assertEqual(record,before)
         return result
 
+    def hidden(self,controls,stage,all_actions=False):
+        record=config.recommended(values['ACTIONS'])
+        if all_actions:
+            for action,tool in record['active']['tools'].items():
+                tool['mode']='INLINE' if action in config.SLIDERS else 'BUTTON'
+        order,tools=config.stage_view(record['active'],stage)
+        families=config.row_families(record['active'],stage)
+        groups={key:{a for a in acts if a} for key,_l,acts in values['GROUPS']}
+        visible=[a for a in order if tools.get(a,{}).get('mode','HIDDEN')!='HIDDEN'
+                 and any(a in groups[f] for f in families)]
+        shown={c[1] for c in controls if c[0] in {'ACTION','SLIDER','POPOUT'}}
+        return [a for a in visible if a not in shown]
+
+    def test_more_only_when_tools_do_not_fit(self):
+        for stage in config.STAGE_IDS:
+            wide=self.controls(1920,stage=stage)
+            self.assertNotIn('MORE',[c[0] for c in wide],stage)
+            self.assertEqual(self.hidden(wide,stage),[],stage)
+            narrow=self.controls(400,stage=stage)
+            hidden=self.hidden(narrow,stage)
+            self.assertTrue(hidden,stage)
+            self.assertIn(('MORE',f'+{len(hidden)}'),[(c[0],c[2]) for c in narrow])
+
     def test_bounds_and_no_overlap(self):
         for scale in (1,1.5,2):
             for width in (250,480,800,1164,1920):
@@ -46,7 +69,11 @@ class TimelineLayoutTests(unittest.TestCase):
                                 self.assertGreaterEqual(y,0)
                                 self.assertLessEqual(y+h,120*scale)
                                 previous=x+w
-                            self.assertEqual([c[0] for c in controls[-3:]],['SEARCH','MORE','SETTINGS'])
+                            self.assertEqual([c[0] for c in controls[-2:]],['SEARCH','SETTINGS'])
+                            more=[c for c in controls if c[0]=='MORE']
+                            if more:
+                                self.assertEqual(controls[-3][0],'MORE')
+                                self.assertEqual(more[0][2],f'+{len(self.hidden(controls,stage,all_actions))}')
                             self.assertIn(controls[0][0],{'STAGE','STAGE_CYCLE'})
 
     def test_stage_filters_families_only(self):
@@ -125,7 +152,9 @@ class TimelineLayoutTests(unittest.TestCase):
         self.assertEqual([c[1] for c in controls if c[0]=='MENU'],list(config.FAMILY_ORDER))
         self.assertEqual({c[1] for c in controls if c[0]=='SLIDER'},{'DRAG','SMOOTH'})
         self.assertIn('SCALE_DRAG',[c[1] for c in controls if c[0]=='POPOUT'])
-        self.assertEqual([c[0] for c in controls[-3:]],['SEARCH','MORE','SETTINGS'])
+        self.assertEqual([c[0] for c in controls[-2:]],['SEARCH','SETTINGS'])
+        self.assertNotIn('MORE',[c[0] for c in controls])  # everything fits: no More button
+        self.assertEqual([c[2] for c in controls[-2:]],['','Settings'])  # Find is an icon
 
     def test_narrow_quick_tools_and_more(self):
         controls=self.controls(250)

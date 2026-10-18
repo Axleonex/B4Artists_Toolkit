@@ -57,6 +57,13 @@ def setup():
     small.type = "INFO"
     lower.type = "DOPESHEET_EDITOR"
     lower.spaces.active.mode = "TIMELINE"
+    # Narrow the Timeline to about 900 px so the row uses the compact stage button.
+    before = {a.as_pointer() for a in win.screen.areas}
+    with bpy.context.temp_override(window=win, area=lower):
+        bpy.ops.screen.area_split(direction="VERTICAL", factor=900 / lower.width)
+    for area in win.screen.areas:
+        if area.as_pointer() not in before:
+            area.type = "INFO"
     bpy.context.scene.frame_set(30)
 
 

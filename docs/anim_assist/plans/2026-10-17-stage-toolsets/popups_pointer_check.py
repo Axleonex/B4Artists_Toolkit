@@ -3,7 +3,7 @@
 Run:  bforartists --factory-startup --enable-event-simulate --python popups_pointer_check.py
 with BLENDER_USER_SCRIPTS holding the package as B4_anim_assist and AA_STAGE_OUT set.
 Family and More lists open on one click and stay open while the pointer moves, even over
-another editor; an item runs and closes; the same button, the Timeline, another editor or
+another editor; More appears only when tools did not fit, as "+N", and lists just those; an item runs and closes; the same button, the Timeline, another editor or
 Esc closes. A clicked popout slider stays open; double-click or a click away applies, Esc
 cancels.
 """
@@ -146,6 +146,26 @@ def release(xy):
     ev("LEFTMOUSE", "RELEASE", **xy)
 
 
+def hidden_tools():
+    with bpy.context.temp_override(window=window(), area=timeline(), region=region()):
+        its, _band = overlay()._items(bpy.context)
+        return overlay()._row_hidden_tools(bpy.context, its)
+
+
+def overflow_all():
+    """Show every Pose, Bake and Motion tool on the All row so some cannot fit."""
+    model = sys.modules["B4_anim_assist.ui.timeline_config"]
+    settings = sys.modules["B4_anim_assist.ui.timeline_settings"]
+    catalog = sys.modules["B4_anim_assist.ui.timeline_catalog"]
+    data = settings.record(bpy.context)
+    for key, _label, actions in catalog.GROUPS:
+        if key in {"pose", "bake", "motion"}:
+            for action in actions:
+                if action:
+                    model.set_stage_tool(data, "ALL", action, mode="BUTTON")
+    settings.write(bpy.context, data)
+
+
 def active_slider():
     return sliders()._active.get(window().as_pointer())
 
@@ -175,21 +195,36 @@ def plan():
     yield (lambda: click(item_xy("MENU", "keys"))), 0.5
     yield (lambda: (ev("ESC", "PRESS"), ev("ESC", "RELEASE"))), 0.5
     yield (lambda: check("Esc closes it", list_view() is None)), 0.1
-    # Another family button switches lists; More opens families and comes back.
+    # Another family button switches lists.
     yield (lambda: click(item_xy("MENU", "keys"))), 0.5
     yield (lambda: click(item_xy("MENU", "pose"))), 0.5
     yield (lambda: check("Clicking another family switches to its list", list_view() == ("FAMILY", "pose"))), 0.1
+    yield (lambda: bpy.ops.screen.screenshot(filepath=str(OUT / "family-list.png"))), 0.3
     yield (lambda: click(item_xy("MENU", "pose"))), 0.5
+    # More has one job: it appears only when tools did not fit, as "+N", and lists them.
+    yield (lambda: check("Everything fits on the wide All row, so there is no More button",
+                         not any(i[0] == "MORE" for i in items()[0]))), 0.1
+    yield overflow_all, 0.6
+
+    def more_label():
+        found = [i for i in items()[0] if i[0] == "MORE"]
+        state["more"] = found[0][2] if found else ""
+        return state["more"]
+    yield (lambda: check("With more tools than fit, More shows how many did not fit",
+                         more_label().startswith("+") and int(more_label()[1:]) == len(hidden_tools()))), 0.1
     yield (lambda: click(item_xy("MORE", ""))), 0.5
     yield (lambda: check("More opens and stays open", list_view() == ("MORE", ""))), 0.1
-    yield (lambda: (state.__setitem__("shot", "more-list.png"),
-                    bpy.ops.screen.screenshot(filepath=str(OUT / "more-list.png")))), 0.3
-    yield (lambda: click(row_xy("FAMILY", "bake"))), 0.5
-    yield (lambda: check("A family in More opens in place", list_view() == ("FAMILY", "bake"))), 0.1
-    yield (lambda: bpy.ops.screen.screenshot(filepath=str(OUT / "family-list.png"))), 0.3
-    yield (lambda: click(row_xy("BACK", ""))), 0.5
-    yield (lambda: check("Back returns to More", list_view() == ("MORE", ""))), 0.1
+    yield (lambda: bpy.ops.screen.screenshot(filepath=str(OUT / "more-list.png"))), 0.3
+    yield (lambda: check("More lists exactly the tools that did not fit, and no families",
+                         [r[1] for r in rows() if r[0] == "RUN"] == hidden_tools()
+                         and not any(r[0] == "FAMILY" for r in rows()))), 0.1
     yield (lambda: click(empty_timeline())), 0.5
+    yield (lambda: bpy.ops.animassist.restore_toolbar()), 0.6
+    # Find is a magnifier icon; with nothing typed it browses tools by family.
+    yield (lambda: check("Find is an icon-only button", any(i[0] == "SEARCH" and i[2] == "" for i in items()[0]))), 0.1
+    yield (lambda: click(item_xy("SEARCH", ""))), 1.0
+    yield (lambda: bpy.ops.screen.screenshot(filepath=str(OUT / "find-browse.png"))), 0.4
+    yield (lambda: (ev("ESC", "PRESS"), ev("ESC", "RELEASE"))), 0.6
     # Popout slider: a click keeps it open; double-click applies.
     yield (lambda: state.__setitem__("before", frames())), 0.1
     yield (lambda: press(item_xy("POPOUT", "SCALE_DRAG"))), 0.3

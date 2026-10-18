@@ -16,7 +16,7 @@ Scene Properties > Anim Assist > Setup (once per rig) > First Run Setup creates 
 
 ## Timeline: buttons and sliders
 
-The row groups tools into **Tween, Timing, Curves, Keys, Pose, Bake and Motion**. Click an action to run it; use family menus or Find for others. Tooltips explain prerequisites and scope. Action-wide offset affects more than selected-key nudging.
+The row groups tools into **Tween, Timing, Curves, Keys, Pose, Bake and Motion**. Click an action to run it; use family menus or **Find** (the magnifier) for others. Find searches all 96 tools as you type; with nothing typed it shows family tabs to browse every tool. Click a tool to run it, or its pin to add it to the row or take it off. Tooltips explain prerequisites and scope. Action-wide offset affects more than selected-key nudging.
 
 **Recommended** starts with two inline sliders: **Breakdown**, whose track has ticks at 25%, 50% and 75% (click a tick to apply it), and **Smooth**. **Timing Scale** uses a temporary popout slider. Quick icons: -1f/+1f nudges, Copy/Paste Keys, Mirror Selected, Bake Object Transforms and Trails (the eye shows or hides world motion trails). Hover an icon for its name. In Tool Settings, **Presets as Ticks** switches any slider between ticks on its track and preset buttons, in All or in a stage.
 
@@ -26,13 +26,13 @@ A stage can show a slider's presets as ticks on its track instead of buttons: cl
 
 ### Customize and save layouts
 
-Open row **Settings**, choose a family/tool, then **Hidden, Button, Popout slider or Inline slider**. Ordinary actions offer Hidden/Button only. Hidden tools remain in Search/More. Move Up/Down orders tools within their family; Slider Width controls inline width.
+Open row **Settings**, choose a family/tool, then **Hidden, Button, Popout slider or Inline slider**. Ordinary actions offer Hidden/Button only. Hidden tools remain in Find. Move Up/Down orders tools within their family; Slider Width controls inline width.
 
 Use **Tool Settings**, or right-click an idle numeric tool, to set display, range, default, width, precision, drag sensitivity, snapping and presets. **Custom Range / Overshoot** permits supported amounts outside the standard range. Masks, targets and breakdown anchors remain scene settings; **Scene Tool Options** opens those separately.
 
 **Save As** names an arrangement. **Load** restores one; **Update Saved** replaces its saved settings. Rename/Delete manage saved layouts. Recommended is protected. **Restore Recommended Layout** resets the working arrangement while retaining saved layouts. Confirm the main Settings dialog to apply staged changes. Save Preferences after applying if automatic preference saving is off.
 
-On a narrow Timeline, tools that do not fit remain available in More and Search. Shorten the row by reducing inline widths or changing occasional sliders to popout/button mode. If hidden, use **Timeline > View > Show Anim Assist Tool Row**. Give the Timeline enough height for its keys and tool row.
+On a narrow Timeline, a **+N** button appears before Find (for example +3): it lists the row's tools that did not fit. When everything fits, there is no More button. Shorten the row by reducing inline widths or changing occasional sliders to popout/button mode. If hidden, use **Timeline > View > Show Anim Assist Tool Row**. Give the Timeline enough height for its keys and tool row.
 
 The **bottom-only canvas overlay** retains 12.7.1 placement, away from the top keyframe diamonds. It adds no native header/editor region or workspace split. There is no top/bottom placement setting.
 
@@ -47,7 +47,7 @@ Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim
 Each stage starts from a fixed default set, the Recommended tools for its families plus tools for that phase, left to right in workflow order:
 
 - **Block:** Breakdown slider whose track runs from -25% to 125% with ticks at -25, 25, 50, 75 and 125 (click a tick to apply it: -25 and 125 push past the previous or next pose, 25 and 75 pull toward it); Inbetween and Distribute (key-plus-key icons); Select Range/All/Ends; Grow left/right (key and arrow icons); mark Keyframe/Breakdown/Extreme/Moving Hold (key-type diamonds in your theme's Dope Sheet key colours); Copy/Paste (icons). Hover any icon for its name. The 25/50/75% and Push/Pull buttons stay in More and Search.
-- **Spline:** To Spline (curve icon; To Stepped is in More); Neighbors, Ease and Smooth sliders; Set Reference (target icon), then To Reference and Amplify sliders; Auto Clamped/Vector/Free handles (icons in your theme's Graph Editor handle colours); Trails (an eye: click to show world motion trails, again to hide them; a slash means they are off).
+- **Spline:** To Spline (curve icon; To Stepped is in Find); Neighbors, Ease and Smooth sliders; Set Reference (target icon), then To Reference and Amplify sliders; Auto Clamped/Vector/Free handles (icons in your theme's Graph Editor handle colours); Trails (an eye: click to show world motion trails, again to hide them; a slash means they are off).
 - **Polish:** -1f/+1f (arrow icons); Timing Scale slider with ticks at 80, 90, 110 and 120; Timing Offset slider; Ripple slider with ticks at -1 and 1 (1 matches the old Ripple button); Snap; Select Opposite, Mirror Selected, Mirror Active and Swap as icons (Mirror Active's right-hand triangle is hollow).
 - **Deliver:** Bake Object (key-bars icon), Bake Preview Range, Smart Bake; Reduce slider with ticks at 0.001, 0.01 and 0.05 (0.01 matches the old Reduce Keys button); Bake Keys to Integer Frames (whole frames, restorable with Reset Timing); One-Click Proxy & Bake; Location, Rotation, World and Parent proxies (icons: move cross, turn arrow, globe, parent link), then Bake Session and Remove Proxies; Remove All Proxy Sessions.
 

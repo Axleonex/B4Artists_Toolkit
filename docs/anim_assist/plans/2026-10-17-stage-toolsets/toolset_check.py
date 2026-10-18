@@ -136,6 +136,24 @@ try:
         check("Load restores the saved stages", "SMOOTH" not in rec()["active"]["stages"]["SPLINE"]["order"])
         bpy.ops.animassist.restore_toolbar()
 
+        # Find with nothing typed browses every tool by family; typing searches all of them.
+        search = sys.modules["B4_anim_assist.ui.timeline_strip"].ANIMASSIST_OT_timeline_search
+        catalog = sys.modules["B4_anim_assist.ui.timeline_catalog"]
+        layout = Rec()
+        fake_find = SimpleNamespace(query="", family="bake", layout=layout)
+        search.draw(fake_find, bpy.context)
+        runs = [k.get("text") for n, a, k in layout.events if n == "operator" and a and a[0] == "animassist.timeline_tool"]
+        bake = [catalog.ACTIONS[a][2] for a in next(acts for key, _l, acts in catalog.GROUPS if key == "bake") if a]
+        check("Find with nothing typed shows family tabs and every tool of the chosen family",
+              any(n == "prop" and len(a) > 1 and a[1] == "family" and k.get("expand") for n, a, k in layout.events)
+              and runs == bake)
+        layout = Rec(); fake_find.layout = layout; fake_find.query = "spacing"
+        search.draw(fake_find, bpy.context)
+        found = [k.get("text") for n, a, k in layout.events if n == "operator" and a and a[0] == "animassist.timeline_tool"]
+        check("Typing searches every tool (spacing finds the timing spacing tools)",
+              found and all("Spacing" in text or "Scale" in text or "Timing" in text for text in found)
+              and not any(n == "prop" and len(a) > 1 and a[1] == "family" for n, a, k in layout.events))
+
         # Search pin follows the shown stage; other families pin into All.
         before_all = copy.deepcopy(rec()["active"]["tools"])
         bpy.ops.animassist.timeline_pin(action="INBETWEEN")
