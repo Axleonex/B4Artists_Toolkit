@@ -22,7 +22,7 @@ class ConfigTests(unittest.TestCase):
 
     def test_defaults(self):
         tools=self.record['active']['tools']
-        self.assertEqual(len(tools),95)
+        self.assertEqual(len(tools),96)
         self.assertEqual({k for k,v in tools.items() if v['mode']=='INLINE'},{'DRAG','SMOOTH'})
         self.assertEqual(tools['SCALE_DRAG']['mode'],'POPOUT')
         self.assertEqual(len(config.SLIDERS),8)
@@ -110,7 +110,12 @@ class ConfigTests(unittest.TestCase):
         stages=self.record['active']['stages']
         self.assertEqual(stages['SPLINE']['order'],['TO_SPLINE','NEIGHBORS','EASE','SMOOTH','REFERENCE','FRAME',
                                                     'AMPLIFY','HANDLE_CLAMPED','HANDLE_VECTOR','HANDLE_FREE',
-                                                    'TRAIL_SHOW','TRAIL_HIDE'])
+                                                    'TRAIL_TOGGLE'])
+        self.assertEqual(stages['BLOCK']['order'][0],'DRAG')
+        self.assertNotIn('B25',stages['BLOCK']['order']); self.assertNotIn('PUSH_PREV',stages['BLOCK']['order'])
+        self.assertNotIn('T80',stages['POLISH']['order'])
+        self.assertEqual(stages['BLOCK']['tools']['DRAG']['presets'],[-25.,25.,50.,75.,125.])
+        self.assertEqual(stages['POLISH']['tools']['SCALE_DRAG'],{'mode':'INLINE','label_mode':'LABEL','presets':[80.,90.,110.,120.]})
         self.assertEqual(stages['SPLINE']['tools']['FRAME'],{'mode':'POPOUT','label_mode':'LABEL'})
         self.assertEqual(stages['BLOCK']['tools']['DRAG']['mode'],'INLINE')
         self.assertEqual(stages['POLISH']['tools']['OFFSET_DRAG']['mode'],'INLINE')
@@ -179,9 +184,9 @@ class ConfigTests(unittest.TestCase):
         self.assertLess(order.index('INBETWEEN'),order.index('RANGE'))
         config.set_stage_tool(self.record,'BLOCK','GROW_BOTH',mode='BUTTON')
         self.assertEqual([a for a in order if family[a]=='keys'][-1],'GROW_BOTH')
-        config.set_stage_tool(self.record,'ALL','B25',mode='HIDDEN')
-        self.assertEqual(self.record['active']['tools']['B25']['mode'],'HIDDEN')
-        self.assertIn('B25',order)
+        config.set_stage_tool(self.record,'ALL','DRAG',mode='HIDDEN')
+        self.assertEqual(self.record['active']['tools']['DRAG']['mode'],'HIDDEN')
+        self.assertIn('DRAG',order)
 
     def test_pin_target(self):
         self.assertEqual(config.pin_target('BLOCK','BAKE_STEP'),'ALL')
@@ -191,7 +196,7 @@ class ConfigTests(unittest.TestCase):
     def test_entries_round_trip_per_stage(self):
         entries=config.stage_entries(self.record,'BLOCK',actions)
         self.assertEqual({family[e['action']] for e in entries},{'tween','keys'})
-        self.assertEqual([e['action'] for e in entries][:3],['B25','B50','B75'])
+        self.assertEqual([e['action'] for e in entries][:3],['DRAG','INBETWEEN','INBETWEENS'])
         by={e['action']:e for e in entries}
         hold=entries.pop([e['action'] for e in entries].index('TYPE_HOLD'))
         entries.insert([e['action'] for e in entries].index('RANGE'),hold)
@@ -205,7 +210,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(self.record['active']['tools']['DRAG']['width'],150.)
         self.assertEqual(self.record['active']['order'],before_all)
         self.assertEqual(self.record['active']['stages']['POLISH'],polish)
-        self.assertEqual(len(config.stage_entries(self.record,'ALL',actions)),95)
+        self.assertEqual(len(config.stage_entries(self.record,'ALL',actions)),96)
         config.validate(self.record,actions)
 
     def test_future_stage_tools_survive_settings(self):
@@ -301,6 +306,49 @@ class IconTests(unittest.TestCase):
         icons = [c for c in controls if c[1] in config.KEY_TYPE_ICONS]
         self.assertEqual(len(icons), 4)
         self.assertTrue(all(c[2] == '' and c[3][2] == 24 for c in icons))
+
+
+class StagePresetTests(unittest.TestCase):
+    def setUp(self):
+        self.record = config.recommended(actions)
+
+    def test_all_keeps_tool_presets_and_stage_shows_its_own(self):
+        self.assertEqual(self.record['active']['tools']['DRAG']['presets'], [])
+        all_tools = config.stage_view(self.record['active'], 'ALL')[1]
+        block_tools = config.stage_view(self.record['active'], 'BLOCK')[1]
+        self.assertEqual(all_tools['DRAG']['presets'], [])
+        self.assertEqual(block_tools['DRAG']['presets'], [-25., 25., 50., 75., 125.])
+
+    def test_block_row_shows_breakdown_presets_and_all_row_does_not(self):
+        measure = lambda text: len(text) * 6
+        block = config.toolbar_layout(1920, 120, 28, False, self.record, groups, {}, measure, 'BLOCK')
+        all_row = config.toolbar_layout(1920, 120, 28, False, self.record, groups, {}, measure, 'ALL')
+        self.assertEqual([c[2] for c in block if c[0] == 'PRESET'], ['-25', '25', '50', '75', '125'])
+        self.assertFalse([c for c in all_row if c[0] == 'PRESET'])
+
+    def test_stage_presets_go_past_the_display_range_within_tool_limits(self):
+        self.assertEqual(config.stage_presets('DRAG', [-25, 125]), [-25., 125.])
+        with self.assertRaises(ValueError): config.stage_presets('DRAG', [250])
+        with self.assertRaises(ValueError): config.stage_presets('DRAG', list(range(13)))
+        with self.assertRaises(ValueError): config.stage_presets('B25', [10])
+
+    def test_presets_survive_mode_changes_and_round_trip(self):
+        config.set_stage_tool(self.record, 'BLOCK', 'DRAG', mode='POPOUT')
+        self.assertEqual(self.record['active']['stages']['BLOCK']['tools']['DRAG']['presets'], [-25., 25., 50., 75., 125.])
+        config.set_stage_tool(self.record, 'BLOCK', 'DRAG', presets=[10, 90])
+        decoded = config.decode(config.encode(self.record, actions), actions)
+        self.assertEqual(decoded['active']['stages']['BLOCK']['tools']['DRAG']['presets'], [10., 90.])
+        entries = config.stage_entries(self.record, 'BLOCK', actions)
+        config.apply_entries(self.record, 'BLOCK', entries, actions)
+        self.assertEqual(self.record['active']['stages']['BLOCK']['tools']['DRAG']['presets'], [10., 90.])
+
+    def test_version_b_icons(self):
+        icons = {stage: {a for a, t in self.record['active']['stages'][stage]['tools'].items() if t['label_mode'] == 'ICON'}
+                 for stage in config.STAGE_KEYS}
+        self.assertEqual(icons['SPLINE'], {'TO_SPLINE', 'HANDLE_CLAMPED', 'HANDLE_VECTOR', 'HANDLE_FREE', 'TRAIL_TOGGLE'})
+        self.assertEqual(icons['POLISH'], {'NUDGE_LEFT', 'NUDGE_RIGHT'})
+        self.assertTrue({'GROW_LEFT', 'GROW_RIGHT', 'COPY_KEYS', 'PASTE_KEYS', 'TYPE_KEYFRAME'} <= icons['BLOCK'])
+        self.assertEqual(icons['DELIVER'], set())
 
 
 if __name__=='__main__': unittest.main()

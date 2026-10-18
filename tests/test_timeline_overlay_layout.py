@@ -140,7 +140,7 @@ class TimelineLayoutTests(unittest.TestCase):
         controls=self.controls(1920,stage='SPLINE')
         shown=[c[1] for c in controls if c[0] in {'ACTION','SLIDER','POPOUT'}]
         expected=['TO_SPLINE','NEIGHBORS','EASE','SMOOTH','REFERENCE','FRAME','AMPLIFY',
-                  'HANDLE_CLAMPED','HANDLE_VECTOR','HANDLE_FREE','TRAIL_SHOW','TRAIL_HIDE']
+                  'HANDLE_CLAMPED','HANDLE_VECTOR','HANDLE_FREE','TRAIL_TOGGLE']
         self.assertEqual(shown,expected[:len(shown)])
         self.assertTrue(len(shown)==len(expected) or 'MORE' in [c[0] for c in controls])
 

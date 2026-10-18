@@ -47,6 +47,7 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
     track_width: FloatProperty(default=120,options={'HIDDEN','SKIP_SAVE'})
     value: FloatProperty(name='Amount',description='Adjustment amount in the tool’s displayed units')
     apply_value: BoolProperty(default=False,options={'HIDDEN','SKIP_SAVE'})
+    preset: BoolProperty(default=False,options={'HIDDEN','SKIP_SAVE'})
     _aborted=False
 
     @classmethod
@@ -184,7 +185,8 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
         try:
             if self.action not in _model().SLIDERS: raise ValueError('Choose a numeric animation tool')
             tool=_model().effective_tool(self.action,timeline_record(get_prefs(context))['active']['tools'][self.action])
-            if not tool['range_min']<=self.value<=tool['range_max']: raise ValueError('Use a value inside the configured slider range')
+            low,high=_model().preset_bounds(self.action) if getattr(self,'preset',False) else (tool['range_min'],tool['range_max'])
+            if not low<=self.value<=high: raise ValueError('Use a value inside the configured slider range')
             session=capture(context,self.action)
             session.preview(self.value); session.commit()
             _last_values[(context.window.as_pointer(),context.area.as_pointer(),self.action)]=self.value

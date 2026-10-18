@@ -277,6 +277,9 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
         if self._target in model.STAGE_KEYS:
             view=model.stage_view(staged['active'],self._target)[1][self.action]
             self.mode=view['mode']; self.label_mode=view['label_mode']
+            if self.action in model.SLIDERS:
+                self._shown_presets=[float(v) for v in view.get('presets',[])]
+                self.presets_text=', '.join(f'{v:g}' for v in self._shown_presets)
         _tool_editors[context.window.as_pointer()]=self
         return context.window_manager.invoke_props_dialog(self,width=430)
 
@@ -285,8 +288,8 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
         layout.label(text=ACTIONS[self.action][2])
         target=getattr(self,'_target','ALL')
         if target in model.STAGE_KEYS:
-            layout.label(text=f'Display and label apply to the {model.stage_label(target)} stage; '
-                              'amounts are shared by every stage.')
+            layout.label(text=f'Display, label and presets apply to the {model.stage_label(target)} stage; '
+                              'other amounts are shared by every stage.')
         layout.prop(self,'mode')
         if model.has_icon(self.action): layout.prop(self,'label_mode')
         if self.action in model.SLIDERS:
@@ -314,11 +317,17 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
                 if field=='presets': tool[field]=[float(x.strip()) for x in self.presets_text.split(',') if x.strip()]
                 elif field!='action' and hasattr(self,field): tool[field]=getattr(self,field)
             target=getattr(self,'_target','ALL')
+            stage_presets=None
             if target in model.STAGE_KEYS:
                 tool['mode'],tool['label_mode']=self._tool['mode'],self._tool['label_mode']
+                if self.action in model.SLIDERS:
+                    # Store stage presets only when edited, so untouched stages keep following All.
+                    if tool['presets']!=getattr(self,'_shown_presets',tool['presets']): stage_presets=tool['presets']
+                    tool['presets']=list(self._tool['presets'])
             data['active']['tools'][self.action]=model.validate_tool(self.action,tool)
             if target in model.STAGE_KEYS:
-                model.set_stage_tool(data,target,self.action,mode=self.mode,label_mode=self.label_mode)
+                model.set_stage_tool(data,target,self.action,mode=self.mode,label_mode=self.label_mode,
+                                     presets=stage_presets)
                 data=model.validate(data,ACTIONS)
             if editor(context): sync_editor(context,data)
             else: write(context,data)

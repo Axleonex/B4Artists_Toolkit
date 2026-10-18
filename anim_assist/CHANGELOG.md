@@ -16,6 +16,14 @@
   catalogue (95 actions).
 - Row labels: Set Reference, To Reference, Amplify (was Push/Pull), Show Trails
   (All keeps Trails), Location Proxy, Rotation Proxy and Clamped (Auto Clamped).
+- Scales and icons (version B): Block's Breakdown slider carries stage presets
+  -25/25/50/75/125, replacing the 25/50/75% and Push/Pull Prev/Next buttons on the
+  row (same results at default strengths); Polish's Timing Scale becomes an
+  inline slider with presets 80/90/110/120, replacing the spacing buttons. Stage
+  presets may exceed the standard range up to the tool limit; All keeps its
+  own presets. Icons for grow, Copy/Paste, To Spline, handle types (theme handle
+  colours) and nudges; Show/Hide Trails become one Trails eye toggle (96
+  actions).
 - Block shows Mark Key/Breakdown/Extreme/Hold as key-type diamonds in the
   theme's Dope Sheet key colours and relative sizes. Icon is offered only for
   tools that have one (key types, nudges, Copy, Paste); an Icon choice saved on

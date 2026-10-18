@@ -79,7 +79,7 @@ try:
           and fake.family in {"timing", "pose"})
     check("Block edit kept after switching", "INBETWEEN" not in fake._record["active"]["stages"]["BLOCK"]["order"])
     cls.switch_stage(fake, "ALL")
-    check("All lists every tool", len(fake.entries) == len(ACTIONS) == 95)
+    check("All lists every tool", len(fake.entries) == len(ACTIONS) == 96)
     settings.write(bpy.context, fake.serialize())
     check("Applied settings store the Block edit", "INBETWEEN" not in rec()["active"]["stages"]["BLOCK"]["order"])
 
@@ -133,6 +133,19 @@ try:
     data = rec()
     check("Tool Settings in Spline changes Spline display; Icon is ignored for a tool without one",
           data["active"]["stages"]["SPLINE"]["tools"]["SMOOTH"] == {"mode": "POPOUT", "label_mode": "LABEL"})
+    # Presets edited in a stage belong to that stage; All keeps its own.
+    setattr(space, PROP, "BLOCK")
+    tool4 = copy.deepcopy(rec()["active"]["tools"]["DRAG"])
+    fields4 = {k: v for k, v in tool4.items() if k not in ("action", "presets", "mode", "label_mode")}
+    fake4 = SimpleNamespace(action="DRAG", _tool=tool4, _target="BLOCK", mode="INLINE", label_mode="LABEL",
+                            presets_text="10, 90", _shown_presets=[-25., 25., 50., 75., 125.],
+                            report=lambda *a: None, **fields4)
+    with ctx():
+        settings.ANIMASSIST_OT_tool_settings.execute(fake4, bpy.context)
+    data4 = rec()
+    check("Tool Settings in Block edits Block presets only",
+          data4["active"]["stages"]["BLOCK"]["tools"]["DRAG"]["presets"] == [10., 90.]
+          and data4["active"]["tools"]["DRAG"]["presets"] == [])
     check("Block key types start as icons",
           all(data["active"]["stages"]["BLOCK"]["tools"][a]["label_mode"] == "ICON"
               for a in ("TYPE_KEYFRAME", "TYPE_BREAKDOWN", "TYPE_EXTREME", "TYPE_HOLD")))

@@ -27,24 +27,37 @@ MODES = ('HIDDEN', 'BUTTON', 'POPOUT', 'INLINE')
 # Tools with a distinct row icon. Only these can show as an icon; any other tool
 # asked to (older records) shows its name.
 KEY_TYPE_ICONS = ('TYPE_KEYFRAME', 'TYPE_BREAKDOWN', 'TYPE_EXTREME', 'TYPE_HOLD', 'TYPE_JITTER')
-ICON_ACTIONS = frozenset(KEY_TYPE_ICONS + ('NUDGE_LEFT', 'NUDGE_RIGHT', 'COPY_KEYS', 'PASTE_KEYS'))
-# Stage tools that start as icons (owner decision 2026-10-18: Block's key types).
-STAGE_ICON_DEFAULTS = {'BLOCK': frozenset(KEY_TYPE_ICONS)}
+HANDLE_ICONS = ('HANDLE_AUTO', 'HANDLE_CLAMPED', 'HANDLE_VECTOR', 'HANDLE_ALIGNED', 'HANDLE_FREE')
+ICON_ACTIONS = frozenset(KEY_TYPE_ICONS + HANDLE_ICONS + (
+    'NUDGE_LEFT', 'NUDGE_RIGHT', 'COPY_KEYS', 'PASTE_KEYS', 'GROW_LEFT', 'GROW_RIGHT', 'GROW_BOTH',
+    'TO_SPLINE', 'TO_STEPPED', 'TRAIL_TOGGLE'))
+# Stage tools that start as icons (owner decisions 2026-10-18: key types, then version B).
+STAGE_ICON_DEFAULTS = {
+    'BLOCK': frozenset(KEY_TYPE_ICONS + ('GROW_LEFT', 'GROW_RIGHT', 'COPY_KEYS', 'PASTE_KEYS')),
+    'SPLINE': frozenset(('TO_SPLINE', 'HANDLE_CLAMPED', 'HANDLE_VECTOR', 'HANDLE_FREE', 'TRAIL_TOGGLE')),
+    'POLISH': frozenset(('NUDGE_LEFT', 'NUDGE_RIGHT')),
+}
+# Stage slider presets (version B): percentage buttons become one-click points on the
+# slider. Breakdown -25/125 match Push Prev/Next and 25/75 Pull Prev/Next at the default
+# Push/Pull Strength. All keeps the tool's own presets, so its row is unchanged.
+STAGE_PRESET_DEFAULTS = {
+    'BLOCK': {'DRAG': (-25., 25., 50., 75., 125.)},
+    'POLISH': {'SCALE_DRAG': (80., 90., 110., 120.)},
+}
 _B, _P, _I = 'BUTTON', 'POPOUT', 'INLINE'
 # Fixed default toolsets, left to right in workflow order (owner decision:
 # defaults never derive from a layout's All tools). Unlisted tools start Hidden.
 STAGE_DEFAULTS = {
-    'BLOCK': (('B25', _B), ('B50', _B), ('B75', _B), ('DRAG', _I), ('INBETWEEN', _B), ('INBETWEENS', _B),
-              ('PUSH_PREV', _B), ('PULL_PREV', _B), ('PULL_NEXT', _B), ('PUSH_NEXT', _B),
+    'BLOCK': (('DRAG', _I), ('INBETWEEN', _B), ('INBETWEENS', _B),
               ('RANGE', _B), ('ALL', _B), ('ENDS', _B), ('GROW_LEFT', _B), ('GROW_RIGHT', _B),
               ('TYPE_KEYFRAME', _B), ('TYPE_BREAKDOWN', _B), ('TYPE_EXTREME', _B), ('TYPE_HOLD', _B),
               ('COPY_KEYS', _B), ('PASTE_KEYS', _B)),
     'SPLINE': (('TO_SPLINE', _B), ('NEIGHBORS', _I), ('EASE', _I), ('SMOOTH', _I),
                ('REFERENCE', _B), ('FRAME', _P), ('AMPLIFY', _P),
                ('HANDLE_CLAMPED', _B), ('HANDLE_VECTOR', _B), ('HANDLE_FREE', _B),
-               ('TRAIL_SHOW', _B), ('TRAIL_HIDE', _B)),
-    'POLISH': (('NUDGE_LEFT', _B), ('NUDGE_RIGHT', _B), ('SCALE_DRAG', _P), ('T80', _B), ('T90', _B),
-               ('T110', _B), ('T120', _B), ('OFFSET_DRAG', _I), ('RIPPLE', _B), ('SNAP', _B),
+               ('TRAIL_TOGGLE', _B)),
+    'POLISH': (('NUDGE_LEFT', _B), ('NUDGE_RIGHT', _B), ('SCALE_DRAG', _I),
+               ('OFFSET_DRAG', _I), ('RIPPLE', _B), ('SNAP', _B),
                ('OPPOSITE', _B), ('MIRROR_SELECTED', _B), ('MIRROR_ACTIVE', _B), ('SWAP', _B)),
     'DELIVER': (('BAKE_STEP', _B), ('BAKE_PREVIEW', _B), ('SMART_BAKE', _B), ('REDUCE', _B), ('BAKE_INTEGER', _B),
                 ('PROXY_BAKE', _B), ('PROXY_TRANSLATION', _B), ('PROXY_ORIENTATION', _B), ('PROXY_WORLD', _B),
@@ -67,8 +80,28 @@ def family_of(action):
 def stage_default(stage):
     pairs = STAGE_DEFAULTS[stage]
     icons = STAGE_ICON_DEFAULTS.get(stage, ())
-    return dict(order=[a for a, _m in pairs],
-                tools={a: dict(mode=m, label_mode='ICON' if a in icons else 'LABEL') for a, m in pairs})
+    presets = STAGE_PRESET_DEFAULTS.get(stage, {})
+    tools = {}
+    for a, m in pairs:
+        tools[a] = dict(mode=m, label_mode='ICON' if a in icons else 'LABEL')
+        if a in presets: tools[a]['presets'] = list(presets[a])
+    return dict(order=[a for a, _m in pairs], tools=tools)
+
+
+def preset_bounds(action):
+    """Stage presets may go past a slider's display range, up to the tool's hard limits."""
+    _label, _unit, _default, low, high, hard_min, hard_max = SLIDERS[action]
+    return (hard_min if hard_min is not None else min(low, -1e8),
+            hard_max if hard_max is not None else max(high, 1e8))
+
+
+def stage_presets(action, raw):
+    if action not in SLIDERS: raise ValueError('Only numeric tools have presets')
+    if not isinstance(raw, (list, tuple)) or len(raw) > 12: raise ValueError('Use at most 12 numeric presets')
+    values = [finite(v, 'Preset') for v in raw]
+    low, high = preset_bounds(action)
+    if any(not low <= v <= high for v in values): raise ValueError('Presets must be inside the tool limits')
+    return values
 
 
 def has_icon(action):
@@ -111,6 +144,8 @@ def validate_stage(stage, raw, actions):
         if mode == 'HIDDEN': continue
         result['order'].append(action)
         result['tools'][action] = dict(mode=mode, label_mode=shown_label_mode(action, label_mode))
+        if 'presets' in entry and action in SLIDERS:
+            result['tools'][action]['presets'] = stage_presets(action, entry['presets'])
     for key, value in tools_raw.items():
         if key not in actions and key not in result['tools']:
             if not isinstance(value, dict): raise ValueError('Stage tool settings must be an object')
@@ -422,7 +457,7 @@ def pin_target(stage, action):
     return stage if stage in STAGE_KEYS and family_of(action) in stage_families(stage) else 'ALL'
 
 
-def set_stage_tool(record, stage, action, mode=None, label_mode=None):
+def set_stage_tool(record, stage, action, mode=None, label_mode=None, presets=None):
     """Change one tool's mode/label in All or a stage; showing a stage tool
     places it after the last visible tool of its family."""
     layout = record['active']
@@ -447,7 +482,10 @@ def set_stage_tool(record, stage, action, mode=None, label_mode=None):
                  and FAMILY_ORDER.index(family_of(a)) > FAMILY_ORDER.index(family)]
         index = same[-1] + 1 if same else (later[0] if later else len(setup['order']))
         setup['order'].insert(index, action)
-    setup['tools'][action] = dict(mode=mode, label_mode=label_mode)
+    entry = dict(mode=mode, label_mode=label_mode)
+    if presets is not None and action in SLIDERS: entry['presets'] = stage_presets(action, presets)
+    elif current and 'presets' in current: entry['presets'] = list(current['presets'])
+    setup['tools'][action] = entry
 
 
 def stage_entries(record, stage, actions):
@@ -475,7 +513,10 @@ def apply_entries(record, stage, entries, actions):
     old = _stage_setup(layout, stage)
     visible = [e for e in entries if e['mode'] != 'HIDDEN']
     setup = dict(order=[e['action'] for e in visible],
-                 tools={e['action']: dict(mode=e['mode'], label_mode=e['label_mode']) for e in visible})
+                 tools={e['action']: dict(mode=e['mode'], label_mode=shown_label_mode(e['action'], e['label_mode']))
+                        for e in visible})
+    for action, tool in setup['tools'].items():
+        if 'presets' in old['tools'].get(action, {}): tool['presets'] = list(old['tools'][action]['presets'])
     for key in old['order']:
         if key not in actions and key not in setup['tools']:
             setup['order'].append(key); setup['tools'][key] = copy.deepcopy(old['tools'].get(key, {}))

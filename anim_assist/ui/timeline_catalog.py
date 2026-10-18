@@ -81,6 +81,7 @@ ACTIONS = {
     "PROXY_BAKE": ("p7_one_click_proxy_bake", {}, "One-Click Translation Proxy and Bake"),
     "CLEANUP_ALL": ("p7_cleanup_all", {}, "Remove All Proxy Sessions"),
     "TRAIL_SHOW": ("p5_enable_overlay", {}, "Show World Motion Trails"),
+    "TRAIL_TOGGLE": ("timeline_trails_toggle", {}, "Show or Hide World Motion Trails"),
     "TRAIL_HIDE": ("p5_disable_overlay", {}, "Hide World Motion Trails"),
     "TRAIL_REFRESH": ("p5_refresh_overlay", {}, "Refresh World Motion Trails"),
     "TRAIL_DIAGNOSE": ("p5_run_diagnostics", {}, "Diagnose Motion Arcs"),
@@ -116,6 +117,7 @@ TIPS = {
     "EASE": "Drag selected keys from linear spacing toward eased spacing. Esc restores the keys",
     "AMPLIFY": "Drag to scale selected key values around the reference-frame value. This changes curve amplitude, not timing",
     "SMOOTH": "Drag selected keys toward neighboring averages; negative factors roughen the curve",
+    "TRAIL_TOGGLE": "Show world motion trails in the 3D Viewport, or hide them when they are shown. The eye is filled while trails are on",
     "TO_SPLINE": "Set selected keys to Bezier interpolation so blocked poses play as smooth curves. Handle types are kept",
     "TO_STEPPED": "Set selected keys to Constant interpolation so each pose holds until the next key, for reviewing poses",
     "T80": "Scale key spacing to 80% around the Timing pivot: keys sit closer together, so the action plays faster",
@@ -168,7 +170,7 @@ GROUPS = (
         "BAKE_STEP", "BAKE_PREVIEW", "SMART_BAKE", "REDUCE", "BAKE_INTEGER", None, "PROXY_BAKE", "PROXY_TRANSLATION",
         "PROXY_ORIENTATION", "PROXY_WORLD", "PROXY_PARENT", "BAKE_CLEANUP", "CLEANUP_ALL")),
     ("motion", "Motion", (
-        "TRAIL_SHOW", "TRAIL_HIDE", "TRAIL_REFRESH", "TRAIL_DIAGNOSE", None,
+        "TRAIL_TOGGLE", "TRAIL_SHOW", "TRAIL_HIDE", "TRAIL_REFRESH", "TRAIL_DIAGNOSE", None,
         "OFFSET", "OFFSET_MASK", "OFFSET_SCENE_RANGE")),
 )
 
@@ -368,6 +370,7 @@ SEARCH_TERMS = {
     "BOOKMARK_ADD": "reference bookmark save", "BOOKMARK_RECALL": "reference bookmark load",
     "BOOKMARK_REMOVE": "reference bookmark delete",
     "TO_SPLINE": "spline bezier interpolation smooth convert from stepped",
+    "TRAIL_TOGGLE": "trails motion path arcs show hide toggle eye",
     "TO_STEPPED": "stepped constant interpolation hold blocking review",
     "SWITCH_SINGLE": "space switch rig compensate", "SWITCH_RANGE": "space switch rig bake compensate",
     "SWITCH_BOOL": "space switch rig boolean", "SWITCH_ENUM": "space switch rig integer enum",

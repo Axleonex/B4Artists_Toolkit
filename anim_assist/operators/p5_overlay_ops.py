@@ -506,9 +506,34 @@ class AA_OT_p5_run_diagnostics(bpy.types.Operator):
         return {"FINISHED"}
 
 
+def trails_shown() -> bool:
+    """True while the trajectory overlay's draw handlers are registered."""
+    h3d, h2d = get_handler_ids()
+    return h3d >= 0 or h2d >= 0
+
+
+class AA_OT_timeline_trails_toggle(bpy.types.Operator):
+    """Show world motion trails, or hide them when they are shown."""
+
+    bl_idname = "animassist.timeline_trails_toggle"
+    bl_label = "Show or Hide Trails"
+    bl_description = "Show world motion trails in the 3D Viewport, or hide them when they are shown"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return _p5_poll(context)
+
+    def execute(self, context):
+        if trails_shown():
+            return bpy.ops.animassist.p5_disable_overlay()
+        return bpy.ops.animassist.p5_enable_overlay()
+
+
 CLASSES: tuple[type, ...] = (
     AA_OT_p5_enable_overlay,
     AA_OT_p5_disable_overlay,
+    AA_OT_timeline_trails_toggle,
     AA_OT_p5_refresh_overlay,
     AA_OT_p5_isolate_target,
     AA_OT_p5_mute_unselected,

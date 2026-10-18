@@ -24,7 +24,7 @@ try:
     p7s = sys.modules["B4_anim_assist.core.p7_session"]
     from B4_anim_assist.ui.timeline_catalog import ACTIONS
     from B4_anim_assist.ui import timeline_config as model
-    check("Catalogue has 95 actions", len(ACTIONS) == 95)
+    check("Catalogue has 96 actions", len(ACTIONS) == 96)
     check("Deliver defaults include the four tools",
           {"BAKE_PREVIEW", "BAKE_INTEGER", "PROXY_BAKE", "CLEANUP_ALL"}
           <= set(model.stage_default("DELIVER")["order"]))
@@ -143,9 +143,9 @@ try:
     # Spline stage: To Stepped / To Spline set the selected keys' interpolation; trails moved here.
     check("Spline shows Curves and Motion; Deliver shows Bake only",
           model.stage_families("SPLINE") == ("curves", "motion") and model.stage_families("DELIVER") == ("bake",))
-    check("Spline defaults start with To Spline and end with the trail buttons",
+    check("Spline defaults start with To Spline and end with the trails toggle",
           model.stage_default("SPLINE")["order"][0] == "TO_SPLINE"
-          and model.stage_default("SPLINE")["order"][-2:] == ["TRAIL_SHOW", "TRAIL_HIDE"])
+          and model.stage_default("SPLINE")["order"][-1] == "TRAIL_TOGGLE")
     # The Timeline shows the selected objects' curves; select only the mover.
     for o in bpy.context.view_layer.objects:
         o.select_set(False)
@@ -167,6 +167,49 @@ try:
     run("TO_SPLINE", mover)
     check("To Spline sets selected keys to Bezier",
           all(k.interpolation == "BEZIER" for fc in curves for k in fc.keyframe_points))
+
+    # Version B: Breakdown presets replace Push/Pull Prev/Next with the same results.
+    bd = bpy.data.objects.new("Bd", None)
+    scene.collection.objects.link(bd)
+    for o in bpy.context.view_layer.objects:
+        o.select_set(False)
+    bd.select_set(True)
+    bpy.context.view_layer.objects.active = bd
+
+    def key_bd():
+        bd.animation_data_clear()
+        for frame, x in ((1, 0.0), (21, 10.0)):
+            bd.location.x = x
+            bd.keyframe_insert("location", index=0, frame=frame)
+        scene.frame_set(11)
+
+    def x_at_11():
+        fc = next(f for f in get_fcurves(bd.animation_data.action, anim_data=bd.animation_data)
+                  if f.data_path == "location" and f.array_index == 0)
+        return round(fc.evaluate(11), 4)
+
+    results_bd = {}
+    for button, preset in (("PUSH_PREV", -25.), ("PULL_PREV", 25.), ("PULL_NEXT", 75.), ("PUSH_NEXT", 125.)):
+        key_bd(); run(button, bd); by_button = x_at_11()
+        key_bd()
+        with ctx(bd):
+            bpy.ops.animassist.timeline_slider("EXEC_DEFAULT", action="DRAG", value=preset, preset=True)
+        results_bd[button] = (by_button, x_at_11())
+    print("Breakdown button vs preset:", results_bd, flush=True)
+    check("Breakdown presets -25/25/75/125 match Push/Pull Prev/Next",
+          all(a == b for a, b in results_bd.values()) and results_bd["PUSH_PREV"][0] == -2.5)
+    check("Block shows Breakdown presets; All does not",
+          model.stage_view(model.recommended(ACTIONS)["active"], "BLOCK")[1]["DRAG"]["presets"] == [-25., 25., 50., 75., 125.]
+          and model.recommended(ACTIONS)["active"]["tools"]["DRAG"]["presets"] == [])
+
+    # Version B: one eye button shows and hides trails.
+    p5mod = sys.modules["B4_anim_assist.operators.p5_overlay_ops"]
+    before_trails = p5mod.trails_shown()
+    run("TRAIL_TOGGLE", bd)
+    after_once = p5mod.trails_shown()
+    run("TRAIL_TOGGLE", bd)
+    check("Trails toggle shows, then hides trails", before_trails is False and after_once is True
+          and p5mod.trails_shown() is False)
     addon_utils.disable("B4_anim_assist", default_set=False)
 except Exception:
     traceback.print_exc()

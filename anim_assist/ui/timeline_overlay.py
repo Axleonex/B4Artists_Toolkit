@@ -29,7 +29,7 @@ ROW_LABELS = {
     'SWAP': 'Swap', 'SMART_BAKE': 'Smart Bake', 'REDUCE': 'Reduce', 'BAKE_CLEANUP': 'Bake Proxies',
     'PROXY_TRANSLATION': 'Location Proxy', 'PROXY_ORIENTATION': 'Rotation Proxy', 'PROXY_WORLD': 'Proxy World',
     'PROXY_PARENT': 'Proxy Parent', 'BAKE_PREVIEW': 'Bake Preview', 'BAKE_INTEGER': 'Whole Frames',
-    'PROXY_BAKE': 'Proxy & Bake', 'TO_SPLINE': 'To Spline', 'TO_STEPPED': 'To Stepped', 'CLEANUP_ALL': 'Clean All Proxies',
+    'PROXY_BAKE': 'Proxy & Bake', 'TO_SPLINE': 'To Spline', 'TO_STEPPED': 'To Stepped', 'TRAIL_TOGGLE': 'Trails', 'CLEANUP_ALL': 'Clean All Proxies',
     'TRAIL_REFRESH': 'Refresh', 'TRAIL_DIAGNOSE': 'Diagnose', 'TRAIL_HIDE': 'Hide Trails',
 }
 
@@ -436,6 +436,117 @@ def _key_icon(rect, context, action, alpha):
         shader.bind(); shader.uniform_float('color', color); batch.draw(shader)
 
 
+# Handle-type icons use the theme's Graph Editor handle colours (bright selected variants).
+_HANDLE_COLORS = {
+    'HANDLE_AUTO': ('handle_sel_auto', (.941, 1.0, .251)),
+    'HANDLE_CLAMPED': ('handle_sel_auto_clamped', (.941, .686, .565)),
+    'HANDLE_VECTOR': ('handle_sel_vect', (.251, .753, .188)),
+    'HANDLE_ALIGNED': ('handle_sel_align', (.941, .565, .627)),
+    'HANDLE_FREE': ('handle_sel_free', (1.0, .937, .945)),
+}
+_LINE_ICONS = frozenset(_HANDLE_COLORS) | {'GROW_LEFT', 'GROW_RIGHT', 'GROW_BOTH', 'TO_SPLINE', 'TO_STEPPED',
+                                           'TRAIL_TOGGLE'}
+
+
+def handle_icon_color(context, action):
+    name, fallback = _HANDLE_COLORS[action]
+    try:
+        return tuple(getattr(context.preferences.themes[0].common.curves, name))[:3]
+    except (AttributeError, IndexError, TypeError):
+        return fallback
+
+
+def _trails_shown():
+    try:
+        from ..operators.p5_overlay_ops import trails_shown
+        return trails_shown()
+    except Exception:
+        return False
+
+
+def _lines(points, color, mode='LINE_STRIP'):
+    shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+    batch = batch_for_shader(shader, mode, {'pos': points})
+    shader.bind(); shader.uniform_float('color', color); batch.draw(shader)
+
+
+def _tris(points, color):
+    _lines(points, color, 'TRIS')
+
+
+def _disc(cx, cy, radius, color, steps=12):
+    import math
+    ring = [(cx + math.cos(i * 2 * math.pi / steps) * radius, cy + math.sin(i * 2 * math.pi / steps) * radius)
+            for i in range(steps + 1)]
+    _tris([p for i in range(steps) for p in ((cx, cy), ring[i], ring[i + 1])], color)
+
+
+def _tool_icon(rect, context, action, alpha, accent, ink):
+    """Line icons for row tools (grow, interpolation, handle types, trails)."""
+    import math
+    x, y, w, h = rect
+    cx, cy = x + w / 2, y + h / 2
+    r = min(w, h) * .32
+    scale = context.preferences.system.ui_scale
+    gpu.state.blend_set('ALPHA')
+    gpu.state.line_width_set(max(1., 1.5 * scale))
+    try:
+        if action in _HANDLE_COLORS:
+            color = (*handle_icon_color(context, action), alpha)
+            shape = {
+                'HANDLE_CLAMPED': ((cx - r, cy), (cx + r, cy)),
+                'HANDLE_AUTO': ((cx - r, cy - r * .5), (cx + r, cy + r * .5)),
+                'HANDLE_ALIGNED': ((cx - r, cy - r * .85), (cx + r, cy + r * .85)),
+                'HANDLE_VECTOR': ((cx - r, cy + r * .85), (cx, cy), (cx + r, cy + r * .85)),
+                'HANDLE_FREE': ((cx - r, cy + r * .7), (cx, cy), (cx + r, cy - r * .25)),
+            }[action]
+            _lines(shape, color)
+            for px, py in (shape[0], shape[-1]):
+                _quad((px - 1.5 * scale, py - 1.5 * scale, 3 * scale, 3 * scale), color)
+            _quad((cx - 2.5 * scale, cy - 2.5 * scale, 5 * scale, 5 * scale), (*ink[:3], alpha))
+        elif action == 'TO_SPLINE':
+            points = []
+            for i in range(13):
+                t = i / 12
+                ease = t * t * (3 - 2 * t)
+                points.append((cx - r + 2 * r * t, cy - r * .75 + 1.5 * r * ease))
+            _lines([(cx - r * 1.3, cy - r * .75)] + points + [(cx + r * 1.3, cy + r * .75)], (*accent[:3], alpha))
+        elif action == 'TO_STEPPED':
+            s = r * .66
+            _lines(((cx - r * 1.2, cy - r * .75), (cx - s, cy - r * .75), (cx - s, cy), (cx + s, cy),
+                    (cx + s, cy + r * .75), (cx + r * 1.2, cy + r * .75)), (*accent[:3], alpha))
+        elif action in {'GROW_LEFT', 'GROW_RIGHT', 'GROW_BOTH'}:
+            color = (*accent[:3], alpha)
+            # A selected key (diamond) with an arrow growing the selection outward.
+            def key(kx):
+                k = r * .45
+                _lines(((kx, cy + k), (kx + k, cy), (kx, cy - k), (kx - k, cy), (kx, cy + k)), color)
+            if action == 'GROW_BOTH':
+                key(cx)
+                _tris(((cx - r * 1.3, cy), (cx - r * .6, cy + r * .5), (cx - r * .6, cy - r * .5),
+                       (cx + r * 1.3, cy), (cx + r * .6, cy + r * .5), (cx + r * .6, cy - r * .5)), color)
+            else:
+                sign = -1 if action == 'GROW_LEFT' else 1
+                kx = cx - sign * r * .55
+                key(kx)
+                _tris(((cx + sign * r * 1.25, cy), (cx + sign * r * .2, cy + r * .6),
+                       (cx + sign * r * .2, cy - r * .6)), color)
+        elif action == 'TRAIL_TOGGLE':
+            shown = _trails_shown()
+            color = (*accent[:3], alpha)
+            upper = [(cx + math.cos(a) * r * 1.25, cy + math.sin(a) * r * .75)
+                     for a in [math.pi * i / 10 for i in range(11)]]
+            lower = [(cx + math.cos(a) * r * 1.25, cy - math.sin(a) * r * .75)
+                     for a in [math.pi * i / 10 for i in range(10, -1, -1)]]
+            _lines(upper + lower, color)
+            if shown:
+                _disc(cx, cy, r * .45, color)
+            else:
+                _lines(((cx - r * 1.1, cy - r * .9), (cx + r * 1.1, cy + r * .9)), color, 'LINES')
+    finally:
+        gpu.state.line_width_set(1.)
+
+
 def _parts(rect,label,scale):
     blf.size(0,round(11*scale))
     return model.slider_parts(rect,label,lambda s:blf.dimensions(0,s)[0],scale)
@@ -533,6 +644,8 @@ def _draw():
                 _text(reset_rect,'R',ink,scale,font=9)
             elif not label and action in _KEY_ICONS:
                 _key_icon(rect,context,action,ink[3])
+            elif not label and action in _LINE_ICONS:
+                _tool_icon(rect,context,action,ink[3],accent,ink)
             elif not label:
                 _glyph(rect,action if action else kind,(*accent[:3],ink[3]))
             else:
@@ -677,7 +790,7 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
                 _slider_controls(context,event,found,context.preferences.system.ui_scale)
             elif found[0]=='PRESET':
                 value=float(found[1].split(':',1)[1])
-                result=bpy.ops.animassist.timeline_slider('EXEC_DEFAULT',action=action,value=value)
+                result=bpy.ops.animassist.timeline_slider('EXEC_DEFAULT',action=action,value=value,preset=True)
                 if 'FINISHED' in result: bpy.ops.ed.undo_push(message='Preset '+model.SLIDERS[action][0])
             else:
                 bpy.ops.animassist.overlay_control("INVOKE_DEFAULT", kind=found[0], key=found[1])
