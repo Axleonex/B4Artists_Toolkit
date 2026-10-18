@@ -30,13 +30,23 @@ KEY_TYPE_ICONS = ('TYPE_KEYFRAME', 'TYPE_BREAKDOWN', 'TYPE_EXTREME', 'TYPE_HOLD'
 HANDLE_ICONS = ('HANDLE_AUTO', 'HANDLE_CLAMPED', 'HANDLE_VECTOR', 'HANDLE_ALIGNED', 'HANDLE_FREE')
 ICON_ACTIONS = frozenset(KEY_TYPE_ICONS + HANDLE_ICONS + (
     'NUDGE_LEFT', 'NUDGE_RIGHT', 'COPY_KEYS', 'PASTE_KEYS', 'GROW_LEFT', 'GROW_RIGHT', 'GROW_BOTH',
-    'TO_SPLINE', 'TO_STEPPED', 'TRAIL_TOGGLE'))
+    'TO_SPLINE', 'TO_STEPPED', 'TRAIL_TOGGLE', 'INBETWEEN', 'INBETWEENS', 'REFERENCE',
+    'OPPOSITE', 'MIRROR_SELECTED', 'MIRROR_ACTIVE', 'SWAP', 'BAKE_STEP',
+    'PROXY_TRANSLATION', 'PROXY_ORIENTATION', 'PROXY_WORLD', 'PROXY_PARENT'))
 # Stage tools that start as icons (owner decisions 2026-10-18: key types, then version B).
 STAGE_ICON_DEFAULTS = {
-    'BLOCK': frozenset(KEY_TYPE_ICONS + ('GROW_LEFT', 'GROW_RIGHT', 'COPY_KEYS', 'PASTE_KEYS')),
-    'SPLINE': frozenset(('TO_SPLINE', 'HANDLE_CLAMPED', 'HANDLE_VECTOR', 'HANDLE_FREE', 'TRAIL_TOGGLE')),
-    'POLISH': frozenset(('NUDGE_LEFT', 'NUDGE_RIGHT')),
+    'BLOCK': frozenset(KEY_TYPE_ICONS + ('GROW_LEFT', 'GROW_RIGHT', 'COPY_KEYS', 'PASTE_KEYS',
+                                         'INBETWEEN', 'INBETWEENS')),
+    'SPLINE': frozenset(('TO_SPLINE', 'REFERENCE', 'HANDLE_CLAMPED', 'HANDLE_VECTOR', 'HANDLE_FREE',
+                         'TRAIL_TOGGLE')),
+    'POLISH': frozenset(('NUDGE_LEFT', 'NUDGE_RIGHT', 'OPPOSITE', 'MIRROR_SELECTED', 'MIRROR_ACTIVE', 'SWAP')),
+    'DELIVER': frozenset(('BAKE_STEP', 'PROXY_TRANSLATION', 'PROXY_ORIENTATION', 'PROXY_WORLD',
+                          'PROXY_PARENT')),
 }
+# Compact rows (owner decision 2026-10-18): these stage sliders draw their presets as
+# click ticks on a wider track instead of preset buttons.
+STAGE_TICK_DEFAULTS = {'BLOCK': {'DRAG'}, 'POLISH': {'SCALE_DRAG', 'RIPPLE'}, 'DELIVER': {'REDUCE'}}
+TICK_TRACK = 140  # logical px of a tick track at full size
 # Stage slider presets (version B): percentage buttons become one-click points on the
 # slider. Breakdown -25/125 match Push Prev/Next and 25/75 Pull Prev/Next at the default
 # Push/Pull Strength. All keeps the tool's own presets, so its row is unchanged.
@@ -55,7 +65,7 @@ STAGE_DEFAULTS = {
               ('TYPE_KEYFRAME', _B), ('TYPE_BREAKDOWN', _B), ('TYPE_EXTREME', _B), ('TYPE_HOLD', _B),
               ('COPY_KEYS', _B), ('PASTE_KEYS', _B)),
     'SPLINE': (('TO_SPLINE', _B), ('NEIGHBORS', _I), ('EASE', _I), ('SMOOTH', _I),
-               ('REFERENCE', _B), ('FRAME', _P), ('AMPLIFY', _P),
+               ('REFERENCE', _B), ('FRAME', _I), ('AMPLIFY', _I),
                ('HANDLE_CLAMPED', _B), ('HANDLE_VECTOR', _B), ('HANDLE_FREE', _B),
                ('TRAIL_TOGGLE', _B)),
     'POLISH': (('NUDGE_LEFT', _B), ('NUDGE_RIGHT', _B), ('SCALE_DRAG', _I),
@@ -83,10 +93,12 @@ def stage_default(stage):
     pairs = STAGE_DEFAULTS[stage]
     icons = STAGE_ICON_DEFAULTS.get(stage, ())
     presets = STAGE_PRESET_DEFAULTS.get(stage, {})
+    ticks = STAGE_TICK_DEFAULTS.get(stage, set())
     tools = {}
     for a, m in pairs:
         tools[a] = dict(mode=m, label_mode='ICON' if a in icons else 'LABEL')
         if a in presets: tools[a]['presets'] = list(presets[a])
+        if a in ticks: tools[a]['ticks'] = True
     return dict(order=[a for a, _m in pairs], tools=tools)
 
 
@@ -95,6 +107,24 @@ def preset_bounds(action):
     _label, _unit, _default, low, high, hard_min, hard_max = SLIDERS[action]
     return (hard_min if hard_min is not None else min(low, -1e8),
             hard_max if hard_max is not None else max(high, 1e8))
+
+
+def tick_values(tool):
+    """Presets drawn as ticks on this slider's track (empty when shown as buttons)."""
+    return list(tool.get('presets', [])) if tool.get('ticks') else []
+
+
+def track_range(tool):
+    """Track span: the tool range, stretched to include any tick presets."""
+    ticks = tick_values(tool)
+    return min([tool['range_min'], *ticks]), max([tool['range_max'], *ticks])
+
+
+def snap_to_tick(tool, value, fraction=.03):
+    """A value within *fraction* of the track span of a tick lands exactly on it."""
+    low, high = track_range(tool)
+    near = [t for t in tick_values(tool) if abs(t - value) <= fraction * (high - low)]
+    return min(near, key=lambda t: abs(t - value)) if near else value
 
 
 def stage_presets(action, raw):
@@ -148,6 +178,9 @@ def validate_stage(stage, raw, actions):
         result['tools'][action] = dict(mode=mode, label_mode=shown_label_mode(action, label_mode))
         if 'presets' in entry and action in SLIDERS:
             result['tools'][action]['presets'] = stage_presets(action, entry['presets'])
+        if 'ticks' in entry and action in SLIDERS:
+            if type(entry['ticks']) is not bool: raise ValueError('Ticks must be on or off')
+            result['tools'][action]['ticks'] = entry['ticks']
     for key, value in tools_raw.items():
         if key not in actions and key not in result['tools']:
             if not isinstance(value, dict): raise ValueError('Stage tool settings must be an object')
@@ -492,6 +525,7 @@ def set_stage_tool(record, stage, action, mode=None, label_mode=None, presets=No
     entry = dict(mode=mode, label_mode=label_mode)
     if presets is not None and action in SLIDERS: entry['presets'] = stage_presets(action, presets)
     elif current and 'presets' in current: entry['presets'] = list(current['presets'])
+    if current and 'ticks' in current: entry['ticks'] = current['ticks']
     setup['tools'][action] = entry
 
 
@@ -524,6 +558,7 @@ def apply_entries(record, stage, entries, actions):
                         for e in visible})
     for action, tool in setup['tools'].items():
         if 'presets' in old['tools'].get(action, {}): tool['presets'] = list(old['tools'][action]['presets'])
+        if 'ticks' in old['tools'].get(action, {}): tool['ticks'] = old['tools'][action]['ticks']
     for key in old['order']:
         if key not in actions and key not in setup['tools']:
             setup['order'].append(key); setup['tools'][key] = copy.deepcopy(old['tools'].get(key, {}))
@@ -568,17 +603,20 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
                 tool=tools[action]; mode=tool['mode']
                 label=SLIDERS[action][0] if action in SLIDERS else labels.get(action,action.replace('_',' ').title())
                 icon=shown_label_mode(action,tool['label_mode'])=='ICON'
+                ticked=bool(tick_values(tool)) and mode=='INLINE' and not demote
                 if mode=='INLINE' and not demote:
                     # named: compact track that keeps the slider's name (before names are dropped).
                     label='' if compact and not named else label
-                    w=((64 if named else 80) if compact else tool['width'])*scale+measure(label)+(46 if compact else 54)*scale
+                    track=(64 if named else 80) if compact else tool['width']
+                    if ticked: track=max(track, TICK_TRACK*(.7 if compact else 1))
+                    w=track*scale+measure(label)+(46 if compact else 54)*scale
                     kind='SLIDER'
                 else:
                     kind='POPOUT' if mode in {'POPOUT','INLINE'} else 'ACTION'
                     if icon: label=''
                     w=max(24*scale,measure(label)+2*pad)
                 specs.append((kind,action,label,w))
-                if action in SLIDERS:
+                if action in SLIDERS and not ticked:
                     for value in tool['presets']:
                         text=f'{value:g}'
                         specs.append(('PRESET',action+':'+text,text,max(24*scale,measure(text)+2*pad)))

@@ -70,7 +70,11 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
             reason=_unavailable(context,context.area,self.action)
             if reason: raise ValueError(reason)
             record=timeline_record(get_prefs(context))
-            self._tool=model.effective_tool(self.action,record['active']['tools'][self.action])
+            from ..ui.timeline_overlay import current_stage
+            # The stage the row shows decides presets and ticks; amounts stay shared.
+            shown=model.stage_view(record['active'],current_stage(context))[1][self.action]
+            self._tool=model.effective_tool(self.action,shown)
+            self._lo,self._hi=model.track_range(self._tool)
             self._area=context.area; self._window=context.window; self._manager=context.window_manager
             self._window_id=context.window.as_pointer(); self._area_id=context.area.as_pointer()
             self._scene=context.scene
@@ -78,7 +82,7 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
             self._area_size=(context.area.width,context.area.height)
             self._session=capture(context,self.action)
             self._start_x=event.mouse_x
-            self._start=min(self._tool['range_max'],max(self._tool['range_min'],
+            self._start=min(self._hi,max(self._lo,
                 last_value(context.window,context.area,self.action,self._tool['default'])))
             self.value=self.value if self.apply_value else self._start
             self._moved=False; self._numeric=''; self._aborted=False
@@ -103,10 +107,11 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
 
     def _track_value(self,x):
         fraction=min(1.,max(0.,(x-self.track_x)/max(1.,self.track_width)))
-        return self._tool['range_min']+fraction*(self._tool['range_max']-self._tool['range_min'])
+        value=self._lo+fraction*(self._hi-self._lo)
+        return _model().snap_to_tick(self._tool,value)
 
     def _preview(self,value):
-        if not self._tool['range_min']<=value<=self._tool['range_max']:
+        if not self._lo<=value<=self._hi:
             raise ValueError('Enter a value inside the configured slider range')
         self._session.preview(value)
         self.value=value
@@ -168,10 +173,10 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
                     value=self._track_value(event.mouse_region_x) if self.mode=='INLINE' else model.value_from_pointer(
                         self._tool,self._start,delta,precise=event.shift,snap=event.ctrl)
                     if self.mode=='INLINE' and event.shift:
-                        value=self._inline_origin+delta/max(1.,self.track_width)*(self._tool['range_max']-self._tool['range_min'])*.1
+                        value=self._inline_origin+delta/max(1.,self.track_width)*(self._hi-self._lo)*.1
                     if self.mode=='INLINE' and (self._tool['snap_enabled'] or event.ctrl):
                         step=self._tool['snap_step']; value=round(value/step)*step
-                    self._preview(min(self._tool['range_max'],max(self._tool['range_min'],value)))
+                    self._preview(min(self._hi,max(self._lo,value)))
             self._status(context)
             return {'RUNNING_MODAL'}
         except Exception as exc:

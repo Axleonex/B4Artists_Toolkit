@@ -115,8 +115,8 @@ class ConfigTests(unittest.TestCase):
         self.assertNotIn('B25',stages['BLOCK']['order']); self.assertNotIn('PUSH_PREV',stages['BLOCK']['order'])
         self.assertNotIn('T80',stages['POLISH']['order'])
         self.assertEqual(stages['BLOCK']['tools']['DRAG']['presets'],[-25.,25.,50.,75.,125.])
-        self.assertEqual(stages['POLISH']['tools']['SCALE_DRAG'],{'mode':'INLINE','label_mode':'LABEL','presets':[80.,90.,110.,120.]})
-        self.assertEqual(stages['SPLINE']['tools']['FRAME'],{'mode':'POPOUT','label_mode':'LABEL'})
+        self.assertEqual(stages['POLISH']['tools']['SCALE_DRAG'],{'mode':'INLINE','label_mode':'LABEL','presets':[80.,90.,110.,120.],'ticks':True})
+        self.assertEqual(stages['SPLINE']['tools']['FRAME'],{'mode':'INLINE','label_mode':'LABEL'})
         self.assertEqual(stages['BLOCK']['tools']['DRAG']['mode'],'INLINE')
         self.assertEqual(stages['POLISH']['tools']['OFFSET_DRAG']['mode'],'INLINE')
         self.assertEqual(stages['DELIVER']['order'],['BAKE_STEP','BAKE_PREVIEW','SMART_BAKE','REDUCE','BAKE_INTEGER',
@@ -279,18 +279,18 @@ class IconTests(unittest.TestCase):
         block = self.record['active']['stages']['BLOCK']['tools']
         for action in ('TYPE_KEYFRAME', 'TYPE_BREAKDOWN', 'TYPE_EXTREME', 'TYPE_HOLD'):
             self.assertEqual(block[action]['label_mode'], 'ICON')
-        self.assertEqual(block['INBETWEEN']['label_mode'], 'LABEL')
+        self.assertEqual(block['RANGE']['label_mode'], 'LABEL')
         self.assertEqual(self.record['active']['tools']['TYPE_KEYFRAME']['label_mode'], 'LABEL')
 
     def test_icon_only_for_tools_that_have_one(self):
         self.assertTrue(config.has_icon('TYPE_BREAKDOWN'))
         self.assertTrue(config.has_icon('NUDGE_LEFT'))
         self.assertFalse(config.has_icon('SMOOTH'))
-        self.assertFalse(config.has_icon('BAKE_STEP'))
+        self.assertFalse(config.has_icon('BAKE_PREVIEW'))
         config.set_stage_tool(self.record, 'SPLINE', 'SMOOTH', label_mode='ICON')
         self.assertEqual(self.record['active']['stages']['SPLINE']['tools']['SMOOTH']['label_mode'], 'LABEL')
-        config.set_stage_tool(self.record, 'ALL', 'BAKE_STEP', label_mode='ICON')
-        self.assertEqual(self.record['active']['tools']['BAKE_STEP']['label_mode'], 'LABEL')
+        config.set_stage_tool(self.record, 'ALL', 'BAKE_PREVIEW', label_mode='ICON')
+        self.assertEqual(self.record['active']['tools']['BAKE_PREVIEW']['label_mode'], 'LABEL')
 
     def test_older_icon_setting_on_a_tool_without_one_loads_as_label(self):
         record = copy.deepcopy(self.record)
@@ -323,7 +323,7 @@ class StagePresetTests(unittest.TestCase):
         measure = lambda text: len(text) * 6
         block = config.toolbar_layout(1920, 120, 28, False, self.record, groups, {}, measure, 'BLOCK')
         all_row = config.toolbar_layout(1920, 120, 28, False, self.record, groups, {}, measure, 'ALL')
-        self.assertEqual([c[2] for c in block if c[0] == 'PRESET'], ['-25', '25', '50', '75', '125'])
+        self.assertEqual([c[2] for c in block if c[0] == 'PRESET'], [])  # drawn as ticks on the track
         self.assertFalse([c for c in all_row if c[0] == 'PRESET'])
 
     def test_stage_presets_go_past_the_display_range_within_tool_limits(self):
@@ -345,18 +345,18 @@ class StagePresetTests(unittest.TestCase):
     def test_version_b_icons(self):
         icons = {stage: {a for a, t in self.record['active']['stages'][stage]['tools'].items() if t['label_mode'] == 'ICON'}
                  for stage in config.STAGE_KEYS}
-        self.assertEqual(icons['SPLINE'], {'TO_SPLINE', 'HANDLE_CLAMPED', 'HANDLE_VECTOR', 'HANDLE_FREE', 'TRAIL_TOGGLE'})
-        self.assertEqual(icons['POLISH'], {'NUDGE_LEFT', 'NUDGE_RIGHT'})
+        self.assertEqual(icons['SPLINE'], {'TO_SPLINE', 'REFERENCE', 'HANDLE_CLAMPED', 'HANDLE_VECTOR', 'HANDLE_FREE', 'TRAIL_TOGGLE'})
+        self.assertEqual(icons['POLISH'], {'NUDGE_LEFT', 'NUDGE_RIGHT', 'OPPOSITE', 'MIRROR_SELECTED', 'MIRROR_ACTIVE', 'SWAP'})
         self.assertTrue({'GROW_LEFT', 'GROW_RIGHT', 'COPY_KEYS', 'PASTE_KEYS', 'TYPE_KEYFRAME'} <= icons['BLOCK'])
-        self.assertEqual(icons['DELIVER'], set())
+        self.assertEqual(icons['DELIVER'], {'BAKE_STEP', 'PROXY_TRANSLATION', 'PROXY_ORIENTATION', 'PROXY_WORLD', 'PROXY_PARENT'})
 
 
 class ReduceRippleTests(unittest.TestCase):
     def test_defaults(self):
         record = config.recommended(actions)
         stages = record['active']['stages']
-        self.assertEqual(stages['POLISH']['tools']['RIPPLE'], {'mode': 'INLINE', 'label_mode': 'LABEL', 'presets': [-1., 1.]})
-        self.assertEqual(stages['DELIVER']['tools']['REDUCE'], {'mode': 'INLINE', 'label_mode': 'LABEL', 'presets': [.001, .01, .05]})
+        self.assertEqual(stages['POLISH']['tools']['RIPPLE'], {'mode': 'INLINE', 'label_mode': 'LABEL', 'presets': [-1., 1.], 'ticks': True})
+        self.assertEqual(stages['DELIVER']['tools']['REDUCE'], {'mode': 'INLINE', 'label_mode': 'LABEL', 'presets': [.001, .01, .05], 'ticks': True})
         self.assertEqual(record['active']['tools']['REDUCE']['precision'], 3)
         self.assertEqual(record['active']['tools']['RIPPLE']['precision'], 1)
         self.assertEqual(record['active']['tools']['REDUCE']['mode'], 'HIDDEN')
@@ -368,6 +368,44 @@ class ReduceRippleTests(unittest.TestCase):
         result = config.validate(record, actions)
         self.assertEqual(result['active']['tools']['REDUCE']['mode'], 'BUTTON')
         self.assertEqual(result['active']['tools']['REDUCE']['range_max'], .1)
+
+
+class TickTests(unittest.TestCase):
+    def setUp(self):
+        self.record = config.recommended(actions)
+        self.measure = lambda text: len(text) * 6
+
+    def test_track_spans_ticks_and_snaps(self):
+        drag = config.effective_tool('DRAG', config.stage_view(self.record['active'], 'BLOCK')[1]['DRAG'])
+        self.assertEqual(config.track_range(drag), (-25., 125.))
+        self.assertEqual(config.snap_to_tick(drag, 122.), 125.)
+        self.assertEqual(config.snap_to_tick(drag, 110.), 110.)
+        plain = config.effective_tool('DRAG', self.record['active']['tools']['DRAG'])
+        self.assertEqual(config.track_range(plain), (0., 100.))
+
+    def test_ticks_replace_preset_buttons_until_the_slider_is_demoted(self):
+        wide = config.toolbar_layout(1920, 120, 28, False, self.record, groups, {}, self.measure, 'BLOCK')
+        self.assertFalse([c for c in wide if c[0] == 'PRESET'])
+        self.assertEqual(next(c for c in wide if c[1] == 'DRAG')[0], 'SLIDER')
+        narrow = config.toolbar_layout(560, 120, 28, False, self.record, groups, {}, self.measure, 'BLOCK')
+        drag = next((c for c in narrow if c[1] == 'DRAG'), None)
+        if drag and drag[0] == 'POPOUT':
+            self.assertTrue([c for c in narrow if c[0] == 'PRESET'])
+
+    def test_ticks_survive_edits_and_round_trip(self):
+        config.set_stage_tool(self.record, 'BLOCK', 'DRAG', mode='POPOUT')
+        config.set_stage_tool(self.record, 'BLOCK', 'DRAG', mode='INLINE')
+        self.assertTrue(self.record['active']['stages']['BLOCK']['tools']['DRAG']['ticks'])
+        decoded = config.decode(config.encode(self.record, actions), actions)
+        self.assertTrue(decoded['active']['stages']['BLOCK']['tools']['DRAG']['ticks'])
+        bad = copy.deepcopy(self.record); bad['active']['stages']['BLOCK']['tools']['DRAG']['ticks'] = 'yes'
+        with self.assertRaises(ValueError): config.validate(bad, actions)
+
+    def test_compact_rows_fit_1397_with_named_sliders(self):
+        for stage in config.STAGE_KEYS:
+            items = config.toolbar_layout(1397, 120, 28, False, self.record, groups, {}, lambda t: len(t) * 6.2, stage)
+            shown = {c[1] for c in items if c[0] in {'ACTION', 'SLIDER', 'POPOUT'}}
+            self.assertEqual(shown, set(self.record['active']['stages'][stage]['order']), stage)
 
 
 if __name__=='__main__': unittest.main()

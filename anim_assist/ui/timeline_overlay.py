@@ -116,6 +116,15 @@ def _tooltip_paragraphs(context, item):
         lines = [(ACTIONS[action][2], 'TITLE'), (text.rstrip('.') + '.', 'BODY'),
                  (f'Works on: {command_metadata(action)[0]}.', 'DETAIL'),
                  ('Drag to preview; release to apply; Esc cancels. Right-click for tool settings.', 'DETAIL')]
+        try:
+            from ..prefs import get_prefs, timeline_record
+            shown = model.stage_view(timeline_record(get_prefs(context))['active'], current_stage(context))[1][action]
+            ticks = model.tick_values(shown)
+        except (ValueError, KeyError, AttributeError):
+            ticks = []
+        if ticks and kind == 'SLIDER':
+            unit = model.SLIDERS[action][1]
+            lines.insert(2, ('Ticks: ' + ', '.join(f'{t:g}{unit}' for t in ticks) + '. Click a tick to apply it.', 'BODY'))
         if action == 'DRAG':
             lines.append((BREAKDOWN_ANCHOR_HINT, 'DETAIL'))
         return lines
@@ -444,8 +453,11 @@ _HANDLE_COLORS = {
     'HANDLE_ALIGNED': ('handle_sel_align', (.941, .565, .627)),
     'HANDLE_FREE': ('handle_sel_free', (1.0, .937, .945)),
 }
+_SHAPE_ICONS = frozenset({'INBETWEEN', 'INBETWEENS', 'REFERENCE', 'OPPOSITE', 'MIRROR_SELECTED', 'MIRROR_ACTIVE',
+                          'SWAP', 'BAKE_STEP', 'PROXY_TRANSLATION', 'PROXY_ORIENTATION', 'PROXY_WORLD',
+                          'PROXY_PARENT'})
 _LINE_ICONS = frozenset(_HANDLE_COLORS) | {'GROW_LEFT', 'GROW_RIGHT', 'GROW_BOTH', 'TO_SPLINE', 'TO_STEPPED',
-                                           'TRAIL_TOGGLE'}
+                                           'TRAIL_TOGGLE'} | _SHAPE_ICONS
 
 
 def handle_icon_color(context, action):
@@ -481,6 +493,79 @@ def _disc(cx, cy, radius, color, steps=12):
     _tris([p for i in range(steps) for p in ((cx, cy), ring[i], ring[i + 1])], color)
 
 
+def _ring(cx, cy, radius, color, steps=20, start=0., sweep=None):
+    import math
+    sweep = 2 * math.pi if sweep is None else sweep
+    _lines([(cx + math.cos(start + sweep * i / steps) * radius, cy + math.sin(start + sweep * i / steps) * radius)
+            for i in range(steps + 1)], color)
+
+
+def _shape_icon(action, cx, cy, r, color, scale):
+    """Compact-row icons for tween, reference, pose, bake and proxy tools."""
+    import math
+
+    def diamond(dx, size):
+        _tris(((dx, cy + size), (dx + size, cy), (dx, cy - size), (dx, cy + size), (dx, cy - size), (dx - size, cy)),
+              color)
+
+    def triangle(tip, base, half, filled=True):
+        points = ((tip, cy), (base, cy + half), (base, cy - half))
+        if filled: _tris(points, color)
+        else: _lines(points + (points[0],), color)
+
+    if action in {'INBETWEEN', 'INBETWEENS'}:
+        diamond(cx - r * 1.0, r * .55); diamond(cx + r * 1.0, r * .55)
+        if action == 'INBETWEEN':
+            _quad((cx - r * .4, cy - .9 * scale, r * .8, 1.8 * scale), color)
+            _quad((cx - .9 * scale, cy - r * .4, 1.8 * scale, r * .8), color)
+        else:
+            for dx in (-.25, .25):
+                _quad((cx + dx * r - 1.5 * scale, cy - 1.5 * scale, 3 * scale, 3 * scale), color)
+    elif action == 'REFERENCE':
+        _ring(cx, cy, r * .95, color); _ring(cx, cy, r * .5, color)
+        _quad((cx - 1.2 * scale, cy - 1.2 * scale, 2.4 * scale, 2.4 * scale), color)
+    elif action == 'OPPOSITE':
+        from_x, to_x = cx - r * .65, cx + r * .65
+        _disc(from_x, cy, r * .42, color); _ring(to_x, cy, r * .42, color)
+        _lines(((from_x + r * .45, cy), (to_x - r * .45, cy)), color)
+    elif action in {'MIRROR_SELECTED', 'MIRROR_ACTIVE'}:
+        for y0 in (-1., -.2, .6):
+            _lines(((cx, cy + y0 * r), (cx, cy + (y0 + .4) * r)), color)
+        triangle(cx - r * 1.2, cx - r * .25, r * .6)
+        triangle(cx + r * 1.2, cx + r * .25, r * .6, filled=action == 'MIRROR_SELECTED')
+    elif action == 'SWAP':
+        top, bottom = cy + r * .45, cy - r * .45
+        _lines(((cx - r * 1.1, top), (cx + r * .7, top)), color)
+        _tris(((cx + r * 1.2, top), (cx + r * .6, top + r * .35), (cx + r * .6, top - r * .35)), color)
+        _lines(((cx + r * 1.1, bottom), (cx - r * .7, bottom)), color)
+        _tris(((cx - r * 1.2, bottom), (cx - r * .6, bottom + r * .35), (cx - r * .6, bottom - r * .35)), color)
+    elif action == 'BAKE_STEP':
+        _lines(((cx - r * 1.2, cy - r * .85), (cx + r * 1.2, cy - r * .85)), color)
+        for i, height in enumerate((.5, 1.1, 1.6, .9)):
+            bx = cx - r * .9 + i * r * .6
+            _quad((bx - scale, cy - r * .8, 2 * scale, r * height), color)
+    elif action == 'PROXY_TRANSLATION':
+        _lines(((cx - r, cy), (cx + r, cy)), color, 'LINES'); _lines(((cx, cy - r), (cx, cy + r)), color, 'LINES')
+        a = r * .35
+        _tris(((cx + r * 1.15, cy), (cx + r * .75, cy + a), (cx + r * .75, cy - a),
+               (cx - r * 1.15, cy), (cx - r * .75, cy + a), (cx - r * .75, cy - a),
+               (cx, cy + r * 1.15), (cx + a, cy + r * .75), (cx - a, cy + r * .75),
+               (cx, cy - r * 1.15), (cx + a, cy - r * .75), (cx - a, cy - r * .75)), color)
+    elif action == 'PROXY_ORIENTATION':
+        _ring(cx, cy, r * .85, color, steps=18, start=math.radians(60), sweep=math.radians(290))
+        ex, ey = cx + math.cos(math.radians(350)) * r * .85, cy + math.sin(math.radians(350)) * r * .85
+        _tris(((ex + r * .35, ey + r * .1), (ex - r * .3, ey + r * .15), (ex, ey - r * .4)), color)
+    elif action == 'PROXY_WORLD':
+        _ring(cx, cy, r * .95, color)
+        _lines(((cx - r * .95, cy), (cx + r * .95, cy)), color, 'LINES')
+        _lines([(cx + math.sin(a) * r * .42, cy + math.cos(a) * r * .95)
+                for a in [math.pi * i / 10 for i in range(21)]], color)
+    elif action == 'PROXY_PARENT':
+        _disc(cx - r * .7, cy + r * .7, r * .3, color)
+        _lines(((cx - r * .7, cy + r * .4), (cx - r * .7, cy - r * .55), (cx + r * .15, cy - r * .55)), color)
+        _quad((cx + r * .2, cy - r * .95, r * .8, r * .8), color)
+
+
 def _tool_icon(rect, context, action, alpha, accent, ink):
     """Line icons for row tools (grow, interpolation, handle types, trails)."""
     import math
@@ -491,7 +576,9 @@ def _tool_icon(rect, context, action, alpha, accent, ink):
     gpu.state.blend_set('ALPHA')
     gpu.state.line_width_set(max(1., 1.5 * scale))
     try:
-        if action in _HANDLE_COLORS:
+        if action in _SHAPE_ICONS:
+            _shape_icon(action, cx, cy, r, (*accent[:3], alpha), scale)
+        elif action in _HANDLE_COLORS:
             color = (*handle_icon_color(context, action), alpha)
             shape = {
                 'HANDLE_CLAMPED': ((cx - r, cy), (cx + r, cy)),
@@ -554,9 +641,14 @@ def _parts(rect,label,scale):
 
 def _track(rect,value,tool,color):
     x,y,w,h=rect; cy=y+h/2
-    fraction=min(1,max(0,(value-tool['range_min'])/(tool['range_max']-tool['range_min'])))
+    low,high=model.track_range(tool)
+    fraction=min(1,max(0,(value-low)/(high-low)))
     _quad((x,cy-2,w,4),(.15,.15,.15,1))
     _quad((x,cy-2,w*fraction,4),color)
+    # Preset ticks: click one to apply it (the drag snaps onto it).
+    for tick in model.tick_values(tool):
+        tx=x+w*(tick-low)/(high-low)
+        _quad((tx-.5,cy-5,1.5,10),(.85,.85,.85,color[3]))
     _quad((x+w*fraction-3,cy-5,6,10),color)
 
 
@@ -564,7 +656,8 @@ def _slider_controls(context,event,item,scale):
     from ..prefs import get_prefs,timeline_record
     from ..operators import timeline_slider_ops as sliders
     kind,action,label,rect=item
-    tool=model.effective_tool(action,timeline_record(get_prefs(context))['active']['tools'][action])
+    tool=model.effective_tool(action,model.stage_view(timeline_record(get_prefs(context))['active'],
+                                                      current_stage(context))[1][action])
     track,value_rect,reset_rect=_parts(rect,label,scale)
     if kind=='POPOUT': track=(rect[0],rect[1],120*scale,rect[3])
     point=(event.mouse_region_x,event.mouse_region_y)
@@ -633,7 +726,7 @@ def _draw():
                         _quad((ax-half*scale,ay+(1-row)*scale,2*half*scale,scale),ink_text)
                 continue
             if kind=='SLIDER':
-                tool=model.effective_tool(action,record['active']['tools'][action])
+                tool=model.effective_tool(action,model.stage_view(record['active'],stage)[1][action])
                 value=active.value if active and active.action==action else sliders.last_value(context.window,context.area,action,tool['default'])
                 track,value_rect,reset_rect=_parts(rect,label,scale)
                 if label: _text((rect[0],rect[1],track[0]-rect[0],rect[3]),label,ink,scale,left=True)

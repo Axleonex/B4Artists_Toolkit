@@ -24,6 +24,11 @@
   own presets. Icons for grow, Copy/Paste, To Spline, handle types (theme handle
   colours) and nudges; Show/Hide Trails become one Trails eye toggle (96
   actions).
+- Compact rows: stage sliders draw presets as click ticks on a wider track
+  (the drag snaps onto ticks; a popout falls back to preset buttons). Icons for
+  Inbetween, Distribute, Set Reference, Opposite, Mirror, Mirror Active, Swap,
+  Bake Object and the four proxy types. Spline shows To Reference and Amplify
+  inline. Every stage row fits 1,397 px with all tools and named sliders.
 - Reduce and Ripple become sliders with live preview (ten numeric tools): Deliver
   shows Reduce with presets 0.001/0.01/0.05, Polish shows Ripple with -1/1; the
   0.01 and 1 presets equal the old buttons. Fixed: cancelling a preview that had

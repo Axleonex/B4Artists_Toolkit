@@ -199,7 +199,7 @@ def plan():
     yield icon_colours, 0.3
     yield icon_faded, 0.8
     yield icon_faded_check, 0.3
-    for stage in ("BLOCK", "SPLINE", "POLISH"):
+    for stage in ("BLOCK", "SPLINE", "POLISH", "DELIVER"):
         yield (lambda s=stage: setattr(window().workspace, PROP, s)), 0.6
         yield (lambda s=stage: (state.__setitem__("shot", f"row-{s.lower()}.png"), shot())), 0.3
     for stage, key, name in (("DELIVER", "BAKE_PREVIEW", "tooltip-deliver-greyed.png"),
