@@ -14,6 +14,7 @@ from gpu_extras.batch import batch_for_shader
 from bpy.props import EnumProperty, IntProperty, StringProperty
 from .timeline_catalog import ACTIONS, GROUPS, FAMILY, QUICK_LABELS, command_metadata
 from . import timeline_config as model
+from ..core import explainers
 
 # Short row labels; tooltips keep the full catalogue names. Distinct from the
 # All tab, the Breakdown slider and the Reference popout they sit beside.
@@ -113,7 +114,7 @@ def _tooltip_paragraphs(context, item):
     action = key.split(':', 1)[0]
     if kind == 'ACTION' and action in ACTIONS:
         operator = tools._operator(action)
-        operation = operator.get_rna_type().description if operator else 'Tool module unavailable'
+        operation = explainers.operator_text('animassist.' + ACTIONS[action][0]) if operator else 'Tool module unavailable'
         reason = tools._unavailable(context, tools._target(context), action)
         status = ''
         if action in {'OFFSET', 'OFFSET_MASK', 'OFFSET_SCENE_RANGE'}:
@@ -122,7 +123,7 @@ def _tooltip_paragraphs(context, item):
         return command_tooltip(action, operation, reason or '', status)
     if kind in {'SLIDER', 'POPOUT', 'PRESET'} and action in ACTIONS:
         operator = tools._operator(action)
-        text = operator.get_rna_type().description if operator else ACTIONS[action][2]
+        text = (explainers.operator_text('animassist.' + ACTIONS[action][0]) if operator else '') or ACTIONS[action][2]
         from ..constants import BREAKDOWN_ANCHOR_HINT
         lines = [(ACTIONS[action][2], 'TITLE'), (text.rstrip('.') + '.', 'BODY'),
                  (f'Works on: {command_metadata(action)[0]}.', 'DETAIL'),
@@ -139,8 +140,33 @@ def _tooltip_paragraphs(context, item):
         if action == 'DRAG':
             lines.append((BREAKDOWN_ANCHOR_HINT, 'DETAIL'))
         return lines
-    text = ANIMASSIST_OT_overlay_control.description(context, SimpleNamespace(kind=kind, key=key))
+    text = explainers.raw_description(ANIMASSIST_OT_overlay_control, context, SimpleNamespace(kind=kind, key=key))
     return [(text.rstrip('.') + '.', 'BODY')]
+
+
+def _shape_tooltip(context, item, paragraphs):
+    """Apply the explainer preference (Full, Short, Off) and add any shortcut that
+    already exists for the tool. Nothing is invented: no binding, no shortcut line."""
+    current = explainers.mode(context)
+    if current == 'OFF':
+        return []
+    kind, key = item[0], item[1]
+    action = key.split(':', 1)[0]
+    extra = []
+    if kind in {'ACTION', 'SLIDER', 'POPOUT', 'PRESET'} and action in ACTIONS:
+        operator, properties, _label = ACTIONS[action]
+        bindings = []
+        for idname, props in (('animassist.' + operator, properties),
+                              ('animassist.timeline_tool', {'action': action}),
+                              ('animassist.timeline_slider', {'action': action})):
+            bindings += [b for b in explainers.shortcuts(idname, props) if b not in bindings]
+        extra = [(line, 'DETAIL') for line in explainers.shortcut_lines(bindings)]
+    if current == 'SHORT':
+        title = [p for p in paragraphs if p[1] == 'TITLE'][:1]
+        body = [(explainers.short(text) + '.', 'BODY') for text, role in paragraphs if role == 'BODY'][:1]
+        warning = [(explainers.short(text) + '.', 'WARNING') for text, role in paragraphs if role == 'WARNING'][:1]
+        paragraphs = title + body + warning
+    return list(paragraphs) + extra
 
 
 def row_layout(width, height, row_height, at_top, clusters, measure):
@@ -223,12 +249,12 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
         action=properties.key.split(':',1)[0]
         if properties.kind in {'SLIDER','POPOUT','PRESET'} and action in ACTIONS:
             operator=tools._operator(action)
-            text=operator.get_rna_type().description if operator else ACTIONS[action][2]
+            text=(explainers.operator_text('animassist.'+ACTIONS[action][0]) if operator else '') or ACTIONS[action][2]
             scope=command_metadata(action)[0]
             from ..constants import BREAKDOWN_ANCHOR_HINT
             return text+'. '+scope+'. Drag to preview; release to apply; Esc cancels. Right-click for tool settings.'+((' '+BREAKDOWN_ANCHOR_HINT) if action=='DRAG' else '')
         if properties.kind == "ACTION" and properties.key in ACTIONS:
-            return tools.ANIMASSIST_OT_timeline_tool.description(
+            return explainers.raw_description(tools.ANIMASSIST_OT_timeline_tool,
                 context, SimpleNamespace(action=properties.key))
         return {"SEARCH": "Find an animation tool; run it or pin a quick button",
                 "SETTINGS": "Choose visible tools, slider modes, order and named layouts",
@@ -922,7 +948,7 @@ def _draw():
         if not active and hover and not _menu_open(context) and not _list_open(context) and time.monotonic() - _hover_started.get(context.window.as_pointer(), float("inf")) > .6:
             item = next((item for item in items if (item[0], item[1]) == hover[1:]), None)
             if item:
-                paragraphs = _tooltip_paragraphs(context, item)
+                paragraphs = _shape_tooltip(context, item, _tooltip_paragraphs(context, item))
                 blf.size(0, round(11 * scale))
                 line_h, pad = 15 * scale, 7 * scale
                 lines, width, height = model.fit_tooltip(
@@ -1222,8 +1248,9 @@ def _stage_items():
 def register():
     global _handle, _epoch
     _epoch = object()
+    from ..core import explainers
     for cls in _CLASSES:
-        bpy.utils.register_class(cls)
+        explainers.register_class(cls)
     setattr(bpy.types.WorkSpace, STAGE_PROPERTY, EnumProperty(
         name="Anim Assist Stage", description="Tool families the Timeline band shows in this workspace",
         items=_stage_items(), default="ALL", update=_stage_update))

@@ -1,4 +1,4 @@
-"""Build the 12.10.0 add-on from the unchanged 12.9.1 inventory (stage toolsets)."""
+"""Build the 12.10.0 add-on from the 12.9.1 inventory plus the files 12.10.0 adds."""
 from pathlib import Path, PurePosixPath
 import ast
 import hashlib
@@ -11,6 +11,8 @@ PROJECT = Path(__file__).resolve().parents[4]
 VERSION = "12.10.0"
 OUTPUT = PROJECT / "releases" / f"b4_anim_assist_v{VERSION}.zip"
 RECEIPT = Path(__file__).with_name("package-receipt.json")
+# Files new in 12.10.0 (paths inside the add-on folder).
+ADDED = ("core/explainers.py",)
 
 
 def assignment(source, name):
@@ -28,6 +30,7 @@ def main():
     roots = {PurePosixPath(n).parts[0] for n in names}
     assert len(roots) == 1
     root = roots.pop()
+    names += [f"{root}/{path}" for path in ADDED]
     assert len(names) == len(set(names))
     contents = {}
     for name in sorted(names):

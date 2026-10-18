@@ -7,6 +7,7 @@ from . import constants
 from .core.logging import get_logger, set_level
 # --- HELP SYSTEM INTEGRATION ---
 from .core.help_draw import draw_explainer_icon
+from .core.explainers import MODES as EXPLAINER_MODES
 from .ui.help_browser import draw_help_browser
 
 _log = get_logger(__name__)
@@ -124,6 +125,16 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         name="Show Diagnostics Panel",
         description="Show the diagnostics panel in Properties > Scene > Anim Assist > Help & Diagnostics",
         default=False,
+    )
+
+    explainer_mode: EnumProperty(  # type: ignore[valid-type]
+        name="Hover Explainers",
+        description=(
+            "How much Anim Assist explains when the pointer rests on its controls: "
+            "Full, Short (name and one line) or Off"
+        ),
+        items=EXPLAINER_MODES,
+        default="FULL",
     )
 
     # --- HELP SYSTEM INTEGRATION ---
@@ -262,6 +273,11 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         row = box.row(align=True)
         row.prop(self, "diagnostics_visible")
         draw_explainer_icon(row, context, "pref.diagnostics_visible")
+
+        row = box.row(align=True)
+        row.label(text="Hover Explainers")
+        row.prop(self, "explainer_mode", expand=True)
+        draw_explainer_icon(row, context, "pref.explainer_mode")
 
         # --- EXPLAINER SYSTEM EXTENSION ---
         row = box.row(align=True)

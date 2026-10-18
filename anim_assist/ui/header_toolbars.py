@@ -311,8 +311,9 @@ _classes: list[type] = [
 
 def register() -> None:
     """Register the popover panel and append toolbar draw functions."""
+    from ..core import explainers
     for cls in _classes:
-        bpy.utils.register_class(cls)
+        explainers.register_class(cls)
 
     _append_pairs = (
         (bpy.types.DOPESHEET_HT_header, _draw_dopesheet_toolbar),

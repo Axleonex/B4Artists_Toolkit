@@ -524,7 +524,8 @@ CLASSES=(AA_ToolbarEntry,AA_ToolbarSection,ANIMASSIST_OT_toolbar_settings,
 
 
 def register():
-    for cls in CLASSES: bpy.utils.register_class(cls)
+    from ..core import explainers
+    for cls in CLASSES: explainers.register_class(cls)
     bpy.app.handlers.load_pre.append(clear_dialogs)
 
 

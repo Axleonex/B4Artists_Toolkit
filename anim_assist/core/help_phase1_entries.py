@@ -67,6 +67,24 @@ PHASE1_ENTRIES: tuple[HelpEntry, ...] = (
         category="Diagnostics",
     ),
     HelpEntry(
+        id="pref.explainer_mode",
+        label="Hover Explainers",
+        tooltip="Choose Full, Short or Off for Anim Assist hover explanations",
+        description=(
+            "Full shows the whole explanation when the pointer rests on an Anim "
+            "Assist control: what it does, what it works on, what it needs and "
+            "how to use it. Short shows the name and a one-line summary. Off "
+            "shows no Anim Assist explanation on hover.\n\n"
+            "The setting covers the Timeline tool row and every Anim Assist "
+            "button. A shortcut line appears only when a key is already bound "
+            "to that tool. With Off, Bforartists still shows a button's name, "
+            "and setting fields keep their own one-line Bforartists tooltip; "
+            "Preferences > Interface > Tooltips turns all tooltips off."
+        ),
+        phase=_PHASE,
+        category="General",
+    ),
+    HelpEntry(
         id="pref.show_explainer_help",
         label="Show Extended Help Popups",
         tooltip="Show question-mark buttons that open detailed Anim Assist help",

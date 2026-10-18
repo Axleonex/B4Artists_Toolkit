@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import bpy
 
+from . import explainers
 from .logging import get_logger
 
 __all__ = ["ClassRegistry"]
@@ -32,7 +33,7 @@ class ClassRegistry:
         """Register all queued classes with Blender. On failure, roll back all previously registered classes to avoid partial addon state."""
         for cls in self._classes:
             try:
-                bpy.utils.register_class(cls)
+                explainers.register_class(cls)
                 self._registered.append(cls)
             except ValueError as exc:
                 if "already registered" in str(exc):

@@ -5,7 +5,7 @@ from bpy.props import StringProperty
 from ..core.logging import get_logger
 from .timeline_catalog import (
     ACTIONS as _ACTIONS, EXECUTE_ACTIONS, GROUPS, QUICK_GROUPS, FAMILY,
-    command_description, command_metadata, QUICK_LABELS, search_actions,
+    command_description, command_metadata, QUICK_LABELS, search_actions, TIPS,
     DEFAULT_QUICK_ACTIONS, quick_property_name, selected_quick_actions, quick_clusters,
 )
 
@@ -241,8 +241,10 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
         action = properties.action
         if action not in _ACTIONS:
             return cls.__doc__
+        from ..core import explainers
         operator = _operator(action)
-        description = command_description(action, operator.get_rna_type().description if operator else "Tool module unavailable")
+        description = command_description(action, explainers.operator_text("animassist." + _ACTIONS[action][0])
+                                          if operator else "Tool module unavailable")
         reason = _unavailable(context, _target(context), action)
         if action in {"OFFSET", "OFFSET_MASK", "OFFSET_SCENE_RANGE"}:
             from ..operators.anim_offset_ops import offset_session_status
@@ -250,6 +252,18 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
             if status:
                 description += f" Active session: {status}."
         return description + (f" Unavailable: {reason}." if reason else "")
+
+    @classmethod
+    def _aa_short(cls, context, properties):
+        # Short explainer: the tool's purpose in one line, and why it is greyed.
+        from ..core import explainers
+        action = properties.action
+        if action not in _ACTIONS:
+            return ""
+        operator = _operator(action)
+        text = TIPS.get(action) or (explainers.operator_text("animassist." + _ACTIONS[action][0]) if operator else "")
+        reason = _unavailable(context, _target(context), action)
+        return explainers.short(text or _ACTIONS[action][2]) + (f". Unavailable: {reason}" if reason else "")
 
     def invoke(self, context, _event):
         return self.execute(context)
@@ -574,9 +588,10 @@ def reconcile_preferences():
 
 def register():
     from . import timeline_overlay, timeline_settings
-    bpy.utils.register_class(ANIMASSIST_OT_timeline_tool)
+    from ..core import explainers
+    explainers.register_class(ANIMASSIST_OT_timeline_tool)
     for cls in _settings_classes + _menus:
-        bpy.utils.register_class(cls)
+        explainers.register_class(cls)
     timeline_settings.register()
     timeline_overlay.register()
     reconcile_preferences()

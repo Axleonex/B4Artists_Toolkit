@@ -82,6 +82,13 @@
   default, presets, width and so on) stay shared by every stage.
 - Tool Settings, Search pins and More follow the shown stage. A Search pin
   goes to the shown row, whatever the tool's family.
+- Hover Explainers (Preferences > Add-ons > Anim Assist > General): Full (the
+  whole explanation), Short (name and one line) or Off. It covers the Timeline
+  row and every Anim Assist button. Off removes the row's hover text entirely;
+  Bforartists buttons then show only their name, because Bforartists always
+  prints a description line. Hover text adds a Shortcut line only when a key is
+  already bound to that tool (none are by default); it reads the live keymap,
+  so keys you bind later appear.
 - Stages start from a fixed default set, not from a layout's All tools: tools
   you added to All stay in All until you add them to a stage. Older 12.9.x
   layout records are upgraded in memory and saved in the new format on the
