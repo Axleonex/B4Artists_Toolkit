@@ -326,11 +326,14 @@ class ANIMASSIST_MT_timeline_more(bpy.types.Menu):
     def draw(self, context):
         from . import timeline_config as model
         from ..prefs import timeline_record, get_prefs
+        from .timeline_overlay import current_stage
         data=timeline_record(get_prefs(context))
+        stage=current_stage(context)
+        order,tools=model.stage_view(data['active'],stage)
         families={key:(label,set(a for a in actions if a)) for key,label,actions in GROUPS}
-        for key in model.FAMILY_ORDER:
+        for key in model.stage_families(stage):
             label,known=families[key]
-            actions=[a for a in data['active']['order'] if a in known and data['active']['tools'][a]['mode']!='HIDDEN']
+            actions=[a for a in order if a in known and tools[a]['mode']!='HIDDEN']
             if not actions: continue
             self.layout.separator()
             self.layout.label(text=label)
@@ -385,14 +388,20 @@ class ANIMASSIST_OT_timeline_pin(bpy.types.Operator):
         from . import timeline_config as model
         from ..prefs import timeline_record
         from .timeline_settings import write
+        from .timeline_overlay import current_stage
         data=timeline_record(prefs)
-        tool=data['active']['tools'][self.action]
-        visible=tool['mode']!='HIDDEN'
-        tool['mode']='HIDDEN' if visible else ('POPOUT' if self.action in model.SLIDERS else 'BUTTON')
+        stage=current_stage(context)
+        target=model.pin_target(stage,self.action)
+        visible=model.stage_view(data['active'],target)[1][self.action]['mode']!='HIDDEN'
+        mode='HIDDEN' if visible else ('POPOUT' if self.action in model.SLIDERS else 'BUTTON')
+        model.set_stage_tool(data,target,self.action,mode=mode)
         try: write(context,data)
         except ValueError as exc:
             self.report({'WARNING'},str(exc)); return {'CANCELLED'}
-        setattr(prefs, quick_property_name(self.action),not visible)
+        if target=='ALL':
+            setattr(prefs, quick_property_name(self.action),not visible)
+            if stage!='ALL':
+                self.report({'INFO'},f"Pinned in All; {model.stage_label(stage)} does not show {FAMILY[self.action][1]}")
         return {"FINISHED"}
 
 
@@ -417,8 +426,18 @@ class ANIMASSIST_OT_timeline_search(bpy.types.Operator):
     def draw(self, context):
         from ..prefs import get_prefs
         self.layout.prop(self, "query", text="", icon="VIEWZOOM")
+        from . import timeline_config as model
+        from .timeline_overlay import current_stage
+        from ..prefs import timeline_record
         prefs = get_prefs(context)
         selected = selected_quick_actions(prefs)
+        stage = current_stage(context)
+        if prefs is not None and stage in model.STAGE_KEYS:
+            try:
+                _order, tools = model.stage_view(timeline_record(prefs)['active'], stage)
+                selected = frozenset(a for a in _ACTIONS if tools[a]['mode'] != 'HIDDEN')
+            except ValueError:
+                pass
         matches = search_actions(self.query)
         if not self.query.strip():
             matches = tuple(action for action in _ACTIONS if action in selected) or DEFAULT_QUICK_ACTIONS

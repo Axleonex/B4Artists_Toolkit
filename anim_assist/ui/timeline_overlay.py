@@ -568,7 +568,8 @@ _CLASSES = (ANIMASSIST_OT_overlay_control, ANIMASSIST_OT_timeline_stage,
 def _stage_update(workspace, _context):
     # Tabs, Toolbar Settings and the View menu all set the stage; redraw every
     # Timeline showing this workspace so the row follows immediately.
-    from . import timeline_strip as tools
+    from . import timeline_strip as tools, timeline_settings
+    timeline_settings.on_stage_changed(workspace)
     manager = getattr(bpy.context, "window_manager", None)
     for window in getattr(manager, "windows", ()):
         if window.workspace == workspace:

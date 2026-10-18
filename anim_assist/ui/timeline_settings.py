@@ -10,6 +10,7 @@ _editors={}
 _tool_editors={}
 _layout_editors={}
 _layout_items={}
+_family_items={}
 _MODES=(('HIDDEN','Hidden','Keep this tool in Search and More',0),
         ('BUTTON','Button','Invoke the existing action directly',1),
         ('POPOUT','Popout slider','Press and drag to reveal a temporary slider',2),
@@ -18,6 +19,16 @@ _LABELS=(('LABEL','Label','Show the tool name'),('ICON','Icon','Use a compact to
 
 
 def _modes(self,context): return _MODES if self.action in model.SLIDERS else _MODES[:2]
+
+
+def _families(self,context):
+    # Family choices follow the setup being edited: a stage offers only its families.
+    stage=getattr(self,'_stage','ALL')
+    if stage not in _family_items:
+        allowed=set(model.stage_families(stage))
+        _family_items[stage]=[(key,label,'Configure '+label,index) for index,(key,label,_a) in enumerate(GROUPS)
+                              if key in allowed]
+    return _family_items[stage]
 
 
 def _family_update(self,context):
@@ -86,36 +97,42 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
     bl_label='Toolbar Settings'
     bl_description='Choose visible tools, inline or popout sliders, labels and order'
     family: EnumProperty(name='Family',description='Choose which animation family to configure',
-        items=[(key,label,'Configure '+label) for key,label,_ in GROUPS],default='tween',update=_family_update)
+        items=_families,update=_family_update)
     entries: CollectionProperty(type=AA_ToolbarEntry)
     active_index: IntProperty(default=0)
     layout_choice: EnumProperty(name='Saved Layout',description='Choose a saved layout to load or manage',items=_choices,default=0)
 
-    def populate(self,data):
+    def populate(self,data,stage=None):
+        # Entries show one setup: All, or the stage the workspace shows.
+        self._stage=stage or getattr(self,'_stage','ALL')
         self._record=copy.deepcopy(data)
         self.entries.clear()
-        for action in data['active']['order']:
-            if action not in ACTIONS: continue
-            tool=data['active']['tools'][action]
-            entry=self.entries.add(); entry.name=ACTIONS[action][2]; entry.action=action
-            entry.family=FAMILY[action][0]
-            entry.mode=tool['mode']; entry.label_mode=tool['label_mode']; entry.width=tool['width']
+        for row in model.stage_entries(data,self._stage,ACTIONS):
+            entry=self.entries.add(); entry.name=ACTIONS[row['action']][2]; entry.action=row['action']
+            entry.family=row['family']
+            entry.mode=row['mode']; entry.label_mode=row['label_mode']; entry.width=row['width']
+        allowed=[item[0] for item in _families(self,None)]
+        if self.family not in allowed and allowed: self.family=allowed[0]
         _family_update(self,None)
         self.layout_choice=data['active_saved_id'] or 'recommended'
 
     def serialize(self):
         data=copy.deepcopy(self._record)
-        data['active']['order']=[entry.action for entry in self.entries]+[
-            key for key in data['active']['order'] if key not in ACTIONS]
-        for entry in self.entries:
-            data['active']['tools'][entry.action].update(mode=entry.mode,label_mode=entry.label_mode,width=entry.width)
+        model.apply_entries(data,getattr(self,'_stage','ALL'),
+            [dict(action=e.action,family=e.family,mode=e.mode,label_mode=e.label_mode,width=e.width)
+             for e in self.entries])
         return model.validate(data,ACTIONS)
+
+    def switch_stage(self,stage):
+        # Keep this stage's unsaved edits in the staged record, then show the next.
+        if stage!=getattr(self,'_stage','ALL'): self.populate(self.serialize(),stage)
 
     def invoke(self,context,event):
         from ..operators.timeline_slider_ops import busy
         if busy():
             self.report({'WARNING'},'Finish or cancel the active slider first'); return {'CANCELLED'}
-        try: self.populate(record(context))
+        from .timeline_overlay import current_stage
+        try: self.populate(record(context),current_stage(context))
         except ValueError as exc:
             if editor(context) is self: _editors.pop(context.window.as_pointer(),None)
             self.report({'WARNING'},str(exc)); return {'CANCELLED'}
@@ -145,6 +162,8 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
                 op=row.operator('animassist.toolbar_reorder',text=label); op.direction=direction
             op=row.operator('animassist.tool_settings',text='Tool Settings'); op.action=entry.action
             if entry.action in model.SLIDERS: layout.prop(entry,'width')
+        if getattr(self,'_stage','ALL') in model.STAGE_KEYS:
+            layout.operator('animassist.reset_stage_toolbar',text='Reset '+model.stage_label(self._stage)+' to Defaults')
         layout.operator('animassist.restore_toolbar',text='Restore Recommended Layout')
         layout.label(text='Hidden tools remain available in Search and More.')
         if not context.preferences.use_preferences_save:
@@ -191,6 +210,36 @@ class ANIMASSIST_OT_restore_toolbar(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class ANIMASSIST_OT_reset_stage_toolbar(bpy.types.Operator):
+    bl_idname='animassist.reset_stage_toolbar'
+    bl_label='Reset Stage to Defaults'
+    bl_description='Restore this stage’s default tools, order and display modes; All and the other stages stay as they are'
+    bl_options={'INTERNAL'}
+    def execute(self,context):
+        from .timeline_overlay import current_stage
+        stage=current_stage(context)
+        if stage not in model.STAGE_KEYS:
+            self.report({'WARNING'},'Choose Block, Spline, Polish or Deliver first'); return {'CANCELLED'}
+        try:
+            data=staged_record(context); model.reset_stage(data,stage)
+            if editor(context): sync_editor(context,data)
+            else: write(context,data)
+        except ValueError as exc:
+            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+        return {'FINISHED'}
+
+
+def on_stage_changed(workspace):
+    """An open Toolbar Settings dialog follows its window's new row stage."""
+    stage=getattr(workspace,'animassist_timeline_stage','ALL')
+    manager=getattr(bpy.context,'window_manager',None)
+    for window in getattr(manager,'windows',()):
+        active=_editors.get(window.as_pointer())
+        if active is not None and window.workspace==workspace:
+            try: active.switch_stage(stage)
+            except (ValueError,ReferenceError): _editors.pop(window.as_pointer(),None)
+
+
 class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
     bl_idname='animassist.tool_settings'
     bl_label='Animation Tool Settings'
@@ -214,16 +263,27 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
         from ..operators.timeline_slider_ops import busy
         if busy():
             self.report({'WARNING'},'Finish or cancel the active slider first'); return {'CANCELLED'}
-        self._tool=copy.deepcopy(staged_record(context)['active']['tools'][self.action])
+        from .timeline_overlay import current_stage
+        staged=staged_record(context)
+        self._tool=copy.deepcopy(staged['active']['tools'][self.action])
+        # Display and label belong to the setup the row shows; numbers are shared.
+        self._target=model.pin_target(current_stage(context),self.action)
         for field,value in self._tool.items():
             if field=='presets': self.presets_text=', '.join(f'{v:g}' for v in value)
             elif field!='action' and hasattr(self,field): setattr(self,field,value)
+        if self._target in model.STAGE_KEYS:
+            view=model.stage_view(staged['active'],self._target)[1][self.action]
+            self.mode=view['mode']; self.label_mode=view['label_mode']
         _tool_editors[context.window.as_pointer()]=self
         return context.window_manager.invoke_props_dialog(self,width=430)
 
     def draw(self,context):
         layout=self.layout
         layout.label(text=ACTIONS[self.action][2])
+        target=getattr(self,'_target','ALL')
+        if target in model.STAGE_KEYS:
+            layout.label(text=f'Display and label apply to the {model.stage_label(target)} stage; '
+                              'amounts are shared by every stage.')
         layout.prop(self,'mode'); layout.prop(self,'label_mode')
         if self.action in model.SLIDERS:
             unit=model.SLIDERS[self.action][1]
@@ -249,7 +309,13 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
             for field in tool:
                 if field=='presets': tool[field]=[float(x.strip()) for x in self.presets_text.split(',') if x.strip()]
                 elif field!='action' and hasattr(self,field): tool[field]=getattr(self,field)
+            target=getattr(self,'_target','ALL')
+            if target in model.STAGE_KEYS:
+                tool['mode'],tool['label_mode']=self._tool['mode'],self._tool['label_mode']
             data['active']['tools'][self.action]=model.validate_tool(self.action,tool)
+            if target in model.STAGE_KEYS:
+                model.set_stage_tool(data,target,self.action,mode=self.mode,label_mode=self.label_mode)
+                data=model.validate(data,ACTIONS)
             if editor(context): sync_editor(context,data)
             else: write(context,data)
             _tool_editors.pop(context.window.as_pointer(),None)
@@ -322,7 +388,8 @@ class ANIMASSIST_OT_layout_action(bpy.types.Operator):
 
 
 CLASSES=(AA_ToolbarEntry,AA_UL_toolbar_tools,ANIMASSIST_OT_toolbar_settings,
-         ANIMASSIST_OT_toolbar_reorder,ANIMASSIST_OT_restore_toolbar,ANIMASSIST_OT_tool_settings,
+         ANIMASSIST_OT_toolbar_reorder,ANIMASSIST_OT_restore_toolbar,ANIMASSIST_OT_reset_stage_toolbar,
+         ANIMASSIST_OT_tool_settings,
          ANIMASSIST_OT_layout_action)
 
 
