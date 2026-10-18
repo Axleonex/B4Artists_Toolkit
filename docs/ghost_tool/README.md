@@ -4,6 +4,10 @@ Ghost Tool 4.3.1 documents the current direct viewport toolbar and compact inlin
 
 [4.3.1 user guide](GhostTool_User_Manual.md) | [4.3.1 PDF](GhostTool_User_Manual.pdf) | [Toolbar reference](toolbar/README.md) | [4.3.1 release notes](releases/4.3.1/RELEASE-NOTES.md)
 
+## Manual languages
+
+The complete 4.3.1 guide is also available in [简体中文, Français, 日本語, 한국어, Português and Español](translations/README.md), with a Markdown edition and downloadable PDF for each language. English UI names are preserved. The translations have structural coverage checks and embedded-font PDFs; no professional linguistic review is claimed.
+
 ## Current tools
 
 The top toolbar offers Ghost Tool on/off, Ghosts display with Before/Ahead counts, Wire/Solid, Paths display with its own counts, Add Selected Path, Follow Selection, Drag, Pin, Markers Display, Arc Style, Spacing Ticks and Settings. Arc Style opens Solid, Speed Colored and Fade directly. Generate and Clear remain in advanced controls rather than repeating as top-row icons.

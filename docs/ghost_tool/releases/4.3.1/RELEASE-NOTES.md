@@ -18,6 +18,17 @@ This update sets the add-on's `bl_info` version to **4.3.1** and brings the Mark
 
 The [user guide](../../GhostTool_User_Manual.md), [PDF](../../GhostTool_User_Manual.pdf) and [toolbar reference](../../toolbar/README.md) describe the 4.3.1 controls, hold menus, counts, repeated marker edits, pinning, curve smoothing, snapshots and toolbar recovery. They distinguish the overall enable switch, mesh visibility, editable-marker visibility and path visibility.
 
+## Translated manuals
+
+The complete 4.3.1 English guide is translated into six languages, with English UI names retained. Each edition covers the same 13 sections and 59 source blocks, plus a translation note. PDFs embed their fonts. No professional linguistic review is claimed. See the [language index](../../translations/README.md) and [source/hash manifest](../../translations/manifest.json).
+
+- [简体中文](../../translations/GhostTool_User_Manual_zh.md) · [PDF](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/GhostTool_User_Manual_zh.pdf)
+- [Français](../../translations/GhostTool_User_Manual_fr.md) · [PDF](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/GhostTool_User_Manual_fr.pdf)
+- [日本語](../../translations/GhostTool_User_Manual_ja.md) · [PDF](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/GhostTool_User_Manual_ja.pdf)
+- [한국어](../../translations/GhostTool_User_Manual_ko.md) · [PDF](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/GhostTool_User_Manual_ko.pdf)
+- [Português](../../translations/GhostTool_User_Manual_pt.md) · [PDF](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/GhostTool_User_Manual_pt.pdf)
+- [Español](../../translations/GhostTool_User_Manual_es.md) · [PDF](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/GhostTool_User_Manual_es.pdf)
+
 ## Verification and publication status
 
 The existing implementation passed 188 targeted background checks before the metadata/manual update. This includes toolbar, authoring, paths, snapshot, startup and display checks. No new functional test run or native 4.3.1 package qualification is claimed by this packaging change. The previous shelf-width verification limitation remains.

@@ -40,6 +40,7 @@ Human-readable manuals are in [`docs/`](docs/):
 - [Anim Assist 12.9.0](docs/anim_assist/releases/12.9.0/RELEASE-NOTES.md) — Timeline stage tabs filter the bottom row by animation stage without changing saved layouts. [Qualification](docs/anim_assist/releases/12.9.0/qualification.md).
 - [Anim Assist 12.8.0](docs/anim_assist/releases/12.8.0/RELEASE-NOTES.md) — NLA clip arrangement and corrections, Graph/Dope Sheet refinements, preserved baking and selected-key scope fixes. [Qualification and screenshots](docs/anim_assist/releases/12.8.0/qualification.md) records the checks and limits. [Suite manuals](docs/anim_assist/) cover the other animation tools.
 - [`docs/ghost_tool/`](docs/ghost_tool/) — Ghost Tool 4.3.1 guide, PDF, toolbar reference and installation archive
+- [Ghost Tool manual translations](docs/ghost_tool/translations/README.md) — Chinese, French, Japanese, Korean, Portuguese and Spanish editions for 4.3.1, with PDFs.
 - [`bonecraft/docs/`](bonecraft/docs/) — BoneCraft 9.2.5 source manual and translation status
 
 ## Requirements

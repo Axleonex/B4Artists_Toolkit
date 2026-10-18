@@ -1,0 +1,63 @@
+{
+  "version": "4.3.1",
+  "source": "../GhostTool_User_Manual.md",
+  "source_sha256_lf": "29c5794cd341f55012f2be606691188fc34b2dedcef09f8c636b9ee05abf7bae",
+  "source_block_count": 59,
+  "translation_note": "Translated from the English guide; English UI labels retained. No professional linguistic review claimed.",
+  "languages": {
+    "zh": {
+      "language": "简体中文",
+      "markdown": "GhostTool_User_Manual_zh.md",
+      "markdown_sha256_lf": "a295a9ab212061c598b0d99dec7bfed752366a35d7c1c9fc95911b273de9d8cb",
+      "pdf": "GhostTool_User_Manual_zh.pdf",
+      "pdf_sha256": "1565004bde5ea8a314463ee602b84231dd551dd3493623dc15bfe6ddeb93e24b",
+      "pdf_bytes": 318528,
+      "source_blocks_covered": 59
+    },
+    "fr": {
+      "language": "Français",
+      "markdown": "GhostTool_User_Manual_fr.md",
+      "markdown_sha256_lf": "edc93d3d8266cc42123bfc3b53129443f95c0cd92ad9051a47df5ce0d7be76ca",
+      "pdf": "GhostTool_User_Manual_fr.pdf",
+      "pdf_sha256": "3ebbbcedf538946b748917d5e5abacb32b43d6c7d6e5c5c6997dea4b3eb5e0b8",
+      "pdf_bytes": 44943,
+      "source_blocks_covered": 59
+    },
+    "ja": {
+      "language": "日本語",
+      "markdown": "GhostTool_User_Manual_ja.md",
+      "markdown_sha256_lf": "6ce9fbf9d7d93db5f56d9acd71c72a28879f5b8a7662607d9afb4ac328f88277",
+      "pdf": "GhostTool_User_Manual_ja.pdf",
+      "pdf_sha256": "f5c23e7ad57ebfc8bf0641f1e466f3640da8cc0e73e3b875ab5d54613c84a0c8",
+      "pdf_bytes": 268427,
+      "source_blocks_covered": 59
+    },
+    "ko": {
+      "language": "한국어",
+      "markdown": "GhostTool_User_Manual_ko.md",
+      "markdown_sha256_lf": "2138acf926e092ef13498985b15aa12697d2f98c180431e0f5b2720161ae1be9",
+      "pdf": "GhostTool_User_Manual_ko.pdf",
+      "pdf_sha256": "a6ba6790835fc8cf525070792071c2b52437d73384383901511bc217a6a987a0",
+      "pdf_bytes": 159286,
+      "source_blocks_covered": 59
+    },
+    "pt": {
+      "language": "Português",
+      "markdown": "GhostTool_User_Manual_pt.md",
+      "markdown_sha256_lf": "17edb98f19b5b8835d4b0b949bf94caa0b743fd664d84c2d099637daf36b4dc0",
+      "pdf": "GhostTool_User_Manual_pt.pdf",
+      "pdf_sha256": "b03cbef2d6bb78f1f6185000a1901e362e49c3e9a6169a7435acf5fbf42f104d",
+      "pdf_bytes": 44749,
+      "source_blocks_covered": 59
+    },
+    "es": {
+      "language": "Español",
+      "markdown": "GhostTool_User_Manual_es.md",
+      "markdown_sha256_lf": "dad4f43b946bf5b35788f813ef97d2762c6ec36be3596e83854f833179672b93",
+      "pdf": "GhostTool_User_Manual_es.pdf",
+      "pdf_sha256": "dce502779b1af5cff851ff47b3e0b28b5f46ca78e0e7e7df39aedb1939445d60",
+      "pdf_bytes": 44423,
+      "source_blocks_covered": 59
+    }
+  }
+}
