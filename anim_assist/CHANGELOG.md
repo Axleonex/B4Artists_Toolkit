@@ -25,8 +25,8 @@
   colours) and nudges; Show/Hide Trails become one Trails eye toggle (96
   actions).
 - Compact All row (Recommended): 25/50/75 as ticks on Breakdown; -1f/+1f,
-  Copy, Paste, Mirror, Bake Object and the Trails eye as icons. Stage tabs
-  return from about 1,360 px. Tool Settings gains Presets as Ticks for any
+  Copy, Paste, Mirror, Bake Object and the Trails eye as icons, so the row is
+  about 200 px shorter. Tool Settings gains Presets as Ticks for any
   slider, in All and in stages. Saved or edited layouts keep their All row.
 - Compact rows: stage sliders draw presets as click ticks on a wider track
   (the drag snaps onto ticks; a popout falls back to preset buttons). Icons for
@@ -92,8 +92,8 @@
 - Find and Toolbar Settings share one saved layout: a pin made in Find shows in
   Toolbar Settings (even while it is open), and Settings changes light or clear
   the pins in Find.
-- Tool Settings, Search pins and More follow the shown stage. A Search pin
-  goes to the shown row, whatever the tool's family.
+- Tool Settings, Find pins and +N follow the shown row. A Find pin goes to
+  the shown row, whatever the tool's family.
 - Hover Explainers (Preferences > Add-ons > Anim Assist > General): Full (the
   whole explanation), Short (name and one line) or Off. It covers the Timeline
   row and every Anim Assist button. Off removes the row's hover text entirely;

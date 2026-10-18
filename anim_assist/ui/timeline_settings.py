@@ -11,7 +11,7 @@ _tool_editors={}
 _layout_editors={}
 _layout_items={}
 
-_MODES=(('HIDDEN','Hidden','Keep this tool in Search and More',0),
+_MODES=(('HIDDEN','Hidden','Take this tool off the row; it stays in Find',0),
         ('BUTTON','Button','Invoke the existing action directly',1),
         ('POPOUT','Popout slider','Press and drag to reveal a temporary slider',2),
         ('INLINE','Inline slider','Keep the slider visible in the row',3))
@@ -255,7 +255,7 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
         row=layout.row(align=True)
         row.operator('animassist.toolbar_revert',text='Revert Changes')
         row.operator('animassist.restore_toolbar',text='Restore Recommended Layout')
-        layout.label(text='Hidden tools remain available in Search and More.')
+        layout.label(text='Hidden tools stay available in Find.')
         layout.label(text='Click outside or press Esc to close; your changes stay.')
         if not context.preferences.use_preferences_save:
             layout.label(text='Save Preferences to keep these changes after a restart.')

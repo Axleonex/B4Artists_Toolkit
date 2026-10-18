@@ -221,7 +221,11 @@ Actual qualification captures: Timeline stage toolsets and settings from 12.10.0
 
 - [Timeline stage toolset: Block (12.10.0)](releases/12.10.0/evidence/images/stage-block.png)
 - [Timeline stage toolset: Spline (12.10.0)](releases/12.10.0/evidence/images/stage-spline.png)
-- [Toolbar Settings editing Block (12.10.0)](releases/12.10.0/evidence/images/settings-dialog.png)
+- [Toolbar Settings editing Block, families grouped (12.10.0)](releases/12.10.0/evidence/images/settings-row-block.png)
+- [Stage dropdown open (12.10.0)](releases/12.10.0/evidence/images/stage-dropdown-hover.png)
+- [Find browsing tools by family (12.10.0)](releases/12.10.0/evidence/images/find-browse.png)
+- [+N listing tools that did not fit (12.10.0)](releases/12.10.0/evidence/images/more-list.png)
+- [Hover explanation, Full (12.10.0)](releases/12.10.0/evidence/images/explainer-row-full.png)
 - [NLA sidebar: arrangement and corrections, 280 px](releases/12.8.0/evidence/images/nla_editor-280.png)
 - [Graph sidebar: curve shaping, 280 px](releases/12.8.0/evidence/images/graph_editor-280.png)
 - [Dope Sheet sidebar: poses and timing, 280 px](releases/12.8.0/evidence/images/dopesheet_editor-280.png)

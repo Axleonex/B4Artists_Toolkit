@@ -7,7 +7,7 @@
 - Earlier: [12.9.0 release notes](releases/12.9.0/RELEASE-NOTES.md) · [12.9.0 qualification](releases/12.9.0/qualification.md)
 - Earlier: [12.8.0 release notes](releases/12.8.0/RELEASE-NOTES.md) · [12.8.0 qualification](releases/12.8.0/qualification.md)
 
-The manual covers the configurable bottom Timeline row and its stage tabs and per-stage toolsets (12.10.0), inline/popout sliders, named layouts, editor-specific Graph/Dope Sheet sidebars and new NLA sidebar. Clip arrangement and corrections are available together, with separate instructions for source editing, shared Actions and preserved-output baking.
+The manual covers the configurable bottom Timeline row (12.10.0): the stage dropdown and per-stage toolsets, Find and +N, Toolbar Settings, layouts and Hover Explainers, inline/popout sliders, named layouts, editor-specific Graph/Dope Sheet sidebars and new NLA sidebar. Clip arrangement and corrections are available together, with separate instructions for source editing, shared Actions and preserved-output baking.
 
 This is an add-on for your existing Bforartists installation. Standard Blender is unsupported. The Timeline row remains bottom-only, retaining the 12.7.1 placement fix. It is a canvas overlay rather than a second native header or separate application.
 

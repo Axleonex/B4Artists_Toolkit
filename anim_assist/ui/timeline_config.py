@@ -5,7 +5,7 @@ import math
 import uuid
 
 FAMILY_ORDER = ('tween', 'timing', 'curves', 'keys', 'pose', 'bake', 'motion')
-# One table drives the stage tabs. Each stage's families are its home families:
+# One table drives the stage dropdown. Each stage's families are its home families:
 # its defaults come from them and its row always shows their menus. Any row may
 # also hold tools from other families (owner request 2026-10-18).
 STAGES = (
@@ -603,9 +603,8 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
     more_w=max(24*scale,measure('+99')+2*pad)
     full_budget=max(0,width-sum(utility_widths)-3*gap)
     budget=full_budget
-    # Stage tabs lead the band. The choice between tabs and the single cycle
-    # button never depends on the selected stage, so switching stages cannot
-    # swap one for the other under the cursor. The cycle button keeps one key.
+    # The stage dropdown button leads the band (the tab specs below are kept
+    # only for their widths). The button keeps one key.
     tabs=[('STAGE',key,label,max(24*scale,measure(label)+2*pad)) for key,label,_ in STAGES]
     label=stage_label(stage)
     if measure(label)+2*pad+STAGE_ARROW*scale>budget*.5: label=label[0]
