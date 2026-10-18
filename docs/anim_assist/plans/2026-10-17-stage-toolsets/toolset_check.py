@@ -145,7 +145,20 @@ try:
     data4 = rec()
     check("Tool Settings in Block edits Block presets only",
           data4["active"]["stages"]["BLOCK"]["tools"]["DRAG"]["presets"] == [10., 90.]
-          and data4["active"]["tools"]["DRAG"]["presets"] == [])
+          and data4["active"]["tools"]["DRAG"]["presets"] == tool4["presets"])
+    # Presets as Ticks: changed in Spline, stored on Spline only.
+    setattr(space, PROP, "SPLINE")
+    tool5 = copy.deepcopy(rec()["active"]["tools"]["SMOOTH"])
+    fields5 = {k: v for k, v in tool5.items() if k not in ("action", "presets", "mode", "label_mode", "ticks")}
+    fake5 = SimpleNamespace(action="SMOOTH", _tool=tool5, _target="SPLINE", mode="POPOUT", label_mode="LABEL",
+                            presets_text="", _shown_presets=[], ticks=True, _shown_ticks=False,
+                            report=lambda *a: None, **fields5)
+    with ctx():
+        settings.ANIMASSIST_OT_tool_settings.execute(fake5, bpy.context)
+    data5 = rec()
+    check("Presets as Ticks in Spline is stored on Spline only",
+          data5["active"]["stages"]["SPLINE"]["tools"]["SMOOTH"].get("ticks") is True
+          and data5["active"]["tools"]["SMOOTH"]["ticks"] == tool5["ticks"])
     check("Block key types start as icons",
           all(data["active"]["stages"]["BLOCK"]["tools"][a]["label_mode"] == "ICON"
               for a in ("TYPE_KEYFRAME", "TYPE_BREAKDOWN", "TYPE_EXTREME", "TYPE_HOLD")))

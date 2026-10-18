@@ -7,7 +7,7 @@
   Show/Hide Trails in Spline; spacing presets, Timing Offset, Ripple and Snap in
   Polish; Bake Preview Range, Smart Bake, Reduce, Bake Keys to Integer Frames,
   One-Click Proxy & Bake, the four proxy types and Remove All Proxy Sessions in
-  Deliver). All is unchanged.
+  Deliver).
 - Stage families: Spline shows Curves and Motion (arc checking), Deliver shows
   Bake. A stage setup holding a tool whose family moved still loads; that tool
   is dropped from it.
@@ -15,7 +15,7 @@
   Remove All Proxy Sessions, To Spline and To Stepped join the Timeline
   catalogue (95 actions).
 - Row labels: Set Reference, To Reference, Amplify (was Push/Pull), Show Trails
-  (All keeps Trails), Location Proxy, Rotation Proxy and Clamped (Auto Clamped).
+  Location Proxy, Rotation Proxy and Clamped (Auto Clamped).
 - Scales and icons (version B): Block's Breakdown slider carries stage presets
   -25/25/50/75/125, replacing the 25/50/75% and Push/Pull Prev/Next buttons on the
   row (same results at default strengths); Polish's Timing Scale becomes an
@@ -24,6 +24,10 @@
   own presets. Icons for grow, Copy/Paste, To Spline, handle types (theme handle
   colours) and nudges; Show/Hide Trails become one Trails eye toggle (96
   actions).
+- Compact All row (Recommended): 25/50/75 as ticks on Breakdown; -1f/+1f,
+  Copy, Paste, Mirror, Bake Object and the Trails eye as icons. Stage tabs
+  return from about 1,450 px. Tool Settings gains Presets as Ticks for any
+  slider, in All and in stages. Saved or edited layouts keep their All row.
 - Compact rows: stage sliders draw presets as click ticks on a wider track
   (the drag snaps onto ticks; a popout falls back to preset buttons). Icons for
   Inbetween, Distribute, Set Reference, Opposite, Mirror, Mirror Active, Swap,

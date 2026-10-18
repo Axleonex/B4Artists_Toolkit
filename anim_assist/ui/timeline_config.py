@@ -201,8 +201,12 @@ SLIDERS = {
     'REDUCE': ('Reduce', '', 0., 0., .1, 0., 1.),
 }
 SLIDER_PRECISION = {'REDUCE': 3}
-RECOMMENDED_BUTTONS = {'B25', 'B50', 'B75', 'NUDGE_LEFT', 'NUDGE_RIGHT',
-                       'COPY_KEYS', 'PASTE_KEYS', 'MIRROR_SELECTED', 'BAKE_STEP', 'TRAIL_SHOW'}
+# Recommended All row, compact (owner pick "A · Compact match", 2026-10-18): the same
+# everyday tools as 12.9, with 25/50/75 as ticks on Breakdown and the small tools as icons.
+RECOMMENDED_BUTTONS = {'NUDGE_LEFT', 'NUDGE_RIGHT', 'COPY_KEYS', 'PASTE_KEYS', 'MIRROR_SELECTED',
+                       'BAKE_STEP', 'TRAIL_TOGGLE'}
+RECOMMENDED_ICONS = RECOMMENDED_BUTTONS
+RECOMMENDED_TICKS = {'DRAG': (25., 50., 75.)}
 
 
 def tool_default(action):
@@ -212,13 +216,16 @@ def tool_default(action):
         entry.update(range_min=low, range_max=high, default=default, sensitivity=200.,
                      precision=SLIDER_PRECISION.get(action, 1), snap_enabled=False,
                      snap_step=.001 if action == 'REDUCE' else 1., presets=[],
-                     overshoot_enabled=False)
+                     overshoot_enabled=False, ticks=False)
     return entry
 
 
 def recommended(actions):
     tools = {action: tool_default(action) for action in actions}
     for action in RECOMMENDED_BUTTONS & tools.keys(): tools[action]['mode'] = 'BUTTON'
+    for action in RECOMMENDED_ICONS & tools.keys(): tools[action]['label_mode'] = 'ICON'
+    for action, presets in RECOMMENDED_TICKS.items():
+        if action in tools: tools[action].update(presets=list(presets), ticks=True)
     for action in ('DRAG', 'SMOOTH'):
         if action in tools: tools[action]['mode'] = 'INLINE'
     if 'SCALE_DRAG' in tools: tools['SCALE_DRAG']['mode'] = 'POPOUT'
@@ -258,7 +265,7 @@ def validate_tool(action, raw):
     if result['snap_step'] <= 0: raise ValueError('Snap step must be positive')
     if type(result['precision']) is not int or not 0 <= result['precision'] <= 4:
         raise ValueError('Precision must be 0–4 decimal places')
-    for name in ('snap_enabled','overshoot_enabled'):
+    for name in ('snap_enabled','overshoot_enabled','ticks'):
         if type(result[name]) is not bool: raise ValueError(name+' must be a checkbox')
     if not isinstance(result['presets'], list) or len(result['presets']) > 12:
         raise ValueError('Use at most 12 numeric presets')
@@ -497,7 +504,7 @@ def pin_target(stage, action):
     return stage if stage in STAGE_KEYS and family_of(action) in stage_families(stage) else 'ALL'
 
 
-def set_stage_tool(record, stage, action, mode=None, label_mode=None, presets=None):
+def set_stage_tool(record, stage, action, mode=None, label_mode=None, presets=None, ticks=None):
     """Change one tool's mode/label in All or a stage; showing a stage tool
     places it after the last visible tool of its family."""
     layout = record['active']
@@ -505,6 +512,7 @@ def set_stage_tool(record, stage, action, mode=None, label_mode=None, presets=No
         tool = layout['tools'][action]
         if mode is not None: tool['mode'] = mode
         if label_mode is not None: tool['label_mode'] = shown_label_mode(action, label_mode)
+        if ticks is not None and action in SLIDERS: tool['ticks'] = bool(ticks)
         return
     setup = _stage_setup(layout, stage)
     current = setup['tools'].get(action)
@@ -525,7 +533,8 @@ def set_stage_tool(record, stage, action, mode=None, label_mode=None, presets=No
     entry = dict(mode=mode, label_mode=label_mode)
     if presets is not None and action in SLIDERS: entry['presets'] = stage_presets(action, presets)
     elif current and 'presets' in current: entry['presets'] = list(current['presets'])
-    if current and 'ticks' in current: entry['ticks'] = current['ticks']
+    if ticks is not None and action in SLIDERS: entry['ticks'] = bool(ticks)
+    elif current and 'ticks' in current: entry['ticks'] = current['ticks']
     setup['tools'][action] = entry
 
 

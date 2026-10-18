@@ -1,0 +1,435 @@
+<title>All Row Lab</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap">
+<style>
+/* Layout: a bench page (controls on top, a working mock Timeline in the middle, notes below). */
+:root{
+  --bg:#eef0f3; --surface:#ffffff; --fg:#1d2128; --muted:#5b6472; --line:#d6dbe2; --accent:#3d6db5;
+  --chip:#e3e8ef; --chip-on:#3d6db5; --chip-on-fg:#ffffff;
+  --display:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  /* The mock is Bforartists' own dark UI in both page themes. */
+  --bf-ui:"Inter",ui-sans-serif,system-ui,"Segoe UI",sans-serif;
+  --bf-bg:#2b2b2b; --bf-canvas:#3d3d3d; --bf-row:#3a3a3a; --bf-btn:#575757; --bf-btn-hi:#6a6a6a; --bf-btn-on:#4c5a6e;
+  --bf-text:#e3e3e3; --bf-dim:#9a9a9a; --bf-track:#2a2a2a; --bf-menu:#1f1f1f; --bf-edge:#e06c5a; --bf-play:#54b933;
+  --tween:#4fc1b4; --keys:#e9b44c; --curves:#5aa5e8; --motion:#6fcf6a; --timing:#e58b4f; --pose:#b48ae8; --bake:#e58b4f;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15181d;--surface:#1d2128;--fg:#e6e9ee;--muted:#9aa3b2;--line:#2e343e;--accent:#7aa2e6;--chip:#262c35;--chip-on:#7aa2e6;--chip-on-fg:#0f1420;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15181d;--surface:#1d2128;--fg:#e6e9ee;--muted:#9aa3b2;--line:#2e343e;--accent:#7aa2e6;--chip:#262c35;--chip-on:#7aa2e6;--chip-on-fg:#0f1420;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--display);padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1280px;margin:0 auto;display:grid;gap:16px}
+h1{font-size:22px;font-weight:600;margin:0;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:72ch;line-height:1.55}
+.bar{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
+.lab{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.opt{font:500 13px var(--display);border:1px solid var(--line);background:var(--chip);color:var(--fg);border-radius:6px;padding:6px 10px;cursor:pointer}
+.opt[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg);border-color:var(--chip-on)}
+.opt:focus-visible,.bf button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+input[type=range]{width:220px;accent-color:var(--accent)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}
+.stage-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--line);background:var(--bf-bg)}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.note h2{font-size:15px;margin:0 0 6px;font-weight:600}
+.note p{margin:0 0 6px;line-height:1.5;color:var(--muted);font-size:13.5px}
+.note b{color:var(--fg);font-weight:500}
+.meter{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.meter span b{color:var(--fg);font-family:var(--mono);font-weight:500}
+
+/* ---- Bforartists mock ---- */
+.bf{position:relative;font:11px/1 var(--bf-ui);color:var(--bf-text);user-select:none;padding:8px 8px 0}
+.tl{position:relative;background:var(--bf-canvas);border-radius:4px 4px 0 0;height:150px;overflow:hidden}
+.ruler{position:absolute;left:0;right:0;top:0;height:22px;background:#333;border-bottom:1px solid #222}
+.tick{position:absolute;top:6px;font-size:10px;color:var(--bf-dim);transform:translateX(-50%)}
+.grid{position:absolute;top:22px;bottom:0;width:1px;background:#353535}
+.key{position:absolute;width:8px;height:8px;background:#ffbe32;border:1px solid #000;transform:translate(-50%,-50%) rotate(45deg)}
+.play{position:absolute;top:0;bottom:0;width:2px;background:var(--bf-play)}
+.play i{position:absolute;top:2px;left:-11px;width:24px;height:16px;border-radius:4px;background:var(--bf-play);color:#fff;font-style:normal;font-size:10px;display:flex;align-items:center;justify-content:center}
+.rowbox{position:relative;background:var(--bf-row);border-top:1px solid #1d1d1d;padding:3px;border-radius:0 0 4px 4px}
+.row{display:flex;flex-wrap:nowrap;align-items:center;gap:3px;height:25px}
+.row>*{flex-shrink:0}
+.sp{flex:1 1 auto !important}
+.bf button{font:inherit;color:inherit;border:0;cursor:default}
+.b{background:var(--bf-btn);border-radius:3px;padding:0 5px;height:23px;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.b:hover,.ic:hover,.pr:hover,.fam:hover{background:var(--bf-btn-hi)}
+.b.flash,.ic.flash,.pr.flash{background:#7c8aa0}
+.ut{background:#4f4f4f;color:#cfcfcf}
+.st{background:var(--bf-btn-on);color:#fff}
+.tab{background:#4a4a4a;color:#cfcfcf;height:23px;padding:0 6px}
+.tab.on{background:var(--bf-btn-on);color:#fff}
+.tabs{display:inline-flex;gap:1px;background:#2a2a2a;border-radius:3px;overflow:hidden}
+.ic{background:var(--bf-btn);border-radius:3px;width:24px;height:23px;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.ic svg{display:block}
+.fam{background:transparent;height:23px;padding:0 5px;border-radius:3px}
+.famb{background:var(--bf-btn);height:23px;padding:0 6px;border-radius:3px}
+.cap{color:var(--bf-dim);padding:0 3px 0 6px;white-space:nowrap}
+.pr{background:#4a4a4a;border:1px solid #626262;border-radius:3px;height:21px;padding:0 6px}
+.sl{display:inline-flex;align-items:center;gap:4px;background:var(--bf-btn);border-radius:3px;height:23px;padding:0 5px;white-space:nowrap}
+.trk{position:relative;height:4px;background:var(--bf-track);border-radius:2px;cursor:ew-resize}
+.trk::before{content:"";position:absolute;left:0;right:0;top:-9px;bottom:-9px}
+.trk .fill{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
+.trk .th{position:absolute;top:-4px;width:6px;height:12px;border-radius:1px;transform:translateX(-50%)}
+.trk .tk{position:absolute;top:-4px;width:1.5px;height:12px;background:#d9d9d9;transform:translateX(-50%)}
+.val{font-variant-numeric:tabular-nums;min-width:34px;text-align:right;color:var(--bf-text)}
+.rs{color:var(--bf-dim);padding:0 2px;background:transparent}
+.edge{box-shadow:inset 3px 0 0 var(--e)}
+.more-n{background:#7c5a2a;color:#fff;border-radius:7px;padding:1px 5px;font-size:10px;margin-left:3px}
+.statusbar{display:flex;justify-content:space-between;gap:12px;padding:6px 10px;color:var(--bf-dim);font-size:11px;background:#232323;border-radius:0 0 6px 6px;margin:0 -8px}
+.statusbar b{color:var(--bf-text);font-weight:500}
+.tip{position:absolute;z-index:20;background:#101010;color:#eee;border-radius:4px;padding:7px 9px;max-width:360px;font-size:11px;line-height:1.45;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.tip .t1{font-weight:500;color:#fff}
+.tip .t3{color:#b0b0b0}
+.menu{position:absolute;z-index:30;background:var(--bf-menu);border:1px solid #111;border-radius:4px;padding:3px;min-width:170px;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.menu .mi{display:flex;justify-content:space-between;gap:16px;width:100%;text-align:left;background:transparent;padding:5px 8px;border-radius:3px;color:var(--bf-text)}
+.menu .mi:hover,.menu .mi.hot{background:var(--bf-btn-on)}
+.menu .mh{color:var(--bf-dim);padding:5px 8px 3px;font-size:10.5px}
+.pop{position:absolute;z-index:25;background:#2b2b2b;border:1px solid #111;border-radius:4px;padding:8px 10px;width:260px;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.find{position:absolute;z-index:40;left:50%;transform:translateX(-50%);bottom:42px;width:min(420px,90%);background:var(--bf-menu);border:1px solid #111;border-radius:6px;padding:6px;box-shadow:0 6px 18px rgba(0,0,0,.55)}
+.find input{width:100%;box-sizing:border-box;background:#2f2f2f;color:#eee;border:1px solid #555;border-radius:3px;padding:6px 8px;font:12px var(--bf-ui)}
+.find .list{max-height:220px;overflow:auto;margin-top:4px}
+.find .fr{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:3px}
+.find .fr:hover{background:#2c3646}
+.find .fr .nm{flex:1}
+.find .pin{background:#3b3b3b;color:#ddd;border-radius:3px;padding:3px 7px}
+.find .pin.on{background:var(--bf-btn-on);color:#fff}
+.edgeline{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed var(--bf-edge);pointer-events:none;z-index:5}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:6px">
+    <h1>All Row Lab</h1>
+    <p class="lede">The bottom Anim Assist toolbar in a working mock Timeline. Pick an All-row option, change the Timeline width, then use the row: hover for hover text, drag sliders, click ticks, open the stage list and family menus. Switch to Block, Spline, Polish or Deliver to see the compact stage rows already built. Widths are close to Bforartists at UI scale 1 but not exact.</p>
+  </header>
+
+  <section class="bar" aria-label="Test controls">
+    <div class="grp" role="group" aria-label="All row option">
+      <span class="lab">All row</span>
+      <button class="opt" id="o-NOW" data-o="NOW">Now</button>
+      <button class="opt" id="o-A" data-o="A">A · Compact match</button>
+      <button class="opt" id="o-B" data-o="B">B · Family hub</button>
+      <button class="opt" id="o-C" data-o="C">C · Icon overview</button>
+      <button class="opt" id="o-D" data-o="D">D · Stage digest</button>
+      <button class="opt" id="o-E" data-o="E">E · Pinned bar</button>
+    </div>
+    <div class="grp">
+      <label class="lab" for="w">Timeline width</label>
+      <input type="range" id="w" min="900" max="1900" step="1" value="1397">
+      <span class="num" id="wv">1397 px</span>
+      <button class="opt" id="w1397">Your Timeline (1397)</button>
+    </div>
+  </section>
+
+  <div class="meter" id="meter"></div>
+
+  <div class="stage-wrap">
+    <div class="bf" id="bf">
+      <div class="tl" id="tl"><div class="ruler" id="ruler"></div></div>
+      <div class="rowbox" id="rowbox"><div class="row" id="row"></div></div>
+      <div class="statusbar"><span id="status">Hover a tool to read its hover text. Click to run it in this mock.</span><span id="stinfo"></span></div>
+    </div>
+  </div>
+
+  <section class="notes" id="notes"></section>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-dk" viewBox="0 0 14 14"><path d="M7 1 13 7 7 13 1 7Z" fill="#ffbe32" stroke="#000"/></symbol>
+<symbol id="i-db" viewBox="0 0 14 14"><path d="M7 2.5 11.5 7 7 11.5 2.5 7Z" fill="#5acefe" stroke="#000"/></symbol>
+<symbol id="i-de" viewBox="0 0 14 14"><path d="M7 .2 13.8 7 7 13.8 .2 7Z" fill="#ffa1a1" stroke="#000"/></symbol>
+<symbol id="i-dh" viewBox="0 0 14 14"><path d="M7 2 12 7 7 12 2 7Z" fill="#fff0f1" stroke="#000"/></symbol>
+<symbol id="i-gl" viewBox="0 0 16 14"><path d="M1 7 6 3.5v7Z" fill="#e9b44c"/><path d="M11 4.5 13.5 7 11 9.5 8.5 7Z" fill="none" stroke="#e9b44c"/></symbol>
+<symbol id="i-gr" viewBox="0 0 16 14"><path d="M15 7 10 3.5v7Z" fill="#e9b44c"/><path d="M5 4.5 7.5 7 5 9.5 2.5 7Z" fill="none" stroke="#e9b44c"/></symbol>
+<symbol id="i-cp" viewBox="0 0 14 14"><rect x="1.5" y="1.5" width="8" height="8" fill="none" stroke="#e9b44c"/><rect x="4.5" y="4.5" width="8" height="8" fill="#575757" stroke="#e9b44c"/></symbol>
+<symbol id="i-ps" viewBox="0 0 14 14"><rect x="3" y="3" width="9" height="9" fill="#e9b44c"/></symbol>
+<symbol id="i-ib" viewBox="0 0 18 14"><path d="M3 3.5 6.5 7 3 10.5-.5 7Z" fill="#4fc1b4"/><path d="M15 3.5 18.5 7 15 10.5 11.5 7Z" fill="#4fc1b4"/><path d="M9 4.5v5M6.5 7h5" stroke="#e3e3e3" stroke-width="1.6"/></symbol>
+<symbol id="i-ds" viewBox="0 0 18 14"><path d="M3 3.5 6.5 7 3 10.5-.5 7Z" fill="#4fc1b4"/><path d="M15 3.5 18.5 7 15 10.5 11.5 7Z" fill="#4fc1b4"/><circle cx="7.6" cy="7" r="1.3" fill="#e3e3e3"/><circle cx="10.4" cy="7" r="1.3" fill="#e3e3e3"/></symbol>
+<symbol id="i-sp" viewBox="0 0 16 14"><path d="M1 11h3M12 3h3" stroke="#9a9a9a"/><path d="M4 11C9 11 7 3 12 3" stroke="#5aa5e8" fill="none" stroke-width="1.5"/></symbol>
+<symbol id="i-hc" viewBox="0 0 16 14"><path d="M2 7h12" stroke="#f0af90" stroke-width="1.5"/><rect x="6" y="5" width="4" height="4" fill="#e3e3e3"/></symbol>
+<symbol id="i-hv" viewBox="0 0 16 14"><path d="M2 12 8 7 14 12" stroke="#40c030" stroke-width="1.5" fill="none"/><rect x="6" y="5" width="4" height="4" fill="#e3e3e3"/></symbol>
+<symbol id="i-hf" viewBox="0 0 16 14"><path d="M2 3 8 7l6-2" stroke="#fff0f1" stroke-width="1.5" fill="none"/><rect x="6" y="5" width="4" height="4" fill="#e3e3e3"/></symbol>
+<symbol id="i-eye" viewBox="0 0 16 14"><path d="M1 7c3-5 11-5 14 0-3 5-11 5-14 0Z" fill="none" stroke="#6fcf6a" stroke-width="1.3"/><circle cx="8" cy="7" r="2.2" fill="#6fcf6a"/></symbol>
+<symbol id="i-eyeoff" viewBox="0 0 16 14"><path d="M1 7c3-5 11-5 14 0-3 5-11 5-14 0Z" fill="none" stroke="#6fcf6a" stroke-width="1.3"/><path d="M2 12 14 2" stroke="#6fcf6a" stroke-width="1.2"/></symbol>
+<symbol id="i-tg" viewBox="0 0 16 14"><circle cx="8" cy="7" r="5.5" fill="none" stroke="#5aa5e8"/><circle cx="8" cy="7" r="3" fill="none" stroke="#5aa5e8"/><circle cx="8" cy="7" r="1" fill="#5aa5e8"/></symbol>
+<symbol id="i-nl" viewBox="0 0 14 14"><path d="M10 2 3 7l7 5Z" fill="#e58b4f"/></symbol>
+<symbol id="i-nr" viewBox="0 0 14 14"><path d="M4 2l7 5-7 5Z" fill="#e58b4f"/></symbol>
+<symbol id="i-mi" viewBox="0 0 16 14"><path d="M8 1v3M8 6v2M8 10v3" stroke="#b48ae8"/><path d="M6 3 1 7l5 4ZM10 3l5 4-5 4Z" fill="#b48ae8"/></symbol>
+<symbol id="i-ma" viewBox="0 0 16 14"><path d="M8 1v3M8 6v2M8 10v3" stroke="#b48ae8"/><path d="M6 3 1 7l5 4Z" fill="#b48ae8"/><path d="M10 3l5 4-5 4Z" fill="none" stroke="#b48ae8"/></symbol>
+<symbol id="i-sw" viewBox="0 0 16 14"><path d="M2 4h10M14 10H4" stroke="#b48ae8" stroke-width="1.3"/><path d="M14 4l-3-2.5v5ZM2 10l3-2.5v5Z" fill="#b48ae8"/></symbol>
+<symbol id="i-op" viewBox="0 0 16 14"><circle cx="3.8" cy="7" r="2.6" fill="#b48ae8"/><circle cx="12.2" cy="7" r="2.6" fill="none" stroke="#b48ae8"/><path d="M6.6 7h2.8" stroke="#b48ae8"/></symbol>
+<symbol id="i-bk" viewBox="0 0 16 14"><path d="M1.5 12h13" stroke="#e58b4f"/><path d="M3.5 11V8M6.5 11V5M9.5 11V2.5M12.5 11V6" stroke="#e58b4f" stroke-width="2"/></symbol>
+<symbol id="i-pt" viewBox="0 0 16 14"><path d="M2 7h12M8 1v12" stroke="#e58b4f" stroke-width="1.3"/><path d="M15 7l-2.6-1.8v3.6ZM1 7l2.6-1.8v3.6ZM8 0l-1.8 2.6h3.6ZM8 14l-1.8-2.6h3.6Z" fill="#e58b4f"/></symbol>
+<symbol id="i-po" viewBox="0 0 16 14"><path d="M12.5 4.5A5.2 5.2 0 1 0 13 9" fill="none" stroke="#e58b4f" stroke-width="1.4"/><path d="M14.5 2.5 13 6.5 10 4Z" fill="#e58b4f"/></symbol>
+<symbol id="i-pw" viewBox="0 0 16 14"><circle cx="8" cy="7" r="5.6" fill="none" stroke="#e58b4f" stroke-width="1.3"/><path d="M2.4 7h11.2" stroke="#e58b4f"/><ellipse cx="8" cy="7" rx="2.4" ry="5.6" fill="none" stroke="#e58b4f"/></symbol>
+<symbol id="i-pp" viewBox="0 0 16 14"><circle cx="4" cy="3.5" r="2" fill="#e58b4f"/><path d="M4 5.5V10h4" stroke="#e58b4f" stroke-width="1.3" fill="none"/><rect x="9" y="7.5" width="5" height="5" fill="#e58b4f"/></symbol>
+<symbol id="i-plus" viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" stroke="#cfcfcf" stroke-width="1.6"/></symbol>
+</defs></svg>
+
+<script>
+const FAM={tween:['Tween','--tween'],keys:['Keys','--keys'],curves:['Curves','--curves'],motion:['Motion','--motion'],timing:['Timing','--timing'],pose:['Pose','--pose'],bake:['Bake','--bake']};
+// Tools: label, full name, family, hover text; sliders carry range/unit/precision/ticks.
+const T={
+ B25:{l:'25%',f:'25% Breakdown',fam:'tween',d:'Write a breakdown at 25% between the surrounding keys on the active object.'},
+ B50:{l:'50%',f:'50% Breakdown',fam:'tween',d:'Write a breakdown halfway between the surrounding keys.'},
+ B75:{l:'75%',f:'75% Breakdown',fam:'tween',d:'Write a breakdown at 75% between the surrounding keys.'},
+ DRAG:{l:'Breakdown',f:'Drag Breakdown',fam:'tween',s:{min:0,max:100,def:50,u:'%',p:1},d:'Drag to blend the current frame between the previous and next pose; release to apply, Esc cancels.'},
+ INBETWEEN:{l:'Inbetween',f:'Add Inbetween in Selected Gap',fam:'tween',i:'i-ib',d:'Insert one inbetween key in the middle of the selected gap.'},
+ INBETWEENS:{l:'Distribute',f:'Distribute Inbetweens in Selected Gap',fam:'tween',i:'i-ds',d:'Spread the chosen number of inbetweens evenly through the selected gap.'},
+ PUSH_PREV:{l:'Push Prev',f:'Push Previous',fam:'tween',d:'Breakdown past the previous pose (-25%).'},
+ PUSH_NEXT:{l:'Push Next',f:'Push Next',fam:'tween',d:'Breakdown past the next pose (125%).'},
+ RANGE:{l:'Range',f:'Select Frame Range',fam:'keys',d:'Select keys in the scene or preview range.'},
+ ALL:{l:'All Keys',f:'Select All Visible Keys',fam:'keys',d:'Select every visible key.'},
+ ENDS:{l:'Ends',f:'Select First and Last Keys',fam:'keys',d:'Select the first and last key of each curve.'},
+ GROW_LEFT:{l:'Grow Left',f:'Grow Key Selection Left',fam:'keys',i:'i-gl',d:'Add the previous key to the selection on each curve.'},
+ GROW_RIGHT:{l:'Grow Right',f:'Grow Key Selection Right',fam:'keys',i:'i-gr',d:'Add the next key to the selection on each curve.'},
+ TYPE_KEYFRAME:{l:'Mark Key',f:'Mark as Keyframe',fam:'keys',i:'i-dk',d:'Set selected keys to the Keyframe type.'},
+ TYPE_BREAKDOWN:{l:'Mark Breakdown',f:'Mark as Breakdown',fam:'keys',i:'i-db',d:'Set selected keys to the Breakdown type.'},
+ TYPE_EXTREME:{l:'Mark Extreme',f:'Mark as Extreme',fam:'keys',i:'i-de',d:'Set selected keys to the Extreme type.'},
+ TYPE_HOLD:{l:'Mark Hold',f:'Mark as Moving Hold',fam:'keys',i:'i-dh',d:'Set selected keys to the Moving Hold type.'},
+ COPY_KEYS:{l:'Copy',f:'Copy Selected Keys with Handles',fam:'keys',i:'i-cp',d:'Copy the selected keys, with handles, into the Anim Assist clipboard.'},
+ PASTE_KEYS:{l:'Paste',f:'Paste Keys at Copied Times',fam:'keys',i:'i-ps',d:'Paste the copied keys at their original times.'},
+ TO_SPLINE:{l:'To Spline',f:'Set Selected Keys to Spline (Bezier)',fam:'curves',i:'i-sp',d:'Set selected keys to Bezier so blocked poses play as smooth curves.'},
+ NEIGHBORS:{l:'Neighbors',f:'Blend to Neighbors',fam:'curves',s:{min:0,max:100,def:0,u:'%',p:1},d:'Drag to blend selected keys toward the line between their neighbours.'},
+ EASE:{l:'Ease',f:'Blend to Ease',fam:'curves',s:{min:0,max:100,def:0,u:'%',p:1},d:'Drag selected keys from linear toward eased spacing.'},
+ SMOOTH:{l:'Smooth',f:'Smooth Keys',fam:'curves',s:{min:0,max:100,def:0,u:'%',p:1},d:'Drag selected keys toward their neighbours’ average.'},
+ REFERENCE:{l:'Set Reference',f:'Set Reference Frame from Playhead',fam:'curves',i:'i-tg',d:'Store the playhead frame as the reference frame.'},
+ FRAME:{l:'To Reference',f:'Blend to Frame',fam:'curves',s:{min:0,max:100,def:0,u:'%',p:1},d:'Drag selected keys toward their value at the reference frame.'},
+ AMPLIFY:{l:'Amplify',f:'Scale Values from Reference',fam:'curves',s:{min:-100,max:200,def:0,u:'%',p:1},d:'Drag to scale key values around the reference frame value.'},
+ HANDLE_CLAMPED:{l:'Clamped',f:'Auto Clamped Handles',fam:'curves',i:'i-hc',d:'Set selected keys to Auto Clamped handles.'},
+ HANDLE_VECTOR:{l:'Vector',f:'Vector Handles',fam:'curves',i:'i-hv',d:'Set selected keys to Vector handles.'},
+ HANDLE_FREE:{l:'Free',f:'Free Handles',fam:'curves',i:'i-hf',d:'Set selected keys to Free handles.'},
+ TRAILS:{l:'Trails',f:'Show or Hide World Motion Trails',fam:'motion',i:'i-eye',toggle:true,d:'Show world motion trails in the 3D Viewport, or hide them when they are shown.'},
+ NUDGE_LEFT:{l:'−1f',f:'Nudge Selected Keys −1 Frame',fam:'timing',i:'i-nl',d:'Move selected keys one frame earlier.'},
+ NUDGE_RIGHT:{l:'+1f',f:'Nudge Selected Keys +1 Frame',fam:'timing',i:'i-nr',d:'Move selected keys one frame later.'},
+ SCALE_DRAG:{l:'Timing Scale',f:'Scale Key Timing',fam:'timing',s:{min:50,max:200,def:100,u:'%',p:1},d:'Drag to change key spacing: below 100% keys sit closer, above 100% they spread apart.'},
+ OFFSET_DRAG:{l:'Timing Offset',f:'Offset Action Timing',fam:'timing',s:{min:-10,max:10,def:0,u:'f',p:1},d:'Drag to shift the active object’s Action timing.'},
+ RIPPLE:{l:'Ripple',f:'Ripple Forward',fam:'timing',s:{min:-10,max:10,def:0,u:'f',p:1},d:'Drag to shift every key after the playhead; earlier stops one frame after it.'},
+ SNAP:{l:'Snap',f:'Round Key Times',fam:'timing',d:'Round selected key times to whole frames.'},
+ OPPOSITE:{l:'Opposite',f:'Select Opposite of Active Bone',fam:'pose',i:'i-op',d:'Select the mirrored partner of the active bone.'},
+ MIRROR_SELECTED:{l:'Mirror',f:'Mirror Selected Bones',fam:'pose',i:'i-mi',d:'Mirror the selected bones’ pose to the other side.'},
+ MIRROR_ACTIVE:{l:'Mirror Active',f:'Mirror Active Bone to Opposite',fam:'pose',i:'i-ma',d:'Copy the active bone’s pose to its opposite.'},
+ SWAP:{l:'Swap',f:'Swap Left/Right Poses',fam:'pose',i:'i-sw',d:'Swap the left and right poses.'},
+ BAKE_STEP:{l:'Bake Object',f:'Bake Object Transforms',fam:'bake',i:'i-bk',d:'Bake the active object’s evaluated transform to keys.'},
+ BAKE_PREVIEW:{l:'Bake Preview',f:'Bake Object Transforms in Preview Range',fam:'bake',d:'Bake within the preview range only.'},
+ SMART_BAKE:{l:'Smart Bake',f:'Bake Object Transforms and Reduce',fam:'bake',d:'Bake, then remove keys that change the curve less than the tolerance.'},
+ REDUCE:{l:'Reduce',f:'Reduce Keys',fam:'bake',s:{min:0,max:.1,def:0,u:'',p:3},d:'Drag to preview removing keys that change a curve by less than the tolerance.'},
+ BAKE_INTEGER:{l:'Whole Frames',f:'Bake Keys to Integer Frames',fam:'bake',d:'Round sub-frame keys to whole frames, restorable with Reset Timing.'},
+ PROXY_BAKE:{l:'Proxy & Bake',f:'One-Click Translation Proxy and Bake',fam:'bake',d:'Bake world motion through a temporary proxy in one step.'},
+ PROXY_TRANSLATION:{l:'Location Proxy',f:'Create Object Translation Proxy',fam:'bake',i:'i-pt',d:'Create a temporary location proxy for the active object.'},
+ PROXY_ORIENTATION:{l:'Rotation Proxy',f:'Create Object Orientation Proxy',fam:'bake',i:'i-po',d:'Create a temporary rotation proxy.'},
+ PROXY_WORLD:{l:'Proxy World',f:'Create Object World-Space Proxy',fam:'bake',i:'i-pw',d:'Create a temporary world-space proxy.'},
+ PROXY_PARENT:{l:'Proxy Parent',f:'Create Object Parent-Space Proxy',fam:'bake',i:'i-pp',d:'Create a temporary parent-space proxy.'},
+ BAKE_CLEANUP:{l:'Bake Proxies',f:'Bake Session and Remove Proxies',fam:'bake',d:'Bake the session’s constrained objects and remove its helpers.'},
+ CLEANUP_ALL:{l:'Clean All Proxies',f:'Remove All Proxy Sessions',fam:'bake',d:'Remove every Anim Assist proxy and helper in this file.'},
+};
+const FAMTOOLS={};for(const [id,t] of Object.entries(T)){(FAMTOOLS[t.fam]=FAMTOOLS[t.fam]||[]).push(id)}
+
+// Row specs. {fam:k} family chip, {t:id,as:'icon'|'label'|'inline'|'popout',ticks:[..],range:[a,b]}, {cap:'text'}, {edge:k}, {famb:k}, {pins:true}
+const t=(id,o={})=>Object.assign({t:id},o);
+const STAGES={
+ BLOCK:[{fam:'tween'},t('DRAG',{as:'inline',ticks:[-25,25,50,75,125],range:[-25,125]}),t('INBETWEEN',{as:'icon'}),t('INBETWEENS',{as:'icon'}),
+   {fam:'keys'},t('RANGE'),t('ALL'),t('ENDS'),t('GROW_LEFT',{as:'icon'}),t('GROW_RIGHT',{as:'icon'}),t('TYPE_KEYFRAME',{as:'icon'}),t('TYPE_BREAKDOWN',{as:'icon'}),t('TYPE_EXTREME',{as:'icon'}),t('TYPE_HOLD',{as:'icon'}),t('COPY_KEYS',{as:'icon'}),t('PASTE_KEYS',{as:'icon'})],
+ SPLINE:[{fam:'curves'},t('TO_SPLINE',{as:'icon'}),t('NEIGHBORS',{as:'inline',w:64}),t('EASE',{as:'inline',w:64}),t('SMOOTH',{as:'inline',w:64}),t('REFERENCE',{as:'icon'}),t('FRAME',{as:'inline',w:64}),t('AMPLIFY',{as:'inline',w:64}),
+   t('HANDLE_CLAMPED',{as:'icon'}),t('HANDLE_VECTOR',{as:'icon'}),t('HANDLE_FREE',{as:'icon'}),{fam:'motion'},t('TRAILS',{as:'icon'})],
+ POLISH:[{fam:'timing'},t('NUDGE_LEFT',{as:'icon'}),t('NUDGE_RIGHT',{as:'icon'}),t('SCALE_DRAG',{as:'inline',ticks:[80,90,110,120]}),t('OFFSET_DRAG',{as:'inline'}),t('RIPPLE',{as:'inline',ticks:[-1,1]}),t('SNAP'),
+   {fam:'pose'},t('OPPOSITE',{as:'icon'}),t('MIRROR_SELECTED',{as:'icon'}),t('MIRROR_ACTIVE',{as:'icon'}),t('SWAP',{as:'icon'})],
+ DELIVER:[{fam:'bake'},t('BAKE_STEP',{as:'icon'}),t('BAKE_PREVIEW'),t('SMART_BAKE'),t('REDUCE',{as:'inline',ticks:[.001,.01,.05],w:110}),t('BAKE_INTEGER'),t('PROXY_BAKE'),
+   t('PROXY_TRANSLATION',{as:'icon'}),t('PROXY_ORIENTATION',{as:'icon'}),t('PROXY_WORLD',{as:'icon'}),t('PROXY_PARENT',{as:'icon'}),t('BAKE_CLEANUP'),t('CLEANUP_ALL')],
+};
+const ALLROWS={
+ NOW:[{fam:'tween'},t('B25'),t('B50'),t('B75'),t('DRAG',{as:'inline'}),{fam:'timing'},t('NUDGE_LEFT'),t('NUDGE_RIGHT'),t('SCALE_DRAG',{as:'popout'}),{fam:'curves'},t('SMOOTH',{as:'inline'}),
+   {fam:'keys'},t('COPY_KEYS'),t('PASTE_KEYS'),{fam:'pose'},t('MIRROR_SELECTED'),{fam:'bake'},t('BAKE_STEP'),{fam:'motion'},t('TRAILS',{lbl:'Trails'})],
+ A:[{fam:'tween'},t('DRAG',{as:'inline',ticks:[25,50,75]}),{fam:'timing'},t('NUDGE_LEFT',{as:'icon'}),t('NUDGE_RIGHT',{as:'icon'}),t('SCALE_DRAG',{as:'popout'}),{fam:'curves'},t('SMOOTH',{as:'inline'}),
+   {fam:'keys'},t('COPY_KEYS',{as:'icon'}),t('PASTE_KEYS',{as:'icon'}),{fam:'pose'},t('MIRROR_SELECTED',{as:'icon'}),{fam:'bake'},t('BAKE_STEP',{as:'icon'}),{fam:'motion'},t('TRAILS',{as:'icon'})],
+ B:[t('DRAG',{as:'inline',ticks:[25,50,75]}),t('SMOOTH',{as:'inline'}),{famb:'tween'},{famb:'timing'},{famb:'curves'},{famb:'keys'},{famb:'pose'},{famb:'bake'},{famb:'motion'}],
+ C:[{edge:'tween'},t('DRAG',{as:'inline',ticks:[25,50,75]}),{edge:'timing'},t('NUDGE_LEFT',{as:'icon'}),t('NUDGE_RIGHT',{as:'icon'}),{edge:'curves'},t('SMOOTH',{as:'inline'}),
+   {edge:'keys'},t('COPY_KEYS',{as:'icon'}),t('PASTE_KEYS',{as:'icon'}),{edge:'pose'},t('MIRROR_SELECTED',{as:'icon'}),{edge:'bake'},t('BAKE_STEP',{as:'icon'}),{edge:'motion'},t('TRAILS',{as:'icon'})],
+ D:[{cap:'Block'},t('DRAG',{as:'inline',ticks:[-25,25,50,75,125],range:[-25,125]}),t('TYPE_KEYFRAME',{as:'icon'}),t('TYPE_BREAKDOWN',{as:'icon'}),{cap:'Spline'},t('TO_SPLINE',{as:'icon'}),t('SMOOTH',{as:'inline'}),t('TRAILS',{as:'icon'}),
+   {cap:'Polish'},t('NUDGE_LEFT',{as:'icon'}),t('NUDGE_RIGHT',{as:'icon'}),t('MIRROR_SELECTED',{as:'icon'}),{cap:'Deliver'},t('BAKE_STEP',{as:'icon'}),t('SMART_BAKE')],
+ E:[t('DRAG',{as:'inline',ticks:[25,50,75]}),t('SMOOTH',{as:'inline'}),{cap:'Pinned'},{pins:true}],
+};
+const NOTES={
+ NOW:['Now','Today’s All row, unchanged since 12.9: text buttons with family names. At your width the five stage tabs do not fit, so the stage button is used.'],
+ A:['A · Compact match','The same tools as now, drawn like the stage rows: 25/50/75 become ticks on Breakdown, and the small tools become the icons the stages use. Family names stay as words.'],
+ B:['B · Family hub','All becomes a launcher: the two everyday sliders, then one menu button per family. Calm and short, but the quick buttons move into the menus.'],
+ C:['C · Icon overview','The tools from A without family names; a coloured edge on each group marks its family. Narrowest of the three tool-carrying options; families open from More.'],
+ D:['D · Stage digest','Grouped by stage instead of family: a few signature tools from Block, Spline, Polish and Deliver, so All previews what each stage holds.'],
+ E:['E · Pinned bar','Two sliders plus your own pinned tools. Use + to pin from Find and right-click a pin to remove it. The example pins are only a starting set.'],
+};
+const STAGE_LIST=[['ALL','All'],['BLOCK','Block'],['SPLINE','Spline'],['POLISH','Polish'],['DELIVER','Deliver']];
+
+// ---- state ----
+const S={opt:'NOW',stage:'ALL',w:1397,vals:{},trails:false,pins:['TYPE_KEYFRAME','COPY_KEYS','PASTE_KEYS','MIRROR_SELECTED','BAKE_STEP'],menu:null};
+try{const saved=JSON.parse(localStorage.getItem('allrowlab')||'{}');if(saved.opt)S.opt=saved.opt;if(Array.isArray(saved.pins))S.pins=saved.pins}catch(e){}
+function save(){try{localStorage.setItem('allrowlab',JSON.stringify({opt:S.opt,pins:S.pins}))}catch(e){}}
+
+const $=s=>document.querySelector(s);
+const row=$('#row'),bf=$('#bf'),status=$('#status');
+function say(html){status.innerHTML=html}
+function famColor(k){return getComputedStyle(document.documentElement).getPropertyValue(FAM[k][1]).trim()}
+
+function icon(id,w=16){return `<svg width="${w}" height="14" aria-hidden="true"><use href="#${id}"/></svg>`}
+function sliderHTML(e,tl){
+  const s=tl.s,ticks=e.ticks||[],[lo,hi]=e.range||[Math.min(s.min,...ticks),Math.max(s.max,...ticks)];
+  const w=e.w||(ticks.length?140:100);const v=S.vals[e.t]??s.def;const c=famColor(tl.fam);
+  const f=Math.min(1,Math.max(0,(v-lo)/(hi-lo)));
+  const tk=ticks.map(x=>`<span class="tk" style="left:${(x-lo)/(hi-lo)*100}%"></span>`).join('');
+  return `<span class="sl" data-tool="${e.t}" data-kind="slider">${tl.l}<span class="trk" style="width:${w}px" data-lo="${lo}" data-hi="${hi}" data-ticks="${ticks.join(',')}"><span class="fill" style="width:${f*100}%;background:${c}"></span>${tk}<span class="th" style="left:${f*100}%;background:${c}"></span></span><span class="val">${fmt(v,s)}</span><button class="rs" data-reset="${e.t}" aria-label="Reset ${tl.f}">R</button></span>`;
+}
+function fmt(v,s){return v.toFixed(s.p)+s.u}
+
+function itemHTML(e){
+  if(e.fam){const [n]=FAM[e.fam];return `<button class="fam" data-menu="${e.fam}" style="color:${famColor(e.fam)}" data-tip="${n} family: open its tools">${n}</button>`}
+  if(e.famb){const [n]=FAM[e.famb];return `<button class="famb" data-menu="${e.famb}" style="color:${famColor(e.famb)}" data-tip="${n} family: open its tools">${n} ▾</button>`}
+  if(e.cap)return `<span class="cap">${e.cap}</span>`;
+  if(e.edge)return '';
+  if(e.pins){return S.pins.map(id=>itemHTML(T[id].i?{t:id,as:'icon',pin:1}:{t:id,pin:1})).join('')+`<button class="ic" data-pinadd="1" aria-label="Pin a tool" data-tip="Pin a tool: pick one in Find">${icon('i-plus',14)}</button>`}
+  const tl=T[e.t];
+  if(e.as==='inline')return sliderHTML(e,tl);
+  if(e.as==='popout')return `<button class="b" data-tool="${e.t}" data-kind="popout" data-ticks="${(e.ticks||[]).join(',')}">${tl.l}</button>`;
+  if(e.as==='icon'){const id=e.t==='TRAILS'?(S.trails?'i-eye':'i-eyeoff'):tl.i;return `<button class="ic" data-tool="${e.t}" ${e.pin?'data-pinned="1"':''} aria-label="${tl.f}">${icon(id,id.startsWith('i-d')||id==='i-cp'||id==='i-ps'?14:(id==='i-ib'||id==='i-ds'?18:16))}</button>`}
+  return `<button class="b" data-tool="${e.t}" ${e.pin?'data-pinned="1"':''}>${e.lbl||tl.l}</button>`;
+}
+
+function rowSpec(stage){return stage==='ALL'?ALLROWS[S.opt]:STAGES[stage]}
+function bodyHTML(spec){let out='',edge=null;for(const e of spec){if(e.edge){edge=e.edge;continue}let h=itemHTML(e);if(edge&&h){h=h.replace(/^<(\w+) class="/,`<$1 style="--e:${famColor(edge)}" class="edge `);edge=null}out+=h}return out}
+
+// Measure widths in a hidden row so layout decisions match what is drawn.
+const meas=document.createElement('div');meas.className='row';meas.style.cssText='position:absolute;visibility:hidden;left:-9999px;top:0';bf.appendChild(meas);
+function widthOf(html){meas.innerHTML=html;let w=0;for(const c of meas.children)w+=c.getBoundingClientRect().width+3;return w}
+function tabsHTML(){return `<span class="tabs">${STAGE_LIST.map(([k,n])=>`<button class="tab${S.stage===k?' on':''}" data-stage="${k}" data-tip="${n} stage">${n}</button>`).join('')}</span>`}
+function stageBtnHTML(){const n=STAGE_LIST.find(x=>x[0]===S.stage)[1];return `<button class="b st" data-stagebtn="1" data-tip="Stage: ${n}. Click to choose a stage.">${n} ▾</button>`}
+const UTIL=()=>`<span class="sp"></span><button class="b ut" data-util="find" data-tip="Find an animation tool; run it or pin it">Find</button><button class="b ut" data-util="more" data-tip="Tools that do not fit, and every family">More<span class="more-n" id="moren" hidden></span></button><button class="b ut" data-util="settings" data-tip="Choose visible tools, slider modes, order and layouts">Settings</button>`;
+
+function render(){
+  closeMenus();
+  const W=S.w-8; // row inner width
+  const utilW=widthOf(UTIL().replace('<span class="sp"></span>',''));
+  const allW=widthOf(bodyHTML(ALLROWS[S.opt]));const tabsW=widthOf(tabsHTML());
+  const useTabs=tabsW+allW+utilW+6<=W; // as in the add-on: tabs only if All's full row fits beside them
+  const lead=useTabs?tabsHTML():stageBtnHTML();
+  row.innerHTML=lead+bodyHTML(rowSpec(S.stage))+UTIL();
+  // Overflow: hide trailing tools that do not fit before the utilities.
+  const kids=[...row.children];const sp=row.querySelector('.sp');const leadEls=kids.slice(0,1);
+  let used=leadEls[0].getBoundingClientRect().width+3+utilW;const hidden=[];
+  for(const c of kids.slice(1,kids.indexOf(sp))){const cw=c.getBoundingClientRect().width+3;if(used+cw>W){c.hidden=true;if(c.dataset.tool)hidden.push(c.dataset.tool)}else used+=cw}
+  S.hidden=hidden;const n=$('#moren');if(hidden.length){n.hidden=false;n.textContent=hidden.length}
+  $('#rowbox').style.width=S.w+'px';$('#tl').style.width=S.w+'px';drawTimeline();
+  const bodyW=widthOf(bodyHTML(rowSpec(S.stage)));
+  $('#meter').innerHTML=`<span>All row tools: <b>${Math.round(allW)} px</b></span><span>Stage tabs: <b>${useTabs?'shown':'stage button'}</b> (tabs need about <b>${Math.round(tabsW+allW+utilW)} px</b>)</span><span>This row: <b>${Math.round(bodyW)} px</b> of tools${hidden.length?`, <b>${hidden.length}</b> in More`:''}</span>`;
+  $('#stinfo').textContent=`${STAGE_LIST.find(x=>x[0]===S.stage)[1]} · ${S.w} px`;
+  document.querySelectorAll('.opt[data-o]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.o===S.opt)));
+  const [h,p]=NOTES[S.opt];$('#notes').innerHTML=Object.entries(NOTES).map(([k,[hh,pp]])=>`<article class="note" style="${k===S.opt?'outline:2px solid var(--accent)':''}"><h2>${hh}</h2><p>${pp}</p></article>`).join('');
+}
+
+function drawTimeline(){
+  const tl=$('#tl'),r=$('#ruler');tl.querySelectorAll('.grid,.key,.play').forEach(x=>x.remove());r.innerHTML='';
+  const px=f=>40+(f+6)*(S.w-80)/66;
+  for(let f=-6;f<=60;f+=6){const x=px(f);r.insertAdjacentHTML('beforeend',`<span class="tick" style="left:${x}px">${f}</span>`);tl.insertAdjacentHTML('beforeend',`<span class="grid" style="left:${x}px"></span>`)}
+  for(const f of [1,12,24,36,48])for(const y of [52,70,88])tl.insertAdjacentHTML('beforeend',`<span class="key" style="left:${px(f)}px;top:${y}px"></span>`);
+  tl.insertAdjacentHTML('beforeend',`<span class="play" style="left:${px(11)}px"><i>11</i></span>`);
+}
+
+// ---- hover text ----
+let tipEl=null,tipTimer=null;
+function tipText(el){
+  const id=el.dataset.tool;if(!id)return el.dataset.tip?`<div class="t1">${el.dataset.tip}</div>`:null;
+  const tl=T[id];let extra='';
+  if(el.dataset.kind==='slider'){const tk=el.querySelector('.trk').dataset.ticks;extra=(tk?`<div>Ticks: ${tk.split(',').map(x=>x+tl.s.u).join(', ')}. Click a tick to apply it.</div>`:'')+'<div class="t3">Drag to preview; release to apply; Esc cancels.</div>'}
+  if(el.dataset.kind==='popout')extra='<div class="t3">Press and drag to adjust; release to apply.</div>';
+  if(el.dataset.pinned)extra+='<div class="t3">Pinned. Right-click to unpin.</div>';
+  return `<div class="t1">${tl.f}</div><div>${tl.d}</div>${extra}<div class="t3">Also in ${FAM[tl.fam][0]} › ${tl.f}</div>`;
+}
+function showTip(el){hideTip();const html=tipText(el);if(!html)return;tipEl=document.createElement('div');tipEl.className='tip';tipEl.innerHTML=html;bf.appendChild(tipEl);
+  const b=el.getBoundingClientRect(),o=bf.getBoundingClientRect();let x=b.left-o.left;x=Math.min(x,bf.clientWidth-tipEl.offsetWidth-6);tipEl.style.left=Math.max(4,x)+'px';tipEl.style.top=(b.top-o.top-tipEl.offsetHeight-6)+'px'}
+function hideTip(){clearTimeout(tipTimer);if(tipEl){tipEl.remove();tipEl=null}}
+row.addEventListener('pointerover',e=>{const el=e.target.closest('[data-tool],[data-tip]');if(!el||S.drag)return;clearTimeout(tipTimer);tipTimer=setTimeout(()=>showTip(el),450)});
+row.addEventListener('pointerout',e=>{if(!e.relatedTarget||!row.contains(e.relatedTarget))hideTip()});
+
+// ---- menus ----
+function closeMenus(){bf.querySelectorAll('.menu,.pop,.find').forEach(m=>m.remove());S.menu=null}
+function openMenu(anchor,items,key){
+  if(S.menu===key){closeMenus();return}closeMenus();hideTip();S.menu=key;
+  const m=document.createElement('div');m.className='menu';m.innerHTML=items;bf.appendChild(m);
+  const b=anchor.getBoundingClientRect(),o=bf.getBoundingClientRect();
+  m.style.left=Math.min(b.left-o.left,bf.clientWidth-m.offsetWidth-6)+'px';m.style.top=(b.top-o.top-m.offsetHeight-4)+'px';return m;
+}
+function toolItems(ids){return ids.map(id=>`<button class="mi" data-run="${id}"><span>${T[id].f}</span></button>`).join('')}
+
+// ---- running tools ----
+function run(id,el){
+  const tl=T[id];
+  if(id==='TRAILS'){S.trails=!S.trails;render();say(`Trails <b>${S.trails?'shown':'hidden'}</b> in the 3D Viewport.`);return}
+  if(el){el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),180)}
+  say(`Ran <b>${tl.f}</b>. In Bforartists this acts on the selected keys or object.`);
+}
+
+// ---- sliders ----
+function trackValue(trk,x,snap=true){
+  const r=trk.getBoundingClientRect(),lo=+trk.dataset.lo,hi=+trk.dataset.hi;let v=lo+Math.min(1,Math.max(0,(x-r.left)/r.width))*(hi-lo);
+  const ticks=trk.dataset.ticks?trk.dataset.ticks.split(',').map(Number):[];
+  if(snap){const near=ticks.filter(t=>Math.abs(t-v)<=.03*(hi-lo));if(near.length)v=near.sort((a,b)=>Math.abs(a-v)-Math.abs(b-v))[0]}return v;
+}
+function setSlider(sl,v){const trk=sl.querySelector('.trk'),lo=+trk.dataset.lo,hi=+trk.dataset.hi,f=(v-lo)/(hi-lo)*100;
+  sl.querySelector('.fill').style.width=f+'%';sl.querySelector('.th').style.left=f+'%';const s=T[sl.dataset.tool].s;sl.querySelector('.val').textContent=fmt(v,s);S.vals[sl.dataset.tool]=v}
+
+row.addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;
+  const trk=e.target.closest('.trk');
+  if(trk){e.preventDefault();hideTip();closeMenus();const sl=trk.closest('.sl'),id=sl.dataset.tool,start=S.vals[id]??T[id].s.def;
+    S.drag={sl,trk,id,start};setSlider(sl,trackValue(trk,e.clientX));trk.setPointerCapture(e.pointerId);say(`${T[id].l}: <b>${sl.querySelector('.val').textContent}</b> · release to apply · Esc cancels`);return}
+  const pop=e.target.closest('[data-kind="popout"]');
+  if(pop){e.preventDefault();hideTip();closeMenus();const id=pop.dataset.tool,s=T[id].s,start=S.vals[id]??s.def;
+    const p=document.createElement('div');p.className='pop';p.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span>${T[id].l}</span><span class="val">${fmt(start,s)}</span></div><div class="trk" style="width:100%" data-lo="${s.min}" data-hi="${s.max}" data-ticks=""><span class="fill" style="background:${famColor(T[id].fam)}"></span><span class="th" style="background:${famColor(T[id].fam)}"></span></div>`;
+    bf.appendChild(p);const b=pop.getBoundingClientRect(),o=bf.getBoundingClientRect();p.style.left=Math.min(b.left-o.left,bf.clientWidth-270)+'px';p.style.top=(b.top-o.top-p.offsetHeight-6)+'px';
+    const upd=v=>{const f=(v-s.min)/(s.max-s.min)*100;p.querySelector('.fill').style.width=f+'%';p.querySelector('.th').style.left=f+'%';p.querySelector('.val').textContent=fmt(v,s);S.vals[id]=v};upd(start);
+    S.drag={pop:p,id,x0:e.clientX,start,upd};pop.setPointerCapture(e.pointerId);return}
+});
+row.addEventListener('pointermove',e=>{const d=S.drag;if(!d)return;
+  if(d.trk){setSlider(d.sl,trackValue(d.trk,e.clientX));say(`${T[d.id].l}: <b>${d.sl.querySelector('.val').textContent}</b> · release to apply · Esc cancels`)}
+  else{const s=T[d.id].s;let v=d.start+(e.clientX-d.x0)/200*(s.max-s.min);v=Math.min(s.max,Math.max(s.min,v));d.upd(v);say(`${T[d.id].l}: <b>${fmt(v,s)}</b> · release to apply`)}});
+row.addEventListener('pointerup',e=>{const d=S.drag;if(!d)return;S.drag=null;const s=T[d.id].s;
+  if(d.pop)d.pop.remove();say(`Applied <b>${T[d.id].f}</b> at <b>${fmt(S.vals[d.id],s)}</b>.`)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const d=S.drag;if(d){S.drag=null;if(d.trk)setSlider(d.sl,d.start);if(d.pop){S.vals[d.id]=d.start;d.pop.remove()}say('Cancelled; the keys are back as they were.')}closeMenus()}});
+
+row.addEventListener('click',e=>{
+  const rs=e.target.closest('[data-reset]');if(rs){const id=rs.dataset.reset;setSlider(rs.closest('.sl'),T[id].s.def);say(`Reset <b>${T[id].f}</b> to ${fmt(T[id].s.def,T[id].s)}.`);return}
+  if(e.target.closest('.trk')||e.target.closest('[data-kind="popout"]'))return;
+  const tab=e.target.closest('[data-stage]');if(tab){S.stage=tab.dataset.stage;render();say(`Stage: <b>${STAGE_LIST.find(x=>x[0]===S.stage)[1]}</b>.`);return}
+  const sb=e.target.closest('[data-stagebtn]');if(sb){const m=openMenu(sb,STAGE_LIST.map(([k,n])=>`<button class="mi${k===S.stage?' hot':''}" data-pick="${k}"><span>${n}</span></button>`).join(''),'stages');return}
+  const fm=e.target.closest('[data-menu]');if(fm){const k=fm.dataset.menu;openMenu(fm,`<div class="mh">${FAM[k][0]}</div>`+toolItems(FAMTOOLS[k]),'fam-'+k);return}
+  const u=e.target.closest('[data-util]');if(u){const k=u.dataset.util;
+    if(k==='more'){const hid=S.hidden||[];openMenu(u,(hid.length?`<div class="mh">Did not fit</div>`+toolItems(hid):'<div class="mh">Everything fits on this row</div>')+`<div class="mh">Families</div>`+Object.keys(FAM).map(f=>`<button class="mi" data-famopen="${f}"><span>${FAM[f][0]}</span><span>›</span></button>`).join(''),'more');return}
+    if(k==='find'){openFind();return}
+    if(k==='settings'){closeMenus();say('In Bforartists this opens Toolbar Settings: tools, slider modes, ticks, order and saved layouts.');return}}
+  if(e.target.closest('[data-pinadd]')){openFind(true);return}
+  const tb=e.target.closest('[data-tool]');if(tb){closeMenus();run(tb.dataset.tool,tb)}
+});
+row.addEventListener('contextmenu',e=>{const p=e.target.closest('[data-pinned]');if(p){e.preventDefault();S.pins=S.pins.filter(x=>x!==p.dataset.tool);save();render();say(`Unpinned <b>${T[p.dataset.tool].f}</b>.`)}});
+bf.addEventListener('click',e=>{
+  const pick=e.target.closest('[data-pick]');if(pick){S.stage=pick.dataset.pick;render();say(`Stage: <b>${STAGE_LIST.find(x=>x[0]===S.stage)[1]}</b>.`);return}
+  const r=e.target.closest('.menu [data-run]');if(r){closeMenus();run(r.dataset.run);return}
+  const fo=e.target.closest('[data-famopen]');if(fo){const k=fo.dataset.famopen;const more=row.querySelector('[data-util="more"]');S.menu=null;openMenu(more,`<div class="mh">${FAM[k][0]}</div>`+toolItems(FAMTOOLS[k]),'fam-'+k);return}
+  if(!e.target.closest('.menu,.find,.pop,[data-stagebtn],[data-menu],[data-util],[data-pinadd]'))closeMenus();
+});
+document.addEventListener('pointerdown',e=>{if(!bf.contains(e.target))closeMenus()});
+
+function openFind(pinMode=false){
+  closeMenus();hideTip();S.menu='find';const f=document.createElement('div');f.className='find';
+  f.innerHTML=`<input id="findq" placeholder="Find an animation tool" aria-label="Find an animation tool"><div class="list" id="findl"></div>`;bf.appendChild(f);
+  const draw=()=>{const q=$('#findq').value.trim().toLowerCase();const ids=Object.keys(T).filter(id=>(T[id].f+' '+T[id].l+' '+FAM[T[id].fam][0]).toLowerCase().includes(q)).slice(0,40);
+    $('#findl').innerHTML=ids.map(id=>`<div class="fr"><span class="nm">${T[id].f}</span><span style="color:${famColor(T[id].fam)}">${FAM[T[id].fam][0]}</span>${S.opt==='E'?`<button class="pin${S.pins.includes(id)?' on':''}" data-pin="${id}">${S.pins.includes(id)?'Pinned':'Pin'}</button>`:''}<button class="pin" data-frun="${id}">Run</button></div>`).join('')||'<div class="fr">No tool matches</div>'};
+  draw();$('#findq').addEventListener('input',draw);$('#findq').focus();
+  f.addEventListener('click',ev=>{const p=ev.target.closest('[data-pin]');if(p){const id=p.dataset.pin;S.pins=S.pins.includes(id)?S.pins.filter(x=>x!==id):[...S.pins,id];save();draw();const keep=$('#findq').value;render();openFind();$('#findq').value=keep;$('#findq').dispatchEvent(new Event('input'));say(`${S.pins.includes(id)?'Pinned':'Unpinned'} <b>${T[id].f}</b>.`);return}
+    const r=ev.target.closest('[data-frun]');if(r){closeMenus();run(r.dataset.frun)}});
+  if(pinMode&&S.opt!=='E')say('Pinning is part of option E.');
+}
+
+// ---- controls ----
+document.querySelectorAll('.opt[data-o]').forEach(b=>b.addEventListener('click',()=>{S.opt=b.dataset.o;S.stage='ALL';save();render();say(`All row: <b>${NOTES[S.opt][0]}</b>.`)}));
+$('#w').addEventListener('input',e=>{S.w=+e.target.value;$('#wv').textContent=S.w+' px';render()});
+$('#w1397').addEventListener('click',()=>{S.w=1397;$('#w').value=1397;$('#wv').textContent='1397 px';render()});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(render);
+render();
+</script>

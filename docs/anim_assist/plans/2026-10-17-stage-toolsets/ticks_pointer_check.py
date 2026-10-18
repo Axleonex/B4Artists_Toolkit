@@ -89,20 +89,19 @@ def value_at_11():
     return round(fc.evaluate(11), 3)
 
 
-def tick_point(preset):
+def tick_point(preset, low=-25., high=125.):
     with bpy.context.temp_override(window=window(), area=timeline(), region=region()):
         items = overlay()._items(bpy.context)[0]
         item = next(i for i in items if i[1] == "DRAG")
         scale = bpy.context.preferences.system.ui_scale
         track = overlay()._parts(item[3], item[2], scale)[0]
-    low, high = -25., 125.
     x = track[0] + track[2] * (preset - low) / (high - low)
     state["kind"] = item[0]
     return dict(x=round(region().x + x), y=round(region().y + track[1] + track[3] / 2))
 
 
-def click(preset):
-    xy = tick_point(preset)
+def click(preset, low=-25., high=125.):
+    xy = tick_point(preset, low, high)
     win = window()
     win.event_simulate(type="MOUSEMOVE", value="NOTHING", **xy)
     win.event_simulate(type="LEFTMOUSE", value="PRESS", **xy)
@@ -118,6 +117,13 @@ def plan():
         yield (lambda p=preset: click(p)), 0.8
         yield (lambda p=preset, e=expected: (log.write(f"  tick {p}: key at frame 11 = {value_at_11()}\n"),
                                              check(f"Clicking the {p} tick keys {e}", value_at_11() == e))), 0.2
+    # All's Recommended row: Breakdown 0-100 with ticks at 25/50/75.
+    yield (lambda: setattr(window().workspace, PROP, "ALL")), 0.6
+    yield rekey, 0.4
+    yield (lambda: click(75, 0., 100.)), 0.8
+    yield (lambda: check("All row: Breakdown is inline with ticks and the 75 tick keys 7.5",
+                         state["kind"] == "SLIDER" and value_at_11() == 7.5)), 0.2
+    yield (lambda: bpy.ops.screen.screenshot(filepath=str(OUT / "all-ticks.png"))), 0.5
     yield (lambda: (setattr(window().workspace, PROP, "BLOCK"),
                     bpy.ops.screen.screenshot(filepath=str(OUT / "block-ticks.png")))), 0.5
 

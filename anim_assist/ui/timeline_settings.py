@@ -259,6 +259,7 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
     snap_enabled: BoolProperty(name='Snap Amount',description='Round slider values to the configured step')
     snap_step: FloatProperty(name='Snap Step',description='Step in this tool’s displayed units',default=1,min=.0001)
     overshoot_enabled: BoolProperty(name='Custom Range / Overshoot',description='Use your configured range rather than the standard display range')
+    ticks: BoolProperty(name='Presets as Ticks',description='Show presets as click ticks on the inline slider track instead of preset buttons',default=False)
     presets_text: StringProperty(name='Presets',description='Comma-separated amounts; at most 12, inside the configured range')
 
     def invoke(self,context,event):
@@ -278,6 +279,7 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
             view=model.stage_view(staged['active'],self._target)[1][self.action]
             self.mode=view['mode']; self.label_mode=view['label_mode']
             if self.action in model.SLIDERS:
+                self.ticks=bool(view.get('ticks',False)); self._shown_ticks=self.ticks
                 self._shown_presets=[float(v) for v in view.get('presets',[])]
                 self.presets_text=', '.join(f'{v:g}' for v in self._shown_presets)
         _tool_editors[context.window.as_pointer()]=self
@@ -305,6 +307,7 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
             layout.prop(self,'snap_enabled')
             row=layout.row(); row.enabled=self.snap_enabled; row.prop(self,'snap_step',text=f'Step ({unit})')
             layout.prop(self,'presets_text')
+            layout.prop(self,'ticks')
         layout.separator()
         layout.label(text='Masks, targets and anchors are scene-specific.')
         op=layout.operator('wm.call_panel',text='Scene Tool Options')
@@ -320,6 +323,7 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
             stage_presets=None
             if target in model.STAGE_KEYS:
                 tool['mode'],tool['label_mode']=self._tool['mode'],self._tool['label_mode']
+                if 'ticks' in self._tool: tool['ticks']=self._tool['ticks']  # All keeps its own; the stage gets self.ticks
                 if self.action in model.SLIDERS:
                     # Store stage presets only when edited, so untouched stages keep following All.
                     if tool['presets']!=getattr(self,'_shown_presets',tool['presets']): stage_presets=tool['presets']
@@ -327,7 +331,10 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
             data['active']['tools'][self.action]=model.validate_tool(self.action,tool)
             if target in model.STAGE_KEYS:
                 model.set_stage_tool(data,target,self.action,mode=self.mode,label_mode=self.label_mode,
-                                     presets=stage_presets)
+                                     presets=stage_presets,
+                                     # Store ticks only when changed, like presets.
+                                     ticks=self.ticks if self.action in model.SLIDERS
+                                     and self.ticks!=getattr(self,'_shown_ticks',self.ticks) else None)
                 data=model.validate(data,ACTIONS)
             if editor(context): sync_editor(context,data)
             else: write(context,data)

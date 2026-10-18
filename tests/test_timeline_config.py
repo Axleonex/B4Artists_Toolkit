@@ -93,8 +93,8 @@ class ConfigTests(unittest.TestCase):
 
     def test_update_and_deep_copy(self):
         config.save_as(self.record,'One')
-        self.record['active']['tools']['DRAG']['presets']=[25,50,75]
-        self.assertEqual(self.record['saved'][0]['tools']['DRAG']['presets'],[])
+        self.record['active']['tools']['DRAG']['presets']=[10,90]
+        self.assertEqual(self.record['saved'][0]['tools']['DRAG']['presets'],[25.,50.,75.])
         config.update_saved(self.record)
         self.assertFalse(config.modified(self.record,actions))
 
@@ -313,10 +313,12 @@ class StagePresetTests(unittest.TestCase):
         self.record = config.recommended(actions)
 
     def test_all_keeps_tool_presets_and_stage_shows_its_own(self):
-        self.assertEqual(self.record['active']['tools']['DRAG']['presets'], [])
+        # All's Recommended row shows 25/50/75 as Breakdown ticks; Block has its own presets.
+        self.assertEqual(self.record['active']['tools']['DRAG']['presets'], [25., 50., 75.])
         all_tools = config.stage_view(self.record['active'], 'ALL')[1]
         block_tools = config.stage_view(self.record['active'], 'BLOCK')[1]
-        self.assertEqual(all_tools['DRAG']['presets'], [])
+        self.assertEqual(all_tools['DRAG']['presets'], [25., 50., 75.])
+        self.assertTrue(all_tools['DRAG']['ticks'])
         self.assertEqual(block_tools['DRAG']['presets'], [-25., 25., 50., 75., 125.])
 
     def test_block_row_shows_breakdown_presets_and_all_row_does_not(self):
@@ -406,6 +408,41 @@ class TickTests(unittest.TestCase):
             items = config.toolbar_layout(1397, 120, 28, False, self.record, groups, {}, lambda t: len(t) * 6.2, stage)
             shown = {c[1] for c in items if c[0] in {'ACTION', 'SLIDER', 'POPOUT'}}
             self.assertEqual(shown, set(self.record['active']['stages'][stage]['order']), stage)
+
+
+class AllCompactTests(unittest.TestCase):
+    def setUp(self):
+        self.record = config.recommended(actions)
+
+    def test_recommended_all_is_compact(self):
+        tools = self.record['active']['tools']
+        for action in ('B25', 'B50', 'B75', 'TRAIL_SHOW'):
+            self.assertEqual(tools[action]['mode'], 'HIDDEN', action)
+        for action in ('NUDGE_LEFT', 'NUDGE_RIGHT', 'COPY_KEYS', 'PASTE_KEYS', 'MIRROR_SELECTED', 'BAKE_STEP', 'TRAIL_TOGGLE'):
+            self.assertEqual((tools[action]['mode'], tools[action]['label_mode']), ('BUTTON', 'ICON'), action)
+        self.assertEqual((tools['DRAG']['presets'], tools['DRAG']['ticks']), ([25., 50., 75.], True))
+        self.assertEqual(tools['SCALE_DRAG']['mode'], 'POPOUT')
+        self.assertEqual(tools['SMOOTH']['mode'], 'INLINE')
+
+    def test_all_row_draws_ticks_not_buttons(self):
+        items = config.toolbar_layout(1920, 120, 28, False, self.record, groups, {}, lambda t: len(t) * 6, 'ALL')
+        self.assertFalse([c for c in items if c[0] == 'PRESET'])
+        self.assertEqual(next(c for c in items if c[1] == 'DRAG')[0], 'SLIDER')
+
+    def test_ticks_setting_in_all_and_stage(self):
+        config.set_stage_tool(self.record, 'ALL', 'DRAG', ticks=False)
+        self.assertFalse(self.record['active']['tools']['DRAG']['ticks'])
+        config.set_stage_tool(self.record, 'SPLINE', 'SMOOTH', ticks=True)
+        self.assertTrue(self.record['active']['stages']['SPLINE']['tools']['SMOOTH']['ticks'])
+        config.validate(self.record, actions)
+        bad = copy.deepcopy(self.record); bad['active']['tools']['DRAG']['ticks'] = 'yes'
+        with self.assertRaises(ValueError): config.validate(bad, actions)
+
+    def test_stage_tabs_return_sooner(self):
+        def lead(width):
+            items = config.toolbar_layout(width, 120, 28, False, self.record, groups, {}, lambda t: len(t) * 6.2, 'ALL')
+            return any(c[0] == 'STAGE' for c in items)
+        self.assertTrue(lead(1600))
 
 
 if __name__=='__main__': unittest.main()

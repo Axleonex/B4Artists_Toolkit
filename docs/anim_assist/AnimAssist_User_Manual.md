@@ -18,7 +18,7 @@ Scene Properties > Anim Assist > Setup (once per rig) > First Run Setup creates 
 
 The row groups tools into **Tween, Timing, Curves, Keys, Pose, Bake and Motion**. Click an action to run it; use family menus or Find for others. Tooltips explain prerequisites and scope. Action-wide offset affects more than selected-key nudging.
 
-**Recommended** starts with two inline sliders: **Breakdown** and **Smooth**. **Timing Scale** uses a temporary popout slider. Quick buttons include 25%, 50% and 75% breakdowns, -1f/+1f nudges, Copy/Paste Keys, Mirror Selected, Bake Object Transforms and Show World Motion Trails.
+**Recommended** starts with two inline sliders: **Breakdown**, whose track has ticks at 25%, 50% and 75% (click a tick to apply it), and **Smooth**. **Timing Scale** uses a temporary popout slider. Quick icons: -1f/+1f nudges, Copy/Paste Keys, Mirror Selected, Bake Object Transforms and Trails (the eye shows or hides world motion trails). Hover an icon for its name. In Tool Settings, **Presets as Ticks** switches any slider between ticks on its track and preset buttons, in All or in a stage.
 
 Press and drag. Release applies; Esc/right-click restores the captured animation. Shift gives finer movement; Ctrl uses the snap step. Type a value and press Enter for numeric input. Clicking without dragging applies nothing. Watch the status bar.
 

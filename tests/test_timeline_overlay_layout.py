@@ -118,7 +118,7 @@ class TimelineLayoutTests(unittest.TestCase):
 
     def test_narrow_quick_tools_and_more(self):
         controls=self.controls(250)
-        self.assertIn('B25',[c[1] for c in controls])
+        self.assertIn('DRAG',[c[1] for c in controls])
         self.assertIn('MORE',[c[0] for c in controls])
         self.assertNotIn('SLIDER',[c[0] for c in controls])
 

@@ -198,9 +198,10 @@ try:
     print("Breakdown button vs preset:", results_bd, flush=True)
     check("Breakdown presets -25/25/75/125 match Push/Pull Prev/Next",
           all(a == b for a, b in results_bd.values()) and results_bd["PUSH_PREV"][0] == -2.5)
-    check("Block shows Breakdown presets; All does not",
+    check("Block shows Breakdown presets -25..125; All shows 25/50/75 as ticks",
           model.stage_view(model.recommended(ACTIONS)["active"], "BLOCK")[1]["DRAG"]["presets"] == [-25., 25., 50., 75., 125.]
-          and model.recommended(ACTIONS)["active"]["tools"]["DRAG"]["presets"] == [])
+          and model.recommended(ACTIONS)["active"]["tools"]["DRAG"]["presets"] == [25., 50., 75.]
+          and model.recommended(ACTIONS)["active"]["tools"]["DRAG"]["ticks"] is True)
 
     # Reduce and Ripple sliders: live preview, Esc restores, presets match the old buttons.
     session = sys.modules["B4_anim_assist.core.timeline_slider_session"]
