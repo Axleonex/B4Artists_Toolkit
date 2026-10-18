@@ -40,8 +40,10 @@ phase. **All** stays the condensed overview, exactly as it is today.
   Spline = Curves; Polish = Timing, Pose; Deliver = Bake, Motion), in permanent
   family order (Tween, Timing, Curves, Keys, Pose, Bake, Motion) so tools do not
   jump between stages. Within each family, tools follow the stage's own order.
-- Stage tabs, cycle button, Ctrl+Wheel, View menu, per-workspace stage storage and
-  "tabs collapse before sliders demote" behave exactly as in 12.9.0.
+- Stage tabs, cycle button, Ctrl+Wheel, View menu and per-workspace stage storage
+  behave as in 12.9.1. Tabs show when All fits beside them in full (the 12.9.1
+  result); a wider stage toolset compacts or overflows into More rather than
+  taking the tabs away from All (review finding).
 - Search and the family menus still list every tool. **More** lists the tools the
   current stage shows (or would show without overflow) followed by All Tools.
 
@@ -102,8 +104,8 @@ from `anim_assist/ui/timeline_catalog.py`; no new operators or animation code.
   on read.
 - *My call:* stage entries are stored sparsely: a stage stores its visible tools'
   `order`, `mode` and `label_mode` only; absent tools are Hidden in that stage.
-  This keeps a five-setup layout close to today's size, so the existing 100-layout
-  cap and 1,000,000-byte limit still hold for libraries that decode today.
+  Even so a layout grows about a third, so the record limit rises from 1,000,000
+  to 1,400,000 bytes to keep the 100-layout cap usable (review finding).
 - Validation mirrors version 1: known actions only within the stage's families,
   valid modes per tool, unique order, unknown stage keys and unknown tools
   preserved for forward compatibility, at most 100 saved layouts, 1,000,000-byte

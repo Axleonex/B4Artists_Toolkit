@@ -401,7 +401,8 @@ class ANIMASSIST_OT_timeline_pin(bpy.types.Operator):
         if target=='ALL':
             setattr(prefs, quick_property_name(self.action),not visible)
             if stage!='ALL':
-                self.report({'INFO'},f"Pinned in All; {model.stage_label(stage)} does not show {FAMILY[self.action][1]}")
+                verb='Unpinned from' if visible else 'Pinned in'
+                self.report({'INFO'},f"{verb} All; {model.stage_label(stage)} does not show {FAMILY[self.action][1]}")
         return {"FINISHED"}
 
 
@@ -434,8 +435,10 @@ class ANIMASSIST_OT_timeline_search(bpy.types.Operator):
         stage = current_stage(context)
         if prefs is not None and stage in model.STAGE_KEYS:
             try:
-                _order, tools = model.stage_view(timeline_record(prefs)['active'], stage)
-                selected = frozenset(a for a in _ACTIONS if tools[a]['mode'] != 'HIDDEN')
+                active = timeline_record(prefs)['active']
+                views = {key: model.stage_view(active, key)[1] for key in ('ALL', stage)}
+                selected = frozenset(a for a in _ACTIONS
+                                     if views[model.pin_target(stage, a)][a]['mode'] != 'HIDDEN')
             except ValueError:
                 pass
         matches = search_actions(self.query)

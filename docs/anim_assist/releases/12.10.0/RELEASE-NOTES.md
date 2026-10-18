@@ -1,0 +1,31 @@
+# Anim Assist 12.10.0
+
+## Stage toolsets
+
+Block, Spline, Polish and Deliver each have their own toolset on the bottom Timeline row. **All** is unchanged: it stays the condensed overview of every family.
+
+Each stage starts from a fixed default set: the Recommended tools for its families plus tools for that phase of work:
+
+| Stage | Adds by default |
+|---|---|
+| Block | Inbetween, Distribute Inbetweens, Push/Pull Previous/Next; Select Range/All/Ends, Grow left/right, mark Keyframe/Breakdown/Extreme/Moving Hold |
+| Spline | Set Reference Frame, Reference and Push/Pull popouts, Neighbors and Ease sliders, Auto Clamped/Vector/Free handles |
+| Polish | 80/90/110/120% spacing, Timing Offset slider, Ripple, Snap; Select Opposite, Mirror Active, Swap |
+| Deliver | Smart Bake, Reduce Keys, Bake Session and Remove Proxies; Refresh, Diagnose and Hide Trails |
+
+- **Customise each stage** in Toolbar Settings: Row Stage chooses the setup you edit, Family offers that stage's families, and each tool can be Hidden, Button, Popout or Inline, labelled or iconed, and reordered. **Reset Stage to Defaults** restores one stage; **Restore Recommended Layout** restores everything.
+- **Saved layouts** store All and all four stages together (Save As, Load, Update Saved, Rename, Delete).
+- **Amounts are shared:** range, default, presets, slider width and snapping are the same in every stage.
+- **Shorter row labels** for tools that showed internal names, for example 80% instead of T80, Mark Key instead of Type Keyframe and All Keys for Select All Visible. They apply wherever these tools appear, including All.
+- **Shortcuts follow the shown stage:** right-click Tool Settings, Search pins and More act on the stage the row shows. A tool from a family the stage does not show is pinned into All, with a note.
+
+## Upgrading from 12.9.x
+
+- Stages start from the fixed default set above, not from your All tools. Tools you added to All stay in All until you add them to a stage.
+- Your saved toolbar record is upgraded in memory and stored in the new format the next time you change toolbar settings. Anim Assist 12.9.x cannot read the new format; reinstalling 12.9.x afterwards falls back to the Recommended layout.
+
+## Install
+
+Install `b4_anim_assist_v12.10.0.zip` through Preferences → Install from Disk, then restart Bforartists.
+
+See [qualification](qualification.md) for measured checks and limits.

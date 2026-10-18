@@ -186,7 +186,7 @@ class ConfigTests(unittest.TestCase):
         by['INBETWEEN']['mode']='HIDDEN'; by['DRAG']['width']=150.
         before_all=copy.deepcopy(self.record['active']['order'])
         polish=copy.deepcopy(self.record['active']['stages']['POLISH'])
-        config.apply_entries(self.record,'BLOCK',entries)
+        config.apply_entries(self.record,'BLOCK',entries,actions)
         order=self.record['active']['stages']['BLOCK']['order']
         self.assertLess(order.index('TYPE_HOLD'),order.index('RANGE'))
         self.assertNotIn('INBETWEEN',order)
@@ -195,6 +195,25 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(self.record['active']['stages']['POLISH'],polish)
         self.assertEqual(len(config.stage_entries(self.record,'ALL',actions)),89)
         config.validate(self.record,actions)
+
+    def test_future_stage_tools_survive_settings(self):
+        self.record['active']['tools']['FUTURE']={'mode':'BUTTON'}
+        self.record['active']['stages']['BLOCK']['order'].append('FUTURE')
+        self.record['active']['stages']['BLOCK']['tools']['FUTURE']={'mode':'BUTTON','extra':1}
+        record=config.validate(self.record,actions)
+        config.apply_entries(record,'BLOCK',config.stage_entries(record,'BLOCK',actions),actions)
+        self.assertIn('FUTURE',record['active']['stages']['BLOCK']['order'])
+        self.assertEqual(record['active']['stages']['BLOCK']['tools']['FUTURE'],{'mode':'BUTTON','extra':1})
+
+    def test_malformed_unknown_stage_tool_rejected(self):
+        for setup in ({'order':['FUTURE'],'tools':{'FUTURE':[1]}},{'order':[],'tools':{'FUTURE':'x'}}):
+            record=copy.deepcopy(self.record); record['active']['stages']['BLOCK']=setup
+            with self.assertRaises(ValueError): config.validate(record,actions)
+
+    def test_hundred_layouts_fit(self):
+        for index in range(100):
+            config.save_as(self.record,f'Layout {index}')
+        self.assertLessEqual(len(config.encode(self.record,actions)),config.RECORD_LIMIT)
 
 
 if __name__=='__main__': unittest.main()

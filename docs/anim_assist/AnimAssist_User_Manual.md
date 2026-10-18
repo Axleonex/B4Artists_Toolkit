@@ -1,10 +1,10 @@
-# Anim Assist 12.9.1 user guide
+# Anim Assist 12.10.0 user guide
 
-Reviewed against 12.9.1 on October 17, 2026. Use Dope Sheet for poses/timing, Graph Editor for curves, and NLA Editor for clips/corrections. Help controls explain individual tools.
+Reviewed against 12.10.0 on October 17, 2026. Use Dope Sheet for poses/timing, Graph Editor for curves, and NLA Editor for clips/corrections. Help controls explain individual tools.
 
 ## Install and find the tools
 
-Download the [12.9.1 add-on ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.9.1.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk. Select the ZIP and enable Anim Assist. Its package is `B4_anim_assist`. Restart after updating.
+Download the [12.10.0 add-on ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.10.0.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk. Select the ZIP and enable Anim Assist. Its package is `B4_anim_assist`. Restart after updating.
 
 Validated host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`, OpenGL. Standard Blender is unsupported; other builds were not validated.
 
@@ -38,11 +38,24 @@ The **bottom-only canvas overlay** retains 12.7.1 placement, away from the top k
 
 ### Stage tabs
 
-Tabs at the left of the row choose a stage: **All**, **Block** (Tween, Keys), **Spline** (Curves), **Polish** (Timing, Pose) and **Deliver** (Bake, Motion). A stage shows only those families from your active layout. It never edits saved layouts, tool modes or slider settings. **All** shows every family.
+Tabs at the left of the row choose a stage: **All**, **Block** (Tween, Keys), **Spline** (Curves), **Polish** (Timing, Pose) and **Deliver** (Bake, Motion). **All** is the condensed overview of every family. Each other stage has its own toolset for its families.
 
 Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. When the row is tight, the tabs collapse into one button that cycles stages before any slider is shortened. Tools outside the stage remain in More and Search.
 
-**Toolbar Settings** (the row's **Settings** button) also shows **Row Stage**. If you configure a family the current stage hides, a note names the stage that shows it; choose that stage or **All** to see your change on the row. Add-on Preferences have no stage control; there, Anim Assist notes that each workspace picks its stage with the row's tabs.
+### Stage toolsets
+
+Each stage starts from a fixed default set, the Recommended tools for its families plus tools for that phase, left to right in workflow order:
+
+- **Block:** 25/50/75%, Breakdown slider, Inbetween, Distribute Inbetweens, Push/Pull Previous/Next; Select Range/All/Ends, Grow left/right, mark Keyframe/Breakdown/Extreme/Moving Hold, Copy/Paste.
+- **Spline:** Set Reference Frame, Reference (popout), Neighbors, Ease and Smooth sliders, Push/Pull (popout), Auto Clamped/Vector/Free handles.
+- **Polish:** -1f/+1f, Timing Scale (popout), 80/90/110/120% spacing, Timing Offset slider, Ripple, Snap; Select Opposite, Mirror Selected, Mirror Active, Swap.
+- **Deliver:** Bake Object, Smart Bake, Reduce Keys, Bake Session and Remove Proxies; Show/Refresh/Diagnose/Hide Trails.
+
+To change a stage, open **Toolbar Settings** (the row's **Settings** button). **Row Stage** chooses the setup you edit, and the row behind the dialog follows it. In a stage, Family offers only that stage's families; set each tool Hidden, Button, Popout or Inline, choose label or icon, and reorder it. **Reset Stage to Defaults** restores the current stage; **Restore Recommended Layout** restores All and every stage. Saved layouts store All and all four stages together.
+
+Amounts (range, default, presets, slider width, snapping) are shared: changing them in any stage changes them everywhere. Right-click Tool Settings changes the display and label in the stage the row shows. A Search pin also goes to that stage; a tool from another family is pinned into All, and a note says so. More lists the shown stage's tools.
+
+Stages start from this fixed set, not from your All tools: a tool you added to All appears in a stage only after you add it there. Add-on Preferences have no stage control; there, Anim Assist notes that each workspace picks its stage with the row's tabs.
 
 ## Dope Sheet: poses and key timing
 
@@ -124,16 +137,17 @@ If a key operation does nothing, check active editor, selected editable keys, vi
 
 For unavailable NLA actions, check track locks, mute/Solo exclusion, missing Action, disabled NLA evaluation or active Tweak Mode. Finish Editing before arranging clips. Read the unsupported-rig/channel explanation for correction creation. Inspect motion after timing/bake changes; use native Undo if needed, then save/reopen before relying on the result.
 
-The [12.9.1 qualification](releases/12.9.1/qualification.md) covers the stage tabs and their 12.9.1 fixes. The [12.8.0 qualification](releases/12.8.0/qualification.md) records 16 native behavioral/interaction groups, Undo/Redo, workspace reload, 98 panel registration checks and five Timeline layout regression checks. Native mesh key insertion was visible in Graph/Dope Sheet. All three sidebars were captured at 220, 280 and 360 px. These synthetic fixtures do not certify every existing tool, production rig or host build. Earlier slider/lipsync evidence is historical, not a fresh full-suite pass for 12.8.0.
+The [12.10.0 qualification](releases/12.10.0/qualification.md) covers stage toolsets; the [12.9.1 qualification](releases/12.9.1/qualification.md) covers the stage tab fixes. The [12.8.0 qualification](releases/12.8.0/qualification.md) records 16 native behavioral/interaction groups, Undo/Redo, workspace reload, 98 panel registration checks and five Timeline layout regression checks. Native mesh key insertion was visible in Graph/Dope Sheet. All three sidebars were captured at 220, 280 and 360 px. These synthetic fixtures do not certify every existing tool, production rig or host build. Earlier slider/lipsync evidence is historical, not a fresh full-suite pass for 12.8.0.
 
 ## Actual interface screenshots
 
-Actual qualification captures: Timeline stage tabs and settings from 12.9.1, editor sidebars from 12.8.0. Open full size; selection determines enabled controls.
+Actual qualification captures: Timeline stage toolsets and settings from 12.10.0, editor sidebars from 12.8.0. Open full size; selection determines enabled controls.
 
-- [Timeline stage tabs: Block stage (12.9.1)](releases/12.9.1/evidence/images/stage-block.png)
-- [Toolbar Settings with Row Stage (12.9.1)](releases/12.9.1/evidence/images/settings-dialog.png)
+- [Timeline stage toolset: Block (12.10.0)](releases/12.10.0/evidence/images/stage-block.png)
+- [Timeline stage toolset: Spline (12.10.0)](releases/12.10.0/evidence/images/stage-spline.png)
+- [Toolbar Settings editing Block (12.10.0)](releases/12.10.0/evidence/images/settings-dialog.png)
 - [NLA sidebar: arrangement and corrections, 280 px](releases/12.8.0/evidence/images/nla_editor-280.png)
 - [Graph sidebar: curve shaping, 280 px](releases/12.8.0/evidence/images/graph_editor-280.png)
 - [Dope Sheet sidebar: poses and timing, 280 px](releases/12.8.0/evidence/images/dopesheet_editor-280.png)
 
-See [release notes](releases/12.9.1/RELEASE-NOTES.md) and the [documentation index](README.md). The 12.5.0 separate-strip screenshots and checkbox-only quick-tool instructions are historical; use this guide for current settings.
+See [release notes](releases/12.10.0/RELEASE-NOTES.md) and the [documentation index](README.md). The 12.5.0 separate-strip screenshots and checkbox-only quick-tool instructions are historical; use this guide for current settings.

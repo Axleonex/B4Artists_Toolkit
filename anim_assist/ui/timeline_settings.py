@@ -120,7 +120,7 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
         data=copy.deepcopy(self._record)
         model.apply_entries(data,getattr(self,'_stage','ALL'),
             [dict(action=e.action,family=e.family,mode=e.mode,label_mode=e.label_mode,width=e.width)
-             for e in self.entries])
+             for e in self.entries],ACTIONS)
         return model.validate(data,ACTIONS)
 
     def switch_stage(self,stage):
@@ -151,6 +151,8 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
         row=layout.row(align=True); row.enabled=self.layout_choice!='recommended'
         for operation,label in (('RENAME','Rename'),('DELETE','Delete')):
             op=row.operator('animassist.layout_action',text=label); op.operation=operation; op.target=self.layout_choice
+        layout.label(text='Editing: '+model.stage_label(getattr(self,'_stage','ALL'))+
+                     (' (all families)' if getattr(self,'_stage','ALL') not in model.STAGE_KEYS else ' stage'))
         layout.prop(self,'family')
         from .timeline_overlay import draw_stage_controls
         draw_stage_controls(layout,context,self.family)

@@ -76,18 +76,16 @@ class TimelineLayoutTests(unittest.TestCase):
                 if kinds=={'STAGE_CYCLE'}:
                     self.assertEqual({key for _k,key in leads},{'CYCLE'})
 
-    def test_tabs_only_when_every_stage_fits_in_full(self):
-        # "Tabs give way first": with tabs shown, no stage loses family menus
-        # or demotes an inline slider.
+    def test_tabs_follow_all_like_12_9(self):
+        # Tabs depend on All only (as in 12.9.x); with tabs shown, All keeps its
+        # family menus and inline sliders, and wide stage toolsets never take
+        # the tabs away from All.
+        self.assertEqual(self.controls(1920)[0][0],'STAGE')
         for width in range(250,1921,10):
-            for stage,_label,families in config.STAGES:
-                controls=self.controls(width,stage=stage)
-                if controls[0][0]!='STAGE': continue
-                expected=[f for f in config.FAMILY_ORDER if families is None or f in families]
-                self.assertEqual([c[1] for c in controls if c[0]=='MENU'],expected,(width,stage))
-                order,tools=config.stage_view(config.recommended(values['ACTIONS'])['active'],stage)
-                inline={a for a in order if a in tools and isinstance(tools[a],dict) and tools[a].get('mode')=='INLINE'}
-                self.assertEqual({c[1] for c in controls if c[0]=='SLIDER'},inline,(width,stage))
+            controls=self.controls(width)
+            if controls[0][0]!='STAGE': continue
+            self.assertEqual([c[1] for c in controls if c[0]=='MENU'],list(config.FAMILY_ORDER),width)
+            self.assertEqual({c[1] for c in controls if c[0]=='SLIDER'},{'DRAG','SMOOTH'},width)
 
     def test_hidden_family_note(self):
         self.assertEqual(config.hidden_family_note('ALL','pose','Pose'),'')

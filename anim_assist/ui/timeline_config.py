@@ -19,6 +19,8 @@ STAGE_IDS = tuple(key for key, _label, _families in STAGES)
 STAGE_NUMBERS = {'ALL': 0, 'BLOCK': 1, 'SPLINE': 2, 'POLISH': 3, 'DELIVER': 4}
 STAGE_KEYS = tuple(key for key, _label, families in STAGES if families)
 SCHEMA_VERSION = 2
+# Stage setups add about a third to each layout; keep room for 100 saved layouts.
+RECORD_LIMIT = 1_400_000
 MODES = ('HIDDEN', 'BUTTON', 'POPOUT', 'INLINE')
 _B, _P, _I = 'BUTTON', 'POPOUT', 'INLINE'
 # Fixed default toolsets, left to right in workflow order (owner decision:
@@ -47,7 +49,7 @@ def register_families(groups):
 
 
 def family_of(action):
-    if not _FAMILY: raise RuntimeError('Toolbar families are not registered')
+    if not _FAMILY: raise ValueError('Toolbar families are not registered')
     return _FAMILY.get(action)
 
 
@@ -77,6 +79,7 @@ def validate_stage(stage, raw, actions):
     for action in order:
         entry = tools_raw.get(action, {})
         if action not in actions:  # Forward compatibility: keep unknown tools intact.
+            if not isinstance(entry, dict): raise ValueError('Stage tool settings must be an object')
             result['order'].append(action); result['tools'][action] = copy.deepcopy(entry); continue
         if family_of(action) not in allowed:
             raise ValueError(f'{action} does not belong to the {stage_label(stage)} stage')
@@ -86,7 +89,9 @@ def validate_stage(stage, raw, actions):
         if mode == 'HIDDEN': continue
         result['order'].append(action); result['tools'][action] = dict(mode=mode, label_mode=label_mode)
     for key, value in tools_raw.items():
-        if key not in actions and key not in result['tools']: result['tools'][key] = copy.deepcopy(value)
+        if key not in actions and key not in result['tools']:
+            if not isinstance(value, dict): raise ValueError('Stage tool settings must be an object')
+            result['tools'][key] = copy.deepcopy(value)
     return result
 # (label, unit, neutral/default, display minimum, display maximum, hard minimum, hard maximum)
 SLIDERS = {
@@ -209,7 +214,7 @@ def validate(record, actions):
 
 
 def decode(raw, actions):
-    if not isinstance(raw,str) or len(raw) > 1_000_000: raise ValueError('Toolbar settings record is too large')
+    if not isinstance(raw,str) or len(raw) > RECORD_LIMIT: raise ValueError('Toolbar settings record is too large')
     try: record = json.loads(raw)
     except (ValueError, TypeError) as exc: raise ValueError('Toolbar settings are not valid JSON') from exc
     return validate(record,actions)
@@ -217,7 +222,7 @@ def decode(raw, actions):
 
 def encode(record, actions):
     raw=json.dumps(validate(record,actions),ensure_ascii=False,separators=(',',':'),sort_keys=True,allow_nan=False)
-    if len(raw)>1_000_000: raise ValueError('Layout library is too large; remove unused layouts')
+    if len(raw)>RECORD_LIMIT: raise ValueError('Layout library is too large; remove unused layouts')
     return raw
 
 
@@ -340,7 +345,7 @@ def stage_view(layout, stage):
     setup = layout.get('stages', {}).get(stage) or stage_default(stage)
     tools = {k: dict(v, mode='HIDDEN') if isinstance(v, dict) else v for k, v in layout['tools'].items()}
     for action in setup['order']:
-        if isinstance(layout['tools'].get(action), dict) and action in setup['tools']:
+        if isinstance(layout['tools'].get(action), dict) and isinstance(setup['tools'].get(action), dict):
             tools[action] = dict(layout['tools'][action], **setup['tools'][action])
     return list(setup['order']) + [k for k in layout['order'] if k not in setup['order']], tools
 
@@ -393,7 +398,7 @@ def stage_entries(record, stage, actions):
             for a in order if a in actions and (allowed is None or family_of(a) in allowed)]
 
 
-def apply_entries(record, stage, entries):
+def apply_entries(record, stage, entries, actions):
     """Store settings rows back; widths are shared by All and every stage."""
     layout = record['active']
     for entry in entries:
@@ -409,8 +414,10 @@ def apply_entries(record, stage, entries):
     setup = dict(order=[e['action'] for e in visible],
                  tools={e['action']: dict(mode=e['mode'], label_mode=e['label_mode']) for e in visible})
     for key in old['order']:
-        if key not in layout['tools'] and key not in setup['tools']:
+        if key not in actions and key not in setup['tools']:
             setup['order'].append(key); setup['tools'][key] = copy.deepcopy(old['tools'].get(key, {}))
+    for key, value in old['tools'].items():
+        if key not in actions and key not in setup['tools']: setup['tools'][key] = copy.deepcopy(value)
     layout['stages'][stage] = setup
 
 
@@ -462,9 +469,10 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
         return specs
 
     fits=lambda specs:sum(i[3]+gap for i in specs)<=budget
-    # Tabs only when every stage's full layout fits beside them ("tabs give way
-    # first"); otherwise every stage uses the cycle button.
-    lead=tabs if all(fits(tabs+compose(key)) for key in STAGE_IDS) else cycle
+    # Tabs only when All's full layout fits beside them, as in 12.9.x. The
+    # choice never depends on the selected stage; a wider stage toolset
+    # compacts or overflows into More instead of moving the tabs.
+    lead=tabs if fits(tabs+compose('ALL')) else cycle
     candidates=[lead+body for body in (compose(stage),compose(stage,compact=True),
                                        compose(stage,compact=True,demote=True),
                                        compose(stage,compact=True,demote=True,no_families=True))]

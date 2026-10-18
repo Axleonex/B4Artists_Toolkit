@@ -1,3 +1,23 @@
+# 12.10.0 — Stage toolsets
+
+- Block, Spline, Polish and Deliver each have their own toolset on the bottom
+  Timeline row. Each starts from a fixed default set: the Recommended tools for
+  its families plus phase-specific ones (for example Inbetween, Push/Pull and key types
+  in Block; Neighbors, Ease, Reference and handle types in Spline; spacing
+  presets, Timing Offset, Ripple and Snap in Polish; Smart Bake, Reduce,
+  proxy cleanup and trail tools in Deliver). All is unchanged.
+- Toolbar Settings edits the stage the row shows: choose it with Row Stage,
+  then set each tool Hidden, Button, Popout or Inline and reorder it. Reset
+  Stage to Defaults restores one stage; Restore Recommended restores all.
+- Saved layouts store All and all four stages together. Amounts (range,
+  default, presets, width and so on) stay shared by every stage.
+- Tool Settings, Search pins and More follow the shown stage. Pinning a tool
+  from a family the stage does not show pins it into All, with a note.
+- Stages start from a fixed default set, not from a layout's All tools: tools
+  you added to All stay in All until you add them to a stage. Older 12.9.x
+  layout records are upgraded in memory and saved in the new format on the
+  next change; 12.9.x cannot read the new format.
+
 # 12.9.1 — Stage tab fixes
 
 - The All tab no longer behaves like the Keys tool Select All Visible: it is
