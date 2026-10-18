@@ -104,11 +104,13 @@ try:
         check("No note for a family the stage shows", not any("hidden" in t for t in labels(rec)))
         record = model.recommended(ACTIONS)
         fake = SimpleNamespace(_record=record, serialize=lambda: record, layout_choice="recommended",
-                               family="bake", entries=[], active_index=0, layout=Rec())
+                               row="BLOCK", _stage="BLOCK", entries=[], active_index=0, layout=Rec())
         timeline_settings.ANIMASSIST_OT_toolbar_settings.draw(fake, bpy.context)
-        check("Toolbar Settings shows Row Stage", stage_prop(fake.layout))
-        check("Toolbar Settings notes Bake hidden in Block",
-              "Bake is hidden in the Block stage; choose All or Deliver to see it." in labels(fake.layout))
+        check("Toolbar Settings shows the Row dropdown",
+              any(n == "prop" and len(a) > 1 and a[1] == "row" for n, a, k in fake.layout.events))
+        check("Toolbar Settings says what the Block row lists",
+              "Block lists its own tools: Tween, Keys." in labels(fake.layout)
+              and "Changes apply to the row right away." in labels(fake.layout))
         prefs = SimpleNamespace(timeline_toolbar_row=True)
         rec = Rec()
         prefs_module.draw_timeline_quick_settings(rec, bpy.context, prefs)

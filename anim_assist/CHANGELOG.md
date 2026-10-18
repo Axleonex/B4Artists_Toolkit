@@ -67,9 +67,14 @@
   the button again, clicking elsewhere or pressing Esc closes it. A short
   Timeline shows the five stages as one row above the button instead. Ctrl+Wheel
   still cycles.
-- Toolbar Settings edits the stage the row shows: choose it with Row Stage,
-  then set each tool Hidden, Button, Popout or Inline and reorder it. Reset
-  Stage to Defaults restores one stage; Restore Recommended restores all.
+- Toolbar Settings edits one row at a time: the Row dropdown (All, Block,
+  Spline, Polish, Deliver) picks the row, and the Timeline switches to it. All
+  lists every tool; a stage lists only its own families' tools, each tagged
+  with its family. Set each tool Hidden, Button, Popout or Inline and reorder
+  it. Changes apply to the row at once, with no OK button: click outside or
+  press Esc to close and keep them, or Revert Changes to undo everything since
+  the dialog opened. Reset <Stage> to Defaults restores one stage; Restore
+  Recommended restores all.
 - Saved layouts store All and all four stages together. Amounts (range,
   default, presets, width and so on) stay shared by every stage.
 - Tool Settings, Search pins and More follow the shown stage. Pinning a tool

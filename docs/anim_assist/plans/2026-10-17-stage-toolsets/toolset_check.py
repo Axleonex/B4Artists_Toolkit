@@ -72,16 +72,31 @@ try:
     fake.populate = lambda data, stage=None: cls.populate(fake, data, stage)
     cls.populate(fake, rec(), "BLOCK")
     check("Block settings list only Tween and Keys", {e.family for e in fake.entries} == {"tween", "keys"})
-    check("Family dropdown limited to the stage", [i[0] for i in settings._families(fake, None)] == ["tween", "keys"])
+    check("Row dropdown offers All and the four stage rows", [i[0] for i in settings._ROWS] == ["ALL", "BLOCK", "SPLINE", "POLISH", "DELIVER"]
+          and fake.row == "BLOCK")
     next(e for e in fake.entries if e.action == "INBETWEEN").mode = "HIDDEN"
     cls.switch_stage(fake, "POLISH")
-    check("Switching stage shows Polish families", {e.family for e in fake.entries} == {"timing", "pose"}
-          and fake.family in {"timing", "pose"})
+    check("Switching to the Polish row lists only its tools", {e.family for e in fake.entries} == {"timing", "pose"}
+          and fake.row == "POLISH")
     check("Block edit kept after switching", "INBETWEEN" not in fake._record["active"]["stages"]["BLOCK"]["order"])
     cls.switch_stage(fake, "ALL")
     check("All lists every tool", len(fake.entries) == len(ACTIONS) == 96)
     settings.write(bpy.context, fake.serialize())
     check("Applied settings store the Block edit", "INBETWEEN" not in rec()["active"]["stages"]["BLOCK"]["order"])
+    # Live apply: a change written by live_write is in the stored record at once; Revert restores.
+    fake._original = copy.deepcopy(rec())
+    cls.switch_stage(fake, "BLOCK")
+    next(e for e in fake.entries if e.action == "RANGE").mode = "HIDDEN"
+    settings.live_write(bpy.context, fake)
+    check("A change applies to the stored row right away", "RANGE" not in rec()["active"]["stages"]["BLOCK"]["order"])
+    real_editor = settings.editor
+    settings.editor = lambda context: fake
+    try:
+        settings.ANIMASSIST_OT_toolbar_revert.execute(SimpleNamespace(report=lambda *a: None), bpy.context)
+    finally:
+        settings.editor = real_editor
+    check("Revert Changes restores the row as it was when the dialog opened",
+          "RANGE" in rec()["active"]["stages"]["BLOCK"]["order"] and any(e.action == "RANGE" and e.mode != "HIDDEN" for e in fake.entries))
 
     with ctx():
         layout = Rec()
