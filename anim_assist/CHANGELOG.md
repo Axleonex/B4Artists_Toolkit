@@ -54,6 +54,14 @@
   move) and removed every helper of an open proxy session. It now records the
   object's world motion on the proxy before baking and works in a session of
   its own.
+- The row sits above the Timeline's horizontal scrollbar instead of under it, and
+  when it reaches the Timeline's left or right edge (channels or sidebar closed) its
+  end buttons are inset from Blender's area corner handles, so clicks on All and
+  Settings land on the buttons.
+- Family and More lists are drawn by the add-on: one click opens them, they stay
+  open while the pointer moves, a click runs a tool, and clicking the same button,
+  anywhere else or Esc closes them. A clicked popout slider stays open; double-click
+  or click away applies, Esc cancels.
 - When the row is tight, the single stage button opens a stage list: one click
   opens it and it stays open while you hover; click a stage to switch. Clicking
   the button again, clicking elsewhere or pressing Esc closes it. A short

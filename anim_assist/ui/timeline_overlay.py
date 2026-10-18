@@ -36,6 +36,11 @@ ROW_LABELS = {
 # All keeps its 12.9 row width: Hide Trails is not beside Show Trails there.
 ALL_ROW_LABELS = {'TRAIL_SHOW': 'Trails'}
 
+# Logical px: room left under the row for the Timeline's horizontal scrollbar, and the
+# inset that keeps the row's end buttons off Blender's area corner handles.
+SCROLLBAR_LIFT = 14
+CORNER_INSET = 16
+
 # Per workspace, saved with the file. Maximized views and extra windows of the
 # same workspace share it (a Screen property would be lost in those).
 STAGE_PROPERTY = "animassist_timeline_stage"
@@ -308,15 +313,130 @@ def _items(context):
     marker_strip = 42 * scale if markers else 0
     keys_at_top = 46 * scale
     y = marker_strip if usable_height - keys_at_top - h >= marker_strip else 0
+    # The Timeline's horizontal scrollbar runs along the bottom edge; sit above it
+    # (owner request 2026-10-18) when nothing else (markers) already lifts the row.
+    scrollbar = SCROLLBAR_LIFT * scale
+    if y == 0 and usable_height - keys_at_top - h >= scrollbar:
+        y = scrollbar
+    # Blender's area corner handles (drag to split or join) sit in the bottom corners.
+    # When the row reaches the Timeline's left or right edge (channels or sidebar
+    # closed), keep the end buttons clear of them so a click hits the button.
+    region, area = context.region, context.area
+    left = CORNER_INSET * scale if region.x <= area.x + 1 else 0
+    right = CORNER_INSET * scale if region.x + region.width >= area.x + area.width - 1 else 0
     try: record=timeline_record(get_prefs(context))
     except ValueError: record=model.recommended(ACTIONS)
     stage = current_stage(context)
     labels={**QUICK_LABELS,**ROW_LABELS,**(ALL_ROW_LABELS if stage == 'ALL' else {})}
-    items = model.toolbar_layout(context.region.width, usable_height, h, False,
+    items = model.toolbar_layout(max(1, region.width - left - right), usable_height, h, False,
                        record,GROUPS,labels,lambda text: blf.dimensions(0, text)[0],
                        stage)
-    items = [(kind, key, label, (x, iy+y, w, ih)) for kind, key, label, (x, iy, w, ih) in items]
+    items = [(kind, key, label, (x + left, iy+y, w, ih)) for kind, key, label, (x, iy, w, ih) in items]
     return items, (0, y, context.region.width, min(h, context.region.height))
+
+
+# Family and More lists drawn by the add-on (Blender's own popup menus picked an item on
+# mouse release and closed when the pointer moved away). One click opens a list; it stays
+# open until an item is clicked, the same button or anything else is clicked, or Esc.
+_row_menu = {}
+
+
+def _list_open(context):
+    window, area = context.window, context.area
+    state = _row_menu.get(window.as_pointer()) if window else None
+    return state if state and area and state['area'] == area.as_pointer() else None
+
+
+def _open_row_menu(context, kind, key):
+    pointer = context.window.as_pointer()
+    _stage_menu.pop(pointer, None)
+    _row_menu[pointer] = dict(area=context.area.as_pointer(), opener=(kind, key),
+                              view=('FAMILY', key) if kind == 'MENU' else ('MORE', ''), back=False)
+    for area in context.window.screen.areas:
+        area.tag_redraw()
+
+
+def _close_row_menu(context):
+    if context.window and _row_menu.pop(context.window.as_pointer(), None):
+        for area in context.window.screen.areas:
+            area.tag_redraw()
+
+
+def _row_hidden_tools(context, items):
+    """Visible tools of the shown setup that did not fit on the row."""
+    from ..prefs import get_prefs, timeline_record
+    try:
+        record = timeline_record(get_prefs(context))
+    except ValueError:
+        record = model.recommended(ACTIONS)
+    stage = current_stage(context)
+    order, tools = model.stage_view(record['active'], stage)
+    families = set(model.stage_families(stage)) if stage in model.STAGE_KEYS else {k for k, _l, _a in GROUPS}
+    shown = {item[1].split(':', 1)[0] for item in items if item[0] in {'ACTION', 'SLIDER', 'POPOUT'}}
+    return [a for a in order if a in ACTIONS and tools.get(a, {}).get('mode', 'HIDDEN') != 'HIDDEN'
+            and FAMILY[a][0] in families and a not in shown]
+
+
+def _list_entries(context, items, state):
+    """(kind, key, label) rows: HEAD, GAP, RUN, FAMILY, BACK, OPTIONS, HOME."""
+    view, key = state['view']
+    if view == 'FAMILY':
+        label, actions = next((l, a) for k, l, a in GROUPS if k == key)
+        rows = [('BACK', '', '\u2039 Back')] if state.get('back') else []
+        rows.append(('HEAD', key, label))
+        for action in actions:
+            rows.append(('GAP', '', '') if action is None else ('RUN', action, ACTIONS[action][2]))
+        return rows + [('GAP', '', ''), ('OPTIONS', key, f'{label} Options'), ('HOME', '', 'Open Anim Assist Panel')]
+    hidden = _row_hidden_tools(context, items)
+    rows = ([('HEAD', '', 'Did Not Fit')] + [('RUN', a, ACTIONS[a][2]) for a in hidden] + [('GAP', '', '')]
+            if hidden else [])
+    return rows + [('HEAD', '', 'Families')] + [('FAMILY', k, f'{l}  \u203a') for k, l, _a in GROUPS]
+
+
+def _list_layout(context, items, band):
+    """Rects of the open family/More list, in columns above the row."""
+    state = _list_open(context)
+    if not state:
+        return []
+    entries = _list_entries(context, items, state)
+    scale = context.preferences.system.ui_scale
+    row_h, gap_h, pad = 20 * scale, 7 * scale, 8 * scale
+    blf.size(0, round(11 * scale))
+    width = max([140 * scale] + [blf.dimensions(0, label)[0] + 2 * pad for _k, _key, label in entries])
+    base = band[1] + band[3] + 4 * scale
+    # Stay below the scrub strip at the top: Blender takes clicks there to change the frame.
+    avail = max(row_h, context.region.height - base - 30 * scale)
+    columns, column, used = [], [], 0.
+    for entry in entries:
+        h = gap_h if entry[0] == 'GAP' else row_h
+        if column and used + h > avail:
+            columns.append(column); column, used = [], 0.
+        if entry[0] == 'GAP' and not column:
+            continue
+        column.append((entry, h)); used += h
+    if column:
+        columns.append(column)
+    tallest = max(sum(h for _e, h in col) for col in columns)
+    anchor = next((item for item in items if (item[0], item[1]) == state['opener']), None)
+    x0 = anchor[3][0] if anchor else 0
+    x0 = max(0, min(x0, context.region.width - len(columns) * (width + 2 * scale)))
+    result = []
+    for index, col in enumerate(columns):
+        x, y = x0 + index * (width + 2 * scale), base + tallest
+        for (kind, key, label), h in col:
+            y -= h
+            result.append((kind, key, label, (x, y, width, h)))
+    return result
+
+
+def popout_geometry(region_w, region_h, band, track_x, scale, extra=0.):
+    """(box, track) of a popout slider, shared by drawing and the slider operator.
+    *extra* adds a bottom line (the hint of a clicked popout)."""
+    width = min(280 * scale, region_w); height = min(44 * scale + extra, region_h)
+    x = max(0, min(track_x, region_w - width))
+    y = band[1] - height - 4 * scale if band[1] > height else band[1] + band[3] + 4 * scale
+    y = max(0, min(y, region_h - height))
+    return (x, y, width, height), (x + 10 * scale, y + 5 * scale + extra, max(1, width - 70 * scale), 16 * scale)
 
 
 def _menu_open(context):
@@ -758,20 +878,42 @@ def _draw():
                         _quad((rect[0] + 3 * scale, rect[1] + 2 * scale, rect[2] - 6 * scale, 2 * scale),
                               _COLORS[model.stage_families(key)[0]])
                     _text(rect, label, (*(widgets.text_sel if lit else widgets.text)[:3], 1), scale)
+        rows = _list_layout(context, items, band)
+        if rows:
+            xs = [r[0] for *_k, r in rows]; ys = [r[1] for *_k, r in rows]
+            x1 = max(r[0] + r[2] for *_k, r in rows); y1 = max(r[1] + r[3] for *_k, r in rows)
+            _quad((min(xs) - 2 * scale, min(ys) - 2 * scale, x1 - min(xs) + 4 * scale, y1 - min(ys) + 4 * scale),
+                  (.08, .08, .08, .97))
+            from . import timeline_strip as tools
+            for kind, key, label, rect in rows:
+                if kind == 'GAP':
+                    _quad((rect[0] + 6 * scale, rect[1] + rect[3] / 2, rect[2] - 12 * scale, 1), (.3, .3, .3, 1))
+                    continue
+                if kind == 'HEAD':
+                    color = _COLORS.get(key, (*widgets.text[:3], .6))
+                    _text(rect, label, (*color[:3], 1), scale, left=True)
+                    continue
+                lit = hover == (context.area.as_pointer(), 'LIST_' + kind, key)
+                if lit:
+                    _quad(rect, tuple(widgets.inner_sel))
+                dim = kind == 'RUN' and tools._unavailable(context, context.area, key)
+                ink_row = (*(widgets.text_sel if lit else widgets.text)[:3], .45 if dim else 1)
+                _text((rect[0] + 8 * scale, rect[1], rect[2] - 8 * scale, rect[3]), label, ink_row, scale, left=True)
         # Thin separator on the edge facing the animation canvas.
         _quad((band[0], band[1]+band[3]-1, band[2], 1), (*widgets.outline[:3], 1))
         if active and active.mode=='POPOUT' and active._moved:
-            width=min(280*scale,context.region.width); height=min(44*scale,context.region.height)
-            x=max(0,min(active.track_x,context.region.width-width))
-            y=band[1]-height-4*scale if band[1]>height else band[1]+band[3]+4*scale
-            y=max(0,min(y,context.region.height-height))
+            sticky=getattr(active,'_sticky',False); extra=14*scale if sticky else 0.
+            (x,y,width,height),track=popout_geometry(context.region.width,context.region.height,band,active.track_x,scale,extra)
             accent=_COLORS[FAMILY[active.action][0]]
             _quad((x,y,width,height),(*background[:3],1))
             _quad((x,y,width,1),accent)
-            _text((x+5*scale,y+23*scale,width-10*scale,18*scale),model.SLIDERS[active.action][0],(*widgets.text[:3],1),scale,left=True)
-            _track((x+10*scale,y+5*scale,max(1,width-70*scale),16*scale),active.value,active._tool,accent)
-            _text((x+width-60*scale,y+3*scale,55*scale,20*scale),f'{active.value:.{active._tool["precision"]}f}'+model.SLIDERS[active.action][1],(*widgets.text[:3],1),scale,font=10)
-        if not active and hover and not _menu_open(context) and time.monotonic() - _hover_started.get(context.window.as_pointer(), float("inf")) > .6:
+            _text((x+5*scale,y+23*scale+extra,width-10*scale,18*scale),model.SLIDERS[active.action][0],(*widgets.text[:3],1),scale,left=True)
+            _track(track,active.value,active._tool,accent)
+            if sticky:
+                _text((x+5*scale,y+2*scale,width-10*scale,12*scale),'Drag to adjust \u00b7 double-click or click away to apply \u00b7 Esc cancels',
+                      (*widgets.text[:3],.6),scale,font=9,left=True)
+            _text((x+width-60*scale,y+3*scale+extra,55*scale,20*scale),f'{active.value:.{active._tool["precision"]}f}'+model.SLIDERS[active.action][1],(*widgets.text[:3],1),scale,font=10)
+        if not active and hover and not _menu_open(context) and not _list_open(context) and time.monotonic() - _hover_started.get(context.window.as_pointer(), float("inf")) > .6:
             item = next((item for item in items if (item[0], item[1]) == hover[1:]), None)
             if item:
                 paragraphs = _tooltip_paragraphs(context, item)
@@ -846,6 +988,51 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
                             pass
                     return None
                 bpy.app.timers.register(tooltip_redraw, first_interval=.65)
+        rows = _list_layout(context, items, band) if _list_open(context) else []
+        if rows:
+            in_row = next((r for r in rows if r[0] not in {'HEAD', 'GAP'} and _inside(r[3], point)), None)
+            row_hover = (context.area.as_pointer(), 'LIST_' + in_row[0], in_row[1]) if in_row else None
+            if _hover.get(pointer) != row_hover:
+                _hover[pointer] = row_hover
+                context.area.tag_redraw()
+            if event.type == 'MOUSEMOVE':
+                return {'FINISHED'}
+            if event.type == 'ESC' or event.type == 'RIGHTMOUSE':
+                _close_row_menu(context)
+                return {'FINISHED'}
+            if event.type == 'LEFTMOUSE':
+                state = _list_open(context)
+                if in_row is None:
+                    box = (min(r[3][0] for r in rows), min(r[3][1] for r in rows),
+                           max(r[3][0] + r[3][2] for r in rows) - min(r[3][0] for r in rows),
+                           max(r[3][1] + r[3][3] for r in rows) - min(r[3][1] for r in rows))
+                    if not _inside(box, point):
+                        if found and found[0] in {'MENU', 'MORE'} and (found[0], found[1]) != state['opener']:
+                            _open_row_menu(context, found[0], found[1])  # another family button switches lists
+                        else:
+                            _close_row_menu(context)  # click away (the opener included) closes
+                    return {'FINISHED'}
+                kind, key = in_row[0], in_row[1]
+                if kind == 'FAMILY':
+                    state.update(view=('FAMILY', key), back=True); context.area.tag_redraw()
+                elif kind == 'BACK':
+                    state.update(view=('MORE', ''), back=False); context.area.tag_redraw()
+                elif kind == 'RUN':
+                    from . import timeline_strip as tools
+                    reason = tools._unavailable(context, context.area, key)
+                    if reason:
+                        self.report({'WARNING'}, reason)  # stays open so another tool can be chosen
+                    else:
+                        _close_row_menu(context)
+                        bpy.ops.animassist.timeline_tool('INVOKE_DEFAULT', action=key)
+                elif kind == 'OPTIONS':
+                    _close_row_menu(context)
+                    bpy.ops.wm.call_panel('INVOKE_DEFAULT', name=f'ANIMASSIST_PT_timeline_options_{key}')
+                elif kind == 'HOME':
+                    _close_row_menu(context)
+                    bpy.ops.animassist.open_home('INVOKE_DEFAULT')
+                return {'FINISHED'}
+            return {'FINISHED'}
         if menu and event.type == "ESC":
             _close_stage_menu(context)
             return {"FINISHED"}
@@ -869,7 +1056,11 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
             if action:
                 bpy.ops.animassist.tool_settings('INVOKE_DEFAULT',action=action)
                 return {'FINISHED'}
+        if event.type == "LEFTMOUSE" and found and found[0] in {'MENU', 'MORE'}:
+            _open_row_menu(context, found[0], found[1])  # one click opens; stays open
+            return {"FINISHED"}
         if event.type == "LEFTMOUSE" and found and found[0] == 'STAGE_CYCLE':
+            _close_row_menu(context)
             _stage_menu[pointer] = context.area.as_pointer()  # one click opens; stays open
             context.area.tag_redraw()
             return {"FINISHED"}
@@ -902,7 +1093,7 @@ class ANIMASSIST_OT_clear_timeline_hover(bpy.types.Operator):
         if not context.window:
             return False
         pointer = context.window.as_pointer()
-        if not (_hover.get(pointer) or _stage_menu.get(pointer)):
+        if not (_hover.get(pointer) or _stage_menu.get(pointer) or _row_menu.get(pointer)):
             return False
         return not (tools.is_timeline(context.area) and context.region
                     and context.region.type == "WINDOW")
@@ -911,6 +1102,7 @@ class ANIMASSIST_OT_clear_timeline_hover(bpy.types.Operator):
         _hover.pop(context.window.as_pointer(), None)
         if event.type == "LEFTMOUSE":
             _stage_menu.pop(context.window.as_pointer(), None)
+            _row_menu.pop(context.window.as_pointer(), None)
         for area in context.window.screen.areas:
             area.tag_redraw()
         return {"CANCELLED", "PASS_THROUGH"}
@@ -923,9 +1115,11 @@ class ANIMASSIST_OT_close_stage_menu(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return bool(context.window and _stage_menu.get(context.window.as_pointer()))
+        return bool(context.window and (_stage_menu.get(context.window.as_pointer())
+                                        or _row_menu.get(context.window.as_pointer())))
 
     def invoke(self, context, _event):
+        _close_row_menu(context)
         _close_stage_menu(context)
         return {"FINISHED"}
 

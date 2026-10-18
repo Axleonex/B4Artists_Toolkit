@@ -123,7 +123,48 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
     def _status(self,context):
         model=_model()
         label,unit,*_=model.SLIDERS[self.action]
+        if getattr(self,'_sticky',False):
+            context.workspace.status_text_set(f'{label}: {self.value:.{self._tool["precision"]}f}{unit} | Drag on the popout: adjust | Double-click or click away: apply | Esc: cancel | Type: value')
+            return
         context.workspace.status_text_set(f'{label}: {self.value:.{self._tool["precision"]}f}{unit} | Release: apply | Esc: cancel | Shift: precise | Type: value')
+
+    def _stick(self):
+        """A click without dragging keeps the popout open (owner request 2026-10-18)."""
+        from ..ui import timeline_overlay as overlay
+        region=self._region
+        with bpy.context.temp_override(window=self._window,area=self._area,region=region):
+            band=overlay._items(bpy.context)[1]
+            scale=bpy.context.preferences.system.ui_scale
+        self._pop_box,self._pop_track=overlay.popout_geometry(region.width,region.height,band,self.track_x,scale,14*scale)
+        self._sticky=True; self._moved=True; self._dragging=False
+        self._area.tag_redraw()
+
+    def _pop_value(self,x):
+        tx,_ty,tw,_th=self._pop_track
+        fraction=min(1.,max(0.,(x-tx)/max(1.,tw)))
+        return _model().snap_to_tick(self._tool,self._lo+fraction*(self._hi-self._lo))
+
+    def _sticky_event(self,event):
+        """Pointer handling while a clicked popout stays open; None = not handled here."""
+        x,y=event.mouse_region_x,event.mouse_region_y
+        bx,by,bw,bh=self._pop_box
+        inside=bx<=x<bx+bw and by<=y<by+bh
+        if event.type=='LEFTMOUSE' and event.value=='DOUBLE_CLICK' and inside:
+            return 'APPLY'
+        if event.type=='LEFTMOUSE' and event.value in {'PRESS','DOUBLE_CLICK'}:
+            if not inside:
+                return 'APPLY'  # click away applies the adjustment
+            self._dragging=True
+            self._preview(self._pop_value(x))
+            return 'KEEP'
+        if event.type=='LEFTMOUSE' and event.value=='RELEASE':
+            self._dragging=False
+            return 'KEEP'
+        if event.type=='MOUSEMOVE':
+            if self._dragging and not self._numeric:
+                self._preview(self._pop_value(x))
+            return 'KEEP'
+        return None
 
     def _cleanup(self):
         _active.pop(self._window_id,None)
@@ -154,8 +195,19 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
             if event.type in {'RET','NUMPAD_ENTER'} and event.value=='PRESS':
                 if self._numeric: self._preview(float(self._numeric))
                 self._session.commit(); self._remember(); self._cleanup(); return {'FINISHED'}
+            if getattr(self,'_sticky',False):
+                outcome=self._sticky_event(event)
+                if outcome=='APPLY':
+                    if self._numeric: self._preview(float(self._numeric))
+                    self._session.commit(); self._remember(); self._cleanup(); return {'FINISHED'}
+                if outcome=='KEEP':
+                    self._status(context)
+                    return {'RUNNING_MODAL'}
             if event.type=='LEFTMOUSE' and event.value=='RELEASE':
                 if not self._moved:
+                    if self.mode=='POPOUT':
+                        self._stick(); self._status(context)
+                        return {'RUNNING_MODAL'}
                     self.abort(); self._cleanup()
                     self.report({'INFO'},'Press and drag this tool to adjust it')
                     return {'CANCELLED'}
