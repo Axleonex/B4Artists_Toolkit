@@ -16,7 +16,7 @@ Scene Properties > Anim Assist > Setup (once per rig) > First Run Setup creates 
 
 ## Timeline: buttons and sliders
 
-The row groups tools into **Tween, Timing, Curves, Keys, Pose, Bake and Motion**. Click an action to run it; use family menus or **Find** (the magnifier) for others. Find searches all 96 tools as you type; with nothing typed it shows family tabs to browse every tool. Click a tool to run it, or its pin to add it to the row or take it off. Tooltips explain prerequisites and scope. Action-wide offset affects more than selected-key nudging.
+The row groups tools into **Tween, Timing, Curves, Keys, Pose, Bake and Motion**. Click an action to run it; use family menus or **Find** (the magnifier) for others. Find searches all 96 tools as you type; with nothing typed it shows family tabs to browse every tool. Click a tool to run it, or its pin to add it to the row or take it off. Find and Toolbar Settings share the same layout, so a pin shows in Toolbar Settings and a Settings change shows on the pins. Tooltips explain prerequisites and scope. Action-wide offset affects more than selected-key nudging.
 
 **Recommended** starts with two inline sliders: **Breakdown**, whose track has ticks at 25%, 50% and 75% (click a tick to apply it), and **Smooth**. **Timing Scale** uses a temporary popout slider. Quick icons: -1f/+1f nudges, Copy/Paste Keys, Mirror Selected, Bake Object Transforms and Trails (the eye shows or hides world motion trails). Hover an icon for its name. In Tool Settings, **Presets as Ticks** switches any slider between ticks on its track and preset buttons, in All or in a stage.
 

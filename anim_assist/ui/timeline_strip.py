@@ -404,7 +404,7 @@ class ANIMASSIST_OT_timeline_pin(bpy.types.Operator):
             return {"CANCELLED"}
         from . import timeline_config as model
         from ..prefs import timeline_record
-        from .timeline_settings import write
+        from .timeline_settings import write, editor, sync_editor
         from .timeline_overlay import current_stage
         data=timeline_record(prefs)
         stage=current_stage(context)
@@ -412,7 +412,10 @@ class ANIMASSIST_OT_timeline_pin(bpy.types.Operator):
         visible=model.stage_view(data['active'],target)[1][self.action]['mode']!='HIDDEN'
         mode='HIDDEN' if visible else ('POPOUT' if self.action in model.SLIDERS else 'BUTTON')
         model.set_stage_tool(data,target,self.action,mode=mode)
-        try: write(context,data)
+        # An open Toolbar Settings shows the pin too, so its next edit cannot undo it.
+        try:
+            if editor(context): sync_editor(context,data)
+            else: write(context,data)
         except ValueError as exc:
             self.report({'WARNING'},str(exc)); return {'CANCELLED'}
         if target=='ALL':

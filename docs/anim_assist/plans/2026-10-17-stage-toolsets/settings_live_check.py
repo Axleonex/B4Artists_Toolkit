@@ -112,6 +112,19 @@ def plan():
     yield (lambda: check("Hiding a tool updates the Timeline row while the dialog is open",
                          dialog() is not None and "RANGE" not in row_keys() and "RANGE" not in stored_block())), 0.2
 
+    def pin_from_find():
+        with bpy.context.temp_override(window=window(), area=timeline(), region=region()):
+            bpy.ops.animassist.timeline_pin(action="BAKE_STEP")
+    yield pin_from_find, 0.6
+    yield (lambda: check("A pin made in Find shows in the open Toolbar Settings",
+                         next(e for e in dialog().entries if e.action == "BAKE_STEP").mode != "HIDDEN")), 0.2
+
+    def later_edit():
+        with bpy.context.temp_override(window=window()):
+            next(e for e in dialog().entries if e.action == "GROW_BOTH").mode = "BUTTON"
+    yield later_edit, 0.6
+    yield (lambda: check("A later Toolbar Settings edit keeps the pin", "BAKE_STEP" in stored_block())), 0.2
+
     # Real input inside the panel. It opens under the pointer at the Timeline's centre, so at
     # 1920x1000 the Row dropdown is at (1300, 838) and, on the Spline row, the Timing header
     # at (946, 703) (window coordinates, origin bottom-left).

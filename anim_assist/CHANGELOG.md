@@ -86,6 +86,9 @@
   do not fit, labelled with how many (for example +3), and lists just those.
   The row gains about 60 px when everything fits, so the five stage tabs
   appear from about 1,360 px (was 1,450 px).
+- Find and Toolbar Settings share one saved layout: a pin made in Find shows in
+  Toolbar Settings (even while it is open), and Settings changes light or clear
+  the pins in Find.
 - Tool Settings, Search pins and More follow the shown stage. A Search pin
   goes to the shown row, whatever the tool's family.
 - Hover Explainers (Preferences > Add-ons > Anim Assist > General): Full (the

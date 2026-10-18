@@ -4,10 +4,10 @@
   "package_root": "B4_anim_assist",
   "files": 212,
   "python_files": 210,
-  "bytes": 645783,
-  "sha256": "f8f7513ad741d534b4acc87628f62511026c780aaaf1e6b44e713235dc4e861f",
+  "bytes": 645983,
+  "sha256": "7193213f27b0d9547340bf4da7d870ec8c7265c8c4bb6d9b2e8338ec8f3c0339",
   "source_files_sha256": {
-    "B4_anim_assist/CHANGELOG.md": "8e3701e40e2900a05f0a2775fe57d0413e9b777fc9d6b072607819980f7d9883",
+    "B4_anim_assist/CHANGELOG.md": "9ea54b048ba0dd7e80794b05d2db1798df5e243e19ecbe4c223196612c1f1fa6",
     "B4_anim_assist/__init__.py": "eec8c05274e9490a47761782afdb5fe2841f0019cbce7de16d3b8cd2ef551c0e",
     "B4_anim_assist/blender_manifest.toml": "a6e0df9539b8a4b39dfe89f4d4b15cd92e6a0d8192dd3b08fbeb429420107b2e",
     "B4_anim_assist/constants.py": "fcbf9aa0b9ffc232e42aa3d964999398356d27217c32013914d2fafceb2f2688",
@@ -217,7 +217,7 @@
     "B4_anim_assist/ui/timeline_config.py": "67949827cf45675168a87955d5187ce741bcb72e3f7f5f9052fb97c77f0c4be1",
     "B4_anim_assist/ui/timeline_overlay.py": "7f3dbe22e173961bb36b39bd7c55d25647a4085fccfcfdd0da075cb74c74622e",
     "B4_anim_assist/ui/timeline_settings.py": "6ed70c2915ac1f8d1a79a8930026261c2a80ba68e1d8b44a4d8bc63927ee736d",
-    "B4_anim_assist/ui/timeline_strip.py": "68b1fb08ec4cea54cbcd5c56c248553220b7f92a1f0fdcc88f256598ef58feed",
+    "B4_anim_assist/ui/timeline_strip.py": "eca74af7aa0cccfb3cab5ced6905a0daa36a70e63897f2b58b212b88c5b07e5d",
     "B4_anim_assist/ui/ui_helpers.py": "5a167981150abc63d37ebc29ac974ded02e88287bee6722bddcd511d7280d781"
   }
 }
