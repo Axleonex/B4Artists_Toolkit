@@ -346,3 +346,8 @@ def toolbar_plan(logical_width):
         "timing": logical_width >= 1120,
         "keys": logical_width >= 1260,
     }
+
+
+# The pure layout model validates stage tools by family without importing this module.
+from .timeline_config import register_families as _register_families  # noqa: E402
+_register_families(GROUPS)

@@ -15,6 +15,7 @@ import copy
 import importlib.util
 spec=importlib.util.spec_from_file_location('config',ROOT/'anim_assist/ui/timeline_config.py')
 config=importlib.util.module_from_spec(spec); spec.loader.exec_module(config)
+config.register_families(values['GROUPS'])
 layout=config.toolbar_layout
 
 
@@ -84,7 +85,8 @@ class TimelineLayoutTests(unittest.TestCase):
                 if controls[0][0]!='STAGE': continue
                 expected=[f for f in config.FAMILY_ORDER if families is None or f in families]
                 self.assertEqual([c[1] for c in controls if c[0]=='MENU'],expected,(width,stage))
-                inline={'DRAG','SMOOTH'}&{a for f in expected for k,_l,acts in values['GROUPS'] if k==f for a in acts if a}
+                order,tools=config.stage_view(config.recommended(values['ACTIONS'])['active'],stage)
+                inline={a for a in order if a in tools and isinstance(tools[a],dict) and tools[a].get('mode')=='INLINE'}
                 self.assertEqual({c[1] for c in controls if c[0]=='SLIDER'},inline,(width,stage))
 
     def test_hidden_family_note(self):
@@ -135,5 +137,33 @@ class TimelineLayoutTests(unittest.TestCase):
                 self.assertLessEqual(track[0]+track[2],value[0])
                 self.assertLessEqual(value[0]+value[2],reset[0])
                 self.assertLessEqual(reset[0]+reset[2],rect[0]+rect[2])
+
+    def test_spline_shows_its_defaults(self):
+        controls=self.controls(1920,stage='SPLINE')
+        shown=[c[1] for c in controls if c[0] in {'ACTION','SLIDER','POPOUT'}]
+        expected=['REFERENCE','FRAME','NEIGHBORS','EASE','SMOOTH','AMPLIFY','HANDLE_CLAMPED','HANDLE_VECTOR','HANDLE_FREE']
+        self.assertEqual(shown,expected[:len(shown)])
+        self.assertTrue(len(shown)==len(expected) or 'MORE' in [c[0] for c in controls])
+
+    def test_stage_independent_of_all_visibility(self):
+        record=config.recommended(values['ACTIONS'])
+        record['active']['tools']['SMOOTH']['mode']='HIDDEN'
+        measure=lambda text:len(text)*6
+        spline=layout(1920,120,28,False,record,values['GROUPS'],values['QUICK_LABELS'],measure,'SPLINE')
+        everything=layout(1920,120,28,False,record,values['GROUPS'],values['QUICK_LABELS'],measure,'ALL')
+        self.assertIn('SMOOTH',[c[1] for c in spline])
+        self.assertNotIn('SMOOTH',[c[1] for c in everything])
+
+    def test_all_output_unchanged_by_stages(self):
+        record=config.recommended(values['ACTIONS'])
+        config.set_stage_tool(record,'SPLINE','SMOOTH',mode='HIDDEN')
+        config.set_stage_tool(record,'BLOCK','GROW_BOTH',mode='BUTTON')
+        measure=lambda text:len(text)*6
+        plain=config.recommended(values['ACTIONS'])
+        for width in (480,1164,1920):
+            a=layout(width,120,28,False,record,values['GROUPS'],values['QUICK_LABELS'],measure,'ALL')
+            b=layout(width,120,28,False,plain,values['GROUPS'],values['QUICK_LABELS'],measure,'ALL')
+            strip=lambda cs:[c for c in cs if c[0] not in {'STAGE','STAGE_CYCLE'}]
+            self.assertEqual([c[:2] for c in strip(a)],[c[:2] for c in strip(b)])
 
 if __name__=='__main__': unittest.main()

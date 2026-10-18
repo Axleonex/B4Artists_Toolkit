@@ -1,5 +1,6 @@
 import ast
 import copy
+import json
 import importlib.util
 from pathlib import Path
 import unittest
@@ -10,6 +11,10 @@ config=importlib.util.module_from_spec(spec); spec.loader.exec_module(config)
 tree=ast.parse((ROOT/'anim_assist/ui/timeline_catalog.py').read_text(encoding='utf-8'))
 actions=next(ast.literal_eval(n.value) for n in tree.body if isinstance(n,ast.Assign)
              and any(isinstance(t,ast.Name) and t.id=='ACTIONS' for t in n.targets))
+groups=next(ast.literal_eval(n.value) for n in tree.body if isinstance(n,ast.Assign)
+            and any(isinstance(t,ast.Name) and t.id=='GROUPS' for t in n.targets))
+config.register_families(groups)
+family={a:k for k,_l,acts in groups for a in acts if a}
 
 
 class ConfigTests(unittest.TestCase):
@@ -51,7 +56,7 @@ class ConfigTests(unittest.TestCase):
 
     def test_future_and_bad_records(self):
         before=copy.deepcopy(self.record)
-        for raw in ('{}','not json','{"schema_version":2}','{"schema_version":true}'):
+        for raw in ('{}','not json','{"schema_version":3}','{"schema_version":true}'):
             with self.assertRaises(ValueError): config.decode(raw,actions)
         self.assertEqual(self.record,before)
 
@@ -100,6 +105,96 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(config.value_from_pointer(tool,50,10000),100)
         tool['snap_step']=25
         self.assertEqual(config.value_from_pointer(tool,50,60,snap=True),75)
+
+    def test_stage_defaults_match_table(self):
+        stages=self.record['active']['stages']
+        self.assertEqual(stages['SPLINE']['order'],['REFERENCE','FRAME','NEIGHBORS','EASE','SMOOTH','AMPLIFY',
+                                                    'HANDLE_CLAMPED','HANDLE_VECTOR','HANDLE_FREE'])
+        self.assertEqual(stages['SPLINE']['tools']['FRAME'],{'mode':'POPOUT','label_mode':'LABEL'})
+        self.assertEqual(stages['BLOCK']['tools']['DRAG']['mode'],'INLINE')
+        self.assertEqual(stages['POLISH']['tools']['OFFSET_DRAG']['mode'],'INLINE')
+        self.assertEqual(len(stages['DELIVER']['order']),8)
+        for stage in config.STAGE_KEYS:
+            allowed=set(config.stage_families(stage))
+            self.assertTrue(all(family[a] in allowed for a in stages[stage]['order']),stage)
+            self.assertEqual(stages[stage],config.stage_default(stage))
+
+    def test_v1_migration_keeps_library(self):
+        old=copy.deepcopy(self.record); old['schema_version']=1
+        old['active'].pop('stages')
+        saved=copy.deepcopy(old['active']); saved.update(id='abc',name='Blocking')
+        saved['tools']['DRAG']['mode']='POPOUT'; old['saved']=[saved]; old['active_saved_id']='abc'
+        result=config.decode(json.dumps(old),actions)
+        self.assertEqual(result['schema_version'],2)
+        self.assertEqual(result['active_saved_id'],'abc')
+        self.assertEqual(result['saved'][0]['name'],'Blocking')
+        self.assertEqual(result['saved'][0]['tools']['DRAG']['mode'],'POPOUT')
+        self.assertEqual(result['saved'][0]['stages']['BLOCK'],config.stage_default('BLOCK'))
+        self.assertEqual(result['active']['tools'],self.record['active']['tools'])
+
+    def test_invalid_stage_rejected(self):
+        bad=[('BLOCK',{'order':['B25','B25'],'tools':{'B25':{'mode':'BUTTON'}}}),
+             ('BLOCK',{'order':['B25'],'tools':{'B25':{'mode':'INLINE'}}}),
+             ('BLOCK',{'order':['TRAIL_SHOW'],'tools':{'TRAIL_SHOW':{'mode':'BUTTON'}}}),
+             ('SPLINE',{'order':[],'tools':{'SMOOTH':{'mode':'INLINE'}}})]
+        for stage,setup in bad:
+            record=copy.deepcopy(self.record); record['active']['stages'][stage]=setup
+            with self.assertRaises(ValueError,msg=(stage,setup)): config.validate(record,actions)
+
+    def test_stage_roundtrip_and_modified(self):
+        self.assertEqual(config.decode(config.encode(self.record,actions),actions),self.record)
+        self.assertFalse(config.modified(self.record,actions))
+        config.set_stage_tool(self.record,'SPLINE','SMOOTH',mode='HIDDEN')
+        self.assertNotIn('SMOOTH',self.record['active']['stages']['SPLINE']['order'])
+        self.assertTrue(config.modified(self.record,actions))
+        self.assertEqual(config.decode(config.encode(self.record,actions),actions),self.record)
+
+    def test_reset_stage_only_current(self):
+        config.set_stage_tool(self.record,'BLOCK','INBETWEEN',mode='HIDDEN')
+        config.set_stage_tool(self.record,'POLISH','SNAP',mode='HIDDEN')
+        config.reset_stage(self.record,'BLOCK')
+        stages=self.record['active']['stages']
+        self.assertEqual(stages['BLOCK'],config.stage_default('BLOCK'))
+        self.assertNotIn('SNAP',stages['POLISH']['order'])
+        config.load(self.record,'recommended',actions)
+        self.assertEqual(self.record['active']['stages']['POLISH'],config.stage_default('POLISH'))
+
+    def test_set_stage_tool_show_hide(self):
+        config.set_stage_tool(self.record,'BLOCK','INBETWEEN',mode='HIDDEN')
+        config.set_stage_tool(self.record,'BLOCK','INBETWEEN',mode='BUTTON')
+        order=self.record['active']['stages']['BLOCK']['order']
+        self.assertEqual([a for a in order if family[a]=='tween'][-1],'INBETWEEN')
+        self.assertLess(order.index('INBETWEEN'),order.index('RANGE'))
+        config.set_stage_tool(self.record,'BLOCK','GROW_BOTH',mode='BUTTON')
+        self.assertEqual([a for a in order if family[a]=='keys'][-1],'GROW_BOTH')
+        config.set_stage_tool(self.record,'ALL','B25',mode='HIDDEN')
+        self.assertEqual(self.record['active']['tools']['B25']['mode'],'HIDDEN')
+        self.assertIn('B25',order)
+
+    def test_pin_target(self):
+        self.assertEqual(config.pin_target('BLOCK','BAKE_STEP'),'ALL')
+        self.assertEqual(config.pin_target('BLOCK','INBETWEEN'),'BLOCK')
+        self.assertEqual(config.pin_target('ALL','INBETWEEN'),'ALL')
+
+    def test_entries_round_trip_per_stage(self):
+        entries=config.stage_entries(self.record,'BLOCK',actions)
+        self.assertEqual({family[e['action']] for e in entries},{'tween','keys'})
+        self.assertEqual([e['action'] for e in entries][:3],['B25','B50','B75'])
+        by={e['action']:e for e in entries}
+        hold=entries.pop([e['action'] for e in entries].index('TYPE_HOLD'))
+        entries.insert([e['action'] for e in entries].index('RANGE'),hold)
+        by['INBETWEEN']['mode']='HIDDEN'; by['DRAG']['width']=150.
+        before_all=copy.deepcopy(self.record['active']['order'])
+        polish=copy.deepcopy(self.record['active']['stages']['POLISH'])
+        config.apply_entries(self.record,'BLOCK',entries)
+        order=self.record['active']['stages']['BLOCK']['order']
+        self.assertLess(order.index('TYPE_HOLD'),order.index('RANGE'))
+        self.assertNotIn('INBETWEEN',order)
+        self.assertEqual(self.record['active']['tools']['DRAG']['width'],150.)
+        self.assertEqual(self.record['active']['order'],before_all)
+        self.assertEqual(self.record['active']['stages']['POLISH'],polish)
+        self.assertEqual(len(config.stage_entries(self.record,'ALL',actions)),89)
+        config.validate(self.record,actions)
 
 
 if __name__=='__main__': unittest.main()
