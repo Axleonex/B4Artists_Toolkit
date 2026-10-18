@@ -4,7 +4,7 @@ Current repository packages and their publication status.
 
 | Tool | Version | Archive | Bytes | SHA256 prefix | Status |
 |---|---|---|---:|---|---|
-| Anim Assist | 12.10.0 | [b4_anim_assist_v12.10.0.zip](b4_anim_assist_v12.10.0.zip) | 626,978 | `422b54267ada` | Local build (not yet pushed); stage toolsets: per-stage customisable tools saved with named layouts; Spline adds To Spline and motion trails, Deliver focuses on baking (fixed One-Click Proxy & Bake); full hover text |
+| Anim Assist | 12.10.0 | [b4_anim_assist_v12.10.0.zip](b4_anim_assist_v12.10.0.zip) | 628,184 | `4b4c9ffc0b3c` | Local build (not yet pushed); stage toolsets: per-stage customisable tools saved with named layouts; Spline adds To Spline and motion trails, Deliver focuses on baking (fixed One-Click Proxy & Bake); key-type icons in Block; full hover text |
 | Anim Assist (historical 12.9.1) | 12.9.1 | [b4_anim_assist_v12.9.1.zip](b4_anim_assist_v12.9.1.zip) | 617,182 | `5e176eb1b7ed` | Local build (not yet pushed); stage tab fixes for the All tab, stable tabs while switching stage, cycle hover, Row Stage outside a Timeline and per-workspace stage |
 | Anim Assist (historical 12.9.0) | 12.9.0 | [b4_anim_assist_v12.9.0.zip](b4_anim_assist_v12.9.0.zip) | 616,250 | `6ce15f609ca3` | Published repository build (merge `055c2e1`, 2026-10-17); Timeline stage tabs; known stage-tab bugs listed in its qualification, fixed for 12.10.0; no standalone GitHub Release |
 | Anim Assist (historical 12.8.0) | 12.8.0 | [b4_anim_assist_v12.8.0.zip](b4_anim_assist_v12.8.0.zip) | 613,678 | `08a904c7dae1` | Earlier published repository build; editor-specific NLA/Graph/Dope Sheet sidebars; bottom-only Timeline row retained |

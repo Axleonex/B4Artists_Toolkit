@@ -28,7 +28,7 @@ Eight tools support numeric display: Breakdown, Smooth, Neighbors, To Reference,
 
 Open row **Settings**, choose a family/tool, then **Hidden, Button, Popout slider or Inline slider**. Ordinary actions offer Hidden/Button only. Hidden tools remain in Search/More. Move Up/Down orders tools within their family; Slider Width controls inline width.
 
-Use **Tool Settings**, or right-click an idle numeric tool, to set label/icon, range, default, width, precision, drag sensitivity, snapping and presets. **Custom Range / Overshoot** permits supported amounts outside the standard range. Masks, targets and breakdown anchors remain scene settings; **Scene Tool Options** opens those separately.
+Use **Tool Settings**, or right-click an idle numeric tool, to set display, range, default, width, precision, drag sensitivity, snapping and presets. **Custom Range / Overshoot** permits supported amounts outside the standard range. Masks, targets and breakdown anchors remain scene settings; **Scene Tool Options** opens those separately.
 
 **Save As** names an arrangement. **Load** restores one; **Update Saved** replaces its saved settings. Rename/Delete manage saved layouts. Recommended is protected. **Restore Recommended Layout** resets the working arrangement while retaining saved layouts. Confirm the main Settings dialog to apply staged changes. Save Preferences after applying if automatic preference saving is off.
 
@@ -46,12 +46,12 @@ Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim
 
 Each stage starts from a fixed default set, the Recommended tools for its families plus tools for that phase, left to right in workflow order:
 
-- **Block:** 25/50/75%, Breakdown slider, Inbetween, Distribute Inbetweens, Push/Pull Previous/Next; Select Range/All/Ends, Grow left/right, mark Keyframe/Breakdown/Extreme/Moving Hold, Copy/Paste.
+- **Block:** 25/50/75%, Breakdown slider, Inbetween, Distribute Inbetweens, Push/Pull Previous/Next; Select Range/All/Ends, Grow left/right, mark Keyframe/Breakdown/Extreme/Moving Hold (shown as key-type diamonds in your theme's Dope Sheet key colours and sizes; hover for the name), Copy/Paste.
 - **Spline:** To Spline (selected keys from stepped to Bezier; To Stepped is in More), Neighbors, Ease and Smooth sliders; Set Reference, then To Reference and Amplify (popouts); Auto Clamped/Vector/Free handles; Show/Hide Trails to check arcs.
 - **Polish:** -1f/+1f, Timing Scale (popout), 80/90/110/120% spacing, Timing Offset slider, Ripple, Snap; Select Opposite, Mirror Selected, Mirror Active, Swap.
 - **Deliver:** Bake Object, Bake Preview Range, Smart Bake, Reduce Keys, Bake Keys to Integer Frames (whole frames, restorable with Reset Timing); One-Click Proxy & Bake (bakes the object's world motion through a temporary proxy in one step); or create Location, Rotation, World or Parent proxies, then Bake Session and Remove Proxies; Remove All Proxy Sessions.
 
-To change a stage, open **Toolbar Settings** (the row's **Settings** button). **Row Stage** chooses the setup you edit, and the row behind the dialog follows it. In a stage, Family offers only that stage's families; set each tool Hidden, Button, Popout or Inline, choose label or icon, and reorder it. **Reset Stage to Defaults** restores the current stage; **Restore Recommended Layout** restores All and every stage. Saved layouts store All and all four stages together.
+To change a stage, open **Toolbar Settings** (the row's **Settings** button). **Row Stage** chooses the setup you edit, and the row behind the dialog follows it. In a stage, Family offers only that stage's families; set each tool Hidden, Button, Popout or Inline, and reorder it. Tools that have an icon (key types, -1f/+1f, Copy and Paste) can also show as Label or Icon; every other tool shows its name. **Reset Stage to Defaults** restores the current stage; **Restore Recommended Layout** restores All and every stage. Saved layouts store All and all four stages together.
 
 Amounts (range, default, presets, slider width, snapping) are shared: changing them in any stage changes them everywhere. Right-click Tool Settings changes the display and label in the stage the row shows. A Search pin also goes to that stage; a tool from another family is pinned into All, and a note says so. More lists the shown stage's tools.
 

@@ -131,8 +131,11 @@ try:
     with ctx():
         settings.ANIMASSIST_OT_tool_settings.execute(fake3, bpy.context)
     data = rec()
-    check("Tool Settings in Spline changes Spline display", data["active"]["stages"]["SPLINE"]["tools"]["SMOOTH"]
-          == {"mode": "POPOUT", "label_mode": "ICON"})
+    check("Tool Settings in Spline changes Spline display; Icon is ignored for a tool without one",
+          data["active"]["stages"]["SPLINE"]["tools"]["SMOOTH"] == {"mode": "POPOUT", "label_mode": "LABEL"})
+    check("Block key types start as icons",
+          all(data["active"]["stages"]["BLOCK"]["tools"][a]["label_mode"] == "ICON"
+              for a in ("TYPE_KEYFRAME", "TYPE_BREAKDOWN", "TYPE_EXTREME", "TYPE_HOLD")))
     check("All display unchanged; width shared", data["active"]["tools"]["SMOOTH"]["mode"] == "INLINE"
           and data["active"]["tools"]["SMOOTH"]["label_mode"] == "LABEL" and data["active"]["tools"]["SMOOTH"]["width"] == 160.)
 

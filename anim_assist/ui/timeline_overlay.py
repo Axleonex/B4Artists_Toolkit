@@ -367,6 +367,7 @@ def _text(rect,text,color,scale,font=11,left=False):
 
 def _glyph(rect,action,color):
     x,y,w,h=rect; cx=x+w/2; cy=y+h/2; r=min(w,h)*.28
+    gpu.state.blend_set('ALPHA')
     shader=gpu.shader.from_builtin('UNIFORM_COLOR')
     if action in {'SEARCH','SETTINGS','MORE'}:
         if action=='MORE':
@@ -392,6 +393,47 @@ def _glyph(rect,action,color):
     batch=batch_for_shader(shader,'TRIS',{'pos':positions})
     shader.bind(); shader.uniform_float('color',color); batch.draw(shader)
     if action=='COPY_KEYS': _quad((cx-r/2,cy-r/2,r,r),(.12,.12,.12,1))
+
+
+# Key-type icons match the Dope Sheet: the theme's key colours (bright "selected"
+# variants, readable on the row) and Blender's relative diamond sizes, so the type
+# reads by shape and size as well as colour.
+_KEY_ICONS = {
+    'TYPE_KEYFRAME': ('keyframe_selected', 1.0, (1.0, .745, .196)),
+    'TYPE_BREAKDOWN': ('keyframe_breakdown_selected', .85, (.353, .808, 1.0)),
+    'TYPE_EXTREME': ('keyframe_extreme_selected', 1.2, (1.0, .631, .631)),
+    'TYPE_HOLD': ('keyframe_moving_hold_selected', .925, (1.0, .937, .945)),
+    'TYPE_JITTER': ('keyframe_jitter_selected', .8, (.529, 1.0, .361)),
+}
+
+
+def key_icon_style(context, action):
+    """(fill RGB, border RGB, size factor) for a key-type icon, from the theme."""
+    name, factor, fallback = _KEY_ICONS[action]
+    try:
+        anim = context.preferences.themes[0].common.anim
+        fill = tuple(getattr(anim, name))[:3]
+    except (AttributeError, IndexError, TypeError):
+        fill = fallback
+    try:
+        border = tuple(context.preferences.themes[0].dopesheet_editor.keyframe_border)[:3]
+    except (AttributeError, IndexError, TypeError):
+        border = (0., 0., 0.)
+    return fill, border, factor
+
+
+def _key_icon(rect, context, action, alpha):
+    fill, border, factor = key_icon_style(context, action)
+    x, y, w, h = rect
+    cx, cy = x + w / 2, y + h / 2
+    r = min(w, h) * .30 * factor
+    gpu.state.blend_set('ALPHA')  # text drawing can leave blending off; faded icons need it
+    shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+    for radius, color in ((r + 1.5, (*border, alpha)), (r, (*fill, alpha))):
+        positions = ((cx, cy + radius), (cx + radius, cy), (cx, cy - radius),
+                     (cx, cy + radius), (cx, cy - radius), (cx - radius, cy))
+        batch = batch_for_shader(shader, 'TRIS', {'pos': positions})
+        shader.bind(); shader.uniform_float('color', color); batch.draw(shader)
 
 
 def _parts(rect,label,scale):
@@ -489,6 +531,8 @@ def _draw():
                 number=f'{value:.{tool["precision"]}f}' if abs(value)<10000 else f'{value:.3g}'
                 _text(value_rect,number+unit,ink,scale,font=9)
                 _text(reset_rect,'R',ink,scale,font=9)
+            elif not label and action in _KEY_ICONS:
+                _key_icon(rect,context,action,ink[3])
             elif not label:
                 _glyph(rect,action if action else kind,(*accent[:3],ink[3]))
             else:

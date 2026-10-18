@@ -24,6 +24,12 @@ RECORD_LIMIT = 2_000_000
 # Logical pixels reserved for the dropdown arrow on the compact stage button.
 STAGE_ARROW = 10
 MODES = ('HIDDEN', 'BUTTON', 'POPOUT', 'INLINE')
+# Tools with a distinct row icon. Only these can show as an icon; any other tool
+# asked to (older records) shows its name.
+KEY_TYPE_ICONS = ('TYPE_KEYFRAME', 'TYPE_BREAKDOWN', 'TYPE_EXTREME', 'TYPE_HOLD', 'TYPE_JITTER')
+ICON_ACTIONS = frozenset(KEY_TYPE_ICONS + ('NUDGE_LEFT', 'NUDGE_RIGHT', 'COPY_KEYS', 'PASTE_KEYS'))
+# Stage tools that start as icons (owner decision 2026-10-18: Block's key types).
+STAGE_ICON_DEFAULTS = {'BLOCK': frozenset(KEY_TYPE_ICONS)}
 _B, _P, _I = 'BUTTON', 'POPOUT', 'INLINE'
 # Fixed default toolsets, left to right in workflow order (owner decision:
 # defaults never derive from a layout's All tools). Unlisted tools start Hidden.
@@ -60,7 +66,18 @@ def family_of(action):
 
 def stage_default(stage):
     pairs = STAGE_DEFAULTS[stage]
-    return dict(order=[a for a, _m in pairs], tools={a: dict(mode=m, label_mode='LABEL') for a, m in pairs})
+    icons = STAGE_ICON_DEFAULTS.get(stage, ())
+    return dict(order=[a for a, _m in pairs],
+                tools={a: dict(mode=m, label_mode='ICON' if a in icons else 'LABEL') for a, m in pairs})
+
+
+def has_icon(action):
+    return action in ICON_ACTIONS
+
+
+def shown_label_mode(action, label_mode):
+    """Icon only for a tool that has one; otherwise its name."""
+    return 'ICON' if label_mode == 'ICON' and has_icon(action) else 'LABEL'
 
 
 def _check_mode(action, mode, label_mode):
@@ -92,7 +109,8 @@ def validate_stage(stage, raw, actions):
         mode, label_mode = entry.get('mode', 'BUTTON'), entry.get('label_mode', 'LABEL')
         _check_mode(action, mode, label_mode)
         if mode == 'HIDDEN': continue
-        result['order'].append(action); result['tools'][action] = dict(mode=mode, label_mode=label_mode)
+        result['order'].append(action)
+        result['tools'][action] = dict(mode=mode, label_mode=shown_label_mode(action, label_mode))
     for key, value in tools_raw.items():
         if key not in actions and key not in result['tools']:
             if not isinstance(value, dict): raise ValueError('Stage tool settings must be an object')
@@ -149,6 +167,7 @@ def validate_tool(action, raw):
     if result['mode'] not in MODES or (action not in SLIDERS and result['mode'] in {'POPOUT','INLINE'}):
         raise ValueError('This tool does not support the selected display mode')
     if result['label_mode'] not in {'LABEL','ICON'}: raise ValueError('Choose Label or Icon')
+    result['label_mode'] = shown_label_mode(action, result['label_mode'])
     result['width'] = finite(result['width'], 'Slider width')
     if not 80 <= result['width'] <= 240: raise ValueError('Slider width must be 80–240')
     if action not in SLIDERS: return result
@@ -410,12 +429,12 @@ def set_stage_tool(record, stage, action, mode=None, label_mode=None):
     if stage not in STAGE_KEYS:
         tool = layout['tools'][action]
         if mode is not None: tool['mode'] = mode
-        if label_mode is not None: tool['label_mode'] = label_mode
+        if label_mode is not None: tool['label_mode'] = shown_label_mode(action, label_mode)
         return
     setup = _stage_setup(layout, stage)
     current = setup['tools'].get(action)
     mode = mode or (current['mode'] if current else 'HIDDEN')
-    label_mode = label_mode or (current['label_mode'] if current else 'LABEL')
+    label_mode = shown_label_mode(action, label_mode or (current['label_mode'] if current else 'LABEL'))
     if mode == 'HIDDEN':
         if action in setup['order']: setup['order'].remove(action)
         setup['tools'].pop(action, None)
@@ -500,14 +519,15 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
             for action in selected:
                 tool=tools[action]; mode=tool['mode']
                 label=SLIDERS[action][0] if action in SLIDERS else labels.get(action,action.replace('_',' ').title())
+                icon=shown_label_mode(action,tool['label_mode'])=='ICON'
                 if mode=='INLINE' and not demote:
                     # named: compact track that keeps the slider's name (before names are dropped).
-                    label='' if (compact and not named) or tool['label_mode']=='ICON' else label
+                    label='' if compact and not named else label
                     w=((64 if named else 80) if compact else tool['width'])*scale+measure(label)+(46 if compact else 54)*scale
                     kind='SLIDER'
                 else:
                     kind='POPOUT' if mode in {'POPOUT','INLINE'} else 'ACTION'
-                    if tool['label_mode']=='ICON': label=''
+                    if icon: label=''
                     w=max(24*scale,measure(label)+2*pad)
                 specs.append((kind,action,label,w))
                 if action in SLIDERS:

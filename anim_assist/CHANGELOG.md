@@ -16,6 +16,12 @@
   catalogue (95 actions).
 - Row labels: Set Reference, To Reference, Amplify (was Push/Pull), Show Trails
   (All keeps Trails), Location Proxy, Rotation Proxy and Clamped (Auto Clamped).
+- Block shows Mark Key/Breakdown/Extreme/Hold as key-type diamonds in the
+  theme's Dope Sheet key colours and relative sizes. Icon is offered only for
+  tools that have one (key types, nudges, Copy, Paste); an Icon choice saved on
+  another tool shows its name.
+- Fixed: icons of unavailable row tools (nudges, Copy, Paste in Icon mode) were
+  drawn at full strength instead of faded.
 - A tight row first shortens inline slider tracks and keeps their names; names
   are dropped only when that still does not fit.
 - Fixed: hover text on the Timeline row kept only three lines, so longer

@@ -266,4 +266,41 @@ class TooltipWrapTests(unittest.TestCase):
         self.assertEqual(roles[:3], ['TITLE', 'BODY', 'WARNING'])
 
 
+class IconTests(unittest.TestCase):
+    def setUp(self):
+        self.record = config.recommended(actions)
+
+    def test_block_key_types_default_to_icons(self):
+        block = self.record['active']['stages']['BLOCK']['tools']
+        for action in ('TYPE_KEYFRAME', 'TYPE_BREAKDOWN', 'TYPE_EXTREME', 'TYPE_HOLD'):
+            self.assertEqual(block[action]['label_mode'], 'ICON')
+        self.assertEqual(block['INBETWEEN']['label_mode'], 'LABEL')
+        self.assertEqual(self.record['active']['tools']['TYPE_KEYFRAME']['label_mode'], 'LABEL')
+
+    def test_icon_only_for_tools_that_have_one(self):
+        self.assertTrue(config.has_icon('TYPE_BREAKDOWN'))
+        self.assertTrue(config.has_icon('NUDGE_LEFT'))
+        self.assertFalse(config.has_icon('SMOOTH'))
+        self.assertFalse(config.has_icon('BAKE_STEP'))
+        config.set_stage_tool(self.record, 'SPLINE', 'SMOOTH', label_mode='ICON')
+        self.assertEqual(self.record['active']['stages']['SPLINE']['tools']['SMOOTH']['label_mode'], 'LABEL')
+        config.set_stage_tool(self.record, 'ALL', 'BAKE_STEP', label_mode='ICON')
+        self.assertEqual(self.record['active']['tools']['BAKE_STEP']['label_mode'], 'LABEL')
+
+    def test_older_icon_setting_on_a_tool_without_one_loads_as_label(self):
+        record = copy.deepcopy(self.record)
+        record['active']['tools']['SMOOTH']['label_mode'] = 'ICON'
+        record['active']['stages']['SPLINE']['tools']['EASE']['label_mode'] = 'ICON'
+        result = config.validate(record, actions)
+        self.assertEqual(result['active']['tools']['SMOOTH']['label_mode'], 'LABEL')
+        self.assertEqual(result['active']['stages']['SPLINE']['tools']['EASE']['label_mode'], 'LABEL')
+
+    def test_block_icons_are_narrow_unlabelled_buttons(self):
+        controls = config.toolbar_layout(1920, 120, 28, False, self.record, groups, {},
+                                         lambda text: len(text) * 6, 'BLOCK')
+        icons = [c for c in controls if c[1] in config.KEY_TYPE_ICONS]
+        self.assertEqual(len(icons), 4)
+        self.assertTrue(all(c[2] == '' and c[3][2] == 24 for c in icons))
+
+
 if __name__=='__main__': unittest.main()

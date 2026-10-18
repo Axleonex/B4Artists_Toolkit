@@ -15,7 +15,7 @@ _MODES=(('HIDDEN','Hidden','Keep this tool in Search and More',0),
         ('BUTTON','Button','Invoke the existing action directly',1),
         ('POPOUT','Popout slider','Press and drag to reveal a temporary slider',2),
         ('INLINE','Inline slider','Keep the slider visible in the row',3))
-_LABELS=(('LABEL','Label','Show the tool name'),('ICON','Icon','Use a compact tool glyph; hover for its name'))
+_LABELS=(('LABEL','Label','Show the tool name'),('ICON','Icon','Show the tool\'s icon; hover for its name. Key types, nudges, Copy and Paste have icons'))
 
 
 def _modes(self,context): return _MODES if self.action in model.SLIDERS else _MODES[:2]
@@ -86,7 +86,8 @@ class AA_UL_toolbar_tools(bpy.types.UIList):
         row=layout.row(align=True)
         row.label(text=item.name)
         row.prop(item,'mode',text='')
-        row.prop(item,'label_mode',text='')
+        if model.has_icon(item.action): row.prop(item,'label_mode',text='')
+        else: row.label(text='')
 
     def filter_items(self,context,data,propname):
         return ([self.bitflag_filter_item if item.family==data.family else 0 for item in getattr(data,propname)],[])
@@ -286,7 +287,8 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
         if target in model.STAGE_KEYS:
             layout.label(text=f'Display and label apply to the {model.stage_label(target)} stage; '
                               'amounts are shared by every stage.')
-        layout.prop(self,'mode'); layout.prop(self,'label_mode')
+        layout.prop(self,'mode')
+        if model.has_icon(self.action): layout.prop(self,'label_mode')
         if self.action in model.SLIDERS:
             unit=model.SLIDERS[self.action][1]
             layout.prop(self,'width')

@@ -68,6 +68,10 @@ def setup():
     for frame, x in ((1, 0.0), (12, 2.0), (24, 0.0)):
         obj.location.x = x
         obj.keyframe_insert("location", index=0, frame=frame)
+    from B4_anim_assist.core.fcurve_compat import get_fcurves
+    for fc in get_fcurves(obj.animation_data.action, anim_data=obj.animation_data):
+        for key in fc.keyframe_points:
+            key.select_control_point = True  # key-type tools are available, so icons draw at full strength
     bpy.context.view_layer.objects.active = obj
     obj.select_set(True)
     bpy.context.scene.frame_set(30)
@@ -110,6 +114,75 @@ def hover(stage, key, name):
     state["shot"] = name
 
 
+def sample_icons(shot_name):
+    """{action: (drawn RGB, theme RGB, label)} for Block's key-type icons in a capture."""
+    with bpy.context.temp_override(window=window(), screen=window().screen):
+        bpy.ops.screen.screenshot(filepath=str(OUT / shot_name))
+    image = bpy.data.images.load(str(OUT / shot_name))
+    width = image.size[0]
+    pixels = image.pixels[:]
+    reg = region()
+    out = {}
+    for item in items():
+        if item[1] in overlay()._KEY_ICONS:
+            x, y, w, h = item[3]
+            i = (round(reg.y + y + h / 2) * width + round(reg.x + x + w / 2)) * 4
+            out[item[1]] = (pixels[i:i + 3], overlay().key_icon_style(bpy.context, item[1])[0], item[2])
+    bpy.data.images.remove(image)
+    return out
+
+
+def icon_faded():
+    """With no keys selected the key-type tools are unavailable and their icons fade."""
+    from B4_anim_assist.core.fcurve_compat import get_fcurves
+    obj = bpy.context.view_layer.objects.active
+    for fc in get_fcurves(obj.animation_data.action, anim_data=obj.animation_data):
+        for key in fc.keyframe_points:
+            key.select_control_point = False
+    for a in window().screen.areas:
+        a.tag_redraw()
+    state["faded"] = True
+
+
+def icon_faded_check():
+    strip = sys.modules["B4_anim_assist.ui.timeline_strip"]
+    with bpy.context.temp_override(window=window(), area=timeline(), region=region()):
+        reason = strip._unavailable(bpy.context, timeline(), "TYPE_KEYFRAME")
+        obj = bpy.context.object
+    log.write(f"  reason now: {reason!r}; object {obj and obj.name}" + chr(10))
+    samples = sample_icons("block-icons-unavailable.png")
+    for action, (got, fill, _label) in samples.items():
+        log.write(f"  {action} unavailable: drawn {tuple(round(v, 2) for v in got)}" + chr(10))
+    check("Unavailable key-type icons are drawn faded",
+          len(samples) == 4 and all(max(fill) - max(got) > .2 for got, fill, _l in samples.values()))
+
+
+def icon_colours():
+    """Block's key-type icons are drawn in the theme's key colours (sampled from a capture)."""
+    setattr(window().workspace, PROP, "BLOCK")
+    shot_name = "block-icons.png"
+    with bpy.context.temp_override(window=window(), screen=window().screen):
+        bpy.ops.screen.screenshot(filepath=str(OUT / shot_name))
+    image = bpy.data.images.load(str(OUT / shot_name))
+    width, height = image.size
+    pixels = image.pixels[:]
+    reg = region()
+    bad = []
+    for item in items():
+        if item[1] not in overlay()._KEY_ICONS:
+            continue
+        x, y, w, h = item[3]
+        px, py = round(reg.x + x + w / 2), round(reg.y + y + h / 2)
+        i = (py * width + px) * 4
+        got = pixels[i:i + 3]
+        fill = overlay().key_icon_style(bpy.context, item[1])[0]
+        log.write(f"  {item[1]}: drawn {tuple(round(v, 2) for v in got)} theme {tuple(round(v, 2) for v in fill)}" + chr(10))
+        if item[2] or any(abs(a - b) > .12 for a, b in zip(got, fill)):
+            bad.append(item[1])
+    check("Block key-type icons drawn in the theme's key colours", len(bad) == 0 and image is not None)
+    bpy.data.images.remove(image)
+
+
 def shot():
     with bpy.context.temp_override(window=window(), screen=window().screen):
         bpy.ops.screen.screenshot(filepath=str(OUT / state["shot"]))
@@ -122,6 +195,10 @@ def plan():
     yield setup, 1.5
     for stage in ("ALL", "BLOCK", "SPLINE", "POLISH", "DELIVER"):
         yield (lambda s=stage: audit(s)), 0.3
+    yield (lambda: setattr(window().workspace, PROP, "BLOCK")), 0.6
+    yield icon_colours, 0.3
+    yield icon_faded, 0.8
+    yield icon_faded_check, 0.3
     for stage, key, name in (("DELIVER", "BAKE_PREVIEW", "tooltip-deliver-greyed.png"),
                              ("DELIVER", "PROXY_BAKE", "tooltip-deliver-proxy-bake.png"),
                              ("SPLINE", "EASE", "tooltip-spline-ease.png")):

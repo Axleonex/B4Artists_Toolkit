@@ -4,10 +4,10 @@
   "package_root": "B4_anim_assist",
   "files": 211,
   "python_files": 209,
-  "bytes": 626978,
-  "sha256": "422b54267ada2b200bc17215a1f1dbd2537e2114a909945f5f588980e6743768",
+  "bytes": 628184,
+  "sha256": "4b4c9ffc0b3c9c28c8118c919ae22b0d114f028d1058cb12924570c79c914472",
   "source_files_sha256": {
-    "B4_anim_assist/CHANGELOG.md": "1bcd480c6cfd82db3b5098028992c41fa433ed38782b6e7ebf6222e21f34f5db",
+    "B4_anim_assist/CHANGELOG.md": "e323199f4d0dc1d82367e845a70d119b828760b3664b47a1c9792341b2f989c1",
     "B4_anim_assist/__init__.py": "eec8c05274e9490a47761782afdb5fe2841f0019cbce7de16d3b8cd2ef551c0e",
     "B4_anim_assist/blender_manifest.toml": "a6e0df9539b8a4b39dfe89f4d4b15cd92e6a0d8192dd3b08fbeb429420107b2e",
     "B4_anim_assist/constants.py": "fcbf9aa0b9ffc232e42aa3d964999398356d27217c32013914d2fafceb2f2688",
@@ -213,9 +213,9 @@
     "B4_anim_assist/ui/pie_menus.py": "3a05cdece389d9daff066c031eee96cac774fe94aae7437f40202f24c639190a",
     "B4_anim_assist/ui/scope_ui.py": "abfef2e81d059b8d1099863a4ed646dab0f0e0147c6bfde84962bc73329aedbe",
     "B4_anim_assist/ui/timeline_catalog.py": "b3dfa064d4b2fa0923415161b58678200823c54ee59a0a49abad3e01358962d6",
-    "B4_anim_assist/ui/timeline_config.py": "14fb4462364e5d85a0621fbda5f032ce9a3d209caf8c604af7db99d712d62b65",
-    "B4_anim_assist/ui/timeline_overlay.py": "adedac61e498bfbf7473401cb8f5f5cd1b7c6d84415cae5feb0a5b6dc064c512",
-    "B4_anim_assist/ui/timeline_settings.py": "d6bd06ad03a4a4ee2dbe1025f9be168342217b23d3beb990a722ac0d2b3890b5",
+    "B4_anim_assist/ui/timeline_config.py": "63b3c3b46c9301d330a40d41b25f32ce3b9c91d7e6990ba4d20a8f1021282a46",
+    "B4_anim_assist/ui/timeline_overlay.py": "13cd5aae890963a1b392e6ea83df93e8928e57d0df5c43b824beec6cf0e9012d",
+    "B4_anim_assist/ui/timeline_settings.py": "423c542fdc67834257a6aa906533f2b4aba6eeb4d90a35cebe85b0ac1679d4b1",
     "B4_anim_assist/ui/timeline_strip.py": "f182cfee9e3e31757e6ab62a24227e9389e7af9e08b94c7408a0cbec08de4b0e",
     "B4_anim_assist/ui/ui_helpers.py": "5a167981150abc63d37ebc29ac974ded02e88287bee6722bddcd511d7280d781"
   }
