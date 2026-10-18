@@ -49,6 +49,8 @@ not both).
 
 For the current 9.2.5 interface map, moved-tool paths and visibility settings, see the [manual: Getting Started](../../bonecraft/docs/manual/en/01-start.md#where-things-are). Bone Merge is under BoneCraft → Setup Rigging; Delta Mush and Proximity Wrap are under Skin; Viseme Library / Lip Sync is under CATS → Avatar Tools; VRChat viseme mapping and face tracking are under CATS → VRChat Tools → Facial.
 
+The [documentation index](../../bonecraft/docs/README.md) links the English manual, all six complete 9.2.5 translations and their PDFs. Each edition includes the illustrated Rig Builder workshop and Crescent Rose tutorial; screenshot and video capture versions remain historical.
+
 ## Rig a character
 
 1. Select the character's mesh. In **Rig Builder**, start the wizard

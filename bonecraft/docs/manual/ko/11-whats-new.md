@@ -4,6 +4,10 @@
 
 최신 항목이 먼저 옵니다.
 
+## 9.2.5 — Starter Rigs 카탈로그 탭
+
+Starter Rigs는 기본 하단 에셋 셸프의 카탈로그 탭 하나를 사용합니다. 뷰포트 왼쪽 위 컨트롤은 제거되었습니다. 셸프 카탈로그 메뉴에서 **Starter Rigs**를 한 번 켜면 다른 카탈로그 옆에 나타납니다. 기본 에셋 가져오기와 **Add → Armature → Starter Rig Catalog**는 계속 사용할 수 있습니다.
+
 ## 9.2.4 — 작업 보드와 기본 도구
 
 **건강 검사 열기**는 이제 리그 검증을 실행하고 결과를 엽니다. 아마추어 또는 연결된 메시를 선택하세요. **Quick Wins**는 최대 세 개의 권장 작업을 표시하고, **Remaining Tasks**는 해당 카드를 중복 표시하지 않습니다. **작업 보드 새로 고침**으로 다시 검사합니다.
@@ -22,6 +26,13 @@ Avatar Tools에서 중복된 Export to VRChat 패널을 제거했습니다. 내�
 - Delta Mush / Proximity Wrap → BoneCraft → Skin
 - Viseme Library / Lip Sync → CATS → Avatar Tools
 - VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
+
+## 9.2.0(2026년 10월)
+
+- **전체 카탈로그:** Basic Humanoid, Simple Human, Full Human, Basic Quadruped, Cat, Horse, Wolf, Bird, Shark 아홉 프리셋의 썸네일이 처음부터 표시됩니다. Humans, Quadrupeds, Other Animals로 묶습니다.
+- **필요할 때 Rigify:** Basic Humanoid는 독립 작동합니다. Rigify가 꺼져도 나머지가 보이며 **Enable Rigify & Add Rig** 또는 Cancel을 제시합니다. 취소·활성화 실패·없는 프리셋은 아무것도 추가하지 않습니다.
+- **당시 선택 셸프:** 뷰포트 헤더의 Starter Rigs 스위치가 일반 에셋 셸프로 돌아가며 설정을 저장했습니다. Add → Armature → Starter Rig Catalog는 팝업을 열었습니다. 9.2.5에서는 카탈로그 탭으로 대체되었습니다.
+- **클릭·드래그:** 클릭 또는 뷰포트 안 드롭으로 추가합니다. 메시 맞춤은 켜지고 웨이트·컨트롤 생성은 꺼져 있으며 Adjust Last Operation에서 바꿉니다. Bforartists 5.2.0에서 기본 클릭·드롭·취소·실행 취소/재실행을 검사했습니다.
 
 ## 9.1.2(2026년 10월)
 
@@ -94,3 +105,5 @@ Avatar Tools에서 중복된 Export to VRChat 패널을 제거했습니다. 내�
 **7.1.3(환경 설정 라벨 정리):** 애드온 환경 설정의 스위치 두 개의 이름이 바뀌어, 이제 각각이 제어하는 사이드바 탭과 일치합니다. "VRChat Avatar Tools"는 이제 **CATS**(CATS 사이드바 탭과 일치)로, "Task Board & Sidebar"는 이제 **Rig Builder**(Rig Builder 사이드바 탭과 일치)로 표시됩니다. 제거된 도구는 없습니다. 편집 > 환경 설정 > 애드온 > BoneCraft의 켜기 / 끄기 라벨만 바뀌었습니다.
 
 **7.1.1:** BoneCraft에 이제 CATS 도구가 들어 있습니다. VRChat 아바타를 깨끗하고 최적화되며 완전히 설정된 상태로 만들기 위해 특별히 설계된 모델 준비 도구 모음입니다. CATS는 전용 사이드바 탭에 있으며, 매번 올바른 작업 순서로 안내하는 파이프라인 시스템을 씁니다.
+
+다음: [Crescent Rose 튜토리얼](12-crescent-rose.md)

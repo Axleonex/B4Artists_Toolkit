@@ -92,7 +92,7 @@ Open the **CATS** tab on the right sidebar (press **N**), expand **Avatar Tools*
 
 ### Step 9 — Export for VRChat
 
-In the **CATS** tab, expand **Avatar Tools** → **Export to VRChat**. Set the **Folder** and the **Avatar** name, then click **Export to VRChat (Unity)**.
+In the **CATS** tab, expand **Import / Export** → **Unity / VRChat**. Set the **Folder** and the **Avatar** name, then click **Export to VRChat (Unity)**. The duplicate export panel in Avatar Tools was removed in 9.2.3.
 
 **What you should be seeing:** The exported avatar in your chosen folder, ready for the VRChat Creator Companion and the VRChat SDK in Unity.
 

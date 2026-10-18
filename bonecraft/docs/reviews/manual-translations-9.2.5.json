@@ -1,0 +1,537 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-17",
+  "target_version": "9.2.5",
+  "source_base_commit": "6db5a589253e9dede9f9c92c15100560aaeb59a9",
+  "status": "VERIFIED",
+  "editions": [
+    {
+      "language": "en",
+      "version": "9.2.5",
+      "markdown_files": 13,
+      "screenshot_targets": 92,
+      "files": [
+        {
+          "path": "bonecraft/docs/manual/en/01-start.md",
+          "sha256_utf8_lf": "d168a3a068e694cc9980a37b131ecffed3c55ddee52a555e5410bd83bb6bf4ea"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/02-guides-a.md",
+          "sha256_utf8_lf": "1c9453827c62101ae1a18c58af4b78b41adcc8026bd14d3fc019b8b52ba935c7"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/03-guides-b.md",
+          "sha256_utf8_lf": "46600e48cd275b8034a7b1d59c780dd74a98b10116c97863a3c8ea4f784a7e12"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/04-cats-pipeline.md",
+          "sha256_utf8_lf": "94fffec63ffd8e0a66a8ab093759c6617f9a6e5d0621087b50c0769b86abdb57"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/05-rig-tools.md",
+          "sha256_utf8_lf": "aa795449b36d62922e9fdfb9c41ab591e936437257521d7d570766325d3414cc"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/06-rig-builder.md",
+          "sha256_utf8_lf": "3b0e3416507f5ac1ce9b7687cc03484c1b790ede089d416554f45f0298b38544"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/07-mechanisms.md",
+          "sha256_utf8_lf": "bcedbbb76adf79b31e91bd5bffeb05bb2bc1d030ce2648bf988fdb907d274473"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/08-vrchat.md",
+          "sha256_utf8_lf": "c918ef182488b9b0062b7ad8870bbc3f286f9a482d8e9be688ab623ca9c8221d"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/09-cats.md",
+          "sha256_utf8_lf": "df0a3d38bb8e5b6b6864abddcbaa7a976b0ca0674aafa8c37762b4bc89dddda1"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/10-reference.md",
+          "sha256_utf8_lf": "06883f9f8e9b268bffdc0422791a77777759b227addc37a37676fba9c94e2ad0"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/11-whats-new.md",
+          "sha256_utf8_lf": "01a3727d359820a6e3d8f158cbe6afa7434ad5c04e6a6ff85d538c3c6eba7823"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/12-crescent-rose.md",
+          "sha256_utf8_lf": "f2cdc8914bafbd14f61b7a6abbc72743d390bd81d329ffb41359f02b6e39150a"
+        },
+        {
+          "path": "bonecraft/docs/manual/en/index.md",
+          "sha256_utf8_lf": "1cf10de2e87cffd45714d52113f57f2cbeaf18201d79f87b2dbff33abf24f804"
+        }
+      ]
+    },
+    {
+      "language": "zh",
+      "version": "9.2.5",
+      "markdown_files": 13,
+      "screenshot_targets": 92,
+      "files": [
+        {
+          "path": "bonecraft/docs/manual/zh/01-start.md",
+          "sha256_utf8_lf": "1d0dbf9e30efd3a48a840e74d4a29c427e8ad083d18f006d5ea126fb9e09b3ac"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/02-guides-a.md",
+          "sha256_utf8_lf": "7cedf9563086cd89e567f28008b2bb2d20f1c9e55c5d2f1bdd6c81d7bd548be5"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/03-guides-b.md",
+          "sha256_utf8_lf": "d843aefd4dd2eb76ac3d679201e84383530dbd5d6ef5e293cb8a375535d2305e"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/04-cats-pipeline.md",
+          "sha256_utf8_lf": "ddde3816c0b71ce90fc50229370fa3f96b5dd575404c66607f44730e7150c8ca"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/05-rig-tools.md",
+          "sha256_utf8_lf": "b81ec1869044246731f7bf7ed15e32779acdf9e8c58a1def7b0979be2bc9421c"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/06-rig-builder.md",
+          "sha256_utf8_lf": "02ce3e9beaf813ac6cf8fac91f695b5ee3ddfb372747d8c42e435a1d4111225b"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/07-mechanisms.md",
+          "sha256_utf8_lf": "f0ad0c089662ec1141bab27a65cb9137de3e36225a324bcb1362985ae0fa333f"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/08-vrchat.md",
+          "sha256_utf8_lf": "9f4a37365ae72ee362149d5b37b4a8f1ed159d645948c657e84ed2ae34c85da5"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/09-cats.md",
+          "sha256_utf8_lf": "56959057c1e908831a9fec37246a95876c11a8ad28e58ce207b51bcdbcd57285"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/10-reference.md",
+          "sha256_utf8_lf": "0be30094aaa68997f5e30ecb1a108b08dcebdbe61dd3529f72fef6dd4b2d5de6"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/11-whats-new.md",
+          "sha256_utf8_lf": "ac6245a9ff8fc70e192e0bfbac5f9d5c41d51dccc5b908b8d08d6bbb3da5b6de"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/12-crescent-rose.md",
+          "sha256_utf8_lf": "4200a399ba6ffbd671460338dc75f99646f6f8b2271f9ed7682d10eecee2f187"
+        },
+        {
+          "path": "bonecraft/docs/manual/zh/index.md",
+          "sha256_utf8_lf": "ff233702f07a5798edcc559ee9174d3379fe8a3f8cded4c373e2d40180e38d75"
+        }
+      ]
+    },
+    {
+      "language": "fr",
+      "version": "9.2.5",
+      "markdown_files": 13,
+      "screenshot_targets": 92,
+      "files": [
+        {
+          "path": "bonecraft/docs/manual/fr/01-start.md",
+          "sha256_utf8_lf": "64777ec2303e7b3919b0b8747d6a25274b21553bdd4880ed74b30c68bbff52e2"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/02-guides-a.md",
+          "sha256_utf8_lf": "91ebee48e65569d847429fb6214598ae143093583dbb65d9f8bc2a2c5e44742c"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/03-guides-b.md",
+          "sha256_utf8_lf": "e78d8246972e1243bccd2caa97feb330b6e8e38f08dc9a54069097b86f683036"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/04-cats-pipeline.md",
+          "sha256_utf8_lf": "56b7bb4a4d1c19cac80f20b8edf47b954ab88474e7390f707d78eeef4b9c5a5e"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/05-rig-tools.md",
+          "sha256_utf8_lf": "fbb4a356bba8b7df0854ba4fb171cbb233d0acd8248c19ab0cae3082bc714747"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/06-rig-builder.md",
+          "sha256_utf8_lf": "b666d6eb538b3b308ca096bb3793786f132a5d4d38d047ad57824bd3f71a7361"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/07-mechanisms.md",
+          "sha256_utf8_lf": "830e5c20d59ed925cca5fdbfde407ee09fe549589cdb64147448eddbcbfd1185"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/08-vrchat.md",
+          "sha256_utf8_lf": "312d0187999b5f52499721f89eb6d3d6d7ba7eca6bdfcba06cf1dacfb8eac7d0"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/09-cats.md",
+          "sha256_utf8_lf": "0817b90d9a400c6f2726eefc9eb7bddf3f4c81d3cfdb7b72c25cf3b317c1b30a"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/10-reference.md",
+          "sha256_utf8_lf": "05096ec18ad8a98a26afb7a10a359e499ed11ecaddcd15b10f83e29931e7fc49"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/11-whats-new.md",
+          "sha256_utf8_lf": "2b9c0e8aa4d804fc0d11b4efdac186a3bb2cf14a12903eb717d9f7487ceda3eb"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/12-crescent-rose.md",
+          "sha256_utf8_lf": "56fb79a11dda6ec76e5ce461ed1d2ede3c2dc67a4afc18fe63223f1bb17b980d"
+        },
+        {
+          "path": "bonecraft/docs/manual/fr/index.md",
+          "sha256_utf8_lf": "a3fcdf5514a5fa50d429697ebf0c8e407b35b33e106951bac4a7fd3b9919e1f1"
+        }
+      ]
+    },
+    {
+      "language": "ja",
+      "version": "9.2.5",
+      "markdown_files": 13,
+      "screenshot_targets": 92,
+      "files": [
+        {
+          "path": "bonecraft/docs/manual/ja/01-start.md",
+          "sha256_utf8_lf": "749d1f786fa83b10545b1c4765140fe66df94e77fd6352ddd0a432789723ed88"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/02-guides-a.md",
+          "sha256_utf8_lf": "d42e5c232ef7be1f5a8f8d4b04d19bf9cad9658ba941a0313dc7c6d4993e069a"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/03-guides-b.md",
+          "sha256_utf8_lf": "ef623489de4f47825e45dd775857c2a1d4b443cd703973766f3f8a7a4003245d"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/04-cats-pipeline.md",
+          "sha256_utf8_lf": "02bd868b7848bc143e48f52fadc37f7fa581502189ac22a4420bd49fa492a64c"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/05-rig-tools.md",
+          "sha256_utf8_lf": "98755a737a7421ad37c9334d75bc86a619f6683a94fad67c4e3372ee1491f5ea"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/06-rig-builder.md",
+          "sha256_utf8_lf": "5526fa8a8ab83fa2f20c307a9fc353102a19d086b2439e7478f5639387f37db1"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/07-mechanisms.md",
+          "sha256_utf8_lf": "a4f60035f8793db210c92b510937200cd3beebe2ecddab0304b667dfde8a7b2b"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/08-vrchat.md",
+          "sha256_utf8_lf": "f215c2b5d34474aecd0c9df3101320f5055b963d54ab980dee3ef9f1a9273ea4"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/09-cats.md",
+          "sha256_utf8_lf": "3164e89cdfb1cdb2c10d4c508fe1b441447a95b61ade2757134cbe410ac8d7e9"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/10-reference.md",
+          "sha256_utf8_lf": "6931664fc6b67a849645d57c26f2a71a59b6af7032804ad5758dfe5c26a0e700"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/11-whats-new.md",
+          "sha256_utf8_lf": "f87b3362b1b59e1f54b9e988a7f52621e767b2661684065ba38539c082311bdd"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/12-crescent-rose.md",
+          "sha256_utf8_lf": "a32e85e2ff26a3c0ac23d520cfef59b60520834614798ee53fff7c7d8f379f59"
+        },
+        {
+          "path": "bonecraft/docs/manual/ja/index.md",
+          "sha256_utf8_lf": "60c5ce5ef8bf420aff6769d40b139fca61b3d7e82f5e81e1a180a698d9a15c51"
+        }
+      ]
+    },
+    {
+      "language": "ko",
+      "version": "9.2.5",
+      "markdown_files": 13,
+      "screenshot_targets": 92,
+      "files": [
+        {
+          "path": "bonecraft/docs/manual/ko/01-start.md",
+          "sha256_utf8_lf": "e353f55238b3d6d177beb080fbce769147e0125a2d32fa2f3cc7d1365743fceb"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/02-guides-a.md",
+          "sha256_utf8_lf": "8a229fe57c85e4ca18e7329695237299be50fb840a2bd9a9743b57eee19599b8"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/03-guides-b.md",
+          "sha256_utf8_lf": "fc18f6c387fab62280b47a0a33ac048210d3198c02e5c6f4888ca139e729c238"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/04-cats-pipeline.md",
+          "sha256_utf8_lf": "0c61fa84f46e92106b943a636b5929974957b53ece5390c9cb8fc88d72eb5be7"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/05-rig-tools.md",
+          "sha256_utf8_lf": "01149cbd77a717457bd2f1bda559fbf8dff541a11d18ff05a589545030a23ca5"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/06-rig-builder.md",
+          "sha256_utf8_lf": "b88edcc834481d1abdd4133b5a6318d0138bb4dfa718e3f90ab5669e322ffd8b"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/07-mechanisms.md",
+          "sha256_utf8_lf": "b225552e75d106d0880b43e369391edf1450b6f033f155762621b8ee6951393c"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/08-vrchat.md",
+          "sha256_utf8_lf": "adfb9399445bcfd8b0ca4c8d71f04dacc0e6a816c5bff06f6aabf5e41a71e3a5"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/09-cats.md",
+          "sha256_utf8_lf": "e4c9bc51e9f661ed34abbe813bc65e6822ebd36908adbc8af1e1a9f08e8d84e0"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/10-reference.md",
+          "sha256_utf8_lf": "fc93fb0660c1307d07947dfefdf225ed066d01162bfe8a932695294ce5dbecb5"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/11-whats-new.md",
+          "sha256_utf8_lf": "9b973a87be11b7d35e8f9b2fe6354d13d17f8a153949e9c99337daf9ae356fe5"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/12-crescent-rose.md",
+          "sha256_utf8_lf": "a428dace957ffdcb7c53a715caadff7dba4e45a6c62382e632c2d6e4edec6dca"
+        },
+        {
+          "path": "bonecraft/docs/manual/ko/index.md",
+          "sha256_utf8_lf": "6bd46d25e72c037e2687bdafd141c8514d489664cee7c9a678803445696e4b13"
+        }
+      ]
+    },
+    {
+      "language": "pt",
+      "version": "9.2.5",
+      "markdown_files": 13,
+      "screenshot_targets": 92,
+      "files": [
+        {
+          "path": "bonecraft/docs/manual/pt/01-start.md",
+          "sha256_utf8_lf": "353f8c81541890b9e0c17744bebcea824a36412bb874864c7537b2c272bc9a93"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/02-guides-a.md",
+          "sha256_utf8_lf": "f5ecb420bc97504fa51f5bf72b49e580b46b48b41718c4b3f1c2486f9acad7f2"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/03-guides-b.md",
+          "sha256_utf8_lf": "bdd475ed005ba85d39cf239621aebb3181101acf57c20a212e919caaecbaa344"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/04-cats-pipeline.md",
+          "sha256_utf8_lf": "9954254924ac39cdddb094b17994be7e6713d1f946b70788c2fb1ab50c8bc648"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/05-rig-tools.md",
+          "sha256_utf8_lf": "d8b8ade54cac33a23e14f7abb37c639a3db896aeb1383672db0a8eb9e713f00a"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/06-rig-builder.md",
+          "sha256_utf8_lf": "67d7d9897c78474aaad1e038fd368ce0c6da86f3ed683ad092ff7106f0895bae"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/07-mechanisms.md",
+          "sha256_utf8_lf": "b8248e2b51f49e1958ffee786e384e92be9d5cc810df9a4bbb5f96d0ff2857b2"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/08-vrchat.md",
+          "sha256_utf8_lf": "b9bb4cc0af70296a0d3216c0cdd86476c1174265b5af502291e819d677fda87e"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/09-cats.md",
+          "sha256_utf8_lf": "821b74b993abc31d89d5807452ecf2ef6e7e55872d17b0f699f369e1817961da"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/10-reference.md",
+          "sha256_utf8_lf": "38ad805ce1ded1f9107f2e2c7ce1580c949a0f61efe7abfc44c61bdf3463f177"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/11-whats-new.md",
+          "sha256_utf8_lf": "f179d47d313b5f98d24167f8135ad7948b1367729fd63acabb5473cea6b69065"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/12-crescent-rose.md",
+          "sha256_utf8_lf": "d09ff9a653368cc05dd951edeb4fd1cbb52d0d067929fa478ac2b19982f46a8f"
+        },
+        {
+          "path": "bonecraft/docs/manual/pt/index.md",
+          "sha256_utf8_lf": "1d136621169687c097aceb2d22773f8f77d416ce830b2fef135598b4d611cc01"
+        }
+      ]
+    },
+    {
+      "language": "es",
+      "version": "9.2.5",
+      "markdown_files": 13,
+      "screenshot_targets": 92,
+      "files": [
+        {
+          "path": "bonecraft/docs/manual/es/01-start.md",
+          "sha256_utf8_lf": "15860222abb25e701739b4819daeb16c61170e981a7497d2445635c3f1712f26"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/02-guides-a.md",
+          "sha256_utf8_lf": "81109ff8441b81243725b924af293ebfa270dd353b3262e016b79ed000d2294a"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/03-guides-b.md",
+          "sha256_utf8_lf": "6fda74576c57fda01e26094472cbc99f25b8bd035dd5582f80926fdb93d88d52"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/04-cats-pipeline.md",
+          "sha256_utf8_lf": "48929decda671e130e5209d8859ba6ee1afc4e572c3e26337dcac7f594bc6a34"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/05-rig-tools.md",
+          "sha256_utf8_lf": "01667969f7dc28412d01fff6dd0ffa89e57c59818849d8a0d09d626f338c93ce"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/06-rig-builder.md",
+          "sha256_utf8_lf": "f71390e4e79f24676384a2f4f496b0c9c63616707193b25beaa1367ee82691c3"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/07-mechanisms.md",
+          "sha256_utf8_lf": "448771dd130184935370c056e9a3f870aa0af75506d6e1ef565941f3a84e942f"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/08-vrchat.md",
+          "sha256_utf8_lf": "e2766b0db9062dad83c83ad80371cff6f2e0f31d83cf5f143b10ea35668e291a"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/09-cats.md",
+          "sha256_utf8_lf": "ef6e773b554b3e682d6e728e4989c4b2740f76a5d9ce2f4eebc2ee2229295d77"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/10-reference.md",
+          "sha256_utf8_lf": "ed7763e688fd96a52571558b35e7b45831a255e06b08472cf206b69a477a406d"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/11-whats-new.md",
+          "sha256_utf8_lf": "1740fe1346c2f3ff0651aa3eebe34fcced394b7b3594df181d63efc58b785420"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/12-crescent-rose.md",
+          "sha256_utf8_lf": "8f76a3058a1e498295f3de6d9b77139f716f7ecb6f9ce01c4f8ecd8329a81071"
+        },
+        {
+          "path": "bonecraft/docs/manual/es/index.md",
+          "sha256_utf8_lf": "98620e0be38c9049e67aa27b734ffbb6b0f0373a683bba29a1564ec89fc16c79"
+        }
+      ]
+    }
+  ],
+  "pdf_checks": [
+    {
+      "language": "en",
+      "pages": 152,
+      "images": 92,
+      "html_nodes": 1644,
+      "missing_pdf_nodes": [],
+      "empty_pages": [],
+      "text_outside_margins": [],
+      "pdf_bytes": 23695759,
+      "pdf_sha256": "719494e9da151e414512531e97bb4bf25fcaa5273abb11209da84dbfacfd1341"
+    },
+    {
+      "language": "zh",
+      "pages": 146,
+      "images": 92,
+      "html_nodes": 1623,
+      "missing_pdf_nodes": [],
+      "empty_pages": [],
+      "text_outside_margins": [],
+      "pdf_bytes": 24568180,
+      "pdf_sha256": "7314b9912ffe79b409a8613afd679724fbe7c46257ce59bb5a945c41355e4af4"
+    },
+    {
+      "language": "fr",
+      "pages": 155,
+      "images": 92,
+      "html_nodes": 1638,
+      "missing_pdf_nodes": [],
+      "empty_pages": [],
+      "text_outside_margins": [],
+      "pdf_bytes": 23717447,
+      "pdf_sha256": "aeb5b1078f55de9eb3e53a10a7dcc02499de5048690ab684e5cfff8cc23b5213"
+    },
+    {
+      "language": "ja",
+      "pages": 148,
+      "images": 92,
+      "html_nodes": 1623,
+      "missing_pdf_nodes": [],
+      "empty_pages": [],
+      "text_outside_margins": [],
+      "pdf_bytes": 24311975,
+      "pdf_sha256": "8502e8119c32090f01684c1fd6d4d1f8b747023224edc4034659c92b35320328"
+    },
+    {
+      "language": "ko",
+      "pages": 150,
+      "images": 92,
+      "html_nodes": 1619,
+      "missing_pdf_nodes": [],
+      "empty_pages": [],
+      "text_outside_margins": [],
+      "pdf_bytes": 24161018,
+      "pdf_sha256": "2e69181f94021237b5ba23c222dfc1e27c30084c93c82aad55cc9eb2ae1cd046"
+    },
+    {
+      "language": "pt",
+      "pages": 155,
+      "images": 92,
+      "html_nodes": 1639,
+      "missing_pdf_nodes": [],
+      "empty_pages": [],
+      "text_outside_margins": [],
+      "pdf_bytes": 23706191,
+      "pdf_sha256": "f739e6969bc09b8777cb78703134e67572e4df8f4a7161534e6342a9567d6153"
+    },
+    {
+      "language": "es",
+      "pages": 156,
+      "images": 92,
+      "html_nodes": 1619,
+      "missing_pdf_nodes": [],
+      "empty_pages": [],
+      "text_outside_margins": [],
+      "pdf_bytes": 23693747,
+      "pdf_sha256": "f0f2d6dffeccfea76a0a4aa1d6a55d51f358bd67a7af7ef2d956ad20d596391c"
+    }
+  ],
+  "checks": {
+    "manual_test": "PASS",
+    "manual_tools_test": "PASS",
+    "repository_manual_audit": "VERIFIED",
+    "git_diff_check": "PASS",
+    "independent_technical_review": "No material findings; source review and substantive translation spot checks",
+    "visual_review": "Representative rendered pages from all seven editions, plus corrected troubleshooting rows and page breaks"
+  },
+  "attribution_scan": {
+    "baseline_tracked_text_files": 1394,
+    "vendor_branding_findings": [],
+    "actual_coauthor_trailers": [],
+    "current_925_zip_findings": [],
+    "screenshot_metadata_findings": [],
+    "pdf_metadata_findings": [],
+    "notices_removed": 0,
+    "git_history_rewritten": false,
+    "required_license_notices_preserved": true
+  },
+  "limits": [
+    "Machine translations; no native-speaker certification",
+    "Historical screenshot capture9.1.2 and video9.1.3 remain identified",
+    "No new host runtime qualification",
+    "9.2.5 is a repository archive; latest tagged release remains9.2.3"
+  ],
+  "execution": {
+    "actual_lane": "T1_NATIVE",
+    "policy_fingerprint": "29fa965cada3128ffe57b5d85d3b9f8e5d749d780954ea14ba5f45dcca1ad8b8"
+  }
+}

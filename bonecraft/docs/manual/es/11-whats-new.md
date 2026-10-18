@@ -4,6 +4,10 @@
 
 Lo más reciente primero.
 
+## 9.2.5 — Pestaña del catálogo Starter Rigs
+
+Starter Rigs usa una pestaña única en la estantería nativa inferior. Se retiraron los controles de la esquina superior izquierda. Activa **Starter Rigs** una vez en el menú de catálogos para ver su pestaña junto a las demás. Siguen disponibles la importación nativa y **Add → Armature → Starter Rig Catalog**.
+
 ## 9.2.4 — Tablero de Tareas y herramientas nativas
 
 **Abrir verificación de salud** ahora ejecuta la validación del rig y abre los resultados. Selecciona una armadura o su malla vinculada. **Quick Wins** muestra hasta tres recomendaciones; **Remaining Tasks** no repite esas tarjetas. **Actualizar Tablero de Tareas** vuelve a comprobar.
@@ -22,6 +26,13 @@ Las pestañas seleccionan grupos de herramientas. Setup Rigging, Skin, Review, A
 - Delta Mush / Proximity Wrap → BoneCraft → Skin
 - Viseme Library / Lip Sync → CATS → Avatar Tools
 - VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
+
+## 9.2.0 (octubre de 2026)
+
+- **Catálogo completo:** nueve esqueletos/metarigs con miniaturas: Basic Humanoid, Simple Human, Full Human, Basic Quadruped, Cat, Horse, Wolf, Bird y Shark. El selector agrupa Humans, Quadrupeds y Other Animals.
+- **Rigify bajo demanda:** Basic Humanoid es independiente. Los demás siguen visibles con Rigify apagado y ofrecen **Enable Rigify & Add Rig** o Cancel. Cancelar, fallar la activación o faltar el preset no añade nada.
+- **Estantería opcional de esa versión:** Starter Rigs en la cabecera devolvía la estantería normal y guardaba la preferencia. Add → Armature → Starter Rig Catalog abría el selector emergente. En 9.2.5 lo sustituye la pestaña del catálogo.
+- **Pulsar o arrastrar:** añadir por clic o soltar dentro de la vista; adaptación a malla activada, pesos y controles desactivados, ajustables en Adjust Last Operation. Clic, arrastre, cancelación y deshacer/rehacer nativos se comprobaron en Bforartists 5.2.0.
 
 ## 9.1.2 (octubre de 2026)
 
@@ -94,3 +105,5 @@ La 8.5.0 también actualiza el flujo de exportación y validación. Las exportac
 **7.1.3 (limpieza de etiquetas de preferencias):** se renombraron dos interruptores de las preferencias del complemento para que coincidan con la pestaña de la barra lateral que controlan. «VRChat Avatar Tools» ahora se llama **CATS** (como la pestaña CATS). «Task Board & Sidebar» ahora se llama **Rig Builder** (como la pestaña Rig Builder). No se quitó ninguna herramienta: solo cambiaron las etiquetas de activar/desactivar en Editar > Preferencias > Complementos > BoneCraft.
 
 **7.1.1:** BoneCraft incluye ahora las herramientas de CATS: un conjunto completo de herramientas de preparación de modelos pensado para dejar los avatares de VRChat limpios, optimizados y totalmente configurados. CATS tiene su propia pestaña en la barra lateral y usa un sistema de pipeline que te guía cada vez por el orden correcto de las operaciones.
+
+Siguiente: [Tutorial Crescent Rose](12-crescent-rose.md)

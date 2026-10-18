@@ -4,6 +4,10 @@
 
 Les plus récentes d'abord.
 
+## 9.2.5 — Onglet de catalogue Starter Rigs
+
+Starter Rigs utilise maintenant un seul onglet dans l'étagère native d'assets en bas. Les commandes en haut à gauche de la vue 3D ont été retirées. Activez une fois **Starter Rigs** dans le menu des catalogues pour afficher son onglet parmi les autres. L'import natif et **Add → Armature → Starter Rig Catalog** restent disponibles.
+
 ## 9.2.4 — Tableau des tâches et outils natifs
 
 **Ouvrir la vérification de santé** lance maintenant la validation du rig et ouvre les résultats. Sélectionnez une armature ou son maillage lié. **Quick Wins** affiche au plus trois recommandations ; **Remaining Tasks** exclut ces fiches. **Actualiser le tableau des tâches** relance la vérification.
@@ -22,6 +26,13 @@ Les onglets sélectionnent un groupe. Setup Rigging, Skin, Review, Avatar Tools 
 - Delta Mush / Proximity Wrap → BoneCraft → Skin
 - Viseme Library / Lip Sync → CATS → Avatar Tools
 - VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
+
+## 9.2.0 (octobre 2026)
+
+- **Catalogue complet :** neuf squelettes/métarigs fournis en vignettes : Basic Humanoid, Simple Human, Full Human, Basic Quadruped, Cat, Horse, Wolf, Bird, Shark. Groupes Humans, Quadrupeds et Other Animals.
+- **Rigify si nécessaire :** Basic Humanoid est autonome. Les autres restent visibles quand Rigify est désactivé ; choisir propose **Enable Rigify & Add Rig** ou Cancel. Annulation, échec d'activation ou préréglage absent n'ajoutent rien.
+- **Étagère facultative à cette version :** l'interrupteur **Starter Rigs** dans l'en-tête ramenait à l'étagère ordinaire ; choix conservé dans les préférences. **Add → Armature → Starter Rig Catalog** ouvrait le sélecteur contextuel.
+- **Cliquer ou glisser :** ajout au clic ou dépôt dans la vue 3D. Adaptation au maillage activée, poids et commandes désactivés ; réglables dans Adjust Last Operation. Clic, dépôt, annulation et annuler/rétablir natifs vérifiés dans Bforartists 5.2.0.
 
 ## 9.1.2 (octobre 2026)
 
@@ -94,3 +105,5 @@ La 8.5.0 met aussi à jour le flux d'export et de validation. Les exports VRChat
 **7.1.3 (nettoyage des libellés de préférences) :** deux interrupteurs des préférences de l'add-on ont été renommés pour correspondre désormais à l'onglet de barre latérale qu'ils contrôlent. « VRChat Avatar Tools » s'appelle maintenant **CATS** (comme l'onglet CATS). « Task Board & Sidebar » s'appelle maintenant **Rig Builder** (comme l'onglet Rig Builder). Aucun outil n'a été retiré : seuls les libellés marche/arrêt dans Édition > Préférences > Add-ons > BoneCraft ont changé.
 
 **7.1.1 :** BoneCraft inclut désormais les outils CATS : une suite complète d'outils de préparation de modèles, conçus pour rendre les avatars VRChat propres, optimisés et entièrement configurés. CATS a son propre onglet dans la barre latérale et utilise un système de pipeline qui vous guide à chaque fois dans le bon ordre des opérations.
+
+Suite : [Tutoriel : Crescent Rose avec Mechanisms](12-crescent-rose.md)

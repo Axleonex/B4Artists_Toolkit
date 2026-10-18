@@ -1,5 +1,7 @@
 # Ferramentas de rig
 
+Desde 9.1, muitas ferramentas executam imediatamente; ajuste opções em Adjust Last Operation logo após o clique, antes de outra operação. Os menus Pose → BoneCraft, Weights → BoneCraft e painéis das Tool Shelf nativas Pose/Weights oferecem ações comuns. Veja [Primeiros passos](01-start.md#onde-fica-cada-coisa). Alguns painéis permanecem visíveis explicando a seleção necessária.
+
 [← Sumário](index.md)
 
 Este capítulo explica em detalhes as ferramentas de rigging, animação e pesos do BoneCraft. Use-o quando quiser entender melhor um recurso, ou quando os guias não cobrirem exatamente a sua situação.
@@ -21,9 +23,11 @@ Estas ferramentas ajudam você a cuidar da parte visual do trabalho com armadura
 > Uma coleção de ossos é um grupo de ossos com nome, por exemplo "IK Controls", "Face Bones" e "Deform Bones". Ocultar uma coleção oculta esses ossos na viewport, para você se concentrar em uma parte do rig.
 
 **Controles principais:**
-- Cada linha: a cor de destaque, **Toggle Collection Visibility** (alternar visibilidade; ícone de olho), o nome da coleção (seleciona os ossos), **Solo Collection** (coleção solo; ícone S) e **Rename Collection Display** (renomear exibição; ícone de engrenagem), que dá à linha um nome de exibição personalizado
+- Cada linha: a cor de destaque, **Toggle Collection Visibility** (alternar visibilidade; ícone de olho), o nome da coleção (seleciona os ossos), **Solo Collection** (coleção solo) e **Rename Collection Display** (renomear exibição), que dá à linha um nome de exibição personalizado
 - **Show All Collections** (mostrar todas as coleções) e **Hide All Collections** (ocultar todas as coleções) (ícones de olho aberto e fechado acima da lista) — tudo de uma vez
 - Seções — agrupar várias coleções sob um cabeçalho recolhível
+
+Passe o mouse sobre ícones sem texto para ler a dica.
 
 **Onde fica:** aba BoneCraft → Revisão → Coleções
 
@@ -37,7 +41,7 @@ Estas ferramentas ajudam você a cuidar da parte visual do trabalho com armadura
 
 **Controles principais:** cada slot é uma linha.
 - O nome do marcador — clique nele para aplicar a visualização salva
-- **Save Bookmark** (salvar marcador; ícone de disco) — salva a visibilidade atual no slot
+- **Save Bookmark** (salvar marcador) — salva a visibilidade atual no slot
 - A amostra de cor — dá uma cor ao marcador
 - **Clear Bookmark** (limpar marcador) e **Remove Bookmark** (remover marcador; ícones de fechar) — esvaziam o slot ou removem um slot adicionado
 - **Adicionar favorito** — adiciona um slot
@@ -63,6 +67,8 @@ Estas ferramentas ajudam você a cuidar da parte visual do trabalho com armadura
 ---
 
 ### Biblioteca de Poses
+
+Blend aplica imediatamente. Ajuste a intensidade em Adjust Last Operation após clicar.
 
 **O que faz:** guarda poses com nome e miniatura que você aplica ao seu rig com um clique.
 
@@ -94,6 +100,8 @@ Estas ferramentas ajudam você a cuidar da parte visual do trabalho com armadura
 
 ### Control Layer (camada de controle, IK/FK)
 
+Para comparar na prática, siga [Testar pesos e usar IK/FK](06-rig-builder.md#parte-c-testar-pesos-e-usar-ikfk).
+
 **O que faz:** controles de animador para os membros de um rig construído por **Construir Rig de Controle**: trocar um membro entre IK e FK sem que ele salte, e fazer o bake de um no outro ao longo de um intervalo de quadros.
 
 **Controles principais:**
@@ -114,7 +122,7 @@ Estas ferramentas ajudam você a cuidar da parte visual do trabalho com armadura
 **Controles principais:**
 - **Aprimoramento Automático** — configura os painéis do BoneCraft para o rig do Rigify selecionado
 - **Executar Novamente o Aprimoramento** — reconstrói tudo do zero
-- **Habilitar Rigify** e **Gerar Rig de Controle (metarig ativo)** ficam no Quick Rig (veja [Construtor de Rig](06-rig-builder.md))
+- **Enable Rigify** fica em Quick Rig; expanda Troubleshooting para **Generate Control Rig (active metarig)** (veja [Rig Builder](06-rig-builder.md)).
 - Propriedades Rigify — os controles deslizantes de IK/FK, alongamento, espaço pai e acompanhamento de cabeça/pescoço do rig
 
 **Onde ficam:** aba BoneCraft → Configurar Rigging → Ferramentas Rigify (e a seção Propriedades Rigify)
@@ -136,6 +144,8 @@ Estas ferramentas ajudam você a cuidar da parte visual do trabalho com armadura
 ---
 
 ### Shape keys corretivos
+
+Edit começa com os valores atuais do corretivo. Altere ângulo e atenuação em Adjust Last Operation após clicar.
 
 **O que fazem:** shape keys que ligam quando um osso atinge um ângulo, para corrigir beliscões ou afundamentos em poses extremas.
 
@@ -174,13 +184,15 @@ Estas ferramentas controlam como sua malha se deforma quando os ossos se movem. 
 
 **O que faz:** recalcula os pesos de uma malha a partir do rig existente, sem mudar a malha. Em malhas densas, trabalha por meio de uma malha proxy mais leve, para não falhar em silêncio.
 
-**Controles principais:** a malha e a armadura de destino, o método, a mistura e a suavização, o número máximo de influências de ossos por vértice, um peso mínimo e um backup dos pesos antigos. Execute **Automatic Bone Weight Recalculation** (recálculo automático de pesos de ossos). A aba CATS tem um atalho: **Smart Automatic Weights** (pesos automáticos inteligentes).
+**Controles principais:** escolha malha alvo, armadura e modo Body ou Clothing. Body calcula do rig existente; Clothing transfere de fonte corretamente ponderada. Defina método, mistura, suavização, máximo de ossos por vértice, peso mínimo e backup, depois **Automatic Bone Weight Recalculation**. Opções acima do botão. O atalho CATS **Smart Automatic Weights** abre diálogo de alvo, armadura e modo, mais fonte para Clothing.
 
 **Onde fica:** aba BoneCraft → Skin → Ferramentas de Peso
 
 ---
 
 ### Espelho de Peso
+
+Clique primeiro no espelho, depois ajuste eixo, direção, topologia e distância em Adjust Last Operation. **Mirror Active Weight** também fica em Weights → BoneCraft e na Tool Shelf Weights.
 
 **O que faz:** copia os pesos de um lado do seu avatar para o outro. Essencial para personagens simétricos.
 
@@ -201,9 +213,10 @@ Estas ferramentas controlam como sua malha se deforma quando os ossos se movem. 
 **O que faz:** copia os pesos de uma malha de origem para a malha ativa. Usada para prender roupas a um corpo, ou para passar pesos de uma malha de alta resolução para uma mais leve.
 
 **Controles principais:**
-- Malha de origem, método de transferência e filtro de ossos
-- **Normalizar Após Transferência** — mantém a soma dos pesos em 1.0
-- **Transferir Pesos** — executa; o resultado mostra a distância média e a máxima, e **Selecionar Vértices com Problema** seleciona os vértices que foram mal associados
+- Escolha a fonte antes de transferir.
+- Após clicar, método e filtro em Adjust Last Operation.
+- **Normalize** em Adjust Last Operation mantém soma 1.0.
+- **Transfer Weights** executa; exibe distâncias média/máxima, **Select Problem Vertices** seleciona más correspondências.
 
 **Onde fica:** aba BoneCraft, no modo Pintura de pesos → Transferência de peso (também em Skin → Ferramentas de Peso)
 
@@ -213,7 +226,7 @@ Estas ferramentas controlam como sua malha se deforma quando os ossos se movem. 
 
 **O que faz:** mostra os pesos exatos do vértice selecionado para cada osso, para você digitar valores precisos.
 
-**Como usar:** selecione um vértice no modo Pintura de pesos; a tabela lista os ossos e pesos dele. Com vários vértices selecionados, **Normalizar todos os vértices** normaliza todos.
+**Como usar:** selecione um vértice em Weight Paint; a tabela lista ossos e pesos. Clique na mão da linha do osso e ajuste **Weight** em Adjust Last Operation. Add Influence usa o osso escolhido; ajuste seu peso ali também. **Normalize All Vertices** normaliza todos os selecionados.
 
 **Onde fica:** aba BoneCraft, no modo Pintura de pesos → Tabela de Pesos
 
@@ -221,9 +234,9 @@ Estas ferramentas controlam como sua malha se deforma quando os ossos se movem. 
 
 ### Preenchimento por Inundação
 
-**O que faz:** define com um clique o peso do grupo ativo nos vértices selecionados: **Preencher com 0.0**, **Preencher com 1.0**, ou **Preencher** com um **Valor Personalizado** (com **Normalização Personalizada**).
+**O que faz:** define peso do grupo ativo nos vértices selecionados: **Flood to 0.0**, **Flood to 1.0**, **Flood to Custom**. Após Custom, ajuste **Value** e **Normalize** em Adjust Last Operation. Menu e prateleira Weights usam Flood to Zero e Flood to One nos botões fixos.
 
-**Onde fica:** aba BoneCraft → Skin → Ferramentas de Peso
+**Onde fica:** aba BoneCraft → Skin → Ferramentas de Peso; Weights → BoneCraft; Tool Shelf → Weights → BoneCraft
 
 ---
 
@@ -239,7 +252,7 @@ Estas ferramentas controlam como sua malha se deforma quando os ossos se movem. 
 
 **O que faz:** uma deformação suavizante que reduz os beliscões nas articulações. A malha mantém a forma em repouso, mas se deforma de modo mais limpo em movimento.
 
-**Controles principais:** iterações, força da suavização, bordas fixadas, suavizar só a deformação e se roda antes da armadura. O botão de adicionar coloca o modificador e o vincula à forma de repouso.
+**Como usar:** **Add Delta Mush** adiciona e vincula à forma de repouso. Ajuste logo **Iterations**, **Smooth Strength**, **Pin Borders**, **Only Smooth Deform** em Adjust Last Operation. Depois o painel mostra **Rebind**, **Remove** e Settings para iterações, suavização e bordas fixadas.
 
 **Onde fica:** BoneCraft → Skin → Delta Mush (Object Mode; Mesh)
 
@@ -249,7 +262,7 @@ Estas ferramentas controlam como sua malha se deforma quando os ossos se movem. 
 
 **O que faz:** faz uma malha acompanhar a superfície de outra, como uma segunda pele. Útil para roupas coladas ao corpo.
 
-**Controles principais:** a malha condutora a acompanhar, o tipo de atenuação e a distância máxima; o botão de vincular prende a malha.
+**Como usar:** selecione a malha alvo, escolha outro **Driver Mesh**, **Bind Proximity Wrap**. Armadura fonte em repouso durante vínculo. Options contém **Falloff Type**, **Max Distance**; em 9.1.2 ficam salvos, mas não alteram Surface Deform. Depois: **Rebind**, **Unbind**. Unbind desativa na viewport/render sem remover o modificador.
 
 **Onde fica:** BoneCraft → Skin → Proximity Wrap (Object Mode; Mesh)
 
@@ -277,7 +290,7 @@ Estas ferramentas aparecem na aba BoneCraft no Modo Pose.
 
 **O que faz:** faz uma cadeia de ossos seguir uma curva. Usado em caudas, tentáculos, cordas, cabelos longos e colunas que precisam de um movimento suave e amplo.
 
-**Controles principais:** **Comprimento da Cadeia**, **Resolução de Curva**, **Esticar**, **Modo de Torção**, **Preservar Volume**; **Gerar Spline IK** e **Remover Spline IK**.
+**Como usar:** ative o osso inicial, **Generate Spline IK**, depois **Chain Length**, **Curve Resolution**, **Stretch**, **Volume Preservation** em Adjust Last Operation. **Remove Spline IK** remove a configuração.
 
 **Onde fica:** aba BoneCraft, no Modo Pose → Spline IK
 
@@ -287,7 +300,7 @@ Estas ferramentas aparecem na aba BoneCraft no Modo Pose.
 
 **O que faz:** movimento secundário de tipo físico em uma cadeia de ossos: os ossos ficam para trás quando o pai se move e voltam quando ele para. Usado em mechas de cabelo, caudas e acessórios.
 
-**Controles principais:** rigidez, amortecimento, massa e gravidade; adicionar dinâmica à cadeia selecionada. A colisão usa uma forma de esfera simplificada, então superfícies côncavas podem não colidir direito.
+**Como usar:** selecione a cadeia, **Add Chain Dynamics**; **Stiffness**, **Damping**, **Mass**, **Gravity Scale** em Adjust Last Operation. Também ficam em Settings abaixo da ação. Depois aparecem **Bake**, **Remove**. Colisão usa esfera simplificada; superfícies côncavas podem falhar.
 
 **Onde fica:** aba BoneCraft, no Modo Pose → Dinâmica de Cadeia
 
@@ -297,7 +310,7 @@ Estas ferramentas aparecem na aba BoneCraft no Modo Pose.
 
 **O que faz:** constrói uma fita de Bendy Bones (ossos que se curvam e torcem com suavidade) para lábios, sobrancelhas, cintos e outras áreas macias e curvas.
 
-**Controles principais:** **Ossos de Controle** e **Largura da Fita**; **Gerar Fita** e **Remover Fita**.
+**Como usar:** selecione a cadeia, **Generate Ribbon**, depois **Control Bones**, **Ribbon Width** em Adjust Last Operation. **Remove Ribbon** remove.
 
 **Onde fica:** aba BoneCraft, no Modo Pose → Fita
 

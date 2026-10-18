@@ -1,0 +1,79 @@
+[
+  {
+    "language": "en",
+    "pages": 152,
+    "images": 92,
+    "html_nodes": 1644,
+    "missing_pdf_nodes": [],
+    "empty_pages": [],
+    "text_outside_margins": [],
+    "pdf_bytes": 23695759,
+    "pdf_sha256": "719494e9da151e414512531e97bb4bf25fcaa5273abb11209da84dbfacfd1341"
+  },
+  {
+    "language": "zh",
+    "pages": 146,
+    "images": 92,
+    "html_nodes": 1623,
+    "missing_pdf_nodes": [],
+    "empty_pages": [],
+    "text_outside_margins": [],
+    "pdf_bytes": 24568180,
+    "pdf_sha256": "7314b9912ffe79b409a8613afd679724fbe7c46257ce59bb5a945c41355e4af4"
+  },
+  {
+    "language": "fr",
+    "pages": 155,
+    "images": 92,
+    "html_nodes": 1638,
+    "missing_pdf_nodes": [],
+    "empty_pages": [],
+    "text_outside_margins": [],
+    "pdf_bytes": 23717447,
+    "pdf_sha256": "aeb5b1078f55de9eb3e53a10a7dcc02499de5048690ab684e5cfff8cc23b5213"
+  },
+  {
+    "language": "ja",
+    "pages": 148,
+    "images": 92,
+    "html_nodes": 1623,
+    "missing_pdf_nodes": [],
+    "empty_pages": [],
+    "text_outside_margins": [],
+    "pdf_bytes": 24311975,
+    "pdf_sha256": "8502e8119c32090f01684c1fd6d4d1f8b747023224edc4034659c92b35320328"
+  },
+  {
+    "language": "ko",
+    "pages": 150,
+    "images": 92,
+    "html_nodes": 1619,
+    "missing_pdf_nodes": [],
+    "empty_pages": [],
+    "text_outside_margins": [],
+    "pdf_bytes": 24161018,
+    "pdf_sha256": "2e69181f94021237b5ba23c222dfc1e27c30084c93c82aad55cc9eb2ae1cd046"
+  },
+  {
+    "language": "pt",
+    "pages": 155,
+    "images": 92,
+    "html_nodes": 1639,
+    "missing_pdf_nodes": [],
+    "empty_pages": [],
+    "text_outside_margins": [],
+    "pdf_bytes": 23706191,
+    "pdf_sha256": "f739e6969bc09b8777cb78703134e67572e4df8f4a7161534e6342a9567d6153"
+  },
+  {
+    "language": "es",
+    "pages": 156,
+    "images": 92,
+    "html_nodes": 1619,
+    "missing_pdf_nodes": [],
+    "empty_pages": [],
+    "text_outside_margins": [],
+    "pdf_bytes": 23693747,
+    "pdf_sha256": "f0f2d6dffeccfea76a0a4aa1d6a55d51f358bd67a7af7ef2d956ad20d596391c"
+  }
+]

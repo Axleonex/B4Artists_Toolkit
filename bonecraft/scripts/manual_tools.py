@@ -153,6 +153,7 @@ h3 { font-size: 12pt; }
 code, pre { font-family: Consolas, "Courier New", monospace; font-size: 9pt; }
 pre { background: #f3f3f3; padding: 6px 8px; white-space: pre-wrap; }
 table { border-collapse: collapse; } td, th { border: 1px solid #999; padding: 3px 6px; }
+tr { break-inside: avoid; }
 section.chapter { break-before: page; }
 section.chapter:first-of-type { break-before: auto; }
 a { color: #0645ad; text-decoration: none; }

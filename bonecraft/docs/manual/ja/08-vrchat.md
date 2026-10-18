@@ -4,16 +4,7 @@
 
 ## VRChat ツール
 
-タブで機能グループを選びます。Setup Rigging、Skin、Review、Avatar Tools、Facial はタブ内の展開可能なセクションで、独立したタブではありません。以下は英語 UI のラベルです。翻訳名は Language 設定に従います。
-
-| ツール | 開く場所 |
-| --- | --- |
-| Humanoid / Hair / Export | CATS → Avatar Tools |
-| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library |
-| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
-| Performance / Clothing / Naming | CATS → VRChat Tools |
-
-設定：Edit → Preferences → Add-ons → BoneCraft → Tabs でタブの表示を変更します。Scene Properties は Properties → Scene の Rig Builder と CATS パネルを個別に制御します。Show Helpers は説明表示、Language は表示言語、Tools は各パッケージの有効化です。Ctrl+Shift+R でクイックパネルを開きます。
+VRChat 機能は右サイドバー（**N**）の **CATS → Avatar Tools** にあり、ヒューマノイド、髪物理、Viseme Library / Lip Sync を扱います。出力は **CATS → Import / Export → Unity / VRChat**。下の独立した **VRChat Tools** は Check Performance、Attach Clothing、Facial、VRChat Naming Extras を含みます。Preferences → Tabs → Scene Properties → Show がオンなら **Properties → Scene** にも表示。オフにしても視点 CATS タブは隠れません。
 
 ---
 
@@ -90,7 +81,7 @@
 - **Embed Textures**（テクスチャを埋め込む）— Unity がテクスチャを見つけられるよう、テクスチャを FBX に詰め込む
 - **Helper Meshes**（ヘルパーメッシュ）— 非表示のメッシュやヘルパーメッシュも含める。普通のアバターではオフのままにする
 
-**ボタン：** **VRChatへエクスポート（Unity）**、**サイドカーを生成**、**インポーターパスをコピー**（BoneCraft の Unity インポートスクリプトのパス）、VRM のマテリアル用の **MToonを確認/保持**。このセクションには、ヒューマノイドの状態も **Auto-Map Humanoid**（ヒューマノイドを自動対応付け）、**Normalize Names**（名前を正規化）、**バリデート** とともに表示されます。
+**場所：** CATS → Import / Export → Unity / VRChat。**Export to VRChat (Unity)** で FBX を書き出し、事前確認には **Check Performance Rank**。
 
 ---
 
@@ -182,9 +173,7 @@ MMD のツールは **CATS** タブ → **インポート / エクスポート**
 
 ## タスクボード
 
-**できること：** 現在のリグの要約です。健全性のスコア、すぐにできる改善、BoneCraft が見つけたタスク（足りないヒューマノイドのボーン、解決していない名前、足りないビジェーム、リグバリデーターの警告など）の一覧を、カテゴリごとにまとめて表示します。**ヘルスチェックを開く** で詳細を開き、**タスクボードを更新** でもう一度確認します。
-
-**ヘルスチェックを開く**はリグ検証を実行して結果を開きます。アーマチュア、またはそれにバインドされたメッシュを選択してください。**Quick Wins**は最大3件の推奨タスクを表示し、**Remaining Tasks**はそれらを重複表示しません。**タスクボードを更新**で再確認できます。
+**機能：** 現リグの健康点、推奨、検出した作業（人型ボーン不足、未解決名、ビジェーム不足、検証警告など）を分類表示。**Quick Wins** は最大 3 件、**Remaining Tasks** は残りだけです。アーマチュアかバインド済みメッシュを選び **Open Health Check** で検証と結果表示、**Refresh Task Board** で再確認。
 
 **場所：** **BoneCraft** タブ → **概要** → **タスクボード**
 

@@ -85,7 +85,7 @@
 
 ### 手順 9 — VRChat 用にエクスポートする
 
-**CATS** タブで **Avatar Tools** → **VRChatにエクスポート** を展開します。**Folder**（フォルダー）と **Avatar**（アバター名）を設定し、**VRChatへエクスポート（Unity）** をクリックします。
+**CATS** タブで **Import / Export** → **Unity / VRChat** を展開します。**Folder**（フォルダー）と **Avatar**（アバター名）を設定し、**VRChatへエクスポート（Unity）** をクリックします。
 
 **表示されるもの：** 選んだフォルダーにエクスポートされたアバターができ、VRChat Creator Companion と Unity の VRChat SDK で使える状態になります。
 

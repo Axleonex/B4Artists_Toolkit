@@ -85,7 +85,7 @@
 
 ### 9단계 — VRChat용으로 내보내기
 
-**CATS** 탭에서 **Avatar Tools** → **VRChat로 내보내기**를 펼칩니다. **Folder**(폴더)와 **Avatar**(아바타) 이름을 설정한 다음 **VRChat로 내보내기 (Unity)** 버튼을 클릭합니다.
+**CATS** 탭에서 **Import / Export** → **Unity / VRChat**를 펼칩니다. **Folder**(폴더)와 **Avatar**(아바타) 이름을 설정한 다음 **VRChat로 내보내기 (Unity)** 버튼을 클릭합니다.
 
 **보여야 하는 것:** 선택한 폴더에 내보낸 아바타가 생기며, VRChat Creator Companion과 Unity의 VRChat SDK에서 쓸 수 있습니다.
 

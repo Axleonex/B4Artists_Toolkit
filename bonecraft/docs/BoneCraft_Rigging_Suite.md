@@ -1,5 +1,7 @@
 # BoneCraft — Production Rigging Suite
 
+This overview accompanies BoneCraft **9.2.5**. For installation, current interface paths, the illustrated workshops, six translated editions and PDFs, use the [manual index](README.md). Starter Rigs is a native bottom-shelf catalog tab; enable it once from the shelf catalog menu. Its former top-left viewport controls are no longer present.
+
 BoneCraft adds a complete character-rigging workflow for Bforartists. All bone
 names use the BoneCraft convention `base-Side` (hyphen side suffix, e.g.
 `upperarm.fk-L`, `roll_heel-L`).

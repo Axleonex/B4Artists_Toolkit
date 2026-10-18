@@ -37,7 +37,8 @@ def build(lang, manual_dir, out_dir, chrome):
     problems = mt.html_link_problems(page)
     if problems:
         raise SystemExit("%s: links without a target: %s" % (lang, ", ".join(sorted(set(problems)))))
-    out_dir = Path(out_dir)
+    # Chrome's print-to-pdf switch requires an absolute path on Windows.
+    out_dir = Path(out_dir).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     pdf = out_dir / ("BoneCraft_Manual_%s.pdf" % lang)
     if pdf.exists():

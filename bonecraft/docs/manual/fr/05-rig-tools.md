@@ -1,5 +1,7 @@
 # Outils de rig
 
+Depuis 9.1, de nombreux outils s'exécutent immédiatement ; réglez leurs options dans Adjust Last Operation juste après le clic, avant toute autre opération. Les menus Pose → BoneCraft, Weights → BoneCraft et les panneaux des Tool Shelf natives Pose/Weights proposent les mêmes actions courantes. Voir [Prise en main](01-start.md#où-trouver-chaque-chose). Certains panneaux restent visibles et expliquent la sélection requise.
+
 [← Sommaire](index.md)
 
 Ce chapitre détaille les outils de rigging, d'animation et de poids de BoneCraft. Utilisez-le pour mieux comprendre une fonction, ou quand les guides ne couvrent pas exactement votre situation.
@@ -21,9 +23,11 @@ Ces outils vous aident à gérer l'aspect visuel du travail avec les armatures :
 > Une collection d'os est un groupe d'os nommé, par exemple « IK Controls », « Face Bones » et « Deform Bones ». Masquer une collection masque ces os dans la vue, pour vous concentrer sur une partie du rig.
 
 **Contrôles principaux :**
-- Chaque ligne : la couleur d'accent, **Toggle Collection Visibility** (basculer la visibilité ; icône d'œil), le nom de la collection (sélectionne ses os), **Solo Collection** (collection en solo ; icône S) et **Rename Collection Display** (renommer l'affichage ; icône d'engrenage), qui donne un nom d'affichage personnalisé à la ligne
+- Chaque ligne : la couleur d'accent, **Toggle Collection Visibility** (basculer la visibilité ; icône d'œil), le nom de la collection (sélectionne ses os), **Solo Collection** (collection en solo) et **Rename Collection Display** (renommer l'affichage), qui donne un nom d'affichage personnalisé à la ligne
 - **Show All Collections** (afficher toutes les collections) et **Hide All Collections** (masquer toutes les collections) (icônes d'œil ouvert et fermé au-dessus de la liste) — tout d'un coup
 - Sections — regrouper plusieurs collections sous un en-tête repliable
+
+Survolez une icône sans texte pour lire son infobulle.
 
 **Où le trouver :** onglet BoneCraft → Révision → Collections
 
@@ -37,7 +41,7 @@ Ces outils vous aident à gérer l'aspect visuel du travail avec les armatures :
 
 **Contrôles principaux :** chaque emplacement est une ligne.
 - Le nom du signet — cliquez dessus pour appliquer la vue enregistrée
-- **Save Bookmark** (enregistrer le signet ; icône de disque) — enregistre la visibilité actuelle dans l'emplacement
+- **Save Bookmark** (enregistrer le signet) — enregistre la visibilité actuelle dans l'emplacement
 - Le nuancier — donne une couleur au signet
 - **Clear Bookmark** (vider le signet) et **Remove Bookmark** (supprimer le signet ; icônes de fermeture) — vident l'emplacement, ou retirent un emplacement ajouté
 - **Ajouter un signet** — ajoute un emplacement
@@ -63,6 +67,8 @@ Ces outils vous aident à gérer l'aspect visuel du travail avec les armatures :
 ---
 
 ### Bibliothèque de Poses
+
+Blend s'applique immédiatement. Réglez l'intensité dans Adjust Last Operation après le clic.
 
 **Ce qu'elle fait :** stocke des poses nommées avec des vignettes, à appliquer à votre rig en un clic.
 
@@ -94,6 +100,8 @@ Ces outils vous aident à gérer l'aspect visuel du travail avec les armatures :
 
 ### Control Layer (couche de contrôle, IK/FK)
 
+Pour une comparaison illustrée, suivez [Vérifier les poids et utiliser IK/FK](06-rig-builder.md#partie-c--vérifier-les-poids-et-utiliser-ikfk).
+
 **Ce qu'il fait :** des contrôles d'animateur pour les membres d'un rig construit par **Construire le rig de contrôle** : basculer un membre entre IK et FK sans qu'il saute, et cuire l'un dans l'autre sur une plage d'images.
 
 **Contrôles principaux :**
@@ -114,7 +122,7 @@ Ces outils vous aident à gérer l'aspect visuel du travail avec les armatures :
 **Contrôles principaux :**
 - **Amélioration automatique** — configure les panneaux de BoneCraft pour le rig Rigify sélectionné
 - **Relancer l'Amélioration** — les reconstruit à partir de zéro
-- **Activer Rigify** et **Générer le rig de contrôle (métarig actif)** se trouvent dans Quick Rig (voir [Constructeur de Rig](06-rig-builder.md))
+- **Enable Rigify** est dans Quick Rig ; dépliez Troubleshooting pour **Generate Control Rig (active metarig)** (voir [Rig Builder](06-rig-builder.md)).
 - Propriétés Rigify — les curseurs IK/FK, étirement, espace parent et suivi tête/cou du rig
 
 **Où les trouver :** onglet BoneCraft → Configurer le Rigging → Outils Rigify (et la section Propriétés Rigify)
@@ -136,6 +144,8 @@ Ces outils vous aident à gérer l'aspect visuel du travail avec les armatures :
 ---
 
 ### Clés de forme correctives
+
+Edit reprend les valeurs actuelles du correctif. Réglez angle et atténuation dans Adjust Last Operation après le clic.
 
 **Ce qu'elles font :** des clés de forme qui s'activent quand un os atteint un angle, pour corriger les pincements ou les affaissements dans les poses extrêmes.
 
@@ -174,13 +184,15 @@ Ces outils règlent la façon dont votre maillage se déforme quand les os bouge
 
 **Ce qu'il fait :** recalcule les poids d'un maillage à partir du rig existant, sans changer le maillage. Sur les maillages denses, il passe par un maillage proxy plus léger, pour ne pas échouer sans bruit.
 
-**Contrôles principaux :** le maillage cible et l'armature, la méthode, le mélange et le lissage, le nombre maximal d'influences d'os par sommet, un poids minimal, et une sauvegarde des anciens poids. Lancez **Automatic Bone Weight Recalculation** (recalcul automatique des poids d'os). L'onglet CATS a un raccourci : **Smart Automatic Weights** (poids automatiques intelligents).
+**Contrôles principaux :** choisissez maillage cible, armature et mode Body ou Clothing. Body calcule depuis le rig existant ; Clothing transfère depuis un maillage source correctement pondéré. Réglez méthode, mélange, lissage, maximum d'os par sommet, poids minimal et sauvegarde, puis **Automatic Bone Weight Recalculation**. Les réglages précèdent le bouton. Le raccourci CATS **Smart Automatic Weights** ouvre un dialogue pour cible, armature, mode, et source en mode Clothing.
 
 **Où le trouver :** onglet BoneCraft → Peau → Outils de Poids
 
 ---
 
 ### Miroir des poids
+
+Cliquez d'abord sur le miroir, puis réglez axe, direction, topologie et distance dans Adjust Last Operation. **Mirror Active Weight** est aussi dans Weights → BoneCraft et la Tool Shelf Weights.
 
 **Ce qu'il fait :** copie les poids d'un côté de votre avatar à l'autre. Indispensable pour les personnages symétriques.
 
@@ -201,9 +213,10 @@ Ces outils règlent la façon dont votre maillage se déforme quand les os bouge
 **Ce qu'il fait :** copie les poids d'un maillage source vers le maillage actif. Sert à attacher des vêtements à un corps, ou à déplacer des poids d'un maillage haute résolution vers un maillage plus léger.
 
 **Contrôles principaux :**
-- Maillage source, méthode de transfert et filtre d'os
-- **Normaliser Après Transfert** — garde la somme des poids à 1.0
-- **Transférer les poids** — lance le transfert ; le résultat montre la distance moyenne et maximale, et **Sélectionner les Sommets Problématiques** sélectionne les sommets mal associés
+- Choisissez le maillage source avant le transfert.
+- Après clic, méthode et filtre d'os dans Adjust Last Operation.
+- **Normalize** dans Adjust Last Operation garde la somme à 1.0.
+- **Transfer Weights** lance ; le résultat indique distances moyenne/maximale et **Select Problem Vertices** sélectionne les mauvaises correspondances.
 
 **Où le trouver :** onglet BoneCraft, en mode Peinture de poids → Transfert de poids (aussi sous Peau → Outils de Poids)
 
@@ -213,7 +226,7 @@ Ces outils règlent la façon dont votre maillage se déforme quand les os bouge
 
 **Ce qu'il fait :** affiche les poids exacts du sommet sélectionné pour chaque os, pour que vous saisissiez des valeurs précises.
 
-**Comment l'utiliser :** sélectionnez un sommet en mode Peinture de poids ; le tableau liste ses os et ses poids. Avec plusieurs sommets sélectionnés, **Normaliser tous les sommets** les normalise tous.
+**Comment l'utiliser :** sélectionnez un sommet en Weight Paint ; la table liste ses os et poids. Cliquez la main d'une ligne d'os puis réglez **Weight** dans Adjust Last Operation. Add Influence utilise l'os choisi ; réglez aussi son poids après clic. **Normalize All Vertices** normalise tous les sommets sélectionnés.
 
 **Où le trouver :** onglet BoneCraft, en mode Peinture de poids → Tableau des poids
 
@@ -221,9 +234,9 @@ Ces outils règlent la façon dont votre maillage se déforme quand les os bouge
 
 ### Remplissage par Inondation
 
-**Ce qu'il fait :** règle en un clic le poids du groupe actif sur les sommets sélectionnés : **Remplir à 0.0**, **Remplir à 1.0**, ou **Remplir** avec une **Valeur Personnalisée** (avec **Normalisation Personnalisée**).
+**Ce qu'il fait :** règle le poids du groupe actif sur les sommets sélectionnés : **Flood to 0.0**, **Flood to 1.0**, **Flood to Custom**. Après Custom, réglez **Value** et **Normalize** dans Adjust Last Operation. Menu et étagère Weights nomment les boutons fixes Flood to Zero et Flood to One.
 
-**Où le trouver :** onglet BoneCraft → Peau → Outils de Poids
+**Où le trouver :** onglet BoneCraft → Peau → Outils de Poids ; Weights → BoneCraft ; Tool Shelf → Weights → BoneCraft
 
 ---
 
@@ -239,7 +252,7 @@ Ces outils règlent la façon dont votre maillage se déforme quand les os bouge
 
 **Ce qu'il fait :** une déformation lissante qui réduit les pincements aux articulations. Le maillage garde sa forme au repos mais se déforme plus proprement en mouvement.
 
-**Contrôles principaux :** itérations, force du lissage, bords épinglés, lissage de la déformation seule, et s'il passe avant l'armature. Le bouton d'ajout ajoute le modificateur et le lie à la forme de repos.
+**Comment l'utiliser :** **Add Delta Mush** ajoute et lie le modificateur à la forme de repos. Réglez immédiatement **Iterations**, **Smooth Strength**, **Pin Borders**, **Only Smooth Deform** dans Adjust Last Operation. Ensuite le panneau propose **Rebind**, **Remove** et un volet Settings pour itérations, lissage et bords épinglés.
 
 **Où le trouver :** BoneCraft → Skin → Delta Mush (Object Mode; Mesh)
 
@@ -249,7 +262,7 @@ Ces outils règlent la façon dont votre maillage se déforme quand les os bouge
 
 **Ce qu'il fait :** fait suivre à un maillage la surface d'un autre, comme une seconde peau. Utile pour les vêtements qui collent au corps.
 
-**Contrôles principaux :** le maillage pilote à suivre, le type d'atténuation et la distance maximale ; le bouton de liaison attache le maillage.
+**Comment l'utiliser :** sélectionnez le maillage cible, choisissez un autre **Driver Mesh**, puis **Bind Proximity Wrap**. Gardez l'armature pilote en pose de repos lors de la liaison. Options contient **Falloff Type** et **Max Distance** ; en 9.1.2, ces valeurs sont stockées mais ne changent pas la liaison Surface Deform. Une fois lié : **Rebind**, **Unbind**. Unbind désactive le modificateur en vue et au rendu sans le supprimer.
 
 **Où le trouver :** BoneCraft → Skin → Proximity Wrap (Object Mode; Mesh)
 
@@ -277,7 +290,7 @@ Ces outils apparaissent dans l'onglet BoneCraft en Mode Pose.
 
 **Ce qu'il fait :** fait suivre une courbe à une chaîne d'os. Sert pour les queues, tentacules, cordes, cheveux longs et colonnes qui demandent un mouvement fluide et ample.
 
-**Contrôles principaux :** **Longueur de la Chaîne**, **Résolution de Courbe**, **Étirer**, **Mode de Torsion**, **Préserver le Volume** ; **Générer Spline IK** et **Supprimer le Spline IK**.
+**Comment l'utiliser :** activez l'os de départ, puis **Generate Spline IK**. Réglez **Chain Length**, **Curve Resolution**, **Stretch**, **Volume Preservation** dans Adjust Last Operation. **Remove Spline IK** retire le montage.
 
 **Où le trouver :** onglet BoneCraft, en Mode Pose → Spline IK
 
@@ -287,7 +300,7 @@ Ces outils apparaissent dans l'onglet BoneCraft en Mode Pose.
 
 **Ce qu'elle fait :** un mouvement secondaire de type physique sur une chaîne d'os : les os traînent quand le parent bouge et rebondissent quand il s'arrête. Sert pour les mèches de cheveux, les queues et les accessoires.
 
-**Contrôles principaux :** raideur, amortissement, masse et gravité ; ajouter la dynamique à la chaîne sélectionnée. La collision utilise une forme de sphère simplifiée, donc les surfaces concaves peuvent mal entrer en collision.
+**Comment l'utiliser :** sélectionnez la chaîne, **Add Chain Dynamics** ; réglez **Stiffness**, **Damping**, **Mass**, **Gravity Scale** dans Adjust Last Operation. Ces paramètres figurent aussi dans Settings sous l'action. Puis **Bake** et **Remove** apparaissent. Collision sphérique simplifiée : surfaces concaves parfois incorrectes.
 
 **Où la trouver :** onglet BoneCraft, en Mode Pose → Dynamique de Chaîne
 
@@ -297,7 +310,7 @@ Ces outils apparaissent dans l'onglet BoneCraft en Mode Pose.
 
 **Ce qu'il fait :** construit un ruban de Bendy Bones (des os qui se courbent et se tordent en douceur) pour les lèvres, les sourcils, les ceintures et d'autres zones souples et courbes.
 
-**Contrôles principaux :** **Os de Contrôle** et **Largeur du Ruban** ; **Générer un ruban** et **Supprimer le Ruban**.
+**Comment l'utiliser :** sélectionnez la chaîne, **Generate Ribbon**, puis **Control Bones** et **Ribbon Width** dans Adjust Last Operation. **Remove Ribbon** retire le montage.
 
 **Où le trouver :** onglet BoneCraft, en Mode Pose → Ruban
 

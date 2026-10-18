@@ -94,6 +94,8 @@ Estas herramientas te ayudan a gestionar la parte visual del trabajo con armadur
 
 ### Control Layer (capa de control, IK/FK)
 
+Para una comparación práctica ilustrada, consulta [Comprobar pesos y usar IK/FK](06-rig-builder.md#parte-c-comprobar-pesos-y-usar-ikfk).
+
 **Qué hace:** controles de animador para las extremidades de un rig construido con **Construir rig de control**: cambiar una extremidad entre IK y FK sin que salte, y hornear una en la otra a lo largo de un rango de fotogramas.
 
 **Controles principales:**
@@ -114,7 +116,7 @@ Estas herramientas te ayudan a gestionar la parte visual del trabajo con armadur
 **Controles principales:**
 - **Mejora Automática** — configura los paneles de BoneCraft para el rig de Rigify seleccionado
 - **Volver a Ejecutar el Mejoramiento** — los reconstruye desde cero
-- **Habilitar Rigify** y **Generar Rig de Control (metarig activo)** están en Quick Rig (consulta [Constructor de Rig](06-rig-builder.md))
+- **Enable Rigify** está en Quick Rig; despliega Troubleshooting para **Generate Control Rig (active metarig)** (consulta [Constructor de Rig](06-rig-builder.md))
 - Propiedades Rigify — los deslizadores de IK/FK, estiramiento, espacio padre y seguimiento de cabeza/cuello del rig
 
 **Dónde están:** pestaña BoneCraft → Configurar Rigging → Herramientas Rigify (y la sección Propiedades Rigify)
@@ -172,11 +174,11 @@ Estas herramientas controlan cómo se deforma tu malla cuando se mueven los hues
 
 ### Recálculo automático de pesos de huesos
 
-**Qué hace:** vuelve a calcular los pesos de una malla a partir del rig existente, sin cambiar la malla. En mallas densas trabaja a través de una malla proxy más ligera, para no fallar en silencio.
+**Qué hace:** recalcula los pesos desde el rig existente sin cambiar la malla. En mallas densas usa una proxy más ligera para evitar fallos silenciosos.
 
-**Controles principales:** la malla y la armadura de destino, el método, la mezcla y el suavizado, el número máximo de influencias de huesos por vértice, un peso mínimo y una copia de seguridad de los pesos anteriores. Ejecuta **Automatic Bone Weight Recalculation** (recálculo automático de pesos de huesos). La pestaña CATS tiene un atajo: **Smart Automatic Weights** (pesos automáticos inteligentes).
+**Controles:** elige malla y armadura, después Body o Clothing. Body calcula desde el rig; Clothing transfiere desde una malla origen correctamente pesada. Define método, mezcla, suavizado, máximo de influencias por vértice, peso mínimo y copia de seguridad, y ejecuta **Automatic Bone Weight Recalculation**. Estos ajustes están encima del botón. El acceso **Smart Automatic Weights** de CATS abre un diálogo para malla, armadura, modo y, en Clothing, malla de origen.
 
-**Dónde está:** pestaña BoneCraft → Malla → Herramientas de Peso
+**Dónde está:** BoneCraft → Skin → Weight Tools.
 
 ---
 
@@ -194,36 +196,35 @@ Estas herramientas controlan cómo se deforma tu malla cuando se mueven los hues
 
 **Dónde está:** pestaña BoneCraft, en modo Pintura de pesos → Espejo de Pesos
 
+Pulsa primero un botón de espejo y después define eje, dirección, topología y distancia en Adjust Last Operation. **Mirror Active Weight** también está en Weights → BoneCraft y la Tool Shelf Weights.
+
 ---
 
 ### Transferencia de pesos
 
-**Qué hace:** copia los pesos de una malla de origen a la malla activa. Se usa al unir ropa a un cuerpo, o al pasar pesos de una malla de alta resolución a otra más ligera.
+**Qué hace:** copia los pesos de una malla de origen a la activa, para ropa o transferencias entre resoluciones.
 
-**Controles principales:**
-- Malla de origen, método de transferencia y filtro de huesos
-- **Normalizar Después de Transferir** — mantiene la suma de los pesos en 1.0
-- **Transferir Pesos** — la ejecuta; el resultado muestra la distancia media y la máxima, y **Seleccionar Vértices con Problemas** selecciona los vértices que se emparejaron mal
+**Controles:** elige la malla de origen antes de ejecutar **Transfer Weights**. Después ajusta método, filtro de huesos y **Normalize** en Adjust Last Operation; Normalize mantiene la suma en 1.0. El resultado muestra distancia media y máxima; **Select Problem Vertices** selecciona las coincidencias deficientes.
 
-**Dónde está:** pestaña BoneCraft, en modo Pintura de pesos → Transferencia de pesos (también en Malla → Herramientas de Peso)
+**Dónde está:** BoneCraft en Weight Paint → Weight Transfer; también Skin → Weight Tools.
 
 ---
 
 ### Tabla de Pesos
 
-**Qué hace:** muestra los pesos exactos del vértice seleccionado para cada hueso, para que puedas escribir valores precisos.
+**Qué hace:** muestra los pesos exactos del vértice seleccionado para cada hueso y permite introducir un valor preciso.
 
-**Cómo usarla:** selecciona un vértice en el modo Pintura de pesos; la tabla enumera sus huesos y pesos. Con varios vértices seleccionados, **Normalizar todos los vértices** los normaliza todos.
+**Uso:** selecciona un vértice en Weight Paint. Pulsa el icono de mano de una fila y establece **Weight** en Adjust Last Operation. Add Influence usa el hueso elegido; ajusta también su peso en Adjust Last Operation. Con varios vértices, **Normalize All Vertices** los normaliza todos.
 
-**Dónde está:** pestaña BoneCraft, en modo Pintura de pesos → Tabla de Pesos
+**Dónde está:** BoneCraft en Weight Paint → Weight Table.
 
 ---
 
 ### Relleno por Inundación
 
-**Qué hace:** fija con un clic el peso del grupo activo en los vértices seleccionados: **Inundar a 0.0**, **Inundar a 1.0**, o **Inundar** con un **Valor Personalizado** (con **Normalización Personalizada**).
+**Qué hace:** asigna el peso del grupo activo a los vértices seleccionados: **Flood to 0.0**, **Flood to 1.0** o **Flood to Custom**. Tras el último, establece **Value** y **Normalize** en Adjust Last Operation. El menú Weights y la estantería llaman a los botones fijos Flood to Zero y Flood to One.
 
-**Dónde está:** pestaña BoneCraft → Malla → Herramientas de Peso
+**Dónde está:** BoneCraft → Skin → Weight Tools; también Weights → BoneCraft y Tool Shelf → Weights → BoneCraft.
 
 ---
 
@@ -237,21 +238,21 @@ Estas herramientas controlan cómo se deforma tu malla cuando se mueven los hues
 
 ### Delta Mush
 
-**Qué hace:** una deformación suavizante que reduce los pellizcos en las articulaciones. La malla conserva su forma en reposo pero se deforma de forma más limpia en movimiento.
+**Qué hace:** suaviza las deformaciones y reduce pellizcos en las articulaciones, conservando la forma en reposo.
 
-**Controles principales:** iteraciones, fuerza del suavizado, bordes fijados, suavizar solo la deformación, y si se ejecuta antes que la armadura. El botón de añadir agrega el modificador y lo vincula a la forma de reposo.
+**Uso:** pulsa **Add Delta Mush** para añadir el modificador y vincularlo al reposo. Inmediatamente ajusta **Iterations**, **Smooth Strength**, **Pin Borders** y **Only Smooth Deform** en Adjust Last Operation. Después el panel muestra **Rebind**, **Remove** y un desplegable Settings con iteraciones, intensidad y fijación de bordes.
 
-**Dónde está:** BoneCraft → Skin → Delta Mush (Object Mode; Mesh)
+**Dónde está:** BoneCraft → Skin → Delta Mush (Object Mode; malla).
 
 ---
 
 ### Envoltura por Proximidad
 
-**Qué hace:** hace que una malla siga la superficie de otra, como una segunda piel. Útil para ropa ceñida al cuerpo.
+**Qué hace:** hace que una malla siga la superficie de otra como una segunda piel; útil para ropa ajustada.
 
-**Controles principales:** la malla conductora a seguir, el tipo de atenuación y la distancia máxima; el botón de vincular une la malla.
+**Uso:** selecciona la malla destino, elige otra como **Driver Mesh** y pulsa **Bind Proximity Wrap**. La armadura del origen debe estar en reposo al vincular. Options contiene **Falloff Type** y **Max Distance**; en 9.1.2 se guardan, pero no modifican el enlace Surface Deform. Después aparecen **Rebind** y **Unbind**. Unbind desactiva el modificador en vista y render, pero no lo elimina.
 
-**Dónde está:** BoneCraft → Skin → Proximity Wrap (Object Mode; Mesh)
+**Dónde está:** BoneCraft → Skin → Proximity Wrap (Object Mode; malla).
 
 ---
 
@@ -275,31 +276,31 @@ Estas herramientas aparecen en la pestaña BoneCraft en Modo Pose.
 
 ### Spline IK
 
-**Qué hace:** hace que una cadena de huesos siga una curva. Se usa para colas, tentáculos, cuerdas, cabello largo y columnas que necesitan un movimiento suave y amplio.
+**Qué hace:** hace seguir una curva a una cadena de huesos: colas, tentáculos, cuerdas, pelo largo y columnas con movimiento fluido.
 
-**Controles principales:** **Longitud de la Cadena**, **Resolución de Curva**, **Estirar**, **Modo de Torsión**, **Preservar Volumen**; **Generar Spline IK** y **Eliminar Spline IK**.
+**Uso:** activa el hueso inicial y pulsa **Generate Spline IK**. Ajusta **Chain Length**, **Curve Resolution**, **Stretch** y **Volume Preservation** en Adjust Last Operation. **Remove Spline IK** elimina la configuración.
 
-**Dónde está:** pestaña BoneCraft, en Modo Pose → Spline IK
+**Dónde está:** BoneCraft en Pose Mode → Spline IK.
 
 ---
 
 ### Dinámica de Cadena
 
-**Qué hace:** movimiento secundario de tipo físico en una cadena de huesos: los huesos se quedan atrás cuando el padre se mueve y rebotan cuando se detiene. Se usa para mechones de cabello, colas y accesorios.
+**Qué hace:** movimiento secundario similar a física en una cadena: los huesos se retrasan respecto al padre y rebotan al detenerse, para pelo, colas y accesorios.
 
-**Controles principales:** rigidez, amortiguación, masa y gravedad; añadir dinámica a la cadena seleccionada. La colisión usa una forma de esfera simplificada, así que las superficies cóncavas pueden no colisionar bien.
+**Uso:** selecciona la cadena y pulsa **Add Chain Dynamics**. Ajusta **Stiffness**, **Damping**, **Mass** y **Gravity Scale** en Adjust Last Operation. También están en Settings bajo la acción. Con la dinámica creada aparecen **Bake** y **Remove**. La colisión usa una esfera simplificada y puede fallar en superficies cóncavas.
 
-**Dónde está:** pestaña BoneCraft, en Modo Pose → Dinámica de Cadena
+**Dónde está:** BoneCraft en Pose Mode → Chain Dynamics.
 
 ---
 
 ### Cinta
 
-**Qué hace:** construye una cinta de Bendy Bones (huesos que se curvan y tuercen con suavidad) para labios, cejas, cinturones y otras zonas blandas y curvas.
+**Qué hace:** crea una cinta de Bendy Bones que se curvan y retuercen suavemente, para labios, cejas, cinturones y otras zonas curvas.
 
-**Controles principales:** **Huesos de Control** y **Ancho de la Cinta**; **Generar Cinta** y **Eliminar Cinta**.
+**Uso:** selecciona la cadena, pulsa **Generate Ribbon** y establece **Control Bones** y **Ribbon Width** en Adjust Last Operation. **Remove Ribbon** elimina la configuración.
 
-**Dónde está:** pestaña BoneCraft, en Modo Pose → Cinta
+**Dónde está:** BoneCraft en Pose Mode → Ribbon.
 
 ---
 

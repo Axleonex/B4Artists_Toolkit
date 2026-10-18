@@ -94,6 +94,8 @@
 
 ### Control Layer(컨트롤 레이어, IK/FK)
 
+그림으로 비교하는 실습은 [웨이트 검사와 IK/FK](06-rig-builder.md#파트-c-웨이트-검사와-ikfk)를 보세요.
+
 **하는 일:** **컨트롤 리그 빌드** 버튼으로 만든 리그의 팔다리를 위한 애니메이터용 컨트롤입니다: 팔다리가 튀지 않게 IK와 FK를 전환하고, 프레임 범위에 걸쳐 한쪽을 다른 쪽으로 베이크합니다.
 
 **주요 컨트롤:**
@@ -114,7 +116,7 @@
 **주요 컨트롤:**
 - **자동 향상** — 선택한 Rigify 리그에 맞게 BoneCraft의 패널을 설정합니다
 - **향상 재실행** — 처음부터 다시 만듭니다
-- **Rigify 활성화**와 **컨트롤 리그 생성 (활성 메타리그)** 버튼은 Quick Rig에 있습니다([리그 빌더](06-rig-builder.md) 참고)
+- **Enable Rigify**는 Quick Rig에 있고 **Generate Control Rig (active metarig)**는 그 안의 Troubleshooting을 펼치면 있습니다([리그 빌더](06-rig-builder.md) 참고)
 - Rigify 속성 — 리그의 IK/FK, 스트레치, 부모 공간, 머리와 목 따라가기 슬라이더
 
 **위치:** BoneCraft 탭 → 리깅 설정 → Rigify 도구(와 Rigify 속성 섹션)
@@ -172,11 +174,11 @@
 
 ### 본 웨이트 자동 재계산
 
-**하는 일:** 메시를 바꾸지 않고 기존 리그로부터 메시의 웨이트를 다시 계산합니다. 고밀도 메시에서는 더 가벼운 프록시 메시를 통해 계산하므로 소리 없이 실패하지 않습니다.
+**하는 일:** 메시를 바꾸지 않고 기존 리그로 웨이트를 다시 계산합니다. 고밀도 메시는 가벼운 프록시를 사용하여 조용한 실패를 피합니다.
 
-**주요 컨트롤:** 대상 메시와 아마추어, 방식, 블렌드와 스무딩, 정점당 본 영향의 최대 수, 최소 웨이트, 이전 웨이트의 백업. **Automatic Bone Weight Recalculation**(본 웨이트 자동 재계산)을 실행합니다. CATS 탭에는 바로 가기 **Smart Automatic Weights**(스마트 자동 웨이트)가 있습니다.
+**컨트롤:** 대상 메시·아마추어와 Body 또는 Clothing 모드를 고릅니다. Body는 기존 리그에서 계산하고 Clothing은 올바르게 웨이트된 원본 메시에서 전송합니다. 방식·블렌드·스무딩·정점당 최대 본 영향·최소 웨이트·백업을 정하여 **Automatic Bone Weight Recalculation**을 실행합니다. 설정은 버튼 위입니다. CATS의 **Smart Automatic Weights**는 메시·아마추어·모드 및 Clothing 원본 메시를 고르는 대화상자를 엽니다.
 
-**위치:** BoneCraft 탭 → 스킨 → 웨이트 도구
+**위치:** BoneCraft → Skin → Weight Tools.
 
 ---
 
@@ -194,36 +196,35 @@
 
 **위치:** BoneCraft 탭, 웨이트 페인트 모드 → 웨이트 미러
 
+미러 버튼을 먼저 누르고 Adjust Last Operation에서 축·방향·토폴로지 모드·검색 거리를 설정합니다. **Mirror Active Weight**는 Weights → BoneCraft와 기본 Weights Tool Shelf에도 있습니다.
+
 ---
 
 ### 웨이트 전송
 
-**하는 일:** 소스 메시의 웨이트를 활성 메시로 복사합니다. 의상을 몸에 붙일 때나, 고해상도 메시의 웨이트를 저해상도 메시로 옮길 때 씁니다.
+**하는 일:** 원본 메시의 웨이트를 활성 메시로 복사합니다. 몸에서 의상으로 또는 고해상도에서 저해상도로 옮길 때 씁니다.
 
-**주요 컨트롤:**
-- 소스 메시, 전송 방식, 본 필터
-- **전송 후 정규화** — 웨이트의 합을 1.0으로 유지합니다
-- **웨이트 전송** — 실행합니다. 결과에 평균과 최대 거리가 표시되며, **문제 정점 선택**은 잘 맞지 않은 정점을 선택합니다
+**컨트롤:** 원본 메시를 먼저 고르고 **Transfer Weights**를 실행합니다. 이후 Adjust Last Operation에서 전송 방식·본 필터·**Normalize**를 정합니다. Normalize는 합을 1.0으로 유지합니다. 결과는 평균·최대 거리를 보여 주며 **Select Problem Vertices**는 잘 맞지 않은 정점을 선택합니다.
 
-**위치:** BoneCraft 탭, 웨이트 페인트 모드 → 웨이트 전송(스킨 → 웨이트 도구에도 있습니다)
+**위치:** BoneCraft의 Weight Paint → Weight Transfer; Skin → Weight Tools에도 있습니다.
 
 ---
 
 ### 웨이트 테이블
 
-**하는 일:** 선택한 정점의 각 본에 대한 정확한 웨이트를 보여 주어, 정확한 값을 입력할 수 있게 합니다.
+**하는 일:** 선택 정점의 본별 정확한 웨이트를 보고 값을 직접 설정합니다.
 
-**사용 방법:** 웨이트 페인트 모드에서 정점 하나를 선택합니다. 표에 그 정점의 본과 웨이트가 나열됩니다. 여러 정점을 선택했다면 **모든 버텍스 정규화**로 모두 정규화합니다.
+**사용:** Weight Paint에서 정점 하나를 선택합니다. 행의 손 아이콘을 누르고 Adjust Last Operation에서 **Weight**를 정합니다. Add Influence는 고른 본을 사용하고 새 웨이트도 Adjust Last Operation에서 정합니다. 여러 정점에서는 **Normalize All Vertices**로 모두 정규화합니다.
 
-**위치:** BoneCraft 탭, 웨이트 페인트 모드 → 웨이트 테이블
+**위치:** BoneCraft의 Weight Paint → Weight Table.
 
 ---
 
 ### 플러드 채우기
 
-**하는 일:** 선택한 정점에 활성 그룹의 웨이트를 한 번의 클릭으로 설정합니다: **0.0으로 플러드**, **1.0으로 플러드**, 또는 **사용자 정의 값**으로 **플러드**(**사용자 정규화**와 함께).
+**하는 일:** 선택 정점에 활성 그룹의 웨이트를 **Flood to 0.0**, **Flood to 1.0**, **Flood to Custom**으로 한 번에 설정합니다. Custom 실행 후 Adjust Last Operation에서 **Value**와 **Normalize**를 정합니다. Weights 메뉴·셸프의 고정 버튼명은 Flood to Zero와 Flood to One입니다.
 
-**위치:** BoneCraft 탭 → 스킨 → 웨이트 도구
+**위치:** BoneCraft → Skin → Weight Tools; Weights → BoneCraft, Tool Shelf → Weights → BoneCraft에도 있습니다.
 
 ---
 
@@ -237,21 +238,21 @@
 
 ### 델타 머시
 
-**하는 일:** 관절의 꼬집힘을 줄이는 스무딩 변형입니다. 메시는 레스트 상태에서 모양을 유지하면서, 움직일 때 더 깔끔하게 변형됩니다.
+**하는 일:** 관절의 찌그러짐을 줄이는 스무딩 변형입니다. 레스트 형상을 유지하며 움직일 때 변형을 부드럽게 합니다.
 
-**주요 컨트롤:** 반복 횟수, 스무딩 강도, 경계 고정, 변형만 스무딩, 아마추어보다 먼저 실행할지 여부. 추가 버튼은 모디파이어를 추가하고 레스트 모양에 바인딩합니다.
+**사용:** **Add Delta Mush**로 모디파이어를 추가하고 레스트 형상에 바인딩합니다. 즉시 Adjust Last Operation에서 **Iterations**, **Smooth Strength**, **Pin Borders**, **Only Smooth Deform**을 정합니다. 이후 패널에 **Rebind**, **Remove**와 반복 수·강도·경계 고정의 Settings가 나타납니다.
 
-**위치:** BoneCraft → Skin → Delta Mush (Object Mode; Mesh)
+**위치:** BoneCraft → Skin → Delta Mush (Object Mode; 메시).
 
 ---
 
 ### 근접 래핑
 
-**하는 일:** 한 메시가 다른 메시의 표면을 두 번째 피부처럼 따라가게 합니다. 몸에 밀착하는 의상에 유용합니다.
+**하는 일:** 한 메시가 다른 표면을 두 번째 피부처럼 따라갑니다. 밀착 의상에 유용합니다.
 
-**주요 컨트롤:** 따라갈 드라이버 메시, 감쇠 유형, 최대 거리. 바인드 버튼이 메시를 붙입니다.
+**사용:** 대상 메시와 다른 **Driver Mesh**를 고르고 **Bind Proximity Wrap**을 누릅니다. 바인딩할 때 드라이버 아마추어는 레스트 포즈여야 합니다. Options의 **Falloff Type**, **Max Distance**는 9.1.2에서 저장되지만 Surface Deform 바인딩은 바꾸지 않습니다. 연결 후 **Rebind**, **Unbind**가 표시됩니다. Unbind는 뷰포트·렌더의 모디파이어를 끄며 삭제하지 않습니다.
 
-**위치:** BoneCraft → Skin → Proximity Wrap (Object Mode; Mesh)
+**위치:** BoneCraft → Skin → Proximity Wrap (Object Mode; 메시).
 
 ---
 
@@ -275,31 +276,31 @@
 
 ### 스플라인 IK
 
-**하는 일:** 본 체인이 커브를 따라가게 합니다. 부드럽고 크게 휘는 움직임이 필요한 꼬리, 촉수, 밧줄, 긴 머리카락, 척추에 씁니다.
+**하는 일:** 본 체인이 곡선을 따르게 합니다. 부드러운 움직임의 꼬리·촉수·밧줄·긴 머리·척추에 씁니다.
 
-**주요 컨트롤:** **체인 길이**, **곡선 해상도**, **스트레치**, **트위스트 모드**, **볼륨 보존**. **스플라인 IK 생성**과 **스플라인 IK 제거**.
+**사용:** 시작 본을 활성화하고 **Generate Spline IK**를 누릅니다. Adjust Last Operation에서 **Chain Length**, **Curve Resolution**, **Stretch**, **Volume Preservation**을 정합니다. **Remove Spline IK**로 제거합니다.
 
-**위치:** BoneCraft 탭, 포즈 모드 → 스플라인 IK
+**위치:** BoneCraft의 Pose Mode → Spline IK.
 
 ---
 
 ### 체인 다이나믹스
 
-**하는 일:** 본 체인에 물리 같은 2차 움직임을 줍니다: 부모가 움직이면 본이 뒤처져 따라오고, 멈추면 되튑니다. 머리카락 가닥, 꼬리, 액세서리에 씁니다.
+**하는 일:** 체인의 본이 부모보다 늦게 움직이고 멈추면 튕기는 물리 유사 보조 동작입니다. 머리카락·꼬리·장식에 씁니다.
 
-**주요 컨트롤:** 강성, 감쇠, 질량, 중력. 선택한 체인에 다이나믹스를 추가합니다. 충돌은 단순화한 구 모양을 쓰므로, 오목한 면에서는 제대로 충돌하지 않을 수 있습니다.
+**사용:** 체인을 선택하고 **Add Chain Dynamics**를 누릅니다. Adjust Last Operation에서 **Stiffness**, **Damping**, **Mass**, **Gravity Scale**을 정합니다. 패널 아래 Settings에도 있습니다. 생성 후 **Bake**, **Remove**가 나타납니다. 충돌은 단순 구형이므로 오목한 표면과 맞지 않을 수 있습니다.
 
-**위치:** BoneCraft 탭, 포즈 모드 → 체인 다이나믹스
+**위치:** BoneCraft의 Pose Mode → Chain Dynamics.
 
 ---
 
 ### 리본
 
-**하는 일:** 부드럽게 휘고 꼬이는 본인 벤디 본으로 리본을 만듭니다. 입술, 눈썹, 벨트 같은 부드럽게 굽은 부분에 씁니다.
+**하는 일:** 부드럽게 굽고 비트는 Bendy Bones 리본을 만들어 입술·눈썹·벨트 같은 곡선 부위에 씁니다.
 
-**주요 컨트롤:** **제어 본**과 **리본 너비**. **리본 생성**과 **리본 제거**.
+**사용:** 본 체인을 선택하고 **Generate Ribbon**, 이후 Adjust Last Operation에서 **Control Bones**, **Ribbon Width**를 정합니다. **Remove Ribbon**으로 제거합니다.
 
-**위치:** BoneCraft 탭, 포즈 모드 → 리본
+**위치:** BoneCraft의 Pose Mode → Ribbon.
 
 ---
 

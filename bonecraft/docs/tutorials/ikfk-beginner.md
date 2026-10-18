@@ -61,7 +61,7 @@ For a new wizard rig, complete **Generate Rig → Build Control Rig** before clo
 
 ## Tested versions and limitation
 
-Motion footage and the practice file were captured with **BoneCraft 9.1.3 source in Bforartists 5.2.0**. That host reports an underlying Blender **5.3.0 Alpha** build. The Auto-Rig setup illustration comes from the **9.1.2 English manual**; the main manual remains the 9.1.2 edition.
+Motion footage and the practice file were captured with **BoneCraft 9.1.3 source in Bforartists 5.2.0**. That host reports an underlying Blender **5.3.0 Alpha** build. The Auto-Rig setup illustration was captured for the **9.1.2 English manual**. The [current main manual](../manual/en/index.md) and its six translated editions cover **9.2.5**; this video and its measurements remain historical examples, not a new 9.2.5 qualification.
 
 Both supplied rigs responded to FK rotations and IK target movement. In the captured forward-bend pose, switching changed corresponding mesh vertices by at most **0.84 mm for Rigify** and **0.04 mm for the Auto-Rig control rig**.
 

@@ -31,7 +31,7 @@ BoneForge 9.0.0 以降は標準 Blender 用です。BoneCraft は独立した Bf
 2. **編集**（Edit）→ **プリファレンス**（Preferences）→ **アドオン**（Add-ons）を開きます。
 3. **ディスクからインストール…**（Install from Disk…）をクリックし、BoneCraft の `.zip` ファイルを選びます。
 4. BoneCraft の横にあるチェックボックスをオンにして有効にします。
-5. BoneCraft の項目を展開すると設定が表示されます：**Tabs**（タブ）、**Show Helpers**（ヘルパーを表示）、**Language**（言語）、そして **ツール** の一覧です。
+5. BoneCraft の項目を展開すると設定が表示されます：**Language**（言語）、**Tabs**（タブ）、**Shelf Width**（棚の幅）、**Show Helpers**（ヘルパーを表示）、そして **ツール** の一覧です。
 
 **表示されるもの：** 左のツールシェルフ（**T** キー）に BoneCraft タブと Rig Builder タブ、右のサイドバー（**N** キー）に CATS タブが表示されます。
 
@@ -58,11 +58,37 @@ BoneForge 9.0.0 以降は標準 Blender 用です。BoneCraft は独立した Bf
 
 リグとビジェームライブラリにはアーマチュアを選択します。Delta Mush と Proximity Wrap にはオブジェクトモードのメッシュが必要です。Lip Sync はポーズモードのアーマチュアで使います。三角を押して展開します。Options は任意設定です。即時実行ツールは、次の操作の前に「最後の操作を調整」で設定を変更できます。
 
-設定：Edit → Preferences → Add-ons → BoneCraft → Tabs でタブの表示を変更します。Scene Properties は Properties → Scene の Rig Builder、Mechanisms と CATS パネルを個別に制御します。Show Helpers は説明表示、Language は表示言語、Tools は各パッケージの有効化です。Ctrl+Shift+R でクイックパネルを開きます。
-
-BoneCraft のタブは Preferences → Tabs の Left / Right で移動できます。Scene Properties → Show は初期状態でオンです。アーマチュアデータのパネルと、標準 Pose / Weights ツールシェルフ内のボタンもあります。これらは Bforartists 固有の入口です。
-
 顔の操作は三種類です。CATS のビジェーム生成は口のシェイプキーを作成し、Viseme Library / Lip Sync はポーズ保存とアニメーションキー生成を行い、Facial は既存キーの VRChat 対応付けと顔トラッキング設定を行います。UVToolkit 由来の設定は CATS → Material Atlas → Override Inherited Settings → UV Packing にあります。共有アトラス機能であり、独立した UVToolkit 全体ではありません。
+
+**タブの移動：** **Edit → Preferences → Add-ons → BoneCraft → Tabs** に表示スイッチと Left / Right があり即時反映。隠している間は左右ボタンが灰色でも操作できます。
+
+**Properties：** Scene Properties は初期オン。**Show** で Properties → Scene の Rig Builder、Mechanisms、CATS、Avatar Tools、VRChat Tools、Import / Export を切り替え、青が表示です。視点タブやアーマチュアデータには影響しません。アーマチュア選択時のデータタブは独立です。全場所から除くには **Tools** のパッケージかアドオンをオフにします。
+
+**Shelf Width：** Widen Narrow Shelves は初期オン。左右の最小幅未満の棚を一度だけ広げ、UI 1 倍で左 240、右 260 ピクセルです。その後手で狭めた幅は維持。自分で管理するならオフにし、幅欄は無効になります。
+
+**メニューと標準棚：**
+
+| 場所 | ツール |
+|---|---|
+| Add → Armature | Quick Rig、Auto-Rig Wizard、Mannequin for Active Rig |
+| Pose → BoneCraft（Pose Mode） | ポーズ、Picker、コレクション、設定と検査 |
+| Weights → BoneCraft（Weight Paint） | 塗潰し、ミラー、正規化 |
+| Object → Mechanisms（Object Mode） | 部品、関節、リンク追加とテスト |
+| Tool Shelf → Pose / Weights → BoneCraft | 共通ポーズ・ウェイト操作 |
+
+Pose/Weights 棚は広いと文字、狭いとアイコン。ホバーで説明が出ます。専用タブと同じツールで、利用可否はパッケージ設定に従います。
+
+**視点ツール：** Place Rig Markers はメッシュクリックで次のマーカー、Build Mechanism は部品クリックで関節・リンクのガイドを開始。[リグビルダー](06-rig-builder.md#オートリグウィザード) と [Mechanisms](07-mechanisms.md) を参照。
+
+**実行してから調整：** Quick Rig、Fit Dropped Rig、Weight Mirror、Weight Transfer、Flood to Custom、Ribbon、Spline IK、Delta Mush はクリックで実行。次の操作前に視点の Adjust Last Operation で調整します。他の面板は下の設定を展開。選択が異なると面板が残り必要な選択を案内する場合があります。
+
+**Show Helpers：** 用途と仕組みの短い説明を隠します。Avatar Tools の Compact Mode は同じ設定です。
+
+**Language：** BoneCraft は English、日本語、한국어、中文、Français、Português、Español に対応。
+
+**最初は常に Fix Model：** 他の CATS ツール前に実行。台帳が順番違いを警告します。[CATS パイプライン](04-cats-pipeline.md) を参照。
+
+**クイックパネル：** 視点の **Ctrl+Shift+R** でカーソル横に開きます。
 
 ---
 

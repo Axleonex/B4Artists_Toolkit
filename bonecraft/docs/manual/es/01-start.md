@@ -31,7 +31,7 @@ BoneForge 9.0.0 y posteriores son para Blender estándar. BoneCraft es un comple
 2. Abre **Editar** (Edit) → **Preferencias** (Preferences) → **Complementos** (Add-ons).
 3. Haz clic en **Instalar desde disco…** (Install from Disk…) y elige el archivo `.zip` de BoneCraft.
 4. Marca la casilla junto a BoneCraft para activarlo.
-5. Despliega la entrada de BoneCraft para ver sus ajustes: **Tabs** (pestañas), **Show Helpers** (mostrar ayudas), **Language** (idioma) y la lista **Herramientas**.
+5. Despliega la entrada de BoneCraft para ver sus ajustes: **Language**, **Tabs**, **Shelf Width**, **Show Helpers** y la lista **Herramientas**.
 
 **Lo que deberías ver:** las pestañas BoneCraft y Rig Builder en la Tool Shelf izquierda (pulsa **T**) y la pestaña CATS en la barra lateral derecha (pulsa **N**).
 
@@ -58,11 +58,37 @@ Las pestañas seleccionan grupos de herramientas. Setup Rigging, Skin, Review, A
 
 Selecciona un esqueleto para el rig y la biblioteca de visemas; una malla en Modo Objeto para Delta Mush y Proximity Wrap. Lip Sync requiere un esqueleto en Modo Pose. Despliega las secciones con el triángulo. Options contiene ajustes opcionales; ajusta las herramientas de ejecución inmediata en Ajustar última operación antes de ejecutar otra operación.
 
-Preferencias: Edit → Preferences → Add-ons → BoneCraft → Tabs controla las pestañas. Scene Properties controla por separado los paneles Rig Builder, Mechanisms y CATS en Properties → Scene. Show Helpers oculta explicaciones; Language cambia las etiquetas; Tools activa los paquetes. Ctrl+Shift+R abre el panel rápido.
-
-BoneCraft permite mover pestañas con Left / Right en Preferences → Tabs. Scene Properties → Show está activado inicialmente. También ofrece paneles de datos del esqueleto y botones en las Tool Shelf nativas Pose / Weights. Estos accesos son propios de Bforartists.
-
 Hay tres flujos faciales: la generación CATS crea claves de forma de la boca; Viseme Library / Lip Sync guarda poses y genera claves de animación; Facial asigna claves existentes a VRChat o configura seguimiento facial. Los controles derivados de UVToolkit están en CATS → Material Atlas → Override Inherited Settings → UV Packing; son el flujo compartido de atlas, no el complemento UVToolkit completo.
+
+**Mover una pestaña:** Edit → Preferences → Add-ons → BoneCraft → Tabs. Cada pestaña tiene un interruptor y Left / Right; los cambios son inmediatos. Aunque esté oculta y los botones grises, Left / Right siguen funcionando.
+
+**Editor Properties:** Scene Properties → Show en Preferences → Tabs está activado inicialmente; azul significa visible. Controla conjuntamente Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools e Import / Export en Properties → Scene. No cambia las pestañas de vista ni Armature Data. Las herramientas de armadura aparecen también en Armature Data al seleccionar una armadura, de forma independiente. Desactiva un paquete en Tools o el complemento para retirar sus herramientas de todas partes.
+
+**Shelf Width:** Widen Narrow Shelves empieza activado y ensancha una vez las estanterías con pestañas BoneCraft que estén por debajo del mínimo Left / Right: 240 / 260 píxeles a escala UI 1×. Si luego arrastras a menor anchura, conserva tu elección. Desactívalo para gestionar la anchura manualmente; sus campos quedan inactivos.
+
+**Menús de la vista y Tool Shelf nativa:**
+
+| Ubicación | Herramientas |
+|---|---|
+| Add → Armature | Quick Rig, Auto-Rig Wizard, Mannequin for Active Rig |
+| Pose → BoneCraft (Pose Mode) | Poses, selector, colecciones, configuración y comprobaciones del rig |
+| Weights → BoneCraft (Weight Paint) | Rellenar, reflejar y normalizar pesos |
+| Object → Mechanisms (Object Mode) | Piezas, articulaciones, vínculos y pruebas de movimiento |
+| Tool Shelf → Pose / Weights → BoneCraft | Operaciones habituales de pose o pesos |
+
+Los botones de Pose y Weights muestran texto con suficiente anchura y una cuadrícula de iconos al estrecharse; pasa el puntero para ver la ayuda. Usan las mismas herramientas y dependen de los paquetes activados.
+
+**Herramientas de vista:** Place Rig Markers coloca el siguiente marcador del asistente al pulsar la malla. Build Mechanism inicia una articulación o vínculo guiado al pulsar una pieza. Consulta [Constructor de Rig](06-rig-builder.md#asistente-auto-rig) y [Mechanisms](07-mechanisms.md).
+
+**Ejecutar primero y ajustar después:** Quick Rig, Fit Dropped Rig, Weight Mirror, Weight Transfer, Flood to Custom, Ribbon, Spline IK y Delta Mush se ejecutan al pulsar. Cambia sus opciones inmediatamente en Adjust Last Operation, antes de otra operación. Otros paneles guardan ajustes opcionales en desplegables bajo los botones; un panel puede seguir visible y explicar qué seleccionar.
+
+**Show Helpers:** oculta las explicaciones «qué/cuándo» y «How this works» al desactivarlo en preferencias. Compact Mode de Avatar Tools es otro acceso al mismo interruptor.
+
+**Language:** cambia los paneles de BoneCraft a English, 日本語, 한국어, 中文, Français, Português o Español.
+
+**Fix Model primero:** en CATS comienza siempre con Fix Model. El registro del pipeline recuerda los pasos y advierte si se ejecutan fuera de orden. Consulta [El pipeline de CATS](04-cats-pipeline.md).
+
+**Panel rápido:** Ctrl+Shift+R en la vista 3D abre el panel de rig bajo el cursor.
 
 ---
 

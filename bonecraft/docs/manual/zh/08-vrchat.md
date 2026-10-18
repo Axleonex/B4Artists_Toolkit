@@ -4,16 +4,7 @@
 
 ## VRChat 工具
 
-选项卡用于选择功能组。Setup Rigging、Skin、Review、Avatar Tools 和 Facial 是选项卡内可展开的分区，不是独立选项卡。下列路径保留英文界面标签；翻译名称取决于 Language 设置。
-
-| 工具 | 打开路径 |
-| --- | --- |
-| Humanoid / Hair / Export | CATS → Avatar Tools |
-| Viseme Library / Lip Sync | CATS → Avatar Tools → Viseme Library |
-| VRChat Viseme Mapping / Face Tracking | CATS → VRChat Tools → Facial |
-| Performance / Clothing / Naming | CATS → VRChat Tools |
-
-偏好设置：Edit → Preferences → Add-ons → BoneCraft → Tabs 控制选项卡显示。Scene Properties 独立控制 Properties → Scene 中的 Rig Builder 和 CATS 面板。Show Helpers 隐藏说明；Language 更改界面语言；Tools 启用各工具包。Ctrl+Shift+R 打开快捷绑定面板。
+VRChat 工具位于右侧边栏（**N**）的 **CATS → Avatar Tools**，分区含人形骨骼、头发物理、Viseme Library / Lip Sync。VRChat 导出在 **CATS → Import / Export → Unity / VRChat**。下面独立的 **VRChat Tools** 包括 Check Performance、Attach Clothing、Facial、VRChat Naming Extras。Preferences → Tabs → Scene Properties → Show 开启时，**Properties → Scene** 也有相同分区；关闭不隐藏 CATS 视图标签。
 
 ---
 
@@ -90,7 +81,7 @@
 - **Embed Textures**（嵌入纹理）— 把纹理打包进 FBX，让 Unity 能找到它们
 - **Helper Meshes**（辅助网格）— 包含隐藏的或辅助的网格；普通虚拟形象请保持关闭
 
-**按钮：** **导出到 VRChat（Unity）**、**生成附件**、**复制导入器路径**（BoneCraft 的 Unity 导入脚本的路径），以及用于 VRM 材质的 **检查/保留MToon**。这个部分还会重复显示人形状态，并提供 **Auto-Map Humanoid**（自动映射人形）、**Normalize Names**（规范化名称）和 **验证**。
+**位置：** CATS → Import / Export → Unity / VRChat。用 **Export to VRChat (Unity)** 写 FBX，或导出前用 **Check Performance Rank**。
 
 ---
 
@@ -182,9 +173,7 @@ MMD 工具位于 **CATS** 选项卡 → **导入 / 导出** → **MMD / PMX**。
 
 ## 任务板
 
-**作用：** 当前绑定的概要：健康评分、快速改进项，以及 BoneCraft 找到的任务列表（缺失的人形骨骼、未解决的名称、缺失的口型、装备验证器的警告等），按类别分组。**打开健康检查** 打开详细信息；**刷新任务板** 再检查一次。
-
-**打开健康检查**现在会运行绑定验证并打开结果。请选择骨架或与其绑定的网格。**快速改进项（Quick Wins）**最多显示三项建议；**其余任务（Remaining Tasks）**不再重复这些卡片。**刷新任务板**可重新检查。
+**作用：** 按类别总结当前绑定：健康评分、快速改进项和发现的任务（人形缺骨、未解决名称、缺口型、绑定验证警告等）。**Quick Wins** 最多三项推荐，**Remaining Tasks** 只含其他任务。选骨架或绑定网格，**Open Health Check** 运行验证并开结果，**Refresh Task Board** 重新检查。
 
 **位置：** **BoneCraft** 选项卡 → **概览** → **任务板**
 

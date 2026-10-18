@@ -39,11 +39,13 @@ HOST_LABELS = {
     "Add-ons", "Edit", "Preferences", "Install from Disk...", "Install from Disk…", "Object Mode", "Pose Mode",
     "Edit Mode", "Weight Paint", "Vertex Group", "Vertex Groups", "Shape Keys", "Armature", "Object Data",
     "Properties", "Scene", "Tool Shelf", "Sidebar", "File", "Import", "Export", "Save Preferences",
+    "Adjust Last Operation",
     "Enter", "Esc", "Tab", "Space", "Delete", "Backspace",          # keys
 }
 # Bold text that looks like a label but is not one, with the reason.
 NOT_LABELS = {
     "You should see": "lead-in", "Note": "lead-in", "Tip": "lead-in", "Important": "lead-in",
+    "Starter Rigs": "native asset catalog name, stored as asset metadata rather than a panel label",
 }
 
 
@@ -377,6 +379,15 @@ def main(argv=None):
     for lang in present:
         for name in manual_files(lang):
             problems += image_problems(mt.MANUAL / lang / name)
+            if lang != "en":
+                translated = mt.MANUAL / lang / name
+                source = mt.MANUAL / "en" / name
+                # Every edition must retain the complete illustrated recipe, in order.
+                if source.exists() and not (lang == args.partial and is_skeleton(translated)):
+                    def image_targets(path):
+                        return re.findall(r'!\[[^\]]*\]\(([^)]+)\)', path.read_text(encoding="utf-8"))
+                    if image_targets(translated) != image_targets(source):
+                        problems.append("%s/%s screenshots differ from English" % (lang, name))
 
     # 5. bold UI labels in the English chapters are text the add-on draws (or host labels / declared non-labels)
     problems += self_test_addon_strings()

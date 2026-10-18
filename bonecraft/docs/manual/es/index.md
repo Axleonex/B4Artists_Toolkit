@@ -1,6 +1,10 @@
 # Manual de BoneCraft
 
-BoneCraft 9.2.4. BoneCraft es un conjunto de herramientas de rigging y avatares para Bforartists.
+<style>
+@media print { @page { @bottom-center { content: "Página " counter(page) " de " counter(pages); font-family: "Segoe UI", sans-serif; font-size:9pt; color:#555; } } }
+</style>
+
+BoneCraft 9.2.5. BoneCraft es un conjunto de herramientas de rigging y avatares para Bforartists.
 
 Este manual se tradujo automáticamente a partir de la edición en inglés.
 
@@ -19,3 +23,7 @@ Las pestañas seleccionan grupos de herramientas. Setup Rigging, Skin, Review, A
 9. [Herramientas de CATS](09-cats.md) — cada herramienta de CATS, una por una.
 10. [Soluciones rápidas y glosario](10-reference.md) — problemas habituales y las palabras que usa este manual.
 11. [Novedades](11-whats-new.md) — cambios por versión.
+
+12. [Tutorial: Crescent Rose con Mechanisms](12-crescent-rose.md) — ocho pasos de preparación FBX, 30 pasos de Mechanisms y 52 capturas anotadas de la interfaz 9.1.2.
+
+La navegación cubre 9.2.5 y el catálogo Starter Rigs. El capítulo 6 incluye el taller ilustrado Simple Human → maniquí → Auto-Rig → IK/FK. Consulta también el [vídeo IK/FK y archivo de práctica](https://github.com/Axleonex/B4Artists_Toolkit/blob/main/bonecraft/docs/tutorials/ikfk-beginner.md). Usa los enlaces de capítulos; la paginación PDF cambia al reconstruirse.

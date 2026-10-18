@@ -85,7 +85,7 @@
 
 ### 步骤 9 — 为 VRChat 导出
 
-在 **CATS** 选项卡中，展开 **Avatar Tools** → **导出到VRChat**。设置 **Folder**（文件夹）和 **Avatar**（虚拟形象）名称，然后点击 **导出到 VRChat（Unity）**。
+在 **CATS** 选项卡中，展开 **Import / Export** → **Unity / VRChat**。设置 **Folder**（文件夹）和 **Avatar**（虚拟形象）名称，然后点击 **导出到 VRChat（Unity）**。
 
 **你应该看到：** 导出的虚拟形象出现在你选择的文件夹中，可用于 VRChat Creator Companion 和 Unity 中的 VRChat SDK。
 

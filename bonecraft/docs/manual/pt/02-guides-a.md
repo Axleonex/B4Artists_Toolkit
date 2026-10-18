@@ -85,7 +85,7 @@ Abra a aba **CATS** na barra lateral da direita (pressione **N**), expanda **Ava
 
 ### Passo 9 — Exportar para o VRChat
 
-Na aba **CATS**, expanda **Avatar Tools** → **Exportar para VRChat**. Defina a **Folder** (pasta) e o nome do **Avatar** e clique em **Exportar para VRChat (Unity)**.
+Na aba **CATS**, expanda **Import / Export** → **Unity / VRChat**. Defina a **Folder** (pasta) e o nome do **Avatar** e clique em **Exportar para VRChat (Unity)**.
 
 **O que você deve ver:** o avatar exportado na pasta escolhida, pronto para o VRChat Creator Companion e o SDK do VRChat no Unity.
 

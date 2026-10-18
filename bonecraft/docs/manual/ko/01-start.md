@@ -31,7 +31,7 @@ BoneForge 9.0.0 이상은 표준 Blender용입니다. BoneCraft는 별도의 Bfo
 2. **편집**(Edit) → **환경 설정**(Preferences) → **애드온**(Add-ons)을 엽니다.
 3. **디스크에서 설치…**(Install from Disk…)를 클릭하고 BoneCraft `.zip` 파일을 고릅니다.
 4. BoneCraft 옆의 체크박스를 켜서 활성화합니다.
-5. BoneCraft 항목을 펼쳐 설정을 봅니다: **Tabs**(탭), **Show Helpers**(도움말 표시), **Language**(언어), 그리고 **도구** 목록.
+5. BoneCraft 항목을 펼쳐 설정을 봅니다: **Language**(언어), **Tabs**(탭), **Shelf Width**(셸프 폭), **Show Helpers**(도움말 표시), 그리고 **도구** 목록.
 
 **보여야 하는 것:** 왼쪽 툴 셸프(**T** 키)에 BoneCraft 탭과 Rig Builder 탭, 오른쪽 사이드바(**N** 키)에 CATS 탭.
 
@@ -58,11 +58,37 @@ BoneForge 9.0.0 이상은 표준 Blender용입니다. BoneCraft는 별도의 Bfo
 
 리그와 비짐 라이브러리는 아마추어를 선택합니다. Delta Mush와 Proximity Wrap은 오브젝트 모드에서 메시를 선택해야 합니다. Lip Sync는 포즈 모드의 아마추어가 필요합니다. 삼각형으로 섹션을 펼칩니다. Options는 선택 설정입니다. 바로 실행되는 도구는 다음 작업 전에 마지막 작업 조정에서 설정을 바꿀 수 있습니다.
 
-설정: Edit → Preferences → Add-ons → BoneCraft → Tabs에서 탭 표시를 조정합니다. Scene Properties는 Properties → Scene의 Rig Builder, Mechanisms와 CATS 패널을 별도로 제어합니다. Show Helpers는 설명 표시, Language는 표시 언어, Tools는 패키지 활성화입니다. Ctrl+Shift+R로 빠른 패널을 엽니다.
-
-BoneCraft 탭은 Preferences → Tabs의 Left / Right로 이동합니다. Scene Properties → Show는 기본으로 켜져 있습니다. 아마추어 데이터 패널과 기본 Pose / Weights Tool Shelf 버튼도 제공합니다. 이들은 Bforartists의 접근 경로입니다.
-
 얼굴 작업은 세 종류입니다. CATS 비짐 생성은 입 셰이프 키를 만들고, Viseme Library / Lip Sync는 포즈 저장과 애니메이션 키 생성을 하며, Facial은 기존 키를 VRChat에 매핑하거나 얼굴 추적을 설정합니다. UVToolkit에서 가져온 설정은 CATS → Material Atlas → Override Inherited Settings → UV Packing에 있습니다. 공유 아틀라스 기능이며 독립 UVToolkit 전체가 아닙니다.
+
+**탭 이동:** Edit → Preferences → Add-ons → BoneCraft → Tabs에서 표시 스위치와 Left / Right를 사용합니다. 즉시 적용되며 숨긴 탭의 회색 Left / Right도 작동합니다.
+
+**Properties 에디터:** Preferences → Tabs → Scene Properties → Show는 기본으로 켜져 있으며 파란색은 표시 상태입니다. Properties → Scene의 Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools, Import / Export를 함께 제어합니다. 뷰포트 탭과 Armature Data는 바꾸지 않습니다. 아마추어 선택 시 전용 도구는 Armature Data에도 독립적으로 표시됩니다. 모든 위치에서 제거하려면 Tools의 패키지나 애드온을 끕니다.
+
+**Shelf Width:** Widen Narrow Shelves는 기본으로 켜져 있습니다. BoneCraft 탭의 셸프가 Left / Right 최소값(1× UI에서 240 / 260픽셀)보다 좁으면 한 번 넓힙니다. 이후 직접 좁힌 폭은 유지합니다. 끄면 수동으로 관리하며 폭 필드가 비활성화됩니다.
+
+**뷰포트 메뉴와 기본 Tool Shelf:**
+
+| 위치 | 도구 |
+|---|---|
+| Add → Armature | Quick Rig, Auto-Rig Wizard, Mannequin for Active Rig |
+| Pose → BoneCraft (Pose Mode) | 포즈, 피커, 본 컬렉션, 리그 설정과 검사 |
+| Weights → BoneCraft (Weight Paint) | 채우기, 미러, 정규화 |
+| Object → Mechanisms (Object Mode) | 파트·관절·링크 추가와 동작 시험 |
+| Tool Shelf → Pose / Weights → BoneCraft | 일반 포즈·웨이트 작업 |
+
+Pose·Weights 버튼은 넓으면 글자, 좁으면 아이콘 격자가 됩니다. 마우스를 올리면 설명이 나옵니다. 전용 탭과 같은 도구이고 패키지 활성 상태를 따릅니다.
+
+**뷰포트 도구:** Place Rig Markers는 메시 클릭으로 마법사의 다음 마커를 놓습니다. Build Mechanism은 파트를 클릭하여 관절·링크 안내를 시작합니다. [리그 빌더](06-rig-builder.md#자동-리깅-마법사)와 [Mechanisms](07-mechanisms.md)를 보세요.
+
+**먼저 실행하고 나중에 조정:** Quick Rig, Fit Dropped Rig, Weight Mirror, Weight Transfer, Flood to Custom, Ribbon, Spline IK, Delta Mush는 클릭 즉시 실행됩니다. 다른 작업 전에 Adjust Last Operation에서 설정합니다. 다른 패널은 버튼 아래 접힌 선택 설정을 사용합니다. 다른 선택이 필요한 패널은 표시를 유지하며 필요한 대상을 설명할 수 있습니다.
+
+**Show Helpers:** 환경 설정에서 끄면 짧은 용도 설명과 How this works가 사라집니다. Avatar Tools의 Compact Mode도 같은 스위치입니다.
+
+**Language:** BoneCraft 패널을 English, 日本語, 한국어, 中文, Français, Português, Español로 바꿉니다.
+
+**항상 Fix Model부터:** CATS에서 다른 도구보다 먼저 Fix Model을 실행합니다. 파이프라인 기록부가 완료 단계를 추적하며 순서가 다르면 경고합니다. [CATS 파이프라인](04-cats-pipeline.md)을 보세요.
+
+**빠른 패널:** 뷰포트의 Ctrl+Shift+R로 커서 아래 리그 패널을 엽니다.
 
 ---
 

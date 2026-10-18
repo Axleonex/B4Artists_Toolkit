@@ -4,6 +4,10 @@
 
 最新的在前。
 
+## 9.2.5 — Starter Rigs 目录标签
+
+Starter Rigs 改用底部原生资源架的一个目录标签，移除了视图左上控件。在资源架目录菜单一次启用 **Starter Rigs** 即显示在其他目录旁。原生资源导入和 **Add → Armature → Starter Rig Catalog** 仍可用。
+
 ## 9.2.4 — 任务板与原生工具
 
 **打开健康检查**现在会运行绑定验证并打开结果。请选择骨架或与其绑定的网格。**快速改进项（Quick Wins）**最多显示三项建议；**其余任务（Remaining Tasks）**不再重复这些卡片。**刷新任务板**可重新检查。
@@ -23,6 +27,13 @@ Place Rig Markers 和 Build Mechanism 仍可作为视口工具使用。它们的
 - Viseme Library / Lip Sync → CATS → Avatar Tools
 - VRChat Viseme Mapping / Face Tracking → CATS → VRChat Tools → Facial
 
+## 9.2.0（2026年10月）
+
+- **完整起始目录：** 全部九种预设从开始就显示缩略图：Basic Humanoid、Simple Human、Full Human、Basic Quadruped、Cat、Horse、Wolf、Bird、Shark。目录按 Humans、Quadrupeds、Other Animals 分组。
+- **按需 Rigify：** Basic Humanoid 独立运行。Rigify 关闭时预设仍可见，选择会提供 **Enable Rigify & Add Rig** 或 Cancel。取消、激活失败或预设不可用都不添加。
+- **可选资源架：** 此版本视图标题的 **Starter Rigs** 开关可回普通资源架，偏好设置记住选择；**Add → Armature → Starter Rig Catalog** 弹出选择器。
+- **点击或拖放：** 点击添加或拖入视图，默认适配网格，权重和控制生成关，之后在 Adjust Last Operation 改。在 Bforartists 5.2.0 核验原生点击、拖放、取消、撤销/重做。
+
 ## 9.1.2（2026年10月）
 
 - **场景属性开关：** 偏好设置 > 选项卡中新增了“场景属性”一行。它的“显示”按钮（开启时为蓝色）可以在不停用插件的情况下，显示或隐藏属性 > 场景选项卡中 BoneCraft 的所有部分（绑定构建器、机构、CATS、VRChat、导入 / 导出）。它默认开启，不影响 3D 视图的选项卡和骨架选项卡。
@@ -37,8 +48,9 @@ Place Rig Markers 和 Build Mechanism 仍可作为视口工具使用。它们的
 
 - **工具放在 Bforartists 放自己工具的地方：** 添加 → 骨架、姿态、权重和物体菜单中有了 BoneCraft 条目，Bforartists 工具架的姿态和权重选项卡中有了 BoneCraft 按钮面板。
 - **先执行，后调整：** 快速绑定、适配拖入的骨架、权重工具、条带、样条 IK、Delta Mush 和 CATS 骨骼工具会用上次的数值立即执行，之后在“调整上一步操作”面板中调整。“确定吗”弹窗也更少了。
-- **先显示操作，选项折叠：** 面板先显示按钮，设置放在下方的折叠区。设置以设置的样子显示（复选框，而不是按钮），面板标题不带图标。
+- **先显示操作，选项折叠：** 面板先显示按钮，设置放在下方的折叠区。必须输入仍在操作前，Fix Model 清理开关也保留在前；设置以设置的样子显示（复选框，而不是按钮），面板标题不带图标。
 - **手势工具：** “放置绑定标记”（点击网格放置自动绑定向导的下一个标记）和“构建机械结构”（点击部件开始一个关节或连接）位于视图工具栏中。
+- **虚拟形象分区：** Avatar Tools 放人形映射、头发、口型、导出；VRChat Tools 单独放性能、服装、命名工具。指南采用当前面板名。
 - **工具提示：** 每个操作和每个选项都有说明。
 - **显示而不隐藏：** 骨架不在时各部分仍然可见并提示要选择什么，自动绑定向导在 Rig Builder 中排在最前，工具架打开时宽度足够阅读。
 - **修复：** 生成样条 IK 重新可用；添加影响使用所选骨骼；口型预览使用其所属的集合。
@@ -46,6 +58,7 @@ Place Rig Markers 和 Build Mechanism 仍可作为视口工具使用。它们的
 ## 9.0.0（2026年10月）
 
 - **Mechanisms：** BoneCraft 选项卡（以及属性编辑器的场景选项卡）中的一个新部分，用于绑定道具和机械：Hinge、Slide、Telescope、Piston、Gear Link、Follow 和 Sequence，通过引导式步骤创建，并用 Test 检查。BoneCraft 绝不会覆盖手动编辑：选择 **Keep mine** 保留它，或选择 **恢复** 重建。参见 [Mechanisms（机械装置）](07-mechanisms.md)。
+- **示例文件：** `examples/crescent-rose/` 提供用 Mechanisms 绑定的 Crescent Rose，含镰刀、步枪和紧凑形态；[第 12 章](12-crescent-rose.md) 逐步构建。
 - **选项卡位置：** 每个视口选项卡都可以放在左侧工具架或右侧边栏（偏好设置 → Tabs → Left / Right）。BoneCraft 和 Rig Builder 默认在左侧，CATS 在右侧。
 - **绑定构建器：** 始终位于属性编辑器的场景选项卡中，另外还有它自己的视口选项卡，在较窄的工具架中使用紧凑布局。Basic Humanoid 绑定随 BoneCraft Rigs 资源库一起提供；Fit Dropped Rig 会适配从资源架放下的绑定。
 - **CATS 选项卡：** 导入 / 导出移到了 CATS 选项卡中。CATS、VRChat 和导入 / 导出也始终位于场景选项卡中。
@@ -94,3 +107,5 @@ Place Rig Markers 和 Build Mechanism 仍可作为视口工具使用。它们的
 **7.1.3（偏好设置标签整理）：** 两个插件偏好设置开关被重命名，现在与它们控制的侧边栏选项卡一致。"VRChat Avatar Tools"现在标为 **CATS**（与 CATS 侧边栏选项卡一致）。"Task Board & Sidebar"现在标为 **Rig Builder**（与 Rig Builder 侧边栏选项卡一致）。没有移除任何工具——只有 编辑 > 偏好设置 > 插件 > BoneCraft 中的开 / 关标签变了。
 
 **7.1.1：** BoneCraft 现在包含 CATS 工具——一整套专门用于让 VRChat 虚拟形象变得干净、经过优化并完全配置好的模型准备工具。CATS 有自己的侧边栏选项卡，并使用一套流程系统，每次都引导你按正确的顺序操作。
+
+下一章：[教程：用 Mechanisms 绑定 Crescent Rose](12-crescent-rose.md)

@@ -1,6 +1,10 @@
 # BoneCraft 설명서
 
-BoneCraft 9.2.4. BoneCraft는 Bforartists용 리깅 및 아바타 툴킷입니다.
+<style>
+@media print { @page { @bottom-center { content: "페이지 " counter(page) " / " counter(pages); font-family: "Segoe UI", sans-serif; font-size:9pt; color:#555; } } }
+</style>
+
+BoneCraft 9.2.5. BoneCraft는 Bforartists용 리깅 및 아바타 툴킷입니다.
 
 이 설명서는 영어판을 기계 번역한 것입니다.
 
@@ -19,3 +23,7 @@ BoneCraft 9.2.4. BoneCraft는 Bforartists용 리깅 및 아바타 툴킷입니�
 9. [CATS 도구](09-cats.md) — 모든 CATS 도구를 하나씩.
 10. [빠른 해결과 용어집](10-reference.md) — 자주 생기는 문제와 이 설명서에서 쓰는 용어.
 11. [새로운 기능](11-whats-new.md) — 버전별 변경 사항.
+
+12. [튜토리얼: Crescent Rose와 Mechanisms](12-crescent-rose.md) — FBX 준비 8단계, Mechanisms 30단계, 9.1.2 인터페이스의 주석 캡처 52장.
+
+탐색과 도구 경로는 Starter Rigs 카탈로그를 포함한 9.2.5 기준입니다. 6장은 Simple Human → 마네킹 → Auto-Rig → IK/FK 그림 실습을 포함합니다. [IK/FK 영상과 연습 파일](https://github.com/Axleonex/B4Artists_Toolkit/blob/main/bonecraft/docs/tutorials/ikfk-beginner.md)도 보세요. 장 링크로 이동하세요. PDF 재생성 시 페이지가 달라집니다.

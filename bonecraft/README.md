@@ -47,7 +47,7 @@ Current repository changes and checks: [BoneCraft 9.2.5 notes](../docs/bonecraft
 
 Repository build 9.2.5: [installable ZIP](../releases/BoneCraft-BFA-9.2.5.zip). The latest tagged GitHub Release remains 9.2.3.
 
-### 9.2.5 local changes
+### 9.2.5 repository changes
 
 - Starter Rigs uses one native catalog tab; its top-left header controls are removed.
 - Enable Starter Rigs once from the bottom shelf catalog menu to display its tab.
@@ -79,7 +79,7 @@ See the current release notes and package receipt for archive and host checks.
 
 New to rig controls? [IK/FK beginner walkthrough](docs/tutorials/ikfk-beginner.md) includes a narrated video and a practice file for Rigify Quick Rig and Auto-Rig Wizard controls. Captured with BoneCraft 9.1.3; see the guide for version details and the observed Rigify snapping limitation.
 
-The current English manual and six translated editions: [docs/README.md](docs/README.md). The translations have 9.1.2 release notes, but their usage chapters are not yet synchronized with the current English interface guide.
+The English manual and all six translated editions cover 9.2.5: [docs/README.md](docs/README.md). Every edition includes the full illustrated Rig Builder workshop and Crescent Rose tutorial, with the same 92 shared screenshots and translated captions. The documentation index also links all seven PDFs. Historical capture labels remain unchanged.
 
 Example file: [examples/crescent-rose](examples/crescent-rose/README.md) — Crescent Rose rigged with Mechanisms, built step by step in the manual's chapter 12.
 

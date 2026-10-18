@@ -14,7 +14,8 @@ has no Python API, so installation cannot enable it automatically.
 The targeted starter suite passes in Bforartists 5.2.0, including all nine rigs,
 catalog metadata, dependency failures, fitting, library ownership, native
 callback restoration and Add-menu access. See the package receipt for archive
-and source-parity checks. This package is local and unpublished.
+and source-parity checks. The 9.2.5 archive is available from the repository's
+release index; the latest tagged GitHub Release remains 9.2.3.
 
 Native-window verification confirms the rightmost tab, all nine starters when selected,
 and removal of the top-left controls. [Screenshot](ui/starter-rigs-selected.png).
