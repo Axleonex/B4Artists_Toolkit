@@ -8,7 +8,6 @@ repaired. The native scrub ruler and keyframe row stay at the top.
 import bpy
 import blf
 import gpu
-import textwrap
 import time
 from types import SimpleNamespace
 from gpu_extras.batch import batch_for_shader
@@ -90,6 +89,35 @@ def _stage_description(kind, stage):
         return "Show the All overview of every tool family. Ctrl+Wheel over the tabs cycles stages"
     return (f"{label} stage: its own {_family_labels(stage)} toolset, edited in Settings. "
             "Ctrl+Wheel over the tabs cycles stages")
+
+
+def _tooltip_paragraphs(context, item):
+    """Hover text for a row control as (text, role) paragraphs."""
+    from . import timeline_strip as tools
+    from .timeline_catalog import command_tooltip
+    kind, key = item[0], item[1]
+    action = key.split(':', 1)[0]
+    if kind == 'ACTION' and action in ACTIONS:
+        operator = tools._operator(action)
+        operation = operator.get_rna_type().description if operator else 'Tool module unavailable'
+        reason = tools._unavailable(context, tools._target(context), action)
+        status = ''
+        if action in {'OFFSET', 'OFFSET_MASK', 'OFFSET_SCENE_RANGE'}:
+            from ..operators.anim_offset_ops import offset_session_status
+            status = offset_session_status(context.scene) or ''
+        return command_tooltip(action, operation, reason or '', status)
+    if kind in {'SLIDER', 'POPOUT', 'PRESET'} and action in ACTIONS:
+        operator = tools._operator(action)
+        text = operator.get_rna_type().description if operator else ACTIONS[action][2]
+        from ..constants import BREAKDOWN_ANCHOR_HINT
+        lines = [(ACTIONS[action][2], 'TITLE'), (text.rstrip('.') + '.', 'BODY'),
+                 (f'Works on: {command_metadata(action)[0]}.', 'DETAIL'),
+                 ('Drag to preview; release to apply; Esc cancels. Right-click for tool settings.', 'DETAIL')]
+        if action == 'DRAG':
+            lines.append((BREAKDOWN_ANCHOR_HINT, 'DETAIL'))
+        return lines
+    text = ANIMASSIST_OT_overlay_control.description(context, SimpleNamespace(kind=kind, key=key))
+    return [(text.rstrip('.') + '.', 'BODY')]
 
 
 def row_layout(width, height, row_height, at_top, clusters, measure):
@@ -492,22 +520,37 @@ def _draw():
         if not active and hover and not _menu_open(context) and time.monotonic() - _hover_started.get(context.window.as_pointer(), float("inf")) > .6:
             item = next((item for item in items if (item[0], item[1]) == hover[1:]), None)
             if item:
-                description = ANIMASSIST_OT_overlay_control.description(
-                    context, SimpleNamespace(kind=item[0], key=item[1]))
-                font = round(11 * scale)
-                blf.size(0, font)
-                wrap = max(12, min(85, int((context.region.width-20*scale)/(6*scale))))
-                lines = textwrap.wrap(description, wrap)[:3]
+                paragraphs = _tooltip_paragraphs(context, item)
+                blf.size(0, round(11 * scale))
+                line_h, pad = 15 * scale, 7 * scale
+                lines, width, height = model.fit_tooltip(
+                    paragraphs, context.region.width, context.region.height,
+                    lambda text: blf.dimensions(0, text)[0], scale, line_h, pad, 420 * scale)
                 if lines:
-                    width = min(context.region.width, max(blf.dimensions(0, line)[0] for line in lines)+16*scale)
-                    height = min(context.region.height, (len(lines)*15+12)*scale)
                     x = max(0, min(item[3][0], context.region.width-width))
-                    y = band[1]-height-4*scale if band[1] > height else band[1]+band[3]+4*scale
+                    # The playhead is drawn over add-on drawing; keep the box clear of it.
+                    try:
+                        head = context.region.view2d.view_to_region(context.scene.frame_current, 0, clip=False)[0]
+                    except (AttributeError, TypeError):
+                        head = None
+                    if head is not None and x - 3*scale <= head <= x + width + 3*scale:
+                        right, left = head + 4*scale, head - 4*scale - width
+                        if right + width <= context.region.width:
+                            x = right
+                        elif left >= 0:
+                            x = left
+                    above, below = band[1], context.region.height-band[1]-band[3]
+                    if above >= height + 4*scale or above >= below:
+                        y = band[1]-height-4*scale
+                    else:
+                        y = band[1]+band[3]+4*scale
                     y = max(0, min(y, context.region.height-height))
                     _quad((x, y, width, height), (.06, .06, .06, .97))
-                    blf.color(0, .95, .95, .95, 1)
-                    for index, line in enumerate(lines):
-                        blf.position(0, x+8*scale, y+height-(index+1)*15*scale, 0)
+                    colors = {'TITLE': (1, 1, 1, 1), 'BODY': (.92, .92, .92, 1),
+                              'DETAIL': (.70, .70, .70, 1), 'WARNING': (1, .72, .35, 1)}
+                    for index, (line, role) in enumerate(lines):
+                        blf.color(0, *colors.get(role, colors['BODY']))
+                        blf.position(0, x+pad, y+height-pad-(index+1)*line_h+4*scale, 0)
                         blf.draw(0, line)
     finally:
         gpu.state.blend_set(old_blend)

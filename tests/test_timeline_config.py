@@ -218,4 +218,42 @@ class ConfigTests(unittest.TestCase):
         self.assertLessEqual(len(config.encode(self.record,actions)),config.RECORD_LIMIT)
 
 
+class TooltipWrapTests(unittest.TestCase):
+    measure = staticmethod(lambda text: 6 * len(text))
+
+    def test_wrap_keeps_every_word_within_width(self):
+        text = 'Bake the active object world motion to keys through a temporary translation proxy ' * 4
+        lines = config.wrap_to_width(text, 120, self.measure)
+        self.assertEqual(' '.join(lines).split(), text.split())
+        self.assertTrue(all(self.measure(line) <= 120 for line in lines))
+
+    def test_wrap_splits_a_word_wider_than_the_line(self):
+        lines = config.wrap_to_width('x' * 50, 60, self.measure)
+        self.assertEqual(''.join(lines), 'x' * 50)
+        self.assertTrue(all(len(line) <= 10 for line in lines))
+
+    def test_fit_keeps_all_lines_when_they_fit(self):
+        paragraphs = [('Title', 'TITLE'), ('word ' * 60, 'BODY'), ('Works on: things.', 'DETAIL'),
+                      ('Unavailable: select an object.', 'WARNING')]
+        lines, width, height = config.fit_tooltip(paragraphs, 1600, 220, self.measure, 1, 15, 7, 420)
+        self.assertEqual(' '.join(l for l, _ in lines).split(), ' '.join(t for t, _ in paragraphs).split())
+        self.assertLessEqual(height, 220)
+        self.assertLessEqual(width, 420)
+        self.assertIn('WARNING', [r for _, r in lines])
+
+    def test_fit_widens_before_dropping_details(self):
+        paragraphs = [('Title', 'TITLE'), ('word ' * 120, 'BODY'), ('Also in Bake > Tool.', 'DETAIL')]
+        lines, width, height = config.fit_tooltip(paragraphs, 1600, 120, self.measure, 1, 15, 7, 420)
+        self.assertGreater(width, 420)
+        self.assertLessEqual(height, 120)
+        self.assertIn('DETAIL', [r for _, r in lines])
+
+    def test_fit_drops_only_details_in_a_tiny_region(self):
+        paragraphs = [('Title', 'TITLE'), ('Body text here.', 'BODY'), ('Unavailable: why.', 'WARNING'),
+                      ('Detail one.', 'DETAIL'), ('Detail two.', 'DETAIL')]
+        lines, _w, _h = config.fit_tooltip(paragraphs, 400, 60, self.measure, 1, 15, 7, 420)
+        roles = [r for _, r in lines]
+        self.assertEqual(roles[:3], ['TITLE', 'BODY', 'WARNING'])
+
+
 if __name__=='__main__': unittest.main()

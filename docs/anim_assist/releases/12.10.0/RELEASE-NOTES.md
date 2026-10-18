@@ -26,6 +26,8 @@ Four existing Bake tools are now on the Timeline toolbar (93 actions in total): 
 
 ## Fixed
 
+**Timeline row hover text** kept only three lines, so longer descriptions were cut off, often the reason a tool is greyed out. It now shows in full: the tool's name, what it does, why it is unavailable (in orange), what it works on and what it needs. The box widens to fit the Timeline and moves clear of the playhead.
+
 **One-Click Proxy & Bake** (Bake sidebar, pie menu and now the toolbar) had two bugs in 12.9.x and earlier:
 
 - It flattened the object's location animation: the proxy stayed at the current position, so the bake recorded a still object. It now records the object's world motion on the proxy first, so the baked keys follow the original motion.

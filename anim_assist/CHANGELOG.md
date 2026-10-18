@@ -9,6 +9,11 @@
   Remove All Proxy Sessions and trail tools in Deliver). All is unchanged.
 - Bake Preview Range, Bake Keys to Integer Frames, One-Click Proxy & Bake and
   Remove All Proxy Sessions join the Timeline catalogue (93 actions).
+- Fixed: hover text on the Timeline row kept only three lines, so longer
+  descriptions (often the reason a tool is greyed out) were cut off. It now shows
+  the full text as short lines: name, what it does, why it is unavailable (in
+  orange), what it works on and what it needs. It widens to fit and stays clear
+  of the playhead.
 - Fixed: One-Click Proxy & Bake flattened the object's motion (the proxy did not
   move) and removed every helper of an open proxy session. It now records the
   object's world motion on the proxy before baking and works in a session of

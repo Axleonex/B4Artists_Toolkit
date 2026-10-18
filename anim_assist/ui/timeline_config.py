@@ -339,6 +339,45 @@ def next_stage(stage,step):
     return STAGE_IDS[(index+step)%len(STAGE_IDS)]
 
 
+def wrap_to_width(text, max_width, measure):
+    """Greedy word wrap by measured width; a word wider than the line is split.
+    Never drops text: joining the lines with spaces gives the words back."""
+    lines, line = [], ''
+    for word in text.split():
+        while measure(word) > max_width and len(word) > 1:
+            cut = max(1, next((i for i in range(len(word), 0, -1) if measure(word[:i]) <= max_width), 1))
+            if line: lines.append(line); line = ''
+            lines.append(word[:cut]); word = word[cut:]
+        candidate = f'{line} {word}' if line else word
+        if line and measure(candidate) > max_width:
+            lines.append(line); line = word
+        else:
+            line = candidate
+    if line: lines.append(line)
+    return lines
+
+
+def fit_tooltip(paragraphs, region_w, region_h, measure, scale, line_h, pad, preferred_w):
+    """Wrap (text, role) paragraphs into (lines, width, height) for the region.
+    Starts at the preferred width and widens up to the region before giving up;
+    when even the full width is too short, DETAIL lines go first (last first)."""
+    widest = max(1, region_w - 2 * pad)
+    width = min(preferred_w, widest)
+    kept = list(paragraphs)
+    while True:
+        lines = [(line, role) for text, role in kept for line in wrap_to_width(text, width - 2 * pad, measure)]
+        height = len(lines) * line_h + 2 * pad
+        if height <= region_h or (width >= widest and not any(r == 'DETAIL' for _, r in kept)):
+            break
+        if width < widest:
+            width = min(widest, width * 1.5)
+            continue
+        index = max(i for i, (_, r) in enumerate(kept) if r == 'DETAIL')
+        kept.pop(index)
+    used = max((measure(line) for line, _ in lines), default=0) + 2 * pad
+    return lines, min(width, used), height
+
+
 def _stage_setup(layout, stage):
     return layout.setdefault('stages', {}).setdefault(stage, stage_default(stage))
 

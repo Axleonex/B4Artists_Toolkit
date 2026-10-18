@@ -330,6 +330,26 @@ def command_description(action, operation):
     return " ".join(parts)
 
 
+def command_tooltip(action, operation, reason="", status=""):
+    """Row hover text as (text, role) lines: name, what it does, then details.
+    Roles: TITLE, BODY, DETAIL, WARNING. A greyed tool leads its details with why."""
+    scope, prerequisite, gesture = command_metadata(action)
+    lines = [(ACTIONS[action][2], "TITLE"), ((TIPS.get(action) or operation).rstrip(".") + ".", "BODY")]
+    if reason:
+        lines.append((f"Unavailable: {reason.rstrip('.')}.", "WARNING"))
+    lines.append((f"Works on: {scope}.", "DETAIL"))
+    if not reason:
+        lines.append((f"Needs: {prerequisite}.", "DETAIL"))
+    if action in {"B25", "B50", "B75", "DRAG"}:
+        lines.append((BREAKDOWN_ANCHOR_HINT, "DETAIL"))
+    if gesture:
+        lines.append((gesture + ".", "DETAIL"))
+    if status:
+        lines.append((f"Active session: {status}.", "DETAIL"))
+    lines.append((f"Also in {FAMILY[action][1]} > {ACTIONS[action][2]}.", "DETAIL"))
+    return lines
+
+
 # Original search terms describe concepts, not another application's guarantees.
 SEARCH_TERMS = {
     "B25": "tween breakdown quarter", "B50": "tween breakdown halfway", "B75": "tween breakdown three quarters",
