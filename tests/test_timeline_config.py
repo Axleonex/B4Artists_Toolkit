@@ -150,13 +150,25 @@ class ConfigTests(unittest.TestCase):
             record=copy.deepcopy(self.record); record['active']['stages'][stage]=setup
             with self.assertRaises(ValueError,msg=(stage,setup)): config.validate(record,actions)
 
-    def test_tool_from_a_moved_family_is_dropped(self):
-        # A Deliver setup saved while Motion belonged to Deliver still loads; the trail tool is dropped.
+    def test_stage_keeps_tools_from_any_family(self):
+        # Any row may hold any tool (owner request 2026-10-18), including a trail tool in Deliver.
         record=copy.deepcopy(self.record)
         record['active']['stages']['DELIVER']={'order':['BAKE_STEP','TRAIL_SHOW'],
             'tools':{'BAKE_STEP':{'mode':'BUTTON'},'TRAIL_SHOW':{'mode':'BUTTON'}}}
         result=config.validate(record,actions)
-        self.assertEqual(result['active']['stages']['DELIVER']['order'],['BAKE_STEP'])
+        self.assertEqual(result['active']['stages']['DELIVER']['order'],['BAKE_STEP','TRAIL_SHOW'])
+
+    def test_row_families_add_held_families(self):
+        self.assertEqual(config.row_families(self.record['active'],'BLOCK'),('tween','keys'))
+        config.set_stage_tool(self.record,'BLOCK','BAKE_STEP',mode='BUTTON')
+        config.set_stage_tool(self.record,'BLOCK','TRAIL_TOGGLE',mode='BUTTON')
+        self.assertEqual(config.row_families(self.record['active'],'BLOCK'),('tween','keys','bake','motion'))
+        order=self.record['active']['stages']['BLOCK']['order']
+        self.assertGreater(order.index('BAKE_STEP'),max(order.index(a) for a in order if family[a]=='keys'))
+        config.set_stage_tool(self.record,'BLOCK','BAKE_STEP',mode='HIDDEN')
+        self.assertNotIn('bake',config.row_families(self.record['active'],'BLOCK'))
+        self.assertEqual(config.row_families(self.record['active'],'ALL'),config.FAMILY_ORDER)
+        config.validate(self.record,actions)
 
     def test_stage_roundtrip_and_modified(self):
         self.assertEqual(config.decode(config.encode(self.record,actions),actions),self.record)
@@ -189,13 +201,15 @@ class ConfigTests(unittest.TestCase):
         self.assertIn('DRAG',order)
 
     def test_pin_target(self):
-        self.assertEqual(config.pin_target('BLOCK','BAKE_STEP'),'ALL')
+        self.assertEqual(config.pin_target('BLOCK','BAKE_STEP'),'BLOCK')
         self.assertEqual(config.pin_target('BLOCK','INBETWEEN'),'BLOCK')
         self.assertEqual(config.pin_target('ALL','INBETWEEN'),'ALL')
 
     def test_entries_round_trip_per_stage(self):
         entries=config.stage_entries(self.record,'BLOCK',actions)
-        self.assertEqual({family[e['action']] for e in entries},{'tween','keys'})
+        self.assertEqual(len(entries),96)
+        ranks=[config.FAMILY_ORDER.index(family[e['action']]) for e in entries]
+        self.assertEqual(ranks,sorted(ranks))  # grouped by family, in permanent order
         self.assertEqual([e['action'] for e in entries][:3],['DRAG','INBETWEEN','INBETWEENS'])
         by={e['action']:e for e in entries}
         hold=entries.pop([e['action'] for e in entries].index('TYPE_HOLD'))

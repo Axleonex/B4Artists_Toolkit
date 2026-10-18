@@ -98,18 +98,18 @@ try:
         overlay.draw_stage_controls(rec, bpy.context, "pose")
         check("Stage dropdown drawn", stage_prop(rec))
         check("Hidden-family note for Pose in Block",
-              "Pose is hidden in the Block stage; choose All or Polish to see it." in labels(rec))
+              "The Block row has no Pose tools; add them in Toolbar Settings, or choose All or Polish." in labels(rec))
         rec = Rec()
         overlay.draw_stage_controls(rec, bpy.context, "tween")
-        check("No note for a family the stage shows", not any("hidden" in t for t in labels(rec)))
+        check("No note for a family the stage shows", not any("has no" in t for t in labels(rec)))
         record = model.recommended(ACTIONS)
         fake = SimpleNamespace(_record=record, serialize=lambda: record, layout_choice="recommended",
                                row="BLOCK", _stage="BLOCK", entries=[], active_index=0, layout=Rec())
         timeline_settings.ANIMASSIST_OT_toolbar_settings.draw(fake, bpy.context)
         check("Toolbar Settings shows the Row dropdown",
               any(n == "prop" and len(a) > 1 and a[1] == "row" for n, a, k in fake.layout.events))
-        check("Toolbar Settings says what the Block row lists",
-              "Block lists its own tools: Tween, Keys." in labels(fake.layout)
+        check("Toolbar Settings says any tool can go on any row",
+              "Any tool can go on any row. Tools are grouped by family; open one to add or remove its tools." in labels(fake.layout)
               and "Changes apply to the row right away." in labels(fake.layout))
         prefs = SimpleNamespace(timeline_toolbar_row=True)
         rec = Rec()

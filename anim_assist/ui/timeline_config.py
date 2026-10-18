@@ -5,8 +5,9 @@ import math
 import uuid
 
 FAMILY_ORDER = ('tween', 'timing', 'curves', 'keys', 'pose', 'bake', 'motion')
-# One table drives the stage tabs and the family filter. A stage only filters
-# what the band shows; the saved layout and its tool settings never change.
+# One table drives the stage tabs. Each stage's families are its home families:
+# its defaults come from them and its row always shows their menus. Any row may
+# also hold tools from other families (owner request 2026-10-18).
 STAGES = (
     ('ALL', 'All', None),
     ('BLOCK', 'Block', ('tween', 'keys')),
@@ -161,15 +162,12 @@ def validate_stage(stage, raw, actions):
         raise ValueError('Stage tool order must contain unique action IDs')
     if any(k in actions and k not in order for k in tools_raw):
         raise ValueError('Every stage tool must appear in its order')
-    allowed = set(stage_families(stage))
     result = dict(order=[], tools={})
     for action in order:
         entry = tools_raw.get(action, {})
         if action not in actions:  # Forward compatibility: keep unknown tools intact.
             if not isinstance(entry, dict): raise ValueError('Stage tool settings must be an object')
             result['order'].append(action); result['tools'][action] = copy.deepcopy(entry); continue
-        if family_of(action) not in allowed:
-            continue  # Its family moved to another stage in a later version; drop it here.
         if not isinstance(entry, dict): raise ValueError('Stage tool settings must be an object')
         mode, label_mode = entry.get('mode', 'BUTTON'), entry.get('label_mode', 'LABEL')
         _check_mode(action, mode, label_mode)
@@ -424,16 +422,28 @@ def stage_families(stage):
     return FAMILY_ORDER if families is None else tuple(f for f in FAMILY_ORDER if f in families)
 
 
+def row_families(layout, stage):
+    """Families a row shows, in permanent order: All shows every family; a stage
+    shows its home families plus any family it holds a visible tool from."""
+    if stage not in STAGE_KEYS: return FAMILY_ORDER
+    home = set(stage_families(stage))
+    order, tools = stage_view(layout, stage)
+    held = {family_of(a) for a in order
+            if isinstance(tools.get(a), dict) and tools[a].get('mode', 'HIDDEN') != 'HIDDEN'}
+    return tuple(f for f in FAMILY_ORDER if f in home or f in held)
+
+
 def stage_for_family(family):
     """The single stage that shows a family; All when no stage lists it."""
     return next((key for key,_,families in STAGES if families and family in families),'ALL')
 
 
-def hidden_family_note(stage,family,family_label):
-    """Explain why a configured family is absent from the row, or ''."""
-    if family in stage_families(stage): return ''
-    return (f'{family_label} is hidden in the {stage_label(stage)} stage; '
-            f'choose All or {stage_label(stage_for_family(family))} to see it.')
+def hidden_family_note(stage,family,family_label,families=None):
+    """Explain why a configured family is absent from the row, or ''.
+    families: what the row shows (row_families); its home families by default."""
+    if family in (stage_families(stage) if families is None else families): return ''
+    return (f'The {stage_label(stage)} row has no {family_label} tools; add them in Toolbar Settings, '
+            f'or choose All or {stage_label(stage_for_family(family))}.')
 
 
 def next_stage(stage,step):
@@ -500,8 +510,8 @@ def reset_stage(record, stage):
 
 
 def pin_target(stage, action):
-    """The setup a pin changes: the stage when it shows the tool's family, else All."""
-    return stage if stage in STAGE_KEYS and family_of(action) in stage_families(stage) else 'ALL'
+    """The setup a pin changes: the row shown. Any row may hold any tool."""
+    return stage if stage in STAGE_KEYS else 'ALL'
 
 
 def set_stage_tool(record, stage, action, mode=None, label_mode=None, presets=None, ticks=None):
@@ -539,14 +549,15 @@ def set_stage_tool(record, stage, action, mode=None, label_mode=None, presets=No
 
 
 def stage_entries(record, stage, actions):
-    """Settings rows for a setup: All lists every tool; a stage lists its families,
-    visible tools in stage order, then hidden ones in catalogue order."""
+    """Settings rows for a setup: every tool, grouped by family in permanent order;
+    within a family, the row's order (visible tools first in a stage)."""
     layout = record['active']
     order, tools = stage_view(layout, stage)
-    allowed = None if stage not in STAGE_KEYS else set(stage_families(stage))
+    rank = {f: i for i, f in enumerate(FAMILY_ORDER)}
+    listed = [a for a in order if a in actions]
+    listed.sort(key=lambda a: rank.get(family_of(a), len(rank)))  # stable: keeps order within a family
     return [dict(action=a, family=family_of(a), mode=tools[a]['mode'],
-                 label_mode=tools[a]['label_mode'], width=tools[a]['width'])
-            for a in order if a in actions and (allowed is None or family_of(a) in allowed)]
+                 label_mode=tools[a]['label_mode'], width=tools[a]['width']) for a in listed]
 
 
 def apply_entries(record, stage, entries, actions):
@@ -603,7 +614,7 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
     def compose(shown,compact=False,demote=False,no_families=False,named=False):
         specs=[]
         order,tools=stage_view(record['active'],shown)
-        for family in stage_families(shown):
+        for family in row_families(record['active'],shown):
             label,known=families[family]
             selected=[a for a in order if a in known and tools[a]['mode']!='HIDDEN']
             if not no_families:

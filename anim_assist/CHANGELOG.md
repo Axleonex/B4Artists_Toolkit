@@ -8,9 +8,9 @@
   Polish; Bake Preview Range, Smart Bake, Reduce, Bake Keys to Integer Frames,
   One-Click Proxy & Bake, the four proxy types and Remove All Proxy Sessions in
   Deliver).
-- Stage families: Spline shows Curves and Motion (arc checking), Deliver shows
-  Bake. A stage setup holding a tool whose family moved still loads; that tool
-  is dropped from it.
+- Stage families: Spline starts with Curves and Motion (arc checking), Deliver
+  with Bake. These are each stage's home families; any row can also hold tools
+  from other families.
 - Bake Preview Range, Bake Keys to Integer Frames, One-Click Proxy & Bake,
   Remove All Proxy Sessions, To Spline and To Stepped join the Timeline
   catalogue (95 actions).
@@ -68,17 +68,20 @@
   Timeline shows the five stages as one row above the button instead. Ctrl+Wheel
   still cycles.
 - Toolbar Settings edits one row at a time: the Row dropdown (All, Block,
-  Spline, Polish, Deliver) picks the row, and the Timeline switches to it. All
-  lists every tool; a stage lists only its own families' tools, each tagged
-  with its family. Set each tool Hidden, Button, Popout or Inline and reorder
-  it. Changes apply to the row at once, with no OK button: click outside or
+  Spline, Polish, Deliver) picks the row, and the Timeline switches to it.
+  Every row lists all 96 tools, grouped under family headers (Tween, Timing,
+  Curves, Keys, Pose, Bake, Motion) that open and close and show how many of
+  their tools are on the row; a stage opens on its home families. Find filters
+  by name. Add any tool to any row, or take a default off it: set it Hidden,
+  Button, Popout or Inline, and move it up or down within its family. A tool
+  from another family brings its family menu onto the row. Changes apply to the row at once, with no OK button: click outside or
   press Esc to close and keep them, or Revert Changes to undo everything since
   the dialog opened. Reset <Stage> to Defaults restores one stage; Restore
   Recommended restores all.
 - Saved layouts store All and all four stages together. Amounts (range,
   default, presets, width and so on) stay shared by every stage.
-- Tool Settings, Search pins and More follow the shown stage. Pinning a tool
-  from a family the stage does not show pins it into All, with a note.
+- Tool Settings, Search pins and More follow the shown stage. A Search pin
+  goes to the shown row, whatever the tool's family.
 - Stages start from a fixed default set, not from a layout's All tools: tools
   you added to All stay in All until you add them to a stage. Older 12.9.x
   layout records are upgraded in memory and saved in the new format on the

@@ -334,7 +334,7 @@ class ANIMASSIST_MT_timeline_more(bpy.types.Menu):
         stage=current_stage(context)
         order,tools=model.stage_view(data['active'],stage)
         families={key:(label,set(a for a in actions if a)) for key,label,actions in GROUPS}
-        for key in model.stage_families(stage):
+        for key in model.row_families(data['active'],stage):
             label,known=families[key]
             actions=[a for a in order if a in known and tools[a]['mode']!='HIDDEN']
             if not actions: continue
@@ -403,9 +403,6 @@ class ANIMASSIST_OT_timeline_pin(bpy.types.Operator):
             self.report({'WARNING'},str(exc)); return {'CANCELLED'}
         if target=='ALL':
             setattr(prefs, quick_property_name(self.action),not visible)
-            if stage!='ALL':
-                verb='Unpinned from' if visible else 'Pinned in'
-                self.report({'INFO'},f"{verb} All; {model.stage_label(stage)} does not show {FAMILY[self.action][1]}")
         return {"FINISHED"}
 
 

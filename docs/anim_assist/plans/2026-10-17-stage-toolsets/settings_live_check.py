@@ -67,6 +67,11 @@ def row_keys():
         return {i[1].split(":", 1)[0] for i in mod("ui.timeline_overlay")._items(bpy.context)[0]}
 
 
+def menu_keys():
+    with bpy.context.temp_override(window=window(), area=timeline(), region=region()):
+        return {i[1] for i in mod("ui.timeline_overlay")._items(bpy.context)[0] if i[0] == "MENU"}
+
+
 def stored_block():
     prefs = mod("prefs")
     return prefs.timeline_record(prefs.get_prefs(bpy.context))["active"]["stages"]["BLOCK"]["order"]
@@ -80,6 +85,12 @@ def open_dialog():
         bpy.ops.animassist.toolbar_settings("INVOKE_DEFAULT")
 
 
+def refresh():
+    """Pointer over the panel so Blender redraws it after a scripted change."""
+    for x in (1200, 1210):
+        window().event_simulate(type="MOUSEMOVE", value="NOTHING", x=x, y=700)
+
+
 def dialog():
     return mod("ui.timeline_settings")._editors.get(window().as_pointer())
 
@@ -89,8 +100,9 @@ def plan():
     yield (lambda: check("Range shows on the Block row first", "RANGE" in row_keys())), 0.2
     yield open_dialog, 1.0
     yield (lambda: check("Toolbar Settings opens on the Timeline's row (Block)",
-                         dialog() is not None and dialog().row == "BLOCK"
-                         and {e.family for e in dialog().entries} == {"tween", "keys"})), 0.2
+                         dialog() is not None and dialog().row == "BLOCK" and len(dialog().entries) == 96
+                         and {s.name for s in dialog().sections if s.expanded} == {"tween", "keys"})), 0.2
+    yield refresh, 0.6
     yield (lambda: bpy.ops.screen.screenshot(filepath=str(OUT / "settings-block.png"))), 0.4
 
     def hide_range():
@@ -100,14 +112,37 @@ def plan():
     yield (lambda: check("Hiding a tool updates the Timeline row while the dialog is open",
                          dialog() is not None and "RANGE" not in row_keys() and "RANGE" not in stored_block())), 0.2
 
-    def pick_spline():
-        with bpy.context.temp_override(window=window(), workspace=window().workspace):
-            dialog().row = "SPLINE"
-    yield pick_spline, 0.6
-    yield (lambda: check("Choosing the Spline row switches the Timeline and the list",
+    # Real input inside the panel. It opens under the pointer at the Timeline's centre, so at
+    # 1920x1000 the Row dropdown is at (1300, 838) and, on the Spline row, the Timing header
+    # at (946, 703) (window coordinates, origin bottom-left).
+    yield (lambda: window().event_simulate(type="MOUSEMOVE", value="NOTHING", x=1298, y=838)), 0.4
+    yield (lambda: window().event_simulate(type="MOUSEMOVE", value="NOTHING", x=1300, y=838)), 0.4
+    yield (lambda: window().event_simulate(type="WHEELDOWNMOUSE", value="PRESS", x=1300, y=838, ctrl=True)), 0.8
+    yield (lambda: check("Choosing Spline in the Row dropdown (real input) switches the Timeline and the list",
                          getattr(window().workspace, PROP) == "SPLINE"
-                         and {e.family for e in dialog().entries} == {"curves", "motion"})), 0.2
+                         and {s.name for s in dialog().sections if s.expanded} == {"curves", "motion"})), 0.2
+    yield refresh, 0.6
     yield (lambda: bpy.ops.screen.screenshot(filepath=str(OUT / "settings-spline.png"))), 0.4
+    yield (lambda: window().event_simulate(type="MOUSEMOVE", value="NOTHING", x=945, y=703)), 0.4
+    yield (lambda: window().event_simulate(type="MOUSEMOVE", value="NOTHING", x=946, y=703)), 0.4
+    yield (lambda: window().event_simulate(type="LEFTMOUSE", value="PRESS", x=946, y=703)), 0.3
+    yield (lambda: window().event_simulate(type="LEFTMOUSE", value="RELEASE", x=946, y=703)), 0.8
+    yield (lambda: check("Clicking the Timing header opens that family in the panel",
+                         {s.name for s in dialog().sections if s.expanded} == {"timing", "curves", "motion"})), 0.2
+
+    def add_bake_to_spline():
+        with bpy.context.temp_override(window=window()):
+            next(e for e in dialog().entries if e.action == "BAKE_STEP").mode = "BUTTON"
+    yield add_bake_to_spline, 0.6
+    yield (lambda: check("A Bake tool added to Spline shows on the Spline row with its Bake menu",
+                         "BAKE_STEP" in row_keys() and "bake" in menu_keys())), 0.2
+
+    def open_bake_section():
+        with bpy.context.temp_override(window=window()):
+            next(s for s in dialog().sections if s.name == "bake").expanded = True
+    yield open_bake_section, 0.6
+    yield refresh, 0.6
+    yield (lambda: bpy.ops.screen.screenshot(filepath=str(OUT / "settings-spline-bake.png"))), 0.4
     def move_away():
         for x, y in ((600, 500), (900, 300), (1500, 150), (100, 900)):
             window().event_simulate(type="MOUSEMOVE", value="NOTHING", x=x, y=y)

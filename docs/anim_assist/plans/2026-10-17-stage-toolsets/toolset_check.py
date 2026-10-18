@@ -41,6 +41,13 @@ class Entries(list):
         return item
 
 
+class Sections(list):
+    def add(self):
+        item = SimpleNamespace(name="", label="", expanded=False)
+        self.append(item)
+        return item
+
+
 try:
     addon_utils.enable("B4_anim_assist", default_set=True, persistent=False)
     pkg = sys.modules["B4_anim_assist"]
@@ -66,17 +73,23 @@ try:
     setattr(space, PROP, "BLOCK")
 
     # Toolbar Settings: entries per stage, edits kept when switching stage.
-    fake = SimpleNamespace(entries=Entries(), family="tween", active_index=0, layout_choice="recommended")
+    fake = SimpleNamespace(entries=Entries(), sections=Sections(), family="tween", active_index=0,
+                           layout_choice="recommended")
     cls = settings.ANIMASSIST_OT_toolbar_settings
     fake.serialize = lambda: cls.serialize(fake)
     fake.populate = lambda data, stage=None: cls.populate(fake, data, stage)
     cls.populate(fake, rec(), "BLOCK")
-    check("Block settings list only Tween and Keys", {e.family for e in fake.entries} == {"tween", "keys"})
+    families = [e.family for e in fake.entries]
+    check("Block settings list every tool, grouped by family",
+          len(fake.entries) == 96 and families == sorted(families, key=model.FAMILY_ORDER.index))
+    check("Block opens on its Tween and Keys sections",
+          {s.name for s in fake.sections if s.expanded} == {"tween", "keys"} and len(fake.sections) == 7)
     check("Row dropdown offers All and the four stage rows", [i[0] for i in settings._ROWS] == ["ALL", "BLOCK", "SPLINE", "POLISH", "DELIVER"]
           and fake.row == "BLOCK")
     next(e for e in fake.entries if e.action == "INBETWEEN").mode = "HIDDEN"
     cls.switch_stage(fake, "POLISH")
-    check("Switching to the Polish row lists only its tools", {e.family for e in fake.entries} == {"timing", "pose"}
+    check("Switching to the Polish row lists every tool and opens Timing and Pose",
+          len(fake.entries) == 96 and {s.name for s in fake.sections if s.expanded} == {"timing", "pose"}
           and fake.row == "POLISH")
     check("Block edit kept after switching", "INBETWEEN" not in fake._record["active"]["stages"]["BLOCK"]["order"])
     cls.switch_stage(fake, "ALL")
@@ -130,11 +143,13 @@ try:
               and rec()["active"]["tools"] == before_all)
         bpy.ops.animassist.timeline_pin(action="INBETWEEN")
         check("Pin again shows it in Block", "INBETWEEN" in rec()["active"]["stages"]["BLOCK"]["order"])
-        block = copy.deepcopy(rec()["active"]["stages"]["BLOCK"])
+        all_tools = copy.deepcopy(rec()["active"]["tools"])
         bpy.ops.animassist.timeline_pin(action="BAKE_STEP")
-        check("Pin of a Bake tool in Block changes All", rec()["active"]["tools"]["BAKE_STEP"]["mode"] == "HIDDEN"
-              and rec()["active"]["stages"]["BLOCK"] == block)
+        check("Pin of a Bake tool in Block adds it to Block, not All",
+              "BAKE_STEP" in rec()["active"]["stages"]["BLOCK"]["order"] and rec()["active"]["tools"] == all_tools
+              and "bake" in model.row_families(rec()["active"], "BLOCK"))
         bpy.ops.animassist.timeline_pin(action="BAKE_STEP")
+        check("Pin again takes it off Block", "BAKE_STEP" not in rec()["active"]["stages"]["BLOCK"]["order"])
 
     # Tool Settings: display per stage, amounts shared.
     setattr(space, PROP, "SPLINE")

@@ -66,7 +66,13 @@ def draw_stage_controls(layout, context, family=None):
     layout.prop(workspace, STAGE_PROPERTY, text="Row Stage")
     if family:
         labels = {key: label for key, label, _actions in GROUPS}
-        note = model.hidden_family_note(current_stage(context), family, labels.get(family, family))
+        from ..prefs import get_prefs, timeline_record
+        stage = current_stage(context)
+        try:
+            shown = model.row_families(timeline_record(get_prefs(context))['active'], stage)
+        except (ValueError, TypeError, AttributeError):
+            shown = None
+        note = model.hidden_family_note(stage, family, labels.get(family, family), shown)
         if note:
             layout.label(text=note, icon="INFO")
 
@@ -371,7 +377,7 @@ def _row_hidden_tools(context, items):
         record = model.recommended(ACTIONS)
     stage = current_stage(context)
     order, tools = model.stage_view(record['active'], stage)
-    families = set(model.stage_families(stage)) if stage in model.STAGE_KEYS else {k for k, _l, _a in GROUPS}
+    families = set(model.row_families(record['active'], stage))
     shown = {item[1].split(':', 1)[0] for item in items if item[0] in {'ACTION', 'SLIDER', 'POPOUT'}}
     return [a for a in order if a in ACTIONS and tools.get(a, {}).get('mode', 'HIDDEN') != 'HIDDEN'
             and FAMILY[a][0] in families and a not in shown]

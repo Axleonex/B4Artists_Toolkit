@@ -59,6 +59,16 @@ class TimelineLayoutTests(unittest.TestCase):
             groups={key:{a for a in actions if a} for key,_l,actions in values['GROUPS']}
             self.assertTrue(all(any(a in groups[f] for f in menus) for a in shown))
 
+    def test_tool_from_another_family_shows_on_a_stage_row(self):
+        record=config.recommended(values['ACTIONS'])
+        config.set_stage_tool(record,'BLOCK','BAKE_STEP',mode='BUTTON')
+        controls=layout(1920,120,28,False,record,values['GROUPS'],values['QUICK_LABELS'],
+                        lambda text:len(text)*6,'BLOCK')
+        menus=[c[1] for c in controls if c[0]=='MENU']
+        self.assertEqual(menus,['tween','keys','bake'])
+        keys=[c[1] for c in controls]
+        self.assertGreater(keys.index('BAKE_STEP'),keys.index('bake'))
+
     def test_all_stage_matches_unstaged_toolbar(self):
         strip=lambda cs:[c for c in cs if c[0] not in {'STAGE','STAGE_CYCLE'}]
         tools=lambda cs:[(c[0],c[1]) for c in strip(cs)]
@@ -91,7 +101,8 @@ class TimelineLayoutTests(unittest.TestCase):
         self.assertEqual(config.hidden_family_note('ALL','pose','Pose'),'')
         self.assertEqual(config.hidden_family_note('POLISH','pose','Pose'),'')
         self.assertEqual(config.hidden_family_note('BLOCK','pose','Pose'),
-                         'Pose is hidden in the Block stage; choose All or Polish to see it.')
+                         'The Block row has no Pose tools; add them in Toolbar Settings, or choose All or Polish.')
+        self.assertEqual(config.hidden_family_note('BLOCK','pose','Pose',('tween','keys','pose')),'')
         for family in config.FAMILY_ORDER:
             owner=config.stage_for_family(family)
             self.assertIn(family,config.stage_families(owner))

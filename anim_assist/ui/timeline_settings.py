@@ -21,13 +21,25 @@ _LABELS=(('LABEL','Label','Show the tool name'),('ICON','Icon','Show the tool\'s
 def _modes(self,context): return _MODES if self.action in model.SLIDERS else _MODES[:2]
 
 
-# The row being edited (owner request 2026-10-18): All lists every tool; a stage row
-# lists only its own families' tools.
-_ROWS=tuple((key,label,('Every tool, all families' if key=='ALL' else
-             label+' row: '+', '.join(dict((k,l) for k,l,_a in GROUPS)[f] for f in families)),
-             model.STAGE_NUMBERS[key]) for key,label,families in model.STAGES)
+# The row being edited (owner request 2026-10-18). Every row lists every tool,
+# grouped by family; a stage starts from its home families' tools.
 _FAMILY_LABELS={key:label for key,label,_a in GROUPS}
+_ROWS=tuple((key,label,('The All row' if key=='ALL' else
+             f'The {label} row; it starts with '+' and '.join(_FAMILY_LABELS[f] for f in families)+' tools'),
+             model.STAGE_NUMBERS[key]) for key,label,families in model.STAGES)
 _populating=False  # populate() sets values; their update callbacks must not write
+# Family sections opened or closed while editing, per row, kept for this session.
+_expanded={}
+
+
+def _home(stage):
+    return set(model.stage_families(stage)) if stage in model.STAGE_KEYS else set()
+
+
+def _section_changed(self,context):
+    if _populating: return
+    current=editor(context)
+    if current is not None: _expanded[(getattr(current,'_stage','ALL'),self.name)]=self.expanded
 
 
 def _redraw_timelines(context):
@@ -110,20 +122,48 @@ class AA_ToolbarEntry(bpy.types.PropertyGroup):
     width: FloatProperty(name='Slider Width',description='Track width in logical pixels',default=120,min=80,max=240,update=_entry_changed)
 
 
-class AA_UL_toolbar_tools(bpy.types.UIList):
-    def draw_item(self,context,layout,data,item,icon,active_data,active_propname,index=0):
-        row=layout.row(align=True)
-        tag=row.row(); tag.enabled=False; tag.label(text=_FAMILY_LABELS.get(item.family,''))
-        row.label(text=item.name)
-        row.prop(item,'mode',text='')
-        if model.has_icon(item.action): row.prop(item,'label_mode',text='')
-        else: row.label(text='')
+class AA_ToolbarSection(bpy.types.PropertyGroup):
+    # name holds the family key.
+    label: StringProperty(options={'HIDDEN'})
+    expanded: BoolProperty(name='Show Tools',description='Show or hide this family\'s tools',default=False,
+        update=_section_changed)
 
-    def filter_items(self,context,data,propname):
-        # Every tool of the chosen row; the name filter still works.
-        items=getattr(data,propname)
-        text=self.filter_name.lower()
-        return ([self.bitflag_filter_item if not text or text in item.name.lower() else 0 for item in items],[])
+
+def _draw_entry(layout,entry):
+    row=layout.row(align=True)
+    split=row.split(factor=.4,align=True)
+    split.label(text=entry.name)
+    right=split.row(align=True)
+    right.prop(entry,'mode',text='')
+    cell=right.row(align=True)
+    if model.has_icon(entry.action): cell.prop(entry,'label_mode',text='')
+    elif entry.action in model.SLIDERS and entry.mode=='INLINE': cell.prop(entry,'width',text='Width')
+    else: cell.label(text='')
+    for direction,icon in ((-1,'TRIA_UP'),(1,'TRIA_DOWN')):
+        op=right.operator('animassist.toolbar_reorder',text='',icon=icon); op.action=entry.action; op.direction=direction
+    op=right.operator('animassist.tool_settings',text='',icon='PREFERENCES'); op.action=entry.action
+
+
+def _draw_sections(self,layout,stage):
+    """Family sections; a function so drawing works on stand-ins in checks."""
+    layout.prop(self,'find',text='',icon='VIEWZOOM')
+    text=getattr(self,'find','').strip().lower()
+    home=_home(stage)
+    column=layout.column(align=True)
+    for section in getattr(self,'sections',()):
+        tools=[e for e in getattr(self,'entries',()) if e.family==section.name]
+        matches=[e for e in tools if not text or text in e.name.lower()]
+        if not matches: continue
+        shown=sum(e.mode!='HIDDEN' for e in tools)
+        note=f'{shown} of {len(tools)} on the row'
+        if section.name in home: note+=f' · a {model.stage_label(stage)} family'
+        box=column.box()
+        opened=section.expanded or bool(text)
+        head=box.row(); head.alignment='LEFT'
+        head.prop(section,'expanded',text=f'{section.label}    {note}',
+                 icon='DOWNARROW_HLT' if opened else 'RIGHTARROW',emboss=False)
+        if opened:
+            for entry in matches: _draw_entry(box,entry)
 
 
 class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
@@ -133,11 +173,14 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
     row: EnumProperty(name='Row',description='Choose the Timeline row to configure; the Timeline shows it while you edit',
         items=_ROWS,update=_row_update)
     entries: CollectionProperty(type=AA_ToolbarEntry)
+    sections: CollectionProperty(type=AA_ToolbarSection)
+    find: StringProperty(name='Find Tool',description='Show only tools whose name contains this text',
+        options={'TEXTEDIT_UPDATE','SKIP_SAVE'})
     active_index: IntProperty(default=0)
     layout_choice: EnumProperty(name='Saved Layout',description='Choose a saved layout to load or manage',items=_choices,default=0)
 
     def populate(self,data,stage=None):
-        # Entries show one row: All (every tool), or a stage row (its families only).
+        # Entries show one row's setup for every tool, grouped by family.
         global _populating
         _populating=True
         try:
@@ -148,6 +191,13 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
                 entry=self.entries.add(); entry.name=ACTIONS[row['action']][2]; entry.action=row['action']
                 entry.family=row['family']
                 entry.mode=row['mode']; entry.label_mode=row['label_mode']; entry.width=row['width']
+            self.sections.clear()
+            home=_home(self._stage)
+            for family in model.FAMILY_ORDER:
+                if family not in _FAMILY_LABELS: continue
+                section=self.sections.add(); section.name=family; section.label=_FAMILY_LABELS[family]
+                # A stage opens on its home families; All opens closed.
+                section.expanded=_expanded.get((self._stage,family),family in home)
             self.row=self._stage
             if not 0<=self.active_index<len(self.entries): self.active_index=0
             self.layout_choice=data['active_saved_id'] or 'recommended'
@@ -196,19 +246,10 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
         layout.separator()
         layout.prop(self,'row')
         stage=getattr(self,'_stage','ALL')
-        layout.label(text='All lists every tool.' if stage not in model.STAGE_KEYS else
-                     model.stage_label(stage)+' lists its own tools: '+
-                     ', '.join(_FAMILY_LABELS[f] for f in model.stage_families(stage))+'.')
+        layout.label(text='Any tool can go on any row. Tools are grouped by family; open one to add or remove its tools.')
         layout.label(text='Changes apply to the row right away.',icon='INFO')
         if getattr(self,'_error',''): layout.label(text=self._error,icon='ERROR')
-        layout.template_list('AA_UL_toolbar_tools','',self,'entries',self,'active_index',rows=10)
-        if 0<=self.active_index<len(self.entries):
-            entry=self.entries[self.active_index]
-            row=layout.row(align=True)
-            for direction,label in ((-1,'Move Up'),(1,'Move Down')):
-                op=row.operator('animassist.toolbar_reorder',text=label); op.direction=direction
-            op=row.operator('animassist.tool_settings',text='Tool Settings'); op.action=entry.action
-            if entry.action in model.SLIDERS: layout.prop(entry,'width')
+        _draw_sections(self,layout,stage)
         if getattr(self,'_stage','ALL') in model.STAGE_KEYS:
             layout.operator('animassist.reset_stage_toolbar',text='Reset '+model.stage_label(self._stage)+' to Defaults')
         row=layout.row(align=True)
@@ -252,19 +293,21 @@ class ANIMASSIST_OT_toolbar_revert(bpy.types.Operator):
 class ANIMASSIST_OT_toolbar_reorder(bpy.types.Operator):
     bl_idname='animassist.toolbar_reorder'
     bl_label='Move Toolbar Tool'
-    bl_description='Move the selected tool within its animation family'
+    bl_description='Move this tool earlier or later within its family on the row'
     bl_options={'INTERNAL'}
+    action: StringProperty(options={'HIDDEN','SKIP_SAVE'})
     direction: IntProperty(options={'HIDDEN','SKIP_SAVE'})
     def execute(self,context):
         current=editor(context)
-        if current and 0<=current.active_index<len(current.entries):
+        if current is None: return {'CANCELLED'}
+        index=next((i for i,e in enumerate(current.entries) if e.action==self.action),current.active_index)
+        if 0<=index<len(current.entries):
             # Order is kept within a family (the row groups tools by family).
-            family=current.entries[current.active_index].family
+            family=current.entries[index].family
             indexes=[i for i,e in enumerate(current.entries) if e.family==family]
-            position=indexes.index(current.active_index)
-            target=position+self.direction
+            target=indexes.index(index)+self.direction
             if 0<=target<len(indexes):
-                current.entries.move(current.active_index,indexes[target]); current.active_index=indexes[target]
+                current.entries.move(index,indexes[target]); current.active_index=indexes[target]
                 live_write(context,current)
         return {'FINISHED'}
 
@@ -474,7 +517,7 @@ class ANIMASSIST_OT_layout_action(bpy.types.Operator):
             _layout_editors.pop(context.window.as_pointer(),None)
 
 
-CLASSES=(AA_ToolbarEntry,AA_UL_toolbar_tools,ANIMASSIST_OT_toolbar_settings,
+CLASSES=(AA_ToolbarEntry,AA_ToolbarSection,ANIMASSIST_OT_toolbar_settings,
          ANIMASSIST_OT_toolbar_reorder,ANIMASSIST_OT_toolbar_revert,ANIMASSIST_OT_restore_toolbar,ANIMASSIST_OT_reset_stage_toolbar,
          ANIMASSIST_OT_tool_settings,
          ANIMASSIST_OT_layout_action)
