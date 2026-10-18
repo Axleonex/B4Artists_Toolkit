@@ -113,7 +113,9 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(stages['SPLINE']['tools']['FRAME'],{'mode':'POPOUT','label_mode':'LABEL'})
         self.assertEqual(stages['BLOCK']['tools']['DRAG']['mode'],'INLINE')
         self.assertEqual(stages['POLISH']['tools']['OFFSET_DRAG']['mode'],'INLINE')
-        self.assertEqual(len(stages['DELIVER']['order']),8)
+        self.assertEqual(stages['DELIVER']['order'],['BAKE_STEP','SMART_BAKE','REDUCE','PROXY_TRANSLATION',
+            'PROXY_ORIENTATION','PROXY_WORLD','PROXY_PARENT','BAKE_CLEANUP','TRAIL_SHOW','TRAIL_REFRESH',
+            'TRAIL_DIAGNOSE','TRAIL_HIDE'])
         for stage in config.STAGE_KEYS:
             allowed=set(config.stage_families(stage))
             self.assertTrue(all(family[a] in allowed for a in stages[stage]['order']),stage)

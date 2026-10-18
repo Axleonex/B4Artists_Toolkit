@@ -49,7 +49,8 @@ try:
     from anim_assist.ui import timeline_overlay as overlay
     text = overlay.ANIMASSIST_OT_overlay_control.description(
         bpy.context, SimpleNamespace(kind="STAGE", key="POLISH"))
-    check("Stage tooltip names its families", "Timing, Pose" in text and "unchanged" in text)
+    check("Stage tooltip names its families", "Timing, Pose" in text and "toolset" in text)
+    check("Stage dropdown menu registered", hasattr(bpy.types, "ANIMASSIST_MT_timeline_stage"))
     from anim_assist.ui.timeline_catalog import command_description
     check("Spacing wording in T80 tooltip", "keys sit closer together" in command_description("T80", ""))
     check("Spacing wording in Timing Scale tooltip", "spacing" in command_description("SCALE_DRAG", ""))

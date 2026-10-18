@@ -27,7 +27,9 @@ ROW_LABELS = {
     'TYPE_HOLD': 'Mark Hold', 'REFERENCE': 'Set Ref', 'HANDLE_CLAMPED': 'Auto Clamped',
     'HANDLE_VECTOR': 'Vector', 'HANDLE_FREE': 'Free', 'T80': '80%', 'T90': '90%', 'T110': '110%',
     'T120': '120%', 'SNAP': 'Snap', 'OPPOSITE': 'Opposite', 'MIRROR_ACTIVE': 'Mirror Active',
-    'SWAP': 'Swap', 'SMART_BAKE': 'Smart Bake', 'REDUCE': 'Reduce', 'BAKE_CLEANUP': 'Cleanup Proxies',
+    'SWAP': 'Swap', 'SMART_BAKE': 'Smart Bake', 'REDUCE': 'Reduce', 'BAKE_CLEANUP': 'Bake Proxies',
+    'PROXY_TRANSLATION': 'Proxy Loc', 'PROXY_ORIENTATION': 'Proxy Rot', 'PROXY_WORLD': 'Proxy World',
+    'PROXY_PARENT': 'Proxy Parent',
     'TRAIL_REFRESH': 'Refresh', 'TRAIL_DIAGNOSE': 'Diagnose', 'TRAIL_HIDE': 'Hide Trails',
 }
 
@@ -81,12 +83,12 @@ def _family_labels(stage):
 def _stage_description(kind, stage):
     label = model.stage_label(stage)
     if kind == "STAGE_CYCLE":
-        return (f"Stage: {label}. Click for the next stage; Ctrl+Wheel cycles. "
-                "Stages filter this band only; saved layouts are unchanged")
+        return (f"Stage: {label}. Click to choose a stage; Ctrl+Wheel cycles. "
+                "Each stage has its own toolset, edited in Settings")
     if stage == "ALL":
-        return "Show every tool family in your active layout. Ctrl+Wheel over the tabs cycles stages"
-    return (f"{label} stage: show only {_family_labels(stage)} tools from your active layout. "
-            "Saved layouts are unchanged. Ctrl+Wheel over the tabs cycles stages")
+        return "Show the All overview of every tool family. Ctrl+Wheel over the tabs cycles stages"
+    return (f"{label} stage: its own {_family_labels(stage)} toolset, edited in Settings. "
+            "Ctrl+Wheel over the tabs cycles stages")
 
 
 def row_layout(width, height, row_height, at_top, clusters, measure):
@@ -199,8 +201,19 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
         if self.kind == "STAGE":
             return bpy.ops.animassist.timeline_stage(stage=self.key)
         if self.kind == "STAGE_CYCLE":
-            return bpy.ops.animassist.timeline_stage(step=1)
+            return bpy.ops.wm.call_menu("INVOKE_DEFAULT", name=ANIMASSIST_MT_timeline_stage.bl_idname)
         return {"FINISHED"}
+
+
+class ANIMASSIST_MT_timeline_stage(bpy.types.Menu):
+    bl_idname = "ANIMASSIST_MT_timeline_stage"
+    bl_label = "Anim Assist Stage"
+    bl_description = "Choose which stage toolset the Timeline row shows"
+
+    def draw(self, context):
+        workspace = getattr(context, "workspace", None)
+        if workspace is not None and hasattr(workspace, STAGE_PROPERTY):
+            self.layout.props_enum(workspace, STAGE_PROPERTY)
 
 
 class ANIMASSIST_OT_timeline_stage(bpy.types.Operator):
@@ -376,7 +389,19 @@ def _draw():
                     # Underline in the colour of the stage's first family.
                     _quad((rect[0]+3*scale,rect[1]+2*scale,rect[2]-6*scale,2*scale),
                           _COLORS[model.stage_families(shown)[0]])
-                _text(rect,label,(*widgets.text_sel[:3],1) if current or highlighted else ink,scale)
+                text_rect=rect
+                blf.size(0,round(11*scale))
+                arrow=0
+                if kind=='STAGE_CYCLE' and rect[2]>=blf.dimensions(0,label)[0]+(model.STAGE_ARROW+8)*scale:
+                    arrow=model.STAGE_ARROW*scale
+                    text_rect=(rect[0],rect[1],rect[2]-arrow,rect[3])
+                ink_text=(*widgets.text_sel[:3],1) if current or highlighted else ink
+                _text(text_rect,label,ink_text,scale)
+                if arrow:
+                    # Dropdown arrow: three stacked bars narrowing downward.
+                    ax=rect[0]+rect[2]-arrow*.6; ay=rect[1]+rect[3]/2
+                    for row,half in enumerate((3,2,1)):
+                        _quad((ax-half*scale,ay+(1-row)*scale,2*half*scale,scale),ink_text)
                 continue
             if kind=='SLIDER':
                 tool=model.effective_tool(action,record['active']['tools'][action])
@@ -575,7 +600,7 @@ def _load_post(_unused):
     _initialized.clear()
 
 
-_CLASSES = (ANIMASSIST_OT_overlay_control, ANIMASSIST_OT_timeline_stage,
+_CLASSES = (ANIMASSIST_OT_overlay_control, ANIMASSIST_MT_timeline_stage, ANIMASSIST_OT_timeline_stage,
             ANIMASSIST_OT_timeline_overlay_events, ANIMASSIST_OT_clear_timeline_hover)
 
 
@@ -595,8 +620,8 @@ def _stage_update(workspace, _context):
 def _stage_items():
     # Explicit, permanent numbers: the .blend stores the number, so reordering
     # STAGES later must not change saved stages.
-    return [(key, label, "Show every tool family in the active layout" if families is None
-             else f"Show only {_family_labels(key)} tools", model.STAGE_NUMBERS[key])
+    return [(key, label, "The All overview of every tool family" if families is None
+             else f"The {label} toolset: {_family_labels(key)}", model.STAGE_NUMBERS[key])
             for key, label, families in model.STAGES]
 
 

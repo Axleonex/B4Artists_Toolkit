@@ -19,8 +19,10 @@ STAGE_IDS = tuple(key for key, _label, _families in STAGES)
 STAGE_NUMBERS = {'ALL': 0, 'BLOCK': 1, 'SPLINE': 2, 'POLISH': 3, 'DELIVER': 4}
 STAGE_KEYS = tuple(key for key, _label, families in STAGES if families)
 SCHEMA_VERSION = 2
-# Stage setups add about a third to each layout; keep room for 100 saved layouts.
-RECORD_LIMIT = 1_400_000
+# Stage setups add about 40% to each layout; keep room for 100 saved layouts with margin.
+RECORD_LIMIT = 2_000_000
+# Logical pixels reserved for the dropdown arrow on the compact stage button.
+STAGE_ARROW = 10
 MODES = ('HIDDEN', 'BUTTON', 'POPOUT', 'INLINE')
 _B, _P, _I = 'BUTTON', 'POPOUT', 'INLINE'
 # Fixed default toolsets, left to right in workflow order (owner decision:
@@ -36,7 +38,9 @@ STAGE_DEFAULTS = {
     'POLISH': (('NUDGE_LEFT', _B), ('NUDGE_RIGHT', _B), ('SCALE_DRAG', _P), ('T80', _B), ('T90', _B),
                ('T110', _B), ('T120', _B), ('OFFSET_DRAG', _I), ('RIPPLE', _B), ('SNAP', _B),
                ('OPPOSITE', _B), ('MIRROR_SELECTED', _B), ('MIRROR_ACTIVE', _B), ('SWAP', _B)),
-    'DELIVER': (('BAKE_STEP', _B), ('SMART_BAKE', _B), ('REDUCE', _B), ('BAKE_CLEANUP', _B),
+    'DELIVER': (('BAKE_STEP', _B), ('SMART_BAKE', _B), ('REDUCE', _B),
+                ('PROXY_TRANSLATION', _B), ('PROXY_ORIENTATION', _B), ('PROXY_WORLD', _B), ('PROXY_PARENT', _B),
+                ('BAKE_CLEANUP', _B),
                 ('TRAIL_SHOW', _B), ('TRAIL_REFRESH', _B), ('TRAIL_DIAGNOSE', _B), ('TRAIL_HIDE', _B)),
 }
 # Action -> family, registered by timeline_catalog (keeps this module bpy- and catalogue-free).
@@ -439,8 +443,11 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
     # swap one for the other under the cursor. The cycle button keeps one key.
     tabs=[('STAGE',key,label,max(24*scale,measure(label)+2*pad)) for key,label,_ in STAGES]
     label=stage_label(stage)
-    if measure(label)+2*pad>budget*.5: label=label[0]
-    cycle=[('STAGE_CYCLE','CYCLE',label,max(24*scale,measure(label)+2*pad))]
+    if measure(label)+2*pad+STAGE_ARROW*scale>budget*.5: label=label[0]
+    # The compact stage button opens a dropdown; leave room for its arrow.
+    cycle_w=max(24*scale,measure(label)+2*pad+STAGE_ARROW*scale)
+    if gap+cycle_w>budget: cycle_w=max(24*scale,measure(label)+2*pad)  # extreme width: no arrow
+    cycle=[('STAGE_CYCLE','CYCLE',label,cycle_w)]
 
     def compose(shown,compact=False,demote=False,no_families=False):
         specs=[]

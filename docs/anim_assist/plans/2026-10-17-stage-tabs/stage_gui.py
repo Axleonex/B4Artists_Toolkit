@@ -28,6 +28,7 @@ def setup():
         for frame, x in ((1, 0), (12, 2), (24, 0)):
             obj.location.x = x
             obj.keyframe_insert("location", index=0, frame=frame)
+    bpy.context.scene.frame_set(30)  # keep the playhead clear of the stage button
     window = bpy.context.window_manager.windows[0]
     area = timeline(window)
     if area is None:
@@ -64,6 +65,18 @@ def step():
             phase = state.setdefault("settings", 0)
             region = next(r for r in area.regions if r.type == "WINDOW")
             override = dict(window=window, screen=window.screen, area=area, region=region)
+            if os.environ.get("AA_CAPTURE_DROPDOWN") == "1" and phase == 0:
+                # Open the compact stage button's dropdown and capture the window.
+                with bpy.context.temp_override(**override):
+                    bpy.ops.wm.call_menu(name="ANIMASSIST_MT_timeline_stage")
+                state["settings"] = 9
+                return 1.2
+            if phase == 9:
+                with bpy.context.temp_override(window=window, screen=window.screen):
+                    bpy.ops.screen.screenshot(filepath=str(OUT / "stage-dropdown.png"))
+                log.write("captured stage dropdown\n")
+                state["settings"] = 99
+                return 0.5
             if phase == 0:
                 setattr(window.workspace, "animassist_timeline_stage", "BLOCK")
                 return_after = 1.0

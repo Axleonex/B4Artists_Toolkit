@@ -40,7 +40,7 @@ The **bottom-only canvas overlay** retains 12.7.1 placement, away from the top k
 
 Tabs at the left of the row choose a stage: **All**, **Block** (Tween, Keys), **Spline** (Curves), **Polish** (Timing, Pose) and **Deliver** (Bake, Motion). **All** is the condensed overview of every family. Each other stage has its own toolset for its families.
 
-Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. When the row is tight, the tabs collapse into one button that cycles stages before any slider is shortened. Tools outside the stage remain in More and Search.
+Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. When All does not fit beside the tabs, they collapse into one stage button: click it to choose a stage from its dropdown, or hold Ctrl and scroll over it. Tools that do not fit remain in More and Search.
 
 ### Stage toolsets
 
@@ -49,7 +49,7 @@ Each stage starts from a fixed default set, the Recommended tools for its famili
 - **Block:** 25/50/75%, Breakdown slider, Inbetween, Distribute Inbetweens, Push/Pull Previous/Next; Select Range/All/Ends, Grow left/right, mark Keyframe/Breakdown/Extreme/Moving Hold, Copy/Paste.
 - **Spline:** Set Reference Frame, Reference (popout), Neighbors, Ease and Smooth sliders, Push/Pull (popout), Auto Clamped/Vector/Free handles.
 - **Polish:** -1f/+1f, Timing Scale (popout), 80/90/110/120% spacing, Timing Offset slider, Ripple, Snap; Select Opposite, Mirror Selected, Mirror Active, Swap.
-- **Deliver:** Bake Object, Smart Bake, Reduce Keys, Bake Session and Remove Proxies; Show/Refresh/Diagnose/Hide Trails.
+- **Deliver:** Bake Object, Smart Bake, Reduce Keys; create Translation, Orientation, World-Space or Parent-Space proxies, then Bake Session and Remove Proxies; Show/Refresh/Diagnose/Hide Trails.
 
 To change a stage, open **Toolbar Settings** (the row's **Settings** button). **Row Stage** chooses the setup you edit, and the row behind the dialog follows it. In a stage, Family offers only that stage's families; set each tool Hidden, Button, Popout or Inline, choose label or icon, and reorder it. **Reset Stage to Defaults** restores the current stage; **Restore Recommended Layout** restores All and every stage. Saved layouts store All and all four stages together.
 

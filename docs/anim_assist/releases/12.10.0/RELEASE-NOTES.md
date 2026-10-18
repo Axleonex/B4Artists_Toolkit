@@ -11,9 +11,10 @@ Each stage starts from a fixed default set: the Recommended tools for its famili
 | Block | Inbetween, Distribute Inbetweens, Push/Pull Previous/Next; Select Range/All/Ends, Grow left/right, mark Keyframe/Breakdown/Extreme/Moving Hold |
 | Spline | Set Reference Frame, Reference and Push/Pull popouts, Neighbors and Ease sliders, Auto Clamped/Vector/Free handles |
 | Polish | 80/90/110/120% spacing, Timing Offset slider, Ripple, Snap; Select Opposite, Mirror Active, Swap |
-| Deliver | Smart Bake, Reduce Keys, Bake Session and Remove Proxies; Refresh, Diagnose and Hide Trails |
+| Deliver | Smart Bake, Reduce Keys; Translation, Orientation, World-Space and Parent-Space proxies, then Bake Session and Remove Proxies; Refresh, Diagnose and Hide Trails |
 
 - **Customise each stage** in Toolbar Settings: Row Stage chooses the setup you edit, Family offers that stage's families, and each tool can be Hidden, Button, Popout or Inline, labelled or iconed, and reordered. **Reset Stage to Defaults** restores one stage; **Restore Recommended Layout** restores everything.
+- **Stage dropdown:** when the row is too narrow for the five tabs, the single stage button opens a dropdown of All, Block, Spline, Polish and Deliver. Ctrl+Wheel still cycles. The button is slightly wider for its arrow, so on very narrow rows one more tool may move into More.
 - **Saved layouts** store All and all four stages together (Save As, Load, Update Saved, Rename, Delete).
 - **Amounts are shared:** range, default, presets, slider width and snapping are the same in every stage.
 - **Shorter row labels** for tools that showed internal names, for example 80% instead of T80, Mark Key instead of Type Keyframe and All Keys for Select All Visible. They apply wherever these tools appear, including All.
