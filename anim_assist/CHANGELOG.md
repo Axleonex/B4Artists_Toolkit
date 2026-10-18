@@ -7,8 +7,12 @@
   presets, Timing Offset, Ripple and Snap in Polish; Bake Preview Range, Smart
   Bake, Reduce, Bake Keys to Integer Frames, the four proxy types, proxy bake,
   Remove All Proxy Sessions and trail tools in Deliver). All is unchanged.
-- Bake Preview Range, Bake Keys to Integer Frames and Remove All Proxy Sessions
-  join the Timeline catalogue (92 actions).
+- Bake Preview Range, Bake Keys to Integer Frames, One-Click Proxy & Bake and
+  Remove All Proxy Sessions join the Timeline catalogue (93 actions).
+- Fixed: One-Click Proxy & Bake flattened the object's motion (the proxy did not
+  move) and removed every helper of an open proxy session. It now records the
+  object's world motion on the proxy before baking and works in a session of
+  its own.
 - When the row is tight, the single stage button opens a stage list: one click
   opens it and it stays open while you hover; click a stage to switch. Clicking
   the button again, clicking elsewhere or pressing Esc closes it. A short

@@ -30,7 +30,7 @@ ROW_LABELS = {
     'SWAP': 'Swap', 'SMART_BAKE': 'Smart Bake', 'REDUCE': 'Reduce', 'BAKE_CLEANUP': 'Bake Proxies',
     'PROXY_TRANSLATION': 'Proxy Loc', 'PROXY_ORIENTATION': 'Proxy Rot', 'PROXY_WORLD': 'Proxy World',
     'PROXY_PARENT': 'Proxy Parent', 'BAKE_PREVIEW': 'Bake Preview', 'BAKE_INTEGER': 'Whole Frames',
-    'CLEANUP_ALL': 'Clean All Proxies',
+    'PROXY_BAKE': 'Proxy & Bake', 'CLEANUP_ALL': 'Clean All Proxies',
     'TRAIL_REFRESH': 'Refresh', 'TRAIL_DIAGNOSE': 'Diagnose', 'TRAIL_HIDE': 'Hide Trails',
 }
 

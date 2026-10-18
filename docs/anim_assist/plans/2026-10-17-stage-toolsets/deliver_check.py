@@ -1,4 +1,4 @@
-"""Background Bforartists check: the three Deliver tools added in 12.10.0 run from the
+"""Background Bforartists check: the four Deliver tools added in 12.10.0 run from the
 Timeline toolbar dispatch and change the scene as described.
 
 Run with BLENDER_USER_SCRIPTS holding the package as B4_anim_assist:
@@ -24,9 +24,9 @@ try:
     p7s = sys.modules["B4_anim_assist.core.p7_session"]
     from B4_anim_assist.ui.timeline_catalog import ACTIONS
     from B4_anim_assist.ui import timeline_config as model
-    check("Catalogue has 92 actions", len(ACTIONS) == 92)
-    check("Deliver defaults include the three tools",
-          {"BAKE_PREVIEW", "BAKE_INTEGER", "CLEANUP_ALL"}
+    check("Catalogue has 93 actions", len(ACTIONS) == 93)
+    check("Deliver defaults include the four tools",
+          {"BAKE_PREVIEW", "BAKE_INTEGER", "PROXY_BAKE", "CLEANUP_ALL"}
           <= set(model.stage_default("DELIVER")["order"]))
 
     scene = bpy.context.scene
@@ -44,12 +44,13 @@ try:
                                if a.type == "DOPESHEET_EDITOR" and a.spaces.active.mode == "TIMELINE")
     region = next(r for r in area.regions if r.type == "WINDOW")
 
-    def ctx():
+    def ctx(target=None):
+        target = target or obj
         return bpy.context.temp_override(workspace=space, screen=screen, area=area, region=region,
-                                         active_object=obj, object=obj, selected_objects=[obj])
+                                         active_object=target, object=target, selected_objects=[target])
 
-    def run(action):
-        with ctx():
+    def run(action, target=None):
+        with ctx(target):
             try:
                 bpy.ops.animassist.timeline_tool(action=action)
             except RuntimeError as exc:
@@ -99,9 +100,41 @@ try:
     check("Clean All removes every proxy helper and constraint",
           not temps() and len(obj.constraints) == constraints_before)
 
-    # One-Click Proxy & Bake is not offered on the toolbar: the existing operator constrains
-    # the object to a static proxy and flattens its motion (measured 2026-10-17).
-    check("One-Click Proxy & Bake is not offered", "PROXY_BAKE" not in ACTIONS)
+    # One-Click Proxy & Bake keeps the object's world motion (12.9.x baked a static proxy and
+    # flattened it) and leaves an open proxy session on another object alone.
+    from B4_anim_assist.core.p7_properties import get_p7
+    p7 = get_p7(bpy.context)
+    mover = bpy.data.objects.new("Mover", None)
+    scene.collection.objects.link(mover)
+    for frame, x, z in ((1, 0.0, 0.0), (8, 2.0, 1.0), (14, 1.0, 3.0), (20, 0.0, 0.0)):
+        mover.location = (x, 0.0, z)
+        mover.keyframe_insert("location", frame=frame)
+
+    def world(target):
+        out = []
+        for f in range(1, 31):
+            scene.frame_set(f)
+            out.append(target.matrix_world.translation.copy())
+        scene.frame_set(1)
+        return out
+
+    before = world(mover)
+    run("PROXY_TRANSLATION")
+    open_session = p7.active_session_id
+    open_helpers = len(temps())
+    actions_before = len(bpy.data.actions)
+    check("Proxy & Bake available with an object selected", reason("PROXY_BAKE") == "")
+    run("PROXY_BAKE", mover)
+    after = world(mover)
+    error = max((a - b).length for a, b in zip(before, after))
+    print("Proxy & Bake max world error:", round(error, 5), flush=True)
+    check("Proxy & Bake keeps the world motion (max error under 0.01)", error < 0.01)
+    check("Proxy & Bake leaves no constraint on the object", len(mover.constraints) == 0)
+    check("Proxy & Bake leaves the open session and its helpers alone",
+          p7.active_session_id == open_session and len(temps()) == open_helpers > 0)
+    check("Proxy & Bake leaves no orphan proxy Action", len(bpy.data.actions) == actions_before)
+    run("CLEANUP_ALL")
+    check("Clean All then removes the remaining session", not temps())
     addon_utils.disable("B4_anim_assist", default_set=False)
 except Exception:
     traceback.print_exc()

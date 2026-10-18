@@ -590,8 +590,9 @@ class AA_OT_p7_one_click_proxy_bake(bpy.types.Operator):
     bl_idname = "animassist.p7_one_click_proxy_bake"
     bl_label = "One-Click Proxy & Bake"
     bl_description = (
-        "Automation: create a translation proxy for the active object, "
-        "bake the constrained animation, then remove all session artifacts"
+        "Automation: record the active object's world motion on a temporary "
+        "translation proxy, bake it back to keys, then remove that proxy. "
+        "Other proxy sessions are left alone"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -600,49 +601,75 @@ class AA_OT_p7_one_click_proxy_bake(bpy.types.Operator):
         return context.active_object is not None and get_p7(context) is not None
 
     def execute(self, context):
-        from .p7_bake_ops import _bake_object_transform, _get_bake_range, _reduce_fcurves
+        from .p7_bake_ops import (
+            _bake_object_transform, _get_bake_range, _reduce_fcurves, _restore_frame,
+        )
 
         p7 = get_p7(context)
-        session = _ensure_session(context)
-        if session is None:
-            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
-            return {"CANCELLED"}
-
         target = context.active_object
         cfg = PROXY_CONFIGS["TRANSLATION"]
-
-        # Create proxy.
-        world_pos = target.matrix_world.translation.copy()
-        name = proxy_object_name(target.name, "TRANSLATION", session.short_id)
-        proxy = bpy.data.objects.new(name, None)
-        proxy.empty_display_type = cfg.empty_display
-        proxy.empty_display_size = p7.proxy_size
-        proxy.location = world_pos
-
-        coll = _get_temp_collection(context, session)
-        coll.objects.link(proxy)
-        p7s.tag_artifact(proxy, session.session_id, "proxy_translation",
-                         owner_obj_name=target.name)
-        session.register_object(name, "proxy_translation")
-
-        # Add constraint.
-        con_name = p7s.make_constraint_name(session.session_id, cfg.constraint_suffix)
-        con = target.constraints.new(cfg.constraint_type)
-        con.name = con_name
-        con.target = proxy
-        session.register_constraint(target.name, "", con_name)
-        p7s.save_session_to_scene(session.session_id)
-
-        # Bake.
+        scene = context.scene
         frame_start, frame_end = _get_bake_range(context, p7)
-        _bake_object_transform(context, target, frame_start, frame_end,
-                               step=p7.bake_step, channel_mode=p7.bake_channels)
-        _reduce_fcurves(target, p7.smart_bake_tolerance)
+        frames = list(range(frame_start, frame_end + 1, max(1, p7.bake_step)))
 
-        # Cleanup.
-        p7s.rollback_session(session.session_id)
-        p7s.clear_scene_session(context.scene)
-        p7.active_session_id = ""
+        # Record the target's world motion before anything constrains it, so the
+        # proxy carries that motion instead of a single still position.
+        original_frame = float(scene.frame_current_final)
+        motion = []
+        for frame in frames:
+            scene.frame_set(frame)
+            motion.append((frame, target.matrix_world.translation.copy()))
+        _restore_frame(scene, original_frame)
+
+        # Use a session of its own so the rollback below never removes the
+        # helpers of a proxy session the user already has open.
+        previous_id = p7.active_session_id
+        previous = p7s.get_session(previous_id) if previous_id else None
+        session = p7s.begin_session(scene.name)
+        p7.active_session_id = session.session_id
+        proxy_action = None
+        try:
+            # Create proxy, keyed along the recorded motion.
+            name = proxy_object_name(target.name, "TRANSLATION", session.short_id)
+            proxy = bpy.data.objects.new(name, None)
+            proxy.empty_display_type = cfg.empty_display
+            proxy.empty_display_size = p7.proxy_size
+            proxy.location = motion[0][1] if motion else target.matrix_world.translation
+
+            coll = _get_temp_collection(context, session)
+            coll.objects.link(proxy)
+            p7s.tag_artifact(proxy, session.session_id, "proxy_translation",
+                             owner_obj_name=target.name)
+            session.register_object(name, "proxy_translation")
+            for frame, position in motion:
+                proxy.location = position
+                proxy.keyframe_insert(data_path="location", frame=frame)
+            if proxy.animation_data is not None:
+                proxy_action = proxy.animation_data.action
+
+            # Add constraint.
+            con_name = p7s.make_constraint_name(session.session_id, cfg.constraint_suffix)
+            con = target.constraints.new(cfg.constraint_type)
+            con.name = con_name
+            con.target = proxy
+            session.register_constraint(target.name, "", con_name)
+            p7s.save_session_to_scene(session.session_id)
+
+            # Bake.
+            _bake_object_transform(context, target, frame_start, frame_end,
+                                   step=p7.bake_step, channel_mode=p7.bake_channels)
+            _reduce_fcurves(target, p7.smart_bake_tolerance)
+        finally:
+            # Cleanup, then hand the scene record back to the earlier session.
+            p7s.rollback_session(session.session_id)
+            if proxy_action is not None and proxy_action.users == 0:
+                bpy.data.actions.remove(proxy_action)
+            if previous is not None:
+                p7.active_session_id = previous_id
+                p7s.save_session_to_scene(previous_id)
+            else:
+                p7s.clear_scene_session(scene)
+                p7.active_session_id = ""
 
         self.report({"INFO"},
                     f"One-click proxy bake complete for '{target.name}'")

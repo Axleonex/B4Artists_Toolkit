@@ -22,11 +22,14 @@ Each stage starts from a fixed default set: the Recommended tools for its famili
 
 ## New toolbar actions
 
-Three existing Bake tools are now on the Timeline toolbar (92 actions in total): **Bake Preview Range**, **Bake Keys to Integer Frames** (same rounding as Round Key Times, with a timing snapshot Reset Timing restores) and **Remove All Proxy Sessions**.
+Four existing Bake tools are now on the Timeline toolbar (93 actions in total): **Bake Preview Range**, **Bake Keys to Integer Frames** (same rounding as Round Key Times, with a timing snapshot Reset Timing restores), **One-Click Proxy & Bake** (row label Proxy & Bake) and **Remove All Proxy Sessions**.
 
-## Known issue (not new)
+## Fixed
 
-The Bake sidebar's **One-Click Proxy & Bake** flattens the active object's location animation: it pins the object to a proxy that does not move and bakes that fixed position. It is not on the Timeline toolbar. Use Undo if you ran it.
+**One-Click Proxy & Bake** (Bake sidebar, pie menu and now the toolbar) had two bugs in 12.9.x and earlier:
+
+- It flattened the object's location animation: the proxy stayed at the current position, so the bake recorded a still object. It now records the object's world motion on the proxy first, so the baked keys follow the original motion.
+- It removed every helper of an open proxy session, including proxies made for other objects, without baking them. It now works in a session of its own and leaves other sessions alone.
 
 ## Upgrading from 12.9.x
 

@@ -76,6 +76,7 @@ ACTIONS = {
     "BAKE_CLEANUP": ("p7_one_click_cleanup", {}, "Bake Session and Remove Proxies"),
     "BAKE_PREVIEW": ("p7_bake_preview", {}, "Bake Object Transforms in Preview Range"),
     "BAKE_INTEGER": ("p6_bake_timing", {}, "Bake Keys to Integer Frames"),
+    "PROXY_BAKE": ("p7_one_click_proxy_bake", {}, "One-Click Translation Proxy and Bake"),
     "CLEANUP_ALL": ("p7_cleanup_all", {}, "Remove All Proxy Sessions"),
     "TRAIL_SHOW": ("p5_enable_overlay", {}, "Show World Motion Trails"),
     "TRAIL_HIDE": ("p5_disable_overlay", {}, "Hide World Motion Trails"),
@@ -132,6 +133,7 @@ TIPS = {
     "BAKE_CLEANUP": "Bake the active proxy session's constrained objects and remove that session's helpers. Uses existing bake settings",
     "BAKE_PREVIEW": "Bake the active object's evaluated transform within the preview range using the existing Frame Step and channel settings",
     "BAKE_INTEGER": "Round sub-frame keys in the active object's Action to whole frames and keep a timing snapshot that Reset Timing restores. Same rounding as Round Key Times",
+    "PROXY_BAKE": "Bake the active object's world motion to keys through a temporary translation proxy, then remove that proxy. Uses the bake range, Frame Step, channel and reduction settings; other proxy sessions are left alone",
     "CLEANUP_ALL": "Remove every Anim Assist proxy, proxy constraint and helper collection in this file, from all sessions. Baked keys stay",
     "PASTE_KEYS": "Paste copied absolute key times plus the paste offset onto matching Action names and curve paths; the playhead does not set the paste time",
 }
@@ -160,7 +162,7 @@ GROUPS = (
         "SWITCH_SINGLE", "SWITCH_RANGE", "SWITCH_BOOL", "SWITCH_ENUM", "SWITCH_INFLUENCE")),
     ("bake", "Bake", (
         "BAKE_STEP", "BAKE_PREVIEW", "SMART_BAKE", "REDUCE", "BAKE_INTEGER", None, "PROXY_TRANSLATION",
-        "PROXY_ORIENTATION", "PROXY_WORLD", "PROXY_PARENT", "BAKE_CLEANUP", "CLEANUP_ALL")),
+        "PROXY_ORIENTATION", "PROXY_WORLD", "PROXY_PARENT", "PROXY_BAKE", "BAKE_CLEANUP", "CLEANUP_ALL")),
     ("motion", "Motion", (
         "TRAIL_SHOW", "TRAIL_HIDE", "TRAIL_REFRESH", "TRAIL_DIAGNOSE", None,
         "OFFSET", "OFFSET_MASK", "OFFSET_SCENE_RANGE")),
@@ -276,6 +278,9 @@ def command_metadata(action):
         prerequisite = "Select an object and turn on the scene preview range"
     if action == "BAKE_INTEGER":
         scope, prerequisite = "Key times in the active object's Action", "Select an object with an Action"
+    if action == "PROXY_BAKE":
+        scope = "Active object; temporary translation proxy, baked then removed"
+        prerequisite = "Select the object to bake through a proxy"
     if action == "CLEANUP_ALL":
         scope, prerequisite = "Every Anim Assist proxy session in this file", "Have proxy helpers or sessions to remove"
     if action == "REDUCE":
@@ -340,7 +345,7 @@ SEARCH_TERMS = {
     "SWITCH_BOOL": "space switch rig boolean", "SWITCH_ENUM": "space switch rig integer enum",
     "SWITCH_INFLUENCE": "space switch rig constraint influence",
     "BAKE_PREVIEW": "bake preview range playback", "BAKE_INTEGER": "bake integer whole frames snap round export",
-    "CLEANUP_ALL": "proxy session cleanup remove all",
+    "PROXY_BAKE": "proxy bake one click world motion", "CLEANUP_ALL": "proxy session cleanup remove all",
 }
 
 

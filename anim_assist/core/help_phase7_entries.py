@@ -443,9 +443,10 @@ PHASE7_ENTRIES: tuple[HelpEntry, ...] = (
     _H("op.animassist.p7_one_click_proxy_bake",
        "One-Click Proxy & Bake",
        "Create a proxy, bake, and clean up in one operation",
-       "Creates a Translation proxy, bakes the constrained animation, "
-       "then removes all session artifacts. Net result: baked animation "
-       "with no lingering temporary objects.",
+       "Records the active object's world motion on a temporary Translation "
+       "proxy, constrains the object to it, bakes the result to keys and removes "
+       "the proxy. Net result: world motion baked to keys with no lingering "
+       "temporary objects. Other proxy sessions are left alone.",
        "One-Click Workflows"),
 
     _H("op.animassist.p7_one_click_cleanup",

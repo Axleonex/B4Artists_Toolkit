@@ -40,7 +40,7 @@ STAGE_DEFAULTS = {
                ('OPPOSITE', _B), ('MIRROR_SELECTED', _B), ('MIRROR_ACTIVE', _B), ('SWAP', _B)),
     'DELIVER': (('BAKE_STEP', _B), ('BAKE_PREVIEW', _B), ('SMART_BAKE', _B), ('REDUCE', _B), ('BAKE_INTEGER', _B),
                 ('PROXY_TRANSLATION', _B), ('PROXY_ORIENTATION', _B), ('PROXY_WORLD', _B), ('PROXY_PARENT', _B),
-                ('BAKE_CLEANUP', _B), ('CLEANUP_ALL', _B),
+                ('PROXY_BAKE', _B), ('BAKE_CLEANUP', _B), ('CLEANUP_ALL', _B),
                 ('TRAIL_SHOW', _B), ('TRAIL_REFRESH', _B), ('TRAIL_DIAGNOSE', _B), ('TRAIL_HIDE', _B)),
 }
 # Action -> family, registered by timeline_catalog (keeps this module bpy- and catalogue-free).
