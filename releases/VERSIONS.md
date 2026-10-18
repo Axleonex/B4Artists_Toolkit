@@ -4,7 +4,8 @@ Current repository packages and their publication status.
 
 | Tool | Version | Archive | Bytes | SHA256 prefix | Status |
 |---|---|---|---:|---|---|
-| Anim Assist | 12.9.0 | [b4_anim_assist_v12.9.0.zip](b4_anim_assist_v12.9.0.zip) | 616,250 | `6ce15f609ca3` | Published repository build (merge `055c2e1`, 2026-10-17); Timeline stage tabs; known stage-tab bugs listed in its qualification, fixed for 12.10.0; no standalone GitHub Release |
+| Anim Assist | 12.9.1 | [b4_anim_assist_v12.9.1.zip](b4_anim_assist_v12.9.1.zip) | 617,182 | `5e176eb1b7ed` | Local build (not yet pushed); stage tab fixes for the All tab, stable tabs while switching stage, cycle hover, Row Stage outside a Timeline and per-workspace stage |
+| Anim Assist (historical 12.9.0) | 12.9.0 | [b4_anim_assist_v12.9.0.zip](b4_anim_assist_v12.9.0.zip) | 616,250 | `6ce15f609ca3` | Published repository build (merge `055c2e1`, 2026-10-17); Timeline stage tabs; known stage-tab bugs listed in its qualification, fixed for 12.10.0; no standalone GitHub Release |
 | Anim Assist (historical 12.8.0) | 12.8.0 | [b4_anim_assist_v12.8.0.zip](b4_anim_assist_v12.8.0.zip) | 613,678 | `08a904c7dae1` | Earlier published repository build; editor-specific NLA/Graph/Dope Sheet sidebars; bottom-only Timeline row retained |
 | Anim Assist (historical 12.6.2) | 12.6.2 | [b4_anim_assist_v12.6.2.zip](b4_anim_assist_v12.6.2.zip) | 599,156 | `5492e94a773a` | Earlier local slider/layout release; retained archive |
 | Anim Assist (historical 12.6.1) | 12.6.1 | [b4_anim_assist_v12.6.1.zip](b4_anim_assist_v12.6.1.zip) | 579,836 | `4da8edac4e4b` | Earlier local release; add-on-only canvas row and unmodified-host qualification |

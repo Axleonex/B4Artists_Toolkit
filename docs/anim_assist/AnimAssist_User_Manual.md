@@ -1,10 +1,10 @@
-# Anim Assist 12.9.0 user guide
+# Anim Assist 12.9.1 user guide
 
-Reviewed against 12.9.0 on October 17, 2026. Use Dope Sheet for poses/timing, Graph Editor for curves, and NLA Editor for clips/corrections. Help controls explain individual tools.
+Reviewed against 12.9.1 on October 17, 2026. Use Dope Sheet for poses/timing, Graph Editor for curves, and NLA Editor for clips/corrections. Help controls explain individual tools.
 
 ## Install and find the tools
 
-Download the [12.9.0 add-on ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.9.0.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk. Select the ZIP and enable Anim Assist. Its package is `B4_anim_assist`. Restart after updating.
+Download the [12.9.1 add-on ZIP](https://raw.githubusercontent.com/Axleonex/B4Artists_Toolkit/main/releases/b4_anim_assist_v12.9.1.zip). In Bforartists, open Edit > Preferences > Add-ons > Install from Disk. Select the ZIP and enable Anim Assist. Its package is `B4_anim_assist`. Restart after updating.
 
 Validated host: stock Bforartists 5.2.0, Blender 5.3.0 Alpha base, build `0a1ca45552db`, OpenGL. Standard Blender is unsupported; other builds were not validated.
 
@@ -124,16 +124,16 @@ If a key operation does nothing, check active editor, selected editable keys, vi
 
 For unavailable NLA actions, check track locks, mute/Solo exclusion, missing Action, disabled NLA evaluation or active Tweak Mode. Finish Editing before arranging clips. Read the unsupported-rig/channel explanation for correction creation. Inspect motion after timing/bake changes; use native Undo if needed, then save/reopen before relying on the result.
 
-The [12.9.0 qualification](releases/12.9.0/qualification.md) covers the stage tabs added in this release. The [12.8.0 qualification](releases/12.8.0/qualification.md) records 16 native behavioral/interaction groups, Undo/Redo, workspace reload, 98 panel registration checks and five Timeline layout regression checks. Native mesh key insertion was visible in Graph/Dope Sheet. All three sidebars were captured at 220, 280 and 360 px. These synthetic fixtures do not certify every existing tool, production rig or host build. Earlier slider/lipsync evidence is historical, not a fresh full-suite pass for 12.8.0.
+The [12.9.1 qualification](releases/12.9.1/qualification.md) covers the stage tabs and their 12.9.1 fixes. The [12.8.0 qualification](releases/12.8.0/qualification.md) records 16 native behavioral/interaction groups, Undo/Redo, workspace reload, 98 panel registration checks and five Timeline layout regression checks. Native mesh key insertion was visible in Graph/Dope Sheet. All three sidebars were captured at 220, 280 and 360 px. These synthetic fixtures do not certify every existing tool, production rig or host build. Earlier slider/lipsync evidence is historical, not a fresh full-suite pass for 12.8.0.
 
 ## Actual interface screenshots
 
-Actual qualification captures: Timeline stage tabs and settings from 12.9.0, editor sidebars from 12.8.0. Open full size; selection determines enabled controls.
+Actual qualification captures: Timeline stage tabs and settings from 12.9.1, editor sidebars from 12.8.0. Open full size; selection determines enabled controls.
 
-- [Timeline stage tabs: Block stage (12.9.0)](releases/12.9.0/evidence/images/stage-block.png)
-- [Toolbar Settings with Row Stage (12.9.0)](releases/12.9.0/evidence/images/settings-dialog.png)
+- [Timeline stage tabs: Block stage (12.9.1)](releases/12.9.1/evidence/images/stage-block.png)
+- [Toolbar Settings with Row Stage (12.9.1)](releases/12.9.1/evidence/images/settings-dialog.png)
 - [NLA sidebar: arrangement and corrections, 280 px](releases/12.8.0/evidence/images/nla_editor-280.png)
 - [Graph sidebar: curve shaping, 280 px](releases/12.8.0/evidence/images/graph_editor-280.png)
 - [Dope Sheet sidebar: poses and timing, 280 px](releases/12.8.0/evidence/images/dopesheet_editor-280.png)
 
-See [release notes](releases/12.9.0/RELEASE-NOTES.md) and the [documentation index](README.md). The 12.5.0 separate-strip screenshots and checkbox-only quick-tool instructions are historical; use this guide for current settings.
+See [release notes](releases/12.9.1/RELEASE-NOTES.md) and the [documentation index](README.md). The 12.5.0 separate-strip screenshots and checkbox-only quick-tool instructions are historical; use this guide for current settings.

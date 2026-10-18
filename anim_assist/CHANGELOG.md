@@ -1,3 +1,16 @@
+# 12.9.1 — Stage tab fixes
+
+- The All tab no longer behaves like the Keys tool Select All Visible: it is
+  not dimmed, always switches stage, and right-click no longer opens that
+  tool's settings.
+- Switching stage never swaps the tabs for the cycle button, so controls stay
+  under the cursor. Tabs show only when every stage fits beside them in full.
+- The cycle button keeps its highlight and tooltip after a click.
+- Row Stage in Toolbar Settings opened outside a Timeline (for example from
+  Preferences) shows a note instead of changing an unrelated screen.
+- The stage is stored per workspace, so a maximized Timeline and extra windows
+  of the same workspace keep it. Stages chosen in 12.9.0 start on All once.
+
 # 12.9.0 — Timeline stage tabs
 
 - Adds stage tabs to the bottom Timeline band: All, Block (Tween, Keys),
