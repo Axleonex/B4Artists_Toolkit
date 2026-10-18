@@ -4,8 +4,11 @@
   Timeline row. Each starts from a fixed default set: the Recommended tools for
   its families plus phase-specific ones (for example Inbetween, Push/Pull and key types
   in Block; Neighbors, Ease, Reference and handle types in Spline; spacing
-  presets, Timing Offset, Ripple and Snap in Polish; Smart Bake, Reduce, the
-  four proxy types, proxy bake and trail tools in Deliver). All is unchanged.
+  presets, Timing Offset, Ripple and Snap in Polish; Bake Preview Range, Smart
+  Bake, Reduce, Bake Keys to Integer Frames, the four proxy types, proxy bake,
+  Remove All Proxy Sessions and trail tools in Deliver). All is unchanged.
+- Bake Preview Range, Bake Keys to Integer Frames and Remove All Proxy Sessions
+  join the Timeline catalogue (92 actions).
 - When the row is tight, the single stage button opens a stage list: one click
   opens it and it stays open while you hover; click a stage to switch. Clicking
   the button again, clicking elsewhere or pressing Esc closes it. A short

@@ -49,7 +49,7 @@ Each stage starts from a fixed default set, the Recommended tools for its famili
 - **Block:** 25/50/75%, Breakdown slider, Inbetween, Distribute Inbetweens, Push/Pull Previous/Next; Select Range/All/Ends, Grow left/right, mark Keyframe/Breakdown/Extreme/Moving Hold, Copy/Paste.
 - **Spline:** Set Reference Frame, Reference (popout), Neighbors, Ease and Smooth sliders, Push/Pull (popout), Auto Clamped/Vector/Free handles.
 - **Polish:** -1f/+1f, Timing Scale (popout), 80/90/110/120% spacing, Timing Offset slider, Ripple, Snap; Select Opposite, Mirror Selected, Mirror Active, Swap.
-- **Deliver:** Bake Object, Smart Bake, Reduce Keys; create Translation, Orientation, World-Space or Parent-Space proxies, then Bake Session and Remove Proxies; Show/Refresh/Diagnose/Hide Trails.
+- **Deliver:** Bake Object, Bake Preview Range, Smart Bake, Reduce Keys, Bake Keys to Integer Frames (whole frames, restorable with Reset Timing); create Translation, Orientation, World-Space or Parent-Space proxies, then Bake Session and Remove Proxies; Remove All Proxy Sessions; Show/Refresh/Diagnose/Hide Trails.
 
 To change a stage, open **Toolbar Settings** (the row's **Settings** button). **Row Stage** chooses the setup you edit, and the row behind the dialog follows it. In a stage, Family offers only that stage's families; set each tool Hidden, Button, Popout or Inline, choose label or icon, and reorder it. **Reset Stage to Defaults** restores the current stage; **Restore Recommended Layout** restores All and every stage. Saved layouts store All and all four stages together.
 

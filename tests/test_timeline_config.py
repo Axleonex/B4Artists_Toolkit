@@ -22,7 +22,7 @@ class ConfigTests(unittest.TestCase):
 
     def test_defaults(self):
         tools=self.record['active']['tools']
-        self.assertEqual(len(tools),89)
+        self.assertEqual(len(tools),92)
         self.assertEqual({k for k,v in tools.items() if v['mode']=='INLINE'},{'DRAG','SMOOTH'})
         self.assertEqual(tools['SCALE_DRAG']['mode'],'POPOUT')
         self.assertEqual(len(config.SLIDERS),8)
@@ -113,9 +113,9 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(stages['SPLINE']['tools']['FRAME'],{'mode':'POPOUT','label_mode':'LABEL'})
         self.assertEqual(stages['BLOCK']['tools']['DRAG']['mode'],'INLINE')
         self.assertEqual(stages['POLISH']['tools']['OFFSET_DRAG']['mode'],'INLINE')
-        self.assertEqual(stages['DELIVER']['order'],['BAKE_STEP','SMART_BAKE','REDUCE','PROXY_TRANSLATION',
-            'PROXY_ORIENTATION','PROXY_WORLD','PROXY_PARENT','BAKE_CLEANUP','TRAIL_SHOW','TRAIL_REFRESH',
-            'TRAIL_DIAGNOSE','TRAIL_HIDE'])
+        self.assertEqual(stages['DELIVER']['order'],['BAKE_STEP','BAKE_PREVIEW','SMART_BAKE','REDUCE','BAKE_INTEGER',
+            'PROXY_TRANSLATION','PROXY_ORIENTATION','PROXY_WORLD','PROXY_PARENT','BAKE_CLEANUP',
+            'CLEANUP_ALL','TRAIL_SHOW','TRAIL_REFRESH','TRAIL_DIAGNOSE','TRAIL_HIDE'])
         for stage in config.STAGE_KEYS:
             allowed=set(config.stage_families(stage))
             self.assertTrue(all(family[a] in allowed for a in stages[stage]['order']),stage)
@@ -195,7 +195,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(self.record['active']['tools']['DRAG']['width'],150.)
         self.assertEqual(self.record['active']['order'],before_all)
         self.assertEqual(self.record['active']['stages']['POLISH'],polish)
-        self.assertEqual(len(config.stage_entries(self.record,'ALL',actions)),89)
+        self.assertEqual(len(config.stage_entries(self.record,'ALL',actions)),92)
         config.validate(self.record,actions)
 
     def test_future_stage_tools_survive_settings(self):

@@ -112,6 +112,7 @@ def _module_reason(context,action):
             'keys':'keys','pose':'matching','bake':'controls','motion':'trajectory'}[family]
     if suffix.startswith('anim_offset'): module='transform'
     elif suffix in {'set_handle_type','move_keys'}: module='keys'
+    elif suffix=='p6_bake_timing': module='retime'
     elif action in {'ALL','RANGE','ENDS','GROW_LEFT','GROW_RIGHT','GROW_BOTH','SELECT_BREAKDOWNS'}: module='selection'
     flag='enable_'+module
     if not getattr(prefs,flag,True):
