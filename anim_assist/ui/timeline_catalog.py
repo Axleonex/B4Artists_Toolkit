@@ -339,6 +339,39 @@ def command_description(action, operation):
     return " ".join(parts)
 
 
+# Bforartists' own commands that do the same job as a row tool, as (operator, settings).
+# Hover text names one only when Bforartists has a key bound to it (owner request
+# 2026-10-18: "native hints", labelled as Bforartists keys, never as Anim Assist ones).
+_TIME_SCALE = (("transform.transform", {"mode": "TIME_SCALE"}),)
+_TIME_MOVE = (("transform.transform", {"mode": "TIME_TRANSLATE"}),)
+NATIVE_EQUIVALENTS = {
+    "COPY_KEYS": (("action.copy", {}), ("graph.copy", {})),
+    "PASTE_KEYS": (("action.paste", {"flipped": False}), ("graph.paste", {"flipped": False})),
+    "ALL": (("action.select_all", {"action": "SELECT"}), ("graph.select_all", {"action": "SELECT"})),
+    "GROW_BOTH": (("action.select_more", {}), ("graph.select_more", {})),
+    "T80": _TIME_SCALE, "T90": _TIME_SCALE, "T110": _TIME_SCALE, "T120": _TIME_SCALE, "SCALE_DRAG": _TIME_SCALE,
+    "OFFSET_DRAG": _TIME_MOVE, "OFFSET_ACTION": _TIME_MOVE, "NUDGE_LEFT": _TIME_MOVE, "NUDGE_RIGHT": _TIME_MOVE,
+    "SNAP": (("action.snap", {"type": "NEAREST_FRAME"}), ("graph.snap", {"type": "NEAREST_FRAME"})),
+    "TO_SPLINE": (("action.interpolation_type", {"type": "BEZIER"}), ("graph.interpolation_type", {"type": "BEZIER"})),
+    "TO_STEPPED": (("action.interpolation_type", {"type": "CONSTANT"}), ("graph.interpolation_type", {"type": "CONSTANT"})),
+    "TYPE_KEYFRAME": (("action.keyframe_type", {"type": "KEYFRAME"}),),
+    "TYPE_BREAKDOWN": (("action.keyframe_type", {"type": "BREAKDOWN"}),),
+    "TYPE_EXTREME": (("action.keyframe_type", {"type": "EXTREME"}),),
+    "TYPE_HOLD": (("action.keyframe_type", {"type": "MOVING_HOLD"}),),
+    "TYPE_JITTER": (("action.keyframe_type", {"type": "JITTER"}),),
+    "SMOOTH": (("graph.smooth", {}),),
+    "EASE": (("graph.ease", {}),),
+    "NEIGHBORS": (("graph.blend_to_neighbor", {}),),
+    "DRAG": (("pose.breakdown", {}), ("graph.breakdown", {})),
+    "REDUCE": (("graph.decimate", {}),),
+    "BAKE_STEP": (("nla.bake", {}),),
+    "OPPOSITE": (("pose.select_mirror", {}),),
+}
+for _kind, _type in (("AUTO", "AUTO"), ("CLAMPED", "AUTO_CLAMPED"), ("VECTOR", "VECTOR"),
+                     ("ALIGNED", "ALIGNED"), ("FREE", "FREE")):
+    NATIVE_EQUIVALENTS["HANDLE_" + _kind] = (("action.handle_type", {"type": _type}), ("graph.handle_type", {"type": _type}))
+
+
 def command_tooltip(action, operation, reason="", status=""):
     """Row hover text as (text, role) lines: name, what it does, then details.
     Roles: TITLE, BODY, DETAIL, WARNING. A greyed tool leads its details with why."""

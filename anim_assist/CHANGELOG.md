@@ -89,6 +89,12 @@
   prints a description line. Hover text adds a Shortcut line only when a key is
   already bound to that tool (none are by default); it reads the live keymap,
   so keys you bind later appear.
+- Hover text also names Bforartists' own key for a command that does the same
+  job, labelled "Bforartists key", only when Bforartists binds one: Copy (Ctrl
+  C), Paste (Ctrl V), All Keys (A), Grow both sides (Ctrl Numpad +), timing
+  scale tools (R, Scale Keys in Time) and timing offset and nudges (W, Move
+  Keys in Time). Key types, handles, interpolation and others have Bforartists
+  equivalents without default keys; a key you bind to one appears.
 - Stages start from a fixed default set, not from a layout's All tools: tools
   you added to All stay in All until you add them to a stage. Older 12.9.x
   layout records are upgraded in memory and saved in the new format on the

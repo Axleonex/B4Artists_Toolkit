@@ -18,7 +18,7 @@ import bpy
 
 __all__ = [
     "MODES", "mode", "short", "register_class", "operator_text", "raw_description",
-    "shortcuts", "shortcut_lines",
+    "shortcuts", "shortcut_lines", "native_lines",
 ]
 
 MODES = (
@@ -136,12 +136,12 @@ def _same(value, wanted) -> bool:
     return value == wanted
 
 
-def shortcuts(idname: str, properties: dict | None = None) -> list[tuple[str, str]]:
+def shortcuts(idname: str, properties: dict | None = None, keys_only: bool = False) -> list[tuple[str, str]]:
     """Active key bindings to ``idname`` whose properties match: [(keys, keymap name)].
 
     Reads the live user and add-on key configurations, so a binding appears only
     when one really exists (a default one or one the user added)."""
-    key = (idname, tuple(sorted((properties or {}).items())))
+    key = (idname, tuple(sorted((properties or {}).items())), keys_only)
     now = time.monotonic()
     hit = _cache.get(key)
     if hit and now - hit[0] < _CACHE_SECONDS:
@@ -154,6 +154,8 @@ def shortcuts(idname: str, properties: dict | None = None) -> list[tuple[str, st
             for item in keymap.keymap_items:
                 if item.idname != idname or not item.active or item.map_type not in {"KEYBOARD", "MOUSE"}:
                     continue
+                if keys_only and (item.map_type != "KEYBOARD" or item.value not in {"PRESS", "RELEASE", "CLICK"}):
+                    continue  # a key press, not a drag or double-click
                 if properties and not all(
                         hasattr(item.properties, name) and _same(getattr(item.properties, name), value)
                         for name, value in properties.items()):
@@ -167,8 +169,43 @@ def shortcuts(idname: str, properties: dict | None = None) -> list[tuple[str, st
 
 def shortcut_lines(bindings: list[tuple[str, str]]) -> list[str]:
     places = {"Window", "Screen"}
-    text = ", ".join(keys if place in places else f"{keys} ({place})" for keys, place in bindings[:3])
+    text = ", ".join(keys if place in places else f"{keys} ({_PLACES.get(place, place)})" for keys, place in bindings[:3])
     return [f"Shortcut: {text}."] if text else []
+
+
+_PLACES = {"Dopesheet": "Dope Sheet", "Dopesheet Generic": "Dope Sheet", "Graph Editor Generic": "Graph Editor",
+           "Pose": "3D View, Pose Mode", "Object Mode": "3D View, Object Mode"}
+
+
+# Clearer names where Bforartists' own is generic or lists two variants.
+_NATIVE_NAMES = {("transform.transform", "TIME_SCALE"): "Scale Keys in Time",
+                 ("transform.transform", "TIME_TRANSLATE"): "Move Keys in Time",
+                 ("action.paste", ""): "Paste Keyframes", ("graph.paste", ""): "Paste Keyframes"}
+
+
+def _native_name(idname: str, properties: dict | None = None) -> str:
+    named = _NATIVE_NAMES.get((idname, (properties or {}).get("mode", "")))
+    if named:
+        return named
+    try:
+        module, name = idname.split(".", 1)
+        return getattr(getattr(bpy.ops, module), name).get_rna_type().name
+    except Exception:
+        return idname
+
+
+def native_lines(pairs) -> list[str]:
+    """'Bforartists key' lines for Bforartists' own commands that do the same job,
+    only for keys Bforartists really has bound (keyboard presses, not drags)."""
+    grouped: dict[tuple[str, str], list[str]] = {}
+    for idname, properties in pairs:
+        for keys, place in shortcuts(idname, properties, keys_only=True):
+            places = grouped.setdefault((keys, _native_name(idname, properties)), [])
+            place = _PLACES.get(place, place)
+            if place not in places:
+                places.append(place)
+    parts = [f"{keys} ({', '.join(places)}: {name})" for (keys, name), places in list(grouped.items())[:3]]
+    return [f"Bforartists key: {'; '.join(parts)}."] if parts else []
 
 
 def clear() -> None:

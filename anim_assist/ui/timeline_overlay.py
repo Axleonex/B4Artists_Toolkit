@@ -161,6 +161,9 @@ def _shape_tooltip(context, item, paragraphs):
                               ('animassist.timeline_slider', {'action': action})):
             bindings += [b for b in explainers.shortcuts(idname, props) if b not in bindings]
         extra = [(line, 'DETAIL') for line in explainers.shortcut_lines(bindings)]
+        # Bforartists' own command for the same job, only when Bforartists binds a key to it.
+        from .timeline_catalog import NATIVE_EQUIVALENTS
+        extra += [(line, 'DETAIL') for line in explainers.native_lines(NATIVE_EQUIVALENTS.get(action, ()))]
     if current == 'SHORT':
         title = [p for p in paragraphs if p[1] == 'TITLE'][:1]
         body = [(explainers.short(text) + '.', 'BODY') for text, role in paragraphs if role == 'BODY'][:1]

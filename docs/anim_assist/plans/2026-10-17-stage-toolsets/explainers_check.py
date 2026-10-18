@@ -136,6 +136,52 @@ def static_checks():
     prefs().explainer_mode = "OFF"
     check("Off row hover: nothing to draw", shaped("B25") == [])
     prefs().explainer_mode = "FULL"
+    native_checks()
+
+
+def native_lines(key):
+    return [t for t, _ in shaped(key) if t.startswith("Bforartists key:")]
+
+
+def native_checks():
+    """Bforartists' own keys for the same job, labelled as such, only when bound."""
+    catalog = mod("ui.timeline_catalog")
+    table = catalog.NATIVE_EQUIVALENTS
+    missing = [(a, i) for a, pairs in table.items() for i, _p in pairs
+               if a not in catalog.ACTIONS or not hasattr(getattr(bpy.ops, i.split(".")[0]), i.split(".")[1])]
+    log.write(f"  native table: {len(table)} tools; missing: {missing}\n")
+    check("Every native equivalent names a row tool and an existing Bforartists command", not missing)
+    lines = {key: native_lines(key) for key in ("COPY_KEYS", "PASTE_KEYS", "ALL", "GROW_BOTH", "T80", "NUDGE_LEFT",
+                                                 "TYPE_KEYFRAME", "HANDLE_VECTOR", "TO_SPLINE", "INBETWEEN")}
+    for key, value in lines.items():
+        log.write(f"  {key}: {value}\n")
+    check("Copy shows Bforartists' Ctrl C in the Dope Sheet and Graph Editor",
+          lines["COPY_KEYS"] and "Ctrl C (Dope Sheet, Graph Editor" in lines["COPY_KEYS"][0])
+    check("Paste shows Ctrl V, not the flipped Shift Ctrl V", lines["PASTE_KEYS"] and "Ctrl V" in lines["PASTE_KEYS"][0]
+          and "Shift" not in lines["PASTE_KEYS"][0] and "Paste Keyframes)" in lines["PASTE_KEYS"][0])
+    check("All Keys shows A; a double-click binding is not a key hint",
+          lines["ALL"] and lines["ALL"][0].startswith("Bforartists key: A (") and "dbl" not in lines["ALL"][0])
+    check("Timing and nudge tools show the Dope Sheet time keys (R scale, W move, no mouse drag)",
+          lines["T80"] and "R (Dope Sheet" in lines["T80"][0] and "Scale Keys in Time" in lines["T80"][0] and lines["NUDGE_LEFT"]
+          and "W (Dope Sheet" in lines["NUDGE_LEFT"][0] and "drag" not in lines["NUDGE_LEFT"][0].lower())
+    check("No Bforartists key line where Bforartists binds none (key types, handles, interpolation, Inbetween)",
+          not any(lines[k] for k in ("TYPE_KEYFRAME", "HANDLE_VECTOR", "TO_SPLINE", "INBETWEEN")))
+    # A key the user binds to Bforartists' own Keyframe Type command then appears for Mark as Keyframe.
+    keymap = bpy.context.window_manager.keyconfigs.user.keymaps["Dopesheet"]
+    item = keymap.keymap_items.new("action.keyframe_type", "K", "PRESS", shift=True, alt=True)
+    item.properties.type = "KEYFRAME"
+    mod("core.explainers").clear()
+    bound = native_lines("TYPE_KEYFRAME")
+    log.write(f"  TYPE_KEYFRAME after binding: {bound}\n")
+    check("A key bound later to Bforartists' Keyframe Type shows for Mark as Keyframe only",
+          bound and "Shift Alt K" in bound[0] and not native_lines("TYPE_BREAKDOWN"))
+    keymap.keymap_items.remove(item)
+    mod("core.explainers").clear()
+    prefs().explainer_mode = "SHORT"
+    check("Short keeps the Bforartists key line", native_lines("COPY_KEYS"))
+    prefs().explainer_mode = "OFF"
+    check("Off drops it with everything else", shaped("COPY_KEYS") == [])
+    prefs().explainer_mode = "FULL"
 
 
 def hover_row(key):
