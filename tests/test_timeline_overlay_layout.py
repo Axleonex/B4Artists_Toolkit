@@ -100,7 +100,7 @@ class TimelineLayoutTests(unittest.TestCase):
         strip=lambda cs:[c for c in cs if c[0] not in {'STAGE','STAGE_CYCLE'}]
         tools=lambda cs:[(c[0],c[1]) for c in strip(cs)]
         self.assertEqual(tools(self.controls(1920)),tools(self.controls(1920,stage='ALL')))
-        self.assertEqual([c[1] for c in self.controls(1920) if c[0]=='STAGE'],list(config.STAGE_IDS))
+        self.assertEqual([c[0] for c in self.controls(1920) if c[0] in {'STAGE','STAGE_CYCLE'}],['STAGE_CYCLE'])
 
     def test_lead_never_depends_on_stage(self):
         # Switching stage at a fixed width must not swap tabs for the cycle
@@ -113,16 +113,18 @@ class TimelineLayoutTests(unittest.TestCase):
                 if kinds=={'STAGE_CYCLE'}:
                     self.assertEqual({key for _k,key in leads},{'CYCLE'})
 
-    def test_tabs_follow_all_like_12_9(self):
-        # Tabs depend on All only (as in 12.9.x); with tabs shown, All keeps its
-        # family menus and inline sliders, and wide stage toolsets never take
-        # the tabs away from All.
-        self.assertEqual(self.controls(1920)[0][0],'STAGE')
-        for width in range(250,1921,10):
-            controls=self.controls(width)
-            if controls[0][0]!='STAGE': continue
-            self.assertEqual([c[1] for c in controls if c[0]=='MENU'],list(config.FAMILY_ORDER),width)
-            self.assertEqual({c[1] for c in controls if c[0]=='SLIDER'},{'DRAG','SMOOTH'},width)
+    def test_stage_is_always_a_dropdown(self):
+        # The five stages are dropdown options, never tabs side by side (owner, 2026-10-18).
+        for scale in (1,2):
+            for width in range(250,1921,50):
+                for stage in config.STAGE_IDS:
+                    controls=self.controls(width,scale,stage=stage)
+                    self.assertEqual(controls[0][:2],('STAGE_CYCLE','CYCLE'),(scale,width,stage))
+                    self.assertFalse(any(c[0]=='STAGE' for c in controls),(scale,width,stage))
+        wide=self.controls(1920)
+        self.assertEqual(wide[0][2],'All')
+        self.assertEqual([c[1] for c in wide if c[0]=='MENU'],list(config.FAMILY_ORDER))
+        self.assertEqual({c[1] for c in wide if c[0]=='SLIDER'},{'DRAG','SMOOTH'})
 
     def test_hidden_family_note(self):
         self.assertEqual(config.hidden_family_note('ALL','pose','Pose'),'')

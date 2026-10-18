@@ -86,7 +86,7 @@ def draw_timeline_quick_settings(layout, context, prefs) -> None:
         draw_stage_controls(layout, context)
         layout.label(text="Stage applies to this workspace; layouts are unchanged")
     else:
-        layout.label(text="Each workspace picks its stage with the row's tabs")
+        layout.label(text="Each workspace picks its stage with the row's stage button")
     layout.label(text="No separate editor or application required")
     layout.label(text="Saved in add-on preferences")
     layout.label(text="Layouts apply to all Timelines")

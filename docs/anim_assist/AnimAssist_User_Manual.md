@@ -36,11 +36,11 @@ On a narrow Timeline, a **+N** button appears before Find (for example +3): it l
 
 The **bottom-only canvas overlay** retains 12.7.1 placement, away from the top keyframe diamonds. It adds no native header/editor region or workspace split. There is no top/bottom placement setting.
 
-### Stage tabs
+### Stages
 
-Tabs at the left of the row choose a stage: **All**, **Block** (Tween, Keys), **Spline** (Curves, Motion), **Polish** (Timing, Pose) and **Deliver** (Bake). **All** is the condensed overview of every family. Each other stage has its own toolset for its families.
+The stage button at the left of the row chooses a stage: **All**, **Block** (Tween, Keys), **Spline** (Curves, Motion), **Polish** (Timing, Pose) and **Deliver** (Bake). **All** is the condensed overview of every family. Each other stage has its own toolset for its families.
 
-Click a tab, hold Ctrl and scroll over the tabs, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. When All does not fit beside the tabs, they collapse into one stage button. Click it once to open the stage list (it stays open while you hover), then click a stage. Clicking the button again, clicking anywhere else or pressing Esc closes the list. In a short Timeline the five stages appear as a row above the button. Ctrl+Wheel over the button also cycles stages. Tools that do not fit remain in More and Search. The row sits just above the Timeline's horizontal scrollbar and keeps its end buttons clear of the Timeline's corners. The family buttons (Tween, Keys and so on) and More work the same way: one click opens the list, it stays open while you move the pointer, clicking a tool runs it, and clicking the same button, anywhere else or pressing Esc closes it. Clicking another family button switches to that family; in More, a family opens in place with a Back row.
+The button shows the current stage's name. Click it, hold Ctrl and scroll over it, or use **Timeline > View > Anim Assist Stage**. Each workspace keeps its own stage, saved with the file. Click the button once to open the stage list (it stays open while you hover), then click a stage. Clicking the button again, clicking anywhere else or pressing Esc closes the list. In a short Timeline the five stages appear as a row above the button. Ctrl+Wheel over the button also cycles stages. Tools that do not fit appear under the **+N** button. The row sits just above the Timeline's horizontal scrollbar and keeps its end buttons clear of the Timeline's corners. The family buttons (Tween, Keys and so on) and More work the same way: one click opens the list, it stays open while you move the pointer, clicking a tool runs it, and clicking the same button, anywhere else or pressing Esc closes it. Clicking another family button switches to that family.
 
 ### Stage toolsets
 
@@ -57,7 +57,7 @@ To change a row, open **Toolbar Settings** (the row's **Settings** button). The 
 
 Amounts (range, default, presets, slider width, snapping) are shared: changing them in any stage changes them everywhere. Right-click Tool Settings changes the display and label in the stage the row shows. A Search pin also goes to that row, whatever the tool's family. More lists the shown stage's tools.
 
-Stages start from this fixed set, not from your All tools: a tool you added to All appears in a stage only after you add it there. Add-on Preferences have no stage control; there, Anim Assist notes that each workspace picks its stage with the row's tabs.
+Stages start from this fixed set, not from your All tools: a tool you added to All appears in a stage only after you add it there. Add-on Preferences have no stage control; there, Anim Assist notes that each workspace picks its stage with the row's stage button.
 
 ## Dope Sheet: poses and key timing
 

@@ -2,9 +2,10 @@
 
 Run:  bforartists --factory-startup --enable-event-simulate --python edges_pointer_check.py
 with BLENDER_USER_SCRIPTS holding the package as B4_anim_assist and AA_STAGE_OUT set.
-With the channel list closed and a wide Timeline (stage tabs shown), the row sits above
-the horizontal scrollbar strip, its first and last buttons are inset from the area's
-corners, and clicks near the outer edge of the first tab and the last button still work.
+With the channel list closed and a wide Timeline, the row sits above the horizontal
+scrollbar strip, its first and last buttons are inset from the area's corners, and clicks
+near the outer edge and the bottom-left corner of the stage button open its dropdown
+instead of starting a corner drag.
 """
 import os
 import sys
@@ -83,12 +84,12 @@ def plan():
         check("The first button is inset from the left corner", first[3][0] >= overlay().CORNER_INSET * scale - .5)
         check("The last button is inset from the right corner",
               last[3][0] + last[3][2] <= reg.width - overlay().CORNER_INSET * scale + .5)
-        check("Stage tabs show on this wide Timeline", first[0] == "STAGE")
+        check("The stage dropdown button leads the row, even on this wide Timeline", first[0] == "STAGE_CYCLE")
 
     yield geometry, 0.2
-    # Click 3 px inside the first tab's outer edge: it must switch the stage, not start a corner drag.
+    # Click 3 px inside the stage button's outer edge: it must open the dropdown, not start a corner drag.
     def click_edge():
-        first = next(i for i in items()[0] if i[0] == "STAGE" and i[1] == "BLOCK")
+        first = items()[0][0]
         x, y, w, h = first[3]
         xy = dict(x=round(region().x + x + 3), y=round(region().y + y + h / 2))
         win = window()
@@ -106,14 +107,21 @@ def plan():
         win.event_simulate(type="LEFTMOUSE", value="RELEASE", **xy)
         state["first_key"] = first[1]
 
+    def menu_open():
+        return window().as_pointer() in overlay()._stage_menu
+
+    def esc():
+        window().event_simulate(type="ESC", value="PRESS")
+        window().event_simulate(type="ESC", value="RELEASE")
+
+    state["areas"] = len(window().screen.areas)
     yield click_edge, 0.6
-    yield (lambda: check("A click near a tab's edge switches the stage",
-                         getattr(window().workspace, PROP) == "BLOCK")), 0.1
-    yield (lambda: setattr(window().workspace, PROP, "SPLINE")), 0.4
+    yield (lambda: check("A click near the stage button's edge opens the stage dropdown", menu_open())), 0.1
+    yield esc, 0.4
     yield click_first_edge, 0.6
-    yield (lambda: check("A click in the bottom-left corner of the first tab selects it",
-                         getattr(window().workspace, PROP) == state["first_key"]
-                         and len(window().screen.areas) == state.setdefault("areas", len(window().screen.areas)))), 0.1
+    yield (lambda: check("A click in the stage button's bottom-left corner opens it, with no area split",
+                         menu_open() and len(window().screen.areas) == state["areas"])), 0.1
+    yield esc, 0.4
     # Pointer near the bottom so Blender shows the scrollbar, then capture.
     yield (lambda: window().event_simulate(type="MOUSEMOVE", value="NOTHING",
                                            x=region().x + region().width // 2, y=region().y + 6)), 0.6

@@ -127,7 +127,7 @@ try:
     rec = Rec()
     prefs_module.draw_timeline_quick_settings(rec, bpy.context, SimpleNamespace(timeline_toolbar_row=True))
     check("Preferences (no Timeline) explain stage tabs instead",
-          not stage_prop(rec) and "Each workspace picks its stage with the row's tabs" in labels(rec))
+          not stage_prop(rec) and "Each workspace picks its stage with the row's stage button" in labels(rec))
     check("Preference description updated",
           "bottom of the Timeline" in prefs_module.AA_AddonPreferences.bl_rna.properties["timeline_toolbar_row"].description
           if hasattr(prefs_module.AA_AddonPreferences, "bl_rna") else True)

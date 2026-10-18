@@ -452,11 +452,9 @@ class AllCompactTests(unittest.TestCase):
         bad = copy.deepcopy(self.record); bad['active']['tools']['DRAG']['ticks'] = 'yes'
         with self.assertRaises(ValueError): config.validate(bad, actions)
 
-    def test_stage_tabs_return_sooner(self):
-        def lead(width):
-            items = config.toolbar_layout(width, 120, 28, False, self.record, groups, {}, lambda t: len(t) * 6.2, 'ALL')
-            return any(c[0] == 'STAGE' for c in items)
-        self.assertTrue(lead(1600))
+    def test_stage_button_names_the_stage(self):
+        items = config.toolbar_layout(1600, 120, 28, False, self.record, groups, {}, lambda t: len(t) * 6.2, 'POLISH')
+        self.assertEqual(items[0][:3], ('STAGE_CYCLE', 'CYCLE', 'Polish'))
 
 
 if __name__=='__main__': unittest.main()

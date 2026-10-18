@@ -101,9 +101,9 @@ def _stage_description(kind, stage):
         return (f"Stage: {label}. Click to choose a stage; Ctrl+Wheel cycles. "
                 "Each stage has its own toolset, edited in Settings")
     if stage == "ALL":
-        return "Show the All overview of every tool family. Ctrl+Wheel over the tabs cycles stages"
+        return "Show the All overview of every tool family. Ctrl+Wheel over the stage button cycles stages"
     return (f"{label} stage: its own {_family_labels(stage)} toolset, edited in Settings. "
-            "Ctrl+Wheel over the tabs cycles stages")
+            "Ctrl+Wheel over the stage button cycles stages")
 
 
 def _tooltip_paragraphs(context, item):

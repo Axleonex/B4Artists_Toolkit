@@ -646,10 +646,9 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
         return specs
 
     fits=lambda specs,room=None:sum(i[3]+gap for i in specs)<=(budget if room is None else room)
-    # Tabs only when All's full layout fits beside them, as in 12.9.x. The
-    # choice never depends on the selected stage; a wider stage toolset
-    # compacts or overflows into More instead of moving the tabs.
-    lead=tabs if fits(tabs+compose('ALL')) else cycle
+    # The stage is always one dropdown button (owner request 2026-10-18: the five
+    # stages as dropdown options, not side by side), at every width and stage.
+    lead=cycle
     candidates=[lead+body for body in (compose(stage),compose(stage,compact=True,named=True),
                                        compose(stage,compact=True),
                                        compose(stage,compact=True,demote=True),

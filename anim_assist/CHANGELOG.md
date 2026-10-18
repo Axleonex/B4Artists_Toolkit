@@ -80,12 +80,15 @@
   Recommended restores all.
 - Saved layouts store All and all four stages together. Amounts (range,
   default, presets, width and so on) stay shared by every stage.
+- The stage is always one dropdown button at the left of the row, named for
+  the stage shown (All, Block, Spline, Polish, Deliver); the five tabs no
+  longer sit side by side. Click it to choose a stage; Ctrl+Wheel over it
+  cycles. The freed space goes to tools.
 - Find and More each have one job. Find is a magnifier icon that reaches all
   96 tools: type to search, or with nothing typed browse them by family tabs;
   click to run, pin to add to the row. More appears only when the row's tools
   do not fit, labelled with how many (for example +3), and lists just those.
-  The row gains about 60 px when everything fits, so the five stage tabs
-  appear from about 1,360 px (was 1,450 px).
+  The row gains about 60 px when everything fits.
 - Find and Toolbar Settings share one saved layout: a pin made in Find shows in
   Toolbar Settings (even while it is open), and Settings changes light or clear
   the pins in Find.
