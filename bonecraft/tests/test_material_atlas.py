@@ -204,7 +204,7 @@ def test_material_atlas_backup_duplicate_toggle_is_near_analyze_row():
     assert "Turn off to remove originals after atlasing without a backup duplicate." in source
     assert 'backup_row.prop(settings, "preserve_originals", text=T("Preserve Backup Duplicate"))' in source
     assert 'text=T("Off: no Revert backup; originals are removed after atlasing")' in source
-    assert source.index('tool_row.operator("boneforge.vrc_atlas_analyze"') < source.index(
+    assert source.index('analyze_row.operator(') < source.index(
         'backup_row.prop(settings, "preserve_originals", text=T("Preserve Backup Duplicate"))'
     )
     assert source.index('backup_row.prop(settings, "preserve_originals", text=T("Preserve Backup Duplicate"))') < source.index(

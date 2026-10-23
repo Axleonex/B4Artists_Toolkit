@@ -1,0 +1,14 @@
+{
+  "product": "BoneCraft",
+  "version": [
+    9,
+    2,
+    15
+  ],
+  "candidate": "local-bugfix-release",
+  "source": "\\\\100.114.2.71\\Gdrive\\LapArt\\Projects\\Blender_Addons\\B4Artists_Tools\\.claude\\worktrees\\bonecraft-mmd-925\\bonecraft\\boneforge",
+  "files": 232,
+  "crc": "PASS",
+  "source_parity": "PASS",
+  "sha256": "d7e1c1af87cbc7e3e1bc98bc35877ced83f81fa55035ef70e95a0c69db7ef158"
+}

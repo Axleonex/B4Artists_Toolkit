@@ -1,5 +1,14 @@
 # BoneCraft
 
+**Current repository build: BoneCraft 9.2.15.**
+[Install BoneCraft-BFA-9.2.15.zip](../releases/BoneCraft-BFA-9.2.15.zip).
+Repairs MMD/PMX installation and material combining. Adds active-group Select All /
+Deselect All for materials and textures and folds detailed controls away from the
+main Analyze, choose sources, Bake Checked Sources workflow.
+[Fixes and verification](docs/material-combiner-fixes-2026-10-23.md).
+No standalone GitHub Release is created by this repository update.
+
+
 A rigging and avatar toolkit for **[Bforartists](https://www.bforartists.de/)** (the Blender fork). BoneCraft runs
 only in Bforartists: in standard Blender it does not load and shows a single "Get Bforartists" notice instead.
 
