@@ -1,12 +1,12 @@
 # BoneCraft
 
-**Current repository build: BoneCraft 9.2.15.**
-[Install BoneCraft-BFA-9.2.15.zip](../releases/BoneCraft-BFA-9.2.15.zip).
+**Current release: BoneCraft 9.2.15.**
+[Install BoneCraft-BFA-9.2.15.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.15/BoneCraft-BFA-9.2.15.zip).
 Repairs MMD/PMX installation and material combining. Adds active-group Select All /
 Deselect All for materials and textures and folds detailed controls away from the
 main Analyze, choose sources, Bake Checked Sources workflow.
 [Fixes and verification](docs/material-combiner-fixes-2026-10-23.md).
-No standalone GitHub Release is created by this repository update.
+[Tagged release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/bonecraft-v9.2.15) and [package receipt](../releases/BoneCraft-BFA-9.2.15.receipt.json).
 
 
 A rigging and avatar toolkit for **[Bforartists](https://www.bforartists.de/)** (the Blender fork). BoneCraft runs
@@ -15,7 +15,7 @@ only in Bforartists: in standard Blender it does not load and shows a single "Ge
 | | |
 |---|---|
 | **Add-on** | BoneCraft |
-| **Version** | 9.2.5 |
+| **Version** | 9.2.15 |
 | **Host** | Bforartists (tested on 5.2) — not standard Blender |
 | **Category** | Rigging / Animation |
 | **License** | GPL v2.0 or later |
@@ -45,18 +45,18 @@ Switching a package off unregisters its classes, so it costs nothing until you s
 
 ## Install
 
-1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([current repository ZIP: BoneCraft 9.2.5](../releases/BoneCraft-BFA-9.2.5.zip)).
+1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([BoneCraft 9.2.15 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.15/BoneCraft-BFA-9.2.15.zip)).
 2. Tick its checkbox.
 3. In the 3D Viewport, the **BoneCraft** and **Rig Builder** tabs are on the left Tool Shelf (press **T**) and the
    **CATS** tab is on the right sidebar (press **N**). Each tab's side can be changed in the add-on's preferences
    (**Tabs**). Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools and Import / Export are also in the Properties
    editor's Scene tab while **Tabs → Scene Properties → Show** is on (the default).
 
-Current repository changes and checks: [BoneCraft 9.2.5 notes](../docs/bonecraft/releases/9.2.5/RELEASE-NOTES.md).
+Current release changes and checks: [BoneCraft 9.2.15 fixes and verification](docs/material-combiner-fixes-2026-10-23.md).
 
-Repository build 9.2.5: [installable ZIP](../releases/BoneCraft-BFA-9.2.5.zip). The latest tagged GitHub Release remains 9.2.3.
+Latest BoneCraft release: [9.2.15](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/bonecraft-v9.2.15). The Toolkit-wide Latest badge can refer to another add-on.
 
-### 9.2.5 local changes
+### Previous changes (9.2.5)
 
 - Starter Rigs uses one native catalog tab; its top-left header controls are removed.
 - Enable Starter Rigs once from the bottom shelf catalog menu to display its tab.
