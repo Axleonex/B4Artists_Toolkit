@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "product": "BoneCraft",
+  "version": "9.2.17",
+  "package_sha256": "a80a49a5eccc363d4afee360dea3277515b08eb25d2859b3c2a062238c8f1454",
+  "context": {
+    "result": "PASS",
+    "host": "5.3.0 Alpha",
+    "count": 19,
+    "evidence": "bonecraft/tests/export-context-evidence/context.json"
+  },
+  "naming": {
+    "result": "PASS",
+    "host": "5.3.0 Alpha",
+    "count": 15,
+    "evidence": "bonecraft/tests/export-context-evidence/naming.json"
+  }
+}

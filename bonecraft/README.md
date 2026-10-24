@@ -1,12 +1,12 @@
 # BoneCraft
 
-**Current release: BoneCraft 9.2.15.**
-[Install BoneCraft-BFA-9.2.15.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.15/BoneCraft-BFA-9.2.15.zip).
-Repairs MMD/PMX installation and material combining. Adds active-group Select All /
-Deselect All for materials and textures and folds detailed controls away from the
-main Analyze, choose sources, Bake Checked Sources workflow.
-[Fixes and verification](docs/material-combiner-fixes-2026-10-23.md).
-[Tagged release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/bonecraft-v9.2.15) and [package receipt](../releases/BoneCraft-BFA-9.2.15.receipt.json).
+**Current release: BoneCraft 9.2.17.**
+[Install BoneCraft-BFA-9.2.17.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.17/BoneCraft-BFA-9.2.17.zip).
+Adds Unity/Unreal export naming presets and repairs export/cleanup from
+Pose and Edit Mode. The working rig, original mode and selection are preserved.
+Retains the earlier MMD/PMX and material-combiner fixes.
+[Release notes](../docs/bonecraft/releases/9.2.17/RELEASE-NOTES.md) · [Verification](tests/export-context-evidence/README.md).
+[Tagged release](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/bonecraft-v9.2.17) and [package receipt](../releases/BoneCraft-BFA-9.2.17.receipt.json).
 
 
 A rigging and avatar toolkit for **[Bforartists](https://www.bforartists.de/)** (the Blender fork). BoneCraft runs
@@ -15,7 +15,7 @@ only in Bforartists: in standard Blender it does not load and shows a single "Ge
 | | |
 |---|---|
 | **Add-on** | BoneCraft |
-| **Version** | 9.2.15 |
+| **Version** | 9.2.17 |
 | **Host** | Bforartists (tested on 5.2) — not standard Blender |
 | **Category** | Rigging / Animation |
 | **License** | GPL v2.0 or later |
@@ -45,16 +45,16 @@ Switching a package off unregisters its classes, so it costs nothing until you s
 
 ## Install
 
-1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([BoneCraft 9.2.15 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.15/BoneCraft-BFA-9.2.15.zip)).
+1. In Bforartists: **Edit → Preferences → Add-ons → Install from Disk…**, and pick the BoneCraft `.zip` ([BoneCraft 9.2.17 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.17/BoneCraft-BFA-9.2.17.zip)).
 2. Tick its checkbox.
 3. In the 3D Viewport, the **BoneCraft** and **Rig Builder** tabs are on the left Tool Shelf (press **T**) and the
    **CATS** tab is on the right sidebar (press **N**). Each tab's side can be changed in the add-on's preferences
    (**Tabs**). Rig Builder, Mechanisms, CATS, Avatar Tools, VRChat Tools and Import / Export are also in the Properties
    editor's Scene tab while **Tabs → Scene Properties → Show** is on (the default).
 
-Current release changes and checks: [BoneCraft 9.2.15 fixes and verification](docs/material-combiner-fixes-2026-10-23.md).
+Current release changes and checks: [BoneCraft 9.2.17](../docs/bonecraft/releases/9.2.17/RELEASE-NOTES.md).
 
-Latest BoneCraft release: [9.2.15](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/bonecraft-v9.2.15). The Toolkit-wide Latest badge can refer to another add-on.
+Latest BoneCraft release: [9.2.17](https://github.com/Axleonex/B4Artists_Toolkit/releases/tag/bonecraft-v9.2.17). The Toolkit-wide Latest badge can refer to another add-on.
 
 ### Previous changes (9.2.5)
 
@@ -100,3 +100,15 @@ preferences carry over).
 ## License
 
 Released under the **GNU General Public License v2.0 or later** — see [`LICENSE`](LICENSE).
+
+## Export naming and updates
+
+Choose **Bone Names → Keep Original Names / Unity-Preset / Unreal-Preset**
+in either export section. Presets affect export copies and preserve the
+working rig. Both main export buttons restore your original mode/selection.
+[Naming guide](docs/export-bone-naming.md).
+
+When updating, save your work, disable/remove the older add-on, and restart
+Bforartists before installing **BoneCraft-BFA-9.2.17.zip**. Confirm **9.2.17**
+in Preferences afterward. Use the product-specific release/download links
+above; the Toolkit-wide Latest badge may belong to another add-on.

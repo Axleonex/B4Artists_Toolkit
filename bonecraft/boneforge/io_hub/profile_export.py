@@ -34,6 +34,7 @@ def profile_to_fbx_kwargs(profile):
         "mesh_smooth_type": 'OFF',
         "use_mesh_modifiers": True,
         "bake_anim_use_all_actions": False,
+        "bake_anim_use_nla_strips": False,
         "bake_anim_force_startend_keying": True,
         "path_mode": 'AUTO',
     }
@@ -193,7 +194,8 @@ def _deformed_meshes(context, armature):
 
 
 def export_with_profile(context, profile_id, filepath, action_mode='ACTIVE',
-                        root_motion=False, interpolation='BEZIER', t_pose=None):
+                        root_motion=False, interpolation='BEZIER', t_pose=None,
+                        bone_naming='NONE'):
     """Export the selection using ``profile_id``'s settings.
 
     Returns ``(ok, message)``. ``root_motion`` temporarily tags the profile's
@@ -207,6 +209,8 @@ def export_with_profile(context, profile_id, filepath, action_mode='ACTIVE',
     """
     import bpy
     from boneforge.io_hub import profiles as _profiles
+    if action_mode == 'ALL' and bone_naming != 'NONE':
+        return False, "Choose Active Action or No Animation for bone naming presets; All Actions requires original names"
     profile = _profiles.get_profile(profile_id)
     armature = context.active_object
     if armature is not None and armature.type != 'ARMATURE':
@@ -247,17 +251,19 @@ def export_with_profile(context, profile_id, filepath, action_mode='ACTIVE',
         action_mode = 'NONE'
 
     try:
-        if profile["container"] == 'FBX':
-            kwargs = profile_to_fbx_kwargs(profile)
-            kwargs.update(resolve_action_kwargs(action_mode))
-            bpy.ops.export_scene.fbx(filepath=filepath, use_selection=True,
-                                     **kwargs)
-        else:
-            kwargs = profile_to_gltf_kwargs(profile)
-            if action_mode == 'NONE':
-                kwargs["export_animations"] = False
-            bpy.ops.export_scene.gltf(filepath=filepath, use_selection=True,
-                                      **kwargs)
+        from boneforge.io_hub.bone_naming import export_copies
+        with export_copies(context, context.selected_objects, bone_naming):
+            if profile["container"] == 'FBX':
+                kwargs = profile_to_fbx_kwargs(profile)
+                kwargs.update(resolve_action_kwargs(action_mode))
+                bpy.ops.export_scene.fbx(filepath=filepath, use_selection=True,
+                                         **kwargs)
+            else:
+                kwargs = profile_to_gltf_kwargs(profile)
+                if action_mode == 'NONE':
+                    kwargs["export_animations"] = False
+                bpy.ops.export_scene.gltf(filepath=filepath, use_selection=True,
+                                          **kwargs)
     except Exception as exc:
         return False, "Export failed: %s" % exc
     finally:
@@ -277,6 +283,7 @@ def export_with_profile(context, profile_id, filepath, action_mode='ACTIVE',
 
 def _register():
     import bpy
+    from boneforge.io_hub.bone_naming import naming_items
     from bpy_extras.io_utils import ExportHelper
 
     def _profile_items(self, context):
@@ -342,6 +349,9 @@ def _register():
         profile_id: bpy.props.EnumProperty(description='Game engine or platform the export is set up for', name="Profile", items=_profile_items)
         action_mode: bpy.props.EnumProperty(description='Which animation to export with the rig', name="Animation", items=ACTION_MODES,
                                             default='ACTIVE')
+        bone_naming: bpy.props.EnumProperty(
+            name="Bone Names", items=naming_items, default=0,
+            description="Bone naming preset for export copies only")
         root_motion: bpy.props.BoolProperty(description="Export the root bone's movement as root motion", name="Root Motion", default=False)
         interpolation: bpy.props.EnumProperty(description='How the exported keys blend from one to the next', name="Interpolation",
                                               items=INTERP_MODES, default='BEZIER')
@@ -366,7 +376,7 @@ def _register():
                                           self.filepath, self.action_mode,
                                           self.root_motion, self.interpolation,
                                           None if self.t_pose == 'PROFILE'
-                                          else self.t_pose == 'ON')
+                                          else self.t_pose == 'ON', bone_naming=self.bone_naming)
             self.report({'INFO'} if ok else {'ERROR'}, msg)
             return {'FINISHED'} if ok else {'CANCELLED'}
 
@@ -473,7 +483,8 @@ def _register():
             box.operator("boneforge.export_fix_apply_transforms",
                          icon='APPLYALL')
             layout.separator(factor=0.5)
-            layout.operator("boneforge.profile_export", icon='EXPORT')
+            op = layout.operator("boneforge.profile_export", icon='EXPORT')
+            op.bone_naming = context.scene.boneforge_game_export_settings.bone_naming
 
     return (BONEFORGE_PG_ProfileFinding, BONEFORGE_UL_ProfileFindings,
             BF_OT_ProfileExport, BF_OT_ProfileCheck, BF_OT_ApplyTransformsFix,
