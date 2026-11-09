@@ -1329,8 +1329,13 @@ def _draw_timeline_header_extension(self, context: bpy.types.Context) -> None:
         return
     settings = scene.ghost_tool
     self.layout.separator()
+    self.layout.prop(settings, "is_active", text="",
+                     icon='GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED', toggle=True)
+    if not settings.is_active:
+        return
+
+    self.layout.separator(factor=0.5)
     row = self.layout.row(align=True)
-    row.prop(settings, "is_active", text="", icon='GHOST_ENABLED' if settings.is_active else 'GHOST_DISABLED', toggle=True)
     icon = 'GHOST_ENABLED' if settings.show_mesh_ghosts else 'GHOST_DISABLED'
     row.operator_menu_hold("ghost_tool.timeline_display", text="", icon=icon,
                            depress=settings.show_mesh_ghosts, menu='GHOST_MT_timeline_ghost_display').target = 'GHOST'
