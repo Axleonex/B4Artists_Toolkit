@@ -18,7 +18,7 @@ Compare retains scoped snapshots, independent variants, binding, JSON transfer a
 
 ## Installation and publication status
 
-Download the [Ghost Tool 4.3.1 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.1/b4_ghost_tool_v4.3.1.zip), install it through Edit > Preferences > Add-ons > Install from Disk and restart Bforartists. Source, archive and manual all identify version **4.3.1**. The [package receipt](releases/4.3.1/package-receipt.json) records its checksum and byte-for-byte source manifest. Historical 4.2.11 downloads keep their original version.
+Download the [Ghost Tool 4.3.2 ZIP](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.2/b4_ghost_tool_v4.3.2.zip), install it through Edit > Preferences > Add-ons > Install from Disk and restart Bforartists. In 4.3.2, turning off the left ghost icon collapses the Timeline controls, and a gap separates the two ghost icons when enabled. This guide is the 4.3.1 edition. The [4.3.1 package receipt](releases/4.3.1/package-receipt.json) records its checksum and byte-for-byte source manifest. Historical 4.2.11 downloads keep their original version.
 
 ## Evidence and history
 
