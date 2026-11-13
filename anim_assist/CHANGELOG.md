@@ -1,3 +1,9 @@
+# 12.10.1 ? Timeline toolbar click targets
+
+- Reserve space above the native horizontal scrollbar as the Timeline is resized.
+- Grow the buttons and their click areas together when the Timeline is tall enough.
+- Keep stage choices inside the usable canvas on a short Timeline.
+
 # 12.10.0 — Stage toolsets
 
 - Block, Spline, Polish and Deliver each have their own toolset on the bottom

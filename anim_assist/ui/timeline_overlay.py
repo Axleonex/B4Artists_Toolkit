@@ -9,6 +9,7 @@ import bpy
 import blf
 import gpu
 import time
+from math import ceil
 from types import SimpleNamespace
 from gpu_extras.batch import batch_for_shader
 from bpy.props import EnumProperty, IntProperty, StringProperty
@@ -351,9 +352,21 @@ def _items(context):
     y = marker_strip if usable_height - keys_at_top - h >= marker_strip else 0
     # The Timeline's horizontal scrollbar runs along the bottom edge; sit above it
     # (owner request 2026-10-18) when nothing else (markers) already lifts the row.
-    scrollbar = SCROLLBAR_LIFT * scale
-    if y == 0 and usable_height - keys_at_top - h >= scrollbar:
-        y = scrollbar
+    # Reserve the native scroller's full input strip before it can appear.
+    # View2D sizes the bottom scroller from the UI scale and pixel padding.
+    pixel_size = context.preferences.system.pixel_size
+    scrollbar = ceil(max(SCROLLBAR_LIFT * scale, 11 * scale + 4 * pixel_size))
+    if usable_height >= 22 * scale:
+        y = max(y, scrollbar)
+    # Extra height goes into the same rectangles used for drawing and input.
+    # Keep horizontal spacing based on the compact row so resizing vertically
+    # does not send labels or tools into the overflow menu.
+    # The native ruler has its own input area at the top of the canvas.
+    ruler = 23 * scale if usable_height >= 46 * scale else 0
+    available = usable_height - y - ruler
+    if available < 8 * scale:
+        return [], (0, y, context.region.width, 0)
+    growth = max(0, min(8 * scale, usable_height - y - keys_at_top - h))
     # Blender's area corner handles (drag to split or join) sit in the bottom corners.
     # When the row reaches the Timeline's left or right edge (channels or sidebar
     # closed), keep the end buttons clear of them so a click hits the button.
@@ -364,11 +377,15 @@ def _items(context):
     except ValueError: record=model.recommended(ACTIONS)
     stage = current_stage(context)
     labels={**QUICK_LABELS,**ROW_LABELS,**(ALL_ROW_LABELS if stage == 'ALL' else {})}
-    items = model.toolbar_layout(max(1, region.width - left - right), usable_height, h, False,
+    items = model.toolbar_layout(max(1, region.width - left - right), available, h, False,
                        record,GROUPS,labels,lambda text: blf.dimensions(0, text)[0],
                        stage)
-    items = [(kind, key, label, (x + left, iy+y, w, ih)) for kind, key, label, (x, iy, w, ih) in items]
-    return items, (0, y, context.region.width, min(h, context.region.height))
+    items = [
+        (kind, key, label, (x + left, y + iy, w, min(ih + growth, available - iy)))
+        for kind, key, label, (x, iy, w, ih) in items
+        if iy < available
+    ]
+    return items, (0, y, region.width, min(h + growth, available))
 
 
 # Family and More lists drawn by the add-on (Blender's own popup menus picked an item on
@@ -500,16 +517,23 @@ def _menu_items(context, items, band):
     blf.size(0, round(11 * scale))
     stages = [(key, label) for key, label, _families in model.STAGES]
     top = band[1] + band[3] + gap
-    region_w, region_h = context.region.width, context.region.height
+    region_w = context.region.width
+    region_h = context.region.height - 23 * scale
+    if region_h <= band[1]:
+        return []
     if top + len(stages) * (bh + gap) <= region_h:
         width = max(bw, max(blf.dimensions(0, label)[0] for _key, label in stages) + 2 * pad)
         x = max(0, min(bx, region_w - width))
         return [('STAGE_ITEM', key, label, (x, top + (len(stages) - 1 - index) * (bh + gap), width, bh))
                 for index, (key, label) in enumerate(stages)]
+    # In a short Timeline the list can cover the toolbar while open. Keep
+    # the options inside the canvas and clear of the scrollbar.
+    bh = min(bh, region_h - band[1])
+    menu_y = max(band[1], min(top, region_h - bh))
     result, x = [], bx
     for key, label in stages:
         width = blf.dimensions(0, label)[0] + 2 * pad
-        result.append(('STAGE_ITEM', key, label, (x, top, width, bh)))
+        result.append(('STAGE_ITEM', key, label, (x, menu_y, width, bh)))
         x += width + gap
     shift = max(0, x - region_w)
     return [(kind, key, label, (rx - shift, ry, rw, rh)) for kind, key, label, (rx, ry, rw, rh) in result]
