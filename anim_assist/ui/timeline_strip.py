@@ -121,7 +121,44 @@ def _module_reason(context,action):
     return ''
 
 
-def _unavailable(context, target, action):
+def _selection_requirement(action):
+    if action in {"NEIGHBORS", "FRAME", "EASE", "AMPLIFY", "SMOOTH"}:
+        from ..operators.curve_tool_ops import _editable_fcurves
+        return _editable_fcurves, 2 if action == "EASE" else 1
+    if action.startswith(("TYPE_", "NUDGE_")):
+        from ..operators.keymanager_ops import _object_fcurves
+        return _object_fcurves, 1
+    if action in {"TO_SPLINE", "TO_STEPPED"} or action.startswith("HANDLE_"):
+        from ..operators.keymanager_ops import _visible_fcurves
+        return _visible_fcurves, 1
+    return None, 0
+
+
+def _has_selected_keys(context, action, checks):
+    curves, count = _selection_requirement(action)
+    if curves is None:
+        return True
+    key = (curves, count)
+    if checks is not None and key in checks:
+        return checks[key]
+    has_selection = False
+    for curve in curves(context):
+        selected = (point for point in curve.keyframe_points if point.select_control_point)
+        if next(selected, None) is None:
+            continue
+        has_selection = True
+        if count == 1 or next(selected, None) is not None:
+            if checks is not None:
+                checks[key] = True
+                checks[curves, 1] = True
+            return True
+    if checks is not None:
+        checks[key] = False
+        checks[curves, 1] = has_selection
+    return False
+
+
+def _unavailable(context, target, action, *, selection_checks=None):
     if target is None:
         return "Use an animation tool from a Timeline"
     reason=_module_reason(context,action)
@@ -131,24 +168,10 @@ def _unavailable(context, target, action):
         return "Enable the corresponding Anim Assist tool module"
     try:
         with context.temp_override(area=target, region=_window_region(target)):
-            selected_actions = {"NEIGHBORS", "FRAME", "EASE", "AMPLIFY", "SMOOTH"}
-            if action in selected_actions or action in {"TO_SPLINE", "TO_STEPPED"} \
-                    or action.startswith(("HANDLE_", "TYPE_", "NUDGE_")):
-                if action in selected_actions:
-                    from ..operators.curve_tool_ops import _editable_fcurves
-                    curves = _editable_fcurves(context)
-                elif action.startswith(("TYPE_", "NUDGE_")):
-                    from ..operators.keymanager_ops import _object_fcurves
-                    curves = _object_fcurves(context)
-                else:
-                    from ..operators.keymanager_ops import _visible_fcurves
-                    curves = _visible_fcurves(context)
+            if not _has_selected_keys(context, action, selection_checks):
                 if action == "EASE":
-                    if not any(sum(k.select_control_point for k in fc.keyframe_points) >= 2
-                               for fc in curves):
-                        return "Select at least two editable keys on the same curve"
-                elif not any(k.select_control_point for fc in curves for k in fc.keyframe_points):
-                    return "Select editable keys on an animated object"
+                    return "Select at least two editable keys on the same curve"
+                return "Select editable keys on an animated object"
             if action == "COPY_KEYS":
                 from ..core.context_utils import iter_selected_keys
                 if next(iter_selected_keys(context), None) is None:

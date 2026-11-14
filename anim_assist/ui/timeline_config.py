@@ -422,12 +422,12 @@ def stage_families(stage):
     return FAMILY_ORDER if families is None else tuple(f for f in FAMILY_ORDER if f in families)
 
 
-def row_families(layout, stage):
+def row_families(layout, stage, *, view=None):
     """Families a row shows, in permanent order: All shows every family; a stage
     shows its home families plus any family it holds a visible tool from."""
     if stage not in STAGE_KEYS: return FAMILY_ORDER
     home = set(stage_families(stage))
-    order, tools = stage_view(layout, stage)
+    order, tools = stage_view(layout, stage) if view is None else view
     held = {family_of(a) for a in order
             if isinstance(tools.get(a), dict) and tools[a].get('mode', 'HIDDEN') != 'HIDDEN'}
     return tuple(f for f in FAMILY_ORDER if f in home or f in held)
@@ -587,7 +587,7 @@ def apply_entries(record, stage, entries, actions):
     layout['stages'][stage] = setup
 
 
-def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,stage='ALL'):
+def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,stage='ALL',*,view=None):
     """Bounded presentation only; never modify the saved layout on overflow."""
     scale=row_height/28.
     gap=3*scale; pad=5*scale
@@ -603,9 +603,6 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
     more_w=max(24*scale,measure('+99')+2*pad)
     full_budget=max(0,width-sum(utility_widths)-3*gap)
     budget=full_budget
-    # The stage dropdown button leads the band (the tab specs below are kept
-    # only for their widths). The button keeps one key.
-    tabs=[('STAGE',key,label,max(24*scale,measure(label)+2*pad)) for key,label,_ in STAGES]
     label=stage_label(stage)
     if measure(label)+2*pad+STAGE_ARROW*scale>budget*.5: label=label[0]
     # The compact stage button opens a dropdown; leave room for its arrow.
@@ -613,10 +610,13 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
     if gap+cycle_w>budget: cycle_w=max(24*scale,measure(label)+2*pad)  # extreme width: no arrow
     cycle=[('STAGE_CYCLE','CYCLE',label,cycle_w)]
 
-    def compose(shown,compact=False,demote=False,no_families=False,named=False):
+    active = record['active']
+    order, tools = stage_view(active, stage) if view is None else view
+    row_groups = row_families(active, stage, view=(order, tools))
+
+    def compose(compact=False,demote=False,no_families=False,named=False):
         specs=[]
-        order,tools=stage_view(record['active'],shown)
-        for family in row_families(record['active'],shown):
+        for family in row_groups:
             label,known=families[family]
             selected=[a for a in order if a in known and tools[a]['mode']!='HIDDEN']
             if not no_families:
@@ -648,14 +648,19 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
     # The stage is always one dropdown button (owner request 2026-10-18: the five
     # stages as dropdown options, not side by side), at every width and stage.
     lead=cycle
-    candidates=[lead+body for body in (compose(stage),compose(stage,compact=True,named=True),
-                                       compose(stage,compact=True),
-                                       compose(stage,compact=True,demote=True),
-                                       compose(stage,compact=True,demote=True,no_families=True))]
+    variants = ({}, {'compact': True, 'named': True}, {'compact': True},
+                {'compact': True, 'demote': True},
+                {'compact': True, 'demote': True, 'no_families': True})
+    candidates = []
     tool_kinds={'ACTION','SLIDER','POPOUT'}
 
     def place(room):
-        specs=next((c for c in candidates if fits(c,room)),candidates[-1])
+        for index, variant in enumerate(variants):
+            if index == len(candidates):
+                candidates.append(lead + compose(**variant))
+            specs = candidates[index]
+            if fits(specs, room):
+                break
         placed=[]; x=gap
         for kind,key,label,w in specs:
             if x+w>room: continue
