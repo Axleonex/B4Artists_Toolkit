@@ -1,8 +1,7 @@
 """Add-on-only Timeline tool band, using the supported pixel draw handler.
 
-A collapsed Timeline receives space once when first enabled. The band covers
-one header-height at the bottom of the WINDOW region; later resizing is never
-repaired. The native scrub ruler and keyframe row stay at the top.
+The fixed-height band sits above the native scrollbar. Hover help and tool
+popouts have their own space above the band.
 """
 
 import bpy
@@ -107,7 +106,7 @@ def _stage_description(kind, stage):
             "Ctrl+Wheel over the stage button cycles stages")
 
 
-def _tooltip_paragraphs(context, item):
+def _tooltip_paragraphs(context, item, row, unavailable):
     """Hover text for a row control as (text, role) paragraphs."""
     from . import timeline_strip as tools
     from .timeline_catalog import command_tooltip
@@ -116,7 +115,7 @@ def _tooltip_paragraphs(context, item):
     if kind == 'ACTION' and action in ACTIONS:
         operator = tools._operator(action)
         operation = explainers.operator_text('animassist.' + ACTIONS[action][0]) if operator else 'Tool module unavailable'
-        reason = tools._unavailable(context, tools._target(context), action)
+        reason = unavailable(action)
         status = ''
         if action in {'OFFSET', 'OFFSET_MASK', 'OFFSET_SCENE_RANGE'}:
             from ..operators.anim_offset_ops import offset_session_status
@@ -130,8 +129,7 @@ def _tooltip_paragraphs(context, item):
                  (f'Works on: {command_metadata(action)[0]}.', 'DETAIL'),
                  ('Drag to preview; release to apply; Esc cancels. Right-click for tool settings.', 'DETAIL')]
         try:
-            from ..prefs import get_prefs, timeline_record
-            shown = model.stage_view(timeline_record(get_prefs(context))['active'], current_stage(context))[1][action]
+            shown = row.view[1][action]
             ticks = model.tick_values(shown)
         except (ValueError, KeyError, AttributeError):
             ticks = []
@@ -171,54 +169,6 @@ def _shape_tooltip(context, item, paragraphs):
         warning = [(explainers.short(text) + '.', 'WARNING') for text, role in paragraphs if role == 'WARNING'][:1]
         paragraphs = title + body + warning
     return list(paragraphs) + extra
-
-
-def row_layout(width, height, row_height, at_top, clusters, measure):
-    """Return bounded controls, shrinking quick selection into More on overflow."""
-    gap, pad = row_height * .15, row_height * .35
-    y = max(0, height - row_height) if at_top else 0
-    button_height = max(1, min(height, row_height) - 4)
-    families = [("MENU", key, label, actions) for key, label, actions in clusters]
-    specs = [("SEARCH", "", "Search"), ("SETTINGS", "", "Settings")]
-    minimum = sum(measure(label) + 2 * pad + gap for _, _, label, _ in families)
-    minimum += sum(measure(label) + 2 * pad + gap for _, _, label in specs)
-    more_width = measure("More") + 2 * pad + gap
-    budget = max(0, width - minimum - more_width - 2 * gap)
-    hidden = []
-    for kind, key, label, actions in families:
-        specs.append((kind, key, label))
-        for action in actions:
-            text = QUICK_LABELS.get(action, ACTIONS[action][2])
-            cost = measure(text) + 2 * pad + gap
-            if cost <= budget:
-                specs.append(("ACTION", action, text))
-                budget -= cost
-            else:
-                hidden.append(action)
-    if hidden or minimum > width:
-        specs.append(("MORE", "", "More"))
-    # Extremely narrow Timeline: retain Search, Settings and More. All families
-    # remain in More, rather than draw controls underneath clipped neighbours.
-    if minimum + more_width > width:
-        specs = [("SEARCH", "", "Find"), ("SETTINGS", "", "Set")]
-        available = width - sum(measure(label)+2*pad+gap for _,_,label in specs)
-        available -= measure("Tools")+2*pad+3*gap
-        for _kind, _key, _label, actions in families:
-            for action in actions:
-                label = QUICK_LABELS.get(action, ACTIONS[action][2])
-                cost = measure(label)+2*pad+gap
-                if cost <= available:
-                    specs.append(("ACTION", action, label))
-                    available -= cost
-        specs.append(("MORE", "", "Tools"))
-    controls, x = [], gap
-    for kind, key, label in specs:
-        w = measure(label) + 2 * pad
-        if x + w > width - gap:
-            break
-        controls.append((kind, key, label, (x, y + 2, w, button_height)))
-        x += w + gap
-    return controls
 
 
 def _theme(context):
@@ -344,7 +294,7 @@ def _row_geometry(area, system):
     return base, height, scrollbar, 46 * scale
 
 
-def _items(context):
+def _toolbar_row(context):
     from ..prefs import get_prefs, timeline_record
     region, area = context.region, context.area
     scale = context.preferences.system.ui_scale
@@ -359,7 +309,7 @@ def _items(context):
     marker_strip = 42 * scale if markers else 0
     y = max(scrollbar, marker_strip if usable_height >= marker_strip + height + keys_at_top else 0)
     if usable_height < y + height + keys_at_top:
-        return [], (0, y, region.width, 0)
+        return SimpleNamespace(items=[], band=(0, y, region.width, 0))
     blf.size(0, round(11 * scale))
     # Blender's area corner handles (drag to split or join) sit in the bottom corners.
     # When the row reaches the Timeline's left or right edge (channels or sidebar
@@ -369,16 +319,24 @@ def _items(context):
     try: record=timeline_record(get_prefs(context))
     except ValueError: record=model.recommended(ACTIONS)
     stage = current_stage(context)
+    layout = record['active']
+    view = model.stage_view(layout, stage)
     labels={**QUICK_LABELS,**ROW_LABELS,**(ALL_ROW_LABELS if stage == 'ALL' else {})}
     # Vertical space never changes the horizontal packing or button order.
     items = model.toolbar_layout(max(1, region.width - left - right), base, base, False,
                        record,GROUPS,labels,lambda text: blf.dimensions(0, text)[0],
-                       stage)
+                       stage, view=view)
     items = [
         (kind, key, label, (x + left, y + iy, w, ih + height - base))
         for kind, key, label, (x, iy, w, ih) in items
     ]
-    return items, (0, y, region.width, height)
+    band = (0, y, region.width, height)
+    return SimpleNamespace(items=items, band=band, layout=layout, stage=stage, view=view)
+
+
+def _items(context):
+    row = _toolbar_row(context)
+    return row.items, row.band
 
 
 # Family and More lists drawn by the add-on (Blender's own popup menus picked an item on
@@ -408,22 +366,16 @@ def _close_row_menu(context):
             area.tag_redraw()
 
 
-def _row_hidden_tools(context, items):
+def _row_hidden_tools(row):
     """Visible tools of the shown setup that did not fit on the row."""
-    from ..prefs import get_prefs, timeline_record
-    try:
-        record = timeline_record(get_prefs(context))
-    except ValueError:
-        record = model.recommended(ACTIONS)
-    stage = current_stage(context)
-    order, tools = model.stage_view(record['active'], stage)
-    families = set(model.row_families(record['active'], stage))
-    shown = {item[1].split(':', 1)[0] for item in items if item[0] in {'ACTION', 'SLIDER', 'POPOUT'}}
+    order, tools = row.view
+    families = set(model.row_families(row.layout, row.stage, view=row.view))
+    shown = {item[1].split(':', 1)[0] for item in row.items if item[0] in {'ACTION', 'SLIDER', 'POPOUT'}}
     return [a for a in order if a in ACTIONS and tools.get(a, {}).get('mode', 'HIDDEN') != 'HIDDEN'
             and FAMILY[a][0] in families and a not in shown]
 
 
-def _list_entries(context, items, state):
+def _list_entries(row, state):
     """(kind, key, label) rows: HEAD, GAP, RUN, FAMILY, BACK, OPTIONS, HOME."""
     view, key = state['view']
     if view == 'FAMILY':
@@ -435,18 +387,19 @@ def _list_entries(context, items, state):
         return rows + [('GAP', '', ''), ('OPTIONS', key, f'{label} Options'), ('HOME', '', 'Open Anim Assist Panel')]
     # More has one job: the row's tools that did not fit (owner pick "C", 2026-10-18).
     # Every other tool is in Find.
-    hidden = _row_hidden_tools(context, items)
+    hidden = _row_hidden_tools(row)
     if not hidden:
         return [('HEAD', '', 'Every tool on this row fits')]
     return [('HEAD', '', 'Did Not Fit')] + [('RUN', a, ACTIONS[a][2]) for a in hidden]
 
 
-def _list_layout(context, items, band):
+def _list_layout(context, row):
     """Rects of the open family/More list, in columns above the row."""
     state = _list_open(context)
     if not state:
         return []
-    entries = _list_entries(context, items, state)
+    items, band = row.items, row.band
+    entries = _list_entries(row, state)
     scale = context.preferences.system.ui_scale
     row_h, gap_h, pad = 20 * scale, 7 * scale, 8 * scale
     blf.size(0, round(11 * scale))
@@ -480,10 +433,13 @@ def _list_layout(context, items, band):
 def popout_geometry(region_w, region_h, band, track_x, scale, extra=0.):
     """(box, track) of a popout slider, shared by drawing and the slider operator.
     *extra* adds a bottom line (the hint of a clicked popout)."""
-    width = min(280 * scale, region_w); height = min(44 * scale + extra, region_h)
+    y = band[1] + band[3] + 4 * scale
+    available = max(0, region_h - y)
+    # In a short Timeline, omit the hint line. It is also in the status bar.
+    extra = extra if available >= 44 * scale + extra else 0.
+    width = min(280 * scale, region_w)
+    height = min(44 * scale + extra, available)
     x = max(0, min(track_x, region_w - width))
-    y = band[1] - height - 4 * scale if band[1] > height else band[1] + band[3] + 4 * scale
-    y = max(0, min(y, region_h - height))
     return (x, y, width, height), (x + 10 * scale, y + 5 * scale + extra, max(1, width - 70 * scale), 16 * scale)
 
 
@@ -512,24 +468,47 @@ def _menu_items(context, items, band):
     top = band[1] + band[3] + gap
     region_w = context.region.width
     region_h = context.region.height - 23 * scale
-    if region_h <= band[1]:
+    if region_h <= top:
         return []
     if top + len(stages) * (bh + gap) <= region_h:
         width = max(bw, max(blf.dimensions(0, label)[0] for _key, label in stages) + 2 * pad)
         x = max(0, min(bx, region_w - width))
         return [('STAGE_ITEM', key, label, (x, top + (len(stages) - 1 - index) * (bh + gap), width, bh))
                 for index, (key, label) in enumerate(stages)]
-    # In a short Timeline the list can cover the toolbar while open. Keep
-    # the options inside the canvas and clear of the scrollbar.
-    bh = min(bh, region_h - band[1])
-    menu_y = max(band[1], min(top, region_h - bh))
-    result, x = [], bx
-    for key, label in stages:
-        width = blf.dimensions(0, label)[0] + 2 * pad
-        result.append(('STAGE_ITEM', key, label, (x, menu_y, width, bh)))
+    # Use one row when the full list cannot fit above the buttons.
+    bh = min(bh, region_h - top)
+    widths = [blf.dimensions(0, label)[0] + 2 * pad for _, label in stages]
+    total = sum(widths) + (len(stages) - 1) * gap
+    if total > region_w:
+        stages = [(key, label[:3]) for key, label in stages]
+        widths = [(region_w - (len(stages) - 1) * gap) / len(stages)] * len(stages)
+        total = region_w
+    x = min(bx, region_w - total)
+    result = []
+    for (key, label), width in zip(stages, widths):
+        result.append(('STAGE_ITEM', key, label, (x, top, width, bh)))
         x += width + gap
-    shift = max(0, x - region_w)
-    return [(kind, key, label, (rx - shift, ry, rw, rh)) for kind, key, label, (rx, ry, rw, rh) in result]
+    return result
+
+
+def _fit_hover_help(paragraphs, region_w, region_h, band, measure, scale):
+    """Fit hover help in the space above the band, leaving every button clear."""
+    y = band[1] + band[3] + 4 * scale
+    line_h, pad = 15 * scale, 7 * scale
+    available = region_h - y
+    count = int((available - 2 * pad) // line_h)
+    if count < 1 or region_w <= 4 * pad:
+        return [], y, 0, 0
+    lines, width, height = model.fit_tooltip(
+        paragraphs, region_w, available, measure, scale, line_h, pad, 420 * scale)
+    if len(lines) > count:
+        lines = lines[:count]
+        text, role = lines[-1]
+        while text and measure(text.rstrip() + '\u2026') > width - 2 * pad:
+            text = text[:-1]
+        lines[-1] = (text.rstrip() + '\u2026', role)
+        height = len(lines) * line_h + 2 * pad
+    return lines, y, width, height
 
 
 def _inside(rect, location):
@@ -827,12 +806,10 @@ def _track(rect,value,tool,color):
     _quad((x+w*fraction-3,cy-5,6,10),color)
 
 
-def _slider_controls(context,point,item,scale):
-    from ..prefs import get_prefs,timeline_record
+def _slider_controls(context,point,item,scale,stage_tools):
     from ..operators import timeline_slider_ops as sliders
     kind,action,label,rect=item
-    tool=model.effective_tool(action,model.stage_view(timeline_record(get_prefs(context))['active'],
-                                                      current_stage(context))[1][action])
+    tool=model.effective_tool(action,stage_tools[action])
     track,value_rect,reset_rect=_parts(rect,label,scale)
     if kind=='POPOUT': track=(rect[0],rect[1],120*scale,rect[3])
     value=sliders.last_value(context.window,context.area,action,tool['default'])
@@ -853,17 +830,25 @@ def _draw():
         return
     if context.region.height < 8:
         return
-    items, band = _items(context)
+    row = _toolbar_row(context)
+    items, band = row.items, row.band
     if not items:
         return
     background, widgets = _theme(context)
     scale = context.preferences.system.ui_scale
-    from ..prefs import get_prefs,timeline_record
     from ..operators import timeline_slider_ops as sliders
-    try: record=timeline_record(get_prefs(context))
-    except ValueError: record=model.recommended(ACTIONS)
-    active=sliders.feedback(context.window,context.area)
-    stage=current_stage(context)
+    active = sliders.feedback(context.window, context.area)
+    stage = row.stage
+    stage_tools = row.view[1]
+    selection_checks = {}
+    availability = {}
+
+    def unavailable(action):
+        if action not in availability:
+            availability[action] = tools._unavailable(
+                context, context.area, action, selection_checks=selection_checks)
+        return availability[action]
+
     old_blend = gpu.state.blend_get()
     try:
         gpu.state.blend_set("ALPHA")
@@ -872,7 +857,7 @@ def _draw():
         for kind, key, label, rect in items:
             action=_tool_action(kind,key)
             highlighted = hover == (context.area.as_pointer(), kind, key)
-            reason = tools._unavailable(context, context.area, action) if action else ""
+            reason = unavailable(action) if action else ""
             color = widgets.inner_sel if highlighted else widgets.inner
             _quad(rect,tuple(color) if kind!='MENU' else (*background[:3],1))
             text_color = widgets.text_sel if highlighted else widgets.text
@@ -902,7 +887,7 @@ def _draw():
                         _quad((ax-half*scale,ay+(1-row)*scale,2*half*scale,scale),ink_text)
                 continue
             if kind=='SLIDER':
-                tool=model.effective_tool(action,model.stage_view(record['active'],stage)[1][action])
+                tool=model.effective_tool(action,stage_tools[action])
                 value=active.value if active and active.action==action else sliders.last_value(context.window,context.area,action,tool['default'])
                 track,value_rect,reset_rect=_parts(rect,label,scale)
                 if label: _text((rect[0],rect[1],track[0]-rect[0],rect[3]),label,ink,scale,left=True)
@@ -934,13 +919,12 @@ def _draw():
                         _quad((rect[0] + 3 * scale, rect[1] + 2 * scale, rect[2] - 6 * scale, 2 * scale),
                               _COLORS[model.stage_families(key)[0]])
                     _text(rect, label, (*(widgets.text_sel if lit else widgets.text)[:3], 1), scale)
-        rows = _list_layout(context, items, band)
+        rows = _list_layout(context, row)
         if rows:
             xs = [r[0] for *_k, r in rows]; ys = [r[1] for *_k, r in rows]
             x1 = max(r[0] + r[2] for *_k, r in rows); y1 = max(r[1] + r[3] for *_k, r in rows)
             _quad((min(xs) - 2 * scale, min(ys) - 2 * scale, x1 - min(xs) + 4 * scale, y1 - min(ys) + 4 * scale),
                   (.08, .08, .08, .97))
-            from . import timeline_strip as tools
             for kind, key, label, rect in rows:
                 if kind == 'GAP':
                     _quad((rect[0] + 6 * scale, rect[1] + rect[3] / 2, rect[2] - 12 * scale, 1), (.3, .3, .3, 1))
@@ -952,7 +936,7 @@ def _draw():
                 lit = hover == (context.area.as_pointer(), 'LIST_' + kind, key)
                 if lit:
                     _quad(rect, tuple(widgets.inner_sel))
-                dim = kind == 'RUN' and tools._unavailable(context, context.area, key)
+                dim = kind == 'RUN' and unavailable(key)
                 ink_row = (*(widgets.text_sel if lit else widgets.text)[:3], .45 if dim else 1)
                 _text((rect[0] + 8 * scale, rect[1], rect[2] - 8 * scale, rect[3]), label, ink_row, scale, left=True)
         # Thin separator on the edge facing the animation canvas.
@@ -960,24 +944,25 @@ def _draw():
         if active and active.mode=='POPOUT' and active._moved:
             sticky=getattr(active,'_sticky',False); extra=14*scale if sticky else 0.
             (x,y,width,height),track=popout_geometry(context.region.width,context.region.height,band,active.track_x,scale,extra)
+            extra = track[1] - y - 5 * scale
             accent=_COLORS[FAMILY[active.action][0]]
             _quad((x,y,width,height),(*background[:3],1))
             _quad((x,y,width,1),accent)
             _text((x+5*scale,y+23*scale+extra,width-10*scale,18*scale),model.SLIDERS[active.action][0],(*widgets.text[:3],1),scale,left=True)
             _track(track,active.value,active._tool,accent)
-            if sticky:
+            if extra > 0:
                 _text((x+5*scale,y+2*scale,width-10*scale,12*scale),'Drag to adjust \u00b7 double-click or click away to apply \u00b7 Esc cancels',
                       (*widgets.text[:3],.6),scale,font=9,left=True)
             _text((x+width-60*scale,y+3*scale+extra,55*scale,20*scale),f'{active.value:.{active._tool["precision"]}f}'+model.SLIDERS[active.action][1],(*widgets.text[:3],1),scale,font=10)
         if not active and hover and not _menu_open(context) and not _list_open(context) and time.monotonic() - _hover_started.get(context.window.as_pointer(), float("inf")) > .6:
             item = next((item for item in items if (item[0], item[1]) == hover[1:]), None)
             if item:
-                paragraphs = _shape_tooltip(context, item, _tooltip_paragraphs(context, item))
+                paragraphs = _shape_tooltip(context, item, _tooltip_paragraphs(context, item, row, unavailable))
                 blf.size(0, round(11 * scale))
                 line_h, pad = 15 * scale, 7 * scale
-                lines, width, height = model.fit_tooltip(
-                    paragraphs, context.region.width, context.region.height,
-                    lambda text: blf.dimensions(0, text)[0], scale, line_h, pad, 420 * scale)
+                lines, y, width, height = _fit_hover_help(
+                    paragraphs, context.region.width, context.region.height, band,
+                    lambda text: blf.dimensions(0, text)[0], scale)
                 if lines:
                     x = max(0, min(item[3][0], context.region.width-width))
                     # The playhead is drawn over add-on drawing; keep the box clear of it.
@@ -991,12 +976,6 @@ def _draw():
                             x = right
                         elif left >= 0:
                             x = left
-                    above, below = band[1], context.region.height-band[1]-band[3]
-                    if above >= height + 4*scale or above >= below:
-                        y = band[1]-height-4*scale
-                    else:
-                        y = band[1]+band[3]+4*scale
-                    y = max(0, min(y, context.region.height-height))
                     _quad((x, y, width, height), (.06, .06, .06, .97))
                     colors = {'TITLE': (1, 1, 1, 1), 'BODY': (.92, .92, .92, 1),
                               'DETAIL': (.70, .70, .70, 1), 'WARNING': (1, .72, .35, 1)}
@@ -1019,7 +998,10 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
         return tools.is_timeline(context.area) and bool(context.region) and context.region.type == "WINDOW" and tools._enabled()
 
     def invoke(self, context, event):
-        items, band = _items(context)
+        return self.handle_event(context, event, _toolbar_row(context))
+
+    def handle_event(self, context, event, row):
+        items, band = row.items, row.band
         if not items:
             return {"PASS_THROUGH"}
         point = (event.mouse_x - context.region.x, event.mouse_y - context.region.y)
@@ -1046,7 +1028,7 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
                             pass
                     return None
                 bpy.app.timers.register(tooltip_redraw, first_interval=.65)
-        rows = _list_layout(context, items, band) if _list_open(context) else []
+        rows = _list_layout(context, row)
         if rows:
             in_row = next((r for r in rows if r[0] not in {'HEAD', 'GAP'} and _inside(r[3], point)), None)
             row_hover = (context.area.as_pointer(), 'LIST_' + in_row[0], in_row[1]) if in_row else None
@@ -1129,7 +1111,7 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
             if reason:
                 self.report({'WARNING'},reason)
             elif found[0] in {'SLIDER','POPOUT'}:
-                _slider_controls(context,point,found,context.preferences.system.ui_scale)
+                _slider_controls(context,point,found,context.preferences.system.ui_scale,row.view[1])
             elif found[0]=='PRESET':
                 value=float(found[1].split(':',1)[1])
                 result=bpy.ops.animassist.timeline_slider('EXEC_DEFAULT',action=action,value=value,preset=True)
@@ -1196,8 +1178,9 @@ class ANIMASSIST_OT_timeline_pointer(bpy.types.Operator):
                 ):
                     continue
                 with context.temp_override(window=window, area=area, region=region):
+                    row = _toolbar_row(context)
                     if event.value == "RELEASE" or not (_menu_open(context) or _list_open(context)):
-                        items, _band = _items(context)
+                        items = row.items
                         point = (event.mouse_x - region.x, event.mouse_y - region.y)
                         settings_hit = any(kind == "SETTINGS" and _inside(rect, point)
                                            for kind, _key, _label, rect in items)
@@ -1210,7 +1193,7 @@ class ANIMASSIST_OT_timeline_pointer(bpy.types.Operator):
                             # the tail of the click that created it.
                             self.settings_press = region.as_pointer()
                             return {"RUNNING_MODAL"}
-                    result = ANIMASSIST_OT_timeline_overlay_events.invoke(self, context, event)
+                    result = ANIMASSIST_OT_timeline_overlay_events.handle_event(self, context, event, row)
                 if "PASS_THROUGH" not in result:
                     return {"RUNNING_MODAL"}
                 return {"PASS_THROUGH"}

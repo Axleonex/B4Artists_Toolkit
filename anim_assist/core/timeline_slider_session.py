@@ -3,22 +3,32 @@ import math
 
 
 class Transaction:
-    def __init__(self, restore, apply, valid=lambda: True):
+    def __init__(self, restore, apply, valid=lambda: True, *, refresh=lambda: None):
         self.restore, self.apply, self.valid = restore, apply, valid
+        self.refresh = refresh
         self.closed = False
+        self._previewed_value = None
 
     def preview(self, value):
         if self.closed or not self.valid(): raise ValueError('The original animation target is no longer available')
         if not math.isfinite(value): raise ValueError('Enter a finite slider value')
+        if value == self._previewed_value:
+            return
+        self._previewed_value = None
         self.restore()
-        try: self.apply(value)
+        try:
+            self.apply(value)
+            self.refresh()
         except Exception:
             self.restore()
+            self.refresh()
             raise
+        self._previewed_value = value
 
     def cancel(self):
         if not self.closed:
             self.restore()
+            self.refresh()
             self.closed = True
 
     def commit(self):
@@ -76,6 +86,7 @@ def capture(context,action):
     if obj.library and not obj.override_library or native_action.library and not native_action.override_library:
         raise ValueError('Use local or overridden animation data')
     frame=scene.frame_current_final
+    base_frame=math.floor(frame)
     options=None; bones=None; curve_data=[]; pivot=frame; snap=False
     if action=='DRAG':
         obj,bones=_resolve_target(context)
@@ -111,12 +122,10 @@ def capture(context,action):
 
     def refresh():
         # Keep the playhead fixed and evaluate the updated pose, including bones.
-        base=math.floor(frame)
-        scene.frame_set(base,subframe=frame-base)
+        scene.frame_set(base_frame,subframe=frame-base_frame)
 
     def restore():
         restore_snapshot(saved)
-        refresh()
 
     def valid():
         try:
@@ -127,12 +136,15 @@ def capture(context,action):
         factor=value/100.
         if action=='DRAG':
             options.factor=factor
+            # Visual Breakdown samples the evaluated pose from the restored keys.
+            if options.visual_transform:
+                refresh()
             breakdown.apply_breakdown(context,obj,bones,options)
         elif action=='SCALE_DRAG': retime.apply_scale(curves,pivot,factor,snap=snap)
         elif action=='OFFSET_DRAG': retime.apply_offset(curves,value,snap=snap)
         elif action=='RIPPLE':
             delta=max(value,min(0.,earliest))
-            if delta: retime.apply_ripple(curves,float(scene.frame_current),delta,direction='FORWARD',snap=snap)
+            if delta: retime.apply_ripple(curves,float(base_frame),delta,direction='FORWARD',snap=snap)
         elif action=='REDUCE':
             if value>0: _reduce(curves,value)
         else:
@@ -146,6 +158,4 @@ def capture(context,action):
                 else: raise ValueError('Unknown scalar tool')
                 if not all(math.isfinite(v) for v in values): raise ValueError('Adjustment produced an invalid value')
                 curves_ops._write_values(fc,selected,values)
-        refresh()
-
-    return Transaction(restore,apply,valid)
+    return Transaction(restore,apply,valid,refresh=refresh)

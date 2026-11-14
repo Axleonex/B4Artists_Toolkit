@@ -46,5 +46,31 @@ class TransactionTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.tx.preview(float('nan'))
         self.assertEqual(self.value,7)
 
+    def test_preview_and_cancel_refresh_only_the_result(self):
+        shown = []
+        self.tx.refresh = lambda: shown.append(self.value)
+        self.tx.preview(3)
+        self.tx.preview(3)
+        self.tx.preview(4)
+        self.tx.cancel()
+        self.assertEqual(shown, [10, 11, 7])
+
+    def test_failed_preview_refreshes_restored_state_and_can_retry(self):
+        shown = []
+        self.tx.refresh = lambda: shown.append(self.value)
+        self.tx.preview(3)
+        apply = self.tx.apply
+
+        def broken(value):
+            apply(value)
+            raise RuntimeError('fixture failure')
+
+        self.tx.apply = broken
+        with self.assertRaises(RuntimeError):
+            self.tx.preview(4)
+        self.tx.apply = apply
+        self.tx.preview(3)
+        self.assertEqual(shown, [10, 7, 10])
+
 
 if __name__=='__main__': unittest.main()
