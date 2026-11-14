@@ -853,7 +853,10 @@ def _draw():
     try:
         gpu.state.blend_set("ALPHA")
         _quad(band, (*background[:3], 1))
-        hover = _hover.get(context.window.as_pointer())
+        pointer = context.window.as_pointer()
+        hover = _hover.get(pointer)
+        if hover and hover[0] != context.area.as_pointer():
+            hover = None
         for kind, key, label, rect in items:
             action=_tool_action(kind,key)
             highlighted = hover == (context.area.as_pointer(), kind, key)
@@ -954,7 +957,7 @@ def _draw():
                 _text((x+5*scale,y+2*scale,width-10*scale,12*scale),'Drag to adjust \u00b7 double-click or click away to apply \u00b7 Esc cancels',
                       (*widgets.text[:3],.6),scale,font=9,left=True)
             _text((x+width-60*scale,y+3*scale+extra,55*scale,20*scale),f'{active.value:.{active._tool["precision"]}f}'+model.SLIDERS[active.action][1],(*widgets.text[:3],1),scale,font=10)
-        if not active and hover and not _menu_open(context) and not _list_open(context) and time.monotonic() - _hover_started.get(context.window.as_pointer(), float("inf")) > .6:
+        if not active and hover and not _menu_open(context) and not _list_open(context) and time.monotonic() - _hover_started.get(pointer, float("inf")) > .6:
             item = next((item for item in items if (item[0], item[1]) == hover[1:]), None)
             if item:
                 paragraphs = _shape_tooltip(context, item, _tooltip_paragraphs(context, item, row, unavailable))
@@ -1011,10 +1014,17 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
         in_menu = next((item for item in menu if _inside(item[3], point)), None)
         found = in_menu or (next((item for item in items if _inside(item[3], point)), None) if hit else None)
         hover = (context.area.as_pointer(), found[0], found[1]) if found else None
-        if _hover.get(pointer) != hover:
+        previous = _hover.get(pointer)
+        if previous != hover:
             _hover[pointer] = hover
             _hover_started[pointer] = time.monotonic()
             context.area.tag_redraw()
+            if previous and previous[0] != context.area.as_pointer():
+                # Moving directly into another Timeline must erase the old box.
+                for area in context.window.screen.areas:
+                    if area.as_pointer() == previous[0]:
+                        area.tag_redraw()
+                        break
             if hover:
                 epoch, window, expected = _epoch, context.window, hover
                 def tooltip_redraw():
@@ -1085,7 +1095,9 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
             return {"FINISHED"}
         if event.type == "ESC":
             return {"CANCELLED", "PASS_THROUGH"}
-        if event.type == "MOUSEMOVE" or not hit:
+        if event.type == "MOUSEMOVE":
+            return {"FINISHED"} if hit else {"PASS_THROUGH"}
+        if not hit:
             return {"CANCELLED", "PASS_THROUGH"}
         if (event.type in {'WHEELUPMOUSE','WHEELDOWNMOUSE'} and event.ctrl and found
                 and found[0] in {'STAGE','STAGE_CYCLE'}):
@@ -1156,16 +1168,19 @@ class ANIMASSIST_OT_timeline_pointer(bpy.types.Operator):
             return {"CANCELLED", "PASS_THROUGH"}
         if event.type == "WINDOW_DEACTIVATE":
             self.settings_press = None
-        if event.type != "LEFTMOUSE" or event.value not in {"PRESS", "RELEASE"}:
+        moving = event.type in {"MOUSEMOVE", "INBETWEEN_MOUSEMOVE"}
+        if not moving and (event.type != "LEFTMOUSE" or event.value not in {"PRESS", "RELEASE"}):
             return {"PASS_THROUGH"}
         settings_press = self.settings_press
-        self.settings_press = None
-        if event.value == "RELEASE" and settings_press is None:
+        if not moving:
+            self.settings_press = None
+        if not moving and event.value == "RELEASE" and settings_press is None:
             return {"PASS_THROUGH"}
         from . import timeline_settings, timeline_strip as tools
         if not tools._enabled() or timeline_settings.editor(context) is not None:
             return {"PASS_THROUGH"}
-        # Window modal handlers run before the native editor's click handlers.
+        # Window modal handlers run before native scene strip gizmos can hover
+        # or show tooltips through the toolbar's drawn overlay.
         # Resolve the editor under this event even immediately after resizing.
         window = context.window
         for area in window.screen.areas:
@@ -1179,9 +1194,15 @@ class ANIMASSIST_OT_timeline_pointer(bpy.types.Operator):
                     continue
                 with context.temp_override(window=window, area=area, region=region):
                     row = _toolbar_row(context)
+                    point = (event.mouse_x - region.x, event.mouse_y - region.y)
+                    if moving:
+                        if event.type == "MOUSEMOVE":
+                            result = ANIMASSIST_OT_timeline_overlay_events.handle_event(
+                                self, context, event, row)
+                            return {"PASS_THROUGH"} if "PASS_THROUGH" in result else {"RUNNING_MODAL"}
+                        return {"RUNNING_MODAL"} if _inside(row.band, point) else {"PASS_THROUGH"}
                     if event.value == "RELEASE" or not (_menu_open(context) or _list_open(context)):
                         items = row.items
-                        point = (event.mouse_x - region.x, event.mouse_y - region.y)
                         settings_hit = any(kind == "SETTINGS" and _inside(rect, point)
                                            for kind, _key, _label, rect in items)
                         if event.value == "RELEASE":
@@ -1375,9 +1396,9 @@ def register():
             _keymaps.append((screen, item))
             for name in ("Dopesheet", "Dopesheet Generic"):
                 keymap = config.keymaps.new(name=name, space_type="DOPESHEET_EDITOR", region_type="WINDOW")
-                for event_type in ("MOUSEMOVE", "LEFTMOUSE", "RIGHTMOUSE", "MIDDLEMOUSE", "WHEELUPMOUSE", "WHEELDOWNMOUSE"):
+                for event_type in ("LEFTMOUSE", "RIGHTMOUSE", "MIDDLEMOUSE", "WHEELUPMOUSE", "WHEELDOWNMOUSE"):
                     item = keymap.keymap_items.new(ANIMASSIST_OT_timeline_overlay_events.bl_idname,
-                                                  type=event_type, value="ANY" if event_type=="MOUSEMOVE" else "PRESS", any=True)
+                                                  type=event_type, value="PRESS", any=True)
                     _keymaps.append((keymap, item))
                 item = keymap.keymap_items.new(ANIMASSIST_OT_timeline_overlay_events.bl_idname,
                                               type="ESC", value="PRESS")

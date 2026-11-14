@@ -1,3 +1,9 @@
+# 12.10.3 Timeline hover help and performance
+
+- Show one Anim Assist tooltip in the Timeline under the cursor. Toolbar hover takes priority over the Scene Strip Gizmo beneath it.
+- Keep hover help, stage choices, and slider popouts above the toolbar buttons.
+- Reuse toolbar layout and key selection checks, and skip redundant slider previews and pose updates.
+
 # 12.10.2 Fixed Timeline toolbar height and clicks
 
 - Keep the toolbar buttons and their click areas at full height. The Timeline divider pulls back up when released below the minimum height.

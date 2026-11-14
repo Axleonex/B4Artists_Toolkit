@@ -4,8 +4,8 @@ from __future__ import annotations
 
 ADDON_PACKAGE: str = "anim_assist"
 
-ADDON_VERSION: tuple[int, int, int] = (12, 10, 2)
-ADDON_VERSION_STRING: str = "12.10.2"
+ADDON_VERSION: tuple[int, int, int] = (12, 10, 3)
+ADDON_VERSION_STRING: str = "12.10.3"
 
 BREAKDOWN_ANCHOR_HINT: str = (
     "An existing key at the playhead becomes the previous anchor; "

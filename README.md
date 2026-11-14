@@ -4,7 +4,7 @@ Two animation add-ons for **Bforartists** (the Blender fork), plus an optional r
 
 | Tool | Version | What it does |
 |---|---|---|
-| **Anim Assist** | 12.10.2 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 96 searchable actions. Ten configurable numeric tools offer inline or popout sliders in a row at the bottom of the Timeline, with per-tool settings and user-named layouts. A stage dropdown (All, Block, Spline, Polish, Deliver) gives each animation phase its own customisable toolset; Find searches every tool and Hover Explainers can be Full, Short or Off. Includes editor-specific NLA, Graph and Dope Sheet sidebars. Inspired by Maya's AnimBot. |
+| **Anim Assist** | 12.10.3 | Animation tools for key editing, breakdowns, retiming, matching, mirroring, baking, layers and lipsync. Seven Timeline families expose 96 searchable actions. Ten configurable numeric tools offer inline or popout sliders in a row at the bottom of the Timeline, with per-tool settings and user-named layouts. A stage dropdown (All, Block, Spline, Polish, Deliver) gives each animation phase its own customisable toolset; Find searches every tool and Hover Explainers can be Full, Short or Off. Includes editor-specific NLA, Graph and Dope Sheet sidebars. Inspired by Maya's AnimBot. |
 | **Ghost Tool** | 4.3.2 | Direct viewport tools with hold-open settings, separate Before/Ahead sample counts, persistent marker dragging and explicit Wire/Solid styles. Ghost keyframe visualization and manipulation: generates draggable in-between markers in 3D space and recalculates f-curves live. Includes onion skinning, motion trails, easing presets, snapshots, Physics Feel archetypes, and Visual Diff Mode. Persistent Top Toolbar, right sidebar and left Tool Shelf locations share feature controls. Marker and Compare target names fold independently. Cached visibility controls preserve previews. Ghosts pause during native gestures and refresh after animation edits settle. Live marker and skin updates default off. |
 | **BoneCraft** | 9.2.17 | Auto-rigging for humanoid characters (VRoid/VRM and similar): a Rig Builder wizard that finds the joints on the mesh, generates a skeleton and skin weights, then builds an animator control rig: IK/FK arms and legs with no-pop switching, a Control Picker, twist bones, joint corrective shapes, skirt/dress bones, and face controls (eye aim, blinks, jaw with lip follow). Also retargets walk/run clips and exports to VRChat, Unity and Unreal, with an optional T-pose export. Manual: [bonecraft/docs](bonecraft/docs/README.md). |
 
@@ -20,7 +20,7 @@ Install add-on ZIPs directly in your existing Bforartists installation.
 
 | Add-on | Direct download |
 |---|---|
-| Anim Assist 12.10.2 | [b4_anim_assist_v12.10.2.zip](releases/b4_anim_assist_v12.10.2.zip?raw=true) |
+| Anim Assist 12.10.3 | [b4_anim_assist_v12.10.3.zip](releases/b4_anim_assist_v12.10.3.zip?raw=true) |
 | Ghost Tool 4.3.2 | [b4_ghost_tool_v4.3.2.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/ghost-v4.3.2/b4_ghost_tool_v4.3.2.zip) |
 | BoneCraft 9.2.17 | [BoneCraft-BFA-9.2.17.zip](https://github.com/Axleonex/B4Artists_Toolkit/releases/download/bonecraft-v9.2.17/BoneCraft-BFA-9.2.17.zip) |
 
@@ -43,6 +43,7 @@ export/cleanup from Pose and Edit Mode. [Release notes](docs/bonecraft/releases/
 
 Human-readable manuals are in [`docs/`](docs/):
 
+- [Anim Assist 12.10.3](anim_assist/CHANGELOG.md#12103-timeline-hover-help-and-performance) keeps hover help clear of the toolbar, prevents duplicate tooltips, and reduces repeated work during redraws and slider previews.
 - [Anim Assist 12.10.2](anim_assist/CHANGELOG.md#12102-fixed-timeline-toolbar-height-and-clicks) keeps Timeline toolbar buttons at full height, prevents clicks from reaching the Timeline underneath, and closes Settings on outside clicks.
 - [Anim Assist 12.10.1](anim_assist/CHANGELOG.md#12101--timeline-toolbar-click-targets) ? scrollbar clearance and taller Timeline toolbar buttons and click areas.
 - [Anim Assist 12.10.0](docs/anim_assist/releases/12.10.0/RELEASE-NOTES.md) — stage toolsets: each stage has its own customisable tools, saved with named layouts. [Qualification](docs/anim_assist/releases/12.10.0/qualification.md).
