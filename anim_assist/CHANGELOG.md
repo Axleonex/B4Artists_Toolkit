@@ -1,3 +1,9 @@
+# 12.10.2 Fixed Timeline toolbar height and clicks
+
+- Keep the toolbar buttons and their click areas at full height. The Timeline divider pulls back up when released below the minimum height.
+- Handle toolbar clicks before they can move the playhead or select keys underneath.
+- Close Toolbar Settings when you click outside it.
+
 # 12.10.1 ? Timeline toolbar click targets
 
 - Reserve space above the native horizontal scrollbar as the Timeline is resized.
