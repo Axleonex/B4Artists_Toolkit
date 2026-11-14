@@ -228,7 +228,12 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
         _editors[context.window.as_pointer()]=self
         # A plain popup: changes apply live, so there is nothing to confirm or cancel.
         # It stays open while the pointer moves; a click outside or Esc closes it.
-        return context.window_manager.invoke_popup(self,width=640)
+        # Bforartists checks the popup's originating region for 2D gizmos
+        # before sending it mouse clicks. Use the header, which has no gizmos.
+        header = next((region for region in getattr(context.area, 'regions', ())
+                       if region.type == 'HEADER'), None)
+        with context.temp_override(region=header):
+            return context.window_manager.invoke_popup(self,width=640)
 
     def draw(self,context):
         layout=self.layout

@@ -326,7 +326,8 @@ class ANIMASSIST_OT_timeline_stage(bpy.types.Operator):
 _handle = None
 _epoch = object()
 _keymaps = []
-_initialized = set()
+_resize_attempts = {}
+_input_windows = set()
 _hover = {}
 # Window -> area pointer whose stage dropdown is open (drawn by this band, not a Blender menu,
 # so it never opens over the stage button and a second click on the button closes it).
@@ -334,58 +335,50 @@ _stage_menu = {}
 _hover_started = {}
 
 
+def _row_geometry(area, system):
+    scale = system.ui_scale
+    header = next((r for r in area.regions if r.type == "HEADER"), None)
+    base = max(28 * scale, header.height if header else 0)
+    height = base + 8 * scale
+    scrollbar = ceil(max(SCROLLBAR_LIFT * scale, 11 * scale + 4 * system.pixel_size))
+    return base, height, scrollbar, 46 * scale
+
+
 def _items(context):
     from ..prefs import get_prefs, timeline_record
-    header = next((r for r in context.area.regions if r.type == "HEADER"), None)
+    region, area = context.region, context.area
     scale = context.preferences.system.ui_scale
-    h = max(28 * scale, header.height if header else 0)
-    blf.size(0, round(11 * scale))
+    base, height, scrollbar, keys_at_top = _row_geometry(area, context.preferences.system)
     # The native scrub ruler and keyframe summary row are always drawn at the
     # top of the canvas, whichever side the header is on. Anchor the band at
     # the bottom so it never hides or intercepts clicks on keyframes. Markers
     # use a bottom strip; sit above it when the canvas has room for both.
-    usable_height = context.region.height
+    usable_height = region.height
     space = context.space_data
     markers = bool(context.scene.timeline_markers) and getattr(space, "show_markers", True)
     marker_strip = 42 * scale if markers else 0
-    keys_at_top = 46 * scale
-    y = marker_strip if usable_height - keys_at_top - h >= marker_strip else 0
-    # The Timeline's horizontal scrollbar runs along the bottom edge; sit above it
-    # (owner request 2026-10-18) when nothing else (markers) already lifts the row.
-    # Reserve the native scroller's full input strip before it can appear.
-    # View2D sizes the bottom scroller from the UI scale and pixel padding.
-    pixel_size = context.preferences.system.pixel_size
-    scrollbar = ceil(max(SCROLLBAR_LIFT * scale, 11 * scale + 4 * pixel_size))
-    if usable_height >= 22 * scale:
-        y = max(y, scrollbar)
-    # Extra height goes into the same rectangles used for drawing and input.
-    # Keep horizontal spacing based on the compact row so resizing vertically
-    # does not send labels or tools into the overflow menu.
-    # The native ruler has its own input area at the top of the canvas.
-    ruler = 23 * scale if usable_height >= 46 * scale else 0
-    available = usable_height - y - ruler
-    if available < 8 * scale:
-        return [], (0, y, context.region.width, 0)
-    growth = max(0, min(8 * scale, usable_height - y - keys_at_top - h))
+    y = max(scrollbar, marker_strip if usable_height >= marker_strip + height + keys_at_top else 0)
+    if usable_height < y + height + keys_at_top:
+        return [], (0, y, region.width, 0)
+    blf.size(0, round(11 * scale))
     # Blender's area corner handles (drag to split or join) sit in the bottom corners.
     # When the row reaches the Timeline's left or right edge (channels or sidebar
     # closed), keep the end buttons clear of them so a click hits the button.
-    region, area = context.region, context.area
     left = CORNER_INSET * scale if region.x <= area.x + 1 else 0
     right = CORNER_INSET * scale if region.x + region.width >= area.x + area.width - 1 else 0
     try: record=timeline_record(get_prefs(context))
     except ValueError: record=model.recommended(ACTIONS)
     stage = current_stage(context)
     labels={**QUICK_LABELS,**ROW_LABELS,**(ALL_ROW_LABELS if stage == 'ALL' else {})}
-    items = model.toolbar_layout(max(1, region.width - left - right), available, h, False,
+    # Vertical space never changes the horizontal packing or button order.
+    items = model.toolbar_layout(max(1, region.width - left - right), base, base, False,
                        record,GROUPS,labels,lambda text: blf.dimensions(0, text)[0],
                        stage)
     items = [
-        (kind, key, label, (x + left, y + iy, w, min(ih + growth, available - iy)))
+        (kind, key, label, (x + left, y + iy, w, ih + height - base))
         for kind, key, label, (x, iy, w, ih) in items
-        if iy < available
     ]
-    return items, (0, y, region.width, min(h + growth, available))
+    return items, (0, y, region.width, height)
 
 
 # Family and More lists drawn by the add-on (Blender's own popup menus picked an item on
@@ -834,7 +827,7 @@ def _track(rect,value,tool,color):
     _quad((x+w*fraction-3,cy-5,6,10),color)
 
 
-def _slider_controls(context,event,item,scale):
+def _slider_controls(context,point,item,scale):
     from ..prefs import get_prefs,timeline_record
     from ..operators import timeline_slider_ops as sliders
     kind,action,label,rect=item
@@ -842,7 +835,6 @@ def _slider_controls(context,event,item,scale):
                                                       current_stage(context))[1][action])
     track,value_rect,reset_rect=_parts(rect,label,scale)
     if kind=='POPOUT': track=(rect[0],rect[1],120*scale,rect[3])
-    point=(event.mouse_region_x,event.mouse_region_y)
     value=sliders.last_value(context.window,context.area,action,tool['default'])
     if kind=='SLIDER' and _inside(value_rect,point):
         return bpy.ops.animassist.slider_value('INVOKE_DEFAULT',True,action=action,value=value)
@@ -862,6 +854,8 @@ def _draw():
     if context.region.height < 8:
         return
     items, band = _items(context)
+    if not items:
+        return
     background, widgets = _theme(context)
     scale = context.preferences.system.ui_scale
     from ..prefs import get_prefs,timeline_record
@@ -1026,7 +1020,9 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
 
     def invoke(self, context, event):
         items, band = _items(context)
-        point = (event.mouse_region_x, event.mouse_region_y)
+        if not items:
+            return {"PASS_THROUGH"}
+        point = (event.mouse_x - context.region.x, event.mouse_y - context.region.y)
         hit = _inside(band, point)
         pointer = context.window.as_pointer()
         menu = _menu_items(context, items, band) if _menu_open(context) else []
@@ -1133,7 +1129,7 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
             if reason:
                 self.report({'WARNING'},reason)
             elif found[0] in {'SLIDER','POPOUT'}:
-                _slider_controls(context,event,found,context.preferences.system.ui_scale)
+                _slider_controls(context,point,found,context.preferences.system.ui_scale)
             elif found[0]=='PRESET':
                 value=float(found[1].split(':',1)[1])
                 result=bpy.ops.animassist.timeline_slider('EXEC_DEFAULT',action=action,value=value,preset=True)
@@ -1142,6 +1138,83 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
                 bpy.ops.animassist.overlay_control("INVOKE_DEFAULT", kind=found[0], key=found[1])
             context.area.tag_redraw()
         return {"FINISHED"}
+
+
+def _open_settings_after_click(window, area, region):
+    epoch = _epoch
+
+    def open_settings():
+        if epoch is _epoch:
+            try:
+                if (any(a == area for a in window.screen.areas)
+                        and any(r == region for r in area.regions)):
+                    with bpy.context.temp_override(window=window, area=area, region=region):
+                        bpy.ops.animassist.toolbar_settings("INVOKE_DEFAULT")
+            except ReferenceError:
+                pass  # The window or editor closed before the callback.
+        return None
+
+    # Let the pointer handler finish before adding the native popup handler.
+    bpy.app.timers.register(open_settings, first_interval=0)
+
+
+class ANIMASSIST_OT_timeline_pointer(bpy.types.Operator):
+    bl_idname = "animassist.timeline_pointer"
+    bl_label = "Anim Assist Timeline Pointer Input"
+    bl_options = {"INTERNAL"}
+
+    def invoke(self, context, _event):
+        self.epoch = _epoch
+        self.settings_press = None
+        context.window_manager.modal_handler_add(self)
+        return {"RUNNING_MODAL"}
+
+    def modal(self, context, event):
+        if self.epoch is not _epoch:
+            return {"CANCELLED", "PASS_THROUGH"}
+        if event.type == "WINDOW_DEACTIVATE":
+            self.settings_press = None
+        if event.type != "LEFTMOUSE" or event.value not in {"PRESS", "RELEASE"}:
+            return {"PASS_THROUGH"}
+        settings_press = self.settings_press
+        self.settings_press = None
+        if event.value == "RELEASE" and settings_press is None:
+            return {"PASS_THROUGH"}
+        from . import timeline_settings, timeline_strip as tools
+        if not tools._enabled() or timeline_settings.editor(context) is not None:
+            return {"PASS_THROUGH"}
+        # Window modal handlers run before the native editor's click handlers.
+        # Resolve the editor under this event even immediately after resizing.
+        window = context.window
+        for area in window.screen.areas:
+            if not tools.is_timeline(area):
+                continue
+            for region in area.regions:
+                if region.type != "WINDOW" or not _inside(
+                    (region.x, region.y, region.width, region.height),
+                    (event.mouse_x, event.mouse_y),
+                ):
+                    continue
+                with context.temp_override(window=window, area=area, region=region):
+                    if event.value == "RELEASE" or not (_menu_open(context) or _list_open(context)):
+                        items, _band = _items(context)
+                        point = (event.mouse_x - region.x, event.mouse_y - region.y)
+                        settings_hit = any(kind == "SETTINGS" and _inside(rect, point)
+                                           for kind, _key, _label, rect in items)
+                        if event.value == "RELEASE":
+                            if settings_hit and settings_press == region.as_pointer():
+                                _open_settings_after_click(window, area, region)
+                            return {"RUNNING_MODAL"}
+                        if settings_hit:
+                            # Open on release so the native popup doesn't see
+                            # the tail of the click that created it.
+                            self.settings_press = region.as_pointer()
+                            return {"RUNNING_MODAL"}
+                    result = ANIMASSIST_OT_timeline_overlay_events.invoke(self, context, event)
+                if "PASS_THROUGH" not in result:
+                    return {"RUNNING_MODAL"}
+                return {"PASS_THROUGH"}
+        return {"RUNNING_MODAL"} if event.value == "RELEASE" else {"PASS_THROUGH"}
 
 
 class ANIMASSIST_OT_clear_timeline_hover(bpy.types.Operator):
@@ -1186,6 +1259,31 @@ class ANIMASSIST_OT_close_stage_menu(bpy.types.Operator):
         return {"FINISHED"}
 
 
+def _restore_timeline_height(window, area):
+    region = next((r for r in area.regions if r.type == "WINDOW"), None)
+    if region is None or region.height <= 0:
+        return
+    _base, height, scrollbar, keys_at_top = _row_geometry(area, bpy.context.preferences.system)
+    missing = ceil(height + scrollbar + keys_at_top - region.height)
+    pointer = area.as_pointer()
+    if missing <= 0:
+        _resize_attempts.pop(pointer, None)
+        return
+    x, y = area.x + area.width // 2, area.y + area.height
+    above = next((a for a in window.screen.areas if a != area and abs(a.y - y - 1) <= 3
+                  and a.x <= x < a.x + a.width), None)
+    if above is None:
+        return
+    # Don't keep nudging a divider whose other side has reached its native limit.
+    size = (x, y, region.height, above.as_pointer(), above.height, missing)
+    if _resize_attempts.get(pointer) == size:
+        return
+    with bpy.context.temp_override(window=window, area=area):
+        if bpy.ops.screen.area_move.poll():
+            _resize_attempts[pointer] = size
+            bpy.ops.screen.area_move(x=x, y=y, delta=missing)
+
+
 def _start_windows():
     if _handle is None:
         return None
@@ -1201,28 +1299,16 @@ def _start_windows():
         prefs.timeline_canvas_row_initialized = True
     for window in bpy.context.window_manager.windows:
         if tools._enabled():
-            for area in window.screen.areas:
-                if not tools.is_timeline(area):
-                    continue
-                pointer = area.spaces.active.as_pointer()
-                if pointer in _initialized:
-                    continue
-                _initialized.add(pointer)
-                # One attempt on first encounter; never repair later resizes.
-                minimum = round(112 * bpy.context.preferences.system.ui_scale)
-                if area.height < minimum:
-                    above = any(a != area and abs(a.y-(area.y+area.height+1)) <= 3
-                                and a.x <= area.x+area.width/2 < a.x+a.width
-                                for a in window.screen.areas)
-                    if above:
-                        with bpy.context.temp_override(window=window, area=area):
-                            if not bpy.ops.screen.area_move.poll():
-                                continue
-                            bpy.ops.screen.area_move(x=area.x+area.width//2,
-                                                     y=area.y+area.height,
-                                                     delta=minimum-area.height)
-                area.tag_redraw()
-    # Window discovery only: existing Timeline sizes are never revisited.
+            window_id = window.as_pointer()
+            if window_id not in _input_windows and any(tools.is_timeline(area) for area in window.screen.areas):
+                with bpy.context.temp_override(window=window):
+                    if "RUNNING_MODAL" in bpy.ops.animassist.timeline_pointer("INVOKE_DEFAULT"):
+                        _input_windows.add(window_id)
+            # The native resize owns the divider until the mouse is released.
+            if not any(op.bl_idname == "SCREEN_OT_area_move" for op in window.modal_operators):
+                for area in window.screen.areas:
+                    if tools.is_timeline(area):
+                        _restore_timeline_height(window, area)
     return 1.0
 
 
@@ -1234,6 +1320,9 @@ def _view_menu(self, context):
         if prefs:
             self.layout.separator()
             self.layout.prop(prefs, "timeline_toolbar_row", text="Show Anim Assist Tool Row")
+            row = self.layout.row()
+            row.operator_context = "INVOKE_DEFAULT"
+            row.operator("animassist.toolbar_settings", text="Anim Assist Toolbar Settings")
             if hasattr(context.workspace, STAGE_PROPERTY):
                 self.layout.prop_menu_enum(context.workspace, STAGE_PROPERTY, text="Anim Assist Stage")
             self.layout.menu("ANIMASSIST_MT_timeline_tools", text="Anim Assist Tools")
@@ -1246,12 +1335,14 @@ def _load_post(_unused):
     _hover.clear()
     _stage_menu.clear()
     _hover_started.clear()
-    _initialized.clear()
+    _resize_attempts.clear()
+    _input_windows.clear()
 
 
 _CLASSES = (ANIMASSIST_OT_overlay_control, ANIMASSIST_MT_timeline_stage, ANIMASSIST_OT_timeline_stage,
             ANIMASSIST_OT_close_stage_menu,
-            ANIMASSIST_OT_timeline_overlay_events, ANIMASSIST_OT_clear_timeline_hover)
+            ANIMASSIST_OT_timeline_overlay_events, ANIMASSIST_OT_timeline_pointer,
+            ANIMASSIST_OT_clear_timeline_hover)
 
 
 def _stage_update(workspace, _context):
@@ -1330,7 +1421,8 @@ def unregister():
             bpy.app.handlers.load_post.remove(_load_post)
         if bpy.app.timers.is_registered(_start_windows):
             bpy.app.timers.unregister(_start_windows)
-    _initialized.clear()
+    _resize_attempts.clear()
+    _input_windows.clear()
     _hover.clear()
     _stage_menu.clear()
     _hover_started.clear()
