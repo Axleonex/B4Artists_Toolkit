@@ -517,9 +517,11 @@ class BC_OT_mech_save_form(_MechOp, bpy.types.Operator):
         rec = arm.data.bonecraft_mech
         form = next((f for f in rec.forms if f.name == self.name), None) or rec.forms.add()
         form.name = self.name
-        form.values.clear()
+        form.control_values.clear()
+        if "values" in form:
+            del form["values"]
         for cid, _ in model.controls(rig):
-            v = form.values.add()
+            v = form.control_values.add()
             v.key, v.value = cid, build.get_value(arm, rig, cid)
         return f"Saved form {self.name}."
 
@@ -537,9 +539,9 @@ class BC_OT_mech_go_to_form(_MechOp, bpy.types.Operator):
         if form is None:
             raise build.BuildError("That form no longer exists.")
         ids = rig.ids()
-        for v in form.values:
-            if v.key in ids:
-                build.set_value(arm, rig, v.key, v.value, key=self.insert_keys)
+        for cid, value in records.form_values(form).items():
+            if cid in ids:
+                build.set_value(arm, rig, cid, value, key=self.insert_keys)
         return f"Went to {self.name}."
 
 
