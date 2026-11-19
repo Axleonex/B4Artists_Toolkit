@@ -57,8 +57,11 @@ from . import header_menus                         # noqa: E402
 
 
 from .nla_panels import CLASSES as _nla_classes
+from .driver_panels import CLASSES as _driver_classes, CURVE_MENUS as _driver_menus
 
 CLASSES: tuple[type, ...] = layout_homes.arrange((
+    *_driver_classes,
+    *_driver_menus,
     *_nla_classes,
     *_ui_state_mod.CLASSES,
     AA_PT_diagnostics,

@@ -93,8 +93,10 @@ from .lifecycle_ops import CLASSES as _lifecycle_classes
 from .home_ops import CLASSES as _home_classes
 
 from .nla_ops import CLASSES as _nla_classes
+from .driver_ops import CLASSES as _driver_classes
 
 CLASSES: tuple[type, ...] = (
+    *_driver_classes,
     *_nla_classes,
     *_timeline_slider_classes,
     *_home_classes,

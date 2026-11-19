@@ -1,0 +1,53 @@
+{
+    "version":  [
+                    12,
+                    11,
+                    0
+                ],
+    "host":  "5.3.0 Alpha",
+    "output":  0.9999998807907104,
+    "selected_owner":  "Driver test owner",
+    "driver":  {
+                   "muted":  false,
+                   "locked":  false,
+                   "interpolation":  [
+                                         "BEZIER",
+                                         "BEZIER"
+                                     ],
+                   "handles":  [
+                                   "AUTO_CLAMPED",
+                                   "AUTO_CLAMPED"
+                               ],
+                   "extrapolation":  "LINEAR",
+                   "modifiers":  [
+                                     "LIMITS"
+                                 ]
+               },
+    "other":  {
+                  "interpolation":  [
+                                        "BEZIER",
+                                        "BEZIER"
+                                    ],
+                  "extrapolation":  "LINEAR",
+                  "modifiers":  [
+
+                                ]
+              },
+    "action":  [
+                   [
+                       [
+                           1.0,
+                           1.0
+                       ],
+                       [
+                           20.0,
+                           8.0
+                       ]
+                   ]
+               ],
+    "mode":  "DRIVERS",
+    "active_driver":  "[\"output\"]",
+    "selected_drivers":  [
+                             "[\"output\"]"
+                         ]
+}

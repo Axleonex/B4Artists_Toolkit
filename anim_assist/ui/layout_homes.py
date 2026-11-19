@@ -123,9 +123,6 @@ def _sidebar_title(space: str, subtitle: str) -> type[Panel]:
             return
         from ..core.context_utils import iter_visible_fcurves
         col = self.layout.column(align=True)
-        if space == "GRAPH_EDITOR" and getattr(context.space_data, "mode", "") == "DRIVERS":
-            col.label(text="Drivers: Action tools unavailable")
-            return
         curves = list(iter_visible_fcurves(context))
         owners = {obj.name for obj, _action, _fc in curves}
         count = sum(k.select_control_point for _o, _a, fc in curves for k in fc.keyframe_points)
@@ -150,6 +147,8 @@ def _sidebar_title(space: str, subtitle: str) -> type[Panel]:
         "bl_idname": name, "bl_label": HOME_LABEL, "bl_space_type": space,
         "bl_region_type": "UI", "bl_category": HOME_LABEL, "bl_order": 0,
         "bl_options": {"HIDE_HEADER"}, "draw": draw,
+        "poll": classmethod(lambda cls, context: space != "GRAPH_EDITOR" or
+                            getattr(context.space_data, "mode", "") != "DRIVERS"),
     })
 
 
@@ -162,6 +161,8 @@ def _group_panel(idname: str, group: Group, order: int, space: str, region: str,
     }
     if region == "UI":
         ns["bl_category"] = HOME_LABEL
+        if space == "GRAPH_EDITOR":
+            ns["poll"] = classmethod(lambda cls, context: getattr(context.space_data, "mode", "") != "DRIVERS")
     if parent:
         ns["bl_parent_id"] = parent
     if context:
@@ -304,7 +305,8 @@ def arrange(classes: tuple[type, ...]) -> tuple[type, ...]:
     """
     panels = {c.__name__: c for c in classes if isinstance(c, type) and issubclass(c, Panel)}
     generated: list[type] = []
-    placed: set[str] = set()
+    # Drivers have their own top-level panels, not children of Action groups.
+    placed: set[str] = {name for name in panels if name.startswith("ANIMASSIST_PT_driver_")}
 
     for space, (subtitle, groups) in SIDEBARS.items():
         generated.append(_sidebar_title(space, subtitle))
