@@ -1,3 +1,8 @@
+# 12.11.1 Timeline Undo history
+
+- Find and native menu actions use the underlying tool's native Undo entry, avoiding a second entry for the same edit.
+- Direct canvas actions retain their required checkpoint. Slider completion and cancellation keep their existing handling.
+
 # 12.11.0 Adaptive Drivers editor
 
 - Drivers mode has its own Driver & Target, Variables & Expression, Response Curve, and Diagnostics sections. Its Anim Assist header menu follows the same layout.

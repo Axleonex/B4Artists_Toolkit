@@ -1,7 +1,7 @@
 """Shared Timeline action dispatch, menus and quick-selection settings."""
 
 import bpy
-from bpy.props import EnumProperty, StringProperty
+from bpy.props import BoolProperty, EnumProperty, StringProperty
 from ..core.logging import get_logger
 from .timeline_catalog import (
     ACTIONS as _ACTIONS, EXECUTE_ACTIONS, GROUPS, QUICK_GROUPS, FAMILY,
@@ -251,6 +251,7 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
     bl_label = "Timeline Tool"
     bl_options = {"INTERNAL"}
     action: StringProperty(options={"HIDDEN", "SKIP_SAVE"})
+    canvas_undo: BoolProperty(default=False, options={"HIDDEN", "SKIP_SAVE"})
 
     @classmethod
     def poll(cls, context):
@@ -307,12 +308,12 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
                         and not operator.poll()):
                     context.scene.anim_assist.anim_offset_active = False
                     return {"FINISHED"}
-                # Nested immediate calls from the canvas keymap do not retain
-                # their committed state in native redo history. Checkpoint it
-                # once here; asynchronous modals own their completion history.
+                # Canvas calls need an explicit checkpoint; native UI buttons
+                # already retain the nested operator's Undo entry. Asynchronous
+                # modals own their completion history.
                 mode = "EXEC_DEFAULT" if self.action in EXECUTE_ACTIONS else "INVOKE_DEFAULT"
                 result = operator(mode, True, **_arguments(context, self.action))
-                if "FINISHED" in result:
+                if self.canvas_undo and "FINISHED" in result:
                     bpy.ops.ed.undo_push(message=_ACTIONS[self.action][2])
             return {"CANCELLED"} if "CANCELLED" in result else {"FINISHED"}
         except (RuntimeError, ReferenceError, AttributeError) as exc:

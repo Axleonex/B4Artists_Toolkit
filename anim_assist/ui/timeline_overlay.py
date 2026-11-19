@@ -222,7 +222,7 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
         if not tools.is_timeline(context.area):
             return {"CANCELLED"}
         if self.kind == "ACTION":
-            return bpy.ops.animassist.timeline_tool("INVOKE_DEFAULT", action=self.key)
+            return bpy.ops.animassist.timeline_tool("INVOKE_DEFAULT", action=self.key, canvas_undo=True)
         if self.kind == "SEARCH":
             return bpy.ops.animassist.timeline_search("INVOKE_DEFAULT")
         if self.kind == "SETTINGS":
@@ -1074,7 +1074,7 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
                         self.report({'WARNING'}, reason)  # stays open so another tool can be chosen
                     else:
                         _close_row_menu(context)
-                        bpy.ops.animassist.timeline_tool('INVOKE_DEFAULT', action=key)
+                        bpy.ops.animassist.timeline_tool('INVOKE_DEFAULT', action=key, canvas_undo=True)
                 elif kind == 'OPTIONS':
                     _close_row_menu(context)
                     bpy.ops.wm.call_panel('INVOKE_DEFAULT', name=f'ANIMASSIST_PT_timeline_options_{key}')
