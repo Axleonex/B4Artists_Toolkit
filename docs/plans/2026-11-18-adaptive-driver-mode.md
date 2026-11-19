@@ -70,3 +70,14 @@ settings navigation and switching back to the Action Graph layout.
 See [qualification and limits](../anim_assist/releases/12.11.0/qualification.md).
 README and release index agree. No local commit, merge, normal-profile install
 or push. The disposable test process is closed after the captured walkthrough.
+
+## Publication follow-up — 2026-11-19
+
+Release implementation committed as Axleonex in `ff80353` and pushed to
+`codex/anim-assist-driver-mode` after the owner's confirmation. The remote commit,
+README 12.11.0 labels and installer SHA256 were verified. The owner subsequently
+requested integration into `main`, including the README/download version labels.
+Those labels already point to 12.11.0; the release index now uses repository-build
+wording. This metadata follow-up is prepared locally for the final protected-merge
+confirmation required by the shared Git rules. Original qualification remains a
+dated pre-publication snapshot; installer bytes and acceptance evidence are unchanged.

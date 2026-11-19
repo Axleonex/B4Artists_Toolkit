@@ -4,7 +4,7 @@ Current repository packages and their publication status.
 
 | Tool | Version | Archive | Bytes | SHA256 prefix | Status |
 |---|---|---|---:|---|---|
-| Anim Assist | 12.11.0 | [b4_anim_assist_v12.11.0.zip](b4_anim_assist_v12.11.0.zip) | 656,057 | `900252082894` | Local candidate; adaptive Drivers sidebar/header, response curves, native settings and selected-driver diagnostics. Not published. |
+| Anim Assist | 12.11.0 | [b4_anim_assist_v12.11.0.zip](b4_anim_assist_v12.11.0.zip) | 656,057 | `900252082894` | Repository build; adaptive Drivers sidebar/header, response curves, native settings and selected-driver diagnostics. |
 | Anim Assist (historical 12.10.3) | 12.10.3 | [b4_anim_assist_v12.10.3.zip](b4_anim_assist_v12.10.3.zip) | 649,040 | `b6711cf2bf61` | Timeline tooltip routing, popup clearance, and faster toolbar and slider previews. |
 | Anim Assist (historical 12.10.2) | 12.10.2 | [b4_anim_assist_v12.10.2.zip](b4_anim_assist_v12.10.2.zip) | 648,792 | `4639b69abe7d` | Fixed Timeline toolbar height, click handling and Settings dismissal. |
 | Anim Assist (historical 12.10.1) | 12.10.1 | [b4_anim_assist_v12.10.1.zip](b4_anim_assist_v12.10.1.zip) | 647,882 | `5a48a3342656` | Timeline toolbar clears the native scrollbar during resize, grows buttons and click targets together, and keeps the stage menu selectable in short Timelines. |
