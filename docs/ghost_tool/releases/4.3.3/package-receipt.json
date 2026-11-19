@@ -7,6 +7,7 @@
   "members": 31,
   "license_source": "LICENSE",
   "source_bytes_match": true,
+  "source_input": "Staged Git blobs, or unmodified source snapshot outside Git",
   "crc": "PASS",
   "zip_timestamp": [
     1980,

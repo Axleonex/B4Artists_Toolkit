@@ -5,6 +5,7 @@ import io
 import json
 from pathlib import Path
 import stat
+import subprocess
 import zipfile
 
 
@@ -17,9 +18,22 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def source_bytes(path):
+    """Use staged repository bytes, independent of Windows checkout EOLs."""
+    checked_out = path.read_bytes()
+    if not (ROOT / ".git").exists():
+        return checked_out
+    data = subprocess.check_output([
+        "git", "-C", str(ROOT), "show", ":" + path.relative_to(ROOT).as_posix(),
+    ])
+    if checked_out.replace(b"\r\n", b"\n") != data.replace(b"\r\n", b"\n"):
+        raise RuntimeError(f"Stage source changes before packaging: {path}")
+    return data
+
+
 def build():
     source = ROOT / "ghost_tool"
-    tree = ast.parse((source / "__init__.py").read_bytes())
+    tree = ast.parse(source_bytes(source / "__init__.py"))
     metadata = next(node.value for node in tree.body
                     if isinstance(node, ast.Assign)
                     and any(isinstance(t, ast.Name) and t.id == "bl_info" for t in node.targets))
@@ -28,10 +42,10 @@ def build():
     assert paths and all("__pycache__" not in path.parts for path in paths)
     payload = {}
     for path in paths:
-        data = path.read_bytes()
+        data = source_bytes(path)
         ast.parse(data, filename=str(path))
         payload[path.relative_to(ROOT).as_posix()] = data
-    payload["ghost_tool/LICENSE"] = (ROOT / "LICENSE").read_bytes()
+    payload["ghost_tool/LICENSE"] = source_bytes(ROOT / "LICENSE")
 
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
@@ -59,6 +73,7 @@ def build():
         "members": len(payload),
         "license_source": "LICENSE",
         "source_bytes_match": True,
+        "source_input": "Staged Git blobs, or unmodified source snapshot outside Git",
         "crc": "PASS",
         "zip_timestamp": [1980, 1, 1, 0, 0, 0],
         "compression": "DEFLATE level 9",

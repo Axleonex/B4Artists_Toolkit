@@ -22,3 +22,7 @@ This targeted check is not every-operator, production-rig or future-host certifi
 ## Scope
 
 Two release source modules change: the guard in `utils.py` and version metadata in `__init__.py`. Other Ghost Python files remain unchanged. The archive includes the repository license. Production rigs, every operator and future host versions are not certified by this targeted release.
+
+## Rebuilding
+
+Run `python docs/ghost_tool/releases/4.3.3/package.py` from this release checkout. Stage source changes first. The recipe uses staged Git blobs to preserve the repository's mixed historical line endings independently of Windows checkout settings. The ZIP matches committed source bytes and includes the repository license.
