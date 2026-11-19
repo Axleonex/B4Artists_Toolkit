@@ -671,6 +671,11 @@ def is_native_transform_active(context) -> bool:
     manager = getattr(context, 'window_manager', None)
     for window in getattr(manager, 'windows', ()):
         for operator in getattr(window, 'modal_operators', ()):
+            # BFA - Anim Assist's persistent timeline pointer only routes UI events;
+            # its active slider/edit operators have separate modal handlers.
+            # Exempt only the audited observer, keeping unknown modals guarded.
+            if operator.bl_idname == 'ANIMASSIST_OT_timeline_pointer':
+                continue
             if not operator.bl_idname.startswith((
                     'ghost_tool.', 'GHOST_TOOL_OT_', 'GHOSTTOOL_OT_')):
                 return True
