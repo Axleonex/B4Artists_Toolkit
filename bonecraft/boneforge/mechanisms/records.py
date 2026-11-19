@@ -217,7 +217,7 @@ class BC_PG_MechFormValue(bpy.types.PropertyGroup):
 
 class BC_PG_MechForm(bpy.types.PropertyGroup):
     name: StringProperty(name="Name")
-    values: CollectionProperty(type=BC_PG_MechFormValue)
+    control_values: CollectionProperty(type=BC_PG_MechFormValue)
 
 
 class BC_PG_MechRig(bpy.types.PropertyGroup):
@@ -369,13 +369,21 @@ def missing_parts(r):
     return out
 
 
+def form_values(form):
+    """Read current or legacy form storage without changing saved/linked data."""
+    if "control_values" in form:
+        return {v.key: v.value for v in form.control_values}
+    # Older files used "values", which is a reserved PropertyGroup method name.
+    return {v.get("key", ""): v.get("value", 0.0) for v in form.get("values", ())}
+
+
 def to_model(arm_obj):
     r = arm_obj.data.bonecraft_mech
     return model.MechRig(
         parts=[_to(model.Part, p) for p in r.parts],
         mechanisms=[_to(model.Mechanism, m) for m in r.mechanisms],
         sequences=[model.Sequence(s.id, s.name, [_to(model.Step, st) for st in s.steps]) for s in r.sequences],
-        forms=[model.Form(f.name, {v.key: v.value for v in f.values}) for f in r.forms],
+        forms=[model.Form(f.name, form_values(f)) for f in r.forms],
         missing=missing_parts(r),
     )
 
