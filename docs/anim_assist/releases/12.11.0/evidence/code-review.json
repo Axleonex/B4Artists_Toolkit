@@ -1,0 +1,106 @@
+﻿{
+  "commit_status": "committed:c0e1ac8",
+  "consumption": {
+    "advisory": true,
+    "grants_execution_authority": false,
+    "review_blocks_completion": false,
+    "review_passed": false
+  },
+  "declared_paths": [
+    "anim_assist/core/driver_context.py",
+    "anim_assist/operators/driver_ops.py",
+    "anim_assist/ui/driver_panels.py",
+    "anim_assist/ui/header_menus.py",
+    "anim_assist/ui/layout_homes.py"
+  ],
+  "evaluation_hooks": {
+    "adaptive_parallel_feedback": null,
+    "architecture_delta": {
+      "reasons": [
+        "pipeline:S3"
+      ],
+      "report": {
+        "base_identity": null,
+        "changed_paths": [
+          "anim_assist/core/driver_context.py",
+          "anim_assist/operators/driver_ops.py",
+          "anim_assist/ui/driver_panels.py",
+          "anim_assist/ui/header_menus.py",
+          "anim_assist/ui/layout_homes.py"
+        ],
+        "head_or_snapshot_identity": null,
+        "kind": "architecture_delta",
+        "renderer_contract": "provider-independent-json",
+        "schema_version": "1.0",
+        "source_refs": [
+          {
+            "evidence_class": "trusted_instruction",
+            "path": "anim_assist/core/driver_context.py"
+          },
+          {
+            "evidence_class": "trusted_instruction",
+            "path": "anim_assist/operators/driver_ops.py"
+          },
+          {
+            "evidence_class": "trusted_instruction",
+            "path": "anim_assist/ui/driver_panels.py"
+          },
+          {
+            "evidence_class": "trusted_instruction",
+            "path": "anim_assist/ui/header_menus.py"
+          },
+          {
+            "evidence_class": "trusted_instruction",
+            "path": "anim_assist/ui/layout_homes.py"
+          }
+        ]
+      },
+      "status": "EMITTED",
+      "triggered": true
+    },
+    "automatic": true,
+    "evidence_integrity": {
+      "epistemic_labels": {
+        "change_contract": "trusted_instruction",
+        "executed_checks": "unverified",
+        "git_changes": "unverified",
+        "review_selection": "deterministic_inference"
+      },
+      "freshness": "UNVERIFIED",
+      "observed_identity": null,
+      "requires_inconclusive": false,
+      "source_identity": null,
+      "status": "UNVERIFIED"
+    },
+    "learning": {
+      "candidates": [],
+      "null_output_allowed": true,
+      "promotion_owner": "existing_learning_pipeline",
+      "promotion_performed": false,
+      "status": "NO_CANDIDATE"
+    },
+    "model_calls": 0,
+    "schema_version": "1.0"
+  },
+  "evidence_provenance": "caller_reported",
+  "exclusions": [
+    "host-evidence-required",
+    "deterministic-validation-not-proven"
+  ],
+  "execution_status": "UNKNOWN",
+  "finding_counts": {
+    "total": 0
+  },
+  "git_status": {
+    "changed_count": 18,
+    "dirty": true,
+    "observed": true
+  },
+  "receipt_path": "",
+  "review_completed": false,
+  "review_pipeline": "S3",
+  "review_verdict": "INCONCLUSIVE",
+  "reviewer_invoked": false,
+  "state": "review_ready",
+  "verified_run_id": null
+}

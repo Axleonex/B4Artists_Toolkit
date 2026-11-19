@@ -162,6 +162,11 @@ def _submenu(space: str, key: str, label: str, ops: tuple[str | None, ...]) -> t
 def _top_menu(space: str, submenus) -> type[Menu]:
     def draw(self, _context: bpy.types.Context) -> None:
         layout = self.layout
+        if space == "GRAPH_EDITOR" and getattr(_context.space_data, "mode", "") == "DRIVERS":
+            from .driver_panels import DRIVER_SECTIONS
+            for key, label, _draw_section in DRIVER_SECTIONS:
+                layout.menu(f"ANIMASSIST_MT_driver_{key}", text=label)
+            return
         if space != "NLA_EDITOR":
             layout.operator("animassist.p10_search_tools", text="Search Anim Assist Tools...", icon="VIEWZOOM")
             layout.operator("animassist.p10_repeat_last", text="Repeat Last Tool", icon="RECOVER_LAST")
@@ -190,8 +195,18 @@ class ANIMASSIST_MT_pie_home(Menu):
             pie.operator(f"animassist.{op}", text=text, icon=icon)
 
 
+def _driver_submenu(key, label, draw_section) -> type[Menu]:
+    def draw(self, context):
+        draw_section(self.layout, context)
+    name = f"ANIMASSIST_MT_driver_{key}"
+    return type(name, (Menu,), {"bl_idname": name, "bl_label": label, "draw": draw})
+
+
 def _build_classes() -> tuple[type, ...]:
     out: list[type] = []
+    from .driver_panels import DRIVER_SECTIONS
+    for key, label, draw_section in DRIVER_SECTIONS:
+        out.append(_driver_submenu(key, label, draw_section))
     for space, (_menus, _pref, submenus) in MENUS.items():
         out += [_submenu(space, key, label, ops) for key, label, _icon, ops in submenus]
         out.append(_top_menu(space, submenus))

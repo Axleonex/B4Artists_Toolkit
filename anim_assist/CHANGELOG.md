@@ -1,3 +1,12 @@
+# 12.11.0 Adaptive Drivers editor
+
+- Drivers mode has its own Driver & Target, Variables & Expression, Response Curve, and Diagnostics sections. Its Anim Assist header menu follows the same layout.
+- Inspect the active driver and its driven property; frame curves, select channels or the owning object, and mute or lock the active driver.
+- Open the native Drivers and Modifiers tabs for variables, expressions and modifier settings.
+- Edit interpolation, selected handles and extrapolation only on selected visible editable driver channels. Add modifiers only to the active editable driver. Action keys and unrelated drivers are excluded.
+- Check selected visible drivers for evaluation errors, missing targets, unresolved property paths and missing bones. Refresh owner dependencies without automatic repairs or deletion.
+- Existing Action Graph, Dope Sheet, NLA and Timeline layouts are preserved. Switching out of Drivers mode restores the Action Graph sections.
+
 # 12.10.3 Timeline hover help and performance
 
 - Show one Anim Assist tooltip in the Timeline under the cursor. Toolbar hover takes priority over the Scene Strip Gizmo beneath it.

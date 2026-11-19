@@ -7,17 +7,21 @@ Run with:
 from __future__ import annotations
 
 import sys
+import os
+import importlib
 from pathlib import Path
 
 import bpy
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.environ.get("AA_TEST_ROOT", Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(ROOT))
 
-import anim_assist  # noqa: E402
-from anim_assist import constants  # noqa: E402
-from anim_assist.ui import header_menus, layout_homes  # noqa: E402
+PACKAGE = os.environ.get("AA_TEST_PACKAGE", "anim_assist")
+anim_assist = importlib.import_module(PACKAGE)
+constants = importlib.import_module(f"{PACKAGE}.constants")
+header_menus = importlib.import_module(f"{PACKAGE}.ui.header_menus")
+layout_homes = importlib.import_module(f"{PACKAGE}.ui.layout_homes")
 
 
 def _walk(cls):
@@ -29,7 +33,7 @@ def _walk(cls):
 def _our_panels() -> list[type]:
     seen: dict[str, type] = {}
     for cls in _walk(bpy.types.Panel):
-        if (cls.__module__ or "").startswith("anim_assist") and getattr(cls, "is_registered", False):
+        if (cls.__module__ or "").startswith(PACKAGE + ".") and getattr(cls, "is_registered", False):
             seen[cls.__name__] = cls
     return list(seen.values())
 
@@ -61,6 +65,9 @@ def main() -> None:
             top = {getattr(c, "bl_idname", c.__name__) for c in sidebar if not getattr(c, "bl_parent_id", "")}
             expected = {layout_homes.sidebar_group_idname(space, "title")}
             expected |= {layout_homes.sidebar_group_idname(space, g.key) for g in groups}
+            if space == "GRAPH_EDITOR":
+                drivers = importlib.import_module(f"{PACKAGE}.ui.driver_panels").CLASSES
+                expected |= {cls.bl_idname for cls in drivers}
             assert top == expected, (space, sorted(top ^ expected))
             for group in groups:
                 for name in group.panels:
