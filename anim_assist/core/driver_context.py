@@ -1,5 +1,6 @@
 """Driver targets from the current editor, without falling back to an Action."""
 from __future__ import annotations
+from ..i18n import T, F
 
 
 def in_driver_editor(context) -> bool:
@@ -38,22 +39,21 @@ def driver_issues(fc, context) -> list[str]:
     driver = fc.driver
     issues = []
     if not driver.is_valid:
-        issues.append("Driver evaluation failed; check the expression and targets, then refresh dependencies.")
+        issues.append(T("Driver evaluation failed; check the expression and targets, then refresh dependencies."))
     if not fc.id_data.is_editable:
-        issues.append("Owner is linked or read-only.")
+        issues.append(T("Owner is linked or read-only."))
     if fc.lock:
-        issues.append("Channel is locked.")
+        issues.append(T("Channel is locked."))
     if fc.mute:
-        issues.append("Driver is muted.")
+        issues.append(T("Driver is muted."))
     for variable in driver.variables:
         for target in variable.targets:
-            label = f"Variable {variable.name}"
             if variable.type == "CONTEXT_PROP":
                 owner = context.scene if target.context_property == "ACTIVE_SCENE" else context.view_layer
             else:
                 owner = target.id
             if owner is None:
-                issues.append(f"{label}: missing target.")
+                issues.append(F("Variable {name}: missing target.", name=variable.name))
                 continue
             if variable.type in {"SINGLE_PROP", "CONTEXT_PROP"}:
                 try:
@@ -62,9 +62,9 @@ def driver_issues(fc, context) -> list[str]:
                     owner.path_resolve(target.data_path)
                 except (ValueError, AttributeError, KeyError, TypeError):
                     if not target.use_fallback_value:
-                        issues.append(f"{label}: unresolved property path {target.data_path!r}.")
+                        issues.append(F("Variable {name}: unresolved property path {path!r}.", name=variable.name, path=target.data_path))
             elif target.bone_target:
                 pose = getattr(owner, "pose", None)
                 if pose is None or pose.bones.get(target.bone_target) is None:
-                    issues.append(f"{label}: missing bone {target.bone_target!r}.")
+                    issues.append(F("Variable {name}: missing bone {bone!r}.", name=variable.name, bone=target.bone_target))
     return issues

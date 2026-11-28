@@ -18,6 +18,8 @@ source of truth for the layout.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from dataclasses import dataclass
 
 import bpy
@@ -126,21 +128,21 @@ def _sidebar_title(space: str, subtitle: str) -> type[Panel]:
         curves = list(iter_visible_fcurves(context))
         owners = {obj.name for obj, _action, _fc in curves}
         count = sum(k.select_control_point for _o, _a, fc in curves for k in fc.keyframe_points)
-        col.label(text=f"Scope: {len(owners)} visible owners")
-        col.label(text=f"Selected keys: {count}")
-        col.label(text=f"Editable curves: {len(curves)}")
+        col.label(text=F('Scope: {p0} visible owners', p0=f'{len(owners)}'), translate=False)
+        col.label(text=F('Selected keys: {p0}', p0=f'{count}'), translate=False)
+        col.label(text=F('Editable curves: {p0}', p0=f'{len(curves)}'), translate=False)
         supported = {fc.as_pointer() for _o, _a, fc in curves}
         if any(fc.as_pointer() not in supported for fc in (getattr(context, "editable_fcurves", ()) or ())
                if not fc.hide and not fc.mute and not fc.lock):
             from .ui_helpers import wrapped_label
             wrapped_label(col, context, "Unsupported source channels excluded. Object Actions only; pinned sources need an owner.", icon="INFO")
         if not curves:
-            col.label(text="Show editable Action channels in this editor")
+            col.label(text="Show editable Action channels in this editor", text_ctxt='AnimAssist')
         if space == "DOPESHEET_EDITOR":
             row = col.row(align=True)
-            row.operator("action.select_all", text="All").action = "SELECT"
-            row.operator("action.select_all", text="None").action = "DESELECT"
-            row.operator("action.select_all", text="Invert").action = "INVERT"
+            row.operator("action.select_all", text="All", text_ctxt='AnimAssist').action = "SELECT"
+            row.operator("action.select_all", text="None", text_ctxt='AnimAssist').action = "DESELECT"
+            row.operator("action.select_all", text="Invert", text_ctxt='AnimAssist').action = "INVERT"
 
     name = f"{sidebar_group_idname(space, 'title')}"
     return type(name, (Panel,), {
@@ -188,10 +190,10 @@ class ANIMASSIST_PT_home(Panel):
         layout = self.layout
         row = layout.row()
         row.enabled = False
-        row.label(text=PROPERTIES_SUBTITLE)
+        row.label(text=PROPERTIES_SUBTITLE, text_ctxt='AnimAssist')
         row = layout.row(align=True)
-        row.operator("animassist.p10_search_tools", text="Search Tools", icon="VIEWZOOM")
-        row.operator("animassist.p10_repeat_last", text="Repeat Last", icon="RECOVER_LAST")
+        row.operator("animassist.p10_search_tools", text="Search Tools", icon="VIEWZOOM", text_ctxt='AnimAssist')
+        row.operator("animassist.p10_repeat_last", text="Repeat Last", icon="RECOVER_LAST", text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_home_setup_body(Panel):
@@ -207,18 +209,18 @@ class ANIMASSIST_PT_home_setup_body(Panel):
     def draw(self, _context: bpy.types.Context) -> None:
         layout = self.layout
         col = layout.column(align=True)
-        col.operator("animassist.p10_first_run_setup", text="Run First Run Setup", icon="CHECKMARK")
-        col.operator("animassist.add_workspace", text="Add Anim Assist Workspace", icon="WORKSPACE")
+        col.operator("animassist.p10_first_run_setup", text="Run First Run Setup", icon="CHECKMARK", text_ctxt='AnimAssist')
+        col.operator("animassist.add_workspace", text="Add Anim Assist Workspace", icon="WORKSPACE", text_ctxt='AnimAssist')
         layout.separator()
         col = layout.column(align=True)
-        col.label(text="Rig")
-        col.operator("animassist.p9_build_cache", text="Find Left/Right Pairs", icon="MOD_MIRROR")
-        col.operator("animassist.p9_validate_pairs", text="Check Pairs", icon="CHECKBOX_HLT")
-        col.operator("animassist.p8_detect_all", text="Find IK/FK Switches", icon="CON_KINEMATIC")
+        col.label(text="Rig", text_ctxt='AnimAssist')
+        col.operator("animassist.p9_build_cache", text="Find Left/Right Pairs", icon="MOD_MIRROR", text_ctxt='AnimAssist')
+        col.operator("animassist.p9_validate_pairs", text="Check Pairs", icon="CHECKBOX_HLT", text_ctxt='AnimAssist')
+        col.operator("animassist.p8_detect_all", text="Find IK/FK Switches", icon="CON_KINEMATIC", text_ctxt='AnimAssist')
         layout.separator()
         col = layout.column(align=True)
-        col.label(text="Face")
-        col.operator("animassist.p12_setup_lipsync", text="Set Up Lipsync", icon="SPEAKER")
+        col.label(text="Face", text_ctxt='AnimAssist')
+        col.operator("animassist.p12_setup_lipsync", text="Set Up Lipsync", icon="SPEAKER", text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_home_settings_body(Panel):
@@ -238,22 +240,22 @@ class ANIMASSIST_PT_home_settings_body(Panel):
         layout = self.layout
         prefs = get_prefs(context)
         if prefs is None:
-            layout.label(text="Preferences unavailable", icon="ERROR")
+            layout.label(text="Preferences unavailable", icon="ERROR", text_ctxt='AnimAssist')
             return
 
         col = layout.column(align=True)
-        col.label(text="Shortcut", icon="EVENT_SHIFT")
-        col.prop(prefs, "pie_hotkey_enabled", text="Anim Assist pie menu")
+        col.label(text="Shortcut", icon="EVENT_SHIFT", text_ctxt='AnimAssist')
+        col.prop(prefs, "pie_hotkey_enabled", text="Anim Assist pie menu", text_ctxt='AnimAssist')
         sub = col.column(align=True)
         sub.active = prefs.pie_hotkey_enabled
         for label, kmi in header_menus.pie_keymap_items(context):
             row = sub.row(align=True)
-            row.label(text=label)
+            row.label(text=label, text_ctxt='AnimAssist')
             row.prop(kmi, "type", text="", full_event=True)
-        col.operator("animassist.p10_check_hotkey_conflicts", text="Check for Conflicts", icon="ERROR")
+        col.operator("animassist.p10_check_hotkey_conflicts", text="Check for Conflicts", icon="ERROR", text_ctxt='AnimAssist')
 
         layout.separator()
-        col = layout.column(heading="Header menu in", align=True)
+        col = layout.column(heading="Header menu in", align=True, heading_ctxt='AnimAssist')
         col.prop(prefs, "header_menu_view3d")
         col.prop(prefs, "header_menu_graph")
         col.prop(prefs, "header_menu_dopesheet")
@@ -263,7 +265,7 @@ class ANIMASSIST_PT_home_settings_body(Panel):
         col = layout.column(align=True)
         col.prop(prefs, "show_explainer_help")
         col.prop(prefs, "compact_ui_mode")
-        op = layout.operator("preferences.addon_show", text="All Preferences", icon="PREFERENCES")
+        op = layout.operator("preferences.addon_show", text="All Preferences", icon="PREFERENCES", text_ctxt='AnimAssist')
         op.module = constants.ADDON_PACKAGE
 
 

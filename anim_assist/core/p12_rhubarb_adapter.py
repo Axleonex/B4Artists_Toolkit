@@ -35,6 +35,7 @@ from .logging import get_logger
 __all__ = [
     "PhonemeCue",
     "BackendUnavailable",
+    "FallbackReason",
     "AnalyzeResult",
     "is_rhubarb_available",
     "analyze",
@@ -87,6 +88,20 @@ class BackendUnavailable(Exception):
     """Raised internally when a backend cannot be invoked."""
 
 
+class FallbackReason(str):
+    """Keep cached/saved English text; defer only its display translation.
+
+    This remains a string for equality, JSON and the existing BakeRecord schema.
+    The UI can render its template through error_text without rerunning analysis.
+    """
+    @classmethod
+    def from_template(cls, template, **fields):
+        value = cls(template.format(**fields))
+        value.ui_template = template
+        value.ui_fields = fields
+        return value
+
+
 # ---------------------------------------------------------------------------
 # Backend dispatch
 # ---------------------------------------------------------------------------
@@ -120,7 +135,7 @@ def analyze(
                 backend="AMPLITUDE",
                 cues=cues,
                 fallback_used=True,
-                fallback_reason="Rhubarb executable not found on PATH",
+                fallback_reason=FallbackReason.from_template("Rhubarb executable not found on PATH"),
             )
         try:
             cues = analyze_rhubarb(audio_path, rhubarb_path=rhubarb_path)
@@ -132,7 +147,8 @@ def analyze(
                 backend="AMPLITUDE",
                 cues=cues,
                 fallback_used=True,
-                fallback_reason=str(exc),
+                fallback_reason=(exc.args[0] if len(exc.args) == 1 and isinstance(exc.args[0], FallbackReason)
+                                 else str(exc)),
             )
 
     # Amplitude path (default).
@@ -205,7 +221,7 @@ def analyze_rhubarb(audio_path: str, rhubarb_path: str = "") -> list[PhonemeCue]
     """
     binary = rhubarb_path.strip() if rhubarb_path.strip() else shutil.which("rhubarb")
     if not binary:
-        raise BackendUnavailable("rhubarb executable not found")
+        raise BackendUnavailable(FallbackReason.from_template("rhubarb executable not found"))
 
     try:
         completed = subprocess.run(  # noqa: S603 — args list, no shell
@@ -216,17 +232,17 @@ def analyze_rhubarb(audio_path: str, rhubarb_path: str = "") -> list[PhonemeCue]
             timeout=120,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
-        raise BackendUnavailable(f"rhubarb subprocess failed: {exc}") from exc
+        raise BackendUnavailable(FallbackReason.from_template("rhubarb subprocess failed: {error}", error=str(exc))) from exc
 
     if completed.returncode != 0:
         raise BackendUnavailable(
-            f"rhubarb exited {completed.returncode}: {completed.stderr[:200]}"
+            FallbackReason.from_template("rhubarb exited {code}: {stderr}", code=completed.returncode, stderr=completed.stderr[:200])
         )
 
     try:
         payload = json.loads(completed.stdout)
     except json.JSONDecodeError as exc:
-        raise BackendUnavailable(f"rhubarb output not valid JSON: {exc}") from exc
+        raise BackendUnavailable(FallbackReason.from_template("rhubarb output not valid JSON: {error}", error=str(exc))) from exc
 
     cues: list[PhonemeCue] = []
     for entry in payload.get("mouthCues", []):

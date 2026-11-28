@@ -142,7 +142,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
         ),
         items=_proxy_type_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     proxy_size: FloatProperty(  # type: ignore[valid-type]
         name="Proxy Size",
@@ -154,7 +154,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
         soft_max=2.0,
         step=10,
         precision=2,
-    )
+     translation_context='AnimAssist')
 
     proxy_color: FloatVectorProperty(  # type: ignore[valid-type]
         name="Proxy Color",
@@ -164,7 +164,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
         default=(0.2, 0.8, 1.0),
         min=0.0,
         max=1.0,
-    )
+     translation_context='AnimAssist')
 
     auto_constrain: BoolProperty(  # type: ignore[valid-type]
         name="Auto-Constrain",
@@ -173,7 +173,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
             "and target on creation. Disable for manual constraint setup."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     # ----- Proxy Mode (Feature 30, 36) -----
 
@@ -182,7 +182,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
         description="How the proxy drives the target: Constrain replaces, Offset adds on top",
         items=_proxy_mode_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     # ----- Locator Tools (Features 1-10) -----
 
@@ -193,7 +193,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
             "bone's head position"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     # ----- Bake Settings (Features 31-35) -----
 
@@ -202,21 +202,21 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
         description="How to determine the frame range for baking operations",
         items=_bake_range_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     bake_range_start: FloatProperty(  # type: ignore[valid-type]
         name="Start",
         description="Custom bake range start frame",
         default=1.0,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     bake_range_end: FloatProperty(  # type: ignore[valid-type]
         name="End",
         description="Custom bake range end frame",
         default=250.0,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     bake_step: IntProperty(  # type: ignore[valid-type]
         name="Frame Step",
@@ -224,7 +224,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
         default=1,
         min=1,
         max=24,
-    )
+     translation_context='AnimAssist')
 
     bake_channels: EnumProperty(  # type: ignore[valid-type]
         name="Channels",
@@ -234,7 +234,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
         ),
         items=_bake_channels_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     smart_bake_tolerance: FloatProperty(  # type: ignore[valid-type]
         name="Key Reduction Tolerance",
@@ -246,7 +246,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
         min=0.0001,
         max=1.0,
         precision=4,
-    )
+     translation_context='AnimAssist')
 
     preserve_timing: BoolProperty(  # type: ignore[valid-type]
         name="Preserve Existing Timing",
@@ -255,7 +255,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
             "values at those frames instead of inserting a key on every frame"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # ----- Display (Features 20-23) -----
 
@@ -264,13 +264,13 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
         description="How proxy objects are displayed in the viewport: full, dimmed, or hidden",
         items=_display_mode_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     show_proxy_names: BoolProperty(  # type: ignore[valid-type]
         name="Show Names",
         description="Display proxy object names in the viewport for quick identification",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     # ----- Session (Features 26-27) -----
 
@@ -279,7 +279,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
         description="UUID of the currently active P7 session",
         default="",
         options={"HIDDEN"},
-    )
+     translation_context='AnimAssist')
 
     # ----- Lock (Feature 29) -----
 
@@ -290,7 +290,7 @@ class AA_P7_Properties(bpy.types.PropertyGroup):
             "a proxy is actively driving it, preventing accidental edits"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -318,7 +318,7 @@ def register_properties() -> None:
     bpy.types.Scene.anim_assist_p7 = bpy.props.PointerProperty(  # type: ignore[assignment]
         type=AA_P7_Properties,
         name="Anim Assist P7",
-    )
+     translation_context='AnimAssist')
 
 
 def unregister_properties() -> None:

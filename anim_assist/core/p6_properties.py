@@ -105,7 +105,7 @@ class AA_P6_Properties(bpy.types.PropertyGroup):
         description="Pivot point for scale operations",
         items=_anchor_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     scale_factor: FloatProperty(  # type: ignore[valid-type]
         name="Scale Factor",
@@ -120,7 +120,7 @@ class AA_P6_Properties(bpy.types.PropertyGroup):
         soft_max=10.0,
         step=10,
         precision=3,
-    )
+     translation_context='AnimAssist')
 
     pivot_frame: FloatProperty(  # type: ignore[valid-type]
         name="Pivot Frame",
@@ -130,7 +130,7 @@ class AA_P6_Properties(bpy.types.PropertyGroup):
         ),
         default=0.0,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     offset_frames: FloatProperty(  # type: ignore[valid-type]
         name="Offset",
@@ -140,7 +140,7 @@ class AA_P6_Properties(bpy.types.PropertyGroup):
         soft_max=500.0,
         step=100,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     # ----- Ripple -----
     # Note: ripple direction is implicit in each dedicated operator
@@ -155,7 +155,7 @@ class AA_P6_Properties(bpy.types.PropertyGroup):
         soft_max=500.0,
         step=100,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     insert_frames: IntProperty(  # type: ignore[valid-type]
         name="Frame Count",
@@ -163,7 +163,7 @@ class AA_P6_Properties(bpy.types.PropertyGroup):
         default=1,
         min=1,
         soft_max=500,
-    )
+     translation_context='AnimAssist')
 
     # ----- Timing Range -----
 
@@ -172,39 +172,39 @@ class AA_P6_Properties(bpy.types.PropertyGroup):
         description="How to determine the active timing range",
         items=_range_mode_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     range_start: FloatProperty(  # type: ignore[valid-type]
         name="Start",
         description="Custom timing range start frame",
         default=1.0,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     range_end: FloatProperty(  # type: ignore[valid-type]
         name="End",
         description="Custom timing range end frame",
         default=100.0,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     stored_range_start: FloatProperty(  # type: ignore[valid-type]
         name="Stored Start",
         default=1.0,
         options={"HIDDEN"},
-    )
+     translation_context='AnimAssist')
 
     stored_range_end: FloatProperty(  # type: ignore[valid-type]
         name="Stored End",
         default=100.0,
         options={"HIDDEN"},
-    )
+     translation_context='AnimAssist')
 
     has_stored_range: BoolProperty(  # type: ignore[valid-type]
         name="Has Stored Range",
         default=False,
         options={"HIDDEN"},
-    )
+     translation_context='AnimAssist')
 
     # ----- Gap Tools -----
 
@@ -215,25 +215,25 @@ class AA_P6_Properties(bpy.types.PropertyGroup):
         min=1.0,
         soft_max=200.0,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     gap_fill_mode: EnumProperty(  # type: ignore[valid-type]
         name="Fill Mode",
         description="How to fill detected timing gaps",
         items=_gap_fill_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     cluster_radius: FloatProperty(  # type: ignore[valid-type]
         name="Cluster Radius",
         description=(
-            "Keys within this many frames of each other are considered a cluster"
+            "Group consecutive keyframe times with gaps no larger than this many frames"
         ),
         default=2.0,
         min=0.5,
         soft_max=20.0,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     # ----- Diagnostics (persisted results) -----
 
@@ -242,31 +242,31 @@ class AA_P6_Properties(bpy.types.PropertyGroup):
         items=_diag_result_items,
         default=0,
         options={"HIDDEN"},
-    )
+     translation_context='AnimAssist')
 
     last_diag_gap_count: IntProperty(  # type: ignore[valid-type]
         name="Gap Count",
         default=0,
         options={"HIDDEN"},
-    )
+     translation_context='AnimAssist')
 
     last_diag_cluster_count: IntProperty(  # type: ignore[valid-type]
         name="Cluster Count",
         default=0,
         options={"HIDDEN"},
-    )
+     translation_context='AnimAssist')
 
     last_diag_score: FloatProperty(  # type: ignore[valid-type]
         name="Timing Score",
         default=-1.0,
         options={"HIDDEN"},
-    )
+     translation_context='AnimAssist')
 
     show_diag_details: BoolProperty(  # type: ignore[valid-type]
         name="Show Details",
         description="Expand the detailed diagnostic breakdown in the panel",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # ----- Modal preferences -----
 
@@ -274,13 +274,13 @@ class AA_P6_Properties(bpy.types.PropertyGroup):
         name="Snap to Frames",
         description="Snap keyframe positions to integer frames during modal operations",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     modal_show_header: BoolProperty(  # type: ignore[valid-type]
         name="Show Header Delta",
         description="Display the current offset/scale delta in the viewport header",
         default=True,
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -303,7 +303,7 @@ def register_properties() -> None:
     bpy.types.Scene.anim_assist_p6 = bpy.props.PointerProperty(  # type: ignore[assignment]
         type=AA_P6_Properties,
         name="Anim Assist P6",
-    )
+     translation_context='AnimAssist')
 
 
 def unregister_properties() -> None:

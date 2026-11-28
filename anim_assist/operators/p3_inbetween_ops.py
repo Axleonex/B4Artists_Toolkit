@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core import breakdown_core as bc
@@ -39,23 +41,23 @@ class AA_OT_inbetween_selected_gap(bpy.types.Operator):
     def execute(self, context):
         obj, _ = _resolve_target(context)
         if obj is None:
-            self.report({"WARNING"}, "No active object.")
+            self.report({"WARNING"}, T('No active object.'))
             return {"CANCELLED"}
         frames = _selected_frames(obj)
         if len(frames) < 2:
-            self.report({"WARNING"}, "Need at least two selected keys.")
+            self.report({"WARNING"}, T('Need at least two selected keys.'))
             return {"CANCELLED"}
         start, end = frames[0], frames[-1]
         if end <= start:
-            self.report({"WARNING"}, "Selected keys collapse to a single frame.")
+            self.report({"WARNING"}, T('Selected keys collapse to a single frame.'))
             return {"CANCELLED"}
         p3 = get_p3(context)
         t = float(p3.factor) if p3 else 0.5
         target = start + (end - start) * t
         opts = _options_from_scene(context, target_frame=target)
-        result = bc.apply_breakdown(context, obj, None, opts, frames=[target])
+        result = bc.apply_breakdown(context, obj, None, opts, frames=[target], format_text=F)
         bc.remember_last(opts)
-        self.report({"INFO"}, result.messages[-1] if result.messages else "Done.")
+        self.report({"INFO"}, (result.messages[-1] if result.messages else T('Done.')))
         return {"FINISHED"}
 
 
@@ -78,7 +80,7 @@ class AA_OT_inbetween_distribute(bpy.types.Operator):
             return {"CANCELLED"}
         frames = _selected_frames(obj)
         if len(frames) < 2:
-            self.report({"WARNING"}, "Need at least two selected keys.")
+            self.report({"WARNING"}, T('Need at least two selected keys.'))
             return {"CANCELLED"}
         start, end = frames[0], frames[-1]
         p3 = get_p3(context)
@@ -90,10 +92,10 @@ class AA_OT_inbetween_distribute(bpy.types.Operator):
         opts = _options_from_scene(context)
         total = 0
         for f in targets:
-            res = bc.apply_breakdown(context, obj, None, opts, frames=[f])
+            res = bc.apply_breakdown(context, obj, None, opts, frames=[f], format_text=F)
             total += res.keys_written
         bc.remember_last(opts)
-        self.report({"INFO"}, f"Distributed {count} inbetweens ({total} keys written).")
+        self.report({"INFO"}, F('Distributed {p0} inbetweens ({p1} keys written).', p0=f'{count}', p1=f'{total}'))
         return {"FINISHED"}
 
 
@@ -116,7 +118,7 @@ class AA_OT_inbetween_on_clusters(bpy.types.Operator):
             return {"CANCELLED"}
         frames = _selected_frames(obj)
         if len(frames) < 2:
-            self.report({"WARNING"}, "Need at least two selected keys.")
+            self.report({"WARNING"}, T('Need at least two selected keys.'))
             return {"CANCELLED"}
         # Cluster by 2-frame proximity.
         clusters: list[list[float]] = []
@@ -129,16 +131,16 @@ class AA_OT_inbetween_on_clusters(bpy.types.Operator):
                 current = [f]
         clusters.append(current)
         if len(clusters) < 2:
-            self.report({"WARNING"}, "Only one cluster detected.")
+            self.report({"WARNING"}, T('Only one cluster detected.'))
             return {"CANCELLED"}
         opts = _options_from_scene(context)
         total = 0
         for a, b in zip(clusters, clusters[1:]):
             midpoint = (a[-1] + b[0]) / 2.0
-            res = bc.apply_breakdown(context, obj, None, opts, frames=[midpoint])
+            res = bc.apply_breakdown(context, obj, None, opts, frames=[midpoint], format_text=F)
             total += res.keys_written
         bc.remember_last(opts)
-        self.report({"INFO"}, f"Inbetweens inserted between {len(clusters)} clusters ({total} keys).")
+        self.report({"INFO"}, F('Inbetweens inserted between {p0} clusters ({p1} keys).', p0=f'{len(clusters)}', p1=f'{total}'))
         return {"FINISHED"}
 
 

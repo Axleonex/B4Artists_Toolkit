@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Anim Assist",
     "author": "Developer",
-    "version": (12, 11, 1),
+    "version": (12, 11, 2),
     "blender": (4, 2, 0),
     "location": "Properties > Scene > Anim Assist; Graph Editor and Dope Sheet > Sidebar > Anim Assist; editor header menus",
     "description": "Animation tools with configurable Timeline sliders and named toolbar layouts, for Bforartists.",
@@ -11,6 +11,7 @@ bl_info = {
 }
 
 from . import constants
+from . import i18n
 from .core.logging import get_logger
 from .core.registry import ClassRegistry
 from .core import lifecycle as lifecycle_mod
@@ -113,6 +114,7 @@ def register() -> None:
     global _registry
     _registry = _build_registry()
     try:
+        i18n.register()
         _registry.register()
         prop_mod.register_properties()
         p3_prop_mod.register_properties()
@@ -252,6 +254,7 @@ def register() -> None:
             except Exception:
                 _log.debug("Rollback class unregister failed", exc_info=True)
             _registry = None
+        i18n.unregister()
         raise
 
 
@@ -382,4 +385,5 @@ def unregister() -> None:
         finally:
             _registry = None
 
+    i18n.unregister()
     _log.info("Anim Assist %s unregistered", constants.ADDON_VERSION_STRING)

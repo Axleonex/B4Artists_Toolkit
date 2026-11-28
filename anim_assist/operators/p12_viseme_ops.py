@@ -13,6 +13,8 @@ The capture is stored as compact JSON on the scene's
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import StringProperty
 from bpy.types import Operator
@@ -64,7 +66,7 @@ class AA_OT_p12_capture_viseme(Operator):
         name="Viseme Name",
         description="Logical viseme name; matches an entry in the active library",
         default="rest",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -79,11 +81,11 @@ class AA_OT_p12_capture_viseme(Operator):
             return {"CANCELLED"}
         wiring = _wiring_dict(p12)
         if not wiring:
-            self.report({"ERROR"}, "No rig wiring set — fill the Rig Wiring panel first.")
+            self.report({"ERROR"}, T('No rig wiring set — fill the Rig Wiring panel first.'))
             return {"CANCELLED"}
         pose = _read_pose_for_roles(context.active_object, wiring)
         if not pose:
-            self.report({"WARNING"}, "No bones matched the wiring — nothing captured.")
+            self.report({"WARNING"}, T('No bones matched the wiring — nothing captured.'))
             return {"CANCELLED"}
         payload = vl.pose_to_json(pose)
 
@@ -92,7 +94,7 @@ class AA_OT_p12_capture_viseme(Operator):
             if existing.viseme_name == self.viseme_name:
                 existing.pose_json = payload
                 existing.is_builtin = False
-                self.report({"INFO"}, f"Updated capture for viseme '{self.viseme_name}'")
+                self.report({"INFO"}, F("Updated capture for viseme '{p0}'", p0=f'{self.viseme_name}'))
                 return {"FINISHED"}
 
         entry = p12.viseme_poses.add()
@@ -100,7 +102,7 @@ class AA_OT_p12_capture_viseme(Operator):
         entry.pose_json = payload
         entry.is_builtin = False
         p12.active_viseme_index = len(p12.viseme_poses) - 1
-        self.report({"INFO"}, f"Captured viseme '{self.viseme_name}'")
+        self.report({"INFO"}, F("Captured viseme '{p0}'", p0=f'{self.viseme_name}'))
         return {"FINISHED"}
 
 
@@ -118,7 +120,7 @@ class AA_OT_p12_reset_viseme(Operator):
     viseme_name: StringProperty(  # type: ignore[valid-type]
         name="Viseme Name",
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -131,9 +133,9 @@ class AA_OT_p12_reset_viseme(Operator):
         for i, entry in enumerate(p12.viseme_poses):
             if entry.viseme_name == self.viseme_name:
                 p12.viseme_poses.remove(i)
-                self.report({"INFO"}, f"Reset viseme '{self.viseme_name}' to built-in")
+                self.report({"INFO"}, F("Reset viseme '{p0}' to built-in", p0=f'{self.viseme_name}'))
                 return {"FINISHED"}
-        self.report({"INFO"}, f"No user capture for viseme '{self.viseme_name}' — already built-in")
+        self.report({"INFO"}, F("No user capture for viseme '{p0}' — already built-in", p0=f'{self.viseme_name}'))
         return {"FINISHED"}
 
 
@@ -155,7 +157,7 @@ class AA_OT_p12_autofill_wiring(Operator):
     library_id: StringProperty(  # type: ignore[valid-type]
         name="Library",
         default="CARTOON_5",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -178,7 +180,7 @@ class AA_OT_p12_autofill_wiring(Operator):
             entry.role = role
             entry.bone_name = match
             added += 1
-        self.report({"INFO"}, f"Autofilled {added} rig wiring rows for {self.library_id}")
+        self.report({"INFO"}, F('Autofilled {p0} rig wiring rows for {p1}', p0=f'{added}', p1=f'{self.library_id}'))
         return {"FINISHED"}
 
 

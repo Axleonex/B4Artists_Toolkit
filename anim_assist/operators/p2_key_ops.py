@@ -6,6 +6,8 @@ integer frames, mirror, protection-aware delete, and bake to range.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import FloatProperty
 from bpy.types import Operator
@@ -38,7 +40,7 @@ class ANIMASSIST_OT_copy_keys(_AnimEditorOp):
 
     def execute(self, context):
         n = ku.copy_selected_keys(context)
-        self.report({"INFO"}, f"Copied {n} keys")
+        self.report({"INFO"}, F('Copied {p0} keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -53,14 +55,14 @@ class ANIMASSIST_OT_paste_keys(_AnimEditorOp):
         name="Frame Offset",
         description="Frames added to each pasted key relative to the current frame",
         default=0.0,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         if ku.clipboard_size() == 0:
-            self.report({"WARNING"}, "Clipboard empty")
+            self.report({"WARNING"}, T('Clipboard empty'))
             return {"CANCELLED"}
         n = ku.paste_keys(context, self.frame_offset)
-        self.report({"INFO"}, f"Pasted {n} keys at offset +{self.frame_offset}")
+        self.report({"INFO"}, F('Pasted {p0} keys at offset +{p1}', p0=f'{n}', p1=f'{self.frame_offset}'))
         return {"FINISHED"}
 
 
@@ -75,11 +77,11 @@ class ANIMASSIST_OT_offset_selected_frames(_AnimEditorOp):
         name="Frame Delta",
         description="Number of frames to add to each selected key's time",
         default=1.0,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         n = ku.offset_selected(context, dx=self.dx)
-        self.report({"INFO"}, f"Offset {n} keys by {self.dx}")
+        self.report({"INFO"}, F('Offset {p0} keys by {p1}', p0=f'{n}', p1=f'{self.dx}'))
         return {"FINISHED"}
 
 
@@ -94,11 +96,11 @@ class ANIMASSIST_OT_offset_selected_values(_AnimEditorOp):
         name="Value Delta",
         description="Amount to add to each selected key's value (co.y)",
         default=0.1,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         n = ku.offset_selected(context, dy=self.dy)
-        self.report({"INFO"}, f"Offset {n} keys by {self.dy}")
+        self.report({"INFO"}, F('Offset {p0} keys by {p1}', p0=f'{n}', p1=f'{self.dy}'))
         return {"FINISHED"}
 
 
@@ -111,7 +113,7 @@ class ANIMASSIST_OT_snap_integer_frames(_AnimEditorOp):
 
     def execute(self, context):
         n = ku.snap_selected_to_integer_frames(context)
-        self.report({"INFO"}, f"Snapped {n} keys")
+        self.report({"INFO"}, F('Snapped {p0} keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -125,7 +127,7 @@ class ANIMASSIST_OT_mirror_keys(_AnimEditorOp):
     def execute(self, context):
         pivot = float(context.scene.frame_current)
         n = ku.mirror_selected(context, pivot)
-        self.report({"INFO"}, f"Mirrored {n} keys around frame {pivot}")
+        self.report({"INFO"}, F('Mirrored {p0} keys around frame {p1}', p0=f'{n}', p1=f'{pivot}'))
         return {"FINISHED"}
 
 
@@ -154,7 +156,7 @@ class ANIMASSIST_OT_safe_delete_selected(_AnimEditorOp):
                 _log.debug("safe delete skipped stale index %s", i)
         for _o, _a, fc in iter_visible_fcurves(context):
             fc.update()
-        self.report({"INFO"}, f"Deleted {len(victims)} keys ({skipped} protected)")
+        self.report({"INFO"}, F('Deleted {p0} keys ({p1} protected)', p0=f'{len(victims)}', p1=f'{skipped}'))
         return {"FINISHED"}
 
 

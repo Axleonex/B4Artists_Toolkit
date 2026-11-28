@@ -1,4 +1,6 @@
 """Native staged dialogs for toolbar presentation and tool-specific options."""
+
+from ..i18n import T, F, error_text, active_language
 import copy
 import json
 import bpy
@@ -24,8 +26,7 @@ def _modes(self,context): return _MODES if self.action in model.SLIDERS else _MO
 # The row being edited (owner request 2026-10-18). Every row lists every tool,
 # grouped by family; a stage starts from its home families' tools.
 _FAMILY_LABELS={key:label for key,label,_a in GROUPS}
-_ROWS=tuple((key,label,('The All row' if key=='ALL' else
-             f'The {label} row; it starts with '+' and '.join(_FAMILY_LABELS[f] for f in families)+' tools'),
+_ROWS=tuple((key,label,'Choose the Timeline row to configure',
              model.STAGE_NUMBERS[key]) for key,label,families in model.STAGES)
 _populating=False  # populate() sets values; their update callbacks must not write
 # Family sections opened or closed while editing, per row, kept for this session.
@@ -56,7 +57,7 @@ def live_write(context,current=None):
         data=current.serialize(); write(context,data)
         current._record=copy.deepcopy(data); current._error=''
     except ValueError as exc:
-        current._error=str(exc)
+        current._error=error_text(exc)
     _redraw_timelines(context)
 
 
@@ -108,36 +109,37 @@ def _choices(self,context):
     data=getattr(self,'_record',None)
     if data is None: data=record(context)
     names=tuple((x['id'],x['name']) for x in data['saved'])
-    if names not in _layout_items:
-        _layout_items[names]=[('recommended','Recommended','Built-in two-slider layout',0)]+[
-            (ident,name,'Load or manage '+name,index+1) for index,(ident,name) in enumerate(names)]
-    return _layout_items[names]
+    cache_key=(active_language(),names)
+    if cache_key not in _layout_items:
+        _layout_items[cache_key]=[('recommended',T('Recommended'),T('Built-in two-slider layout'),0)]+[
+            (ident,name,F('Load or manage {layout}',layout=name),index+1) for index,(ident,name) in enumerate(names)]
+    return _layout_items[cache_key]
 
 
 class AA_ToolbarEntry(bpy.types.PropertyGroup):
-    action: StringProperty(options={'HIDDEN'})
-    family: StringProperty(options={'HIDDEN'})
-    mode: EnumProperty(name='Display',description='How this tool appears in the Timeline row',items=_modes,default=1,update=_entry_changed)
-    label_mode: EnumProperty(name='Label',description='Choose a name or compact tool glyph',items=_LABELS,default='LABEL',update=_entry_changed)
-    width: FloatProperty(name='Slider Width',description='Track width in logical pixels',default=120,min=80,max=240,update=_entry_changed)
+    action: StringProperty(options={'HIDDEN'}, translation_context='AnimAssist')
+    family: StringProperty(options={'HIDDEN'}, translation_context='AnimAssist')
+    mode: EnumProperty(name='Display',description='How this tool appears in the Timeline row',items=_modes,default=1,update=_entry_changed, translation_context='AnimAssist')
+    label_mode: EnumProperty(name='Label',description='Choose a name or compact tool glyph',items=_LABELS,default='LABEL',update=_entry_changed, translation_context='AnimAssist')
+    width: FloatProperty(name='Slider Width',description='Track width in logical pixels',default=120,min=80,max=240,update=_entry_changed, translation_context='AnimAssist')
 
 
 class AA_ToolbarSection(bpy.types.PropertyGroup):
     # name holds the family key.
-    label: StringProperty(options={'HIDDEN'})
+    label: StringProperty(options={'HIDDEN'}, translation_context='AnimAssist')
     expanded: BoolProperty(name='Show Tools',description='Show or hide this family\'s tools',default=False,
-        update=_section_changed)
+        update=_section_changed, translation_context='AnimAssist')
 
 
 def _draw_entry(layout,entry):
     row=layout.row(align=True)
     split=row.split(factor=.4,align=True)
-    split.label(text=entry.name)
+    split.label(text=T(entry.name), translate=False)
     right=split.row(align=True)
     right.prop(entry,'mode',text='')
     cell=right.row(align=True)
     if model.has_icon(entry.action): cell.prop(entry,'label_mode',text='')
-    elif entry.action in model.SLIDERS and entry.mode=='INLINE': cell.prop(entry,'width',text='Width')
+    elif entry.action in model.SLIDERS and entry.mode=='INLINE': cell.prop(entry,'width',text='Width', text_ctxt='AnimAssist')
     else: cell.label(text='')
     for direction,icon in ((-1,'TRIA_UP'),(1,'TRIA_DOWN')):
         op=right.operator('animassist.toolbar_reorder',text='',icon=icon); op.action=entry.action; op.direction=direction
@@ -152,16 +154,16 @@ def _draw_sections(self,layout,stage):
     column=layout.column(align=True)
     for section in getattr(self,'sections',()):
         tools=[e for e in getattr(self,'entries',()) if e.family==section.name]
-        matches=[e for e in tools if not text or text in e.name.lower()]
+        matches=[e for e in tools if not text or text in (e.name+' '+T(e.name)).lower()]
         if not matches: continue
         shown=sum(e.mode!='HIDDEN' for e in tools)
-        note=f'{shown} of {len(tools)} on the row'
-        if section.name in home: note+=f' · a {model.stage_label(stage)} family'
+        note=F('{shown} of {total} on the row',shown=shown,total=len(tools))
+        if section.name in home: note+=F(' · a {stage} family',stage=T(model.stage_label(stage)))
         box=column.box()
         opened=section.expanded or bool(text)
         head=box.row(); head.alignment='LEFT'
-        head.prop(section,'expanded',text=f'{section.label}    {note}',
-                 icon='DOWNARROW_HLT' if opened else 'RIGHTARROW',emboss=False)
+        head.prop(section,'expanded',text=F('{family}    {summary}', family=T(section.label), summary=note),
+                 icon='DOWNARROW_HLT' if opened else 'RIGHTARROW',emboss=False, translate=False)
         if opened:
             for entry in matches: _draw_entry(box,entry)
 
@@ -171,13 +173,16 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
     bl_label='Toolbar Settings'
     bl_description='Choose visible tools, inline or popout sliders, labels and order'
     row: EnumProperty(name='Row',description='Choose the Timeline row to configure; the Timeline shows it while you edit',
-        items=_ROWS,update=_row_update)
-    entries: CollectionProperty(type=AA_ToolbarEntry)
-    sections: CollectionProperty(type=AA_ToolbarSection)
+        items=_ROWS,update=_row_update, translation_context='AnimAssist')
+    entries: CollectionProperty(type=AA_ToolbarEntry, translation_context='AnimAssist', name="entries")
+    sections: CollectionProperty(type=AA_ToolbarSection, translation_context='AnimAssist', name="sections")
     find: StringProperty(name='Find Tool',description='Show only tools whose name contains this text',
-        options={'TEXTEDIT_UPDATE','SKIP_SAVE'})
-    active_index: IntProperty(default=0)
-    layout_choice: EnumProperty(name='Saved Layout',description='Choose a saved layout to load or manage',items=_choices,default=0)
+        options={'TEXTEDIT_UPDATE','SKIP_SAVE'}, translation_context='AnimAssist')
+    active_index: IntProperty(default=0, translation_context='AnimAssist', name="active_index")
+    # User layout names must never enter native gettext. Fixed captions and
+    # descriptions are translated explicitly at their display boundaries.
+    layout_choice: EnumProperty(name='Saved Layout',description='Choose a saved layout to load or manage',
+        translation_context='AnimAssist.UserLayoutName',items=_choices,default=0)
 
     def populate(self,data,stage=None):
         # Entries show one row's setup for every tool, grouped by family.
@@ -218,12 +223,12 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
     def invoke(self,context,event):
         from ..operators.timeline_slider_ops import busy
         if busy():
-            self.report({'WARNING'},'Finish or cancel the active slider first'); return {'CANCELLED'}
+            self.report({'WARNING'},T('Finish or cancel the active slider first')); return {'CANCELLED'}
         from .timeline_overlay import current_stage
         try: self.populate(record(context),current_stage(context))
         except ValueError as exc:
             if editor(context) is self: _editors.pop(context.window.as_pointer(),None)
-            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+            self.report({'WARNING'},error_text(exc)); return {'CANCELLED'}
         self._original=copy.deepcopy(self._record); self._error=''
         _editors[context.window.as_pointer()]=self
         # A plain popup: changes apply live, so there is nothing to confirm or cancel.
@@ -237,40 +242,41 @@ class ANIMASSIST_OT_toolbar_settings(bpy.types.Operator):
 
     def draw(self,context):
         layout=self.layout
-        layout.label(text='Toolbar Settings',icon='PREFERENCES')
-        layout.label(text='Layout: '+self._record['active']['name']+(' *' if model.modified(self.serialize(),ACTIONS) else ''))
-        layout.prop(self,'layout_choice')
+        layout.label(text='Toolbar Settings',icon='PREFERENCES', text_ctxt='AnimAssist')
+        active=self._record['active']
+        layout.label(text=F('Layout: {p0}{p1}', p0=T('Recommended') if active['id']=='recommended' else active['name'], p1=' *' if model.modified(self.serialize(),ACTIONS) else ''), translate=False)
+        layout.prop(self,'layout_choice',text=T('Saved Layout'),translate=False)
         row=layout.row(align=True)
         for operation,label in (('SAVE','Save As'),('LOAD','Load'),('UPDATE','Update Saved')):
             cell=row.row(align=True)
             cell.enabled=operation!='UPDATE' or self._record['active_saved_id'] not in {None,'recommended'}
-            op=cell.operator('animassist.layout_action',text=label); op.operation=operation; op.target=self.layout_choice
+            op=cell.operator('animassist.layout_action',text=label, text_ctxt='AnimAssist'); op.operation=operation; op.target=self.layout_choice
         row=layout.row(align=True); row.enabled=self.layout_choice!='recommended'
         for operation,label in (('RENAME','Rename'),('DELETE','Delete')):
-            op=row.operator('animassist.layout_action',text=label); op.operation=operation; op.target=self.layout_choice
+            op=row.operator('animassist.layout_action',text=label, text_ctxt='AnimAssist'); op.operation=operation; op.target=self.layout_choice
         layout.separator()
         layout.prop(self,'row')
         stage=getattr(self,'_stage','ALL')
-        layout.label(text='Any tool can go on any row. Tools are grouped by family; open one to add or remove its tools.')
-        layout.label(text='Changes apply to the row right away.',icon='INFO')
-        if getattr(self,'_error',''): layout.label(text=self._error,icon='ERROR')
+        layout.label(text='Any tool can go on any row. Tools are grouped by family; open one to add or remove its tools.', text_ctxt='AnimAssist')
+        layout.label(text='Changes apply to the row right away.',icon='INFO', text_ctxt='AnimAssist')
+        if getattr(self,'_error',''): layout.label(text=self._error,icon='ERROR', translate=False)
         _draw_sections(self,layout,stage)
         if getattr(self,'_stage','ALL') in model.STAGE_KEYS:
-            layout.operator('animassist.reset_stage_toolbar',text='Reset '+model.stage_label(self._stage)+' to Defaults')
+            layout.operator('animassist.reset_stage_toolbar',text=F('Reset {p0} to Defaults', p0=T(model.stage_label(self._stage))), translate=False)
         row=layout.row(align=True)
-        row.operator('animassist.toolbar_revert',text='Revert Changes')
-        row.operator('animassist.restore_toolbar',text='Restore Recommended Layout')
-        layout.label(text='Hidden tools stay available in Find.')
-        layout.label(text='Click outside or press Esc to close; your changes stay.')
+        row.operator('animassist.toolbar_revert',text='Revert Changes', text_ctxt='AnimAssist')
+        row.operator('animassist.restore_toolbar',text='Restore Recommended Layout', text_ctxt='AnimAssist')
+        layout.label(text='Hidden tools stay available in Find.', text_ctxt='AnimAssist')
+        layout.label(text='Click outside or press Esc to close; your changes stay.', text_ctxt='AnimAssist')
         if not context.preferences.use_preferences_save:
-            layout.label(text='Save Preferences to keep these changes after a restart.')
-            layout.operator('wm.save_userpref',text='Save Preferences')
+            layout.label(text='Save Preferences to keep these changes after a restart.', text_ctxt='AnimAssist')
+            layout.operator('wm.save_userpref',text='Save Preferences', text_ctxt='AnimAssist')
 
     def execute(self,context):
         try: write(context,self.serialize())
         except ValueError as exc:
             if editor(context) is self: _editors.pop(context.window.as_pointer(),None)
-            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+            self.report({'WARNING'},error_text(exc)); return {'CANCELLED'}
         _editors.pop(context.window.as_pointer(),None)
         return {'FINISHED'}
 
@@ -291,7 +297,7 @@ class ANIMASSIST_OT_toolbar_revert(bpy.types.Operator):
             data=copy.deepcopy(current._original); write(context,data)
             current.populate(data,getattr(current,'_stage','ALL')); _redraw_timelines(context)
         except ValueError as exc:
-            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+            self.report({'WARNING'},error_text(exc)); return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -300,8 +306,8 @@ class ANIMASSIST_OT_toolbar_reorder(bpy.types.Operator):
     bl_label='Move Toolbar Tool'
     bl_description='Move this tool earlier or later within its family on the row'
     bl_options={'INTERNAL'}
-    action: StringProperty(options={'HIDDEN','SKIP_SAVE'})
-    direction: IntProperty(options={'HIDDEN','SKIP_SAVE'})
+    action: StringProperty(options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    direction: IntProperty(options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
     def execute(self,context):
         current=editor(context)
         if current is None: return {'CANCELLED'}
@@ -337,13 +343,13 @@ class ANIMASSIST_OT_reset_stage_toolbar(bpy.types.Operator):
         from .timeline_overlay import current_stage
         stage=current_stage(context)
         if stage not in model.STAGE_KEYS:
-            self.report({'WARNING'},'Choose Block, Spline, Polish or Deliver first'); return {'CANCELLED'}
+            self.report({'WARNING'},T('Choose Block, Spline, Polish or Deliver first')); return {'CANCELLED'}
         try:
             data=staged_record(context); model.reset_stage(data,stage)
             if editor(context): sync_editor(context,data)
             else: write(context,data)
         except ValueError as exc:
-            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+            self.report({'WARNING'},error_text(exc)); return {'CANCELLED'}
         return {'FINISHED'}
 
 
@@ -362,26 +368,26 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
     bl_idname='animassist.tool_settings'
     bl_label='Animation Tool Settings'
     bl_description='Configure this tool’s display, slider range, defaults and drag behavior'
-    action: StringProperty(options={'HIDDEN','SKIP_SAVE'})
-    mode: EnumProperty(name='Display',description='How this tool appears in the row',items=_modes,default=1)
-    label_mode: EnumProperty(name='Label',description='Choose name or compact glyph',items=_LABELS,default='LABEL')
-    width: FloatProperty(name='Slider Width',description='Track width in logical pixels',default=120,min=80,max=240)
-    range_min: FloatProperty(name='Minimum',description='Lower display and numeric adjustment bound')
-    range_max: FloatProperty(name='Maximum',description='Upper display and numeric adjustment bound')
-    default: FloatProperty(name='Default',description='Starting amount; changing it does not change animation')
-    sensitivity: FloatProperty(name='Sensitivity',description='Pixels needed to traverse a popout slider range',default=200,min=10,max=2000)
-    precision: IntProperty(name='Precision',description='Decimal places shown in slider readouts',default=1,min=0,max=4)
-    snap_enabled: BoolProperty(name='Snap Amount',description='Round slider values to the configured step')
-    snap_step: FloatProperty(name='Snap Step',description='Step in this tool’s displayed units',default=1,min=.0001)
-    overshoot_enabled: BoolProperty(name='Custom Range / Overshoot',description='Use your configured range rather than the standard display range')
-    ticks: BoolProperty(name='Presets as Ticks',description='Show presets as click ticks on the inline slider track instead of preset buttons',default=False)
-    presets_text: StringProperty(name='Presets',description='Comma-separated amounts; at most 12, inside the configured range')
+    action: StringProperty(options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    mode: EnumProperty(name='Display',description='How this tool appears in the row',items=_modes,default=1, translation_context='AnimAssist')
+    label_mode: EnumProperty(name='Label',description='Choose name or compact glyph',items=_LABELS,default='LABEL', translation_context='AnimAssist')
+    width: FloatProperty(name='Slider Width',description='Track width in logical pixels',default=120,min=80,max=240, translation_context='AnimAssist')
+    range_min: FloatProperty(name='Minimum',description='Lower display and numeric adjustment bound', translation_context='AnimAssist')
+    range_max: FloatProperty(name='Maximum',description='Upper display and numeric adjustment bound', translation_context='AnimAssist')
+    default: FloatProperty(name='Default',description='Starting amount; changing it does not change animation', translation_context='AnimAssist')
+    sensitivity: FloatProperty(name='Sensitivity',description='Pixels needed to traverse a popout slider range',default=200,min=10,max=2000, translation_context='AnimAssist')
+    precision: IntProperty(name='Precision',description='Decimal places shown in slider readouts',default=1,min=0,max=4, translation_context='AnimAssist')
+    snap_enabled: BoolProperty(name='Snap Amount',description='Round slider values to the configured step', translation_context='AnimAssist')
+    snap_step: FloatProperty(name='Snap Step',description='Step in this tool’s displayed units',default=1,min=.0001, translation_context='AnimAssist')
+    overshoot_enabled: BoolProperty(name='Custom Range / Overshoot',description='Use your configured range rather than the standard display range', translation_context='AnimAssist')
+    ticks: BoolProperty(name='Presets as Ticks',description='Show presets as click ticks on the inline slider track instead of preset buttons',default=False, translation_context='AnimAssist')
+    presets_text: StringProperty(name='Presets',description='Comma-separated amounts; at most 12, inside the configured range', translation_context='AnimAssist')
 
     def invoke(self,context,event):
         if self.action not in ACTIONS: return {'CANCELLED'}
         from ..operators.timeline_slider_ops import busy
         if busy():
-            self.report({'WARNING'},'Finish or cancel the active slider first'); return {'CANCELLED'}
+            self.report({'WARNING'},T('Finish or cancel the active slider first')); return {'CANCELLED'}
         from .timeline_overlay import current_stage
         staged=staged_record(context)
         self._tool=copy.deepcopy(staged['active']['tools'][self.action])
@@ -402,30 +408,29 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
 
     def draw(self,context):
         layout=self.layout
-        layout.label(text=ACTIONS[self.action][2])
+        layout.label(text=ACTIONS[self.action][2], text_ctxt='AnimAssist')
         target=getattr(self,'_target','ALL')
         if target in model.STAGE_KEYS:
-            layout.label(text=f'Display, label and presets apply to the {model.stage_label(target)} stage; '
-                              'other amounts are shared by every stage.')
+            layout.label(text=F('Display, label and presets apply to the {p0} stage; other amounts are shared by every stage.', p0=T(model.stage_label(target))), translate=False)
         layout.prop(self,'mode')
         if model.has_icon(self.action): layout.prop(self,'label_mode')
         if self.action in model.SLIDERS:
             unit=model.SLIDERS[self.action][1]
             layout.prop(self,'width')
-            layout.prop(self,'default',text=f'Default ({unit})')
+            layout.prop(self,'default',text=F('Default ({p0})', p0=f'{unit}'), translate=False)
             layout.prop(self,'overshoot_enabled')
             low,high=model.SLIDERS[self.action][3:5]
-            layout.label(text=f'Standard range: {low:g} to {high:g}{unit}')
+            layout.label(text=F('Standard range: {p0} to {p1}{p2}', p0=f'{low:g}', p1=f'{high:g}', p2=f'{unit}'), translate=False)
             row=layout.row(align=True); row.enabled=self.overshoot_enabled
-            row.prop(self,'range_min',text=f'Min ({unit})'); row.prop(self,'range_max',text=f'Max ({unit})')
+            row.prop(self,'range_min',text=F('Min ({p0})', p0=f'{unit}'), translate=False); row.prop(self,'range_max',text=F('Max ({p0})', p0=f'{unit}'), translate=False)
             layout.prop(self,'sensitivity'); layout.prop(self,'precision')
             layout.prop(self,'snap_enabled')
-            row=layout.row(); row.enabled=self.snap_enabled; row.prop(self,'snap_step',text=f'Step ({unit})')
+            row=layout.row(); row.enabled=self.snap_enabled; row.prop(self,'snap_step',text=F('Step ({p0})', p0=f'{unit}'), translate=False)
             layout.prop(self,'presets_text')
             layout.prop(self,'ticks')
         layout.separator()
-        layout.label(text='Masks, targets and anchors are scene-specific.')
-        op=layout.operator('wm.call_panel',text='Scene Tool Options')
+        layout.label(text='Masks, targets and anchors are scene-specific.', text_ctxt='AnimAssist')
+        op=layout.operator('wm.call_panel',text='Scene Tool Options', text_ctxt='AnimAssist')
         op.name='ANIMASSIST_PT_timeline_options_'+FAMILY[self.action][0]
 
     def execute(self,context):
@@ -457,7 +462,7 @@ class ANIMASSIST_OT_tool_settings(bpy.types.Operator):
             return {'FINISHED'}
         except ValueError as exc:
             _tool_editors.pop(context.window.as_pointer(),None)
-            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+            self.report({'WARNING'},error_text(exc)); return {'CANCELLED'}
 
     def cancel(self,context):
         if _tool_editors.get(context.window.as_pointer()) is self:
@@ -468,15 +473,15 @@ class ANIMASSIST_OT_layout_action(bpy.types.Operator):
     bl_idname='animassist.layout_action'
     bl_label='Saved Toolbar Layout'
     bl_description='Save, load, rename or delete a named toolbar arrangement without changing animation'
-    operation: StringProperty(options={'HIDDEN','SKIP_SAVE'})
-    target: StringProperty(options={'HIDDEN','SKIP_SAVE'})
-    layout_name: StringProperty(name='Layout Name',description='A unique user-entered name, at most 64 characters',maxlen=64)
-    discard_changes: BoolProperty(name='Discard Unsaved Working Changes',description='Replace the current modified arrangement with the selected saved layout')
+    operation: StringProperty(options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    target: StringProperty(options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    layout_name: StringProperty(name='Layout Name',description='A unique user-entered name, at most 64 characters',maxlen=64, translation_context='AnimAssist')
+    discard_changes: BoolProperty(name='Discard Unsaved Working Changes',description='Replace the current modified arrangement with the selected saved layout', translation_context='AnimAssist')
 
     def invoke(self,context,event):
         from ..operators.timeline_slider_ops import busy
         if busy():
-            self.report({'WARNING'},'Finish or cancel the active slider first'); return {'CANCELLED'}
+            self.report({'WARNING'},T('Finish or cancel the active slider first')); return {'CANCELLED'}
         data=staged_record(context)
         self._item=next((item for item in data['saved'] if item['id']==self.target),None)
         if self.operation=='RENAME' and self._item: self.layout_name=self._item['name']
@@ -488,14 +493,14 @@ class ANIMASSIST_OT_layout_action(bpy.types.Operator):
 
     def draw(self,context):
         if self.operation in {'SAVE','RENAME'}:
-            self.layout.label(text='Save your arrangement' if self.operation=='SAVE' else 'Rename saved layout')
+            self.layout.label(text=(T('Save your arrangement') if self.operation=='SAVE' else T('Rename saved layout')), translate=False)
             self.layout.prop(self,'layout_name')
         elif self.operation=='DELETE':
-            self.layout.label(text='Delete '+(self._item['name'] if self._item else 'this layout')+'?')
-            self.layout.label(text='The current working arrangement stays available.')
+            self.layout.label(text=F('Delete {p0}?', p0=self._item['name'] if self._item else T('this layout')), translate=False)
+            self.layout.label(text='The current working arrangement stays available.', text_ctxt='AnimAssist')
         elif self.operation=='LOAD':
-            self.layout.label(text='The current arrangement has unsaved changes.')
-            op=self.layout.operator('animassist.layout_action',text='Save As First'); op.operation='SAVE'
+            self.layout.label(text='The current arrangement has unsaved changes.', text_ctxt='AnimAssist')
+            op=self.layout.operator('animassist.layout_action',text='Save As First', text_ctxt='AnimAssist'); op.operation='SAVE'
             self.layout.prop(self,'discard_changes')
 
     def execute(self,context):
@@ -515,7 +520,7 @@ class ANIMASSIST_OT_layout_action(bpy.types.Operator):
             return {'FINISHED'}
         except ValueError as exc:
             _layout_editors.pop(context.window.as_pointer(),None)
-            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+            self.report({'WARNING'},error_text(exc)); return {'CANCELLED'}
 
     def cancel(self,context):
         if _layout_editors.get(context.window.as_pointer()) is self:

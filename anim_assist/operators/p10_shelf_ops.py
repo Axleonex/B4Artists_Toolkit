@@ -5,6 +5,8 @@ Manages shelf modes (COMPACT/EXPANDED/FAVORITES), favorites list,
 tool search, recent tools tracking, and quick repeat functionality.
 """
 
+from ..i18n import T, F, active_language
+
 import time
 
 import bpy
@@ -28,7 +30,7 @@ class AA_OT_p10_toggle_shelf_mode(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             # Cycle through modes: 0 (COMPACT) -> 1 (EXPANDED) -> 2 (FAVORITES) -> 0
@@ -38,7 +40,7 @@ class AA_OT_p10_toggle_shelf_mode(Operator):
             p10.shelf_mode = modes[next_index]
 
             _log.info(f"Toggled shelf mode to {p10.shelf_mode}")
-            self.report({'INFO'}, f"Shelf mode: {p10.shelf_mode}")
+            self.report({'INFO'}, F('Shelf mode: {p0}', p0=f'{p10.shelf_mode}'))
             return {'FINISHED'}
 
         except Exception as e:
@@ -57,33 +59,33 @@ class AA_OT_p10_add_favorite(Operator):
         name="Operator ID",
         description="The operator ID to add as favorite",
         default=""
-    )
+    , translation_context='AnimAssist')
     label: StringProperty(
         name="Label",
         description="Display label for the favorite",
         default=""
-    )
+    , translation_context='AnimAssist')
     icon: StringProperty(
         name="Icon",
         description="Icon identifier",
         default="NONE"
-    )
+    , translation_context='AnimAssist')
 
     def execute(self, context):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             if not self.op_id:
-                self.report({'ERROR'}, "No tool selected. Pick a tool for this shelf slot first")
+                self.report({'ERROR'}, T('No tool selected. Pick a tool for this shelf slot first'))
                 return {'CANCELLED'}
 
             # Check for duplicate
             for fav in p10.favorites:
                 if fav.op_id == self.op_id:
-                    self.report({'WARNING'}, f"'{self.label}' is already in favorites")
+                    self.report({'WARNING'}, F("'{p0}' is already in favorites", p0=f'{self.label}'))
                     return {'CANCELLED'}
 
             # Add new favorite
@@ -93,7 +95,7 @@ class AA_OT_p10_add_favorite(Operator):
             fav_item.icon = self.icon
 
             _log.info(f"Added favorite: {self.op_id}")
-            self.report({'INFO'}, f"Added '{self.label}' to favorites")
+            self.report({'INFO'}, F("Added '{p0}' to favorites", p0=f'{self.label}'))
             return {'FINISHED'}
 
         except Exception as e:
@@ -113,24 +115,24 @@ class AA_OT_p10_remove_favorite(Operator):
         description="Index of favorite to remove",
         default=0,
         min=0
-    )
+    , translation_context='AnimAssist')
 
     def execute(self, context):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             if self.index < 0 or self.index >= len(p10.favorites):
-                self.report({'ERROR'}, f"Select a favorite in the list first")
+                self.report({'ERROR'}, F('Select a favorite in the list first'))
                 return {'CANCELLED'}
 
             removed_label = p10.favorites[self.index].label
             p10.favorites.remove(self.index)
 
             _log.info(f"Removed favorite at index {self.index}")
-            self.report({'INFO'}, f"Removed '{removed_label}' from favorites")
+            self.report({'INFO'}, F("Removed '{p0}' from favorites", p0=f'{removed_label}'))
             return {'FINISHED'}
 
         except Exception as e:
@@ -143,6 +145,7 @@ class AA_OT_p10_remove_favorite(Operator):
 # callbacks. Retain the items and their metadata for the popup's lifetime.
 _tool_enum_snapshot = None
 _tool_enum_items = []
+_tool_enum_language_items = {}
 
 
 def _get_tool_items(self, context):
@@ -152,30 +155,41 @@ def _get_tool_items(self, context):
         from ..core.p10_tool_registry import all_tools
 
         tools = tuple(all_tools())
-        if tools == _tool_enum_snapshot:
+        language = active_language(context)
+        snapshot = (language, tools)
+        if snapshot == _tool_enum_snapshot:
+            return _tool_enum_items
+        cached = _tool_enum_language_items.get(language)
+        if cached is not None and cached[0] == tools:
+            _tool_enum_snapshot = snapshot
+            _tool_enum_items = cached[1]
             return _tool_enum_items
         if not tools:
-            _tool_enum_snapshot = tools
+            _tool_enum_snapshot = snapshot
             _tool_enum_items = [(
-                "NONE", "Run First Run Setup to restore tools",
-                "Open Properties > Scene > Anim Assist > Setup", 0,
+                "NONE", T("Run First Run Setup to restore tools", context=context),
+                T("Open Properties > Scene > Anim Assist > Setup", context=context), 0,
             )]
+            _tool_enum_language_items[language] = (tools, _tool_enum_items)
             return _tool_enum_items
 
         items = []
         for i, tool in enumerate(tools):
             icon = tool.icon if tool.icon != "NONE" else "NONE"
-            items.append((tool.op_id, tool.label, tool.description, icon, i))
+            items.append((tool.op_id, T(tool.label, context=context),
+                          T(tool.description, context=context), icon, i))
 
-        _tool_enum_snapshot = tools
+        _tool_enum_snapshot = snapshot
         _tool_enum_items = items
+        _tool_enum_language_items[language] = (tools, items)
         return _tool_enum_items
 
     except Exception as e:
         _log.error(f"Error building tool enum items: {e}")
         _tool_enum_snapshot = None
         _tool_enum_items = [(
-            "NONE", "Tools could not load", "Run First Run Setup and try again", 0,
+            "NONE", T("Tools could not load", context=context),
+            T("Run First Run Setup and try again", context=context), 0,
         )]
         return _tool_enum_items
 
@@ -186,11 +200,11 @@ def _run_shelf_tool(operator, context, op_id):
 
     tool = get_tool(op_id)
     if tool is None:
-        operator.report({'WARNING'}, "This tool is unavailable. Run First Run Setup, then choose a tool from Search")
+        operator.report({'WARNING'}, T('This tool is unavailable. Run First Run Setup, then choose a tool from Search'))
         return {'CANCELLED'}
     parts = op_id.split(".")
     if len(parts) != 2 or parts[0] != "animassist":
-        operator.report({'ERROR'}, "This is not an Anim Assist tool. Choose a tool from Search")
+        operator.report({'ERROR'}, T('This is not an Anim Assist tool. Choose a tool from Search'))
         return {'CANCELLED'}
     op_func = getattr(getattr(bpy.ops, parts[0]), parts[1])
     op_func.get_rna_type()
@@ -212,7 +226,7 @@ def _run_shelf_tool(operator, context, op_id):
         # The target owns its modal handler/dialog. Close only this wrapper;
         # do not claim completion or add an uncompleted tool to Recents.
         return {'FINISHED'}
-    operator.report({'WARNING'}, "The tool did not run. Open its panel and check the required selection")
+    operator.report({'WARNING'}, T('The tool did not run. Open its panel and check the required selection'))
     return {'CANCELLED'}
 
 
@@ -226,6 +240,7 @@ class AA_OT_p10_search_tools(Operator):
     tool_enum: EnumProperty(
         name="Tool",
         description="Select a tool to run",
+        translation_context="AnimAssist.ToolChoices",
         items=_get_tool_items
     )
 
@@ -247,7 +262,7 @@ class AA_OT_p10_search_tools(Operator):
         from ..core.p10_tool_registry import all_tools
 
         if not all_tools():
-            self.report({'WARNING'}, "No tools available. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({'WARNING'}, T('No tools available. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {'CANCELLED'}
         context.window_manager.invoke_search_popup(self)
         return {'FINISHED'}
@@ -263,22 +278,22 @@ class AA_OT_p10_record_recent(Operator):
         name="Operator ID",
         description="The operator ID being used",
         default=""
-    )
+    , translation_context='AnimAssist')
     label: StringProperty(
         name="Label",
         description="Display label for the tool",
         default=""
-    )
+    , translation_context='AnimAssist')
 
     def execute(self, context):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             if not self.op_id:
-                self.report({'ERROR'}, "No tool selected. Pick a tool for this shelf slot first")
+                self.report({'ERROR'}, T('No tool selected. Pick a tool for this shelf slot first'))
                 return {'CANCELLED'}
 
             # Check if tool already exists in recents
@@ -328,11 +343,11 @@ class AA_OT_p10_repeat_last(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             if len(p10.recents) == 0:
-                self.report({'WARNING'}, "No recent tools available")
+                self.report({'WARNING'}, T('No recent tools available'))
                 return {'CANCELLED'}
 
             # Get the most recent tool (legacy files may be stored oldest-first)
@@ -340,7 +355,7 @@ class AA_OT_p10_repeat_last(Operator):
             op_id = last_tool.op_id
 
             if not op_id:
-                self.report({'ERROR'}, "That recent tool is no longer available. Clear Recents and use the tool again")
+                self.report({'ERROR'}, T('That recent tool is no longer available. Clear Recents and use the tool again'))
                 return {'CANCELLED'}
 
             _log.info(f"Repeating last tool: {op_id}")
@@ -362,14 +377,14 @@ class AA_OT_p10_clear_recents(Operator):
         try:
             p10 = get_p10(context)
             if not p10:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             count = len(p10.recents)
             p10.recents.clear()
 
             _log.info(f"Cleared {count} recent tools")
-            self.report({'INFO'}, f"Cleared {count} recent tools")
+            self.report({'INFO'}, F('Cleared {p0} recent tools', p0=f'{count}'))
             return {'FINISHED'}
 
         except Exception as e:

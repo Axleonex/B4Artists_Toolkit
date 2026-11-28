@@ -11,6 +11,8 @@ operators (jump-to-gap) and the diagnostics panel.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.logging import get_logger
@@ -126,12 +128,12 @@ class AA_OT_p6_detect_gaps(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         gaps = _run_detect_gaps(p6, fcurves, obj_name)
@@ -139,10 +141,10 @@ class AA_OT_p6_detect_gaps(bpy.types.Operator):
         if gaps:
             self.report(
                 {"INFO"},
-                f"Found {len(gaps)} gap(s) wider than {p6.gap_threshold:.0f}f",
+                F('Found {p0} gap(s) wider than {p1}f', p0=f'{len(gaps)}', p1=f'{p6.gap_threshold:.0f}'),
             )
         else:
-            self.report({"INFO"}, "No significant gaps found")
+            self.report({"INFO"}, T('No significant gaps found'))
 
         _tag_redraw(context)
         return {"FINISHED"}
@@ -167,27 +169,27 @@ class AA_OT_p6_fill_gaps(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         if not _cached_gaps:
-            self.report({"WARNING"}, "No gap cache — run Detect Gaps first")
+            self.report({"WARNING"}, T('No gap cache — run Detect Gaps first'))
             return {"CANCELLED"}
 
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         if p6.gap_fill_mode == "NONE":
-            self.report({"INFO"}, "Fill Mode is 'Mark Only' — no keys inserted")
+            self.report({"INFO"}, T("Fill Mode is 'Mark Only' — no keys inserted"))
             return {"FINISHED"}
 
         n_gaps = len(_cached_gaps)
         inserted = _run_fill_gaps(p6, fcurves)
 
         _tag_redraw(context)
-        self.report({"INFO"}, f"Inserted {inserted} fill key(s) in {n_gaps} gap(s)")
+        self.report({"INFO"}, F('Inserted {p0} fill key(s) in {p1} gap(s)', p0=f'{inserted}', p1=f'{n_gaps}'))
         return {"FINISHED"}
 
 
@@ -209,12 +211,12 @@ class AA_OT_p6_collapse_gap(bpy.types.Operator):
 
     def execute(self, context):
         if not _cached_gaps:
-            self.report({"WARNING"}, "No gap cache — run Detect Gaps first")
+            self.report({"WARNING"}, T('No gap cache — run Detect Gaps first'))
             return {"CANCELLED"}
 
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         current = float(context.scene.frame_current)
@@ -232,7 +234,7 @@ class AA_OT_p6_collapse_gap(bpy.types.Operator):
         _tag_redraw(context)
         self.report(
             {"INFO"},
-            f"Collapsed {nearest.size:.0f}f gap at frame {nearest.start_frame:.0f}",
+            F('Collapsed {p0}f gap at frame {p1}', p0=f'{nearest.size:.0f}', p1=f'{nearest.start_frame:.0f}'),
         )
         return {"FINISHED"}
 
@@ -256,12 +258,12 @@ class AA_OT_p6_distribute_keys(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         lo, hi = rm.resolve_active_range(p6, context)
@@ -269,9 +271,9 @@ class AA_OT_p6_distribute_keys(bpy.types.Operator):
 
         _tag_redraw(context)
         if moved:
-            self.report({"INFO"}, f"Distributed {moved} key(s) in [{lo:.0f}, {hi:.0f}]")
+            self.report({"INFO"}, F('Distributed {p0} key(s) in [{p1}, {p2}]', p0=f'{moved}', p1=f'{lo:.0f}', p2=f'{hi:.0f}'))
         else:
-            self.report({"INFO"}, "Need at least 3 keys in range to distribute")
+            self.report({"INFO"}, T('Need at least 3 keys in range to distribute'))
         return {"FINISHED"}
 
 
@@ -294,7 +296,7 @@ class AA_OT_p6_normalize_spacing(bpy.types.Operator):
         min=0.0,
         max=1.0,
         subtype="FACTOR",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -303,12 +305,12 @@ class AA_OT_p6_normalize_spacing(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         lo, hi = rm.resolve_active_range(p6, context)
@@ -318,7 +320,7 @@ class AA_OT_p6_normalize_spacing(bpy.types.Operator):
         frames = [f for f in frames if lo <= f <= hi]
         n = len(frames)
         if n < 3:
-            self.report({"INFO"}, "Need at least 3 keys in range")
+            self.report({"INFO"}, T('Need at least 3 keys in range'))
             return {"FINISHED"}
 
         # Compute target positions (evenly distributed).
@@ -345,7 +347,7 @@ class AA_OT_p6_normalize_spacing(bpy.types.Operator):
             fc.update()
 
         _tag_redraw(context)
-        self.report({"INFO"}, f"Normalized spacing for {n} keys (strength {self.strength:.0%})")
+        self.report({"INFO"}, F('Normalized spacing for {p0} keys (strength {p1})', p0=f'{n}', p1=f'{self.strength:.0%}'))
         return {"FINISHED"}
 
 
@@ -368,12 +370,12 @@ class AA_OT_p6_snap_to_frames(bpy.types.Operator):
     def execute(self, context):
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         moved = rm.snap_keys_to_frames(fcurves)
         _tag_redraw(context)
-        self.report({"INFO"}, f"Snapped {moved} key(s) to integer frames")
+        self.report({"INFO"}, F('Snapped {p0} key(s) to integer frames', p0=f'{moved}'))
         return {"FINISHED"}
 
 
@@ -396,12 +398,12 @@ class AA_OT_p6_clear_doubles(bpy.types.Operator):
     def execute(self, context):
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         removed = rm.remove_duplicate_frames(fcurves)
         _tag_redraw(context)
-        self.report({"INFO"}, f"Removed {removed} duplicate key(s)")
+        self.report({"INFO"}, F('Removed {p0} duplicate key(s)', p0=f'{removed}'))
         return {"FINISHED"}
 
 
@@ -424,26 +426,25 @@ class AA_OT_p6_detect_and_fill(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         # Detect — populates the module-level cache.
         gaps = _run_detect_gaps(p6, fcurves, obj_name)
         if not gaps:
-            self.report({"INFO"}, "No gaps found")
+            self.report({"INFO"}, T('No gaps found'))
             return {"FINISHED"}
 
         # Fill — reads the module-level cache populated above.
         if p6.gap_fill_mode == "NONE":
             self.report(
                 {"INFO"},
-                f"Found {len(gaps)} gap(s) — Fill Mode is 'Mark Only', "
-                "no keys inserted",
+                F("Found {p0} gap(s) — Fill Mode is 'Mark Only', no keys inserted", p0=f'{len(gaps)}'),
             )
             return {"FINISHED"}
 
@@ -451,7 +452,7 @@ class AA_OT_p6_detect_and_fill(bpy.types.Operator):
         _tag_redraw(context)
         self.report(
             {"INFO"},
-            f"Detected {len(gaps)} gap(s), inserted {inserted} fill key(s)",
+            F('Detected {p0} gap(s), inserted {p1} fill key(s)', p0=f'{len(gaps)}', p1=f'{inserted}'),
         )
         return {"FINISHED"}
 

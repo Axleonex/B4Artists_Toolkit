@@ -14,10 +14,11 @@ pair that delegates to :func:`register_phase_help` /
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Iterable
 
 from .logging import get_logger
+from ..i18n import T
 
 __all__ = [
     "HelpEntry",
@@ -87,15 +88,22 @@ def unregister_help(help_id: str) -> None:
             _BY_PHASE.pop(entry.phase, None)
 
 
+def _localized(entry: HelpEntry) -> HelpEntry:
+    # Category is a stable grouping key; the browser translates its caption.
+    return replace(entry, label=T(entry.label), tooltip=T(entry.tooltip), description=T(entry.description))
+
+
 def get_help(help_id: str) -> HelpEntry | None:
     """Return the entry for ``help_id`` or *None*."""
-    return _REGISTRY.get(help_id)
+    entry = _REGISTRY.get(help_id)
+    return _localized(entry) if entry else None
 
 
 def get_all_help() -> tuple[HelpEntry, ...]:
     """Return every registered entry, sorted by category then label."""
     return tuple(
-        sorted(_REGISTRY.values(), key=lambda e: (e.category.lower(), e.label.lower()))
+        sorted((_localized(entry) for entry in _REGISTRY.values()),
+               key=lambda e: (e.category.lower(), e.label.lower()))
     )
 
 
@@ -103,7 +111,7 @@ def get_help_by_category() -> dict[str, list[HelpEntry]]:
     """Return entries grouped by category, each group sorted by label."""
     groups: dict[str, list[HelpEntry]] = {}
     for entry in _REGISTRY.values():
-        groups.setdefault(entry.category, []).append(entry)
+        groups.setdefault(entry.category, []).append(_localized(entry))
     for items in groups.values():
         items.sort(key=lambda e: e.label.lower())
     return dict(sorted(groups.items(), key=lambda kv: kv[0].lower()))

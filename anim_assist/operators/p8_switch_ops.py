@@ -4,6 +4,8 @@ Features 13-16, 21-25: compensation (single/multi/range), enum/bool/influence sw
 history restore, and preview toggle.
 """
 
+from ..i18n import T, F
+
 import bpy
 from ..core.p8_properties import get_p8
 from ..core import p8_match_math as mm
@@ -131,18 +133,18 @@ class AA_OT_p8_compensate_single(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         # Resolve property owner (object or pose bone)
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
+            self.report({"ERROR"}, T('Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel'))
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
+            self.report({"ERROR"}, T('No switch property set. Pick the IK/FK switch property in the Match & Switch panel first'))
             return {"CANCELLED"}
 
         # Record visual state BEFORE switch
@@ -190,7 +192,7 @@ class AA_OT_p8_compensate_single(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Compensated switch on '{obj.name}' ({len(result.channels_written)} channels)",
+            F("Compensated switch on '{p0}' ({p1} channels)", p0=f'{obj.name}', p1=f'{len(result.channels_written)}'),
         )
         return {"FINISHED"}
 
@@ -216,18 +218,18 @@ class AA_OT_p8_compensate_multi(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         # Resolve property owner
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
+            self.report({"ERROR"}, T('Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel'))
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
+            self.report({"ERROR"}, T('No switch property set. Pick the IK/FK switch property in the Match & Switch panel first'))
             return {"CANCELLED"}
 
         # Get frame range
@@ -296,7 +298,7 @@ class AA_OT_p8_compensate_multi(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Compensated {end_frame - start_frame + 1} frames ({total_channels} channels)",
+            F('Compensated {p0} frames ({p1} channels)', p0=f'{end_frame - start_frame + 1}', p1=f'{total_channels}'),
         )
         return {"FINISHED"}
 
@@ -322,23 +324,23 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         # Resolve property owner
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
+            self.report({"ERROR"}, T('Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel'))
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
+            self.report({"ERROR"}, T('No switch property set. Pick the IK/FK switch property in the Match & Switch panel first'))
             return {"CANCELLED"}
 
         # Get selected keyframe range
         if not obj.animation_data or not obj.animation_data.action:
-            self.report({"ERROR"}, "This object has no animation. Key it first")
+            self.report({"ERROR"}, T('This object has no animation. Key it first'))
             return {"CANCELLED"}
 
         frames = []
@@ -348,7 +350,7 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
                     frames.append(int(kp.co.x))
 
         if not frames:
-            self.report({"ERROR"}, "No keyframes selected. Select keyframes in the Dope Sheet or Graph Editor first")
+            self.report({"ERROR"}, T('No keyframes selected. Select keyframes in the Dope Sheet or Graph Editor first'))
             return {"CANCELLED"}
 
         start_frame = min(frames)
@@ -411,7 +413,7 @@ class AA_OT_p8_bake_switch_range(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Baked switch range {start_frame}-{end_frame} ({total_channels} channels)",
+            F('Baked switch range {p0}-{p1} ({p2} channels)', p0=f'{start_frame}', p1=f'{end_frame}', p2=f'{total_channels}'),
         )
         return {"FINISHED"}
 
@@ -437,18 +439,18 @@ class AA_OT_p8_bake_switch_preview(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         # Resolve property owner
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
+            self.report({"ERROR"}, T('Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel'))
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
+            self.report({"ERROR"}, T('No switch property set. Pick the IK/FK switch property in the Match & Switch panel first'))
             return {"CANCELLED"}
 
         # Get preview range
@@ -518,7 +520,7 @@ class AA_OT_p8_bake_switch_preview(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Baked switch preview range {start_frame}-{end_frame} ({total_channels} channels)",
+            F('Baked switch preview range {p0}-{p1} ({p2} channels)', p0=f'{start_frame}', p1=f'{end_frame}', p2=f'{total_channels}'),
         )
         return {"FINISHED"}
 
@@ -539,7 +541,7 @@ class AA_OT_p8_switch_enum(bpy.types.Operator):
         name="Value",
         description="Enum or integer value to set",
         default=0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -550,17 +552,17 @@ class AA_OT_p8_switch_enum(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
+            self.report({"ERROR"}, T('Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel'))
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
+            self.report({"ERROR"}, T('No switch property set. Pick the IK/FK switch property in the Match & Switch panel first'))
             return {"CANCELLED"}
 
         # Record state before switch
@@ -604,7 +606,7 @@ class AA_OT_p8_switch_enum(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Switched enum to {self.value} ({len(result.channels_written)} channels)",
+            F('Switched enum to {p0} ({p1} channels)', p0=f'{self.value}', p1=f'{len(result.channels_written)}'),
         )
         return {"FINISHED"}
 
@@ -630,17 +632,17 @@ class AA_OT_p8_switch_bool(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
+            self.report({"ERROR"}, T('Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel'))
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
+            self.report({"ERROR"}, T('No switch property set. Pick the IK/FK switch property in the Match & Switch panel first'))
             return {"CANCELLED"}
 
         # Record state before switch
@@ -685,7 +687,7 @@ class AA_OT_p8_switch_bool(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Toggled bool to {new_value} ({len(result.channels_written)} channels)",
+            F('Toggled bool to {p0} ({p1} channels)', p0=f'{new_value}', p1=f'{len(result.channels_written)}'),
         )
         return {"FINISHED"}
 
@@ -708,7 +710,7 @@ class AA_OT_p8_switch_influence(bpy.types.Operator):
         default=1.0,
         min=0.0,
         max=1.0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -719,17 +721,17 @@ class AA_OT_p8_switch_influence(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         owner = _resolve_prop_owner(obj, p8.switch_bone_name if p8 else "")
         if owner is None:
-            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
+            self.report({"ERROR"}, T('Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel'))
             return {"CANCELLED"}
 
         prop_path = p8.switch_prop_path if p8 else ""
         if not prop_path:
-            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
+            self.report({"ERROR"}, T('No switch property set. Pick the IK/FK switch property in the Match & Switch panel first'))
             return {"CANCELLED"}
 
         # Record state before switch
@@ -773,7 +775,7 @@ class AA_OT_p8_switch_influence(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Set influence to {self.influence:.2f} ({len(result.channels_written)} channels)",
+            F('Set influence to {p0} ({p1} channels)', p0=f'{self.influence:.2f}', p1=f'{len(result.channels_written)}'),
         )
         return {"FINISHED"}
 
@@ -799,18 +801,18 @@ class AA_OT_p8_restore_switch(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         # Get last event from history
         last_event = hist.get_last_event()
         if not last_event:
-            self.report({"ERROR"}, "No switch history yet. Perform a switch first")
+            self.report({"ERROR"}, T('No switch history yet. Perform a switch first'))
             return {"CANCELLED"}
 
         owner = _resolve_prop_owner(obj, last_event.bone_name)
         if owner is None:
-            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
+            self.report({"ERROR"}, T('Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel'))
             return {"CANCELLED"}
 
         # Record state for re-compensation
@@ -818,7 +820,7 @@ class AA_OT_p8_restore_switch(bpy.types.Operator):
 
         # Restore old value
         if not _set_prop_value(owner, last_event.prop_path, last_event.old_value):
-            self.report({"ERROR"}, "Could not restore the switch property. Check it is not locked or driven")
+            self.report({"ERROR"}, T('Could not restore the switch property. Check it is not locked or driven'))
             return {"CANCELLED"}
 
         context.view_layer.update()
@@ -842,7 +844,7 @@ class AA_OT_p8_restore_switch(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Restored switch value ({len(result.channels_written)} channels)",
+            F('Restored switch value ({p0} channels)', p0=f'{len(result.channels_written)}'),
         )
         return {"FINISHED"}
 
@@ -870,11 +872,11 @@ class AA_OT_p8_toggle_preview(bpy.types.Operator):
         obj = context.active_object
 
         if not obj:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         if not p8:
-            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({"ERROR"}, T('Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {"CANCELLED"}
 
         # Check if preview is currently enabled
@@ -897,7 +899,7 @@ class AA_OT_p8_toggle_preview(bpy.types.Operator):
                                 obj_ref.scale = value
                 _preview_state = None
                 _preview_obj_name = ""
-            self.report({"INFO"}, "Preview disabled, restored previous state")
+            self.report({"INFO"}, T('Preview disabled, restored previous state'))
         else:
             # Enabling preview: save current state
             p8.switch_preview = True
@@ -906,7 +908,7 @@ class AA_OT_p8_toggle_preview(bpy.types.Operator):
             # scene.objects['matrix_world'] and restore nothing.
             _preview_state = {obj.name: mm.record_visual_state(obj)}
             _preview_obj_name = obj.name
-            self.report({"INFO"}, "Preview enabled, state saved")
+            self.report({"INFO"}, T('Preview enabled, state saved'))
 
         return {"FINISHED"}
 

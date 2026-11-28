@@ -15,10 +15,12 @@ import re
 import time
 
 import bpy
+from ..i18n import T, F, native_text, OWN_CONTEXT
 
 __all__ = [
     "MODES", "mode", "short", "register_class", "operator_text", "raw_description",
     "shortcuts", "shortcut_lines", "native_lines",
+    "original_description",
 ]
 
 MODES = (
@@ -48,9 +50,9 @@ def short(text: str, limit: int = SHORT_LIMIT) -> str:
     """First sentence, at most ``limit`` characters, without a closing period.
     A longer sentence is cut at a clause boundary (or a word), never mid-word."""
     text = " ".join((text or "").split())
-    match = re.search(r"(?<=[.;!?])\s", text)
+    match = re.search(r"(?<=[.;!?])\s|(?<=[。！？])", text)
     first = text[:match.start()] if match else text
-    first = first.rstrip(".;")
+    first = first.rstrip(".;。！？")
     if len(first) > limit:
         head = first[:limit]
         points = [head.rfind(cut) for cut in _CUTS if head.rfind(cut) > 40]
@@ -69,23 +71,33 @@ def _original(cls) -> str:
     return (cls.__dict__.get("__doc__") or "").strip()
 
 
+def original_description(cls) -> str:
+    """Canonical English help for registries; never freeze a display language."""
+    return _original(cls)
+
+
 def _describe(cls, context, properties):
     current = mode(context)
     if current == "OFF":
         # Bforartists always prints a description line (an empty one reads
         # "(undocumented operator)"), so Off leaves just the tool's name.
-        return getattr(cls, "bl_label", "") or " "
+        return T(getattr(cls, "bl_label", "")) or " "
     if current == "SHORT":
         brief = cls.__dict__.get("_aa_short")
         if brief is not None:
             return brief.__func__(cls, context, properties) or ""
     raw = cls.__dict__.get("_aa_raw")
-    text = (raw(cls, context, properties) if raw else "") or _full.get(cls, "")
+    text = (raw(cls, context, properties) if raw else "") or T(_full.get(cls, ""))
     return text if current == "FULL" else short(text)
 
 
 def register_class(cls) -> None:
     """Register a class; an operator's hover text then follows the explainer mode."""
+    # This wrapper registers only this add-on's queued classes. Keep their
+    # captions separate from host words with a different animation meaning.
+    # Blender's RNA descriptions remain in the default TIP context.
+    if "bl_translation_context" not in cls.__dict__:
+        cls.bl_translation_context = OWN_CONTEXT
     if isinstance(cls, type) and issubclass(cls, bpy.types.Operator):
         if cls not in _full:
             _full[cls] = _original(cls)
@@ -107,10 +119,10 @@ def operator_text(idname: str) -> str:
     """Full description of a registered Anim Assist operator ('animassist.name')."""
     cls = _by_idname.get(idname)
     if cls is not None:
-        return _full.get(cls, "")
+        return T(_full.get(cls, ""))
     try:
         module, name = idname.split(".", 1)
-        return getattr(getattr(bpy.ops, module), name).get_rna_type().description
+        return T(getattr(getattr(bpy.ops, module), name).get_rna_type().description)
     except Exception:
         return ""
 
@@ -118,7 +130,7 @@ def operator_text(idname: str) -> str:
 def raw_description(cls, context, properties) -> str:
     """The full dynamic text of an operator, whatever the explainer mode."""
     raw = cls.__dict__.get("_aa_raw")
-    return (raw(cls, context, properties) if raw else "") or _full.get(cls, "") or (cls.__doc__ or "")
+    return (raw(cls, context, properties) if raw else "") or T(_full.get(cls, "") or (cls.__doc__ or ""))
 
 
 # --- Shortcuts that already exist -------------------------------------------
@@ -169,8 +181,8 @@ def shortcuts(idname: str, properties: dict | None = None, keys_only: bool = Fal
 
 def shortcut_lines(bindings: list[tuple[str, str]]) -> list[str]:
     places = {"Window", "Screen"}
-    text = ", ".join(keys if place in places else f"{keys} ({_PLACES.get(place, place)})" for keys, place in bindings[:3])
-    return [f"Shortcut: {text}."] if text else []
+    text = ", ".join(keys if place in places else f"{keys} ({T(_PLACES.get(place, place))})" for keys, place in bindings[:3])
+    return [F("Shortcut: {keys}.", keys=text)] if text else []
 
 
 _PLACES = {"Dopesheet": "Dope Sheet", "Dopesheet Generic": "Dope Sheet", "Graph Editor Generic": "Graph Editor",
@@ -186,10 +198,10 @@ _NATIVE_NAMES = {("transform.transform", "TIME_SCALE"): "Scale Keys in Time",
 def _native_name(idname: str, properties: dict | None = None) -> str:
     named = _NATIVE_NAMES.get((idname, (properties or {}).get("mode", "")))
     if named:
-        return named
+        return T(named)
     try:
         module, name = idname.split(".", 1)
-        return getattr(getattr(bpy.ops, module), name).get_rna_type().name
+        return native_text(getattr(getattr(bpy.ops, module), name).get_rna_type().name, "Operator")
     except Exception:
         return idname
 
@@ -201,11 +213,11 @@ def native_lines(pairs) -> list[str]:
     for idname, properties in pairs:
         for keys, place in shortcuts(idname, properties, keys_only=True):
             places = grouped.setdefault((keys, _native_name(idname, properties)), [])
-            place = _PLACES.get(place, place)
+            place = T(_PLACES.get(place, place))
             if place not in places:
                 places.append(place)
     parts = [f"{keys} ({', '.join(places)}: {name})" for (keys, name), places in list(grouped.items())[:3]]
-    return [f"Bforartists key: {'; '.join(parts)}."] if parts else []
+    return [F("Bforartists key: {keys}.", keys='; '.join(parts))] if parts else []
 
 
 def clear() -> None:

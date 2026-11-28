@@ -15,13 +15,13 @@ class ANIMASSIST_MT_pie_curve_tools(Menu):
     def draw(self, _context: bpy.types.Context) -> None:
         pie = self.layout.menu_pie()
         # Cardinal directions first (W, E, S, N), then diagonals (NW, NE, SW, SE)
-        pie.operator("animassist.blend_neighbor", text="Blend Neighbor", icon="TRACKING_FORWARDS_SINGLE")
-        pie.operator("animassist.ease_to_ease", text="Ease To Ease", icon="IPO_EASE_IN_OUT")
-        pie.operator("animassist.blend_frame", text="Blend Frame", icon="IPO_BEZIER")
-        pie.operator("animassist.blend_offset", text="Blend Offset", icon="ARROW_LEFTRIGHT")
-        pie.operator("animassist.push_pull", text="Push / Pull", icon="FULLSCREEN_EXIT")
-        pie.operator("animassist.smooth_keys", text="Smooth Keys", icon="SMOOTHCURVE")
-        pie.operator("animassist.anim_offset", text="Anim Offset", icon="ANIM")
+        pie.operator("animassist.blend_neighbor", text="Blend Neighbor", icon="TRACKING_FORWARDS_SINGLE", text_ctxt='AnimAssist')
+        pie.operator("animassist.ease_to_ease", text="Ease To Ease", icon="IPO_EASE_IN_OUT", text_ctxt='AnimAssist')
+        pie.operator("animassist.blend_frame", text="Blend Frame", icon="IPO_BEZIER", text_ctxt='AnimAssist')
+        pie.operator("animassist.blend_offset", text="Blend Offset", icon="ARROW_LEFTRIGHT", text_ctxt='AnimAssist')
+        pie.operator("animassist.push_pull", text="Push / Pull", icon="FULLSCREEN_EXIT", text_ctxt='AnimAssist')
+        pie.operator("animassist.smooth_keys", text="Smooth Keys", icon="SMOOTHCURVE", text_ctxt='AnimAssist')
+        pie.operator("animassist.anim_offset", text="Anim Offset", icon="ANIM", text_ctxt='AnimAssist')
         pie.separator()  # 8th slot empty
 
 
@@ -38,7 +38,7 @@ class ANIMASSIST_MT_pie_key_types(Menu):
             ("EXTREME", "Extreme"),
             ("JITTER", "Jitter"),
         ):
-            op = pie.operator("animassist.set_key_type", text=label)
+            op = pie.operator("animassist.set_key_type", text=label, text_ctxt='AnimAssist')
             op.key_type = kt
 
 

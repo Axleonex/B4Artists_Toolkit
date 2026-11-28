@@ -9,6 +9,8 @@ in ``core.p7_proxy_math``.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from mathutils import Vector
 
@@ -92,7 +94,7 @@ class AA_OT_p7_create_proxy(bpy.types.Operator):
         description="Type of temporary helper to create for the active object or bone",
         items=_proxy_type_items_fn,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -101,13 +103,13 @@ class AA_OT_p7_create_proxy(bpy.types.Operator):
     def execute(self, context):
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
+            self.report({"ERROR"}, T('Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again'))
             return {"CANCELLED"}
 
         p7 = get_p7(context)
         cfg = PROXY_CONFIGS.get(self.proxy_type)
         if cfg is None:
-            self.report({"ERROR"}, f"Unknown proxy type '{self.proxy_type}'. Pick a type in the Create Proxy dropdown")
+            self.report({"ERROR"}, F("Unknown proxy type '{p0}'. Pick a type in the Create Proxy dropdown", p0=f'{self.proxy_type}'))
             return {"CANCELLED"}
 
         target_obj = context.active_object
@@ -166,7 +168,7 @@ class AA_OT_p7_create_proxy(bpy.types.Operator):
                 con.influence = 0.0
 
         p7s.save_session_to_scene(session.session_id)
-        self.report({"INFO"}, f"Created {self.proxy_type} proxy '{proxy_name}'")
+        self.report({"INFO"}, F("Created {p0} proxy '{p1}'", p0=f'{self.proxy_type}', p1=f'{proxy_name}'))
         return {"FINISHED"}
 
 

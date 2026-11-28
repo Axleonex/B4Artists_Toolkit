@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import EnumProperty, StringProperty
 
@@ -43,7 +45,7 @@ class AA_OT_apply_preset(bpy.types.Operator):
         name="Preset Name",
         description="Name of the built-in preset to apply. Leave empty to use the active preset from the property group.",
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -54,7 +56,7 @@ class AA_OT_apply_preset(bpy.types.Operator):
         name = self.preset_name.strip() or (p3.active_preset if p3 else "Midpoint")
         preset = bp.find_builtin_preset(name)
         if preset is None:
-            self.report({"WARNING"}, f"Unknown preset '{name}'.")
+            self.report({"WARNING"}, F("Unknown preset '{p0}'.", p0=f'{name}'))
             return {"CANCELLED"}
 
         mask = _mask_from_kind_str(preset.mask_kind)
@@ -82,12 +84,12 @@ class AA_OT_save_preset(bpy.types.Operator):
         name="Preset Name",
         description="Human-readable name for the new user preset.",
         default="Custom Preset",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         p3 = get_p3(context)
         if p3 is None:
-            self.report({"WARNING"}, "Property group unavailable.")
+            self.report({"WARNING"}, T('Property group unavailable.'))
             return {"CANCELLED"}
         row = p3.user_presets.add()
         row.name = self.preset_name or "Custom Preset"
@@ -107,7 +109,7 @@ class AA_OT_save_preset(bpy.types.Operator):
             kind = "TRANSFORM"
         row.mask_kind = kind
         p3.user_preset_index = len(p3.user_presets) - 1
-        self.report({"INFO"}, f"Saved preset '{row.name}'.")
+        self.report({"INFO"}, F("Saved preset '{p0}'.", p0=f'{row.name}'))
         return {"FINISHED"}
 
 
@@ -122,13 +124,13 @@ class AA_OT_delete_preset(bpy.types.Operator):
     def execute(self, context):
         p3 = get_p3(context)
         if p3 is None or not p3.user_presets:
-            self.report({"WARNING"}, "No user presets to delete.")
+            self.report({"WARNING"}, T('No user presets to delete.'))
             return {"CANCELLED"}
         idx = max(0, min(int(p3.user_preset_index), len(p3.user_presets) - 1))
         name = p3.user_presets[idx].name
         p3.user_presets.remove(idx)
         p3.user_preset_index = max(0, idx - 1)
-        self.report({"INFO"}, f"Deleted preset '{name}'.")
+        self.report({"INFO"}, F("Deleted preset '{p0}'.", p0=f'{name}'))
         return {"FINISHED"}
 
 
@@ -152,31 +154,31 @@ class AA_OT_manage_exclusion_set(bpy.types.Operator):
             ("CLEAR", "Clear", "Remove every exclusion pattern row."),
         ),
         default="ADD",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         p3 = get_p3(context)
         if p3 is None:
-            self.report({"WARNING"}, "Property group unavailable.")
+            self.report({"WARNING"}, T('Property group unavailable.'))
             return {"CANCELLED"}
 
         if self.action == "ADD":
             row = p3.exclusion_patterns.add()
             row.pattern = ""
             p3.exclusion_index = len(p3.exclusion_patterns) - 1
-            self.report({"INFO"}, "Added exclusion pattern row.")
+            self.report({"INFO"}, T('Added exclusion pattern row.'))
         elif self.action == "REMOVE":
             if not p3.exclusion_patterns:
-                self.report({"WARNING"}, "Nothing to remove.")
+                self.report({"WARNING"}, T('Nothing to remove.'))
                 return {"CANCELLED"}
             idx = max(0, min(int(p3.exclusion_index), len(p3.exclusion_patterns) - 1))
             p3.exclusion_patterns.remove(idx)
             p3.exclusion_index = max(0, idx - 1)
-            self.report({"INFO"}, "Removed exclusion pattern row.")
+            self.report({"INFO"}, T('Removed exclusion pattern row.'))
         else:
             p3.exclusion_patterns.clear()
             p3.exclusion_index = 0
-            self.report({"INFO"}, "Cleared exclusion patterns.")
+            self.report({"INFO"}, T('Cleared exclusion patterns.'))
         return {"FINISHED"}
 
 

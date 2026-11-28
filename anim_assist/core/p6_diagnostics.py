@@ -261,36 +261,36 @@ def run_diagnostics(
 # Report formatting
 # ---------------------------------------------------------------------------
 
-def format_diagnostics_report(diag: TimingDiagnostics, label: str = "") -> str:
-    """Return a multi-line human-readable diagnostics report."""
+def format_diagnostics_report(diag: TimingDiagnostics, label: str = "", *, format_text=str.format) -> str:
+    """Return a report; callers can supply a UI formatter without coupling math to bpy."""
     lines: list[str] = []
     if label:
-        lines.append(f"=== {label} ===")
+        lines.append(format_text("=== {label} ===", label=label))
     lines.append(
-        f"Keys: {diag.key_count}  |  Span: {diag.frame_span:.0f}f  "
-        f"|  Avg spacing: {diag.avg_spacing:.1f}f"
+        format_text("Keys: {keys}  |  Span: {span:.0f}f  |  Avg spacing: {spacing:.1f}f",
+                    keys=diag.key_count, span=diag.frame_span, spacing=diag.avg_spacing)
     )
-    lines.append(f"Timing Score: {diag.score:.0f}/100")
+    lines.append(format_text("Timing Score: {score:.0f}/100", score=diag.score))
 
     # Gaps section
     if diag.gaps:
-        lines.append(f"Gaps ({len(diag.gaps)}):")
+        lines.append(format_text("Gaps ({count}):", count=len(diag.gaps)))
         for g in diag.gaps:
             lines.append(
-                f"  {g.start_frame:.0f} → {g.end_frame:.0f}  ({g.size:.0f}f gap)"
+                format_text("  {start:.0f} → {end:.0f}  ({size:.0f}f gap)", start=g.start_frame, end=g.end_frame, size=g.size)
             )
     else:
-        lines.append("No significant gaps.")
+        lines.append(format_text("No significant gaps."))
 
     # Clusters section
     if diag.clusters:
-        lines.append(f"Clusters ({len(diag.clusters)}):")
+        lines.append(format_text("Clusters ({count}):", count=len(diag.clusters)))
         for c in diag.clusters:
             lines.append(
-                f"  {len(c.frames)} keys near frame {c.center:.0f} "
-                f"(spread {c.spread:.1f}f)"
+                format_text("  {count} keys near frame {center:.0f} (spread {spread:.1f}f)",
+                            count=len(c.frames), center=c.center, spread=c.spread)
             )
     else:
-        lines.append("No key clusters.")
+        lines.append(format_text("No key clusters."))
 
     return "\n".join(lines)

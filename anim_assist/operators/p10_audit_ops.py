@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import IntProperty
 
@@ -18,18 +20,18 @@ class AA_OT_p10_show_history(bpy.types.Operator):
     bl_label = "Show Operation History"
     bl_options = {'REGISTER'}
 
-    limit: IntProperty(name="Limit", default=20, min=1, max=100)  # type: ignore[valid-type]
+    limit: IntProperty(name="Limit", default=20, min=1, max=100, translation_context='AnimAssist')  # type: ignore[valid-type]
 
     def execute(self, context):
         from ..core import p10_audit as audit
         history = audit.get_history(self.limit)
         if not history:
-            self.report({'INFO'}, "No operations recorded")
+            self.report({'INFO'}, T('No operations recorded'))
         else:
             for h in history:
-                status = "OK" if h["success"] else "FAIL"
-                self.report({'INFO'}, f"  {h['op_id']} [{status}] {h['detail']}")
-            self.report({'INFO'}, f"Showing {len(history)} recent operation(s)")
+                status = T('OK') if h['success'] else T('FAIL')
+                self.report({'INFO'}, F('  {p0} [{p1}] {p2}', p0=f"{h['op_id']}", p1=f'{status}', p2=f"{h['detail']}"))
+            self.report({'INFO'}, F('Showing {p0} recent operation(s)', p0=f'{len(history)}'))
         return {'FINISHED'}
 
 
@@ -39,17 +41,17 @@ class AA_OT_p10_show_errors(bpy.types.Operator):
     bl_label = "Show Error Log"
     bl_options = {'REGISTER'}
 
-    limit: IntProperty(name="Limit", default=20, min=1, max=100)  # type: ignore[valid-type]
+    limit: IntProperty(name="Limit", default=20, min=1, max=100, translation_context='AnimAssist')  # type: ignore[valid-type]
 
     def execute(self, context):
         from ..core import p10_audit as audit
         errors = audit.get_errors(self.limit)
         if not errors:
-            self.report({'INFO'}, "No errors recorded")
+            self.report({'INFO'}, T('No errors recorded'))
         else:
             for e in errors:
-                self.report({'WARNING'}, f"  [{e['source']}] {e['message']}")
-            self.report({'INFO'}, f"Showing {len(errors)} recent error(s)")
+                self.report({'WARNING'}, F('  [{p0}] {p1}', p0=f"{e['source']}", p1=f"{e['message']}"))
+            self.report({'INFO'}, F('Showing {p0} recent error(s)', p0=f'{len(errors)}'))
         return {'FINISHED'}
 
 
@@ -62,10 +64,10 @@ class AA_OT_p10_show_stats(bpy.types.Operator):
     def execute(self, context):
         from ..core import p10_audit as audit
         stats = audit.get_stats()
-        self.report({'INFO'}, f"Operations: {stats['total_operations']}")
-        self.report({'INFO'}, f"Failures: {stats['total_failures']}")
-        self.report({'INFO'}, f"Success rate: {stats['success_rate']:.1f}%")
-        self.report({'INFO'}, f"Uptime: {stats['session_uptime_s']:.0f}s")
+        self.report({'INFO'}, F('Operations: {p0}', p0=f"{stats['total_operations']}"))
+        self.report({'INFO'}, F('Failures: {p0}', p0=f"{stats['total_failures']}"))
+        self.report({'INFO'}, F('Success rate: {p0}%', p0=f"{stats['success_rate']:.1f}"))
+        self.report({'INFO'}, F('Uptime: {p0}s', p0=f"{stats['session_uptime_s']:.0f}"))
         return {'FINISHED'}
 
 
@@ -81,7 +83,7 @@ class AA_OT_p10_clear_history(bpy.types.Operator):
     def execute(self, context):
         from ..core import p10_audit as audit
         audit.clear_history()
-        self.report({'INFO'}, "Operation history cleared")
+        self.report({'INFO'}, T('Operation history cleared'))
         return {'FINISHED'}
 
 
@@ -97,7 +99,7 @@ class AA_OT_p10_clear_errors(bpy.types.Operator):
     def execute(self, context):
         from ..core import p10_audit as audit
         audit.clear_errors()
-        self.report({'INFO'}, "Error log cleared")
+        self.report({'INFO'}, T('Error log cleared'))
         return {'FINISHED'}
 
 

@@ -1,6 +1,8 @@
 """Drivers-only actions with explicit visible, selected-channel scope."""
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import json
 
 import bpy
@@ -14,10 +16,10 @@ class _ActiveDriver:
     @classmethod
     def poll(cls, context):
         if not in_driver_editor(context):
-            cls.poll_message_set("Switch to the Drivers editor")
+            cls.poll_message_set(T('Switch to the Drivers editor'))
             return False
         if active_driver(context) is None:
-            cls.poll_message_set("Select an active visible driver channel")
+            cls.poll_message_set(T('Select an active visible driver channel'))
             return False
         return True
 
@@ -32,20 +34,20 @@ class ANIMASSIST_OT_driver_settings(_ActiveDriver, Operator):
         if not super().poll(context):
             return False
         if getattr(context, "active_editable_fcurve", None) is None:
-            cls.poll_message_set("Click an unlocked driver channel to make it active")
+            cls.poll_message_set(T('Click an unlocked driver channel to make it active'))
             return False
         return True
 
     panel: EnumProperty(name="Settings", description="Native settings to open for the active driver",
         items=(("DRIVER", "Driver", "Variables and expression"),
                ("MODIFIERS", "Modifiers", "Response curve modifiers")),
-        default="DRIVER", options={"HIDDEN", "SKIP_SAVE"})
+        default="DRIVER", options={"HIDDEN", "SKIP_SAVE"}, translation_context='AnimAssist')
 
     @classmethod
     def description(cls, context, properties):
         if properties.panel == "MODIFIERS":
-            return "Open the native Modifiers tab for the active driver's response curve"
-        return cls.__doc__
+            return T("Open the native Modifiers tab for the active driver's response curve")
+        return T(cls.__doc__)
 
     def execute(self, context):
         # C sidebar panels are not wm.call_panel popovers in this host. Navigate
@@ -53,7 +55,7 @@ class ANIMASSIST_OT_driver_settings(_ActiveDriver, Operator):
         context.space_data.show_region_ui = True
         sidebar = next((r for r in context.area.regions if r.type == "UI"), None)
         if sidebar is None:
-            self.report({"WARNING"}, "Open the editor sidebar and try again")
+            self.report({"WARNING"}, T('Open the editor sidebar and try again'))
             return {"CANCELLED"}
         category = "Modifiers" if self.panel == "MODIFIERS" else "Drivers"
         area = context.area
@@ -89,7 +91,7 @@ class ANIMASSIST_OT_driver_modifier_add(_ActiveDriver, Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     type: EnumProperty(name="Modifier", description="Response modifier for the active driver",
-                       items=_MODIFIER_TYPES, default="LIMITS")
+                       items=_MODIFIER_TYPES, default="LIMITS", translation_context="Action")
 
     @classmethod
     def poll(cls, context):
@@ -97,7 +99,7 @@ class ANIMASSIST_OT_driver_modifier_add(_ActiveDriver, Operator):
             return False
         fc = active_driver(context)
         if fc.lock or not fc.id_data.is_editable:
-            cls.poll_message_set("Unlock the active driver and use an editable owner")
+            cls.poll_message_set(T('Unlock the active driver and use an editable owner'))
             return False
         return True
 
@@ -122,10 +124,10 @@ class ANIMASSIST_OT_driver_select_owner(_ActiveDriver, Operator):
             return False
         owner = active_driver(context).id_data
         if not isinstance(owner, bpy.types.Object) or context.view_layer.objects.get(owner.name) != owner:
-            cls.poll_message_set("The active driver must belong to an object in this view layer")
+            cls.poll_message_set(T('The active driver must belong to an object in this view layer'))
             return False
         if owner.hide_get() or owner.hide_select:
-            cls.poll_message_set("Unhide the owner and enable object selection first")
+            cls.poll_message_set(T('Unhide the owner and enable object selection first'))
             return False
         return True
 
@@ -140,10 +142,10 @@ class _SelectedDrivers:
     @classmethod
     def poll(cls, context):
         if not in_driver_editor(context):
-            cls.poll_message_set("Switch to the Drivers editor")
+            cls.poll_message_set(T('Switch to the Drivers editor'))
             return False
         if not driver_curves(context, selected=True):
-            cls.poll_message_set("Select at least one visible driver channel")
+            cls.poll_message_set(T('Select at least one visible driver channel'))
             return False
         return True
 
@@ -167,7 +169,7 @@ class _EditableDrivers(_SelectedDrivers):
         if not super().poll(context):
             return False
         if not driver_curves(context, selected=True, editable=True):
-            cls.poll_message_set("Select an unlocked driver channel with an editable owner")
+            cls.poll_message_set(T('Select an unlocked driver channel with an editable owner'))
             return False
         return True
 
@@ -179,7 +181,7 @@ class _DriverKeys(_EditableDrivers):
             return False
         if not any(_selected_key(k) for fc in driver_curves(context, selected=True, editable=True)
                    for k in fc.keyframe_points):
-            cls.poll_message_set("Select response points in an unlocked driver channel")
+            cls.poll_message_set(T('Select response points in an unlocked driver channel'))
             return False
         return True
 
@@ -192,7 +194,7 @@ class ANIMASSIST_OT_driver_interpolation(_DriverKeys, Operator):
     type: EnumProperty(name="Interpolation", description="How driver output changes between response points",
         items=(("CONSTANT", "Constant", "Hold the previous output"),
                ("LINEAR", "Linear", "Straight response between points"),
-               ("BEZIER", "Bezier", "Shape the response with handles")), default="BEZIER")
+               ("BEZIER", "Bezier", "Shape the response with handles")), default="BEZIER", translation_context='AnimAssist')
 
     def execute(self, context):
         curves = [fc for fc in driver_curves(context, selected=True, editable=True)
@@ -213,7 +215,7 @@ class ANIMASSIST_OT_driver_handles(_DriverKeys, Operator):
     type: EnumProperty(name="Handles", description="Handle behavior for selected driver response points",
         items=tuple((item.identifier, item.name, item.description)
             for item in bpy.ops.graph.handle_type.get_rna_type().properties["type"].enum_items),
-        default="AUTO_CLAMPED")
+        default="AUTO_CLAMPED", translation_context='*')
 
     def execute(self, context):
         curves = [fc for fc in driver_curves(context, selected=True, editable=True)
@@ -235,7 +237,7 @@ class ANIMASSIST_OT_driver_extrapolation(_EditableDrivers, Operator):
     bl_options = {"REGISTER", "UNDO"}
     type: EnumProperty(name="Extrapolation", description="Driver response outside its first and last points",
         items=(("CONSTANT", "Constant", "Hold endpoint output"),
-               ("LINEAR", "Linear", "Continue the endpoint slope")), default="CONSTANT")
+               ("LINEAR", "Linear", "Continue the endpoint slope")), default="CONSTANT", translation_context='AnimAssist')
 
     def execute(self, context):
         curves = driver_curves(context, selected=True, editable=True)
@@ -256,7 +258,7 @@ class ANIMASSIST_OT_driver_refresh(_SelectedDrivers, Operator):
             owner.update_tag()
         context.view_layer.update()
         context.area.tag_redraw()
-        self.report({"INFO"}, f"Refreshed {len(owners)} selected driver owner(s)")
+        self.report({"INFO"}, F('Refreshed {p0} selected driver owner(s)', p0=f'{len(owners)}'))
         return {"FINISHED"}
 
 
@@ -265,7 +267,7 @@ class ANIMASSIST_OT_driver_check(_SelectedDrivers, Operator):
     bl_idname = "animassist.driver_check"
     bl_label = "Check Selected Drivers"
 
-    results: StringProperty(options={"HIDDEN", "SKIP_SAVE"})
+    results: StringProperty(options={"HIDDEN", "SKIP_SAVE"}, translation_context='AnimAssist')
 
     def execute(self, context):
         rows = []
@@ -275,9 +277,9 @@ class ANIMASSIST_OT_driver_check(_SelectedDrivers, Operator):
                 rows.append(f"{fc.id_data.name}: {fc.data_path}[{fc.array_index}] — {issue}")
         self.results = json.dumps(rows)
         if rows:
-            self.report({"WARNING"}, f"{len(rows)} issue(s) in {len(curves)} selected driver(s)")
+            self.report({"WARNING"}, F('{p0} issue(s) in {p1} selected driver(s)', p0=f'{len(rows)}', p1=f'{len(curves)}'))
         else:
-            self.report({"INFO"}, f"No issues found in {len(curves)} selected driver(s)")
+            self.report({"INFO"}, F('No issues found in {p0} selected driver(s)', p0=f'{len(curves)}'))
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -287,11 +289,11 @@ class ANIMASSIST_OT_driver_check(_SelectedDrivers, Operator):
     def draw(self, context):
         from ..ui.ui_helpers import wrapped_label
         rows = json.loads(self.results or "[]")
-        self.layout.label(text="Selected Driver Diagnostics")
+        self.layout.label(text="Selected Driver Diagnostics", text_ctxt='AnimAssist')
         for row in rows:
             wrapped_label(self.layout, context, row, icon="INFO")
         if not rows:
-            self.layout.label(text="No issues found", icon="CHECKMARK")
+            self.layout.label(text="No issues found", icon="CHECKMARK", text_ctxt='AnimAssist')
 
 
 CLASSES = (ANIMASSIST_OT_driver_settings, ANIMASSIST_OT_driver_select_owner,

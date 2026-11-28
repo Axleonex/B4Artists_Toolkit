@@ -1,5 +1,7 @@
 """Shared Timeline action dispatch, menus and quick-selection settings."""
 
+from ..i18n import T, F, error_text
+
 import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty
 from ..core.logging import get_logger
@@ -72,21 +74,21 @@ def _switch_unavailable(context, action):
     settings = get_p8(context)
     obj = context.active_object
     if obj is None or settings is None or not settings.switch_prop_path:
-        return "Configure an active object's rig property in Pose options"
+        return T("Configure an active object's rig property in Pose options")
     if obj.library and not obj.override_library:
-        return "Use a local or overridden rig object"
+        return T('Use a local or overridden rig object')
     owner = _resolve_prop_owner(obj, settings.switch_bone_name)
     if owner is None:
-        return "Choose an existing rig bone in Pose options"
+        return T('Choose an existing rig bone in Pose options')
     value = _get_prop_value(owner, settings.switch_prop_path)
     if not isinstance(value, (int, float)):
-        return "Choose a writable numeric rig property; string enum properties are unsupported"
+        return T('Choose a writable numeric rig property; string enum properties are unsupported')
     if action == "SWITCH_BOOL" and value not in (0, 1):
-        return "Choose a boolean rig property whose value is 0 or 1"
+        return T('Choose a boolean rig property whose value is 0 or 1')
     if action == "SWITCH_INFLUENCE" and not 0 <= settings.switch_new_value <= 1:
-        return "Set the rig influence target between 0 and 1 in Pose options"
+        return T('Set the rig influence target between 0 and 1 in Pose options')
     if action == "SWITCH_ENUM" and not float(settings.switch_new_value).is_integer():
-        return "Set a whole-number rig target value in Pose options"
+        return T('Set a whole-number rig target value in Pose options')
     path = settings.switch_prop_path
     if not (path.startswith('["') and path.endswith('"]')):
         try:
@@ -96,9 +98,9 @@ def _switch_unavailable(context, action):
             else:
                 parent, attribute = owner, path
             if parent.is_property_readonly(attribute):
-                return "Choose a writable rig property in Pose options"
+                return T('Choose a writable rig property in Pose options')
         except (AttributeError, ValueError, TypeError):
-            return "Choose a supported rig property path in Pose options"
+            return T('Choose a supported rig property path in Pose options')
     return ""
 
 
@@ -117,7 +119,7 @@ def _module_reason(context,action):
     elif action in {'ALL','RANGE','ENDS','GROW_LEFT','GROW_RIGHT','GROW_BOTH','SELECT_BREAKDOWNS'}: module='selection'
     flag='enable_'+module
     if not getattr(prefs,flag,True):
-        return 'Enable '+prefs.bl_rna.properties[flag].name+' in add-on preferences'
+        return F('Enable {p0} in add-on preferences', p0=T(prefs.bl_rna.properties[flag].name))
     return ''
 
 
@@ -160,66 +162,66 @@ def _has_selected_keys(context, action, checks):
 
 def _unavailable(context, target, action, *, selection_checks=None):
     if target is None:
-        return "Use an animation tool from a Timeline"
+        return T('Use an animation tool from a Timeline')
     reason=_module_reason(context,action)
-    if reason: return reason
+    if reason: return T(reason)
     operator = _operator(action)
     if operator is None:
-        return "Enable the corresponding Anim Assist tool module"
+        return T('Enable the corresponding Anim Assist tool module')
     try:
         with context.temp_override(area=target, region=_window_region(target)):
             if not _has_selected_keys(context, action, selection_checks):
                 if action == "EASE":
-                    return "Select at least two editable keys on the same curve"
-                return "Select editable keys on an animated object"
+                    return T('Select at least two editable keys on the same curve')
+                return T('Select editable keys on an animated object')
             if action == "COPY_KEYS":
                 from ..core.context_utils import iter_selected_keys
                 if next(iter_selected_keys(context), None) is None:
-                    return "Select editable keys to copy"
+                    return T('Select editable keys to copy')
             if action == "PASTE_KEYS":
                 from ..core.key_utils import clipboard_size
                 if not clipboard_size():
-                    return "Copy keys into the Anim Assist clipboard first"
+                    return T('Copy keys into the Anim Assist clipboard first')
             if action in {"BOOKMARK_RECALL", "BOOKMARK_REMOVE"}:
                 settings = context.scene.anim_assist
                 if not 0 <= settings.active_bookmark_index < len(settings.bookmarks):
-                    return "Choose an existing reference bookmark in Curves options"
+                    return T('Choose an existing reference bookmark in Curves options')
             if action.startswith("SWITCH_"):
                 reason = _switch_unavailable(context, action)
                 if reason:
-                    return reason
+                    return T(reason)
             if action == "MIRROR_RANGE":
                 scene = context.scene
                 start = scene.frame_preview_start if scene.use_preview_range else scene.frame_start
                 if start < 0:
-                    return "Use a nonnegative preview/playback range for Mirror Range"
+                    return T('Use a nonnegative preview/playback range for Mirror Range')
             if action in {"INBETWEEN", "INBETWEENS"}:
                 from ..operators.p3_inbetween_ops import _selected_frames
                 obj = context.active_object
                 if obj is None or len(_selected_frames(obj)) < 2:
-                    return "Select two bounding keys with a gap"
+                    return T('Select two bounding keys with a gap')
             if action == "OFFSET":
                 if context.scene.anim_assist.anim_offset_active:
                     return ""
                 from ..operators.anim_offset_ops import _object_fcurves
                 if not _object_fcurves(context):
-                    return "Select an object with editable Action curves"
+                    return T('Select an object with editable Action curves')
             if action in {'TRAIL_SHOW','TRAIL_REFRESH','TRAIL_DIAGNOSE'}:
                 from ..operators.p5_overlay_ops import _resolve_targets
                 from ..core.p5_properties import get_p5
                 if not _resolve_targets(context,get_p5(context)):
-                    return 'Select or configure an animated motion-trail target'
+                    return T('Select or configure an animated motion-trail target')
             if action in {'SCALE_DRAG','OFFSET_DRAG'}:
                 from ..core.fcurve_compat import get_fcurves
                 obj=context.active_object
                 data=getattr(obj,'animation_data',None)
                 if data and data.action and not any(not fc.lock and not fc.hide for fc in get_fcurves(data.action,anim_data=data)):
-                    return 'Unlock and show editable Action curves'
+                    return T('Unlock and show editable Action curves')
             if not operator.poll():
-                return command_metadata(action)[1]
+                return T(command_metadata(action)[1])
     except (RuntimeError, ReferenceError, StopIteration) as exc:
         _log.debug("Timeline prerequisite unavailable: %s", exc)
-        return "Open an editable Timeline and select the required animation"
+        return T('Open an editable Timeline and select the required animation')
     return ""
 
 
@@ -250,13 +252,13 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
     bl_idname = "animassist.timeline_tool"
     bl_label = "Timeline Tool"
     bl_options = {"INTERNAL"}
-    action: StringProperty(options={"HIDDEN", "SKIP_SAVE"})
-    canvas_undo: BoolProperty(default=False, options={"HIDDEN", "SKIP_SAVE"})
+    action: StringProperty(options={"HIDDEN", "SKIP_SAVE"}, translation_context='AnimAssist')
+    canvas_undo: BoolProperty(default=False, options={"HIDDEN", "SKIP_SAVE"}, translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
         if not is_timeline(context.area):
-            cls.poll_message_set("Use this tool from a Timeline")
+            cls.poll_message_set(T('Use this tool from a Timeline'))
             return False
         return True
 
@@ -264,18 +266,18 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
     def description(cls, context, properties):
         action = properties.action
         if action not in _ACTIONS:
-            return cls.__doc__
+            return T(cls.__doc__)
         from ..core import explainers
         operator = _operator(action)
-        description = command_description(action, explainers.operator_text("animassist." + _ACTIONS[action][0])
-                                          if operator else "Tool module unavailable")
+        description = T(command_description(action, explainers.operator_text("animassist." + _ACTIONS[action][0])
+                                            if operator else "Tool module unavailable"))
         reason = _unavailable(context, _target(context), action)
         if action in {"OFFSET", "OFFSET_MASK", "OFFSET_SCENE_RANGE"}:
             from ..operators.anim_offset_ops import offset_session_status
             status = offset_session_status(context.scene)
             if status:
-                description += f" Active session: {status}."
-        return description + (f" Unavailable: {reason}." if reason else "")
+                description += F(" Active session: {status}.", status=status)
+        return description + (F(" Unavailable: {reason}.", reason=reason) if reason else "")
 
     @classmethod
     def _aa_short(cls, context, properties):
@@ -287,7 +289,7 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
         operator = _operator(action)
         text = TIPS.get(action) or (explainers.operator_text("animassist." + _ACTIONS[action][0]) if operator else "")
         reason = _unavailable(context, _target(context), action)
-        return explainers.short(text or _ACTIONS[action][2]) + (f". Unavailable: {reason}" if reason else "")
+        return explainers.short(T(text or _ACTIONS[action][2])) + (F(". Unavailable: {reason}", reason=reason) if reason else "")
 
     def invoke(self, context, _event):
         return self.execute(context)
@@ -295,12 +297,12 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
     def execute(self, context):
         target = _target(context)
         if target is None or self.action not in _ACTIONS:
-            self.report({"WARNING"}, "Choose a known Timeline tool")
+            self.report({"WARNING"}, T('Choose a known Timeline tool'))
             return {"CANCELLED"}
         try:
             reason = _unavailable(context, target, self.action)
             if reason:
-                self.report({"WARNING"}, reason)
+                self.report({"WARNING"}, T(reason))
                 return {"CANCELLED"}
             with context.temp_override(area=target, region=_window_region(target)):
                 operator = _operator(self.action)
@@ -317,7 +319,7 @@ class ANIMASSIST_OT_timeline_tool(bpy.types.Operator):
                     bpy.ops.ed.undo_push(message=_ACTIONS[self.action][2])
             return {"CANCELLED"} if "CANCELLED" in result else {"FINISHED"}
         except (RuntimeError, ReferenceError, AttributeError) as exc:
-            self.report({"WARNING"}, str(exc))
+            self.report({"WARNING"}, error_text(exc))
             return {"CANCELLED"}
 
 
@@ -325,7 +327,7 @@ def _button(layout, context, target, action, text="", icon="NONE", depress=False
     row = layout.row(align=True)
     row.enabled = not _unavailable(context, target, action)
     row.operator_context = "INVOKE_DEFAULT"
-    op = row.operator("animassist.timeline_tool", text=text, icon=icon, depress=depress)
+    op = row.operator("animassist.timeline_tool", text=text, icon=icon, depress=depress, text_ctxt='AnimAssist')
     op.action = action
 
 
@@ -341,9 +343,9 @@ def _build_menu(key, label, actions):
             else:
                 _button(self.layout, context, _target(context), action, _ACTIONS[action][2])
         self.layout.separator()
-        options = self.layout.operator("wm.call_panel", text=f"{label} Options", icon="PREFERENCES")
+        options = self.layout.operator("wm.call_panel", text=F('{p0} Options', p0=T(label)), icon="PREFERENCES", translate=False)
         options.name = f"ANIMASSIST_PT_timeline_options_{key}"
-        self.layout.operator("animassist.open_home", text="Open Anim Assist Panel", icon="PROPERTIES")
+        self.layout.operator("animassist.open_home", text="Open Anim Assist Panel", icon="PROPERTIES", text_ctxt='AnimAssist')
     name = _menu_id(key)
     return type(name, (bpy.types.Menu,), {"bl_idname": name, "bl_label": label, "draw": draw})
 
@@ -357,7 +359,7 @@ class ANIMASSIST_MT_timeline_tools(bpy.types.Menu):
 
     def draw(self, context):
         for key, label, _actions in GROUPS:
-            self.layout.menu(_menu_id(key), text=label)
+            self.layout.menu(_menu_id(key), text=label, text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_MT_timeline_more(bpy.types.Menu):
@@ -377,16 +379,16 @@ class ANIMASSIST_MT_timeline_more(bpy.types.Menu):
             actions=[a for a in order if a in known and tools[a]['mode']!='HIDDEN']
             if not actions: continue
             self.layout.separator()
-            self.layout.label(text=label)
+            self.layout.label(text=label, text_ctxt='AnimAssist')
             for action in actions:
                 active = action == "OFFSET" and context.scene.anim_assist.anim_offset_active
                 _button(self.layout, context, _target(context), action, _ACTIONS[action][2],
                         icon="PAUSE" if active else "NONE", depress=active)
                 for value in data['active']['tools'][action].get('presets',[]):
-                    op=self.layout.operator('animassist.timeline_slider',text=f'{_ACTIONS[action][2]}: {value:g}')
+                    op=self.layout.operator('animassist.timeline_slider',text=F('{p0}: {p1}', p0=T(_ACTIONS[action][2]), p1=f'{value:g}'), translate=False)
                     op.action=action; op.value=value; op.apply_value=True
         self.layout.separator()
-        self.layout.menu("ANIMASSIST_MT_timeline_tools", text="All Tools")
+        self.layout.menu("ANIMASSIST_MT_timeline_tools", text="All Tools", text_ctxt='AnimAssist')
 
 
 _menus.extend([ANIMASSIST_MT_timeline_tools, ANIMASSIST_MT_timeline_more])
@@ -402,7 +404,7 @@ class ANIMASSIST_OT_reset_timeline_quick_defaults(bpy.types.Operator):
         from ..prefs import get_prefs
         prefs = get_prefs(context)
         if prefs is None:
-            self.report({"WARNING"}, "Enable Anim Assist in add-on preferences first")
+            self.report({"WARNING"}, T('Enable Anim Assist in add-on preferences first'))
             return {"CANCELLED"}
         for action in _ACTIONS:
             setattr(prefs, quick_property_name(action), action in DEFAULT_QUICK_ACTIONS)
@@ -418,13 +420,13 @@ class ANIMASSIST_OT_timeline_pin(bpy.types.Operator):
     bl_label = "Toggle Quick Button"
     bl_description = "Add or remove this tool's one-click button beside its family"
     bl_options = {"INTERNAL"}
-    action: StringProperty(options={"HIDDEN", "SKIP_SAVE"})
+    action: StringProperty(options={"HIDDEN", "SKIP_SAVE"}, translation_context='AnimAssist')
 
     def execute(self, context):
         from ..prefs import get_prefs
         prefs = get_prefs(context)
         if prefs is None or self.action not in _ACTIONS:
-            self.report({"WARNING"}, "Enable Anim Assist and choose a known tool")
+            self.report({"WARNING"}, T('Enable Anim Assist and choose a known tool'))
             return {"CANCELLED"}
         from . import timeline_config as model
         from ..prefs import timeline_record
@@ -441,7 +443,7 @@ class ANIMASSIST_OT_timeline_pin(bpy.types.Operator):
             if editor(context): sync_editor(context,data)
             else: write(context,data)
         except ValueError as exc:
-            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+            self.report({'WARNING'},error_text(exc)); return {'CANCELLED'}
         if target=='ALL':
             setattr(prefs, quick_property_name(self.action),not visible)
         return {"FINISHED"}
@@ -454,15 +456,15 @@ class ANIMASSIST_OT_timeline_search(bpy.types.Operator):
                       "With nothing typed, browse every tool by family")
     bl_options = {"INTERNAL"}
     query: StringProperty(name="Search", description="Find tools by name, family or animation concept",
-                          options={"TEXTEDIT_UPDATE", "SKIP_SAVE"})
+                          options={"TEXTEDIT_UPDATE", "SKIP_SAVE"}, translation_context='AnimAssist')
     family: EnumProperty(name="Family", description="Browse this family's tools",
-                         items=[(key, label, f"Browse the {label} tools") for key, label, _a in GROUPS],
-                         options={"SKIP_SAVE"})
+                         items=[(key, label, "Browse this family's tools") for key, label, _a in GROUPS],
+                         options={"SKIP_SAVE"}, translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
         if not is_timeline(context.area):
-            cls.poll_message_set("Search these tools from a Timeline")
+            cls.poll_message_set(T('Search these tools from a Timeline'))
             return False
         return True
 
@@ -501,9 +503,9 @@ class ANIMASSIST_OT_timeline_search(bpy.types.Operator):
             self.layout.row().prop(self, "family", expand=True)
             matches = tuple(a for a in next(acts for key, _l, acts in GROUPS if key == self.family) if a)
             limit = len(matches)
-            self.layout.label(text="Click a tool to run it; the pin adds it to this row or takes it off.")
+            self.layout.label(text="Click a tool to run it; the pin adds it to this row or takes it off.", text_ctxt='AnimAssist')
         if not matches:
-            self.layout.label(text="No matching animation tools", icon="INFO")
+            self.layout.label(text="No matching animation tools", icon="INFO", text_ctxt='AnimAssist')
         for action in matches[:limit]:
             row = self.layout.row(align=True)
             _button(row, context, _target(context), action, _ACTIONS[action][2])
@@ -514,7 +516,7 @@ class ANIMASSIST_OT_timeline_search(bpy.types.Operator):
                               depress=action in selected)
             op.action = action
         if len(matches) > limit:
-            self.layout.label(text=f"{len(matches)} matches; refine the search to see more")
+            self.layout.label(text=F('{p0} matches; refine the search to see more', p0=f'{len(matches)}'), translate=False)
 
     def execute(self, context):
         return {"FINISHED"}
@@ -530,7 +532,7 @@ class ANIMASSIST_PT_timeline_quick_settings(bpy.types.Panel):
         from ..prefs import get_prefs, draw_timeline_quick_settings
         prefs = get_prefs(context)
         if prefs is None:
-            self.layout.label(text="Enable Anim Assist in add-on preferences", icon="INFO")
+            self.layout.label(text="Enable Anim Assist in add-on preferences", icon="INFO", text_ctxt='AnimAssist')
         else:
             draw_timeline_quick_settings(self.layout, context, prefs)
 
@@ -552,11 +554,11 @@ _OPTION_FIELDS = {
 def _build_options(key, label, _actions):
     def draw(self, context):
         layout = self.layout
-        layout.label(text=f"{label} options")
+        layout.label(text=F('{p0} options', p0=T(label)), translate=False)
         for attribute, names in _OPTION_FIELDS[key]:
             settings = getattr(context.scene, attribute, None)
             if settings is None:
-                layout.label(text="Enable this tool module to edit its settings", icon="INFO")
+                layout.label(text="Enable this tool module to edit its settings", icon="INFO", text_ctxt='AnimAssist')
                 continue
             for name in names:
                 layout.prop(settings, name)
@@ -571,23 +573,23 @@ def _build_options(key, label, _actions):
                 layout.prop(settings.bookmarks[index], "frame")
             for action in ("BOOKMARK_ADD", "BOOKMARK_RECALL", "BOOKMARK_REMOVE"):
                 _button(layout, context, _target(context), action, _ACTIONS[action][2])
-            layout.label(text="Recall changes the reference; the playhead stays put.")
+            layout.label(text="Recall changes the reference; the playhead stays put.", text_ctxt='AnimAssist')
         elif key == "keys":
             from ..prefs import get_prefs
             prefs = get_prefs(context)
             if prefs:
                 layout.prop(prefs, "timeline_paste_offset")
-            layout.label(text="Paste matches Action names and curve paths.")
-            layout.label(text="Paste uses copied times plus offset, not the playhead.")
+            layout.label(text="Paste matches Action names and curve paths.", text_ctxt='AnimAssist')
+            layout.label(text="Paste uses copied times plus offset, not the playhead.", text_ctxt='AnimAssist')
         elif key == "pose":
-            layout.label(text="Mirror Range uses the preview/playback range.")
+            layout.label(text="Mirror Range uses the preview/playback range.", text_ctxt='AnimAssist')
         elif key == "motion":
             mask = context.scene.anim_assist.mask
             for name in ("enabled", "start_frame", "end_frame", "blend_left", "blend_right"):
                 layout.prop(mask, name)
         layout.separator()
-        layout.label(text="Drag feedback appears in the header or status bar.")
-        layout.label(text="Use Adjust Last Operation for completed tool options.")
+        layout.label(text="Drag feedback appears in the header or status bar.", text_ctxt='AnimAssist')
+        layout.label(text="Use Adjust Last Operation for completed tool options.", text_ctxt='AnimAssist')
     name = f"ANIMASSIST_PT_timeline_options_{key}"
     return type(name, (bpy.types.Panel,), {"bl_label": f"{label} Options",
                 "bl_space_type": "DOPESHEET_EDITOR", "bl_region_type": "HEADER",
@@ -605,12 +607,12 @@ def _draw_toolbar(self, context):
     if target is None:
         return
     from ..prefs import get_prefs
-    layout.operator("animassist.timeline_search", text="Search", icon="VIEWZOOM")
+    layout.operator("animassist.timeline_search", text="Search", icon="VIEWZOOM", text_ctxt='AnimAssist')
     layout.popover(panel="ANIMASSIST_PT_timeline_quick_settings", text="", icon="PREFERENCES")
     for key, label, actions in quick_clusters(selected_quick_actions(get_prefs(context))):
         layout.separator()
         row = layout.row(align=True)
-        row.menu(_menu_id(key), text=label)
+        row.menu(_menu_id(key), text=label, text_ctxt='AnimAssist')
         for action in actions:
             active = action == "OFFSET" and context.scene.anim_assist.anim_offset_active
             _button(row, context, target, action, QUICK_LABELS.get(action, _ACTIONS[action][2]),

@@ -17,6 +17,8 @@ Primary → Scope → Advanced draw ordering is respected, and uses
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.p4_properties import get_p4
@@ -45,14 +47,14 @@ def _p4_available(context: bpy.types.Context) -> bool:
 def _draw_context_warning(layout, context) -> None:
     obj = getattr(context, "active_object", None)
     if obj is None:
-        layout.label(text="No active object.", icon="INFO")
+        layout.label(text="No active object.", icon="INFO", text_ctxt='AnimAssist')
         return
     adata = getattr(obj, "animation_data", None)
     if adata is None or adata.action is None:
-        layout.label(text=f"{obj.name} has no animation data.", icon="INFO")
+        layout.label(text=F('{p0} has no animation data.', p0=f'{obj.name}'), icon="INFO", translate=False)
         return
     if get_p4(context) is None:
-        layout.label(text="Offset property group unavailable.", icon="ERROR")
+        layout.label(text="Offset property group unavailable.", icon="ERROR", text_ctxt='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -77,9 +79,9 @@ class ANIMASSIST_PT_p4_offset(PanelAnatomyMixin, DopeSheetSidebarPanel):
         # --- Amounts ---
         uh.section_header(layout, "Offset Amounts", icon="ORIENTATION_LOCAL")
         col = layout.column(align=True)
-        col.prop(p4, "translate_amount", text="Translate")
-        col.prop(p4, "rotate_amount", text="Rotate")
-        col.prop(p4, "scale_amount", text="Scale")
+        col.prop(p4, "translate_amount", text="Translate", text_ctxt='AnimAssist')
+        col.prop(p4, "rotate_amount", text="Rotate", text_ctxt='AnimAssist')
+        col.prop(p4, "scale_amount", text="Scale", text_ctxt='AnimAssist')
         uh.separator(layout)
 
         # --- Core operators ---
@@ -100,10 +102,10 @@ class ANIMASSIST_PT_p4_offset(PanelAnatomyMixin, DopeSheetSidebarPanel):
 
         # --- Axis filter buttons ---
         row = layout.row(align=True)
-        row.operator("animassist.p4_offset_translate_only", text="T Only", icon="CON_LOCLIMIT")
-        row.operator("animassist.p4_offset_rotate_only", text="R Only", icon="CON_ROTLIMIT")
-        row.operator("animassist.p4_offset_scale_only", text="S Only", icon="CON_SIZELIMIT")
-        row.operator("animassist.p4_offset_trs_combined", text="TRS", icon="OBJECT_ORIGIN")
+        row.operator("animassist.p4_offset_translate_only", text="T Only", icon="CON_LOCLIMIT", text_ctxt='AnimAssist')
+        row.operator("animassist.p4_offset_rotate_only", text="R Only", icon="CON_ROTLIMIT", text_ctxt='AnimAssist')
+        row.operator("animassist.p4_offset_scale_only", text="S Only", icon="CON_SIZELIMIT", text_ctxt='AnimAssist')
+        row.operator("animassist.p4_offset_trs_combined", text="TRS", icon="OBJECT_ORIGIN", text_ctxt='AnimAssist')
         uh.separator(layout)
 
         # --- Reapply / Invert ---
@@ -264,18 +266,18 @@ class ANIMASSIST_PT_p4_pose_offset(PanelAnatomyMixin, View3DSidebarPanel):
         layout.prop(p4, "push_amount")
         uh.separator(layout, factor=0.5)
         row = layout.row(align=True)
-        row.operator("animassist.p4_push_x", text="+X")
-        row.operator("animassist.p4_push_y", text="+Y")
-        row.operator("animassist.p4_push_z", text="+Z")
+        row.operator("animassist.p4_push_x", text="+X", text_ctxt='AnimAssist')
+        row.operator("animassist.p4_push_y", text="+Y", text_ctxt='AnimAssist')
+        row.operator("animassist.p4_push_z", text="+Z", text_ctxt='AnimAssist')
         row = layout.row(align=True)
-        row.operator("animassist.p4_pull_x", text="-X")
-        row.operator("animassist.p4_pull_y", text="-Y")
-        row.operator("animassist.p4_pull_z", text="-Z")
+        row.operator("animassist.p4_pull_x", text="-X", text_ctxt='AnimAssist')
+        row.operator("animassist.p4_pull_y", text="-Y", text_ctxt='AnimAssist')
+        row.operator("animassist.p4_pull_z", text="-Z", text_ctxt='AnimAssist')
         uh.separator(layout)
 
         row = layout.row(align=True)
-        row.operator("animassist.p4_reapply_last", text="Reapply", icon="FILE_REFRESH")
-        row.operator("animassist.p4_invert_last", text="Invert", icon="LOOP_BACK")
+        row.operator("animassist.p4_reapply_last", text="Reapply", icon="FILE_REFRESH", text_ctxt='AnimAssist')
+        row.operator("animassist.p4_invert_last", text="Invert", icon="LOOP_BACK", text_ctxt='AnimAssist')
 
     def draw_scope(self, context):
         layout = self.layout

@@ -13,6 +13,8 @@ Operators that manage the trajectory overlay lifecycle:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.logging import get_logger
@@ -261,7 +263,7 @@ class AA_OT_p5_enable_overlay(bpy.types.Operator):
     def execute(self, context):
         p5 = get_p5(context)
         if p5 is None:
-            self.report({"WARNING"}, "Trajectory properties not available")
+            self.report({"WARNING"}, T('Trajectory properties not available'))
             return {"CANCELLED"}
 
         state = rts_mod.get_state()
@@ -269,7 +271,7 @@ class AA_OT_p5_enable_overlay(bpy.types.Operator):
         # Already enabled?
         h3d, h2d = get_handler_ids()
         if h3d >= 0 or h2d >= 0:
-            self.report({"INFO"}, "Overlay already active")
+            self.report({"INFO"}, T('Overlay already active'))
             return {"CANCELLED"}
 
         # Register draw handlers.
@@ -363,7 +365,7 @@ class AA_OT_p5_refresh_overlay(bpy.types.Operator):
     def execute(self, context):
         p5 = get_p5(context)
         if p5 is None or not p5.overlay_enabled:
-            self.report({"WARNING"}, "Overlay not active")
+            self.report({"WARNING"}, T('Overlay not active'))
             return {"CANCELLED"}
 
         # Bump generation to invalidate all cached entries.
@@ -372,10 +374,10 @@ class AA_OT_p5_refresh_overlay(bpy.types.Operator):
 
         try:
             n_paths, n_issues = _build_all_draw_data(context, p5)
-            self.report({"INFO"}, f"Refreshed: {n_paths} paths, {n_issues} issues")
+            self.report({"INFO"}, F('Refreshed: {p0} paths, {p1} issues', p0=f'{n_paths}', p1=f'{n_issues}'))
         except Exception:
             _log.exception("Refresh failed")
-            self.report({"ERROR"}, "Could not refresh the overlay. Details are in the system console (Window > Toggle System Console)")
+            self.report({"ERROR"}, T('Could not refresh the overlay. Details are in the system console (Window > Toggle System Console)'))
 
         for area in context.screen.areas:
             if area.type == "VIEW_3D":
@@ -404,7 +406,7 @@ class AA_OT_p5_isolate_target(bpy.types.Operator):
         name="Target Key",
         description="Target key in object_name::bone_name format",
         default="",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         p5 = get_p5(context)
@@ -485,19 +487,19 @@ class AA_OT_p5_run_diagnostics(bpy.types.Operator):
     def execute(self, context):
         p5 = get_p5(context)
         if p5 is None:
-            self.report({"WARNING"}, "Trajectory properties not available")
+            self.report({"WARNING"}, T('Trajectory properties not available'))
             return {"CANCELLED"}
 
         if not p5.overlay_enabled:
-            self.report({"WARNING"}, "Enable overlay first")
+            self.report({"WARNING"}, T('Enable overlay first'))
             return {"CANCELLED"}
 
         try:
             n_paths, n_issues = _build_all_draw_data(context, p5, run_diagnostics=True)
-            self.report({"INFO"}, f"Diagnostics: {n_issues} issues found")
+            self.report({"INFO"}, F('Diagnostics: {p0} issues found', p0=f'{n_issues}'))
         except Exception:
             _log.exception("Diagnostics failed")
-            self.report({"ERROR"}, "Could not run overlay diagnostics. Details are in the system console (Window > Toggle System Console)")
+            self.report({"ERROR"}, T('Could not run overlay diagnostics. Details are in the system console (Window > Toggle System Console)'))
 
         for area in context.screen.areas:
             if area.type == "VIEW_3D":

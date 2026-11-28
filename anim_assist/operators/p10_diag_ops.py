@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.logging import get_logger
@@ -20,13 +22,13 @@ class AA_OT_p10_system_diagnostics(bpy.types.Operator):
     def execute(self, context):
         from ..core import p10_diagnostics as diag
         report = diag.get_system_report()
-        self.report({'INFO'}, f"Blender: {report.get('blender_version', '?')}")
+        self.report({'INFO'}, F('Blender: {p0}', p0=f"{report.get('blender_version', '?')}"))
         rt = report.get("runtime", {})
-        self.report({'INFO'}, f"Batch mode: {rt.get('is_batch_processing', False)}")
-        self.report({'INFO'}, f"Overlays: {rt.get('active_overlay_count', 0)}")
+        self.report({'INFO'}, F('Batch mode: {p0}', p0=f"{rt.get('is_batch_processing', False)}"))
+        self.report({'INFO'}, F('Overlays: {p0}', p0=f"{rt.get('active_overlay_count', 0)}"))
         tr = report.get("tool_registry", {})
-        self.report({'INFO'}, f"Registered tools: {tr.get('total_tools', 0)}")
-        self.report({'INFO'}, f"Dispatch commands: {len(report.get('dispatch_commands', []))}")
+        self.report({'INFO'}, F('Registered tools: {p0}', p0=f"{tr.get('total_tools', 0)}"))
+        self.report({'INFO'}, F('Dispatch commands: {p0}', p0=f"{len(report.get('dispatch_commands', []))}"))
         log_operation(self.bl_idname, True, "report generated")
         return {'FINISHED'}
 
@@ -43,9 +45,9 @@ class AA_OT_p10_leak_check(bpy.types.Operator):
         if warnings:
             for w in warnings:
                 self.report({'WARNING'}, w)
-            self.report({'WARNING'}, f"{len(warnings)} potential leak(s) found")
+            self.report({'WARNING'}, F('{p0} potential leak(s) found', p0=f'{len(warnings)}'))
         else:
-            self.report({'INFO'}, "No leaks detected")
+            self.report({'INFO'}, T('No leaks detected'))
         log_operation(self.bl_idname, True, f"{len(warnings)} warnings")
         return {'FINISHED'}
 
@@ -60,7 +62,7 @@ class AA_OT_p10_stale_cleanup(bpy.types.Operator):
         from ..core import p10_diagnostics as diag
         cleaned = diag.run_stale_cleanup()
         total = sum(cleaned.values())
-        self.report({'INFO'}, f"Cleaned {total} stale item(s)")
+        self.report({'INFO'}, F('Cleaned {p0} stale item(s)', p0=f'{total}'))
         log_operation(self.bl_idname, True, f"{total} items cleaned")
         return {'FINISHED'}
 
@@ -75,7 +77,7 @@ class AA_OT_p10_metadata_cleanup(bpy.types.Operator):
         from ..core import p10_diagnostics as diag
         cleaned = diag.run_metadata_cleanup(context)
         total = sum(cleaned.values())
-        self.report({'INFO'}, f"Cleaned {total} metadata item(s)")
+        self.report({'INFO'}, F('Cleaned {p0} metadata item(s)', p0=f'{total}'))
         log_operation(self.bl_idname, True, f"{total} items cleaned")
         return {'FINISHED'}
 
@@ -91,7 +93,7 @@ class AA_OT_p10_rebuild_caches(bpy.types.Operator):
         results = diag.rebuild_all_caches(context)
         ok = sum(1 for v in results.values() if v)
         fail = sum(1 for v in results.values() if not v)
-        self.report({'INFO'}, f"Caches rebuilt: {ok} ok, {fail} failed")
+        self.report({'INFO'}, F('Caches rebuilt: {p0} ok, {p1} failed', p0=f'{ok}', p1=f'{fail}'))
         log_operation(self.bl_idname, fail == 0, f"{ok} ok / {fail} failed")
         return {'FINISHED'}
 
@@ -105,7 +107,7 @@ class AA_OT_p10_reset_ui(bpy.types.Operator):
     def execute(self, context):
         from ..core import p10_diagnostics as diag
         count = diag.reset_ui_state(context)
-        self.report({'INFO'}, f"UI state reset: {count} section(s) cleared")
+        self.report({'INFO'}, F('UI state reset: {p0} section(s) cleared', p0=f'{count}'))
         log_operation(self.bl_idname, True, f"{count} sections reset")
         return {'FINISHED'}
 
@@ -121,10 +123,10 @@ class AA_OT_p10_validate_registration(bpy.types.Operator):
         issues = diag.validate_registration()
         if issues:
             for issue in issues:
-                self.report({'WARNING'}, issue)
-            self.report({'WARNING'}, f"{len(issues)} registration issue(s)")
+                self.report({'WARNING'}, T(issue))
+            self.report({'WARNING'}, F('{p0} registration issue(s)', p0=f'{len(issues)}'))
         else:
-            self.report({'INFO'}, "All registrations valid")
+            self.report({'INFO'}, T('All registrations valid'))
         log_operation(self.bl_idname, len(issues) == 0, f"{len(issues)} issues")
         return {'FINISHED'}
 

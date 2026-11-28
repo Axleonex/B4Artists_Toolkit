@@ -17,6 +17,8 @@ Uses PanelAnatomyMixin section hooks:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.p11_properties import get_p11
@@ -129,7 +131,7 @@ class ANIMASSIST_UL_p11_layer_stack(bpy.types.UIList):
 
         elif self.layout_type == 'GRID':
             layout.alignment = 'CENTER'
-            layout.label(text=layer.name, icon=_layer_icon(layer))
+            layout.label(text=layer.name, icon=_layer_icon(layer), translate=False)
 
     def draw_filter(self, context, layout):
         # No filtering needed for animation layers.
@@ -167,32 +169,32 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
         try:
             self._draw_primary_inner(context, layout)
         except Exception as exc:  # noqa: BLE001
-            layout.label(text=f"Layer panel error: {exc}", icon="ERROR")
+            layout.label(text=F('Layer panel error: {p0}', p0=f'{exc}'), icon="ERROR", translate=False)
 
     def _draw_primary_inner(
         self, context: bpy.types.Context, layout
     ) -> None:
         p11 = get_p11(context)
         if p11 is None:
-            layout.label(text="Layer system unavailable.", icon="ERROR")
-            layout.label(text="Save & re-open the file, or reload the addon.")
+            layout.label(text="Layer system unavailable.", icon="ERROR", text_ctxt='AnimAssist')
+            layout.label(text="Save & re-open the file, or reload the addon.", text_ctxt='AnimAssist')
             return
 
         # ── Master toggle ──
         row = layout.row(align=True)
-        row.prop(p11, "layers_enabled", text="Enable Layers")
+        row.prop(p11, "layers_enabled", text="Enable Layers", text_ctxt='AnimAssist')
         uh.draw_explainer_icon(row, context, "p11.layers_enabled")
 
         if not p11.layers_enabled:
-            layout.label(text="Turn on to animate in layers", icon="INFO")
+            layout.label(text="Turn on to animate in layers", icon="INFO", text_ctxt='AnimAssist')
             return
 
         uh.separator(layout)
 
         # ── Layer stack — UIList ──
         if len(p11.layers) == 0:
-            layout.label(text="Next: add a base layer", icon="INFO")
-            layout.label(text="from the current animation.")
+            layout.label(text="Next: add a base layer", icon="INFO", text_ctxt='AnimAssist')
+            layout.label(text="from the current animation.", text_ctxt='AnimAssist')
             # Use plain operator() so a missing operator shows disabled
             # rather than crashing the entire draw.
             col = layout.column()
@@ -200,7 +202,7 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
                 "animassist.p11_init_layers",
                 text="Create Base Layer",
                 icon="FILE_NEW",
-            )
+             text_ctxt='AnimAssist')
             return
 
         # The UIList widget with +/- buttons on the right side.
@@ -235,7 +237,7 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
 
             # Header row: name + rename button.
             header = info_box.row(align=True)
-            header.label(text=f"Active: {active.name}", icon=_layer_icon(active))
+            header.label(text=F('Active: {p0}', p0=f'{active.name}'), icon=_layer_icon(active), translate=False)
             header.operator("animassist.p11_rename_layer", text="", icon="GREASEPENCIL")
 
             # Blend mode.
@@ -245,13 +247,13 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
 
             # Weight slider (larger, more visible).
             row = info_box.row(align=True)
-            row.prop(active, "weight", text="Weight", slider=True)
+            row.prop(active, "weight", text="Weight", slider=True, text_ctxt='AnimAssist')
             uh.draw_explainer_icon(row, context, "p11.weight")
 
             # Color + auto-key.
             row = info_box.row(align=True)
-            row.prop(active, "layer_color", text="Color")
-            row.prop(active, "auto_key", text="Auto Key", icon="REC", toggle=True)
+            row.prop(active, "layer_color", text="Color", text_ctxt='AnimAssist')
+            row.prop(active, "auto_key", text="Auto Key", icon="REC", toggle=True, text_ctxt='AnimAssist')
 
     # ── Scope: assignments, scope filter, editing mode ───────────────
 
@@ -262,23 +264,23 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
             if p11 is None or not p11.layers_enabled:
                 return
         except Exception as exc:  # noqa: BLE001
-            layout.label(text=f"Scope error: {exc}", icon="ERROR")
+            layout.label(text=F('Scope error: {p0}', p0=f'{exc}'), icon="ERROR", translate=False)
             return
 
         # ── Editing mode ──
         uh.section_header(layout, "Editing Mode", icon="TOOL_SETTINGS")
 
         row = layout.row(align=True)
-        row.prop(p11, "edit_active_only", text="Edit Active Only")
+        row.prop(p11, "edit_active_only", text="Edit Active Only", text_ctxt='AnimAssist')
         uh.draw_explainer_icon(row, context, "p11.edit_active_only")
 
         row = layout.row(align=True)
-        row.prop(p11, "auto_assign_on_key", text="Auto-Assign on Key")
+        row.prop(p11, "auto_assign_on_key", text="Auto-Assign on Key", text_ctxt='AnimAssist')
         uh.draw_explainer_icon(row, context, "p11.auto_assign_on_key")
 
         row = layout.row(align=True)
-        row.prop(p11, "show_layer_colors", text="Show Colors")
-        row.prop(p11, "show_unassigned_warning", text="Warn Unassigned")
+        row.prop(p11, "show_layer_colors", text="Show Colors", text_ctxt='AnimAssist')
+        row.prop(p11, "show_unassigned_warning", text="Warn Unassigned", text_ctxt='AnimAssist')
 
         uh.separator(layout)
 
@@ -292,12 +294,12 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
                 layout.label(
                     text="No assignments (all bones)",
                     icon="INFO",
-                )
+                 text_ctxt='AnimAssist')
             else:
                 bone_box = layout.box()
                 for i, ba in enumerate(active.assigned_bones):
                     row = bone_box.row(align=True)
-                    row.label(text=ba.bone_name, icon="BONE_DATA")
+                    row.label(text=ba.bone_name, icon="BONE_DATA", translate=False)
                     op = row.operator(
                         "animassist.p11_remove_bone",
                         text="", icon="X",
@@ -324,15 +326,15 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
             row.operator(
                 "animassist.p11_assign_by_pattern",
                 text="By Pattern", icon="FILTER",
-            )
+             text_ctxt='AnimAssist')
             row.operator(
                 "animassist.p11_clear_assignments",
                 text="Clear All", icon="X",
-            )
+             text_ctxt='AnimAssist')
             row.operator(
                 "animassist.p11_select_assigned",
                 text="Select", icon="RESTRICT_SELECT_OFF",
-            )
+             text_ctxt='AnimAssist')
 
             uh.separator(layout)
 
@@ -343,7 +345,7 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
                 help_id="p11.layer_scope",
             )
             if active.layer_scope == "CUSTOM":
-                layout.prop(active, "custom_filter", text="Filter")
+                layout.prop(active, "custom_filter", text="Filter", text_ctxt='AnimAssist')
 
     # ── Advanced: channel overrides, presets, blending, merge ────────
 
@@ -354,7 +356,7 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
             if p11 is None or not p11.layers_enabled:
                 return
         except Exception as exc:  # noqa: BLE001
-            layout.label(text=f"Advanced error: {exc}", icon="ERROR")
+            layout.label(text=F('Advanced error: {p0}', p0=f'{exc}'), icon="ERROR", translate=False)
             return
 
         # ── Auto-Partition ──
@@ -389,24 +391,24 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
                     for i, ovr in enumerate(active.channel_overrides):
                         ovr_box = body.box()
                         row = ovr_box.row(align=True)
-                        row.label(text=ovr.bone_name, icon="BONE_DATA")
+                        row.label(text=ovr.bone_name, icon="BONE_DATA", translate=False)
                         op = row.operator(
                             "animassist.p11_remove_channel_override",
                             text="", icon="X",
                         )
                         op.index = i
                         row = ovr_box.row(align=True)
-                        row.prop(ovr, "location_weight", text="Loc")
-                        row.prop(ovr, "rotation_weight", text="Rot")
-                        row.prop(ovr, "scale_weight", text="Sca")
+                        row.prop(ovr, "location_weight", text="Loc", text_ctxt='AnimAssist')
+                        row.prop(ovr, "rotation_weight", text="Rot", text_ctxt='AnimAssist')
+                        row.prop(ovr, "scale_weight", text="Sca", text_ctxt='AnimAssist')
                 else:
-                    body.label(text="No channel overrides", icon="INFO")
+                    body.label(text="No channel overrides", icon="INFO", text_ctxt='AnimAssist')
 
                 uh.separator(body)
                 body.operator(
                     "animassist.p11_add_channel_override",
                     text="Add Override", icon="ADD",
-                )
+                 text_ctxt='AnimAssist')
 
         # ── Blend Between Layers ──
         body, expanded = uh.subsection(
@@ -417,9 +419,9 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
             default_open=False,
         )
         if expanded:
-            body.prop(p11, "blend_source_index", text="Source")
-            body.prop(p11, "blend_target_index", text="Target")
-            body.prop(p11, "blend_factor", text="Factor", slider=True)
+            body.prop(p11, "blend_source_index", text="Source", text_ctxt='AnimAssist')
+            body.prop(p11, "blend_target_index", text="Target", text_ctxt='AnimAssist')
+            body.prop(p11, "blend_factor", text="Factor", slider=True, text_ctxt='AnimAssist')
 
             row = body.row(align=True)
             uh.explained_op(
@@ -469,7 +471,7 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
             body.operator(
                 "animassist.p11_evaluate_stack",
                 text="Evaluate Stack", icon="PLAY",
-            )
+             text_ctxt='AnimAssist')
 
         # ── Presets ──
         body, expanded = uh.subsection(
@@ -487,21 +489,21 @@ class ANIMASSIST_PT_p11_layers(PanelAnatomyMixin, DopeSheetSidebarPanel):
                     row.label(
                         text=preset.name,
                         icon="RADIOBUT_ON" if is_active else "RADIOBUT_OFF",
-                    )
-                body.prop(p11, "user_presets_index", text="Active")
+                    translate=False)
+                body.prop(p11, "user_presets_index", text="Active", text_ctxt='AnimAssist')
             else:
-                body.label(text="No saved presets", icon="INFO")
+                body.label(text="No saved presets", icon="INFO", text_ctxt='AnimAssist')
 
             uh.separator(body)
             row = body.row(align=True)
             row.operator(
                 "animassist.p11_save_preset",
                 text="Save", icon="FILE_TICK",
-            )
+             text_ctxt='AnimAssist')
             row.operator(
                 "animassist.p11_load_preset",
                 text="Load", icon="FILE_FOLDER",
-            )
+             text_ctxt='AnimAssist')
             row.operator(
                 "animassist.p11_remove_preset",
                 text="", icon="X",
@@ -524,22 +526,22 @@ class ANIMASSIST_PT_p11_layers_v3d(PanelAnatomyMixin, View3DSidebarPanel):
         layout = self.layout
         p11 = get_p11(context)
         if p11 is None:
-            layout.label(text="Layer system unavailable", icon="ERROR")
+            layout.label(text="Layer system unavailable", icon="ERROR", text_ctxt='AnimAssist')
             return
 
         row = layout.row(align=True)
-        row.prop(p11, "layers_enabled", text="Enable Layers", icon="RENDERLAYERS")
+        row.prop(p11, "layers_enabled", text="Enable Layers", icon="RENDERLAYERS", text_ctxt='AnimAssist')
 
         if not p11.layers_enabled:
-            layout.label(text="Turn on to animate in layers", icon="INFO")
+            layout.label(text="Turn on to animate in layers", icon="INFO", text_ctxt='AnimAssist')
             return
         if len(p11.layers) == 0:
-            layout.label(text="Next: add a base layer", icon="INFO")
-            layout.label(text="from the current animation.")
+            layout.label(text="Next: add a base layer", icon="INFO", text_ctxt='AnimAssist')
+            layout.label(text="from the current animation.", text_ctxt='AnimAssist')
             layout.operator(
                 "animassist.p11_init_layers",
                 text="Create Base Layer", icon="FILE_NEW",
-            )
+             text_ctxt='AnimAssist')
             return
 
         uh.separator(layout)
@@ -576,22 +578,22 @@ class ANIMASSIST_PT_p11_layers_v3d(PanelAnatomyMixin, View3DSidebarPanel):
         uh.separator(layout)
 
         if not _in_pose_mode(context):
-            layout.label(text="Enter Pose Mode for assignment tools", icon="INFO")
+            layout.label(text="Enter Pose Mode for assignment tools", icon="INFO", text_ctxt='AnimAssist')
             return
 
         row = layout.row(align=True)
         row.operator(
             "animassist.p11_assign_selected",
             text="Assign", icon="ADD",
-        )
+         text_ctxt='AnimAssist')
         row.operator(
             "animassist.p11_remove_selected",
             text="Remove", icon="REMOVE",
-        )
+         text_ctxt='AnimAssist')
         row.operator(
             "animassist.p11_select_assigned",
             text="Select", icon="RESTRICT_SELECT_OFF",
-        )
+         text_ctxt='AnimAssist')
 
 
 # ---------------------------------------------------------------------------

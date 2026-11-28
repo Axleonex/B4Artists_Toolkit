@@ -10,6 +10,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import StringProperty
 from bpy.types import Operator
@@ -35,7 +37,7 @@ class AA_OT_p12_autofill_shape_key_wiring(Operator):
     library_id: StringProperty(  # type: ignore[valid-type]
         name="Library",
         default="CARTOON_5",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -54,17 +56,18 @@ class AA_OT_p12_autofill_shape_key_wiring(Operator):
         if mesh_obj is None and context.active_object is not None and context.active_object.type == "MESH":
             mesh_obj = context.active_object
         if mesh_obj is None:
-            self.report({"ERROR"}, "No mesh selected and no link.mesh_name set")
+            self.report({"ERROR"}, T('No mesh selected and no link.mesh_name set'))
             return {"CANCELLED"}
 
         added = skw.autofill_shape_key_wiring(p12, mesh_obj, self.library_id)
         if added == 0:
-            self.report({"INFO"}, "All " + self.library_id + " visemes already wired")
+            self.report({"INFO"}, F('All {p0} visemes already wired', p0=self.library_id))
         else:
             missing = skw.missing_shape_keys(p12, mesh_obj)
-            msg = "Autofilled " + str(added) + " row(s)"
+            msg = F('Autofilled {p0} row(s)', p0=str(added))
             if missing:
-                msg += " - " + str(len(missing)) + " viseme(s) need a shape key: " + ", ".join(missing[:5])
+                msg = F('{p0} - {p1} viseme(s) need a shape key: {p2}',
+                        p0=msg, p1=str(len(missing)), p2=', '.join(missing[:5]))
             self.report({"INFO"}, msg)
         return {"FINISHED"}
 
@@ -89,16 +92,16 @@ class AA_OT_p12_pick_mesh(Operator):
     def execute(self, context):
         p12 = p12_props.get_p12(context)
         if not p12.layer_links or p12.active_link_index < 0 or p12.active_link_index >= len(p12.layer_links):
-            self.report({"ERROR"}, "No lipsync layer link selected. Select one in the Lipsync panel list first")
+            self.report({"ERROR"}, T('No lipsync layer link selected. Select one in the Lipsync panel list first'))
             return {"CANCELLED"}
         link = p12.layer_links[p12.active_link_index]
         link.mesh_name = context.active_object.name
         sk = context.active_object.data.shape_keys
         if sk is None:
-            self.report({"WARNING"}, "Mesh '" + link.mesh_name + "' has no shape keys")
+            self.report({"WARNING"}, F("Mesh '{p0}' has no shape keys", p0=link.mesh_name))
         else:
             count = len([kb for kb in sk.key_blocks if kb.name != "Basis"])
-            self.report({"INFO"}, "Mesh set to '" + link.mesh_name + "' (" + str(count) + " shape keys)")
+            self.report({"INFO"}, F("Mesh set to '{p0}' ({p1} shape keys)", p0=link.mesh_name, p1=str(count)))
         return {"FINISHED"}
 
 
@@ -121,7 +124,7 @@ class AA_OT_p12_capture_viseme_shape(Operator):
     viseme_name: StringProperty(  # type: ignore[valid-type]
         name="Viseme",
         default="A",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -140,12 +143,12 @@ class AA_OT_p12_capture_viseme_shape(Operator):
                 if entry.shape_key_name:
                     self.report(
                         {"INFO"},
-                        "Viseme '" + self.viseme_name + "' wired to shape key '" + entry.shape_key_name + "'",
+                        F("Viseme '{p0}' wired to shape key '{p1}'", p0=self.viseme_name, p1=entry.shape_key_name),
                     )
                 else:
                     self.report(
                         {"WARNING"},
-                        "Viseme '" + self.viseme_name + "' has no shape key wired - fill in the wiring row",
+                        F("Viseme '{p0}' has no shape key wired - fill in the wiring row", p0=self.viseme_name),
                     )
                 return {"FINISHED"}
         # Not yet in wiring - add it.
@@ -154,7 +157,7 @@ class AA_OT_p12_capture_viseme_shape(Operator):
         entry.shape_key_name = ""
         self.report(
             {"INFO"},
-            "Added wiring row for viseme '" + self.viseme_name + "' - fill in the shape key name",
+            F("Added wiring row for viseme '{p0}' - fill in the shape key name", p0=self.viseme_name),
         )
         return {"FINISHED"}
 

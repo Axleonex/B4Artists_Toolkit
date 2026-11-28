@@ -71,17 +71,17 @@ class AA_UISectionState(bpy.types.PropertyGroup):
         name="Panel",
         description="bl_idname of the owning panel",
         default="",
-    )
+     translation_context='AnimAssist')
     section_key: StringProperty(  # type: ignore[valid-type]
         name="Section",
         description="Stable identifier for the subsection within its panel",
         default="",
-    )
+     translation_context='AnimAssist')
     expanded: BoolProperty(  # type: ignore[valid-type]
         name="Expanded",
         description="Whether this subsection is currently expanded",
         default=True,
-    )
+     translation_context='AnimAssist')
 
 
 class AA_UIState(bpy.types.PropertyGroup):
@@ -100,7 +100,7 @@ class AA_UIState(bpy.types.PropertyGroup):
             "can be flipped per-session without touching preferences"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
     show_analysis_details: BoolProperty(  # type: ignore[valid-type]
         name="Show Analysis Details",
         description=(
@@ -108,7 +108,7 @@ class AA_UIState(bpy.types.PropertyGroup):
             "disabled only the summary line and counts are drawn"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     show_advanced_default: BoolProperty(  # type: ignore[valid-type]
         name="Show Advanced By Default",
         description=(
@@ -116,9 +116,9 @@ class AA_UIState(bpy.types.PropertyGroup):
             "panel is drawn in a session"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
-    sections: CollectionProperty(type=AA_UISectionState)  # type: ignore[valid-type]
+    sections: CollectionProperty(type=AA_UISectionState, translation_context='AnimAssist', name="sections")  # type: ignore[valid-type]
 
 
 # ---------------------------------------------------------------------------
@@ -193,7 +193,7 @@ def register_properties() -> None:
         setattr(
             bpy.types.WindowManager,
             constants.UI_STATE_ATTR,
-            PointerProperty(type=AA_UIState),
+            PointerProperty(type=AA_UIState, translation_context='AnimAssist'),
         )
 
 

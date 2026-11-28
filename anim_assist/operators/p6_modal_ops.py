@@ -15,6 +15,8 @@ No ``bpy.ops.*`` calls inside the modal body.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 
 import bpy
 
@@ -127,12 +129,12 @@ class AA_OT_p6_modal_scale(bpy.types.Operator):
     def invoke(self, context: bpy.types.Context, event):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         self._fcurves, self._obj_name = _get_fcurves(context)
         if not self._fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         # Resolve pivot from current properties.
@@ -191,8 +193,7 @@ class AA_OT_p6_modal_scale(bpy.types.Operator):
         if show:
             try:
                 context.area.header_text_set(
-                    f"Scale: ×{self._current_factor:.3f} | "
-                    "LMB/Enter=Confirm  RMB/Esc=Cancel  Shift=Precise  Ctrl=Snap"
+                    F('Scale: ×{p0} | LMB/Enter=Confirm  RMB/Esc=Cancel  Shift=Precise  Ctrl=Snap', p0=f'{self._current_factor:.3f}')
                 )
             except Exception:
                 pass
@@ -202,7 +203,7 @@ class AA_OT_p6_modal_scale(bpy.types.Operator):
             context.area.header_text_set(None)
         except Exception:
             pass
-        self.report({"INFO"}, f"Scale ×{self._current_factor:.3f}")
+        self.report({"INFO"}, F('Scale ×{p0}', p0=f'{self._current_factor:.3f}'))
 
     def _cancel(self, context: bpy.types.Context) -> None:
         _restore_snap(self._fcurves, self._snap_data)
@@ -211,7 +212,7 @@ class AA_OT_p6_modal_scale(bpy.types.Operator):
         except Exception:
             pass
         _tag_redraw(context)
-        self.report({"INFO"}, "Interactive scale cancelled")
+        self.report({"INFO"}, T('Interactive scale cancelled'))
 
     def cancel(self, context: bpy.types.Context):
         self._cancel(context)
@@ -236,12 +237,12 @@ class AA_OT_p6_modal_offset(bpy.types.Operator):
     def invoke(self, context: bpy.types.Context, event):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         self._fcurves, self._obj_name = _get_fcurves(context)
         if not self._fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         self._snap = p6.modal_snap
@@ -288,8 +289,7 @@ class AA_OT_p6_modal_offset(bpy.types.Operator):
             try:
                 sign = "+" if self._current_delta >= 0 else ""
                 context.area.header_text_set(
-                    f"Offset: {sign}{self._current_delta:.1f}f | "
-                    "LMB/Enter=Confirm  RMB/Esc=Cancel  Shift=Sub-frame  Ctrl=Snap"
+                    F('Offset: {p0}{p1}f | LMB/Enter=Confirm  RMB/Esc=Cancel  Shift=Sub-frame  Ctrl=Snap', p0=f'{sign}', p1=f'{self._current_delta:.1f}')
                 )
             except Exception:
                 pass
@@ -300,7 +300,7 @@ class AA_OT_p6_modal_offset(bpy.types.Operator):
         except Exception:
             pass
         sign = "+" if self._current_delta >= 0 else ""
-        self.report({"INFO"}, f"Offset {sign}{self._current_delta:.1f}f")
+        self.report({"INFO"}, F('Offset {p0}{p1}f', p0=f'{sign}', p1=f'{self._current_delta:.1f}'))
 
     def _cancel(self, context: bpy.types.Context) -> None:
         _restore_snap(self._fcurves, self._snap_data)
@@ -309,7 +309,7 @@ class AA_OT_p6_modal_offset(bpy.types.Operator):
         except Exception:
             pass
         _tag_redraw(context)
-        self.report({"INFO"}, "Interactive offset cancelled")
+        self.report({"INFO"}, T('Interactive offset cancelled'))
 
     def cancel(self, context: bpy.types.Context):
         self._cancel(context)

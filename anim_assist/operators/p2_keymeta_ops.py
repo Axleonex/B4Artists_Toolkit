@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from bpy.props import BoolProperty, StringProperty
 from bpy.types import Operator
 
@@ -29,18 +31,18 @@ class ANIMASSIST_OT_tag_selected_keys(_AnimEditorOp):
         name="Tag",
         description="String written into the tag field of every selected key's metadata",
         default="",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         if not self.tag:
-            self.report({"WARNING"}, "Empty tag")
+            self.report({"WARNING"}, T('Empty tag'))
             return {"CANCELLED"}
         scene = context.scene
         n = 0
         for obj, _a, fc, _i, kp in iter_selected_keys(context):
             meta.upsert_meta(scene, key_identity(obj.name, fc, kp.co.x), tag=self.tag)
             n += 1
-        self.report({"INFO"}, f"Tagged {n} keys")
+        self.report({"INFO"}, F('Tagged {p0} keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -60,7 +62,7 @@ class ANIMASSIST_OT_clear_tag_selected(_AnimEditorOp):
             if item:
                 item.tag = ""
                 n += 1
-        self.report({"INFO"}, f"Cleared {n} tags")
+        self.report({"INFO"}, F('Cleared {p0} tags', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -75,7 +77,7 @@ class ANIMASSIST_OT_set_key_note(_AnimEditorOp):
         name="Note",
         description="Free-form annotation written into the metadata note field",
         default="",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         scene = context.scene
@@ -83,7 +85,7 @@ class ANIMASSIST_OT_set_key_note(_AnimEditorOp):
         for obj, _a, fc, _i, kp in iter_selected_keys(context):
             meta.upsert_meta(scene, key_identity(obj.name, fc, kp.co.x), note=self.note)
             n += 1
-        self.report({"INFO"}, f"Note set on {n} keys")
+        self.report({"INFO"}, F('Note set on {p0} keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -98,7 +100,7 @@ class ANIMASSIST_OT_protect_selected(_AnimEditorOp):
         name="Protected",
         description="True to protect, False to clear the protected flag",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         scene = context.scene
@@ -108,7 +110,7 @@ class ANIMASSIST_OT_protect_selected(_AnimEditorOp):
                 scene, key_identity(obj.name, fc, kp.co.x), protected=self.protected
             )
             n += 1
-        self.report({"INFO"}, f"{'Protected' if self.protected else 'Unprotected'} {n} keys")
+        self.report({"INFO"}, F('{p0} {p1} keys', p0=f"{(T('Protected') if self.protected else T('Unprotected'))}", p1=f'{n}'))
         return {"FINISHED"}
 
 
@@ -123,7 +125,7 @@ class ANIMASSIST_OT_set_key_flavor(_AnimEditorOp):
         name="Flavor",
         description="Secondary tag axis stored in the metadata flavor field",
         default="",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         scene = context.scene
@@ -131,7 +133,7 @@ class ANIMASSIST_OT_set_key_flavor(_AnimEditorOp):
         for obj, _a, fc, _i, kp in iter_selected_keys(context):
             meta.upsert_meta(scene, key_identity(obj.name, fc, kp.co.x), flavor=self.flavor)
             n += 1
-        self.report({"INFO"}, f"Flavor set on {n} keys")
+        self.report({"INFO"}, F('Flavor set on {p0} keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -149,7 +151,7 @@ class ANIMASSIST_OT_clear_all_metadata(_AnimEditorOp):
         n = len(pg.key_metadata)
         pg.key_metadata.clear()
         meta.mark_dirty(scene)
-        self.report({"INFO"}, f"Cleared {n} records")
+        self.report({"INFO"}, F('Cleared {p0} records', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -161,7 +163,7 @@ class ANIMASSIST_OT_prune_orphan_metadata(_AnimEditorOp):
 
     def execute(self, context):
         removed = meta.prune_orphans(context)
-        self.report({"INFO"}, f"Pruned {removed} records")
+        self.report({"INFO"}, F('Pruned {p0} records', p0=f'{removed}'))
         return {"FINISHED"}
 
 

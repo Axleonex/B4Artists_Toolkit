@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from .. import constants
@@ -18,51 +20,51 @@ _log = get_logger(__name__)
 
 def _build_diagnostics_text(context: bpy.types.Context) -> str:
     lines: list[str] = []
-    lines.append(f"Anim Assist v{constants.ADDON_VERSION_STRING}")
-    lines.append(f"Blender {bpy.app.version_string}")
+    lines.append(F('Anim Assist v{p0}', p0=f'{constants.ADDON_VERSION_STRING}'))
+    lines.append(F('Blender {p0}', p0=f'{bpy.app.version_string}'))
     lines.append("")
 
     target = get_active_target(context)
     if target is not None:
-        lines.append(f"Active Object: {target.obj.name}")
+        lines.append(F('Active Object: {p0}', p0=f'{target.obj.name}'))
         if target.bone_name:
-            lines.append(f"Active Bone: {target.bone_name}")
+            lines.append(F('Active Bone: {p0}', p0=f'{target.bone_name}'))
         if target.action:
             lines.append(
-                f"Action: {target.action.name} ({len(target.fcurves)} fcurves)"
+                F('Action: {p0} ({p1} fcurves)', p0=f'{target.action.name}', p1=f'{len(target.fcurves)}')
             )
         else:
-            lines.append("Action: None")
-        lines.append(f"Linked: {target.is_linked}")
+            lines.append(T('Action: None'))
+        lines.append(F('Linked: {p0}', p0=f'{target.is_linked}'))
     else:
-        lines.append("Active Object: None")
+        lines.append(T('Active Object: None'))
 
     lines.append("")
 
     ge = AnimContextResolver.get_graph_editor(context)
     ds = AnimContextResolver.get_dope_sheet(context)
     tl = AnimContextResolver.get_timeline(context)
-    lines.append(f"Graph Editor: {'found' if ge else 'not found'}")
-    lines.append(f"Dope Sheet: {'found' if ds else 'not found'}")
-    lines.append(f"Timeline: {'found' if tl else 'not found'}")
+    lines.append(F('Graph Editor: {p0}', p0=f"{(T('found') if ge else T('not found'))}"))
+    lines.append(F('Dope Sheet: {p0}', p0=f"{(T('found') if ds else T('not found'))}"))
+    lines.append(F('Timeline: {p0}', p0=f"{(T('found') if tl else T('not found'))}"))
 
     lines.append("")
 
     reg = cap_mod.get_registry()
     caps = reg.all_capabilities()
-    lines.append(f"Capabilities ({len(caps)}):")
+    lines.append(F('Capabilities ({p0}):', p0=f'{len(caps)}'))
     for name, available in sorted(caps.items()):
-        lines.append(f"  {name}: {'OK' if available else 'UNAVAILABLE'}")
+        lines.append(F('  {p0}: {p1}', p0=f'{name}', p1=f"{(T('OK') if available else T('UNAVAILABLE'))}"))
 
     lines.append("")
 
     cache = cache_mod.get_cache()
-    lines.append(f"Selection history entries: {len(cache.selection_history)}")
-    lines.append(f"Last used tool: {cache.last_used_tool or '(none)'}")
+    lines.append(F('Selection history entries: {p0}', p0=f'{len(cache.selection_history)}'))
+    lines.append(F('Last used tool: {p0}', p0=f"{cache.last_used_tool or T('(none)')}"))
 
     state = rts_mod.get_state()
-    lines.append(f"Active tool: {state.active_tool_id or '(none)'}")
-    lines.append(f"Batch processing: {state.is_batch_processing}")
+    lines.append(F('Active tool: {p0}', p0=f"{state.active_tool_id or T('(none)')}"))
+    lines.append(F('Batch processing: {p0}', p0=f'{state.is_batch_processing}'))
 
     return "\n".join(lines)
 
@@ -80,18 +82,18 @@ class AA_OT_copy_diagnostics(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         wm = getattr(context, "window_manager", None)
         if wm is None:
-            self.report({"ERROR"}, "Window manager not available. Run this from the Bforartists interface, not a background script")
+            self.report({"ERROR"}, T('Window manager not available. Run this from the Bforartists interface, not a background script'))
             return {"CANCELLED"}
 
         try:
             text = _build_diagnostics_text(context)
         except Exception:
             _log.exception("Failed to build diagnostics text")
-            self.report({"ERROR"}, "Could not collect diagnostics. Details are in the system console (Window > Toggle System Console)")
+            self.report({"ERROR"}, T('Could not collect diagnostics. Details are in the system console (Window > Toggle System Console)'))
             return {"CANCELLED"}
 
         wm.clipboard = text
-        self.report({"INFO"}, "Diagnostics copied to clipboard")
+        self.report({"INFO"}, T('Diagnostics copied to clipboard'))
         return {"FINISHED"}
 
 
@@ -107,5 +109,5 @@ class AA_OT_refresh_diagnostics(bpy.types.Operator):
 
     def execute(self, context: bpy.types.Context):
         redraw_notify(context)
-        self.report({"INFO"}, "Diagnostics refreshed")
+        self.report({"INFO"}, T('Diagnostics refreshed'))
         return {"FINISHED"}

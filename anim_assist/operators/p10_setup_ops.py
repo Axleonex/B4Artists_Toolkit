@@ -5,6 +5,8 @@ Operators for safe disable, hotkey conflict checking, first-run setup,
 demo configuration loading, debug toggling, and comprehensive validation.
 """
 
+from ..i18n import T, F
+
 from bpy.types import Operator
 
 from ..core.logging import get_logger
@@ -56,7 +58,7 @@ class AA_OT_p10_safe_disable(Operator):
                 _log.warning(f"Could not clear p10_tool_registry: {e}")
 
             log_operation("safe_disable", success=True, detail="State cleared")
-            self.report({'INFO'}, "Addon cleanup completed. State cleared.")
+            self.report({'INFO'}, T('Addon cleanup completed. State cleared.'))
             return {'FINISHED'}
 
         except Exception as e:
@@ -97,10 +99,10 @@ class AA_OT_p10_check_hotkey_conflicts(Operator):
             if conflicts:
                 conflict_str = "; ".join(conflicts)
                 _log.warning(f"Hotkey conflicts detected: {conflict_str}")
-                self.report({'WARNING'}, f"Hotkey conflicts found: {conflict_str}")
+                self.report({'WARNING'}, F('Hotkey conflicts found: {p0}', p0=f'{conflict_str}'))
             else:
                 _log.info("No hotkey conflicts detected")
-                self.report({'INFO'}, "No hotkey conflicts detected")
+                self.report({'INFO'}, T('No hotkey conflicts detected'))
 
             log_operation("check_hotkey_conflicts", success=True, detail=f"conflicts_found={len(conflicts)}")
             return {'FINISHED'}
@@ -123,7 +125,7 @@ class AA_OT_p10_first_run_setup(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             from ..core.p10_tool_registry import seed_registered_tools
@@ -145,7 +147,7 @@ class AA_OT_p10_first_run_setup(Operator):
                 detail=f"searchable_tools={tool_count}",
             )
 
-            self.report({'INFO'}, f"Setup complete: {tool_count} tools available in Search")
+            self.report({'INFO'}, F('Setup complete: {p0} tools available in Search', p0=f'{tool_count}'))
             return {'FINISHED'}
 
         except Exception as e:
@@ -167,7 +169,7 @@ class AA_OT_p10_load_demo_config(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             # Enable debug panel
@@ -187,7 +189,7 @@ class AA_OT_p10_load_demo_config(Operator):
                 detail=f"debug_panel_enabled=True, audit_enabled=True, searchable_tools={tool_count}",
             )
 
-            self.report({'INFO'}, "Demo configuration loaded successfully")
+            self.report({'INFO'}, T('Demo configuration loaded successfully'))
             return {'FINISHED'}
 
         except Exception as e:
@@ -207,19 +209,19 @@ class AA_OT_p10_toggle_debug(Operator):
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             # Toggle the debug panel
             new_state = not p10.show_debug_panel
             p10.show_debug_panel = new_state
 
-            state_str = "enabled" if new_state else "disabled"
+            state_str = T('enabled') if new_state else T('disabled')
             _log.info(f"Debug panel {state_str}")
 
             log_operation("toggle_debug", success=True, detail=f"show_debug_panel={new_state}")
 
-            self.report({'INFO'}, f"Debug panel {state_str}")
+            self.report({'INFO'}, F('Debug panel {p0}', p0=f'{state_str}'))
             return {'FINISHED'}
 
         except Exception as e:
@@ -294,10 +296,10 @@ class AA_OT_p10_final_validation(Operator):
             )
 
             if all_passed:
-                self.report({'INFO'}, "Final validation PASSED: all components healthy")
+                self.report({'INFO'}, T('Final validation PASSED: all components healthy'))
             else:
                 failed_checks = [k for k, v in validation_results.items() if not v]
-                self.report({'WARNING'}, f"Final validation FAILED: {', '.join(failed_checks)}")
+                self.report({'WARNING'}, F('Final validation FAILED: {p0}', p0=f"{', '.join(failed_checks)}"))
 
             return {'FINISHED'}
 

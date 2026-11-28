@@ -125,23 +125,24 @@ def compare_snapshots(
     b: PoseSnapshot | None,
     *,
     tolerance: float = 1e-5,
+    format_text=str.format,
 ) -> list[str]:
     """Return a human-readable list of differing channels."""
     if a is None or b is None:
-        return ["Both snapshots required for compare."]
+        return [format_text("Both snapshots required for compare.")]
     diffs: list[str] = []
     keys = set(a.values.keys()) | set(b.values.keys())
     for key in sorted(keys):
         va = a.values.get(key)
         vb = b.values.get(key)
         if va is None:
-            diffs.append(f"+ {key[0]}[{key[1]}]  (only in {b.label})")
+            diffs.append(format_text("+ {path}[{index}]  (only in {label})", path=key[0], index=key[1], label=b.label))
             continue
         if vb is None:
-            diffs.append(f"- {key[0]}[{key[1]}]  (only in {a.label})")
+            diffs.append(format_text("- {path}[{index}]  (only in {label})", path=key[0], index=key[1], label=a.label))
             continue
         if abs(va - vb) > tolerance:
             diffs.append(
-                f"~ {key[0]}[{key[1]}]  {va:.4f} → {vb:.4f}"
+                format_text("~ {path}[{index}]  {before:.4f} → {after:.4f}", path=key[0], index=key[1], before=va, after=vb)
             )
     return diffs

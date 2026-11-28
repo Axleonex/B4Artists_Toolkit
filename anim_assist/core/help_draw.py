@@ -13,6 +13,7 @@ from __future__ import annotations
 import bpy
 
 from .. import constants
+from ..i18n import T
 from . import help_registry
 from .logging import get_logger
 
@@ -88,15 +89,15 @@ def draw_explainer_label(
     """
     if not _is_enabled(context):
         if text:
-            layout.label(text=text)
+            layout.label(text=T(text), translate=False)
         return
     entry = help_registry.get_help(help_id)
     if entry is None:
         if text:
-            layout.label(text=text)
+            layout.label(text=T(text), translate=False)
         return
 
     row = layout.row(align=True)
     if not _is_compact(context):
-        row.label(text=text if text is not None else entry.label)
+        row.label(text=T(text) if text is not None else entry.label, translate=False)
     draw_explainer_icon(row, context, help_id)

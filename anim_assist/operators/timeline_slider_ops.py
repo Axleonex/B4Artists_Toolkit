@@ -1,4 +1,6 @@
 """Undoable direct-drag tools; preview state is never stored in preferences."""
+
+from ..i18n import T, F, error_text
 import math
 import bpy
 from bpy.props import StringProperty, FloatProperty, BoolProperty
@@ -40,21 +42,21 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
     bl_label='Adjust Animation'
     bl_description='Drag to preview; release to commit; Esc or right-click restores the original animation'
     bl_options={'REGISTER','UNDO','BLOCKING'}
-    action: StringProperty(options={'HIDDEN','SKIP_SAVE'})
-    mode: StringProperty(default='POPOUT',options={'HIDDEN','SKIP_SAVE'})
-    track_x: FloatProperty(options={'HIDDEN','SKIP_SAVE'})
-    track_y: FloatProperty(options={'HIDDEN','SKIP_SAVE'})
-    track_width: FloatProperty(default=120,options={'HIDDEN','SKIP_SAVE'})
-    value: FloatProperty(name='Amount',description='Adjustment amount in the tool’s displayed units')
-    apply_value: BoolProperty(default=False,options={'HIDDEN','SKIP_SAVE'})
-    preset: BoolProperty(default=False,options={'HIDDEN','SKIP_SAVE'})
+    action: StringProperty(options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    mode: StringProperty(default='POPOUT',options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    track_x: FloatProperty(options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    track_y: FloatProperty(options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    track_width: FloatProperty(default=120,options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    value: FloatProperty(name='Amount',description='Adjustment amount in the tool’s displayed units', translation_context='AnimAssist')
+    apply_value: BoolProperty(default=False,options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    preset: BoolProperty(default=False,options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
     _aborted=False
 
     @classmethod
     def poll(cls,context):
         from ..ui.timeline_strip import is_timeline
         if not is_timeline(context.area):
-            cls.poll_message_set('Use this adjustment from a Timeline')
+            cls.poll_message_set(T('Use this adjustment from a Timeline'))
             return False
         return True
 
@@ -63,7 +65,7 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
         from ..prefs import get_prefs,timeline_record
         from ..ui.timeline_strip import _unavailable
         if busy():
-            self.report({'WARNING'},'Finish or cancel the active slider first')
+            self.report({'WARNING'},T('Finish or cancel the active slider first'))
             return {'CANCELLED'}
         try:
             if self.action not in model.SLIDERS: raise ValueError('Choose a supported numeric animation tool')
@@ -102,7 +104,7 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
             return {'RUNNING_MODAL'}
         except Exception as exc:
             if hasattr(self,'_session'): self.abort()
-            self.report({'WARNING'},str(exc))
+            self.report({'WARNING'},error_text(exc))
             return {'CANCELLED'}
 
     def _track_value(self,x):
@@ -123,10 +125,11 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
     def _status(self,context):
         model=_model()
         label,unit,*_=model.SLIDERS[self.action]
+        label=T(label)
         if getattr(self,'_sticky',False):
-            context.workspace.status_text_set(f'{label}: {self.value:.{self._tool["precision"]}f}{unit} | Drag on the popout: adjust | Double-click or click away: apply | Esc: cancel | Type: value')
+            context.workspace.status_text_set(F('{p0}: {p1}{p2} | Drag on the popout: adjust | Double-click or click away: apply | Esc: cancel | Type: value', p0=f'{label}', p1=f"{self.value:.{self._tool['precision']}f}", p2=f'{unit}'))
             return
-        context.workspace.status_text_set(f'{label}: {self.value:.{self._tool["precision"]}f}{unit} | Release: apply | Esc: cancel | Shift: precise | Type: value')
+        context.workspace.status_text_set(F('{p0}: {p1}{p2} | Release: apply | Esc: cancel | Shift: precise | Type: value', p0=f'{label}', p1=f"{self.value:.{self._tool['precision']}f}", p2=f'{unit}'))
 
     def _stick(self):
         """A click without dragging keeps the popout open (owner request 2026-10-18)."""
@@ -209,7 +212,7 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
                         self._stick(); self._status(context)
                         return {'RUNNING_MODAL'}
                     self.abort(); self._cleanup()
-                    self.report({'INFO'},'Press and drag this tool to adjust it')
+                    self.report({'INFO'},T('Press and drag this tool to adjust it'))
                     return {'CANCELLED'}
                 self._session.commit(); self._remember(); self._cleanup(); return {'FINISHED'}
             if event.type=='BACK_SPACE' and event.value=='PRESS':
@@ -232,7 +235,7 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
             self._status(context)
             return {'RUNNING_MODAL'}
         except Exception as exc:
-            self.abort(); self._cleanup(); self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+            self.abort(); self._cleanup(); self.report({'WARNING'},error_text(exc)); return {'CANCELLED'}
 
     def cancel(self,context):
         self.abort(); self._cleanup()
@@ -250,7 +253,7 @@ class ANIMASSIST_OT_timeline_slider(bpy.types.Operator):
             context.area.tag_redraw()
             return {'FINISHED'}
         except Exception as exc:
-            self.report({'WARNING'},str(exc)); return {'CANCELLED'}
+            self.report({'WARNING'},error_text(exc)); return {'CANCELLED'}
 
 
 class ANIMASSIST_OT_slider_value(bpy.types.Operator):
@@ -258,13 +261,13 @@ class ANIMASSIST_OT_slider_value(bpy.types.Operator):
     bl_label='Set Slider Amount'
     bl_description='Enter an exact adjustment amount; accept applies one undoable adjustment'
     bl_options={'REGISTER','UNDO'}
-    action: StringProperty(options={'HIDDEN','SKIP_SAVE'})
-    value: FloatProperty(name='Amount',description='Amount in this tool’s displayed units')
+    action: StringProperty(options={'HIDDEN','SKIP_SAVE'}, translation_context='AnimAssist')
+    value: FloatProperty(name='Amount',description='Amount in this tool’s displayed units', translation_context='AnimAssist')
     def invoke(self,context,event): return context.window_manager.invoke_props_dialog(self,width=300)
     def draw(self,context):
         label,unit,*_=_model().SLIDERS[self.action]
-        self.layout.label(text=label)
-        self.layout.prop(self,'value',text=f'Amount ({unit})')
+        self.layout.label(text=label, text_ctxt='AnimAssist')
+        self.layout.prop(self,'value',text=F('Amount ({p0})', p0=f'{unit}'), translate=False)
     def execute(self,context):
         return ANIMASSIST_OT_timeline_slider.execute(self,context)
 

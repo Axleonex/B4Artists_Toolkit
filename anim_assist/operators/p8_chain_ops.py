@@ -8,6 +8,8 @@ matching and switch-compensation pipeline.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import BoolProperty, IntProperty
 
@@ -69,7 +71,7 @@ class AA_OT_p8_detect_chains(bpy.types.Operator):
         name="Include Muted",
         description="Also detect chains whose IK constraint is currently muted",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -98,7 +100,7 @@ class AA_OT_p8_detect_chains(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Found {len(chains)} IK chain(s) on '{obj.name}'",
+            F("Found {p0} IK chain(s) on '{p1}'", p0=f'{len(chains)}', p1=f'{obj.name}'),
         )
         return {"FINISHED"}
 
@@ -140,12 +142,12 @@ class AA_OT_p8_detect_chain_for_bone(bpy.types.Operator):
         if chains:
             self.report(
                 {"INFO"},
-                f"Found {len(chains)} chain(s) from '{bone.name}'",
+                F("Found {p0} chain(s) from '{p1}'", p0=f'{len(chains)}', p1=f'{bone.name}'),
             )
         else:
             self.report(
                 {"WARNING"},
-                f"No IK chain originates from '{bone.name}'",
+                F("No IK chain originates from '{p0}'", p0=f'{bone.name}'),
             )
         return {"FINISHED"}
 
@@ -166,13 +168,13 @@ class AA_OT_p8_select_chain_bones(bpy.types.Operator):
         description="Index into the cached chains list",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     extend: BoolProperty(  # type: ignore[valid-type]
         name="Extend Selection",
         description="Add chain bones to existing selection instead of replacing",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -186,13 +188,13 @@ class AA_OT_p8_select_chain_bones(bpy.types.Operator):
             idx = p8.chain_selected_index
 
         if idx >= len(_cached_chains):
-            self.report({"WARNING"}, "Chain index out of range")
+            self.report({"WARNING"}, T('Chain index out of range'))
             return {"CANCELLED"}
 
         chain = _cached_chains[idx]
         pose = obj.pose
         if pose is None:
-            self.report({"WARNING"}, "No pose data")
+            self.report({"WARNING"}, T('No pose data'))
             return {"CANCELLED"}
 
         if not self.extend:
@@ -212,8 +214,7 @@ class AA_OT_p8_select_chain_bones(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Selected {selected_count} bone(s) in chain "
-            f"'{chain.tip_bone}' → '{chain.root_bone}'",
+            F("Selected {p0} bone(s) in chain '{p1}' → '{p2}'", p0=f'{selected_count}', p1=f'{chain.tip_bone}', p2=f'{chain.root_bone}'),
         )
         return {"FINISHED"}
 
@@ -230,7 +231,7 @@ class AA_OT_p8_chain_nav(bpy.types.Operator):
         name="Direction",
         description="+1 for next chain, -1 for previous",
         default=1,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -248,8 +249,7 @@ class AA_OT_p8_chain_nav(bpy.types.Operator):
         chain = _cached_chains[new_idx]
         self.report(
             {"INFO"},
-            f"Chain {new_idx + 1}/{total}: "
-            f"'{chain.tip_bone}' → '{chain.root_bone}' ({chain.length} bones)",
+            F("Chain {p0}/{p1}: '{p2}' → '{p3}' ({p4} bones)", p0=f'{new_idx + 1}', p1=f'{total}', p2=f'{chain.tip_bone}', p3=f'{chain.root_bone}', p4=f'{chain.length}'),
         )
         return {"FINISHED"}
 
@@ -277,14 +277,14 @@ class AA_OT_p8_chain_to_match(bpy.types.Operator):
         p8 = get_p8(context)
         idx = p8.chain_selected_index
         if idx >= len(_cached_chains):
-            self.report({"WARNING"}, "Chain index out of range")
+            self.report({"WARNING"}, T('Chain index out of range'))
             return {"CANCELLED"}
 
         chain = _cached_chains[idx]
         p8.switch_bone_name = chain.tip_bone
         self.report(
             {"INFO"},
-            f"Match target set to '{chain.tip_bone}'",
+            F("Match target set to '{p0}'", p0=f'{chain.tip_bone}'),
         )
         return {"FINISHED"}
 
@@ -327,12 +327,12 @@ class AA_OT_p8_find_bone_chains(bpy.types.Operator):
         if chains:
             self.report(
                 {"INFO"},
-                f"'{bone.name}' participates in {len(chains)} chain(s)",
+                F("'{p0}' participates in {p1} chain(s)", p0=f'{bone.name}', p1=f'{len(chains)}'),
             )
         else:
             self.report(
                 {"WARNING"},
-                f"'{bone.name}' is not part of any IK chain",
+                F("'{p0}' is not part of any IK chain", p0=f'{bone.name}'),
             )
         return {"FINISHED"}
 
@@ -360,10 +360,7 @@ class AA_OT_p8_chain_summary(bpy.types.Operator):
         summary = cr.get_chain_summary(obj, include_muted=include_muted)
         self.report(
             {"INFO"},
-            f"{summary['total_chains']} chain(s) "
-            f"({summary['active_chains']} active, "
-            f"{summary['muted_chains']} muted) — "
-            f"longest: {summary['longest_chain']} bones",
+            F('{p0} chain(s) ({p1} active, {p2} muted) — longest: {p3} bones', p0=f"{summary['total_chains']}", p1=f"{summary['active_chains']}", p2=f"{summary['muted_chains']}", p3=f"{summary['longest_chain']}"),
         )
         _log.info("Chain summary for %s: %s", obj.name, summary)
         return {"FINISHED"}
@@ -391,7 +388,7 @@ class AA_OT_p8_invalidate_chain_cache(bpy.types.Operator):
         if p8 is not None:
             p8.chain_last_count = 0
             p8.chain_selected_index = 0
-        self.report({"INFO"}, "Chain cache cleared")
+        self.report({"INFO"}, T('Chain cache cleared'))
         return {"FINISHED"}
 
 

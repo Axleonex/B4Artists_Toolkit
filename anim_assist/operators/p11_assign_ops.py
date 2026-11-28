@@ -11,6 +11,8 @@ Provides workflows for:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import re
 
 import bpy
@@ -65,12 +67,12 @@ class ANIMASSIST_OT_p11_assign_selected(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
 
         if layer.locked:
-            self.report({'WARNING'}, "Layer is locked")
+            self.report({'WARNING'}, T('Layer is locked'))
             return {'CANCELLED'}
 
         selected = context.selected_pose_bones or []
         if not selected:
-            self.report({'WARNING'}, "No pose bones selected")
+            self.report({'WARNING'}, T('No pose bones selected'))
             return {'CANCELLED'}
 
         added = 0
@@ -84,7 +86,7 @@ class ANIMASSIST_OT_p11_assign_selected(bpy.types.Operator):
                     added += 1
 
         p11.eval_generation += 1
-        self.report({'INFO'}, f"Assigned {added} bones to '{layer.name}'")
+        self.report({'INFO'}, F("Assigned {p0} bones to '{p1}'", p0=f'{added}', p1=f'{layer.name}'))
         return {'FINISHED'}
 
 
@@ -104,7 +106,7 @@ class ANIMASSIST_OT_p11_remove_bone(bpy.types.Operator):
         description="Index of the bone assignment to remove",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -115,14 +117,14 @@ class ANIMASSIST_OT_p11_remove_bone(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
 
         if layer.locked:
-            self.report({'WARNING'}, "Layer is locked")
+            self.report({'WARNING'}, T('Layer is locked'))
             return {'CANCELLED'}
 
         if 0 <= self.index < len(layer.assigned_bones):
             name = layer.assigned_bones[self.index].bone_name
             layer.assigned_bones.remove(self.index)
             p11.eval_generation += 1
-            self.report({'INFO'}, f"Removed '{name}' from '{layer.name}'")
+            self.report({'INFO'}, F("Removed '{p0}' from '{p1}'", p0=f'{name}', p1=f'{layer.name}'))
             return {'FINISHED'}
 
         return {'CANCELLED'}
@@ -148,7 +150,7 @@ class ANIMASSIST_OT_p11_remove_selected(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
 
         if layer.locked:
-            self.report({'WARNING'}, "Layer is locked")
+            self.report({'WARNING'}, T('Layer is locked'))
             return {'CANCELLED'}
 
         selected_names = {b.name for b in (context.selected_pose_bones or [])}
@@ -160,7 +162,7 @@ class ANIMASSIST_OT_p11_remove_selected(bpy.types.Operator):
                 removed += 1
 
         p11.eval_generation += 1
-        self.report({'INFO'}, f"Removed {removed} bones from '{layer.name}'")
+        self.report({'INFO'}, F("Removed {p0} bones from '{p1}'", p0=f'{removed}', p1=f'{layer.name}'))
         return {'FINISHED'}
 
 
@@ -188,12 +190,12 @@ class ANIMASSIST_OT_p11_clear_assignments(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
 
         if layer.locked:
-            self.report({'WARNING'}, "Layer is locked")
+            self.report({'WARNING'}, T('Layer is locked'))
             return {'CANCELLED'}
 
         layer.assigned_bones.clear()
         p11.eval_generation += 1
-        self.report({'INFO'}, f"Cleared all assignments on '{layer.name}'")
+        self.report({'INFO'}, F("Cleared all assignments on '{p0}'", p0=f'{layer.name}'))
         return {'FINISHED'}
 
 
@@ -216,7 +218,7 @@ class ANIMASSIST_OT_p11_assign_by_pattern(bpy.types.Operator):
             "'spine|chest|neck|head' for upper body)"
         ),
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -230,11 +232,11 @@ class ANIMASSIST_OT_p11_assign_by_pattern(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
 
         if layer.locked:
-            self.report({'WARNING'}, "Layer is locked")
+            self.report({'WARNING'}, T('Layer is locked'))
             return {'CANCELLED'}
 
         if not self.pattern:
-            self.report({'WARNING'}, "No pattern specified")
+            self.report({'WARNING'}, T('No pattern specified'))
             return {'CANCELLED'}
 
         obj = context.active_object
@@ -253,7 +255,7 @@ class ANIMASSIST_OT_p11_assign_by_pattern(bpy.types.Operator):
                 added += 1
 
         p11.eval_generation += 1
-        self.report({'INFO'}, f"Assigned {added} bones matching '{self.pattern}'")
+        self.report({'INFO'}, F("Assigned {p0} bones matching '{p1}'", p0=f'{added}', p1=f'{self.pattern}'))
         return {'FINISHED'}
 
 
@@ -315,7 +317,7 @@ class ANIMASSIST_OT_p11_auto_partition(bpy.types.Operator):
         description="Partitioning scheme",
         items=_preset_items_fn,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -341,10 +343,10 @@ class ANIMASSIST_OT_p11_auto_partition(bpy.types.Operator):
         elif self.preset == "FINGERS_HANDS":
             self._partition_fingers_hands(p11, bone_names)
         else:
-            self.report({'INFO'}, "Use 'Assign by Pattern' for custom partitions")
+            self.report({'INFO'}, T("Use 'Assign by Pattern' for custom partitions"))
             return {'CANCELLED'}
 
-        self.report({'INFO'}, f"Applied '{self.preset}' partition preset")
+        self.report({'INFO'}, F("Applied '{p0}' partition preset", p0=f'{self.preset}'))
         return {'FINISHED'}
 
     def _create_assigned_layer(
@@ -436,7 +438,7 @@ class ANIMASSIST_OT_p11_select_assigned(bpy.types.Operator):
         if len(layer.assigned_bones) == 0:
             # Whole-body layer: select all.
             bpy.ops.pose.select_all(action='SELECT')
-            self.report({'INFO'}, "Selected all bones (whole-body layer)")
+            self.report({'INFO'}, T('Selected all bones (whole-body layer)'))
             return {'FINISHED'}
 
         assigned_names = {b.bone_name for b in layer.assigned_bones}
@@ -446,7 +448,7 @@ class ANIMASSIST_OT_p11_select_assigned(bpy.types.Operator):
                 set_pose_bone_selected(bone, True)
                 selected += 1
 
-        self.report({'INFO'}, f"Selected {selected} assigned bones")
+        self.report({'INFO'}, F('Selected {p0} assigned bones', p0=f'{selected}'))
         return {'FINISHED'}
 
 
@@ -465,7 +467,7 @@ class ANIMASSIST_OT_p11_add_channel_override(bpy.types.Operator):
         name="Bone",
         description="Bone to add override for",
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -485,19 +487,19 @@ class ANIMASSIST_OT_p11_add_channel_override(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
 
         if not self.bone_name:
-            self.report({'WARNING'}, "No bone name specified")
+            self.report({'WARNING'}, T('No bone name specified'))
             return {'CANCELLED'}
 
         # Check if override already exists.
         for ovr in layer.channel_overrides:
             if ovr.bone_name == self.bone_name:
-                self.report({'WARNING'}, f"Override already exists for '{self.bone_name}'")
+                self.report({'WARNING'}, F("Override already exists for '{p0}'", p0=f'{self.bone_name}'))
                 return {'CANCELLED'}
 
         ovr = layer.channel_overrides.add()
         ovr.bone_name = self.bone_name
         p11.eval_generation += 1
-        self.report({'INFO'}, f"Added channel override for '{self.bone_name}'")
+        self.report({'INFO'}, F("Added channel override for '{p0}'", p0=f'{self.bone_name}'))
         return {'FINISHED'}
 
 
@@ -516,7 +518,7 @@ class ANIMASSIST_OT_p11_remove_channel_override(bpy.types.Operator):
         name="Override Index",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -530,7 +532,7 @@ class ANIMASSIST_OT_p11_remove_channel_override(bpy.types.Operator):
             name = layer.channel_overrides[self.index].bone_name
             layer.channel_overrides.remove(self.index)
             p11.eval_generation += 1
-            self.report({'INFO'}, f"Removed override for '{name}'")
+            self.report({'INFO'}, F("Removed override for '{p0}'", p0=f'{name}'))
             return {'FINISHED'}
 
         return {'CANCELLED'}

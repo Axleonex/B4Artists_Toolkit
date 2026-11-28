@@ -4,6 +4,14 @@ import json
 import math
 import uuid
 
+
+class ValidationError(ValueError):
+    """English-compatible model error with a template for the UI consumer."""
+    def __init__(self, template, **fields):
+        self.ui_template = template
+        self.ui_fields = fields
+        super().__init__(template.format(**fields))
+
 FAMILY_ORDER = ('tween', 'timing', 'curves', 'keys', 'pose', 'bake', 'motion')
 # One table drives the stage dropdown. Each stage's families are its home families:
 # its defaults come from them and its row always shows their menus. Any row may
@@ -86,7 +94,7 @@ def register_families(groups):
 
 
 def family_of(action):
-    if not _FAMILY: raise ValueError('Toolbar families are not registered')
+    if not _FAMILY: raise ValidationError('Toolbar families are not registered')
     return _FAMILY.get(action)
 
 
@@ -129,11 +137,11 @@ def snap_to_tick(tool, value, fraction=.03):
 
 
 def stage_presets(action, raw):
-    if action not in SLIDERS: raise ValueError('Only numeric tools have presets')
-    if not isinstance(raw, (list, tuple)) or len(raw) > 12: raise ValueError('Use at most 12 numeric presets')
+    if action not in SLIDERS: raise ValidationError('Only numeric tools have presets')
+    if not isinstance(raw, (list, tuple)) or len(raw) > 12: raise ValidationError('Use at most 12 numeric presets')
     values = [finite(v, 'Preset') for v in raw]
     low, high = preset_bounds(action)
-    if any(not low <= v <= high for v in values): raise ValueError('Presets must be inside the tool limits')
+    if any(not low <= v <= high for v in values): raise ValidationError('Presets must be inside the tool limits')
     return values
 
 
@@ -148,27 +156,27 @@ def shown_label_mode(action, label_mode):
 
 def _check_mode(action, mode, label_mode):
     if mode not in MODES or (action not in SLIDERS and mode in {'POPOUT', 'INLINE'}):
-        raise ValueError('This tool does not support the selected display mode')
-    if label_mode not in {'LABEL', 'ICON'}: raise ValueError('Choose Label or Icon')
+        raise ValidationError('This tool does not support the selected display mode')
+    if label_mode not in {'LABEL', 'ICON'}: raise ValidationError('Choose Label or Icon')
 
 
 def validate_stage(stage, raw, actions):
     """Sparse stage setup: visible tools only, in order; Hidden entries dropped."""
-    if not isinstance(raw, dict): raise ValueError('Stage setup must be an object')
+    if not isinstance(raw, dict): raise ValidationError('Stage setup must be an object')
     order, tools_raw = raw.get('order', []), raw.get('tools', {})
     if not isinstance(order, list) or not isinstance(tools_raw, dict):
-        raise ValueError('Stage setup must contain an order and tools')
+        raise ValidationError('Stage setup must contain an order and tools')
     if any(not isinstance(k, str) for k in order) or len(set(order)) != len(order):
-        raise ValueError('Stage tool order must contain unique action IDs')
+        raise ValidationError('Stage tool order must contain unique action IDs')
     if any(k in actions and k not in order for k in tools_raw):
-        raise ValueError('Every stage tool must appear in its order')
+        raise ValidationError('Every stage tool must appear in its order')
     result = dict(order=[], tools={})
     for action in order:
         entry = tools_raw.get(action, {})
         if action not in actions:  # Forward compatibility: keep unknown tools intact.
-            if not isinstance(entry, dict): raise ValueError('Stage tool settings must be an object')
+            if not isinstance(entry, dict): raise ValidationError('Stage tool settings must be an object')
             result['order'].append(action); result['tools'][action] = copy.deepcopy(entry); continue
-        if not isinstance(entry, dict): raise ValueError('Stage tool settings must be an object')
+        if not isinstance(entry, dict): raise ValidationError('Stage tool settings must be an object')
         mode, label_mode = entry.get('mode', 'BUTTON'), entry.get('label_mode', 'LABEL')
         _check_mode(action, mode, label_mode)
         if mode == 'HIDDEN': continue
@@ -177,11 +185,11 @@ def validate_stage(stage, raw, actions):
         if 'presets' in entry and action in SLIDERS:
             result['tools'][action]['presets'] = stage_presets(action, entry['presets'])
         if 'ticks' in entry and action in SLIDERS:
-            if type(entry['ticks']) is not bool: raise ValueError('Ticks must be on or off')
+            if type(entry['ticks']) is not bool: raise ValidationError('Ticks must be on or off')
             result['tools'][action]['ticks'] = entry['ticks']
     for key, value in tools_raw.items():
         if key not in actions and key not in result['tools']:
-            if not isinstance(value, dict): raise ValueError('Stage tool settings must be an object')
+            if not isinstance(value, dict): raise ValidationError('Stage tool settings must be an object')
             result['tools'][key] = copy.deepcopy(value)
     return result
 # (label, unit, neutral/default, display minimum, display maximum, hard minimum, hard maximum)
@@ -234,56 +242,56 @@ def recommended(actions):
 
 def finite(value, label):
     if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
-        raise ValueError(label+' must be a finite number')
-    if abs(value) > 1e8: raise ValueError(label+' is outside the numeric display limit')
+        raise ValidationError('{label} must be a finite number', label=label)
+    if abs(value) > 1e8: raise ValidationError('{label} is outside the numeric display limit', label=label)
     return float(value)
 
 
 def validate_tool(action, raw):
-    if not isinstance(raw, dict): raise ValueError('Tool settings must be an object')
+    if not isinstance(raw, dict): raise ValidationError('Tool settings must be an object')
     result = tool_default(action)
     result.update({k: copy.deepcopy(v) for k, v in raw.items() if k in result})
     result['action'] = action
     if result['mode'] not in MODES or (action not in SLIDERS and result['mode'] in {'POPOUT','INLINE'}):
-        raise ValueError('This tool does not support the selected display mode')
-    if result['label_mode'] not in {'LABEL','ICON'}: raise ValueError('Choose Label or Icon')
+        raise ValidationError('This tool does not support the selected display mode')
+    if result['label_mode'] not in {'LABEL','ICON'}: raise ValidationError('Choose Label or Icon')
     result['label_mode'] = shown_label_mode(action, result['label_mode'])
     result['width'] = finite(result['width'], 'Slider width')
-    if not 80 <= result['width'] <= 240: raise ValueError('Slider width must be 80–240')
+    if not 80 <= result['width'] <= 240: raise ValidationError('Slider width must be 80–240')
     if action not in SLIDERS: return result
     for name in ('range_min','range_max','default','sensitivity','snap_step'):
         result[name] = finite(result[name], name)
     low, high = result['range_min'], result['range_max']
-    if low >= high: raise ValueError('Minimum must be below maximum')
-    if not low <= result['default'] <= high: raise ValueError('Default must be inside the slider range')
+    if low >= high: raise ValidationError('Minimum must be below maximum')
+    if not low <= result['default'] <= high: raise ValidationError('Default must be inside the slider range')
     hard_min, hard_max = SLIDERS[action][-2:]
-    if hard_min is not None and low < hard_min: raise ValueError('Minimum is below the tool limit')
-    if hard_max is not None and high > hard_max: raise ValueError('Maximum exceeds the tool limit')
-    if not 10 <= result['sensitivity'] <= 2000: raise ValueError('Sensitivity must be 10–2000 pixels')
-    if result['snap_step'] <= 0: raise ValueError('Snap step must be positive')
+    if hard_min is not None and low < hard_min: raise ValidationError('Minimum is below the tool limit')
+    if hard_max is not None and high > hard_max: raise ValidationError('Maximum exceeds the tool limit')
+    if not 10 <= result['sensitivity'] <= 2000: raise ValidationError('Sensitivity must be 10–2000 pixels')
+    if result['snap_step'] <= 0: raise ValidationError('Snap step must be positive')
     if type(result['precision']) is not int or not 0 <= result['precision'] <= 4:
-        raise ValueError('Precision must be 0–4 decimal places')
+        raise ValidationError('Precision must be 0–4 decimal places')
     for name in ('snap_enabled','overshoot_enabled','ticks'):
-        if type(result[name]) is not bool: raise ValueError(name+' must be a checkbox')
+        if type(result[name]) is not bool: raise ValidationError('{name} must be a checkbox', name=name)
     if not isinstance(result['presets'], list) or len(result['presets']) > 12:
-        raise ValueError('Use at most 12 numeric presets')
+        raise ValidationError('Use at most 12 numeric presets')
     result['presets'] = [finite(v,'Preset') for v in result['presets']]
-    if any(not low <= v <= high for v in result['presets']): raise ValueError('Presets must be inside the range')
+    if any(not low <= v <= high for v in result['presets']): raise ValidationError('Presets must be inside the range')
     if not result['overshoot_enabled']:
         standard_min,standard_max=SLIDERS[action][3:5]
         if any(not standard_min<=v<=standard_max for v in [result['default'],*result['presets']]):
-            raise ValueError('Enable Custom Range / Overshoot for these amounts')
+            raise ValidationError('Enable Custom Range / Overshoot for these amounts')
     return result
 
 
 def validate_layout(raw, actions):
     if not isinstance(raw, dict) or not isinstance(raw.get('tools'), dict):
-        raise ValueError('Layout must contain tool settings')
-    if not isinstance(raw.get('id'), str) or not raw['id']: raise ValueError('Layout identity is missing')
+        raise ValidationError('Layout must contain tool settings')
+    if not isinstance(raw.get('id'), str) or not raw['id']: raise ValidationError('Layout identity is missing')
     name = validate_name(raw.get('name',''), allow_recommended=True)
     order = raw.get('order', [])
     if not isinstance(order,list) or any(not isinstance(k,str) for k in order) or len(set(order)) != len(order):
-        raise ValueError('Tool order must contain unique action IDs')
+        raise ValidationError('Tool order must contain unique action IDs')
     tools = {k: validate_tool(k, raw['tools'].get(k,{})) for k in actions}
     # Keep unknown tool records intact, hidden from current UI, for forward compatibility.
     unknown = {k: copy.deepcopy(v) for k,v in raw['tools'].items() if k not in actions}
@@ -291,7 +299,7 @@ def validate_layout(raw, actions):
     order = order + [k for k in tools if k not in order]
     # Schema 1 layouts have no stages: they get the fixed defaults (migration).
     stages_raw = raw.get('stages', {})
-    if not isinstance(stages_raw, dict): raise ValueError('Stage setups must be an object')
+    if not isinstance(stages_raw, dict): raise ValidationError('Stage setups must be an object')
     stages = {stage: validate_stage(stage, stages_raw[stage], actions) if stage in stages_raw
               else stage_default(stage) for stage in STAGE_KEYS}
     stages.update({k: copy.deepcopy(v) for k, v in stages_raw.items() if k not in STAGE_KEYS})
@@ -301,32 +309,32 @@ def validate_layout(raw, actions):
 def validate(record, actions):
     if (not isinstance(record,dict) or type(record.get('schema_version')) is not int
             or record['schema_version'] not in (1, SCHEMA_VERSION)):
-        raise ValueError('Unsupported toolbar layout version; keep the original settings file')
+        raise ValidationError('Unsupported toolbar layout version; keep the original settings file')
     saved = record.get('saved')
-    if not isinstance(saved,list) or len(saved) > 100: raise ValueError('Layout library must have at most 100 entries')
+    if not isinstance(saved,list) or len(saved) > 100: raise ValidationError('Layout library must have at most 100 entries')
     active = validate_layout(record.get('active'),actions)
     items = [validate_layout(item,actions) for item in saved]
     identities = [x['id'] for x in items]
     names = [x['name'].casefold() for x in items]
     if len(set(identities)) != len(items) or len(set(names)) != len(items):
-        raise ValueError('Saved layouts need unique names and identities')
+        raise ValidationError('Saved layouts need unique names and identities')
     if 'recommended' in identities or 'recommended' in names:
-        raise ValueError('Recommended is a protected built-in layout')
+        raise ValidationError('Recommended is a protected built-in layout')
     selected = record.get('active_saved_id')
     if selected is not None and selected not in ['recommended',*identities]: selected = None
     return dict(schema_version=SCHEMA_VERSION,active=active,active_saved_id=selected,saved=items)
 
 
 def decode(raw, actions):
-    if not isinstance(raw,str) or len(raw) > RECORD_LIMIT: raise ValueError('Toolbar settings record is too large')
+    if not isinstance(raw,str) or len(raw) > RECORD_LIMIT: raise ValidationError('Toolbar settings record is too large')
     try: record = json.loads(raw)
-    except (ValueError, TypeError) as exc: raise ValueError('Toolbar settings are not valid JSON') from exc
+    except (ValueError, TypeError) as exc: raise ValidationError('Toolbar settings are not valid JSON') from exc
     return validate(record,actions)
 
 
 def encode(record, actions):
     raw=json.dumps(validate(record,actions),ensure_ascii=False,separators=(',',':'),sort_keys=True,allow_nan=False)
-    if len(raw)>RECORD_LIMIT: raise ValueError('Layout library is too large; remove unused layouts')
+    if len(raw)>RECORD_LIMIT: raise ValidationError('Layout library is too large; remove unused layouts')
     return raw
 
 
@@ -340,17 +348,17 @@ def from_legacy(actions, selected):
 
 
 def validate_name(name, allow_recommended=False):
-    if not isinstance(name,str): raise ValueError('Enter a layout name')
+    if not isinstance(name,str): raise ValidationError('Enter a layout name')
     name = name.strip()
-    if not name or len(name)>64: raise ValueError('Use a name with 1–64 characters')
-    if not allow_recommended and name.casefold()=='recommended': raise ValueError('Recommended is reserved')
+    if not name or len(name)>64: raise ValidationError('Use a name with 1–64 characters')
+    if not allow_recommended and name.casefold()=='recommended': raise ValidationError('Recommended is reserved')
     return name
 
 
 def save_as(record,name):
     name=validate_name(name)
     if any(x['name'].casefold()==name.casefold() for x in record['saved']):
-        raise ValueError('That name already exists; choose another name or Update Saved Layout')
+        raise ValidationError('That name already exists; choose another name or Update Saved Layout')
     item=copy.deepcopy(record['active']); item.update(id=uuid.uuid4().hex,name=name)
     record['saved'].append(item)
     record['active']=copy.deepcopy(item); record['active_saved_id']=item['id']
@@ -358,32 +366,32 @@ def save_as(record,name):
 
 def load(record,ident,actions):
     item=recommended(actions)['active'] if ident=='recommended' else next((x for x in record['saved'] if x['id']==ident),None)
-    if item is None: raise ValueError('Choose an existing saved layout')
+    if item is None: raise ValidationError('Choose an existing saved layout')
     record['active']=copy.deepcopy(item); record['active_saved_id']=ident
 
 
 def update_saved(record):
     ident=record['active_saved_id']
-    if ident in {None,'recommended'}: raise ValueError('Use Save As to create your own layout')
+    if ident in {None,'recommended'}: raise ValidationError('Use Save As to create your own layout')
     index=next((i for i,x in enumerate(record['saved']) if x['id']==ident),None)
-    if index is None: raise ValueError('Saved layout no longer exists')
+    if index is None: raise ValidationError('Saved layout no longer exists')
     record['saved'][index]=copy.deepcopy(record['active'])
 
 
 def rename(record,ident,name):
     name=validate_name(name)
-    if ident=='recommended': raise ValueError('Recommended cannot be renamed')
+    if ident=='recommended': raise ValidationError('Recommended cannot be renamed')
     if any(x['id']!=ident and x['name'].casefold()==name.casefold() for x in record['saved']):
-        raise ValueError('That layout name already exists')
+        raise ValidationError('That layout name already exists')
     item=next((x for x in record['saved'] if x['id']==ident),None)
-    if item is None: raise ValueError('Choose an existing saved layout')
+    if item is None: raise ValidationError('Choose an existing saved layout')
     item['name']=name
     if record['active_saved_id']==ident: record['active']['name']=name
 
 
 def delete(record,ident):
-    if ident=='recommended': raise ValueError('Recommended cannot be deleted')
-    if not any(x['id']==ident for x in record['saved']): raise ValueError('Choose an existing saved layout')
+    if ident=='recommended': raise ValidationError('Recommended cannot be deleted')
+    if not any(x['id']==ident for x in record['saved']): raise ValidationError('Choose an existing saved layout')
     record['saved']=[x for x in record['saved'] if x['id']!=ident]
     if record['active_saved_id']==ident:
         record['active_saved_id']=None
@@ -438,12 +446,14 @@ def stage_for_family(family):
     return next((key for key,_,families in STAGES if families and family in families),'ALL')
 
 
-def hidden_family_note(stage,family,family_label,families=None):
+def hidden_family_note(stage,family,family_label,families=None,*,translate=lambda text:text):
     """Explain why a configured family is absent from the row, or ''.
     families: what the row shows (row_families); its home families by default."""
     if family in (stage_families(stage) if families is None else families): return ''
-    return (f'The {stage_label(stage)} row has no {family_label} tools; add them in Toolbar Settings, '
-            f'or choose All or {stage_label(stage_for_family(family))}.')
+    return translate('The {stage} row has no {family} tools; add them in Toolbar Settings, '
+                     'or choose All or {home}.').format(
+                         stage=translate(stage_label(stage)), family=translate(family_label),
+                         home=translate(stage_label(stage_for_family(family))))
 
 
 def next_stage(stage,step):
@@ -587,23 +597,23 @@ def apply_entries(record, stage, entries, actions):
     layout['stages'][stage] = setup
 
 
-def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,stage='ALL',*,view=None):
+def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,stage='ALL',*,view=None,translate=lambda text:text):
     """Bounded presentation only; never modify the saved layout on overflow."""
     scale=row_height/28.
     gap=3*scale; pad=5*scale
     y=max(0,height-row_height) if at_top else 0
     h=max(1,min(height,row_height)-4*scale)
-    families={key:(label,{a for a in actions if a is not None}) for key,label,actions in groups}
+    families={key:(translate(label),{a for a in actions if a is not None}) for key,label,actions in groups}
     # Each utility has one job (owner pick "C", 2026-10-18): Find is a magnifier icon
     # that reaches every tool; More appears only when tools did not fit, as "+N".
-    settings_label='Settings'
+    settings_label=translate('Settings')
     utility_widths=[24*scale,max(24*scale,measure(settings_label)+2*pad)]
     if sum(utility_widths)+3*gap>width:
         settings_label=''; utility_widths=[24*scale,24*scale]
     more_w=max(24*scale,measure('+99')+2*pad)
     full_budget=max(0,width-sum(utility_widths)-3*gap)
     budget=full_budget
-    label=stage_label(stage)
+    label=translate(stage_label(stage))
     if measure(label)+2*pad+STAGE_ARROW*scale>budget*.5: label=label[0]
     # The compact stage button opens a dropdown; leave room for its arrow.
     cycle_w=max(24*scale,measure(label)+2*pad+STAGE_ARROW*scale)
@@ -623,7 +633,7 @@ def toolbar_layout(width,height,row_height,at_top,record,groups,labels,measure,s
                 specs.append(('MENU',family,label,measure(label)+(6 if compact else 10)*scale))
             for action in selected:
                 tool=tools[action]; mode=tool['mode']
-                label=SLIDERS[action][0] if action in SLIDERS else labels.get(action,action.replace('_',' ').title())
+                label=translate(SLIDERS[action][0] if action in SLIDERS else labels.get(action,action.replace('_',' ').title()))
                 icon=shown_label_mode(action,tool['label_mode'])=='ICON'
                 ticked=bool(tick_values(tool)) and mode=='INLINE' and not demote
                 if mode=='INLINE' and not demote:

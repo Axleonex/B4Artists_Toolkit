@@ -22,6 +22,8 @@ header), 42 (commit/cancel), and 43 (numeric entry) for offset operations.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from typing import Optional
 
 import bpy
@@ -162,7 +164,7 @@ class AA_OT_p4_modal_offset(bpy.types.Operator):
         name="Sensitivity",
         description="Pixels per unit of offset delta during modal drag.",
         default=100.0, min=1.0, soft_max=500.0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -171,18 +173,18 @@ class AA_OT_p4_modal_offset(bpy.types.Operator):
     def invoke(self, context, event):
         opts = _resolve_options(context)
         if opts is None:
-            self.report({"WARNING"}, "Offset properties unavailable.")
+            self.report({"WARNING"}, T('Offset properties unavailable.'))
             return {"CANCELLED"}
 
         targets = tg.resolve_targets(context, pivot_mode=opts.pivot_mode)
         if not targets:
-            self.report({"INFO"}, "No targets selected.")
+            self.report({"INFO"}, T('No targets selected.'))
             return {"CANCELLED"}
 
         action = context.active_object.animation_data.action
         frames = _frames_from_scope(context, opts, targets, action)
         if not frames:
-            self.report({"INFO"}, "No frames matched the current scope.")
+            self.report({"INFO"}, T('No frames matched the current scope.'))
             return {"CANCELLED"}
 
         # Collect the full fcurve set for snapshotting.
@@ -201,7 +203,7 @@ class AA_OT_p4_modal_offset(bpy.types.Operator):
                     all_fcs.append(fc)
 
         if not all_fcs:
-            self.report({"INFO"}, "No writable channels to offset.")
+            self.report({"INFO"}, T('No writable channels to offset.'))
             return {"CANCELLED"}
 
         self._snap = _snapshot_fcurves(action, all_fcs)
@@ -221,7 +223,7 @@ class AA_OT_p4_modal_offset(bpy.types.Operator):
 
         context.window_manager.modal_handler_add(self)
         if context.area is not None:
-            context.area.header_text_set("Drag to offset | Shift=Fine | Ctrl=Coarse | LMB/Enter=Commit | RMB/Esc=Cancel")
+            context.area.header_text_set(T('Drag to offset | Shift=Fine | Ctrl=Coarse | LMB/Enter=Commit | RMB/Esc=Cancel'))
         return {"RUNNING_MODAL"}
 
     def _apply(self, context, dx: float, dy: float) -> None:
@@ -261,7 +263,7 @@ class AA_OT_p4_modal_offset(bpy.types.Operator):
 
             if context.area is not None:
                 context.area.header_text_set(
-                    f"Offset Δ = ({dx:.4f}, {dy:.4f})  [{self._numeric.display()}]"
+                    F('Offset Δ = ({p0}, {p1})  [{p2}]', p0=f'{dx:.4f}', p1=f'{dy:.4f}', p2=f'{self._numeric.display()}')
                 )
             return {"RUNNING_MODAL"}
 
@@ -285,14 +287,14 @@ class AA_OT_p4_modal_offset(bpy.types.Operator):
                 )
             )
             self._header_restore(context)
-            self.report({"INFO"}, f"Offset committed: Δ=({self._current_delta[0]:.4f}, {self._current_delta[1]:.4f}).")
+            self.report({"INFO"}, F('Offset committed: Δ=({p0}, {p1}).', p0=f'{self._current_delta[0]:.4f}', p1=f'{self._current_delta[1]:.4f}'))
             return {"FINISHED"}
 
         if event.type in {"RIGHTMOUSE", "ESC"} and event.value == "PRESS":
             # Cancel — restore pristine state.
             _restore_snapshot(self._fcs, self._snap)
             self._header_restore(context)
-            self.report({"INFO"}, "Offset cancelled.")
+            self.report({"INFO"}, T('Offset cancelled.'))
             return {"CANCELLED"}
 
         # Numeric input.
@@ -337,7 +339,7 @@ class AA_OT_p4_set_pivot_from_cursor(bpy.types.Operator):
             return {"CANCELLED"}
         cursor = context.scene.cursor.location
         p4.custom_pivot = (cursor.x, cursor.y, cursor.z)
-        self.report({"INFO"}, f"Custom pivot set to ({cursor.x:.3f}, {cursor.y:.3f}, {cursor.z:.3f}).")
+        self.report({"INFO"}, F('Custom pivot set to ({p0}, {p1}, {p2}).', p0=f'{cursor.x:.3f}', p1=f'{cursor.y:.3f}', p2=f'{cursor.z:.3f}'))
         return {"FINISHED"}
 
 
@@ -366,7 +368,7 @@ class AA_OT_p4_set_pivot_head(bpy.types.Operator):
             return {"CANCELLED"}
         world = obj.matrix_world @ pb.bone.head_local
         p4.custom_pivot = (world.x, world.y, world.z)
-        self.report({"INFO"}, f"Pivot set to bone head ({world.x:.3f}, {world.y:.3f}, {world.z:.3f}).")
+        self.report({"INFO"}, F('Pivot set to bone head ({p0}, {p1}, {p2}).', p0=f'{world.x:.3f}', p1=f'{world.y:.3f}', p2=f'{world.z:.3f}'))
         return {"FINISHED"}
 
 
@@ -395,7 +397,7 @@ class AA_OT_p4_set_pivot_tail(bpy.types.Operator):
             return {"CANCELLED"}
         world = obj.matrix_world @ pb.bone.tail_local
         p4.custom_pivot = (world.x, world.y, world.z)
-        self.report({"INFO"}, f"Pivot set to bone tail ({world.x:.3f}, {world.y:.3f}, {world.z:.3f}).")
+        self.report({"INFO"}, F('Pivot set to bone tail ({p0}, {p1}, {p2}).', p0=f'{world.x:.3f}', p1=f'{world.y:.3f}', p2=f'{world.z:.3f}'))
         return {"FINISHED"}
 
 

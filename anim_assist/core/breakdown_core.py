@@ -461,6 +461,7 @@ def apply_breakdown(
     options: BreakdownOptions,
     *,
     frames: Iterable[float] | None = None,
+    format_text=str.format,
 ) -> BreakdownResult:
     """Run a breakdown across ``obj`` for one or more frames.
 
@@ -470,19 +471,19 @@ def apply_breakdown(
     result = BreakdownResult()
 
     if not _scene_writable(scene):
-        result.messages.append("Scene is linked and read-only; skipped.")
+        result.messages.append(format_text("Scene is linked and read-only; skipped."))
         return result
 
     adata = getattr(obj, "animation_data", None)
     if adata is None or adata.action is None:
-        result.messages.append(f"{obj.name}: no action to write to.")
+        result.messages.append(format_text("{object}: no action to write to.", object=obj.name))
         return result
 
     target_fcurves = iter_target_fcurves(
         obj, bone_names, options.mask, options.exclusion
     )
     if not target_fcurves:
-        result.messages.append("No fcurves matched the current mask.")
+        result.messages.append(format_text("No fcurves matched the current mask."))
         return result
 
     quat_groups = _group_quaternions(target_fcurves)
@@ -661,8 +662,8 @@ def apply_breakdown(
 
     result.fcurves_touched = len(touched)
     result.messages.append(
-        f"Wrote {result.keys_written} key(s) across "
-        f"{result.fcurves_touched} fcurve(s)."
+        format_text("Wrote {keys} key(s) across {curves} fcurve(s).",
+                    keys=result.keys_written, curves=result.fcurves_touched)
     )
     return result
 

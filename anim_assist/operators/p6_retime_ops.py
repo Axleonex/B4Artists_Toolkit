@@ -11,6 +11,8 @@ All operators:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import FloatProperty
 
@@ -49,17 +51,17 @@ def _p6_base_poll(context: bpy.types.Context, cls=None) -> bool:
     """Base poll: need a scene with an active object that has an action."""
     if not hasattr(context, "scene") or context.scene is None:
         if cls is not None:
-            cls.poll_message_set("Open a scene to use retiming tools")
+            cls.poll_message_set(T('Open a scene to use retiming tools'))
         return False
     obj = getattr(context, "active_object", None)
     if obj is None:
         if cls is not None:
-            cls.poll_message_set("Select an animated object to retime its keys")
+            cls.poll_message_set(T('Select an animated object to retime its keys'))
         return False
     adata = getattr(obj, "animation_data", None)
     if adata is None or getattr(adata, "action", None) is None:
         if cls is not None:
-            cls.poll_message_set("Add keyframes to the active object before retiming")
+            cls.poll_message_set(T('Add keyframes to the active object before retiming'))
         return False
     return True
 
@@ -104,7 +106,7 @@ class AA_OT_p6_scale_keys(bpy.types.Operator):
         soft_max=10.0,
         step=10,
         precision=3,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -113,12 +115,12 @@ class AA_OT_p6_scale_keys(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         # Blender skips invoke in background execution. Resolve an unset
@@ -145,7 +147,7 @@ class AA_OT_p6_scale_keys(bpy.types.Operator):
         rm.apply_scale(fcurves, pivot, factor, frame_range=range_filter)
 
         _tag_redraw(context)
-        self.report({"INFO"}, f"Scaled ×{factor:.3f} around frame {pivot:.1f}")
+        self.report({"INFO"}, F('Scaled ×{p0} around frame {p1}', p0=f'{factor:.3f}', p1=f'{pivot:.1f}'))
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -172,7 +174,7 @@ class AA_OT_p6_offset_keys(bpy.types.Operator):
         soft_max=500.0,
         step=100,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -181,12 +183,12 @@ class AA_OT_p6_offset_keys(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         range_filter = None
@@ -201,7 +203,7 @@ class AA_OT_p6_offset_keys(bpy.types.Operator):
 
         _tag_redraw(context)
         sign = "+" if self.offset_frames >= 0 else ""
-        self.report({"INFO"}, f"Offset keys {sign}{self.offset_frames:.1f}f")
+        self.report({"INFO"}, F('Offset keys {p0}{p1}f', p0=f'{sign}', p1=f'{self.offset_frames:.1f}'))
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -227,10 +229,10 @@ class AA_OT_p6_set_pivot(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
         p6.pivot_frame = float(context.scene.frame_current)
-        self.report({"INFO"}, f"Pivot set to frame {p6.pivot_frame:.1f}")
+        self.report({"INFO"}, F('Pivot set to frame {p0}', p0=f'{p6.pivot_frame:.1f}'))
         return {"FINISHED"}
 
 
@@ -256,7 +258,7 @@ class AA_OT_p6_time_warp(bpy.types.Operator):
         soft_max=500.0,
         step=100,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -265,12 +267,12 @@ class AA_OT_p6_time_warp(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         factor = self.warp_percent / 100.0
@@ -286,7 +288,7 @@ class AA_OT_p6_time_warp(bpy.types.Operator):
         rm.apply_scale(fcurves, pivot, factor)
 
         _tag_redraw(context)
-        self.report({"INFO"}, f"Time warp {self.warp_percent:.1f}% (×{factor:.3f})")
+        self.report({"INFO"}, F('Time warp {p0}% (×{p1})', p0=f'{self.warp_percent:.1f}', p1=f'{factor:.3f}'))
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -315,12 +317,12 @@ class AA_OT_p6_reverse_keys(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         lo, hi = rm.resolve_active_range(p6, context)
@@ -328,7 +330,7 @@ class AA_OT_p6_reverse_keys(bpy.types.Operator):
         rm.reverse_keys_in_range(fcurves, lo, hi)
 
         _tag_redraw(context)
-        self.report({"INFO"}, f"Reversed keys in range {lo:.0f}–{hi:.0f}")
+        self.report({"INFO"}, F('Reversed keys in range {p0}–{p1}', p0=f'{lo:.0f}', p1=f'{hi:.0f}'))
         return {"FINISHED"}
 
 
@@ -351,14 +353,14 @@ class AA_OT_p6_bake_timing(bpy.types.Operator):
     def execute(self, context):
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         _store_backup(fcurves, obj_name)
         moved = rm.snap_keys_to_frames(fcurves)
 
         _tag_redraw(context)
-        self.report({"INFO"}, f"Baked {moved} key(s) to integer frames")
+        self.report({"INFO"}, F('Baked {p0} key(s) to integer frames', p0=f'{moved}'))
         return {"FINISHED"}
 
 
@@ -379,30 +381,30 @@ class AA_OT_p6_reset_timing(bpy.types.Operator):
         if not _p6_base_poll(context, cls):
             return False
         if _last_backup is None:
-            cls.poll_message_set("Run a retiming operation before resetting its timing")
+            cls.poll_message_set(T('Run a retiming operation before resetting its timing'))
             return False
         return True
 
     def execute(self, context):
         if _last_backup is None:
-            self.report({"WARNING"}, "No timing snapshot available")
+            self.report({"WARNING"}, T('No timing snapshot available'))
             return {"CANCELLED"}
 
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         if obj_name != _last_backup_obj:
             self.report(
                 {"WARNING"},
-                f"Snapshot is for '{_last_backup_obj}', not '{obj_name}'",
+                F("Snapshot is for '{p0}', not '{p1}'", p0=f'{_last_backup_obj}', p1=f'{obj_name}'),
             )
             return {"CANCELLED"}
 
         rm.restore_fcurves(fcurves, _last_backup)
         _tag_redraw(context)
-        self.report({"INFO"}, "Timing restored from snapshot")
+        self.report({"INFO"}, T('Timing restored from snapshot'))
         return {"FINISHED"}
 
 
@@ -424,7 +426,7 @@ class AA_OT_p6_match_timing(bpy.types.Operator):
             return False
         selected = getattr(context, "selected_objects", []) or []
         if len(selected) < 2:
-            cls.poll_message_set("Select a source and a target object to match timing")
+            cls.poll_message_set(T('Select a source and a target object to match timing'))
             return False
         return True
 
@@ -432,40 +434,40 @@ class AA_OT_p6_match_timing(bpy.types.Operator):
         selected = list(getattr(context, "selected_objects", []) or [])
         active = getattr(context, "active_object", None)
         if active is None or len(selected) < 2:
-            self.report({"WARNING"}, "Need at least 2 selected objects")
+            self.report({"WARNING"}, T('Need at least 2 selected objects'))
             return {"CANCELLED"}
 
         # Reference = any selected object that is not the active one.
         ref_obj = next((o for o in selected if o is not active), None)
         if ref_obj is None:
-            self.report({"WARNING"}, "Could not identify reference object")
+            self.report({"WARNING"}, T('Could not identify reference object'))
             return {"CANCELLED"}
 
         ref_adata = getattr(ref_obj, "animation_data", None)
         ref_action = getattr(ref_adata, "action", None) if ref_adata else None
         if ref_action is None:
-            self.report({"WARNING"}, f"Reference '{ref_obj.name}' has no action")
+            self.report({"WARNING"}, F("Reference '{p0}' has no action", p0=f'{ref_obj.name}'))
             return {"CANCELLED"}
 
         ref_frames = rm.collect_key_frames(get_fcurves(ref_action))
         if len(ref_frames) < 2:
-            self.report({"WARNING"}, "Reference action has fewer than 2 keyframes")
+            self.report({"WARNING"}, T('Reference action has fewer than 2 keyframes'))
             return {"CANCELLED"}
         ref_span = ref_frames[-1] - ref_frames[0]
 
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         active_frames = rm.collect_key_frames(fcurves)
         if len(active_frames) < 2:
-            self.report({"WARNING"}, "Active action has fewer than 2 keyframes")
+            self.report({"WARNING"}, T('Active action has fewer than 2 keyframes'))
             return {"CANCELLED"}
         active_span = active_frames[-1] - active_frames[0]
 
         if active_span < 1e-6:
-            self.report({"WARNING"}, "Active action has zero-length span")
+            self.report({"WARNING"}, T('Active action has zero-length span'))
             return {"CANCELLED"}
 
         factor = ref_span / active_span
@@ -477,7 +479,7 @@ class AA_OT_p6_match_timing(bpy.types.Operator):
         _tag_redraw(context)
         self.report(
             {"INFO"},
-            f"Matched timing to '{ref_obj.name}' (×{factor:.3f})",
+            F("Matched timing to '{p0}' (×{p1})", p0=f'{ref_obj.name}', p1=f'{factor:.3f}'),
         )
         return {"FINISHED"}
 

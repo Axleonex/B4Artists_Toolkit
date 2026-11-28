@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F, error_text
+
 import json
 from pathlib import Path
 from typing import Any
@@ -48,7 +50,7 @@ class AA_OT_export_settings(bpy.types.Operator, ExportHelper):
     bl_options = {"REGISTER"}
 
     filename_ext = ".json"
-    filter_glob: StringProperty(default="*.json", options={"HIDDEN"})  # type: ignore[valid-type]
+    filter_glob: StringProperty(default="*.json", options={"HIDDEN"}, translation_context='AnimAssist')  # type: ignore[valid-type]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -57,11 +59,11 @@ class AA_OT_export_settings(bpy.types.Operator, ExportHelper):
     def execute(self, context: bpy.types.Context):
         prefs = _get_prefs(context)
         if prefs is None:
-            self.report({"ERROR"}, "Add-on preferences unavailable. Re-enable Anim Assist in Preferences > Add-ons")
+            self.report({"ERROR"}, T('Add-on preferences unavailable. Re-enable Anim Assist in Preferences > Add-ons'))
             return {"CANCELLED"}
 
         if not self.filepath:
-            self.report({"ERROR"}, "Choose a file to export to first")
+            self.report({"ERROR"}, T('Choose a file to export to first'))
             return {"CANCELLED"}
 
         data: dict[str, Any] = {}
@@ -94,7 +96,7 @@ class AA_OT_export_settings(bpy.types.Operator, ExportHelper):
             _log.exception("Settings export failed")
             return {"CANCELLED"}
 
-        self.report({"INFO"}, f"Settings exported to {self.filepath}")
+        self.report({"INFO"}, F('Settings exported to {p0}', p0=f'{self.filepath}'))
         return {"FINISHED"}
 
 
@@ -105,7 +107,7 @@ class AA_OT_import_settings(bpy.types.Operator, ImportHelper):
     bl_options = {"REGISTER", "UNDO"}
 
     filename_ext = ".json"
-    filter_glob: StringProperty(default="*.json", options={"HIDDEN"})  # type: ignore[valid-type]
+    filter_glob: StringProperty(default="*.json", options={"HIDDEN"}, translation_context='AnimAssist')  # type: ignore[valid-type]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -114,11 +116,11 @@ class AA_OT_import_settings(bpy.types.Operator, ImportHelper):
     def execute(self, context: bpy.types.Context):
         prefs = _get_prefs(context)
         if prefs is None:
-            self.report({"ERROR"}, "Add-on preferences unavailable. Re-enable Anim Assist in Preferences > Add-ons")
+            self.report({"ERROR"}, T('Add-on preferences unavailable. Re-enable Anim Assist in Preferences > Add-ons'))
             return {"CANCELLED"}
 
         if not self.filepath:
-            self.report({"ERROR"}, "Choose a settings file to import first")
+            self.report({"ERROR"}, T('Choose a settings file to import first'))
             return {"CANCELLED"}
 
         try:
@@ -130,7 +132,7 @@ class AA_OT_import_settings(bpy.types.Operator, ImportHelper):
             return {"CANCELLED"}
 
         if not isinstance(data, dict):
-            self.report({"ERROR"}, "Import failed: JSON root must be an object")
+            self.report({"ERROR"}, T('Import failed: JSON root must be an object'))
             return {"CANCELLED"}
 
         # Validate the whole toolbar record before assigning any preferences.
@@ -141,9 +143,9 @@ class AA_OT_import_settings(bpy.types.Operator, ImportHelper):
         try:
             layout_raw=data.get('timeline_layouts_json')
             if 'timeline_layouts_json' in data and not isinstance(layout_raw,str):
-                raise ValueError('Toolbar layout must be a JSON string')
+                raise ValueError(T('Toolbar layout must be a JSON string'))
             if layout_raw:
-                if not isinstance(layout_raw,str): raise ValueError('Toolbar layout must be a JSON string')
+                if not isinstance(layout_raw,str): raise ValueError(T('Toolbar layout must be a JSON string'))
                 data['timeline_layouts_json']=toolbar_model.encode(toolbar_model.decode(layout_raw,ACTIONS),ACTIONS)
             elif any(quick_property_name(action) in data for action in ACTIONS):
                 existing=timeline_record(prefs)
@@ -151,16 +153,16 @@ class AA_OT_import_settings(bpy.types.Operator, ImportHelper):
                 for action in ACTIONS:
                     key=quick_property_name(action)
                     if key in data:
-                        if type(data[key]) is not bool: raise ValueError('Quick tool choices must be checkboxes')
+                        if type(data[key]) is not bool: raise ValueError(T('Quick tool choices must be checkboxes'))
                         if data[key]: chosen.add(action)
                         else: chosen.discard(action)
                 migrated=toolbar_model.from_legacy(ACTIONS,chosen)
                 migrated['saved']=existing['saved']
                 data['timeline_layouts_json']=toolbar_model.encode(migrated,ACTIONS)
             elif 'timeline_layouts_json' in data:
-                raise ValueError('The settings file has an empty toolbar layout record')
+                raise ValueError(T('The settings file has an empty toolbar layout record'))
         except ValueError as exc:
-            self.report({'ERROR'},str(exc)); return {'CANCELLED'}
+            self.report({'ERROR'},error_text(exc)); return {'CANCELLED'}
 
         applied = 0
         from ..ui.timeline_catalog import GROUPS
@@ -190,5 +192,5 @@ class AA_OT_import_settings(bpy.types.Operator, ImportHelper):
             except Exception:
                 _log.warning("Could not apply setting '%s'", key, exc_info=True)
 
-        self.report({"INFO"}, f"Applied {applied} settings from {self.filepath}")
+        self.report({"INFO"}, F('Applied {p0} settings from {p1}', p0=f'{applied}', p1=f'{self.filepath}'))
         return {"FINISHED"}

@@ -16,6 +16,8 @@ Two panels, both appearing in Dope Sheet (primary) and Graph Editor
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.p6_properties import get_p6
@@ -44,10 +46,10 @@ def _has_active_action(context: bpy.types.Context) -> bool:
 
 def _draw_no_action_warning(layout: bpy.types.UILayout, context: bpy.types.Context) -> None:
     if not _p6_available(context):
-        layout.label(text="Retiming properties unavailable.", icon="ERROR")
+        layout.label(text="Retiming properties unavailable.", icon="ERROR", text_ctxt='AnimAssist')
         return
     if not _has_active_action(context):
-        layout.label(text="No active action.", icon="INFO")
+        layout.label(text="No active action.", icon="INFO", text_ctxt='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -71,22 +73,23 @@ class ANIMASSIST_PT_p6_retime(PanelAnatomyMixin, DopeSheetSidebarPanel):
             _draw_no_action_warning(layout, context)
             return
 
-        layout.label(text=f"Target: {context.active_object.name} · {p6.range_mode.title()} range")
+        range_label=T({'SELECTION':'Selection','SCENE':'Scene','CUSTOM':'Custom'}.get(p6.range_mode,p6.range_mode))
+        layout.label(text=F('Target: {p0} · {p1} range', p0=f'{context.active_object.name}', p1=range_label), translate=False)
         for op, label in (("p6_scale_keys", "Scale Keys"), ("p6_modal_scale", "Interactive Scale"),
                           ("p6_time_warp", "Time Warp"), ("p6_offset_keys", "Offset Keys"),
                           ("p6_modal_offset", "Interactive Offset"), ("p6_reverse_keys", "Reverse Keys"),
                           ("p6_bake_timing", "Bake Timing"), ("p6_match_timing", "Match Timing"),
                           ("p6_reset_timing", "Reset Timing")):
-            layout.operator(f"animassist.{op}", text=label)
+            layout.operator(f"animassist.{op}", text=T(label), translate=False)
         header, body = layout.panel("aa_retime_options", default_closed=True)
-        header.label(text="Retime Options")
+        header.label(text="Retime Options", text_ctxt='AnimAssist')
         if body:
-            body.prop(p6, "anchor_mode", text="Anchor")
+            body.prop(p6, "anchor_mode", text="Anchor", text_ctxt='AnimAssist')
             if p6.anchor_mode == "CUSTOM":
                 body.prop(p6, "pivot_frame")
-            body.operator("animassist.p6_set_pivot", text="Set Pivot from Playhead")
-            body.prop(p6, "scale_factor", text="Scale Factor")
-            body.prop(p6, "offset_frames", text="Offset Frames")
+            body.operator("animassist.p6_set_pivot", text="Set Pivot from Playhead", text_ctxt='AnimAssist')
+            body.prop(p6, "scale_factor", text="Scale Factor", text_ctxt='AnimAssist')
+            body.prop(p6, "offset_frames", text="Offset Frames", text_ctxt='AnimAssist')
 
     # ---- Scope: timing range ----
 
@@ -110,27 +113,27 @@ class ANIMASSIST_PT_p6_retime(PanelAnatomyMixin, DopeSheetSidebarPanel):
 
         if p6.range_mode == "CUSTOM":
             row = body.row(align=True)
-            row.prop(p6, "range_start", text="Start")
-            row.prop(p6, "range_end",   text="End")
+            row.prop(p6, "range_start", text="Start", text_ctxt='AnimAssist')
+            row.prop(p6, "range_end",   text="End", text_ctxt='AnimAssist')
 
             row2 = body.row(align=True)
             row2.operator("animassist.p6_set_range_start", text="", icon="TRIA_LEFT")
             row2.operator("animassist.p6_set_range_end",   text="", icon="TRIA_RIGHT")
 
         elif p6.range_mode == "SELECTION":
-            body.label(text="Range from selected keys", icon="RESTRICT_SELECT_OFF")
+            body.label(text="Range from selected keys", icon="RESTRICT_SELECT_OFF", text_ctxt='AnimAssist')
 
         row3 = body.row(align=True)
-        row3.operator("animassist.p6_store_range",          text="Store",    icon="BOOKMARKS")
-        row3.operator("animassist.p6_restore_range",        text="Restore",  icon="RECOVER_LAST")
-        row3.operator("animassist.p6_clear_range",          text="Clear",    icon="X")
+        row3.operator("animassist.p6_store_range",          text="Store",    icon="BOOKMARKS", text_ctxt='AnimAssist')
+        row3.operator("animassist.p6_restore_range",        text="Restore",  icon="RECOVER_LAST", text_ctxt='AnimAssist')
+        row3.operator("animassist.p6_clear_range",          text="Clear",    icon="X", text_ctxt='AnimAssist')
 
         body.operator("animassist.p6_select_keys_in_range", text="Select Keys in Range",
-                      icon="RESTRICT_SELECT_OFF")
+                      icon="RESTRICT_SELECT_OFF", text_ctxt='AnimAssist')
 
         row4 = body.row(align=True)
-        row4.operator("animassist.p6_scale_range",  text="Scale Range",  icon="CON_SIZELIKE")
-        row4.operator("animassist.p6_offset_range", text="Offset Range", icon="NEXT_KEYFRAME")
+        row4.operator("animassist.p6_scale_range",  text="Scale Range",  icon="CON_SIZELIKE", text_ctxt='AnimAssist')
+        row4.operator("animassist.p6_offset_range", text="Offset Range", icon="NEXT_KEYFRAME", text_ctxt='AnimAssist')
 
     # ---- Advanced: ripple and compression ----
 
@@ -150,7 +153,7 @@ class ANIMASSIST_PT_p6_retime(PanelAnatomyMixin, DopeSheetSidebarPanel):
         if not expanded:
             return
 
-        body.prop(p6, "ripple_delta", text="Ripple Amount")
+        body.prop(p6, "ripple_delta", text="Ripple Amount", text_ctxt='AnimAssist')
 
         row = body.row(align=True)
         uh.explained_op(
@@ -167,10 +170,10 @@ class ANIMASSIST_PT_p6_retime(PanelAnatomyMixin, DopeSheetSidebarPanel):
             icon="FRAME_PREV",
             help_id="op.animassist.p6_ripple_backward",
         )
-        body.operator("animassist.p6_ripple_to_end", text="Ripple to End", icon="TRACKING_FORWARDS")
+        body.operator("animassist.p6_ripple_to_end", text="Ripple to End", icon="TRACKING_FORWARDS", text_ctxt='AnimAssist')
 
         body.separator(factor=0.5)
-        body.prop(p6, "insert_frames", text="Frame Count")
+        body.prop(p6, "insert_frames", text="Frame Count", text_ctxt='AnimAssist')
         row2 = body.row(align=True)
         uh.explained_op(
             row2, context,
@@ -186,28 +189,28 @@ class ANIMASSIST_PT_p6_retime(PanelAnatomyMixin, DopeSheetSidebarPanel):
             icon="REMOVE",
             help_id="op.animassist.p6_remove_time",
         )
-        body.operator("animassist.p6_compress_timing", text="Compress Timing…", icon="FULLSCREEN_EXIT")
+        body.operator("animassist.p6_compress_timing", text="Compress Timing…", icon="FULLSCREEN_EXIT", text_ctxt='AnimAssist')
 
         # Gap tools sub-section.
         body.separator(factor=0.5)
-        body.label(text="Gap Tools", icon="SEQ_SPLITVIEW")
-        body.prop(p6, "gap_threshold",  text="Gap Threshold")
-        body.prop(p6, "cluster_radius", text="Cluster Radius")
-        body.prop(p6, "gap_fill_mode",  text="Fill Mode")
+        body.label(text="Gap Tools", icon="SEQ_SPLITVIEW", text_ctxt='AnimAssist')
+        body.prop(p6, "gap_threshold",  text="Gap Threshold", text_ctxt='AnimAssist')
+        body.prop(p6, "cluster_radius", text="Cluster Radius", text_ctxt='AnimAssist')
+        body.prop(p6, "gap_fill_mode",  text="Fill Mode", text_ctxt='AnimAssist')
 
         row3 = body.row(align=True)
-        row3.operator("animassist.p6_detect_gaps", text="Detect Gaps",   icon="VIEWZOOM")
-        row3.operator("animassist.p6_fill_gaps",   text="Fill Gaps",     icon="FIXED_SIZE")
+        row3.operator("animassist.p6_detect_gaps", text="Detect Gaps",   icon="VIEWZOOM", text_ctxt='AnimAssist')
+        row3.operator("animassist.p6_fill_gaps",   text="Fill Gaps",     icon="FIXED_SIZE", text_ctxt='AnimAssist')
         body.operator("animassist.p6_collapse_gap", text="Collapse Gap at Playhead",
-                      icon="GRIP")
+                      icon="GRIP", text_ctxt='AnimAssist')
 
         row4 = body.row(align=True)
-        row4.operator("animassist.p6_distribute_keys",  text="Distribute", icon="ALIGN_JUSTIFY")
-        row4.operator("animassist.p6_normalize_spacing", text="Normalize",  icon="NLA_PUSHDOWN")
+        row4.operator("animassist.p6_distribute_keys",  text="Distribute", icon="ALIGN_JUSTIFY", text_ctxt='AnimAssist')
+        row4.operator("animassist.p6_normalize_spacing", text="Normalize",  icon="NLA_PUSHDOWN", text_ctxt='AnimAssist')
 
         # Snap & clean.
         body.separator(factor=0.5)
-        body.label(text="Snap & Clean", icon="SNAP_ON")
+        body.label(text="Snap & Clean", icon="SNAP_ON", text_ctxt='AnimAssist')
         row5 = body.row(align=True)
         uh.explained_op(
             row5, context,
@@ -226,9 +229,9 @@ class ANIMASSIST_PT_p6_retime(PanelAnatomyMixin, DopeSheetSidebarPanel):
 
         # Modal preferences.
         body.separator(factor=0.5)
-        body.label(text="Modal Preferences", icon="PREFERENCES")
-        body.prop(p6, "modal_snap",        text="Snap to Frames")
-        body.prop(p6, "modal_show_header", text="Show Header Delta")
+        body.label(text="Modal Preferences", icon="PREFERENCES", text_ctxt='AnimAssist')
+        body.prop(p6, "modal_snap",        text="Snap to Frames", text_ctxt='AnimAssist')
+        body.prop(p6, "modal_show_header", text="Show Header Delta", text_ctxt='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -247,7 +250,7 @@ class ANIMASSIST_PT_p6_retime_diag(DopeSheetSidebarPanel):
         layout = self.layout
         p6 = get_p6(context)
         if p6 is None:
-            layout.label(text="Retiming properties unavailable.", icon="ERROR")
+            layout.label(text="Retiming properties unavailable.", icon="ERROR", text_ctxt='AnimAssist')
             return
 
         # Run / Clear row.
@@ -278,15 +281,15 @@ class ANIMASSIST_PT_p6_retime_diag(DopeSheetSidebarPanel):
                     icon = "ERROR"
                 else:
                     icon = "CANCEL"
-                score_row.label(text=f"Score: {score:.0f}/100", icon=icon)
+                score_row.label(text=F('Score: {p0}/100', p0=f'{score:.0f}'), icon=icon, translate=False)
 
             # Counts.
             if p6.last_diag_gap_count > 0:
-                col.label(text=f"Gaps: {p6.last_diag_gap_count}", icon="SEQ_SPLITVIEW")
+                col.label(text=F('Gaps: {p0}', p0=f'{p6.last_diag_gap_count}'), icon="SEQ_SPLITVIEW", translate=False)
             if p6.last_diag_cluster_count > 0:
-                col.label(text=f"Clusters: {p6.last_diag_cluster_count}", icon="PARTICLES")
+                col.label(text=F('Clusters: {p0}', p0=f'{p6.last_diag_cluster_count}'), icon="PARTICLES", translate=False)
             if result == "CLEAN":
-                col.label(text="No issues found", icon="CHECKMARK")
+                col.label(text="No issues found", icon="CHECKMARK", text_ctxt='AnimAssist')
 
             # Gap navigation.
             if get_cached_gaps():
@@ -294,7 +297,7 @@ class ANIMASSIST_PT_p6_retime_diag(DopeSheetSidebarPanel):
                 nav_row = box.row(align=True)
                 nav_row.operator("animassist.p6_jump_prev_gap", text="", icon="PREV_KEYFRAME")
                 nav_row.operator("animassist.p6_jump_next_gap", text="", icon="NEXT_KEYFRAME")
-                nav_row.label(text="Gap navigation")
+                nav_row.label(text="Gap navigation", text_ctxt='AnimAssist')
 
             # Cluster navigation.
             d = get_cached_diag()
@@ -302,28 +305,26 @@ class ANIMASSIST_PT_p6_retime_diag(DopeSheetSidebarPanel):
                 cluster_row = box.row(align=True)
                 cluster_row.label(text="", icon="PARTICLES")
                 cluster_row.operator("animassist.p6_jump_next_cluster",
-                                     text="Next Cluster", icon="NEXT_KEYFRAME")
+                                     text="Next Cluster", icon="NEXT_KEYFRAME", text_ctxt='AnimAssist')
 
             # Detail listing (collapsible).
             box.prop(p6, "show_diag_details",
                      text="Details",
                      icon="DISCLOSURE_TRI_DOWN" if p6.show_diag_details else "DISCLOSURE_TRI_RIGHT",
-                     toggle=True)
+                     toggle=True, text_ctxt='AnimAssist')
 
             if p6.show_diag_details and d is not None:
                 detail_col = box.column(align=True)
                 for gap in d.gaps:
                     detail_col.label(
-                        text=f"  Gap {gap.start_frame:.0f}→{gap.end_frame:.0f} "
-                             f"({gap.size:.0f}f)",
+                        text=F('  Gap {p0}→{p1} ({p2}f)', p0=f'{gap.start_frame:.0f}', p1=f'{gap.end_frame:.0f}', p2=f'{gap.size:.0f}'),
                         icon="SEQ_SPLITVIEW",
-                    )
+                    translate=False)
                 for cluster in d.clusters:
                     detail_col.label(
-                        text=f"  Cluster ~{cluster.center:.0f}f "
-                             f"({len(cluster.frames)} keys)",
+                        text=F('  Cluster ~{p0}f ({p1} keys)', p0=f'{cluster.center:.0f}', p1=f'{len(cluster.frames)}'),
                         icon="PARTICLES",
-                    )
+                    translate=False)
 
             # Copy report button.
             box.separator(factor=0.3)
@@ -336,13 +337,13 @@ class ANIMASSIST_PT_p6_retime_diag(DopeSheetSidebarPanel):
             )
 
         else:
-            layout.label(text="No results yet — click Run Diagnostics.", icon="INFO")
+            layout.label(text="No results yet — click Run Diagnostics.", icon="INFO", text_ctxt='AnimAssist')
 
         # Threshold controls.
         layout.separator(factor=0.5)
-        layout.label(text="Thresholds", icon="PREFERENCES")
-        layout.prop(p6, "gap_threshold",  text="Gap Threshold")
-        layout.prop(p6, "cluster_radius", text="Cluster Radius")
+        layout.label(text="Thresholds", icon="PREFERENCES", text_ctxt='AnimAssist')
+        layout.prop(p6, "gap_threshold",  text="Gap Threshold", text_ctxt='AnimAssist')
+        layout.prop(p6, "cluster_radius", text="Cluster Radius", text_ctxt='AnimAssist')
 
 
 # ---------------------------------------------------------------------------

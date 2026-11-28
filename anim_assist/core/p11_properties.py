@@ -132,7 +132,7 @@ class AA_P11_BoneAssignment(bpy.types.PropertyGroup):
         name="Bone",
         description="Name of the bone assigned to this layer",
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P11_ChannelOverride(bpy.types.PropertyGroup):
@@ -146,28 +146,28 @@ class AA_P11_ChannelOverride(bpy.types.PropertyGroup):
         name="Bone",
         description="Bone this override applies to",
         default="",
-    )
+     translation_context='AnimAssist')
 
     location_weight: FloatProperty(  # type: ignore[valid-type]
         name="Location Weight",
         description="Override weight for location channels on this bone",
         default=1.0, min=0.0, max=1.0,
         subtype="FACTOR",
-    )
+     translation_context='AnimAssist')
 
     rotation_weight: FloatProperty(  # type: ignore[valid-type]
         name="Rotation Weight",
         description="Override weight for rotation channels on this bone",
         default=1.0, min=0.0, max=1.0,
         subtype="FACTOR",
-    )
+     translation_context='AnimAssist')
 
     scale_weight: FloatProperty(  # type: ignore[valid-type]
         name="Scale Weight",
         description="Override weight for scale channels on this bone",
         default=1.0, min=0.0, max=1.0,
         subtype="FACTOR",
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P11_AnimLayer(bpy.types.PropertyGroup):
@@ -184,14 +184,14 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
         name="Layer Name",
         description="Display name for this animation layer",
         default="Layer",
-    )
+     translation_context='AnimAssist')
 
     layer_color: EnumProperty(  # type: ignore[valid-type]
         name="Color",
         description="Visual accent color for this layer in the UI",
         items=_layer_color_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     # ---- Blending ----
 
@@ -203,7 +203,7 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
         ),
         default=1.0, min=0.0, max=1.0,
         subtype="FACTOR",
-    )
+     translation_context='AnimAssist')
 
     blend_mode: EnumProperty(  # type: ignore[valid-type]
         name="Blend Mode",
@@ -212,7 +212,7 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
         ),
         items=_blend_mode_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     # ---- State flags ----
 
@@ -220,7 +220,7 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
         name="Mute",
         description="Disable this layer without removing it",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     solo: BoolProperty(  # type: ignore[valid-type]
         name="Solo",
@@ -229,19 +229,19 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
             "Other layers are temporarily muted"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     locked: BoolProperty(  # type: ignore[valid-type]
         name="Lock",
         description="Prevent editing on this layer (read-only)",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     protected: BoolProperty(  # type: ignore[valid-type]
         name="Protected",
         description="Prevent accidental deletion of this layer",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     auto_key: BoolProperty(  # type: ignore[valid-type]
         name="Auto Key",
@@ -251,7 +251,7 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
             "Works independently of Blender's global auto-keying"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # ---- Scope ----
 
@@ -260,7 +260,7 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
         description="Which transform channels this layer affects",
         items=_layer_scope_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     custom_filter: StringProperty(  # type: ignore[valid-type]
         name="Custom Filter",
@@ -269,7 +269,7 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
             "(e.g. 'location,rotation_euler'). Used when scope is Custom"
         ),
         default="",
-    )
+     translation_context='AnimAssist')
 
     # ---- Part assignment ----
 
@@ -280,13 +280,13 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
             "Bones that this layer is allowed to edit. "
             "Empty means ALL bones (whole-body layer)"
         ),
-    )
+     translation_context='AnimAssist')
 
     assigned_bones_index: IntProperty(  # type: ignore[valid-type]
         name="Active Bone",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     # ---- Per-channel weight overrides ----
 
@@ -298,13 +298,13 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
             "Allows different blend percentages for loc/rot/scale "
             "on individual bones within this layer"
         ),
-    )
+     translation_context='AnimAssist')
 
     channel_overrides_index: IntProperty(  # type: ignore[valid-type]
         name="Active Override",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     # ---- Metadata ----
 
@@ -315,7 +315,7 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
             "The base layer always uses Override mode at 100%% weight"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     action_name: StringProperty(  # type: ignore[valid-type]
         name="Action",
@@ -324,7 +324,7 @@ class AA_P11_AnimLayer(bpy.types.PropertyGroup):
             "Each layer stores its animation in a separate Action"
         ),
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P11_LayerPreset(bpy.types.PropertyGroup):
@@ -334,13 +334,13 @@ class AA_P11_LayerPreset(bpy.types.PropertyGroup):
         name="Preset Name",
         description="Display name for this layer preset",
         default="Preset",
-    )
+     translation_context='AnimAssist')
 
     preset_json: StringProperty(  # type: ignore[valid-type]
         name="Preset Data",
         description="JSON-encoded layer stack configuration",
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -356,14 +356,14 @@ class AA_P11_Properties(bpy.types.PropertyGroup):
         type=AA_P11_AnimLayer,
         name="Animation Layers",
         description="Stack of animation layers, evaluated bottom to top",
-    )
+     translation_context='AnimAssist')
 
     active_layer_index: IntProperty(  # type: ignore[valid-type]
         name="Active Layer",
         description="Index of the currently active layer for editing",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     # ---- Global toggles ----
 
@@ -374,7 +374,7 @@ class AA_P11_Properties(bpy.types.PropertyGroup):
             "When disabled, only the base action is used"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     edit_active_only: BoolProperty(  # type: ignore[valid-type]
         name="Edit Active Only",
@@ -384,7 +384,7 @@ class AA_P11_Properties(bpy.types.PropertyGroup):
             "Inspired by Maya's 'Selected Layer' editing mode"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     auto_assign_on_key: BoolProperty(  # type: ignore[valid-type]
         name="Auto-Assign on Key",
@@ -393,13 +393,13 @@ class AA_P11_Properties(bpy.types.PropertyGroup):
             "a keyframe is inserted on it (if not already assigned)"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     show_layer_colors: BoolProperty(  # type: ignore[valid-type]
         name="Show Layer Colors",
         description="Color-code bones in the viewport by their layer assignment",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     show_unassigned_warning: BoolProperty(  # type: ignore[valid-type]
         name="Warn Unassigned",
@@ -408,7 +408,7 @@ class AA_P11_Properties(bpy.types.PropertyGroup):
             "assigned to any layer"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     # ---- Interactive blend ----
 
@@ -417,14 +417,14 @@ class AA_P11_Properties(bpy.types.PropertyGroup):
         description="Index of the source layer for interactive blend",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     blend_target_index: IntProperty(  # type: ignore[valid-type]
         name="Blend Target",
         description="Index of the target layer for interactive blend",
         default=1,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     blend_factor: FloatProperty(  # type: ignore[valid-type]
         name="Blend Factor",
@@ -434,7 +434,7 @@ class AA_P11_Properties(bpy.types.PropertyGroup):
         ),
         default=0.5, min=0.0, max=1.0,
         subtype="FACTOR",
-    )
+     translation_context='AnimAssist')
 
     # ---- Presets ----
 
@@ -442,14 +442,14 @@ class AA_P11_Properties(bpy.types.PropertyGroup):
         type=AA_P11_LayerPreset,
         name="Layer Presets",
         description="Saved layer stack configurations",
-    )
+     translation_context='AnimAssist')
 
     user_presets_index: IntProperty(  # type: ignore[valid-type]
         name="Active Preset",
         description="Index of the selected animation-layer preset",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     # ---- Evaluation cache generation ----
 
@@ -457,7 +457,7 @@ class AA_P11_Properties(bpy.types.PropertyGroup):
         name="Eval Generation",
         description="Incremented when layer stack changes to invalidate caches",
         default=0,
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -491,7 +491,7 @@ def register_properties() -> None:
     bpy.types.Scene.anim_assist_p11 = PointerProperty(  # type: ignore[assignment]
         type=AA_P11_Properties,
         name="Anim Assist P11",
-    )
+     translation_context='AnimAssist')
 
 
 def unregister_properties() -> None:

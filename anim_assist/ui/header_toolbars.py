@@ -30,6 +30,7 @@ appended functions for clean removal.
 from __future__ import annotations
 
 import bpy
+from ..i18n import T
 from . import timeline_strip
 
 # Track appended draw functions for clean unregister.
@@ -56,13 +57,13 @@ class ANIMASSIST_PT_header_toolbar_options(bpy.types.Panel):
         timeline = timeline_strip.is_timeline(context.area)
         if prefs is not None:
             if timeline:
-                layout.label(text="Timeline Placement")
-                layout.label(text="Add-on preference")
+                layout.label(text="Timeline Placement", text_ctxt='AnimAssist')
+                layout.label(text="Add-on preference", text_ctxt='AnimAssist')
             layout.prop(prefs, "timeline_toolbar_row")
             layout.separator()
         if timeline:
-            layout.label(text="Category Visibility / This Scene")
-            layout.label(text="Shared across editor headers")
+            layout.label(text="Category Visibility / This Scene", text_ctxt='AnimAssist')
+            layout.label(text="Shared across editor headers", text_ctxt='AnimAssist')
             for property_name, label in (
                 ("header_show_breakdown", "Tween"),
                 ("header_show_pushpull", "Curves"),
@@ -71,15 +72,15 @@ class ANIMASSIST_PT_header_toolbar_options(bpy.types.Panel):
                 ("header_show_trajectory", "Motion"),
                 ("header_show_matching", "Pose"),
             ):
-                layout.prop(props, property_name, text=label)
+                layout.prop(props, property_name, text=T(label), translate=False)
             return
-        layout.label(text="Show in Header:")
+        layout.label(text="Show in Header:", text_ctxt='AnimAssist')
         layout.prop(props, "header_show_breakdown")
         layout.prop(props, "header_show_pushpull")
         layout.prop(props, "header_show_retime")
         layout.prop(props, "header_show_selection")
         layout.separator()
-        layout.label(text="Motion / Matching:")
+        layout.label(text="Motion / Matching:", text_ctxt='AnimAssist')
         layout.prop(props, "header_show_trajectory")
         layout.prop(props, "header_show_matching")
 
@@ -100,7 +101,7 @@ def _draw_breakdown_row(layout: bpy.types.UILayout) -> None:
     for percent_value, label in ((25, "25"), (50, "50"), (75, "75")):
         op = row.operator(
             "animassist.breakdown_percentage",
-            text=label,
+            text=label, translate=False,
         )
         op.percent = percent_value
 
@@ -139,7 +140,7 @@ def _draw_retime_row(layout: bpy.types.UILayout) -> None:
     for speed_factor, label in ((0.8, "80"), (0.9, "90"), (1.1, "110"), (1.2, "120")):
         op = row.operator(
             "animassist.p6_scale_keys",
-            text=label,
+            text=label, translate=False,
         )
         op.scale_factor = speed_factor
 
@@ -289,9 +290,9 @@ def _draw_viewport_toolbar(self, context: bpy.types.Context) -> None:
         match_row = layout.row(align=True)
         match_row.separator()
 
-        match_row.operator("animassist.p8_match_to_world", text="W")
-        match_row.operator("animassist.p8_match_to_parent", text="P")
-        match_row.operator("animassist.p8_visual_match", text="V")
+        match_row.operator("animassist.p8_match_to_world", text="W", text_ctxt='AnimAssist')
+        match_row.operator("animassist.p8_match_to_parent", text="P", text_ctxt='AnimAssist')
+        match_row.operator("animassist.p8_visual_match", text="V", text_ctxt='AnimAssist')
 
     layout.popover(
         panel="ANIMASSIST_PT_header_toolbar_options",

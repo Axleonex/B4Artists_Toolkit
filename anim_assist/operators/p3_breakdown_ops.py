@@ -16,6 +16,8 @@ undo stack wraps their effects. None of them mutate scene state outside
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from typing import Iterable, Optional
 
 import bpy
@@ -122,18 +124,18 @@ def _run(
 ) -> set[str]:
     obj, bones = _resolve_target(context)
     if obj is None:
-        self.report({"WARNING"}, "No active object.")
+        self.report({"WARNING"}, T('No active object.'))
         return {"CANCELLED"}
     adata = getattr(obj, "animation_data", None)
     if adata is None or adata.action is None:
-        self.report({"WARNING"}, f"{obj.name}: no action.")
+        self.report({"WARNING"}, F('{p0}: no action.', p0=f'{obj.name}'))
         return {"CANCELLED"}
 
     result = bc.apply_breakdown(
         context, obj, bones, options, frames=frames
-    )
+    , format_text=F)
     bc.remember_last(options)
-    msg = result.messages[-1] if result.messages else "Done."
+    msg = result.messages[-1] if result.messages else T("Done.")
     self.report({"INFO"}, msg)
     return {"FINISHED"}
 
@@ -141,11 +143,11 @@ def _run(
 def _poll_animated(cls, context: bpy.types.Context) -> bool:
     obj = getattr(context, "active_object", None)
     if obj is None:
-        cls.poll_message_set("Select an animated object to insert a breakdown")
+        cls.poll_message_set(T('Select an animated object to insert a breakdown'))
         return False
     adata = getattr(obj, "animation_data", None)
     if adata is None or adata.action is None:
-        cls.poll_message_set("Add keyframes to the active object before inserting a breakdown")
+        cls.poll_message_set(T('Add keyframes to the active object before inserting a breakdown'))
         return False
     return True
 
@@ -184,7 +186,7 @@ class AA_OT_breakdown_weighted(bpy.types.Operator):
         name="Factor",
         description="Override factor for this run. 0 favours the previous pose, 1 favours the next.",
         default=0.5, min=-1.0, max=2.0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -305,7 +307,7 @@ class AA_OT_breakdown_percentage(bpy.types.Operator):
         name="Percent",
         description="Fixed breakdown percentage, 0 favours the previous pose and 100 favours the next.",
         default=50, min=0, max=100,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -348,7 +350,7 @@ class AA_OT_breakdown_batch_frames(bpy.types.Operator):
     def execute(self, context):
         obj, _ = _resolve_target(context)
         if obj is None or obj.animation_data is None or obj.animation_data.action is None:
-            self.report({"WARNING"}, "No animated object.")
+            self.report({"WARNING"}, T('No animated object.'))
             return {"CANCELLED"}
         frames: set[float] = set()
         for fc in get_fcurves(obj.animation_data.action, anim_data=obj.animation_data):
@@ -356,7 +358,7 @@ class AA_OT_breakdown_batch_frames(bpy.types.Operator):
                 if kp.select_control_point:
                     frames.add(float(kp.co[0]))
         if not frames:
-            self.report({"WARNING"}, "No selected keys to batch over.")
+            self.report({"WARNING"}, T('No selected keys to batch over.'))
             return {"CANCELLED"}
         return _run(
             self, context,
@@ -375,12 +377,12 @@ class AA_OT_breakdown_numeric(bpy.types.Operator):
         name="Factor",
         description="Blend factor. 0 favours the previous pose, 1 favours the next.",
         default=0.5, min=-1.0, max=2.0,
-    )
+     translation_context='AnimAssist')
     target_frame: FloatProperty(  # type: ignore[valid-type]
         name="Frame",
         description="Frame at which to insert the new breakdown key.",
         default=1.0,
-    )
+     translation_context='AnimAssist')
     mode: EnumProperty(  # type: ignore[valid-type]
         name="Mode",
         description="Blend mode for this numeric breakdown.",
@@ -393,7 +395,7 @@ class AA_OT_breakdown_numeric(bpy.types.Operator):
             ("PULL_NEXT", "Pull Next", "Soften toward next"),
         ),
         default="REPLACE",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -423,7 +425,7 @@ class AA_OT_breakdown_repeat_last(bpy.types.Operator):
     def execute(self, context):
         last = bc.get_last()
         if last is None:
-            self.report({"WARNING"}, "No previous breakdown to repeat.")
+            self.report({"WARNING"}, T('No previous breakdown to repeat.'))
             return {"CANCELLED"}
         return _run(self, context, last)
 
@@ -516,10 +518,10 @@ class AA_OT_breakdown_selected_controls(bpy.types.Operator):
     def execute(self, context):
         obj, bones = _resolve_target(context)
         if obj is None:
-            self.report({"WARNING"}, "No active object.")
+            self.report({"WARNING"}, T('No active object.'))
             return {"CANCELLED"}
         if obj.type == "ARMATURE" and obj.mode == "POSE" and not bones:
-            self.report({"WARNING"}, "No pose bones selected.")
+            self.report({"WARNING"}, T('No pose bones selected.'))
             return {"CANCELLED"}
         return _run(self, context, _options_from_scene(context))
 

@@ -4,6 +4,7 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatProperty, IntProperty, StringProperty
 
 from . import constants
+from .i18n import LANGUAGE_ITEMS, redraw as _update_language
 from .core.logging import get_logger, set_level
 # --- HELP SYSTEM INTEGRATION ---
 from .core.help_draw import draw_explainer_icon
@@ -62,70 +63,78 @@ def prepare_timeline_quick_preferences() -> None:
     for action, (_suffix, _arguments, label) in ACTIONS.items():
         annotations[quick_property_name(action)] = BoolProperty(
             name=label,
-            description=f"Show a quick button beside {FAMILY[action][1]} in the Timeline toolbar",
+            description="Show a quick button in the Timeline toolbar",
             default=action in DEFAULT_QUICK_ACTIONS,
             update=_update_timeline_quick,
-        )
+         translation_context='AnimAssist')
     annotations["timeline_quick_family"] = EnumProperty(
         name="Family",
         description="Choose the family whose quick-button checkboxes you want to edit",
-        items=[(key, label, f"Choose quick buttons for {label}")
+        items=[(key, label, "Choose a tool family")
                for key, label, _actions in GROUPS],
         default="tween",
-    )
+     translation_context='AnimAssist')
 
 
 def draw_timeline_quick_settings(layout, context, prefs) -> None:
     """Shared quick-selection controls in the tool row and preferences."""
     from .ui.timeline_catalog import GROUPS, quick_property_name
     layout.prop(prefs, "timeline_toolbar_row")
-    layout.label(text="Tool row at the bottom of the Timeline", icon="INFO")
+    layout.label(text="Tool row at the bottom of the Timeline", icon="INFO", text_ctxt='AnimAssist')
     from .ui.timeline_strip import is_timeline
     if is_timeline(context.area):
         from .ui.timeline_overlay import draw_stage_controls
         draw_stage_controls(layout, context)
-        layout.label(text="Stage applies to this workspace; layouts are unchanged")
+        layout.label(text="Stage applies to this workspace; layouts are unchanged", text_ctxt='AnimAssist')
     else:
-        layout.label(text="Each workspace picks its stage with the row's stage button")
-    layout.label(text="No separate editor or application required")
-    layout.label(text="Saved in add-on preferences")
-    layout.label(text="Layouts apply to all Timelines")
-    layout.operator("animassist.toolbar_settings",text="Toolbar Settings",icon="PREFERENCES")
-    layout.operator("animassist.restore_toolbar",text="Restore Recommended Layout",icon="LOOP_BACK")
-    layout.label(text="More contains quick tools that do not fit this width")
+        layout.label(text="Each workspace picks its stage with the row's stage button", text_ctxt='AnimAssist')
+    layout.label(text="No separate editor or application required", text_ctxt='AnimAssist')
+    layout.label(text="Saved in add-on preferences", text_ctxt='AnimAssist')
+    layout.label(text="Layouts apply to all Timelines", text_ctxt='AnimAssist')
+    layout.operator("animassist.toolbar_settings",text="Toolbar Settings",icon="PREFERENCES", text_ctxt='AnimAssist')
+    layout.operator("animassist.restore_toolbar",text="Restore Recommended Layout",icon="LOOP_BACK", text_ctxt='AnimAssist')
+    layout.label(text="More contains quick tools that do not fit this width", text_ctxt='AnimAssist')
     if not context.preferences.use_preferences_save:
-        layout.label(text="Save Preferences to keep choices after restart", icon="INFO")
-        layout.operator("wm.save_userpref", text="Save Preferences", icon="FILE_TICK")
+        layout.label(text="Save Preferences to keep choices after restart", icon="INFO", text_ctxt='AnimAssist')
+        layout.operator("wm.save_userpref", text="Save Preferences", icon="FILE_TICK", text_ctxt='AnimAssist')
 
 
 class AA_AddonPreferences(bpy.types.AddonPreferences):
     # ZIP and extension installs may use B4_anim_assist or bl_ext.<repo>.<id>.
     bl_idname = __package__
 
+    language: EnumProperty(
+        name="Language",
+        description="Choose the custom text language. For all labels and tooltips, use the same application interface language",
+        items=LANGUAGE_ITEMS,
+        default="AUTO",
+        update=_update_language,
+     translation_context='AnimAssist')
+
     timeline_layouts_json: StringProperty(
         name="Toolbar Layout Library",
         description="Saved presentation and slider configurations; no animation or scene state",
         default="", options={"HIDDEN"}, update=_update_timeline_quick,
-    )
+     translation_context='AnimAssist')
 
     debug_mode: BoolProperty(  # type: ignore[valid-type]
         name="Debug Mode",
         description="Enable verbose logging to the console",
         default=False,
         update=lambda self, _ctx: set_level(self.debug_mode),
-    )
+     translation_context='AnimAssist')
 
     performance_mode: BoolProperty(  # type: ignore[valid-type]
         name="Performance Mode",
         description="Reduce UI updates and diagnostics for better performance",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     diagnostics_visible: BoolProperty(  # type: ignore[valid-type]
         name="Show Diagnostics Panel",
         description="Show the diagnostics panel in Properties > Scene > Anim Assist > Help & Diagnostics",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     explainer_mode: EnumProperty(  # type: ignore[valid-type]
         name="Hover Explainers",
@@ -135,7 +144,7 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         ),
         items=EXPLAINER_MODES,
         default="FULL",
-    )
+     translation_context='AnimAssist')
 
     # --- HELP SYSTEM INTEGRATION ---
     show_explainer_help: BoolProperty(  # type: ignore[valid-type]
@@ -145,7 +154,7 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
             "native Bforartists hover tooltips are unaffected"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     compact_ui_mode: BoolProperty(  # type: ignore[valid-type]
         name="Compact UI Mode",
         description=(
@@ -153,26 +162,26 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
             "keep sidebar panels dense on small screens"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # Operator behaviour toggles (used by curve_tool_ops and anim_offset_ops).
     animassist_fast_offset: BoolProperty(  # type: ignore[valid-type]
         name="Fast Offset Mode",
         description="Only propagate Anim Offset on mouse release (faster for complex rigs)",
         default=False,
-    )
+     translation_context='AnimAssist')
     animassist_autokey_outside_margins: BoolProperty(  # type: ignore[valid-type]
         name="Auto-key Outside Margins",
         description="Auto-insert keys for frames outside the mask blend region during Anim Offset",
         default=False,
-    )
+     translation_context='AnimAssist')
     animassist_drag_sensitivity: IntProperty(  # type: ignore[valid-type]
         name="Drag Sensitivity",
         description="Mouse pixels needed to reach factor 1.0 in modal drag operators",
         default=200,
         min=10,
         max=2000,
-    )
+     translation_context='AnimAssist')
 
     # Key diagnostics defaults.
     p2_dense_min_gap: FloatProperty(  # type: ignore[valid-type]
@@ -180,19 +189,19 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         description="Frames below this count as 'too dense' in the diagnostics scan",
         default=1.0,
         min=0.0,
-    )
+     translation_context='AnimAssist')
     p2_redundant_tolerance: FloatProperty(  # type: ignore[valid-type]
         name="Redundant Key Tolerance",
         description="Value tolerance for flagging a key as redundant (lies on a line)",
         default=1e-4,
         min=0.0,
-    )
+     translation_context='AnimAssist')
     p2_spike_ratio: FloatProperty(  # type: ignore[valid-type]
         name="Spike Ratio",
         description="Neighbour deviation ratio at which a key is flagged as a spike",
         default=4.0,
         min=1.0,
-    )
+     translation_context='AnimAssist')
 
     # Where Anim Assist appears (Properties > Scene > Anim Assist > Settings).
     timeline_canvas_row_initialized: BoolProperty(  # type: ignore[valid-type]
@@ -200,7 +209,7 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         description="Remember that existing-header preferences were migrated to the canvas row",
         default=False,
         options={"HIDDEN"},
-    )
+     translation_context='AnimAssist')
 
     timeline_toolbar_row: BoolProperty(  # type: ignore[valid-type]
         name="Timeline Tool Row",
@@ -210,12 +219,12 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         ),
         default=True,
         update=_update_timeline_placement,
-    )
+     translation_context='AnimAssist')
     timeline_paste_offset: FloatProperty(
         name="Paste Frame Offset",
         description="Add this frame offset to the copied absolute key times when pasting",
         default=0.0,
-    )
+     translation_context='AnimAssist')
     pie_hotkey_enabled: BoolProperty(  # type: ignore[valid-type]
         name="Anim Assist Pie Menu Hotkey",
         description=(
@@ -224,43 +233,44 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         ),
         default=False,
         update=_update_pie_hotkey,
-    )
+     translation_context='AnimAssist')
     header_menu_view3d: BoolProperty(  # type: ignore[valid-type]
         name="3D Viewport",
         description="Show the Anim Assist menu in the 3D Viewport header",
         default=True,
-    )
+     translation_context='AnimAssist')
     header_menu_graph: BoolProperty(  # type: ignore[valid-type]
         name="Graph Editor",
         description="Show the Anim Assist menu in the Graph Editor header",
         default=True,
-    )
+     translation_context='AnimAssist')
     header_menu_dopesheet: BoolProperty(  # type: ignore[valid-type]
         name="Dope Sheet",
         description="Show the Anim Assist menu in the Dope Sheet header",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     header_menu_nla: BoolProperty(
         name="NLA Editor", description="Show the Anim Assist menu in the NLA Editor header", default=True,
-    )
+     translation_context='AnimAssist')
 
     # Feature module toggles.
-    enable_selection: BoolProperty(name="Selection Tools", description="Enable keyframe and channel selection tools", default=True)  # type: ignore[valid-type]
-    enable_keys: BoolProperty(name="Key Utilities", description="Enable key editing and metadata utilities", default=True)  # type: ignore[valid-type]
-    enable_transform: BoolProperty(name="Transform Workflows", description="Enable transform and animation offset workflows", default=True)  # type: ignore[valid-type]
-    enable_breakdown: BoolProperty(name="Breakdown Tools", description="Enable breakdown, inbetween, and pose comparison tools", default=True)  # type: ignore[valid-type]
-    enable_trajectory: BoolProperty(name="Trajectory Tools", description="Enable trajectory overlays and arc diagnostics", default=True)  # type: ignore[valid-type]
-    enable_retime: BoolProperty(name="Retime Tools", description="Enable keyframe timing, ripple, and time-warp tools", default=True)  # type: ignore[valid-type]
-    enable_controls: BoolProperty(name="Temp Controls", description="Enable temporary proxy and rig control tools", default=True)  # type: ignore[valid-type]
-    enable_matching: BoolProperty(name="Matching Workflows", description="Enable transform matching and IK/FK switching tools", default=True)  # type: ignore[valid-type]
-    enable_layers: BoolProperty(name="Animation Layers", description="Enable the animation-layer workflow", default=True)  # type: ignore[valid-type]
+    enable_selection: BoolProperty(name="Selection Tools", description="Enable keyframe and channel selection tools", default=True, translation_context='AnimAssist')  # type: ignore[valid-type]
+    enable_keys: BoolProperty(name="Key Utilities", description="Enable key editing and metadata utilities", default=True, translation_context='AnimAssist')  # type: ignore[valid-type]
+    enable_transform: BoolProperty(name="Transform Workflows", description="Enable transform and animation offset workflows", default=True, translation_context='AnimAssist')  # type: ignore[valid-type]
+    enable_breakdown: BoolProperty(name="Breakdown Tools", description="Enable breakdown, inbetween, and pose comparison tools", default=True, translation_context='AnimAssist')  # type: ignore[valid-type]
+    enable_trajectory: BoolProperty(name="Trajectory Tools", description="Enable trajectory overlays and arc diagnostics", default=True, translation_context='AnimAssist')  # type: ignore[valid-type]
+    enable_retime: BoolProperty(name="Retime Tools", description="Enable keyframe timing, ripple, and time-warp tools", default=True, translation_context='AnimAssist')  # type: ignore[valid-type]
+    enable_controls: BoolProperty(name="Temp Controls", description="Enable temporary proxy and rig control tools", default=True, translation_context='AnimAssist')  # type: ignore[valid-type]
+    enable_matching: BoolProperty(name="Matching Workflows", description="Enable transform matching and IK/FK switching tools", default=True, translation_context='AnimAssist')  # type: ignore[valid-type]
+    enable_layers: BoolProperty(name="Animation Layers", description="Enable the animation-layer workflow", default=True, translation_context='AnimAssist')  # type: ignore[valid-type]
 
     def draw(self, context: bpy.types.Context) -> None:
         layout = self.layout
 
         box = layout.box()
-        box.label(text="General", icon='PREFERENCES')
+        box.label(text="General", icon='PREFERENCES', text_ctxt='AnimAssist')
+        box.prop(self, "language")
 
         row = box.row(align=True)
         row.prop(self, "debug_mode")
@@ -275,7 +285,7 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         draw_explainer_icon(row, context, "pref.diagnostics_visible")
 
         row = box.row(align=True)
-        row.label(text="Hover Explainers")
+        row.label(text="Hover Explainers", text_ctxt='AnimAssist')
         row.prop(self, "explainer_mode", expand=True)
         draw_explainer_icon(row, context, "pref.explainer_mode")
 
@@ -289,21 +299,21 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         draw_explainer_icon(row, context, "pref.compact_ui_mode")
 
         box = layout.box()
-        box.label(text="Where Anim Assist Appears", icon='WINDOW')
+        box.label(text="Where Anim Assist Appears", icon='WINDOW', text_ctxt='AnimAssist')
         box.prop(self, "timeline_toolbar_row")
         box.prop(self, "pie_hotkey_enabled")
-        col = box.column(heading="Header menu in", align=True)
+        col = box.column(heading="Header menu in", align=True, heading_ctxt='AnimAssist')
         col.prop(self, "header_menu_view3d")
         col.prop(self, "header_menu_graph")
         col.prop(self, "header_menu_dopesheet")
         col.prop(self, "header_menu_nla")
 
         box = layout.box()
-        box.label(text="Timeline Quick Tools", icon='PREFERENCES')
+        box.label(text="Timeline Quick Tools", icon='PREFERENCES', text_ctxt='AnimAssist')
         draw_timeline_quick_settings(box, context, self)
 
         box = layout.box()
-        box.label(text="Modules", icon='PACKAGE')
+        box.label(text="Modules", icon='PACKAGE', text_ctxt='AnimAssist')
         col = box.column(align=True)
         for key in constants.MODULE_KEYS:
             row = col.row(align=True)
@@ -311,7 +321,7 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
             draw_explainer_icon(row, context, f"pref.enable_{key}")
 
         box = layout.box()
-        box.label(text="Tool Behaviour", icon='TOOL_SETTINGS')
+        box.label(text="Tool Behaviour", icon='TOOL_SETTINGS', text_ctxt='AnimAssist')
 
         row = box.row(align=True)
         row.prop(self, "animassist_fast_offset")
@@ -326,7 +336,7 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         draw_explainer_icon(row, context, "pref.animassist_drag_sensitivity")
 
         box = layout.box()
-        box.label(text="Key Diagnostics", icon='VIEWZOOM')
+        box.label(text="Key Diagnostics", icon='VIEWZOOM', text_ctxt='AnimAssist')
 
         row = box.row(align=True)
         row.prop(self, "p2_dense_min_gap")
@@ -341,7 +351,7 @@ class AA_AddonPreferences(bpy.types.AddonPreferences):
         draw_explainer_icon(row, context, "pref.p2_spike_ratio")
 
         box = layout.box()
-        box.label(text="Settings", icon='FILE_FOLDER')
+        box.label(text="Settings", icon='FILE_FOLDER', text_ctxt='AnimAssist')
         row = box.row(align=True)
         row.operator("anim_assist.export_settings", icon='EXPORT')
         draw_explainer_icon(row, context, "op.anim_assist.export_settings")

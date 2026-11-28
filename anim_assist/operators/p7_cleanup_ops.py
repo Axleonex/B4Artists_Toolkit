@@ -23,6 +23,8 @@ Also includes:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import json
 
 import bpy
@@ -92,7 +94,7 @@ class AA_OT_p7_cleanup_session(bpy.types.Operator):
         sid = p7.active_session_id
         session = p7s.get_session(sid)
         if session is None:
-            self.report({"WARNING"}, "No active session to clean up")
+            self.report({"WARNING"}, T('No active session to clean up'))
             return {"CANCELLED"}
 
         n_obj = len(session.created_objects)
@@ -102,10 +104,9 @@ class AA_OT_p7_cleanup_session(bpy.types.Operator):
         p7s.clear_scene_session(context.scene)
         p7.active_session_id = ""
 
-        status = "clean" if ok else "with some errors"
+        status = T('clean') if ok else T('with some errors')
         self.report({"INFO"},
-                    f"Session {session.short_id} cleaned: "
-                    f"{n_obj} object(s), {n_con} constraint(s) ({status})")
+                    F('Session {p0} cleaned: {p1} object(s), {p2} constraint(s) ({p3})', p0=f'{session.short_id}', p1=f'{n_obj}', p2=f'{n_con}', p3=f'{status}'))
         return {"FINISHED"}
 
 
@@ -144,9 +145,9 @@ class AA_OT_p7_cleanup_all(bpy.types.Operator):
             p7.active_session_id = ""
 
         if removed:
-            self.report({"INFO"}, f"Purged {removed} P7 artifact(s)")
+            self.report({"INFO"}, F('Purged {p0} P7 artifact(s)', p0=f'{removed}'))
         else:
-            self.report({"INFO"}, "No P7 artifacts found")
+            self.report({"INFO"}, T('No P7 artifacts found'))
         return {"FINISHED"}
 
 
@@ -214,7 +215,7 @@ class AA_OT_p7_remove_proxy(bpy.types.Operator):
             p7s.save_session_to_scene(session.session_id)
 
         self.report({"INFO"},
-                    f"Removed proxy '{proxy_name}' and {removed_cons} constraint(s)")
+                    F("Removed proxy '{p0}' and {p1} constraint(s)", p0=f'{proxy_name}', p1=f'{removed_cons}'))
         return {"FINISHED"}
 
 
@@ -265,7 +266,7 @@ class AA_OT_p7_remove_constraints(bpy.types.Operator):
 
         session.created_constraints.clear()
         p7s.save_session_to_scene(session.session_id)
-        self.report({"INFO"}, f"Removed {removed} constraint(s)")
+        self.report({"INFO"}, F('Removed {p0} constraint(s)', p0=f'{removed}'))
         return {"FINISHED"}
 
 
@@ -292,12 +293,12 @@ class AA_OT_p7_batch_create_proxies(bpy.types.Operator):
         p7 = get_p7(context)
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
+            self.report({"ERROR"}, T('Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again'))
             return {"CANCELLED"}
 
         cfg = PROXY_CONFIGS.get(p7.proxy_type)
         if cfg is None:
-            self.report({"ERROR"}, f"Unknown proxy type '{p7.proxy_type}'. Pick a type in the Create Proxy dropdown")
+            self.report({"ERROR"}, F("Unknown proxy type '{p0}'. Pick a type in the Create Proxy dropdown", p0=f'{p7.proxy_type}'))
             return {"CANCELLED"}
 
         created = 0
@@ -330,7 +331,7 @@ class AA_OT_p7_batch_create_proxies(bpy.types.Operator):
             created += 1
 
         p7s.save_session_to_scene(session.session_id)
-        self.report({"INFO"}, f"Created {created} proxy/proxies")
+        self.report({"INFO"}, F('Created {p0} proxy/proxies', p0=f'{created}'))
         return {"FINISHED"}
 
 
@@ -381,9 +382,9 @@ class AA_OT_p7_auto_cleanup(bpy.types.Operator):
                         orphaned += 1
 
         if orphaned:
-            self.report({"INFO"}, f"Auto-cleaned {orphaned} orphaned artifact(s)")
+            self.report({"INFO"}, F('Auto-cleaned {p0} orphaned artifact(s)', p0=f'{orphaned}'))
         else:
-            self.report({"INFO"}, "No orphaned artifacts found")
+            self.report({"INFO"}, T('No orphaned artifacts found'))
         return {"FINISHED"}
 
 
@@ -418,32 +419,32 @@ class AA_OT_p7_validate_session(bpy.types.Operator):
         # Check objects.
         for name in session.created_objects:
             if bpy.data.objects.get(name) is None:
-                issues.append(f"Missing object: '{name}'")
+                issues.append(F("Missing object: '{p0}'", p0=f'{name}'))
 
         # Check constraints.
         for rec in session.created_constraints:
             obj = bpy.data.objects.get(rec.object_name)
             if obj is None:
-                issues.append(f"Missing constraint owner: '{rec.object_name}'")
+                issues.append(F("Missing constraint owner: '{p0}'", p0=f'{rec.object_name}'))
                 continue
             if rec.bone_name:
                 if not (hasattr(obj, "pose") and obj.pose):
-                    issues.append(f"Non-armature object has bone constraint: '{rec.object_name}'")
+                    issues.append(F("Non-armature object has bone constraint: '{p0}'", p0=f'{rec.object_name}'))
                     continue
                 bone = obj.pose.bones.get(rec.bone_name)
                 if bone is None:
-                    issues.append(f"Missing bone: '{rec.bone_name}' on '{rec.object_name}'")
+                    issues.append(F("Missing bone: '{p0}' on '{p1}'", p0=f'{rec.bone_name}', p1=f'{rec.object_name}'))
                     continue
                 if bone.constraints.get(rec.constraint_name) is None:
-                    issues.append(f"Missing constraint: '{rec.constraint_name}' on bone '{rec.bone_name}'")
+                    issues.append(F("Missing constraint: '{p0}' on bone '{p1}'", p0=f'{rec.constraint_name}', p1=f'{rec.bone_name}'))
             else:
                 if obj.constraints.get(rec.constraint_name) is None:
-                    issues.append(f"Missing constraint: '{rec.constraint_name}' on '{rec.object_name}'")
+                    issues.append(F("Missing constraint: '{p0}' on '{p1}'", p0=f'{rec.constraint_name}', p1=f'{rec.object_name}'))
 
         # Check collections.
         for name in session.created_collections:
             if bpy.data.collections.get(name) is None:
-                issues.append(f"Missing collection: '{name}'")
+                issues.append(F("Missing collection: '{p0}'", p0=f'{name}'))
 
         # Check for unsupported constraint configurations on constrained objects.
         constrained_objects = {rec.object_name for rec in session.created_constraints}
@@ -456,16 +457,15 @@ class AA_OT_p7_validate_session(bpy.types.Operator):
             for con in obj.constraints:
                 if con.type in conflict_types:
                     issues.append(
-                        f"Potential conflict: '{obj_name}' has {con.type} constraint "
-                        f"that may interfere with proxy operation"
+                        F("Potential conflict: '{p0}' has {p1} constraint that may interfere with proxy operation", p0=f'{obj_name}', p1=f'{con.type}')
                     )
 
         if issues:
             for issue in issues:
                 self.report({"WARNING"}, issue)
-            self.report({"WARNING"}, f"Validation found {len(issues)} issue(s)")
+            self.report({"WARNING"}, F('Validation found {p0} issue(s)', p0=f'{len(issues)}'))
         else:
-            self.report({"INFO"}, "Session is valid — no issues found")
+            self.report({"INFO"}, T('Session is valid — no issues found'))
         return {"FINISHED"}
 
 
@@ -497,8 +497,7 @@ class AA_OT_p7_check_setup(bpy.types.Operator):
         for con in obj.constraints:
             if con.type in conflict_types:
                 issues.append(
-                    f"Conflict: constraint '{con.name}' ({con.type}) may interfere "
-                    f"with proxy operation"
+                    F("Conflict: constraint '{p0}' ({p1}) may interfere with proxy operation", p0=f'{con.name}', p1=f'{con.type}')
                 )
 
         # Check for unusual transform state.
@@ -508,25 +507,24 @@ class AA_OT_p7_check_setup(bpy.types.Operator):
         scale = obj.scale
 
         if any(math.isnan(v) for v in (*loc, *rot, *scale)):
-            issues.append("Warning: object has NaN values in transform")
+            issues.append(T('Warning: object has NaN values in transform'))
 
         if any(abs(v) > 1e6 for v in (*loc, *rot)):
-            issues.append("Warning: object has extremely large transform values")
+            issues.append(T('Warning: object has extremely large transform values'))
 
         if any(abs(s) < 1e-6 for s in scale):
-            issues.append("Warning: object has near-zero scale which may cause issues")
+            issues.append(T('Warning: object has near-zero scale which may cause issues'))
 
         # Check if object has a parent (parent-in-transform).
         if obj.parent is not None:
-            issues.append(f"Note: object is parented to '{obj.parent.name}' — "
-                         f"proxy will be in world space")
+            issues.append(F("Note: object is parented to '{p0}' — proxy will be in world space", p0=f'{obj.parent.name}'))
 
         if issues:
             for issue in issues:
                 self.report({"WARNING"}, issue)
-            self.report({"WARNING"}, f"Setup check found {len(issues)} issue(s)")
+            self.report({"WARNING"}, F('Setup check found {p0} issue(s)', p0=f'{len(issues)}'))
         else:
-            self.report({"INFO"}, "Setup is compatible with proxy operation")
+            self.report({"INFO"}, T('Setup is compatible with proxy operation'))
         return {"FINISHED"}
 
 
@@ -554,7 +552,7 @@ class AA_OT_p7_mirror_proxy(bpy.types.Operator):
         p7 = get_p7(context)
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
+            self.report({"ERROR"}, T('Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again'))
             return {"CANCELLED"}
 
         src = context.active_object
@@ -576,7 +574,7 @@ class AA_OT_p7_mirror_proxy(bpy.types.Operator):
         session.register_object(new_name, "mirrored_proxy")
         p7s.save_session_to_scene(session.session_id)
 
-        self.report({"INFO"}, f"Mirrored '{src.name}' → '{mirror.name}'")
+        self.report({"INFO"}, F("Mirrored '{p0}' → '{p1}'", p0=f'{src.name}', p1=f'{mirror.name}'))
         return {"FINISHED"}
 
 
@@ -672,7 +670,7 @@ class AA_OT_p7_one_click_proxy_bake(bpy.types.Operator):
                 p7.active_session_id = ""
 
         self.report({"INFO"},
-                    f"One-click proxy bake complete for '{target.name}'")
+                    F("One-click proxy bake complete for '{p0}'", p0=f'{target.name}'))
         return {"FINISHED"}
 
 
@@ -705,7 +703,7 @@ class AA_OT_p7_one_click_cleanup(bpy.types.Operator):
         p7 = get_p7(context)
         session = p7s.get_session(p7.active_session_id)
         if session is None:
-            self.report({"WARNING"}, "No active session")
+            self.report({"WARNING"}, T('No active session'))
             return {"CANCELLED"}
 
         frame_start, frame_end = _get_bake_range(context, p7)
@@ -726,7 +724,7 @@ class AA_OT_p7_one_click_cleanup(bpy.types.Operator):
         p7s.clear_scene_session(context.scene)
         p7.active_session_id = ""
 
-        self.report({"INFO"}, f"One-click cleanup: baked and removed {n_obj} artifact(s)")
+        self.report({"INFO"}, F('One-click cleanup: baked and removed {p0} artifact(s)', p0=f'{n_obj}'))
         return {"FINISHED"}
 
 
@@ -752,7 +750,7 @@ class AA_OT_p7_quick_proxy(bpy.types.Operator):
     def execute(self, context):
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
+            self.report({"ERROR"}, T('Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again'))
             return {"CANCELLED"}
 
         p7 = get_p7(context)
@@ -781,7 +779,7 @@ class AA_OT_p7_quick_proxy(bpy.types.Operator):
         session.register_constraint(target.name, "", con_name)
 
         p7s.save_session_to_scene(session.session_id)
-        self.report({"INFO"}, f"Quick proxy created for '{target.name}'")
+        self.report({"INFO"}, F("Quick proxy created for '{p0}'", p0=f'{target.name}'))
         return {"FINISHED"}
 
 
@@ -811,14 +809,13 @@ class AA_OT_p7_export_session(bpy.types.Operator):
         p7 = get_p7(context)
         session = p7s.get_session(p7.active_session_id)
         if session is None:
-            self.report({"WARNING"}, "No active session")
+            self.report({"WARNING"}, T('No active session'))
             return {"CANCELLED"}
 
         blob = json.dumps(session.to_dict(), indent=2)
         context.window_manager.clipboard = blob
         self.report({"INFO"},
-                    f"Session {session.short_id} exported to clipboard "
-                    f"({len(blob)} chars)")
+                    F('Session {p0} exported to clipboard ({p1} chars)', p0=f'{session.short_id}', p1=f'{len(blob)}'))
         return {"FINISHED"}
 
 

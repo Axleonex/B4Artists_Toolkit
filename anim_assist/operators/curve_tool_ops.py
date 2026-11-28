@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import FloatProperty, IntProperty, StringProperty
 from bpy.types import Operator
@@ -73,7 +75,7 @@ class ANIMASSIST_OT_blend_frame(Operator):
     bl_description = "Blend selected keys toward the value at the reference frame"
     bl_options = {"REGISTER", "UNDO"}
 
-    factor: FloatProperty(name="Factor", description="Strength of the blend toward the reference-frame value", default=0.0, soft_min=0.0, soft_max=1.0)  # type: ignore[assignment]
+    factor: FloatProperty(name="Factor", description="Strength of the blend toward the reference-frame value", default=0.0, soft_min=0.0, soft_max=1.0, translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -90,7 +92,7 @@ class ANIMASSIST_OT_blend_frame(Operator):
 
             fcurves = _editable_fcurves(context)
             if not fcurves:
-                self.report({"WARNING"}, "No editable FCurves found")
+                self.report({"WARNING"}, T('No editable FCurves found'))
                 return {"CANCELLED"}
 
             self._data: list[dict] = []
@@ -110,14 +112,14 @@ class ANIMASSIST_OT_blend_frame(Operator):
                 )
 
             if not self._data:
-                self.report({"WARNING"}, "No selected keyframes")
+                self.report({"WARNING"}, T('No selected keyframes'))
                 return {"CANCELLED"}
 
             self.factor = 0.0
             context.window_manager.modal_handler_add(self)
             return {"RUNNING_MODAL"}
         except Exception as exc:
-            self.report({"ERROR"}, str(exc))
+            self.report({"ERROR"}, T(str(exc)))
             return {"CANCELLED"}
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event):
@@ -126,7 +128,7 @@ class ANIMASSIST_OT_blend_frame(Operator):
             self.factor = dx / self._sensitivity
             self._apply()
             if context.area:
-                context.area.header_text_set(f"Blend Frame: {self.factor:.3f}")
+                context.area.header_text_set(F('Blend Frame: {p0}', p0=f'{self.factor:.3f}'))
                 context.area.tag_redraw()
 
         elif event.type in {"LEFTMOUSE", "RET", "NUMPAD_ENTER"} and event.value == "PRESS":
@@ -176,7 +178,7 @@ class ANIMASSIST_OT_blend_offset(Operator):
     bl_description = "Offset selected keys using the difference between their neighboring keys"
     bl_options = {"REGISTER", "UNDO"}
 
-    factor: FloatProperty(name="Factor", description="Signed strength of the neighboring-key offset", default=0.0, soft_min=-1.0, soft_max=1.0)  # type: ignore[assignment]
+    factor: FloatProperty(name="Factor", description="Signed strength of the neighboring-key offset", default=0.0, soft_min=-1.0, soft_max=1.0, translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -191,7 +193,7 @@ class ANIMASSIST_OT_blend_offset(Operator):
 
             fcurves = _editable_fcurves(context)
             if not fcurves:
-                self.report({"WARNING"}, "No editable FCurves found")
+                self.report({"WARNING"}, T('No editable FCurves found'))
                 return {"CANCELLED"}
 
             self._data: list[dict] = []
@@ -203,14 +205,14 @@ class ANIMASSIST_OT_blend_offset(Operator):
                 self._data.append({"fc": fc, "keys": keys, "sel": sel, "orig": [keys[i].value for i in sel]})
 
             if not self._data:
-                self.report({"WARNING"}, "No selected keyframes")
+                self.report({"WARNING"}, T('No selected keyframes'))
                 return {"CANCELLED"}
 
             self.factor = 0.0
             context.window_manager.modal_handler_add(self)
             return {"RUNNING_MODAL"}
         except Exception as exc:
-            self.report({"ERROR"}, str(exc))
+            self.report({"ERROR"}, T(str(exc)))
             return {"CANCELLED"}
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event):
@@ -219,7 +221,7 @@ class ANIMASSIST_OT_blend_offset(Operator):
             self.factor = dx / self._sensitivity
             self._apply()
             if context.area:
-                context.area.header_text_set(f"Blend Offset: {self.factor:.3f}")
+                context.area.header_text_set(F('Blend Offset: {p0}', p0=f'{self.factor:.3f}'))
                 context.area.tag_redraw()
 
         elif event.type in {"LEFTMOUSE", "RET", "NUMPAD_ENTER"} and event.value == "PRESS":
@@ -269,7 +271,7 @@ class ANIMASSIST_OT_ease_to_ease(Operator):
     bl_description = "Blend selected keys from linear spacing toward a smooth ease-in/ease-out curve"
     bl_options = {"REGISTER", "UNDO"}
 
-    factor: FloatProperty(name="Factor", description="Strength of the ease-in/ease-out shaping", default=0.0, soft_min=0.0, soft_max=1.0)  # type: ignore[assignment]
+    factor: FloatProperty(name="Factor", description="Strength of the ease-in/ease-out shaping", default=0.0, soft_min=0.0, soft_max=1.0, translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -284,7 +286,7 @@ class ANIMASSIST_OT_ease_to_ease(Operator):
 
             fcurves = _editable_fcurves(context)
             if not fcurves:
-                self.report({"WARNING"}, "No editable FCurves found")
+                self.report({"WARNING"}, T('No editable FCurves found'))
                 return {"CANCELLED"}
 
             self._data: list[dict] = []
@@ -297,14 +299,14 @@ class ANIMASSIST_OT_ease_to_ease(Operator):
                 self._data.append({"fc": fc, "sel": sel, "sel_keys": sel_keys, "orig": [k.value for k in sel_keys]})
 
             if not self._data:
-                self.report({"WARNING"}, "Need ≥ 2 selected keys per FCurve")
+                self.report({"WARNING"}, T('Need ≥ 2 selected keys per FCurve'))
                 return {"CANCELLED"}
 
             self.factor = 0.0
             context.window_manager.modal_handler_add(self)
             return {"RUNNING_MODAL"}
         except Exception as exc:
-            self.report({"ERROR"}, str(exc))
+            self.report({"ERROR"}, T(str(exc)))
             return {"CANCELLED"}
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event):
@@ -313,7 +315,7 @@ class ANIMASSIST_OT_ease_to_ease(Operator):
             self.factor = dx / self._sensitivity
             self._apply()
             if context.area:
-                context.area.header_text_set(f"Ease To Ease: {self.factor:.3f}")
+                context.area.header_text_set(F('Ease To Ease: {p0}', p0=f'{self.factor:.3f}'))
                 context.area.tag_redraw()
 
         elif event.type in {"LEFTMOUSE", "RET", "NUMPAD_ENTER"} and event.value == "PRESS":
@@ -362,7 +364,7 @@ class ANIMASSIST_OT_blend_neighbor(Operator):
     bl_description = "Blend selected keys toward the line between their unselected neighbors"
     bl_options = {"REGISTER", "UNDO"}
 
-    factor: FloatProperty(name="Factor", description="Strength of the blend toward neighboring keys", default=0.0, soft_min=0.0, soft_max=1.0)  # type: ignore[assignment]
+    factor: FloatProperty(name="Factor", description="Strength of the blend toward neighboring keys", default=0.0, soft_min=0.0, soft_max=1.0, translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -377,7 +379,7 @@ class ANIMASSIST_OT_blend_neighbor(Operator):
 
             fcurves = _editable_fcurves(context)
             if not fcurves:
-                self.report({"WARNING"}, "No editable FCurves found")
+                self.report({"WARNING"}, T('No editable FCurves found'))
                 return {"CANCELLED"}
 
             self._data: list[dict] = []
@@ -396,14 +398,14 @@ class ANIMASSIST_OT_blend_neighbor(Operator):
                 )
 
             if not self._data:
-                self.report({"WARNING"}, "No selected keyframes")
+                self.report({"WARNING"}, T('No selected keyframes'))
                 return {"CANCELLED"}
 
             self.factor = 0.0
             context.window_manager.modal_handler_add(self)
             return {"RUNNING_MODAL"}
         except Exception as exc:
-            self.report({"ERROR"}, str(exc))
+            self.report({"ERROR"}, T(str(exc)))
             return {"CANCELLED"}
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event):
@@ -412,7 +414,7 @@ class ANIMASSIST_OT_blend_neighbor(Operator):
             self.factor = dx / self._sensitivity
             self._apply()
             if context.area:
-                context.area.header_text_set(f"Blend to Neighbor: {self.factor:.3f}")
+                context.area.header_text_set(F('Blend to Neighbor: {p0}', p0=f'{self.factor:.3f}'))
                 context.area.tag_redraw()
 
         elif event.type in {"LEFTMOUSE", "RET", "NUMPAD_ENTER"} and event.value == "PRESS":
@@ -461,7 +463,7 @@ class ANIMASSIST_OT_push_pull(Operator):
     bl_description = "Scale selected keys away from or toward the reference frame value"
     bl_options = {"REGISTER", "UNDO"}
 
-    factor: FloatProperty(name="Factor", description="Amount to push away from or pull toward the reference value", default=0.0, soft_min=-1.0, soft_max=2.0)  # type: ignore[assignment]
+    factor: FloatProperty(name="Factor", description="Amount to push away from or pull toward the reference value", default=0.0, soft_min=-1.0, soft_max=2.0, translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -478,7 +480,7 @@ class ANIMASSIST_OT_push_pull(Operator):
 
             fcurves = _editable_fcurves(context)
             if not fcurves:
-                self.report({"WARNING"}, "No editable FCurves found")
+                self.report({"WARNING"}, T('No editable FCurves found'))
                 return {"CANCELLED"}
 
             self._data: list[dict] = []
@@ -498,14 +500,14 @@ class ANIMASSIST_OT_push_pull(Operator):
                 )
 
             if not self._data:
-                self.report({"WARNING"}, "No selected keyframes")
+                self.report({"WARNING"}, T('No selected keyframes'))
                 return {"CANCELLED"}
 
             self.factor = 0.0
             context.window_manager.modal_handler_add(self)
             return {"RUNNING_MODAL"}
         except Exception as exc:
-            self.report({"ERROR"}, str(exc))
+            self.report({"ERROR"}, T(str(exc)))
             return {"CANCELLED"}
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event):
@@ -514,7 +516,7 @@ class ANIMASSIST_OT_push_pull(Operator):
             self.factor = dx / self._sensitivity
             self._apply()
             if context.area:
-                context.area.header_text_set(f"Push/Pull: {self.factor:.3f}")
+                context.area.header_text_set(F('Push/Pull: {p0}', p0=f'{self.factor:.3f}'))
                 context.area.tag_redraw()
 
         elif event.type in {"LEFTMOUSE", "RET", "NUMPAD_ENTER"} and event.value == "PRESS":
@@ -564,7 +566,7 @@ class ANIMASSIST_OT_smooth_keys(Operator):
     bl_description = "Blend selected keys toward the average of their immediate neighbors"
     bl_options = {"REGISTER", "UNDO"}
 
-    factor: FloatProperty(name="Factor", description="Strength of smoothing toward neighboring-key averages", default=0.0, soft_min=0.0, soft_max=1.0)  # type: ignore[assignment]
+    factor: FloatProperty(name="Factor", description="Strength of smoothing toward neighboring-key averages", default=0.0, soft_min=0.0, soft_max=1.0, translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -579,7 +581,7 @@ class ANIMASSIST_OT_smooth_keys(Operator):
 
             fcurves = _editable_fcurves(context)
             if not fcurves:
-                self.report({"WARNING"}, "No editable FCurves found")
+                self.report({"WARNING"}, T('No editable FCurves found'))
                 return {"CANCELLED"}
 
             self._data: list[dict] = []
@@ -598,14 +600,14 @@ class ANIMASSIST_OT_smooth_keys(Operator):
                 )
 
             if not self._data:
-                self.report({"WARNING"}, "No selected keyframes")
+                self.report({"WARNING"}, T('No selected keyframes'))
                 return {"CANCELLED"}
 
             self.factor = 0.0
             context.window_manager.modal_handler_add(self)
             return {"RUNNING_MODAL"}
         except Exception as exc:
-            self.report({"ERROR"}, str(exc))
+            self.report({"ERROR"}, T(str(exc)))
             return {"CANCELLED"}
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event):
@@ -614,7 +616,7 @@ class ANIMASSIST_OT_smooth_keys(Operator):
             self.factor = dx / self._sensitivity
             self._apply()
             if context.area:
-                context.area.header_text_set(f"Smooth Keys: {self.factor:.3f}")
+                context.area.header_text_set(F('Smooth Keys: {p0}', p0=f'{self.factor:.3f}'))
                 context.area.tag_redraw()
 
         elif event.type in {"LEFTMOUSE", "RET", "NUMPAD_ENTER"} and event.value == "PRESS":
@@ -667,7 +669,7 @@ class ANIMASSIST_OT_set_reference_frame(Operator):
         # ACCESS_GATE_HERE
         s = context.scene.anim_assist
         s.reference_frame = context.scene.frame_current
-        self.report({"INFO"}, f"Reference frame → {s.reference_frame}")
+        self.report({"INFO"}, F('Reference frame → {p0}', p0=f'{s.reference_frame}'))
         return {"FINISHED"}
 
 
@@ -677,7 +679,7 @@ class ANIMASSIST_OT_add_bookmark(Operator):
     bl_description = "Save the current reference frame as a named bookmark"
     bl_options = {"REGISTER", "UNDO"}
 
-    name: StringProperty(name="Name", description="Display name for the new frame bookmark", default="Bookmark")  # type: ignore[assignment]
+    name: StringProperty(name="Name", description="Display name for the new frame bookmark", default="Bookmark", translation_context='AnimAssist')  # type: ignore[assignment]
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event):
         # ACCESS_GATE_HERE
@@ -715,7 +717,7 @@ class ANIMASSIST_OT_recall_bookmark(Operator):
     bl_description = "Set the reference frame from a saved bookmark"
     bl_options = {"REGISTER", "UNDO"}
 
-    index: IntProperty(name="Index", description="Stored bookmark index to recall", default=0)  # type: ignore[assignment]
+    index: IntProperty(name="Index", description="Stored bookmark index to recall", default=0, translation_context='AnimAssist')  # type: ignore[assignment]
 
     def execute(self, context: bpy.types.Context):
         # ACCESS_GATE_HERE

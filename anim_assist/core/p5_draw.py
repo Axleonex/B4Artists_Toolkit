@@ -35,6 +35,10 @@ from .logging import get_logger
 
 _log = get_logger(__name__)
 
+_ISSUE_LABELS = {"ARC_DRIFT": "Arc Drift", "FLAT_ARC": "Flat Arc", "ZIGZAG": "Zig-Zag", "POP": "Pop",
+                 "OVERSPACED": "Overspaced", "UNDERSPACED": "Underspaced", "DIRECTION_REVERSAL": "Direction Reversal",
+                 "STOP": "Stop", "CONTACT": "Contact", "APEX": "Apex"}
+
 __all__ = [
     "set_draw_data",
     "clear_draw_data",
@@ -386,7 +390,7 @@ def draw_labels_2d() -> None:
     """POST_PIXEL callback — draws frame numbers, markers, and arc score."""
     if blf is None or bpy is None:
         return
-
+    from ..i18n import T, F
 
     try:
         context = bpy.context
@@ -415,7 +419,7 @@ def draw_labels_2d() -> None:
                     continue
                 blf.color(font_id, color[0], color[1], color[2], color[3])
                 blf.position(font_id, screen[0] + 10, screen[1] - 4, 0)
-                blf.draw(font_id, label_text)
+                blf.draw(font_id, T(_ISSUE_LABELS[label_text]) if label_text in _ISSUE_LABELS else label_text)
 
         # Arc quality score badge (top-left of viewport).
         if _state.score >= 0.0:
@@ -427,7 +431,7 @@ def draw_labels_2d() -> None:
             else:
                 blf.color(font_id, 0.9, 0.3, 0.3, 0.9)
             blf.position(font_id, 20, region.height - 30, 0)
-            blf.draw(font_id, f"Arc Score: {_state.score:.0f}")
+            blf.draw(font_id, F("Arc Score: {score:.0f}", score=_state.score))
 
     except Exception:
         _log.exception("trajectory draw_labels_2d failed; disabling overlay")

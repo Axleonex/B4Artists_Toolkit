@@ -120,14 +120,14 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
         description="Reference space for matching: world, parent, target, visual, or local",
         items=_match_space_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     match_channels: EnumProperty(  # type: ignore[valid-type]
         name="Match Channels",
         description="Which transform channels to include in the match operation",
         items=_match_channels_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     match_axis: BoolVectorProperty(  # type: ignore[valid-type]
         name="Axis Filter",
@@ -135,7 +135,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
         size=3,
         default=(True, True, True),
         subtype="XYZ",
-    )
+     translation_context='AnimAssist')
 
     maintain_offset: BoolProperty(  # type: ignore[valid-type]
         name="Maintain Offset",
@@ -144,7 +144,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             "rather than snapping exactly to the source position"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # ----- Compensation / Switch (Features 13-16, 21-28) -----
 
@@ -153,28 +153,28 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
         description="Frame range over which to apply space-switch compensation",
         items=_comp_range_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     comp_range_start: FloatProperty(  # type: ignore[valid-type]
         name="Start",
         description="Custom compensation range start frame",
         default=1.0,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     comp_range_end: FloatProperty(  # type: ignore[valid-type]
         name="End",
         description="Custom compensation range end frame",
         default=250.0,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     switch_kind: EnumProperty(  # type: ignore[valid-type]
         name="Switch Type",
         description="What kind of property is being switched (enum, boolean, influence, custom)",
         items=_switch_kind_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     switch_prop_path: StringProperty(  # type: ignore[valid-type]
         name="Property Path",
@@ -183,20 +183,20 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             '(e.g. \'["space_switch"]\' or \'constraints["Child Of"].influence\')'
         ),
         default="",
-    )
+     translation_context='AnimAssist')
 
     switch_bone_name: StringProperty(  # type: ignore[valid-type]
         name="Switch Bone",
         description="Name of the pose bone owning the switch property (empty for object-level)",
         default="",
-    )
+     translation_context='AnimAssist')
 
     switch_new_value: FloatProperty(  # type: ignore[valid-type]
         name="New Value",
         description="The value to set the switch property to",
         default=0.0,
         precision=2,
-    )
+     translation_context='AnimAssist')
 
     auto_compensate: BoolProperty(  # type: ignore[valid-type]
         name="Auto Compensate",
@@ -205,7 +205,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             "property is changed so the control does not visually jump"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     auto_key_switch: BoolProperty(  # type: ignore[valid-type]
         name="Auto-Key Switch",
@@ -214,7 +214,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             "after a space-switch operation"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     switch_preview: BoolProperty(  # type: ignore[valid-type]
         name="Switch Preview",
@@ -223,7 +223,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             "committing. Cancel to revert."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # ----- Safety Flags (Features 27-28) -----
 
@@ -231,7 +231,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
         name="Respect Locked Transforms",
         description="Skip transform channels that are locked on the target object or bone",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     respect_drivers: BoolProperty(  # type: ignore[valid-type]
         name="Respect Driven Channels",
@@ -240,7 +240,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             "constraints, where overriding them would be unsafe"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     # ----- Contact Preservation (Features 40-41) -----
 
@@ -251,7 +251,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             "(hands, feet) planted by blending compensation near contact frames"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     contact_mask: StringProperty(  # type: ignore[valid-type]
         name="Contact Mask",
@@ -260,7 +260,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             '(e.g. "foot_ik_L, foot_ik_R, hand_ik_L, hand_ik_R")'
         ),
         default="",
-    )
+     translation_context='AnimAssist')
 
     # ----- IK Chain Resolver (Features 46-56) -----
 
@@ -268,7 +268,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
         name="Show Chain Resolver",
         description="Expand the IK Chain Resolver section in the panel",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     chain_include_muted: BoolProperty(  # type: ignore[valid-type]
         name="Include Muted",
@@ -277,7 +277,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             "results (useful for inspecting disabled setups)"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     chain_highlight_members: BoolProperty(  # type: ignore[valid-type]
         name="Highlight Chain Members",
@@ -286,7 +286,7 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             "viewport for visual feedback"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     chain_auto_detect: BoolProperty(  # type: ignore[valid-type]
         name="Auto-Detect on Selection",
@@ -295,27 +295,27 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
             "keeping the chain info panel up to date"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     chain_selected_index: IntProperty(  # type: ignore[valid-type]
         name="Selected Chain",
         description="Index of the currently inspected IK chain in the results list",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     chain_last_armature: StringProperty(  # type: ignore[valid-type]
         name="Last Armature",
         description="Name of the armature used in the most recent chain detection",
         default="",
-    )
+     translation_context='AnimAssist')
 
     chain_last_count: IntProperty(  # type: ignore[valid-type]
         name="Detected Count",
         description="Number of IK chains found in the most recent detection run",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     # ----- Detection / Presets (Features 17-20, 34) -----
 
@@ -324,13 +324,13 @@ class AA_P8_Properties(bpy.types.PropertyGroup):
         description="Index of the currently selected detected switch pattern",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     switch_preset_name: StringProperty(  # type: ignore[valid-type]
         name="Preset Name",
         description="Name for saving or loading a switch preset configuration",
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -358,7 +358,7 @@ def register_properties() -> None:
     bpy.types.Scene.anim_assist_p8 = bpy.props.PointerProperty(  # type: ignore[assignment]
         type=AA_P8_Properties,
         name="Anim Assist P8",
-    )
+     translation_context='AnimAssist')
 
 
 def unregister_properties() -> None:

@@ -79,7 +79,7 @@ class ANIMASSIST_MT_p10_pie_key_tools(bpy.types.Menu):
         pie = self.layout.menu_pie()
         for op_id, label, icon in _KEY_TOOLS_ITEMS:
             try:
-                pie.operator(op_id, text=label, icon=icon)
+                pie.operator(op_id, text=label, icon=icon, text_ctxt='AnimAssist')
             except Exception:
                 pie.separator()
 
@@ -92,7 +92,7 @@ class ANIMASSIST_MT_p10_pie_breakdown(bpy.types.Menu):
         pie = self.layout.menu_pie()
         for op_id, label, icon in _BREAKDOWN_ITEMS:
             try:
-                pie.operator(op_id, text=label, icon=icon)
+                pie.operator(op_id, text=label, icon=icon, text_ctxt='AnimAssist')
             except Exception:
                 pie.separator()
 
@@ -105,7 +105,7 @@ class ANIMASSIST_MT_p10_pie_transform(bpy.types.Menu):
         pie = self.layout.menu_pie()
         for op_id, label, icon in _TRANSFORM_ITEMS:
             try:
-                pie.operator(op_id, text=label, icon=icon)
+                pie.operator(op_id, text=label, icon=icon, text_ctxt='AnimAssist')
             except Exception:
                 pie.separator()
 
@@ -118,7 +118,7 @@ class ANIMASSIST_MT_p10_pie_proxy(bpy.types.Menu):
         pie = self.layout.menu_pie()
         for op_id, label, icon in _PROXY_ITEMS:
             try:
-                pie.operator(op_id, text=label, icon=icon)
+                pie.operator(op_id, text=label, icon=icon, text_ctxt='AnimAssist')
             except Exception:
                 pie.separator()
 
@@ -131,7 +131,7 @@ class ANIMASSIST_MT_p10_pie_switch(bpy.types.Menu):
         pie = self.layout.menu_pie()
         for op_id, label, icon in _SWITCH_ITEMS:
             try:
-                pie.operator(op_id, text=label, icon=icon)
+                pie.operator(op_id, text=label, icon=icon, text_ctxt='AnimAssist')
             except Exception:
                 pie.separator()
 
@@ -144,7 +144,7 @@ class ANIMASSIST_MT_p10_pie_symmetry(bpy.types.Menu):
         pie = self.layout.menu_pie()
         for op_id, label, icon in _SYMMETRY_ITEMS:
             try:
-                pie.operator(op_id, text=label, icon=icon)
+                pie.operator(op_id, text=label, icon=icon, text_ctxt='AnimAssist')
             except Exception:
                 pie.separator()
 

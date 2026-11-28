@@ -7,6 +7,8 @@ already use ``ui/panels.py``.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from bpy.types import Panel
 
 from ..operators.p2_diag_ops import get_last_summary
@@ -55,21 +57,21 @@ class ANIMASSIST_PT_p2_selection(_P2Panel):
         col.operator("animassist.invert_selection")
 
         box = layout.box()
-        box.label(text="By Type")
+        box.label(text="By Type", text_ctxt='AnimAssist')
         # --- EXPLAINER HELP INTEGRATION ---
         _op_with_help(box, context, "animassist.select_by_key_type_adv")
         _op_with_help(box, context, "animassist.select_by_interpolation")
         _op_with_help(box, context, "animassist.select_by_handle_type_adv")
 
         box = layout.box()
-        box.label(text="Range")
+        box.label(text="Range", text_ctxt='AnimAssist')
         # --- EXPLAINER HELP INTEGRATION ---
         _op_with_help(box, context, "animassist.select_frame_range")
         box.operator("animassist.select_playback_range")
         box.operator("animassist.select_preview_range")
 
         box = layout.box()
-        box.label(text="Structural")
+        box.label(text="Structural", text_ctxt='AnimAssist')
         # --- EXPLAINER HELP INTEGRATION ---
         _op_with_help(box, context, "animassist.select_every_nth")
         _op_with_help(box, context, "animassist.select_neighbors")
@@ -80,7 +82,7 @@ class ANIMASSIST_PT_p2_selection(_P2Panel):
         _op_with_help(box, context, "animassist.select_by_value_range")
 
         box = layout.box()
-        box.label(text="Metadata")
+        box.label(text="Metadata", text_ctxt='AnimAssist')
         # --- EXPLAINER HELP INTEGRATION ---
         _op_with_help(box, context, "animassist.select_by_tag")
         _op_with_help(box, context, "animassist.select_protected")
@@ -109,8 +111,8 @@ class ANIMASSIST_PT_p2_channels(_P2Panel):
 
         # --- EXPLAINER HELP INTEGRATION ---
         row = layout.row(align=True)
-        row.operator("animassist.push_channel_isolation", text="Save")
-        row.operator("animassist.pop_channel_isolation", text="Restore")
+        row.operator("animassist.push_channel_isolation", text="Save", text_ctxt='AnimAssist')
+        row.operator("animassist.pop_channel_isolation", text="Restore", text_ctxt='AnimAssist')
         draw_explainer_icon(row, context, "op.animassist.push_channel_isolation")
 
 
@@ -130,9 +132,9 @@ class ANIMASSIST_PT_p2_metadata(_P2Panel):
 
         # --- EXPLAINER HELP INTEGRATION ---
         row = layout.row(align=True)
-        op = row.operator("animassist.protect_selected_keys", text="Protect")
+        op = row.operator("animassist.protect_selected_keys", text="Protect", text_ctxt='AnimAssist')
         op.protected = True
-        op = row.operator("animassist.protect_selected_keys", text="Unprotect")
+        op = row.operator("animassist.protect_selected_keys", text="Unprotect", text_ctxt='AnimAssist')
         op.protected = False
         draw_explainer_icon(row, context, "op.animassist.protect_selected_keys")
 
@@ -157,10 +159,10 @@ class ANIMASSIST_PT_p2_diagnostics(_P2Panel):
         summary = get_last_summary()
         if summary and summary.get("TOTAL"):
             box = layout.box()
-            box.label(text="Last scan:")
+            box.label(text="Last scan:", text_ctxt='AnimAssist')
             for k in ("DENSE", "REDUNDANT", "SPIKE"):
                 if summary.get(k):
-                    box.label(text=f"{k.title()}: {summary[k]}")
+                    box.label(text=F('{p0}: {p1}', p0=T({'DENSE': 'Dense', 'REDUNDANT': 'Redundant', 'SPIKE': 'Spike'}.get(k, k.title())), p1=f'{summary[k]}'), translate=False)
 
 
 class ANIMASSIST_PT_p2_keyutils(_P2Panel):
@@ -172,8 +174,8 @@ class ANIMASSIST_PT_p2_keyutils(_P2Panel):
         layout = self.layout
         # --- EXPLAINER HELP INTEGRATION ---
         row = layout.row(align=True)
-        row.operator("animassist.copy_selected_keys", text="Copy")
-        row.operator("animassist.paste_keys_at_frame", text="Paste")
+        row.operator("animassist.copy_selected_keys", text="Copy", text_ctxt='AnimAssist')
+        row.operator("animassist.paste_keys_at_frame", text="Paste", text_ctxt='AnimAssist')
         draw_explainer_icon(row, context, "op.animassist.paste_keys_at_frame")
 
         col = layout.column(align=True)

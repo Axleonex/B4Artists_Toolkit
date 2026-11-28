@@ -20,6 +20,7 @@ from __future__ import annotations
 from typing import Any
 
 import bpy
+from ..i18n import F
 
 from .logging import get_logger
 
@@ -45,7 +46,7 @@ def run_leak_check() -> list[str]:
         from . import draw_registry as dreg
         count = dreg.handler_count() if hasattr(dreg, 'handler_count') else 0
         if count > 20:
-            warnings.append(f"Draw registry has {count} handlers (expected < 20)")
+            warnings.append(F("Draw registry has {count} handlers (expected < 20)", count=count))
     except Exception:
         _log.debug("Draw registry check failed", exc_info=True)
 
@@ -63,7 +64,7 @@ def run_leak_check() -> list[str]:
         stats = audit.get_stats()
         if stats.get("buffered_errors", 0) > 50:
             warnings.append(
-                f"Audit error buffer has {stats['buffered_errors']} entries"
+                F("Audit error buffer has {count} entries", count=stats['buffered_errors'])
             )
     except Exception:
         _log.debug("Audit buffer check failed", exc_info=True)
@@ -73,7 +74,7 @@ def run_leak_check() -> list[str]:
         from . import p10_recovery as recovery
         count = recovery.get_snapshot_count()
         if count > 8:
-            warnings.append(f"Recovery buffer has {count} snapshots")
+            warnings.append(F("Recovery buffer has {count} snapshots", count=count))
     except Exception:
         _log.debug("Recovery snapshot check failed", exc_info=True)
 
@@ -307,7 +308,7 @@ def validate_registration() -> list[str]:
         if len(parts) == 2:
             cat = getattr(bpy.ops, parts[0], None)
             if cat is None or not hasattr(cat, parts[1]):
-                issues.append(f"Missing operator: {op_id}")
+                issues.append(F("Missing operator: {operator}", operator=op_id))
 
     if not issues:
         _log.info("Registration validation: all checks passed")

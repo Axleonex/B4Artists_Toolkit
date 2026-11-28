@@ -1,3 +1,5 @@
+
+from ..i18n import T, F
 import json
 import bpy
 from ..core.p9_properties import get_p9
@@ -55,7 +57,7 @@ class AA_OT_p9_build_cache(bpy.types.Operator):
 
         self.report(
             {'INFO'},
-            f"Pair cache built: {paired_count}/{total} bones paired"
+            F('Pair cache built: {p0}/{p1} bones paired', p0=f'{paired_count}', p1=f'{total}')
         )
         return {'FINISHED'}
 
@@ -74,7 +76,7 @@ class AA_OT_p9_add_pair_override(bpy.types.Operator):
         p9 = get_p9(context)
         p9.pair_overrides.add()
         cache.invalidate()
-        self.report({'INFO'}, "Pair override added")
+        self.report({'INFO'}, T('Pair override added'))
         return {'FINISHED'}
 
 
@@ -90,7 +92,7 @@ class AA_OT_p9_remove_pair_override(bpy.types.Operator):
         description="Index of the pair override to remove",
         default=0,
         min=0
-    )
+    , translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -104,7 +106,7 @@ class AA_OT_p9_remove_pair_override(bpy.types.Operator):
         idx = self.index if self.index < len(p9.pair_overrides) else p9.pair_overrides_index
         p9.pair_overrides.remove(idx)
         cache.invalidate()
-        self.report({'INFO'}, "Pair override removed")
+        self.report({'INFO'}, T('Pair override removed'))
         return {'FINISHED'}
 
 
@@ -121,7 +123,7 @@ class AA_OT_p9_add_naming_exception(bpy.types.Operator):
     def execute(self, context):
         p9 = get_p9(context)
         p9.naming_exceptions.add()
-        self.report({'INFO'}, "Naming exception added")
+        self.report({'INFO'}, T('Naming exception added'))
         return {'FINISHED'}
 
 
@@ -137,7 +139,7 @@ class AA_OT_p9_remove_naming_exception(bpy.types.Operator):
         description="Index of the naming exception to remove",
         default=0,
         min=0
-    )
+    , translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -150,7 +152,7 @@ class AA_OT_p9_remove_naming_exception(bpy.types.Operator):
         p9 = get_p9(context)
         idx = self.index if self.index < len(p9.naming_exceptions) else p9.naming_exceptions_index
         p9.naming_exceptions.remove(idx)
-        self.report({'INFO'}, "Naming exception removed")
+        self.report({'INFO'}, T('Naming exception removed'))
         return {'FINISHED'}
 
 
@@ -192,7 +194,7 @@ class AA_OT_p9_save_pair_preset(bpy.types.Operator):
         preset_json = json.dumps(preset_data, indent=2)
         context.scene["anim_assist_p9_pair_presets"] = preset_json
 
-        self.report({'INFO'}, "Pair preset saved")
+        self.report({'INFO'}, T('Pair preset saved'))
         return {'FINISHED'}
 
 
@@ -217,7 +219,7 @@ class AA_OT_p9_load_pair_preset(bpy.types.Operator):
         try:
             preset_data = json.loads(preset_json)
         except json.JSONDecodeError:
-            self.report({'ERROR'}, "The saved pair preset is damaged. Save the pair preset again")
+            self.report({'ERROR'}, T('The saved pair preset is damaged. Save the pair preset again'))
             return {'CANCELLED'}
 
         # Clear existing collections
@@ -237,7 +239,7 @@ class AA_OT_p9_load_pair_preset(bpy.types.Operator):
             exc.opposite = exc_data.get("opposite", "")
 
         cache.invalidate()
-        self.report({'INFO'}, "Pair preset loaded")
+        self.report({'INFO'}, T('Pair preset loaded'))
         return {'FINISHED'}
 
 
@@ -258,7 +260,7 @@ class AA_OT_p9_mirror_switch_targets(bpy.types.Operator):
         selected_bones = [bone for bone in context.selected_pose_bones]
 
         if not selected_bones:
-            self.report({'WARNING'}, "No bones selected")
+            self.report({'WARNING'}, T('No bones selected'))
             return {'FINISHED'}
 
         p9 = get_p9(context)
@@ -274,7 +276,7 @@ class AA_OT_p9_mirror_switch_targets(bpy.types.Operator):
                 matches_found += 1
                 _log.info(f"Opposite for {bone.name}: {opposite_name}")
 
-        self.report({'INFO'}, f"Found {matches_found} opposite-side matches")
+        self.report({'INFO'}, F('Found {p0} opposite-side matches', p0=f'{matches_found}'))
         return {'FINISHED'}
 
 
@@ -295,7 +297,7 @@ class AA_OT_p9_mirror_proxy_helpers(bpy.types.Operator):
         selected_bones = [bone for bone in context.selected_pose_bones]
 
         if not selected_bones:
-            self.report({'WARNING'}, "No bones selected")
+            self.report({'WARNING'}, T('No bones selected'))
             return {'FINISHED'}
 
         p9 = get_p9(context)
@@ -311,7 +313,7 @@ class AA_OT_p9_mirror_proxy_helpers(bpy.types.Operator):
                 matches_found += 1
                 _log.info(f"Proxy helper opposite for {bone.name}: {opposite_name}")
 
-        self.report({'INFO'}, f"Found {matches_found} proxy helper opposites")
+        self.report({'INFO'}, F('Found {p0} proxy helper opposites', p0=f'{matches_found}'))
         return {'FINISHED'}
 
 
@@ -332,7 +334,7 @@ class AA_OT_p9_mirror_selection_sets(bpy.types.Operator):
         selected_bones = [bone for bone in context.selected_pose_bones]
 
         if not selected_bones:
-            self.report({'WARNING'}, "No bones selected")
+            self.report({'WARNING'}, T('No bones selected'))
             return {'FINISHED'}
 
         p9 = get_p9(context)
@@ -352,7 +354,7 @@ class AA_OT_p9_mirror_selection_sets(bpy.types.Operator):
                 set_pose_bone_selected(opposite_bone, True)
                 mirrored_count += 1
 
-        self.report({'INFO'}, f"Selected {mirrored_count} mirrored bones")
+        self.report({'INFO'}, F('Selected {p0} mirrored bones', p0=f'{mirrored_count}'))
         return {'FINISHED'}
 
 
@@ -376,7 +378,7 @@ class AA_OT_p9_nav_next_unpaired(bpy.types.Operator):
         unpaired = cache.get_unpaired(armature.data.name)
 
         if not unpaired:
-            self.report({'INFO'}, "All bones are paired")
+            self.report({'INFO'}, T('All bones are paired'))
             return {'FINISHED'}
 
         current_active = context.active_pose_bone
@@ -403,7 +405,7 @@ class AA_OT_p9_nav_next_unpaired(bpy.types.Operator):
         set_pose_bone_selected(target_bone, True)
         armature.data.bones.active = target_bone.bone
 
-        self.report({'INFO'}, f"Selected unpaired bone: {next_unpaired}")
+        self.report({'INFO'}, F('Selected unpaired bone: {p0}', p0=f'{next_unpaired}'))
         return {'FINISHED'}
 
 
@@ -434,7 +436,7 @@ class AA_OT_p9_validate_pairs(bpy.types.Operator):
 
         self.report(
             {'INFO'},
-            f"Pairs: {paired_count}, Unpaired: {unpaired_count}, Ambiguous: {ambiguous_count}"
+            F('Pairs: {p0}, Unpaired: {p1}, Ambiguous: {p2}', p0=f'{paired_count}', p1=f'{unpaired_count}', p2=f'{ambiguous_count}')
         )
 
         return {'FINISHED'}

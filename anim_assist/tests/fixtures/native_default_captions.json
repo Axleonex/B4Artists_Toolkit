@@ -1,0 +1,276 @@
+{
+  "schema": "toolkit.i18n.native-default-captions.v1",
+  "source_head": "2c0d4f4b7cecbf160f699b60e234b2bfc37954b5",
+  "host": "5.3.0 Alpha",
+  "build_hash": "746e15e13b04",
+  "probe_result_sha256": "4d0c67f276f1a94b077fd3201bb6338db54f911cf362f954db89746116e15cb3",
+  "provenance": "Parent actual registered bpyRNA probe, UNNAMED-NATIVE-LATEST.json -> RESULT.json, 2026-11-20; raw names retained exactly, no inferred humanization.",
+  "rows": [
+    {
+      "path": "core/p3_properties.py",
+      "line": 315,
+      "class": "AA_P3_Properties",
+      "target": "user_presets",
+      "effective_name": "user_presets",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": false,
+      "operator_options": [],
+      "custom_draw": false
+    },
+    {
+      "path": "core/p3_properties.py",
+      "line": 321,
+      "class": "AA_P3_Properties",
+      "target": "exclusion_patterns",
+      "effective_name": "exclusion_patterns",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": false,
+      "operator_options": [],
+      "custom_draw": false
+    },
+    {
+      "path": "core/properties.py",
+      "line": 107,
+      "class": "AA_SceneProperties",
+      "target": "bone_metadata",
+      "effective_name": "bone_metadata",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": false,
+      "operator_options": [],
+      "custom_draw": false
+    },
+    {
+      "path": "core/properties.py",
+      "line": 115,
+      "class": "AA_SceneProperties",
+      "target": "mask",
+      "effective_name": "mask",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": false,
+      "operator_options": [],
+      "custom_draw": false
+    },
+    {
+      "path": "core/properties.py",
+      "line": 123,
+      "class": "AA_SceneProperties",
+      "target": "bookmarks",
+      "effective_name": "bookmarks",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": false,
+      "operator_options": [],
+      "custom_draw": false
+    },
+    {
+      "path": "core/properties.py",
+      "line": 131,
+      "class": "AA_SceneProperties",
+      "target": "key_metadata",
+      "effective_name": "key_metadata",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": false,
+      "operator_options": [],
+      "custom_draw": false
+    },
+    {
+      "path": "core/ui_state.py",
+      "line": 121,
+      "class": "AA_UIState",
+      "target": "sections",
+      "effective_name": "sections",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": false,
+      "operator_options": [],
+      "custom_draw": false
+    },
+    {
+      "path": "operators/p11_layer_ops.py",
+      "line": 433,
+      "class": "ANIMASSIST_OT_p11_select_layer",
+      "target": "index",
+      "effective_name": "index",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [],
+      "custom_draw": false
+    },
+    {
+      "path": "operators/p12_bake_ops.py",
+      "line": 115,
+      "class": "AA_OT_p12_bake_lipsync",
+      "target": "layer_name",
+      "effective_name": "layer_name",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "custom_draw": false
+    },
+    {
+      "path": "operators/p12_bake_ops.py",
+      "line": 251,
+      "class": "AA_OT_p12_clear_auto_keys",
+      "target": "layer_name",
+      "effective_name": "layer_name",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "custom_draw": false
+    },
+    {
+      "path": "operators/p12_bake_ops.py",
+      "line": 299,
+      "class": "AA_OT_p12_rebake",
+      "target": "layer_name",
+      "effective_name": "layer_name",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "custom_draw": false
+    },
+    {
+      "path": "operators/p12_bake_ops.py",
+      "line": 325,
+      "class": "AA_OT_p12_mark_manual",
+      "target": "layer_name",
+      "effective_name": "layer_name",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "custom_draw": false
+    },
+    {
+      "path": "operators/p12_mode_ops.py",
+      "line": 175,
+      "class": "AA_OT_p12_install_drivers",
+      "target": "layer_name",
+      "effective_name": "layer_name",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [
+        "REGISTER"
+      ],
+      "custom_draw": false
+    },
+    {
+      "path": "operators/p12_mode_ops.py",
+      "line": 204,
+      "class": "AA_OT_p12_remove_drivers",
+      "target": "layer_name",
+      "effective_name": "layer_name",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "custom_draw": false
+    },
+    {
+      "path": "operators/p2_diag_ops.py",
+      "line": 68,
+      "class": "ANIMASSIST_OT_scan_dense_keys",
+      "target": "min_gap",
+      "effective_name": "min_gap",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "custom_draw": false
+    },
+    {
+      "path": "operators/p2_diag_ops.py",
+      "line": 86,
+      "class": "ANIMASSIST_OT_scan_redundant_keys",
+      "target": "tol",
+      "effective_name": "tol",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "custom_draw": false
+    },
+    {
+      "path": "operators/p2_diag_ops.py",
+      "line": 104,
+      "class": "ANIMASSIST_OT_scan_spike_keys",
+      "target": "ratio",
+      "effective_name": "ratio",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [
+        "REGISTER",
+        "UNDO"
+      ],
+      "custom_draw": false
+    },
+    {
+      "path": "ui/timeline_settings.py",
+      "line": 177,
+      "class": "ANIMASSIST_OT_toolbar_settings",
+      "target": "entries",
+      "effective_name": "entries",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [],
+      "custom_draw": true
+    },
+    {
+      "path": "ui/timeline_settings.py",
+      "line": 178,
+      "class": "ANIMASSIST_OT_toolbar_settings",
+      "target": "sections",
+      "effective_name": "sections",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [],
+      "custom_draw": true
+    },
+    {
+      "path": "ui/timeline_settings.py",
+      "line": 181,
+      "class": "ANIMASSIST_OT_toolbar_settings",
+      "target": "active_index",
+      "effective_name": "active_index",
+      "translation_context": "AnimAssist",
+      "is_hidden": false,
+      "is_operator": true,
+      "operator_options": [],
+      "custom_draw": true
+    }
+  ]
+}

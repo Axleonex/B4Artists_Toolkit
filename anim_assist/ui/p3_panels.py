@@ -20,6 +20,8 @@ channel tools do not belong in the viewport sidebar.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.p3_properties import get_p3
@@ -49,14 +51,14 @@ def _p3_available(context: bpy.types.Context) -> bool:
 def _draw_context_warning(layout, context) -> None:
     obj = getattr(context, "active_object", None)
     if obj is None:
-        layout.label(text="No active object.", icon="INFO")
+        layout.label(text="No active object.", icon="INFO", text_ctxt='AnimAssist')
         return
     adata = getattr(obj, "animation_data", None)
     if adata is None or adata.action is None:
-        layout.label(text=f"{obj.name} has no animation data.", icon="INFO")
+        layout.label(text=F('{p0} has no animation data.', p0=f'{obj.name}'), icon="INFO", translate=False)
         return
     if get_p3(context) is None:
-        layout.label(text="Breakdown property group unavailable.", icon="ERROR")
+        layout.label(text="Breakdown property group unavailable.", icon="ERROR", text_ctxt='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -80,11 +82,11 @@ class ANIMASSIST_PT_p3_breakdown(PanelAnatomyMixin, DopeSheetSidebarPanel):
 
         uh.section_header(layout, "Quick Breakdowns", icon="KEYFRAME_HLT")
         row = layout.row(align=True)
-        op = row.operator("animassist.breakdown_percentage", text="25%")
+        op = row.operator("animassist.breakdown_percentage", text="25%", text_ctxt='AnimAssist')
         op.percent = 25
-        op = row.operator("animassist.breakdown_percentage", text="50%")
+        op = row.operator("animassist.breakdown_percentage", text="50%", text_ctxt='AnimAssist')
         op.percent = 50
-        op = row.operator("animassist.breakdown_percentage", text="75%")
+        op = row.operator("animassist.breakdown_percentage", text="75%", text_ctxt='AnimAssist')
         op.percent = 75
 
         col = layout.column(align=True)
@@ -103,10 +105,10 @@ class ANIMASSIST_PT_p3_breakdown(PanelAnatomyMixin, DopeSheetSidebarPanel):
         if p3 is None:
             return
         header, body = self.layout.panel("aa_breakdown_factor", default_closed=True)
-        header.label(text="Breakdown Options")
+        header.label(text="Breakdown Options", text_ctxt='AnimAssist')
         if body:
             body.prop(p3, "factor", slider=True)
-            body.prop(p3, "mode", text="Mode")
+            body.prop(p3, "mode", text="Mode", text_ctxt='AnimAssist')
             for name in ("quaternion_aware", "euler_wrap_aware", "match_tangents", "auto_key_missing"):
                 body.prop(p3, name)
 
@@ -235,7 +237,7 @@ class ANIMASSIST_PT_p3_inbetween(PanelAnatomyMixin, DopeSheetSidebarPanel):
         uh.explained_op(col, context, "animassist.inbetween_on_clusters",
                         text="Inbetween Clusters", icon="STICKY_UVS_LOC")
         header, body = layout.panel("aa_inbetween_options", default_closed=True)
-        header.label(text="Inbetween Options")
+        header.label(text="Inbetween Options", text_ctxt='AnimAssist')
         if body:
             body.prop(p3, "inbetween_count")
 
@@ -394,9 +396,9 @@ class ANIMASSIST_PT_p3_modal(PanelAnatomyMixin, DopeSheetSidebarPanel):
         if p3.preview_active:
             info = layout.box()
             info.label(
-                text=f"Preview staged @ frame {p3.preview_frame:.1f}",
+                text=F('Preview staged @ frame {p0}', p0=f'{p3.preview_frame:.1f}'),
                 icon="INFO",
-            )
+            translate=False)
 
 
 # ---------------------------------------------------------------------------
@@ -458,8 +460,8 @@ class ANIMASSIST_PT_graph_breakdown(GraphEditorSidebarPanel):
     bl_label = "Breakdown"
 
     def draw(self, context):
-        self.layout.operator("animassist.breakdown_current_frame", text="Breakdown at Current Frame")
-        self.layout.operator("animassist.breakdown_midpoint", text="Midpoint Breakdown")
+        self.layout.operator("animassist.breakdown_current_frame", text="Breakdown at Current Frame", text_ctxt='AnimAssist')
+        self.layout.operator("animassist.breakdown_midpoint", text="Midpoint Breakdown", text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_p3_options_dope(PanelAnatomyMixin, DopeSheetSidebarPanel):

@@ -1,5 +1,6 @@
 """Read-only, editor-local NLA targeting. No active-Action fallback."""
 from dataclasses import dataclass
+from ..i18n import T, F
 
 import bpy
 
@@ -41,16 +42,16 @@ def active_target(context):
 
 def require_editable(context, items, *, single=False):
     if not in_nla(context):
-        raise ValueError("Use the NLA Editor")
+        raise ValueError(T("Use the NLA Editor"))
     if not items or (single and len(items) != 1):
-        raise ValueError("Select one Action clip" if single else "Select Action clips in this editor")
+        raise ValueError(T("Select one Action clip") if single else T("Select Action clips in this editor"))
     if context.scene.is_nla_tweakmode:
-        raise ValueError("Finish editing the Action before arranging clips")
+        raise ValueError(T("Finish editing the Action before arranging clips"))
     for item in items:
         if not item.owner.is_editable or item.track.lock:
-            raise ValueError(f"Unlock the editable track for {item.owner.name}: {item.track.name}")
+            raise ValueError(F("Unlock the editable track for {owner}: {track}", owner=item.owner.name, track=item.track.name))
         if item.strip.type != "CLIP" or item.strip.action is None:
-            raise ValueError("Select Action clips; transition, meta and sound strips are not supported")
+            raise ValueError(T("Select Action clips; transition, meta and sound strips are not supported"))
     return items
 
 
@@ -94,26 +95,26 @@ def correction_reason(item):
     """Conservative supported contract for transform-delta correction creation."""
     obj = item.owner
     if item.strip.type != "CLIP" or not item.strip.action:
-        return "Assign a source Action to this clip"
+        return T("Assign a source Action to this clip")
     if obj.animation_data.action:
-        return "Push down or stash the active Action before adding a correction"
+        return T("Push down or stash the active Action before adding a correction")
     if item.track.mute or item.strip.mute or any(t.is_solo for t in obj.animation_data.nla_tracks):
-        return "Unmute the source and clear track Solo before adding a correction"
+        return T("Unmute the source and clear track Solo before adding a correction")
     if obj.constraints or (obj.pose and any(b.constraints for b in obj.pose.bones)):
-        return "Correction creation supports unconstrained transforms; bake constraints first"
+        return T("Correction creation supports unconstrained transforms; bake constraints first")
     if obj.animation_data.drivers:
-        return "Correction creation does not support driven transforms"
+        return T("Correction creation does not support driven transforms")
     curves = strip_curves(item.strip)
     if not curves:
-        return "The source clip has no transform channels in its assigned Action slot"
+        return T("The source clip has no transform channels in its assigned Action slot")
     allowed = {"location", "rotation_euler", "rotation_quaternion", "rotation_axis_angle", "scale"}
     for fc in curves:
         path = fc.data_path
         if path not in allowed:
             if not (path.startswith('pose.bones["') and path.rsplit(".", 1)[-1] in allowed):
-                return "Correction creation supports object and pose-bone transform channels only"
+                return T("Correction creation supports object and pose-bone transform channels only")
             try:
                 obj.path_resolve(path.rsplit(".", 1)[0])
             except (ValueError, KeyError):
-                return "A source bone channel cannot be resolved on this owner"
+                return T("A source bone channel cannot be resolved on this owner")
     return ""

@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import re
+from ..i18n import T
 
 from .logging import get_logger
 
@@ -88,6 +89,7 @@ def seed_registered_tools() -> int:
 
     from ..operators import CLASSES
     from .help_registry import get_help
+    from .explainers import original_description
 
     entries = []
     # Dispatch wrappers must not offer themselves as executable search items.
@@ -111,10 +113,10 @@ def seed_registered_tools() -> int:
         is_modal = callable(getattr(cls, "modal", None))
         entries.append(ToolEntry(
             op_id=op_id,
-            label=rna.name,
+            label=getattr(cls, "bl_label", "") or rna.name,
             phase=phase,
             category=help_entry.category if help_entry else "Animation",
-            description=rna.description,
+            description=original_description(cls),
             is_modal=is_modal,
             supports_batch=not is_modal and callable(getattr(cls, "execute", None)),
         ))
@@ -152,15 +154,13 @@ def get_tools_by_category(category: str) -> list[ToolEntry]:
 
 def search_tools(query: str) -> list[ToolEntry]:
     """Case-insensitive substring search across label, category, tags, description."""
-    q = query.lower()
+    q = query.casefold()
     results: list[ToolEntry] = []
     for t in _registry.values():
         if (
-            q in t.label.lower()
-            or q in t.category.lower()
-            or q in t.description.lower()
-            or q in t.op_id.lower()
-            or any(q in tag.lower() for tag in t.tags)
+            any(q in text.casefold() for text in (t.label, T(t.label), t.category, T(t.category),
+                                                  t.description, T(t.description), t.op_id))
+            or any(q in tag.casefold() for tag in t.tags)
         ):
             results.append(t)
     return results

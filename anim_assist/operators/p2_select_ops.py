@@ -6,6 +6,8 @@ visible FCurves via ``core.context_utils`` / ``core.selection_p2``.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from bpy.props import BoolProperty, EnumProperty, FloatProperty, IntProperty, StringProperty
 from bpy.types import Operator
 
@@ -39,7 +41,7 @@ class ANIMASSIST_OT_select_all_visible(_AnimEditorOp):
 
     def execute(self, context):
         n = sel.select_all_visible(context, True)
-        self.report({"INFO"}, f"Selected {n} keys")
+        self.report({"INFO"}, F('Selected {p0} keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -104,12 +106,12 @@ class ANIMASSIST_OT_select_by_type(_AnimEditorOp):
         description="Blender key type to match",
         items=_KEY_TYPE_ITEMS,
         default="KEYFRAME",
-    )
+     translation_context='AnimAssist')
     additive: BoolProperty(  # type: ignore[valid-type]
         name="Extend",
         description="Add to the existing selection instead of replacing it",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         kt = self.key_type
@@ -118,7 +120,7 @@ class ANIMASSIST_OT_select_by_type(_AnimEditorOp):
             lambda _fc, _i, kp: kp.type == kt,
             additive=self.additive,
         )
-        self.report({"INFO"}, f"Selected {n} {kt} keys")
+        self.report({"INFO"}, F('Selected {p0} {p1} keys', p0=f'{n}', p1=f'{kt}'))
         return {"FINISHED"}
 
 
@@ -134,12 +136,12 @@ class ANIMASSIST_OT_select_by_interpolation(_AnimEditorOp):
         description="Interpolation type to match",
         items=_INTERP_ITEMS,
         default="BEZIER",
-    )
+     translation_context='AnimAssist')
     additive: BoolProperty(  # type: ignore[valid-type]
         name="Extend",
         description="Add to the existing selection instead of replacing it",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         ip = self.interp
@@ -148,7 +150,7 @@ class ANIMASSIST_OT_select_by_interpolation(_AnimEditorOp):
             lambda _fc, _i, kp: kp.interpolation == ip,
             additive=self.additive,
         )
-        self.report({"INFO"}, f"Selected {n} keys")
+        self.report({"INFO"}, F('Selected {p0} keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -164,12 +166,12 @@ class ANIMASSIST_OT_select_by_handle_type(_AnimEditorOp):
         description="Handle type to match on either side of the key",
         items=_HANDLE_ITEMS,
         default="AUTO_CLAMPED",
-    )
+     translation_context='AnimAssist')
     additive: BoolProperty(  # type: ignore[valid-type]
         name="Extend",
         description="Add to the existing selection instead of replacing it",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         ht = self.handle_type
@@ -178,7 +180,7 @@ class ANIMASSIST_OT_select_by_handle_type(_AnimEditorOp):
             lambda _fc, _i, kp: kp.handle_left_type == ht or kp.handle_right_type == ht,
             additive=self.additive,
         )
-        self.report({"INFO"}, f"Selected {n} keys")
+        self.report({"INFO"}, F('Selected {p0} keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -197,16 +199,16 @@ class ANIMASSIST_OT_select_frame_range(_AnimEditorOp):
         name="Start",
         description="First frame of the inclusive selection range",
         default=1.0,
-    )
+     translation_context='AnimAssist')
     end: FloatProperty(  # type: ignore[valid-type]
         name="End",
         description="Last frame of the inclusive selection range",
         default=250.0,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         n = sel.select_frame_range(context, self.start, self.end)
-        self.report({"INFO"}, f"Selected {n} keys in [{self.start}, {self.end}]")
+        self.report({"INFO"}, F('Selected {p0} keys in [{p1}, {p2}]', p0=f'{n}', p1=f'{self.start}', p2=f'{self.end}'))
         return {"FINISHED"}
 
 
@@ -220,7 +222,7 @@ class ANIMASSIST_OT_select_playback_range(_AnimEditorOp):
     def execute(self, context):
         scn = context.scene
         n = sel.select_frame_range(context, scn.frame_start, scn.frame_end)
-        self.report({"INFO"}, f"Selected {n} keys")
+        self.report({"INFO"}, F('Selected {p0} keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -238,7 +240,7 @@ class ANIMASSIST_OT_select_preview_range(_AnimEditorOp):
     def execute(self, context):
         scn = context.scene
         n = sel.select_frame_range(context, scn.frame_preview_start, scn.frame_preview_end)
-        self.report({"INFO"}, f"Selected {n} keys")
+        self.report({"INFO"}, F('Selected {p0} keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -257,16 +259,16 @@ class ANIMASSIST_OT_select_every_nth(_AnimEditorOp):
         name="N",
         description="Stride between selected keys (1 selects every key)",
         default=2, min=1, max=1000,
-    )
+     translation_context='AnimAssist')
     offset: IntProperty(  # type: ignore[valid-type]
         name="Offset",
         description="Index of the first key to select on each FCurve",
         default=0, min=0, max=1000,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         count = sel.select_every_nth(context, self.n, self.offset)
-        self.report({"INFO"}, f"Selected {count} keys")
+        self.report({"INFO"}, F('Selected {p0} keys', p0=f'{count}'))
         return {"FINISHED"}
 
 
@@ -286,7 +288,7 @@ class ANIMASSIST_OT_select_neighbors(_AnimEditorOp):
             ("BOTH", "Both", "Add both neighbours of every selected key"),
         ],
         default="BOTH",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         sel.select_neighbors(context, self.direction)
@@ -303,7 +305,7 @@ class ANIMASSIST_OT_select_between_selected(_AnimEditorOp):
     def execute(self, context):
         bounds = sel.selection_bounds(context)
         if bounds is None:
-            self.report({"WARNING"}, "No keys selected")
+            self.report({"WARNING"}, T('No keys selected'))
             return {"CANCELLED"}
         sel.select_frame_range(context, *bounds)
         return {"FINISHED"}
@@ -329,7 +331,7 @@ class ANIMASSIST_OT_select_first_last(_AnimEditorOp):
             ("BOTH", "Both", "Select both endpoint keys of each FCurve"),
         ],
         default="BOTH",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         count = 0
@@ -347,7 +349,7 @@ class ANIMASSIST_OT_select_first_last(_AnimEditorOp):
                 kp.select_right_handle = keep
                 if keep:
                     count += 1
-        self.report({"INFO"}, f"Selected {count} keys")
+        self.report({"INFO"}, F('Selected {p0} keys', p0=f'{count}'))
         return {"FINISHED"}
 
 
@@ -375,7 +377,7 @@ class ANIMASSIST_OT_select_local_extremes(_AnimEditorOp):
                 kp.select_right_handle = is_ext
                 if is_ext:
                     count += 1
-        self.report({"INFO"}, f"Selected {count} extremes")
+        self.report({"INFO"}, F('Selected {p0} extremes', p0=f'{count}'))
         return {"FINISHED"}
 
 
@@ -390,7 +392,7 @@ class ANIMASSIST_OT_select_flat_segments(_AnimEditorOp):
         name="Tolerance",
         description="Maximum value delta to a neighbour that still counts as flat",
         default=1e-4, min=0.0,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         t = self.tol
@@ -404,7 +406,7 @@ class ANIMASSIST_OT_select_flat_segments(_AnimEditorOp):
                 )
             ),
         )
-        self.report({"INFO"}, f"Selected {n} flat-segment keys")
+        self.report({"INFO"}, F('Selected {p0} flat-segment keys', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -423,7 +425,7 @@ class ANIMASSIST_OT_select_by_tag(_AnimEditorOp):
         name="Tag",
         description="Exact tag string to match against each key's metadata record",
         default="",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         scene = context.scene
@@ -439,7 +441,7 @@ class ANIMASSIST_OT_select_by_tag(_AnimEditorOp):
                 kp.select_right_handle = hit
                 if hit:
                     count += 1
-        self.report({"INFO"}, f"Selected {count} tagged keys")
+        self.report({"INFO"}, F('Selected {p0} tagged keys', p0=f'{count}'))
         return {"FINISHED"}
 
 
@@ -454,17 +456,17 @@ class ANIMASSIST_OT_select_by_value_range(_AnimEditorOp):
         name="Min",
         description="Lower bound of the inclusive value range",
         default=0.0,
-    )
+     translation_context='AnimAssist')
     hi: FloatProperty(  # type: ignore[valid-type]
         name="Max",
         description="Upper bound of the inclusive value range",
         default=1.0,
-    )
+     translation_context='AnimAssist')
     additive: BoolProperty(  # type: ignore[valid-type]
         name="Extend",
         description="Add to existing selection instead of replacing it",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         lo, hi = min(self.lo, self.hi), max(self.lo, self.hi)
@@ -473,7 +475,7 @@ class ANIMASSIST_OT_select_by_value_range(_AnimEditorOp):
             lambda _fc, _i, kp: lo <= kp.co.y <= hi,
             additive=self.additive,
         )
-        self.report({"INFO"}, f"Selected {n} keys in value range")
+        self.report({"INFO"}, F('Selected {p0} keys in value range', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -488,7 +490,7 @@ class ANIMASSIST_OT_select_protected(_AnimEditorOp):
         name="Invert",
         description="Select unprotected keys instead of protected ones",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         scene = context.scene
@@ -504,7 +506,7 @@ class ANIMASSIST_OT_select_protected(_AnimEditorOp):
                 kp.select_right_handle = hit
                 if hit:
                     count += 1
-        self.report({"INFO"}, f"Selected {count} keys")
+        self.report({"INFO"}, F('Selected {p0} keys', p0=f'{count}'))
         return {"FINISHED"}
 
 

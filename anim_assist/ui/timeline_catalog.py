@@ -7,6 +7,7 @@ their existing sidebar home (mid tier); setup and file procedures are excluded.
 """
 
 from ..constants import BREAKDOWN_ANCHOR_HINT
+from ..i18n import T, F
 
 # (existing operator suffix, fixed arguments, menu label). No scene overrides.
 ACTIONS = {
@@ -324,18 +325,19 @@ def command_metadata(action):
         gesture = "Left click or Enter applies; Esc/right click cancels"
     elif action == "OFFSET":
         gesture = "Click again to finish; Esc uses the existing Offset snapshot restore"
-    return scope, prerequisite, gesture
+    return T(scope), T(prerequisite), T(gesture)
 
 
 def command_description(action, operation):
     scope, prerequisite, gesture = command_metadata(action)
-    parts = [f"Scope: {scope}.", f"{ACTIONS[action][2]}: {TIPS.get(action) or operation}.",
-             f"Requires: {prerequisite}."]
+    parts = [F("Scope: {scope}.", scope=scope),
+             F("{label}: {purpose}.", label=T(ACTIONS[action][2]), purpose=T(TIPS.get(action) or operation)),
+             F("Requires: {prerequisite}.", prerequisite=prerequisite)]
     if action in {"B25", "B50", "B75", "DRAG"}:
-        parts.append(BREAKDOWN_ANCHOR_HINT)
+        parts.append(T(BREAKDOWN_ANCHOR_HINT))
     if gesture:
         parts.append(gesture + ".")
-    parts.append(f"Also in {FAMILY[action][1]} > {ACTIONS[action][2]}.")
+    parts.append(F("Also in {family} > {label}.", family=T(FAMILY[action][1]), label=T(ACTIONS[action][2])))
     return " ".join(parts)
 
 
@@ -376,19 +378,19 @@ def command_tooltip(action, operation, reason="", status=""):
     """Row hover text as (text, role) lines: name, what it does, then details.
     Roles: TITLE, BODY, DETAIL, WARNING. A greyed tool leads its details with why."""
     scope, prerequisite, gesture = command_metadata(action)
-    lines = [(ACTIONS[action][2], "TITLE"), ((TIPS.get(action) or operation).rstrip(".") + ".", "BODY")]
+    lines = [(T(ACTIONS[action][2]), "TITLE"), (T(TIPS.get(action) or operation).rstrip(".") + ".", "BODY")]
     if reason:
-        lines.append((f"Unavailable: {reason.rstrip('.')}.", "WARNING"))
-    lines.append((f"Works on: {scope}.", "DETAIL"))
+        lines.append((F("Unavailable: {reason}.", reason=T(reason).rstrip('.')), "WARNING"))
+    lines.append((F("Works on: {scope}.", scope=scope), "DETAIL"))
     if not reason:
-        lines.append((f"Needs: {prerequisite}.", "DETAIL"))
+        lines.append((F("Needs: {prerequisite}.", prerequisite=prerequisite), "DETAIL"))
     if action in {"B25", "B50", "B75", "DRAG"}:
-        lines.append((BREAKDOWN_ANCHOR_HINT, "DETAIL"))
+        lines.append((T(BREAKDOWN_ANCHOR_HINT), "DETAIL"))
     if gesture:
         lines.append((gesture + ".", "DETAIL"))
     if status:
-        lines.append((f"Active session: {status}.", "DETAIL"))
-    lines.append((f"Also in {FAMILY[action][1]} > {ACTIONS[action][2]}.", "DETAIL"))
+        lines.append((F("Active session: {status}.", status=T(status)), "DETAIL"))
+    lines.append((F("Also in {family} > {label}.", family=T(FAMILY[action][1]), label=T(ACTIONS[action][2])), "DETAIL"))
     return lines
 
 
@@ -418,7 +420,7 @@ def search_actions(query):
     """Stable token matching across the complete catalogue, including aliases."""
     terms = query.casefold().split()
     return tuple(action for action, (suffix, _arguments, label) in ACTIONS.items()
-                 if all(term in f"{action} {label} {FAMILY[action][1]} {suffix} {SEARCH_TERMS.get(action, '')}".casefold()
+                 if all(term in f"{action} {label} {T(label)} {FAMILY[action][1]} {T(FAMILY[action][1])} {suffix} {SEARCH_TERMS.get(action, '')} {T(SEARCH_TERMS.get(action, ''))}".casefold()
                         for term in terms))
 
 

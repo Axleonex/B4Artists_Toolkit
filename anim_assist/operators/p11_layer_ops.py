@@ -5,6 +5,8 @@ rename, solo, mute, lock, and layer initialization.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import EnumProperty, FloatProperty, IntProperty, StringProperty
 
@@ -62,7 +64,7 @@ class ANIMASSIST_OT_p11_init_layers(bpy.types.Operator):
         if obj is not None and obj.animation_data and obj.animation_data.action:
             p11.layers[0].action_name = obj.animation_data.action.name
 
-        self.report({'INFO'}, "Layer stack initialized")
+        self.report({'INFO'}, T('Layer stack initialized'))
         return {'FINISHED'}
 
 
@@ -81,7 +83,7 @@ class ANIMASSIST_OT_p11_add_layer(bpy.types.Operator):
         name="Name",
         description="Name for the new layer",
         default="New Layer",
-    )
+     translation_context='AnimAssist')
 
     blend_mode: EnumProperty(  # type: ignore[valid-type]
         name="Blend Mode",
@@ -93,13 +95,13 @@ class ANIMASSIST_OT_p11_add_layer(bpy.types.Operator):
             ("COMBINE", "Combine", "NLA-style combine"),
         ],
         default="OVERRIDE",
-    )
+     translation_context='AnimAssist')
 
     weight: FloatProperty(  # type: ignore[valid-type]
         name="Weight",
         description="Initial layer weight",
         default=1.0, min=0.0, max=1.0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -120,7 +122,7 @@ class ANIMASSIST_OT_p11_add_layer(bpy.types.Operator):
         # Create backing Action for the new layer.
         engine.get_layer_action(p11.layers[idx], create=True)
 
-        self.report({'INFO'}, f"Added layer '{self.name}' at position {idx}")
+        self.report({'INFO'}, F("Added layer '{p0}' at position {p1}", p0=f'{self.name}', p1=f'{idx}'))
         return {'FINISHED'}
 
 
@@ -160,10 +162,10 @@ class ANIMASSIST_OT_p11_remove_layer(bpy.types.Operator):
             bpy.data.actions.remove(action)
 
         if engine.remove_layer(p11, idx):
-            self.report({'INFO'}, f"Removed layer '{name}'")
+            self.report({'INFO'}, F("Removed layer '{p0}'", p0=f'{name}'))
             return {'FINISHED'}
         else:
-            self.report({'WARNING'}, f"Cannot remove layer '{name}'")
+            self.report({'WARNING'}, F("Cannot remove layer '{p0}'", p0=f'{name}'))
             return {'CANCELLED'}
 
 
@@ -246,7 +248,7 @@ class ANIMASSIST_OT_p11_duplicate_layer(bpy.types.Operator):
         idx = p11.active_layer_index
         new_idx = engine.duplicate_layer(p11, idx)
         if new_idx >= 0:
-            self.report({'INFO'}, f"Duplicated layer to position {new_idx}")
+            self.report({'INFO'}, F('Duplicated layer to position {p0}', p0=f'{new_idx}'))
             return {'FINISHED'}
         return {'CANCELLED'}
 
@@ -271,8 +273,8 @@ class ANIMASSIST_OT_p11_toggle_solo(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
         layer.solo = not layer.solo
         p11.eval_generation += 1
-        state = "ON" if layer.solo else "OFF"
-        self.report({'INFO'}, f"Solo {state}: {layer.name}")
+        state = T('ON') if layer.solo else T('OFF')
+        self.report({'INFO'}, F('Solo {p0}: {p1}', p0=f'{state}', p1=f'{layer.name}'))
         return {'FINISHED'}
 
 
@@ -292,8 +294,8 @@ class ANIMASSIST_OT_p11_toggle_mute(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
         layer.mute = not layer.mute
         p11.eval_generation += 1
-        state = "ON" if layer.mute else "OFF"
-        self.report({'INFO'}, f"Mute {state}: {layer.name}")
+        state = T('ON') if layer.mute else T('OFF')
+        self.report({'INFO'}, F('Mute {p0}: {p1}', p0=f'{state}', p1=f'{layer.name}'))
         return {'FINISHED'}
 
 
@@ -312,8 +314,8 @@ class ANIMASSIST_OT_p11_toggle_lock(bpy.types.Operator):
         p11 = get_p11(context)
         layer = p11.layers[p11.active_layer_index]
         layer.locked = not layer.locked
-        state = "ON" if layer.locked else "OFF"
-        self.report({'INFO'}, f"Lock {state}: {layer.name}")
+        state = T('ON') if layer.locked else T('OFF')
+        self.report({'INFO'}, F('Lock {p0}: {p1}', p0=f'{state}', p1=f'{layer.name}'))
         return {'FINISHED'}
 
 
@@ -333,7 +335,7 @@ class ANIMASSIST_OT_p11_set_active(bpy.types.Operator):
         description="Index of the layer to activate",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -343,7 +345,7 @@ class ANIMASSIST_OT_p11_set_active(bpy.types.Operator):
         p11 = get_p11(context)
         if 0 <= self.index < len(p11.layers):
             p11.active_layer_index = self.index
-            self.report({'INFO'}, f"Active layer: {p11.layers[self.index].name}")
+            self.report({'INFO'}, F('Active layer: {p0}', p0=f'{p11.layers[self.index].name}'))
             return {'FINISHED'}
         return {'CANCELLED'}
 
@@ -363,7 +365,7 @@ class ANIMASSIST_OT_p11_rename_layer(bpy.types.Operator):
         name="New Name",
         description="New name for the active layer",
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -379,7 +381,7 @@ class ANIMASSIST_OT_p11_rename_layer(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
         old_name = layer.name
         layer.name = self.new_name
-        self.report({'INFO'}, f"Renamed '{old_name}' to '{self.new_name}'")
+        self.report({'INFO'}, F("Renamed '{p0}' to '{p1}'", p0=f'{old_name}', p1=f'{self.new_name}'))
         return {'FINISHED'}
 
 
@@ -414,7 +416,7 @@ class ANIMASSIST_OT_p11_evaluate_stack(bpy.types.Operator):
                 engine.apply_eval_result(bone, result)
                 bones_updated += 1
 
-        self.report({'INFO'}, f"Evaluated {bones_updated} bones across {len(p11.layers)} layers")
+        self.report({'INFO'}, F('Evaluated {p0} bones across {p1} layers', p0=f'{bones_updated}', p1=f'{len(p11.layers)}'))
         return {'FINISHED'}
 
 
@@ -428,7 +430,7 @@ class ANIMASSIST_OT_p11_select_layer(bpy.types.Operator):
     bl_idname = "animassist.p11_select_layer"
     bl_label = "Select Layer"
 
-    index: IntProperty(default=0, min=0)  # type: ignore[valid-type]
+    index: IntProperty(default=0, min=0, translation_context='AnimAssist', name="index")  # type: ignore[valid-type]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:

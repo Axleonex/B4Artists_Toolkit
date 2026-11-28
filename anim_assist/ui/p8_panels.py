@@ -15,6 +15,8 @@ Uses PanelAnatomyMixin section hooks:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.p8_properties import get_p8
@@ -65,7 +67,7 @@ class ANIMASSIST_PT_p8_matching(PanelAnatomyMixin, DopeSheetSidebarPanel):
         # Most match buttons need a second selected object; without one they
         # grey out silently, so say what they are waiting for.
         if len(getattr(context, "selected_objects", None) or ()) < 2:
-            layout.label(text="Select target, then this object", icon="INFO")
+            layout.label(text="Select target, then this object", icon="INFO", text_ctxt='AnimAssist')
         uh.explained_op(
             layout, context,
             "animassist.p8_quick_match",
@@ -207,7 +209,7 @@ class ANIMASSIST_PT_p8_matching(PanelAnatomyMixin, DopeSheetSidebarPanel):
         )
 
         row = body.row(align=True)
-        row.label(text="Axes:")
+        row.label(text="Axes:", text_ctxt='AnimAssist')
         row.prop(p8, "match_axis", text="")
         uh.draw_explainer_icon(row, context, "prop.p8_match_axis")
 
@@ -253,17 +255,17 @@ class ANIMASSIST_PT_p8_matching(PanelAnatomyMixin, DopeSheetSidebarPanel):
             default_open=False,
         )
         if expanded:
-            body.prop(p8, "switch_bone_name", text="Bone")
-            body.prop(p8, "switch_prop_path", text="Property")
-            body.prop(p8, "switch_kind", text="Type")
-            body.prop(p8, "switch_new_value", text="Value")
+            body.prop(p8, "switch_bone_name", text="Bone", text_ctxt='AnimAssist')
+            body.prop(p8, "switch_prop_path", text="Property", text_ctxt='AnimAssist')
+            body.prop(p8, "switch_kind", text="Type", text_ctxt='AnimAssist')
+            body.prop(p8, "switch_new_value", text="Value", text_ctxt='AnimAssist')
 
             uh.separator(body)
-            body.prop(p8, "comp_range", text="Range")
+            body.prop(p8, "comp_range", text="Range", text_ctxt='AnimAssist')
             if p8.comp_range == "CUSTOM":
                 row = body.row(align=True)
-                row.prop(p8, "comp_range_start", text="Start")
-                row.prop(p8, "comp_range_end", text="End")
+                row.prop(p8, "comp_range_start", text="Start", text_ctxt='AnimAssist')
+                row.prop(p8, "comp_range_end", text="End", text_ctxt='AnimAssist')
 
             uh.separator(body)
             row = body.row(align=True)
@@ -327,8 +329,8 @@ class ANIMASSIST_PT_p8_matching(PanelAnatomyMixin, DopeSheetSidebarPanel):
             from ..operators.p8_detect_ops import get_cached_patterns
             patterns = get_cached_patterns()
             if patterns:
-                body.label(text=f"{len(patterns)} pattern(s) found:")
-                body.prop(p8, "detected_pattern_index", text="Select")
+                body.label(text=F('{p0} pattern(s) found:', p0=f'{len(patterns)}'), translate=False)
+                body.prop(p8, "detected_pattern_index", text="Select", text_ctxt='AnimAssist')
                 uh.explained_op(
                     body, context,
                     "animassist.p8_apply_detected_pattern",
@@ -432,7 +434,7 @@ class ANIMASSIST_PT_p8_matching(PanelAnatomyMixin, DopeSheetSidebarPanel):
             default_open=False,
         )
         if expanded:
-            body.prop(p8, "switch_preset_name", text="Name")
+            body.prop(p8, "switch_preset_name", text="Name", text_ctxt='AnimAssist')
             row = body.row(align=True)
             uh.explained_op(
                 row, context,
@@ -542,9 +544,9 @@ class ANIMASSIST_PT_p8_matching(PanelAnatomyMixin, DopeSheetSidebarPanel):
             if chains:
                 uh.separator(body)
                 body.label(
-                    text=f"{len(chains)} chain(s) detected:",
+                    text=F('{p0} chain(s) detected:', p0=f'{len(chains)}'),
                     icon="LINKED",
-                )
+                translate=False)
 
                 # Navigation
                 row = body.row(align=True)
@@ -558,9 +560,8 @@ class ANIMASSIST_PT_p8_matching(PanelAnatomyMixin, DopeSheetSidebarPanel):
                 idx = min(idx, len(chains) - 1)
                 chain = chains[idx]
                 row.label(
-                    text=f"{idx + 1}/{len(chains)}: "
-                         f"{chain.tip_bone} → {chain.root_bone}",
-                )
+                    text=F('{p0}/{p1}: {p2} → {p3}', p0=f'{idx + 1}', p1=f'{len(chains)}', p2=f'{chain.tip_bone}', p3=f'{chain.root_bone}'),
+                translate=False)
 
                 nav_next = row.operator(
                     "animassist.p8_chain_nav",
@@ -571,36 +572,34 @@ class ANIMASSIST_PT_p8_matching(PanelAnatomyMixin, DopeSheetSidebarPanel):
                 # Chain detail box
                 box = body.box()
                 col = box.column(align=True)
-                col.label(text=f"Tip: {chain.tip_bone}", icon="PMARKER_ACT")
-                col.label(text=f"Root: {chain.root_bone}", icon="PMARKER")
-                col.label(text=f"Bones: {chain.length}", icon="BONE_DATA")
+                col.label(text=F('Tip: {p0}', p0=f'{chain.tip_bone}'), icon="PMARKER_ACT", translate=False)
+                col.label(text=F('Root: {p0}', p0=f'{chain.root_bone}'), icon="PMARKER", translate=False)
+                col.label(text=F('Bones: {p0}', p0=f'{chain.length}'), icon="BONE_DATA", translate=False)
                 col.label(
-                    text=f"Active: {'Yes' if chain.is_active else 'No'}",
+                    text=F('Active: {p0}', p0=T('Yes') if chain.is_active else T('No')),
                     icon="CHECKMARK" if chain.is_active else "X",
-                )
+                translate=False)
                 ci = chain.constraint_info
                 if ci.target_object:
                     col.label(
-                        text=f"Target: {ci.target_object}"
-                             + (f".{ci.target_bone}" if ci.target_bone else ""),
+                        text=F("Target: {target}", target=ci.target_object + (f".{ci.target_bone}" if ci.target_bone else "")),
                         icon="TRACKER",
-                    )
+                    translate=False)
                 if ci.pole_object:
                     col.label(
-                        text=f"Pole: {ci.pole_object}"
-                             + (f".{ci.pole_bone}" if ci.pole_bone else ""),
+                        text=F("Pole: {target}", target=ci.pole_object + (f".{ci.pole_bone}" if ci.pole_bone else "")),
                         icon="EMPTY_ARROWS",
-                    )
+                    translate=False)
                 col.label(
-                    text=f"Influence: {ci.influence:.2f}",
+                    text=F('Influence: {p0}', p0=f'{ci.influence:.2f}'),
                     icon="CON_KINEMATIC",
-                )
+                translate=False)
 
                 # Member list
                 if len(chain.bone_names) <= 12:
-                    col.label(text="Members:", icon="GROUP_BONE")
+                    col.label(text="Members:", icon="GROUP_BONE", text_ctxt='AnimAssist')
                     for bname in chain.bone_names:
-                        col.label(text=f"  {bname}")
+                        col.label(text=F('  {p0}', p0=f'{bname}'), translate=False)
 
                 uh.separator(body)
 
@@ -752,7 +751,7 @@ class ANIMASSIST_PT_p8_match_v3d(PanelAnatomyMixin, View3DSidebarPanel):
         uh.explained_prop(body, context, p8, "match_channels", text="Channels",
                           help_id="prop.p8_match_channels")
         row = body.row(align=True)
-        row.label(text="Axes:")
+        row.label(text="Axes:", text_ctxt='AnimAssist')
         row.prop(p8, "match_axis", text="")
         uh.explained_prop(body, context, p8, "maintain_offset",
                           help_id="op.animassist.p8_match_with_offset")

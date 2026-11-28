@@ -99,13 +99,13 @@ class AA_P9_PairOverride(bpy.types.PropertyGroup):
         name="Bone A",
         description="First bone in the manual pair",
         default="",
-    )
+     translation_context='AnimAssist')
 
     bone_b: StringProperty(  # type: ignore[valid-type]
         name="Bone B",
         description="Second bone in the manual pair (opposite side)",
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P9_NamingException(bpy.types.PropertyGroup):
@@ -115,13 +115,13 @@ class AA_P9_NamingException(bpy.types.PropertyGroup):
         name="Original",
         description="Original bone name",
         default="",
-    )
+     translation_context='AnimAssist')
 
     opposite: StringProperty(  # type: ignore[valid-type]
         name="Opposite",
         description="Opposite bone name override",
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -138,33 +138,33 @@ class AA_P9_Properties(bpy.types.PropertyGroup):
         description="Axis to mirror transforms across",
         items=_mirror_axis_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     mirror_space: EnumProperty(  # type: ignore[valid-type]
         name="Mirror Space",
         description="Coordinate space for mirror operations",
         items=_mirror_space_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     naming_pattern: EnumProperty(  # type: ignore[valid-type]
         name="Naming Pattern",
         description="Bone naming convention for pair detection",
         items=_naming_pattern_items,
         default=0,
-    )
+     translation_context='AnimAssist')
 
     custom_left_pattern: StringProperty(  # type: ignore[valid-type]
         name="Left Pattern",
         description="Regex pattern matching left-side bones",
         default="",
-    )
+     translation_context='AnimAssist')
 
     custom_right_pattern: StringProperty(  # type: ignore[valid-type]
         name="Right Pattern",
         description="Regex pattern matching right-side bones",
         default="",
-    )
+     translation_context='AnimAssist')
 
     # ----- Channel Filters -----
 
@@ -172,19 +172,19 @@ class AA_P9_Properties(bpy.types.PropertyGroup):
         name="Location",
         description="Include location channels in mirror",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     mirror_rotation: BoolProperty(  # type: ignore[valid-type]
         name="Rotation",
         description="Include rotation channels in mirror",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     mirror_scale: BoolProperty(  # type: ignore[valid-type]
         name="Scale",
         description="Include scale channels in mirror",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     axis_mask: BoolVectorProperty(  # type: ignore[valid-type]
         name="Axis Mask",
@@ -192,7 +192,7 @@ class AA_P9_Properties(bpy.types.PropertyGroup):
         size=3,
         default=(True, True, True),
         subtype="XYZ",
-    )
+     translation_context='AnimAssist')
 
     # ----- Safety -----
 
@@ -200,19 +200,19 @@ class AA_P9_Properties(bpy.types.PropertyGroup):
         name="Respect Locks",
         description="Skip locked transform channels during mirror",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     respect_drivers: BoolProperty(  # type: ignore[valid-type]
         name="Respect Drivers",
         description="Skip driven channels during mirror",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     auto_key_mirror: BoolProperty(  # type: ignore[valid-type]
         name="Auto Key",
         description="Automatically insert keyframes after mirror operations",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     maintain_offset: BoolProperty(  # type: ignore[valid-type]
         name="Maintain Offset",
@@ -220,7 +220,7 @@ class AA_P9_Properties(bpy.types.PropertyGroup):
             "Preserve existing offset between source and target during mirror"
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # ----- Scope -----
 
@@ -228,13 +228,13 @@ class AA_P9_Properties(bpy.types.PropertyGroup):
         name="Keyed Only",
         description="Only mirror channels that have keyframes",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     mirror_visible_only: BoolProperty(  # type: ignore[valid-type]
         name="Visible Only",
         description="Only mirror channels visible in the editor",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # ----- Pair Management -----
 
@@ -242,25 +242,25 @@ class AA_P9_Properties(bpy.types.PropertyGroup):
         type=AA_P9_PairOverride,
         name="Pair Overrides",
         description="Manual bone pair definitions that override auto-detection",
-    )
+     translation_context='AnimAssist')
 
     pair_overrides_index: IntProperty(  # type: ignore[valid-type]
         name="Active Override",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     naming_exceptions: CollectionProperty(  # type: ignore[valid-type]
         type=AA_P9_NamingException,
         name="Naming Exceptions",
         description="Bone naming overrides for non-standard names",
-    )
+     translation_context='AnimAssist')
 
     naming_exceptions_index: IntProperty(  # type: ignore[valid-type]
         name="Active Exception",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -292,7 +292,7 @@ def register_properties() -> None:
     bpy.types.Scene.anim_assist_p9 = PointerProperty(  # type: ignore[assignment]
         type=AA_P9_Properties,
         name="Anim Assist P9",
-    )
+     translation_context='AnimAssist')
 
 
 def unregister_properties() -> None:

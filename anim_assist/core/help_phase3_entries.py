@@ -179,8 +179,8 @@ PHASE3_ENTRIES: tuple[HelpEntry, ...] = (
        "Per-Axis Masking",
        "Checkbox row for per-axis breakdown masking",
        "Per-axis checkboxes let you restrict a breakdown to, for example, only the "
-       "Y component of location channels. Axis indices map to 0=X, 1=Y, 2=Z, and "
-       "3=W for quaternion channels.",
+       "Y component of location channels. Location, Euler rotation and scale use "
+       "0=X, 1=Y and 2=Z. Quaternion rotation uses 0=W, 1=X, 2=Y and 3=Z.",
        "Breakdown Subsets"),
     _H("prop.p3_skip_locked",
        "Ignore Locked Axes",
@@ -230,16 +230,16 @@ PHASE3_ENTRIES: tuple[HelpEntry, ...] = (
     # ====================================================================
     _H("op.animassist.pose_snapshot_prev",
        "Snapshot Previous Pose",
-       "Snapshot the pose at the previous key as 'previous'",
+       "Snapshot the current-frame pose as 'previous'",
        "Walks every fcurve on the active object, evaluates its value at the "
-       "previous key frame, and stores the result in the Previous slot of the "
+       "current frame, and stores the result in the Previous slot of the "
        "pose compare state. Used by the Pose Compare Report.",
        "Pose Compare"),
     _H("op.animassist.pose_snapshot_next",
        "Snapshot Next Pose",
-       "Snapshot the pose at the next key as 'next'",
+       "Snapshot the current-frame pose as 'next'",
        "Walks every fcurve on the active object, evaluates its value at the "
-       "next key frame, and stores the result in the Next slot of the pose "
+       "current frame, and stores the result in the Next slot of the pose "
        "compare state.",
        "Pose Compare"),
     _H("op.animassist.pose_snapshot_reference",

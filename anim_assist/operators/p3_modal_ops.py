@@ -3,9 +3,9 @@
 
 from __future__ import annotations
 
-import bpy
+from ..i18n import T, F
 
-from ..constants import BREAKDOWN_ANCHOR_HINT
+import bpy
 
 from ..core import breakdown_core as bc
 from ..core.fcurve_compat import get_fcurves
@@ -31,7 +31,8 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
     bl_description = (
         "Active object's Action using Breakdown targets and mask. Drag horizontally; "
         "release left mouse to apply, Esc/right mouse restores the pre-drag keys. "
-        + BREAKDOWN_ANCHOR_HINT
+        "An existing key at the playhead becomes the previous anchor; "
+        "an empty frame blends between the surrounding keys."
     )
     bl_options = {"REGISTER", "UNDO", "GRAB_CURSOR", "BLOCKING"}
 
@@ -113,7 +114,7 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
         if obj is None:
             return
         options = _options_from_scene(context, factor=factor)
-        bc.apply_breakdown(context, obj, bones, options)
+        bc.apply_breakdown(context, obj, bones, options, format_text=F)
 
     # ------------------------------------------------------------------
     # Invoke / modal
@@ -122,8 +123,7 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
         if context.workspace:
             obj = self._snap_obj
             context.workspace.status_text_set(
-                f"Breakdown {self._p3.factor:.2f} | {obj.name if obj else 'No object'} "
-                "| Breakdown targets/mask | Release: apply | Esc: cancel")
+                F('Breakdown {p0} | {p1} | Breakdown targets/mask | Release: apply | Esc: cancel', p0=f'{self._p3.factor:.2f}', p1=f"{(obj.name if obj else T('No object'))}"))
 
     def invoke(self, context, event):
         p3 = get_p3(context)
@@ -164,7 +164,7 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
             self._committed = True
             self.report(
                 {"INFO"},
-                f"Committed breakdown @ factor {self._p3.factor:.2f}",
+                F('Committed breakdown @ factor {p0}', p0=f'{self._p3.factor:.2f}'),
             )
             return {"FINISHED"}
         if event.type in {"RIGHTMOUSE", "ESC"}:
@@ -177,7 +177,7 @@ class AA_OT_modal_drag_breakdown(bpy.types.Operator):
                 context.window.cursor_modal_restore()
             if context.area is not None:
                 context.area.tag_redraw()
-            self.report({"INFO"}, "Modal breakdown cancelled.")
+            self.report({"INFO"}, T('Modal breakdown cancelled.'))
             return {"CANCELLED"}
         return {"RUNNING_MODAL"}
 
@@ -200,18 +200,18 @@ class AA_OT_preview_breakdown(bpy.types.Operator):
     def execute(self, context):
         p3 = get_p3(context)
         if p3 is None:
-            self.report({"WARNING"}, "Property group unavailable.")
+            self.report({"WARNING"}, T('Property group unavailable.'))
             return {"CANCELLED"}
         obj, bones = _resolve_target(context)
         if obj is None:
-            self.report({"WARNING"}, "No active object.")
+            self.report({"WARNING"}, T('No active object.'))
             return {"CANCELLED"}
         options = _options_from_scene(context)
-        result = bc.apply_breakdown(context, obj, bones, options)
+        result = bc.apply_breakdown(context, obj, bones, options, format_text=F)
         p3.preview_active = True
         p3.preview_frame = float(context.scene.frame_current_final)
-        msg = result.messages[-1] if result.messages else "Preview staged."
-        self.report({"INFO"}, f"[Preview] {msg}")
+        msg = result.messages[-1] if result.messages else T("Preview staged.")
+        self.report({"INFO"}, F('[Preview] {p0}', p0=f'{msg}'))
         return {"FINISHED"}
 
 
@@ -229,11 +229,11 @@ class AA_OT_commit_preview(bpy.types.Operator):
     def execute(self, context):
         p3 = get_p3(context)
         if p3 is None or not p3.preview_active:
-            self.report({"WARNING"}, "No preview to commit.")
+            self.report({"WARNING"}, T('No preview to commit.'))
             return {"CANCELLED"}
         bc.remember_last(_options_from_scene(context))
         p3.preview_active = False
-        self.report({"INFO"}, f"Preview committed @ frame {p3.preview_frame:.1f}")
+        self.report({"INFO"}, F('Preview committed @ frame {p0}', p0=f'{p3.preview_frame:.1f}'))
         return {"FINISHED"}
 
 

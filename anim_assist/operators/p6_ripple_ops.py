@@ -8,6 +8,8 @@ functions and are wrapped in ``bl_options = {"REGISTER", "UNDO"}``.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import FloatProperty, IntProperty
 
@@ -71,7 +73,7 @@ class AA_OT_p6_ripple_forward(bpy.types.Operator):
         soft_max=500.0,
         step=100,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -80,7 +82,7 @@ class AA_OT_p6_ripple_forward(bpy.types.Operator):
     def execute(self, context):
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         threshold = float(context.scene.frame_current)
@@ -89,7 +91,7 @@ class AA_OT_p6_ripple_forward(bpy.types.Operator):
         _tag_redraw(context)
         self.report(
             {"INFO"},
-            f"Ripple forward {self.ripple_delta:+.1f}f from frame {threshold:.0f}",
+            F('Ripple forward {p0}f from frame {p1}', p0=f'{self.ripple_delta:+.1f}', p1=f'{threshold:.0f}'),
         )
         return {"FINISHED"}
 
@@ -120,7 +122,7 @@ class AA_OT_p6_ripple_backward(bpy.types.Operator):
         soft_max=500.0,
         step=100,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -129,7 +131,7 @@ class AA_OT_p6_ripple_backward(bpy.types.Operator):
     def execute(self, context):
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         threshold = float(context.scene.frame_current)
@@ -141,7 +143,7 @@ class AA_OT_p6_ripple_backward(bpy.types.Operator):
         _tag_redraw(context)
         self.report(
             {"INFO"},
-            f"Ripple backward {self.ripple_delta:.1f}f from frame {threshold:.0f}",
+            F('Ripple backward {p0}f from frame {p1}', p0=f'{self.ripple_delta:.1f}', p1=f'{threshold:.0f}'),
         )
         return {"FINISHED"}
 
@@ -170,7 +172,7 @@ class AA_OT_p6_insert_time(bpy.types.Operator):
         default=1,
         min=1,
         soft_max=500,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -179,7 +181,7 @@ class AA_OT_p6_insert_time(bpy.types.Operator):
     def execute(self, context):
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         threshold = float(context.scene.frame_current)
@@ -190,7 +192,7 @@ class AA_OT_p6_insert_time(bpy.types.Operator):
         _tag_redraw(context)
         self.report(
             {"INFO"},
-            f"Inserted {self.insert_frames}f at frame {threshold:.0f}",
+            F('Inserted {p0}f at frame {p1}', p0=f'{self.insert_frames}', p1=f'{threshold:.0f}'),
         )
         return {"FINISHED"}
 
@@ -218,7 +220,7 @@ class AA_OT_p6_remove_time(bpy.types.Operator):
         default=1,
         min=1,
         soft_max=500,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -227,7 +229,7 @@ class AA_OT_p6_remove_time(bpy.types.Operator):
     def execute(self, context):
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         threshold = float(context.scene.frame_current)
@@ -257,8 +259,7 @@ class AA_OT_p6_remove_time(bpy.types.Operator):
         _tag_redraw(context)
         self.report(
             {"INFO"},
-            f"Removed {self.remove_frames}f at frame {threshold:.0f} "
-            f"(deleted {deleted} key(s))",
+            F('Removed {p0}f at frame {p1} (deleted {p2} key(s))', p0=f'{self.remove_frames}', p1=f'{threshold:.0f}', p2=f'{deleted}'),
         )
         return {"FINISHED"}
 
@@ -289,7 +290,7 @@ class AA_OT_p6_ripple_to_end(bpy.types.Operator):
         soft_max=500.0,
         step=100,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -298,13 +299,13 @@ class AA_OT_p6_ripple_to_end(bpy.types.Operator):
     def execute(self, context):
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         threshold = float(context.scene.frame_current)
         all_frames = rm.collect_key_frames(fcurves)
         if not all_frames:
-            self.report({"WARNING"}, "No keys found")
+            self.report({"WARNING"}, T('No keys found'))
             return {"CANCELLED"}
 
         last_frame = all_frames[-1]
@@ -324,7 +325,7 @@ class AA_OT_p6_ripple_to_end(bpy.types.Operator):
         _tag_redraw(context)
         self.report(
             {"INFO"},
-            f"Ripple to end {self.ripple_delta:+.1f}f from frame {threshold:.0f}",
+            F('Ripple to end {p0}f from frame {p1}', p0=f'{self.ripple_delta:+.1f}', p1=f'{threshold:.0f}'),
         )
         return {"FINISHED"}
 
@@ -354,7 +355,7 @@ class AA_OT_p6_compress_timing(bpy.types.Operator):
         min=1.0,
         soft_max=5000.0,
         precision=1,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -363,18 +364,18 @@ class AA_OT_p6_compress_timing(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         lo, hi = rm.resolve_active_range(p6, context)
         current_span = hi - lo
         if current_span < 1e-6:
-            self.report({"WARNING"}, "Active range has zero span")
+            self.report({"WARNING"}, T('Active range has zero span'))
             return {"CANCELLED"}
 
         factor = self.target_duration / current_span
@@ -383,8 +384,7 @@ class AA_OT_p6_compress_timing(bpy.types.Operator):
         _tag_redraw(context)
         self.report(
             {"INFO"},
-            f"Compressed {current_span:.0f}f → {self.target_duration:.0f}f "
-            f"(×{factor:.3f})",
+            F('Compressed {p0}f → {p1}f (×{p2})', p0=f'{current_span:.0f}', p1=f'{self.target_duration:.0f}', p2=f'{factor:.3f}'),
         )
         return {"FINISHED"}
 

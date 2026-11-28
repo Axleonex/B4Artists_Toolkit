@@ -14,6 +14,8 @@ Uses PanelAnatomyMixin section hooks:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.p9_properties import get_p9
@@ -63,7 +65,7 @@ class ANIMASSIST_PT_p9_mirror(PanelAnatomyMixin, DopeSheetSidebarPanel):
         # ── Quick mirror ──
         uh.section_header(layout, "Quick Mirror", icon="MOD_MIRROR")
         if not _in_pose_mode(context):
-            layout.label(text="Enter Pose Mode to use mirror tools", icon="INFO")
+            layout.label(text="Enter Pose Mode to use mirror tools", icon="INFO", text_ctxt='AnimAssist')
             return
 
         uh.explained_op(
@@ -136,9 +138,9 @@ class ANIMASSIST_PT_p9_mirror(PanelAnatomyMixin, DopeSheetSidebarPanel):
         # ── Channel filters ──
         uh.section_header(layout, "Channel Filters", icon="FILTER")
         row = layout.row(align=True)
-        row.prop(p9, "mirror_location", text="Loc", toggle=True)
-        row.prop(p9, "mirror_rotation", text="Rot", toggle=True)
-        row.prop(p9, "mirror_scale", text="Scale", toggle=True)
+        row.prop(p9, "mirror_location", text="Loc", toggle=True, text_ctxt='AnimAssist')
+        row.prop(p9, "mirror_rotation", text="Rot", toggle=True, text_ctxt='AnimAssist')
+        row.prop(p9, "mirror_scale", text="Scale", toggle=True, text_ctxt='AnimAssist')
 
         uh.explained_prop(
             layout, context, p9, "axis_mask", text="Axes",
@@ -147,16 +149,16 @@ class ANIMASSIST_PT_p9_mirror(PanelAnatomyMixin, DopeSheetSidebarPanel):
         uh.separator(layout)
 
         row = layout.row(align=True)
-        row.prop(p9, "mirror_keyed_only", text="Keyed Only")
-        row.prop(p9, "mirror_visible_only", text="Visible Only")
+        row.prop(p9, "mirror_keyed_only", text="Keyed Only", text_ctxt='AnimAssist')
+        row.prop(p9, "mirror_visible_only", text="Visible Only", text_ctxt='AnimAssist')
 
         row = layout.row(align=True)
-        row.prop(p9, "respect_locks", text="Respect Locks")
-        row.prop(p9, "respect_drivers", text="Respect Drivers")
+        row.prop(p9, "respect_locks", text="Respect Locks", text_ctxt='AnimAssist')
+        row.prop(p9, "respect_drivers", text="Respect Drivers", text_ctxt='AnimAssist')
 
         row = layout.row(align=True)
-        row.prop(p9, "auto_key_mirror", text="Auto Key")
-        row.prop(p9, "maintain_offset", text="Maintain Offset")
+        row.prop(p9, "auto_key_mirror", text="Auto Key", text_ctxt='AnimAssist')
+        row.prop(p9, "maintain_offset", text="Maintain Offset", text_ctxt='AnimAssist')
 
     # ── Advanced: pair manager, naming exceptions, presets, diagnostics ─
 
@@ -180,8 +182,8 @@ class ANIMASSIST_PT_p9_mirror(PanelAnatomyMixin, DopeSheetSidebarPanel):
                 help_id="op.animassist.p9_custom_pattern",
             )
             if p9.naming_pattern == "CUSTOM":
-                body.prop(p9, "custom_left_pattern", text="Left")
-                body.prop(p9, "custom_right_pattern", text="Right")
+                body.prop(p9, "custom_left_pattern", text="Left", text_ctxt='AnimAssist')
+                body.prop(p9, "custom_right_pattern", text="Right", text_ctxt='AnimAssist')
 
             uh.separator(body)
             row = body.row(align=True)
@@ -211,10 +213,10 @@ class ANIMASSIST_PT_p9_mirror(PanelAnatomyMixin, DopeSheetSidebarPanel):
             if p9.pair_overrides:
                 for i, override in enumerate(p9.pair_overrides):
                     row = body.row(align=True)
-                    row.label(text=f"{override.bone_a} ↔ {override.bone_b}")
+                    row.label(text=F('{p0} ↔ {p1}', p0=f'{override.bone_a}', p1=f'{override.bone_b}'), translate=False)
                     row.operator("animassist.p9_remove_pair_override", text="", icon="X").index = i
             else:
-                body.label(text="No pair overrides")
+                body.label(text="No pair overrides", text_ctxt='AnimAssist')
 
             uh.separator(body)
             row = body.row(align=True)
@@ -249,10 +251,10 @@ class ANIMASSIST_PT_p9_mirror(PanelAnatomyMixin, DopeSheetSidebarPanel):
             if p9.naming_exceptions:
                 for i, exception in enumerate(p9.naming_exceptions):
                     row = body.row(align=True)
-                    row.label(text=f"{exception.original} → {exception.opposite}")
+                    row.label(text=F('{p0} → {p1}', p0=f'{exception.original}', p1=f'{exception.opposite}'), translate=False)
                     row.operator("animassist.p9_remove_naming_exception", text="", icon="X").index = i
             else:
-                body.label(text="No naming exceptions")
+                body.label(text="No naming exceptions", text_ctxt='AnimAssist')
 
             uh.separator(body)
             row = body.row(align=True)
@@ -401,7 +403,7 @@ class ANIMASSIST_PT_p9_mirror_v3d(PanelAnatomyMixin, View3DSidebarPanel):
         layout = self.layout
 
         if not _in_pose_mode(context):
-            layout.label(text="Enter Pose Mode to use mirror tools", icon="INFO")
+            layout.label(text="Enter Pose Mode to use mirror tools", icon="INFO", text_ctxt='AnimAssist')
             return
 
         uh.section_header(layout, "Quick Mirror", icon="MOD_MIRROR")

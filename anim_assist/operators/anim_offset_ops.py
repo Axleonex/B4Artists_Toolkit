@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import FloatProperty
 from bpy.types import Operator
@@ -27,12 +29,13 @@ def offset_session_status(scene, mask_scene=None):
     if not target or not scene.anim_assist.anim_offset_active:
         return ""
     mask = (mask_scene or scene).anim_assist.mask
-    coverage = (f"mask {min(mask.start_frame, mask.end_frame)}–{max(mask.start_frame, mask.end_frame)} "
-                f"(blend {mask.blend_left}/{mask.blend_right})" if mask.enabled else "all frames")
+    coverage = (F("mask {start}–{end} (blend {left}/{right})",
+                  start=min(mask.start_frame, mask.end_frame), end=max(mask.start_frame, mask.end_frame),
+                  left=mask.blend_left, right=mask.blend_right) if mask.enabled else T("all frames"))
     try:
         return f"{target[0].name} / {target[1].name} | {coverage}"
     except ReferenceError:
-        return f"Captured target removed | {coverage}"
+        return F("Captured target removed | {coverage}", coverage=coverage)
 
 
 def _addon_prefs(context: bpy.types.Context):
@@ -127,7 +130,7 @@ class ANIMASSIST_OT_anim_offset(Operator):
 
             self._fcurves = _object_fcurves(context)
             if not self._fcurves:
-                self.report({"WARNING"}, "Active object has no editable animation curves")
+                self.report({"WARNING"}, T('Active object has no editable animation curves'))
                 return {"CANCELLED"}
 
             self._current_frame = float(context.scene.frame_current)
@@ -144,10 +147,10 @@ class ANIMASSIST_OT_anim_offset(Operator):
             self._status(context)
             self._timer = context.window_manager.event_timer_add(_TIMER_STEP, window=context.window)
             context.window_manager.modal_handler_add(self)
-            self.report({"INFO"}, f"Offset active: {offset_session_status(context.scene)}")
+            self.report({"INFO"}, F('Offset active: {p0}', p0=f'{offset_session_status(context.scene)}'))
             return {"RUNNING_MODAL"}
         except Exception as exc:
-            self.report({"ERROR"}, str(exc))
+            self.report({"ERROR"}, T(str(exc)))
             return {"CANCELLED"}
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event):
@@ -156,7 +159,7 @@ class ANIMASSIST_OT_anim_offset(Operator):
 
         if not settings.anim_offset_active:
             self._cleanup(context)
-            self.report({"INFO"}, "Anim Offset deactivated")
+            self.report({"INFO"}, T('Anim Offset deactivated'))
             return {"FINISHED"}
 
         if event.type == "ESC" and event.value == "PRESS":
@@ -187,7 +190,7 @@ class ANIMASSIST_OT_anim_offset(Operator):
     def _status(self, context):
         if context.workspace:
             context.workspace.status_text_set(
-                f"Action Offset: {offset_session_status(self._scene, context.scene)} | Toggle: finish | Esc: restore snapshot")
+                F('Action Offset: {p0} | Toggle: finish | Esc: restore snapshot', p0=f'{offset_session_status(self._scene, context.scene)}'))
 
     def _build_mask(self, context: bpy.types.Context) -> MaskRegion:
         m = context.scene.anim_assist.mask
@@ -290,8 +293,8 @@ class ANIMASSIST_OT_anim_offset_set_range(Operator):
     bl_description = "Set the start and end frames of the Anim Offset mask"
     bl_options = {"REGISTER", "UNDO"}
 
-    start: FloatProperty(name="Start", description="First frame of the offset mask", default=1.0)  # type: ignore[assignment]
-    end: FloatProperty(name="End", description="Last frame of the offset mask", default=250.0)  # type: ignore[assignment]
+    start: FloatProperty(name="Start", description="First frame of the offset mask", default=1.0, translation_context='AnimAssist')  # type: ignore[assignment]
+    end: FloatProperty(name="End", description="Last frame of the offset mask", default=250.0, translation_context='AnimAssist')  # type: ignore[assignment]
 
     def execute(self, context: bpy.types.Context):
         # ACCESS_GATE_HERE

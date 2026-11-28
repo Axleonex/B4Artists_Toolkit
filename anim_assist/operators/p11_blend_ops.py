@@ -5,6 +5,8 @@ the stack, and layer preset management.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import EnumProperty, FloatProperty, IntProperty, StringProperty
 
@@ -65,10 +67,10 @@ class ANIMASSIST_OT_p11_merge_down(bpy.types.Operator):
         obj = context.active_object
 
         if engine.merge_layer_down(p11, idx, obj):
-            self.report({'INFO'}, f"Merged '{name}' into layer below")
+            self.report({'INFO'}, F("Merged '{p0}' into layer below", p0=f'{name}'))
             return {'FINISHED'}
         else:
-            self.report({'WARNING'}, "Merge failed")
+            self.report({'WARNING'}, T('Merge failed'))
             return {'CANCELLED'}
 
 
@@ -96,10 +98,10 @@ class ANIMASSIST_OT_p11_flatten_all(bpy.types.Operator):
         count = len(p11.layers)
 
         if engine.flatten_all(p11, obj):
-            self.report({'INFO'}, f"Flattened {count} layers into base")
+            self.report({'INFO'}, F('Flattened {p0} layers into base', p0=f'{count}'))
             return {'FINISHED'}
         else:
-            self.report({'WARNING'}, "Flatten failed")
+            self.report({'WARNING'}, T('Flatten failed'))
             return {'CANCELLED'}
 
 
@@ -117,19 +119,19 @@ class ANIMASSIST_OT_p11_blend_layers(bpy.types.Operator):
     source_index: IntProperty(  # type: ignore[valid-type]
         name="Source Layer",
         default=0, min=0,
-    )
+     translation_context='AnimAssist')
 
     target_index: IntProperty(  # type: ignore[valid-type]
         name="Target Layer",
         default=1, min=0,
-    )
+     translation_context='AnimAssist')
 
     factor: FloatProperty(  # type: ignore[valid-type]
         name="Blend Factor",
         description="0.0 = fully source, 1.0 = fully target",
         default=0.5, min=0.0, max=1.0,
         subtype="FACTOR",
-    )
+     translation_context='AnimAssist')
 
     # Internal state for modal.
     _initial_mouse_x: int = 0
@@ -177,7 +179,7 @@ class ANIMASSIST_OT_p11_blend_layers(bpy.types.Operator):
             self.factor = max(0.0, min(1.0, self._initial_factor + delta))
             self._apply_blend(context)
             context.area.header_text_set(
-                f"Blend: {self.factor:.1%}  (Move mouse, LMB to confirm, RMB/Esc to cancel)"
+                F('Blend: {p0}  (Move mouse, LMB to confirm, RMB/Esc to cancel)', p0=f'{self.factor:.1%}')
             )
             return {'RUNNING_MODAL'}
 
@@ -185,7 +187,7 @@ class ANIMASSIST_OT_p11_blend_layers(bpy.types.Operator):
             context.area.header_text_set(None)
             p11 = get_p11(context)
             p11.blend_factor = self.factor
-            self.report({'INFO'}, f"Blend applied at {self.factor:.1%}")
+            self.report({'INFO'}, F('Blend applied at {p0}', p0=f'{self.factor:.1%}'))
             return {'FINISHED'}
 
         elif event.type in {'RIGHTMOUSE', 'ESC'}:
@@ -193,7 +195,7 @@ class ANIMASSIST_OT_p11_blend_layers(bpy.types.Operator):
             # Restore original values.
             self.factor = 0.0
             self._apply_blend(context)
-            self.report({'INFO'}, "Blend cancelled")
+            self.report({'INFO'}, T('Blend cancelled'))
             return {'CANCELLED'}
 
         return {'PASS_THROUGH'}
@@ -237,7 +239,7 @@ class ANIMASSIST_OT_p11_set_blend_factor(bpy.types.Operator):
         description="Blend amount between the source and target animation layers",
         default=0.5, min=0.0, max=1.0,
         subtype="FACTOR",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -256,7 +258,7 @@ class ANIMASSIST_OT_p11_set_blend_factor(bpy.types.Operator):
         tgt_idx = p11.blend_target_index
 
         if src_idx >= len(p11.layers) or tgt_idx >= len(p11.layers):
-            self.report({'WARNING'}, "Invalid source/target layer indices")
+            self.report({'WARNING'}, T('Invalid source/target layer indices'))
             return {'CANCELLED'}
 
         src_action = engine.get_layer_action(p11.layers[src_idx])
@@ -283,7 +285,7 @@ class ANIMASSIST_OT_p11_set_blend_factor(bpy.types.Operator):
             updated += 1
 
         p11.blend_factor = self.factor
-        self.report({'INFO'}, f"Blend factor {self.factor:.1%} applied to {updated} bones")
+        self.report({'INFO'}, F('Blend factor {p0} applied to {p1} bones', p0=f'{self.factor:.1%}', p1=f'{updated}'))
         return {'FINISHED'}
 
 
@@ -301,7 +303,7 @@ class ANIMASSIST_OT_p11_save_preset(bpy.types.Operator):
     preset_name: StringProperty(  # type: ignore[valid-type]
         name="Preset Name",
         default="My Preset",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -318,7 +320,7 @@ class ANIMASSIST_OT_p11_save_preset(bpy.types.Operator):
         preset.name = self.preset_name
         preset.preset_json = json_str
 
-        self.report({'INFO'}, f"Saved preset '{self.preset_name}'")
+        self.report({'INFO'}, F("Saved preset '{p0}'", p0=f'{self.preset_name}'))
         return {'FINISHED'}
 
 
@@ -346,10 +348,10 @@ class ANIMASSIST_OT_p11_load_preset(bpy.types.Operator):
         preset = p11.user_presets[p11.user_presets_index]
 
         if engine.deserialize_layer_stack(p11, preset.preset_json):
-            self.report({'INFO'}, f"Loaded preset '{preset.name}'")
+            self.report({'INFO'}, F("Loaded preset '{p0}'", p0=f'{preset.name}'))
             return {'FINISHED'}
         else:
-            self.report({'ERROR'}, "Could not load the preset. Pick a preset from the list or save a new one")
+            self.report({'ERROR'}, T('Could not load the preset. Pick a preset from the list or save a new one'))
             return {'CANCELLED'}
 
 
@@ -376,7 +378,7 @@ class ANIMASSIST_OT_p11_remove_preset(bpy.types.Operator):
         p11.user_presets.remove(idx)
         if p11.user_presets_index >= len(p11.user_presets):
             p11.user_presets_index = max(0, len(p11.user_presets) - 1)
-        self.report({'INFO'}, f"Removed preset '{name}'")
+        self.report({'INFO'}, F("Removed preset '{p0}'", p0=f'{name}'))
         return {'FINISHED'}
 
 
@@ -396,7 +398,7 @@ class ANIMASSIST_OT_p11_set_weight(bpy.types.Operator):
         description="Influence of the active animation layer",
         default=1.0, min=0.0, max=1.0,
         subtype="FACTOR",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -407,7 +409,7 @@ class ANIMASSIST_OT_p11_set_weight(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
         layer.weight = self.weight
         p11.eval_generation += 1
-        self.report({'INFO'}, f"'{layer.name}' weight: {self.weight:.0%}")
+        self.report({'INFO'}, F("'{p0}' weight: {p1}", p0=f'{layer.name}', p1=f'{self.weight:.0%}'))
         return {'FINISHED'}
 
 
@@ -432,7 +434,7 @@ class ANIMASSIST_OT_p11_set_blend_mode(bpy.types.Operator):
             ("COMBINE", "Combine", ""),
         ],
         default="OVERRIDE",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -446,7 +448,7 @@ class ANIMASSIST_OT_p11_set_blend_mode(bpy.types.Operator):
         layer = p11.layers[p11.active_layer_index]
         layer.blend_mode = self.mode
         p11.eval_generation += 1
-        self.report({'INFO'}, f"'{layer.name}' mode: {self.mode}")
+        self.report({'INFO'}, F("'{p0}' mode: {p1}", p0=f'{layer.name}', p1=f'{self.mode}'))
         return {'FINISHED'}
 
 

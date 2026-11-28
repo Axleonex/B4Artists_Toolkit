@@ -42,24 +42,24 @@ _log = get_logger(__name__)
 class AA_BoneMetadataItem(bpy.types.PropertyGroup):
     """One record of tool metadata keyed by object + bone name."""
 
-    object_name: StringProperty(name="Object", description="Object associated with this metadata record", default="")  # type: ignore[valid-type]
-    bone_name: StringProperty(name="Bone", description="Bone associated with this metadata record", default="")  # type: ignore[valid-type]
-    metadata_json: StringProperty(name="Data", default="{}")  # type: ignore[valid-type]
+    object_name: StringProperty(name="Object", description="Object associated with this metadata record", default="", translation_context='AnimAssist')  # type: ignore[valid-type]
+    bone_name: StringProperty(name="Bone", description="Bone associated with this metadata record", default="", translation_context='AnimAssist')  # type: ignore[valid-type]
+    metadata_json: StringProperty(name="Data", default="{}", translation_context='AnimAssist')  # type: ignore[valid-type]
 
 
 class AA_ObjectMetadata(bpy.types.PropertyGroup):
     """Per-object tool metadata stored on the object."""
 
-    tool_state_json: StringProperty(name="Tool State", default="{}")  # type: ignore[valid-type]
-    last_tool: StringProperty(name="Last Tool", default="")  # type: ignore[valid-type]
-    flags: IntProperty(name="Flags", default=0)  # type: ignore[valid-type]
+    tool_state_json: StringProperty(name="Tool State", default="{}", translation_context='AnimAssist')  # type: ignore[valid-type]
+    last_tool: StringProperty(name="Last Tool", default="", translation_context='AnimAssist')  # type: ignore[valid-type]
+    flags: IntProperty(name="Flags", default=0, translation_context='AnimAssist')  # type: ignore[valid-type]
 
 
 class AA_BookmarkItem(bpy.types.PropertyGroup):
     """A named frame bookmark stored on the scene."""
 
-    name: StringProperty(name="Name", description="Display name of the frame bookmark", default="Bookmark")  # type: ignore[valid-type]
-    frame: IntProperty(name="Frame", default=1)  # type: ignore[valid-type]
+    name: StringProperty(name="Name", description="Display name of the frame bookmark", default="Bookmark", translation_context='AnimAssist')  # type: ignore[valid-type]
+    frame: IntProperty(name="Frame", default=1, translation_context='AnimAssist')  # type: ignore[valid-type]
 
 
 class AA_KeyMetaItem(bpy.types.PropertyGroup):
@@ -69,73 +69,73 @@ class AA_KeyMetaItem(bpy.types.PropertyGroup):
     the scene so it persists with the .blend.
     """
 
-    object_name: StringProperty(name="Object", description="Object whose animation this record belongs to", default="")  # type: ignore[valid-type]
-    data_path: StringProperty(name="Data Path", default="")  # type: ignore[valid-type]
-    array_index: IntProperty(name="Array Index", default=0)  # type: ignore[valid-type]
-    frame: FloatProperty(name="Frame", default=0.0)  # type: ignore[valid-type]
+    object_name: StringProperty(name="Object", description="Object whose animation this record belongs to", default="", translation_context='AnimAssist')  # type: ignore[valid-type]
+    data_path: StringProperty(name="Data Path", default="", translation_context='AnimAssist')  # type: ignore[valid-type]
+    array_index: IntProperty(name="Array Index", default=0, translation_context='AnimAssist')  # type: ignore[valid-type]
+    frame: FloatProperty(name="Frame", default=0.0, translation_context='AnimAssist')  # type: ignore[valid-type]
 
-    tag: StringProperty(name="Tag", default="")  # type: ignore[valid-type]
-    note: StringProperty(name="Note", default="")  # type: ignore[valid-type]
-    protected: BoolProperty(name="Protected", default=False)  # type: ignore[valid-type]
-    flavor: StringProperty(name="Flavor", default="")  # type: ignore[valid-type]
+    tag: StringProperty(name="Tag", default="", translation_context='AnimAssist')  # type: ignore[valid-type]
+    note: StringProperty(name="Note", default="", translation_context='AnimAssist')  # type: ignore[valid-type]
+    protected: BoolProperty(name="Protected", default=False, translation_context='AnimAssist')  # type: ignore[valid-type]
+    flavor: StringProperty(name="Flavor", default="", translation_context='AnimAssist')  # type: ignore[valid-type]
 
 
 class AA_MaskSettings(bpy.types.PropertyGroup):
     """Anim Offset mask / blend region settings."""
 
-    enabled: BoolProperty(name="Use Mask", description="Limit Anim Offset propagation to the masked frame range", default=True)  # type: ignore[valid-type]
-    start_frame: IntProperty(name="Start", description="First frame of the Anim Offset mask", default=1)  # type: ignore[valid-type]
-    end_frame: IntProperty(name="End", description="Last frame of the Anim Offset mask", default=250)  # type: ignore[valid-type]
+    enabled: BoolProperty(name="Use Mask", description="Limit Anim Offset propagation to the masked frame range", default=True, translation_context='AnimAssist')  # type: ignore[valid-type]
+    start_frame: IntProperty(name="Start", description="First frame of the Anim Offset mask", default=1, translation_context='AnimAssist')  # type: ignore[valid-type]
+    end_frame: IntProperty(name="End", description="Last frame of the Anim Offset mask", default=250, translation_context='AnimAssist')  # type: ignore[valid-type]
     blend_left: IntProperty(  # type: ignore[valid-type]
         name="Blend In",
         description="Blend-in frames on the left edge of the mask",
         default=5,
         min=0,
-    )
+     translation_context='AnimAssist')
     blend_right: IntProperty(  # type: ignore[valid-type]
         name="Blend Out",
         description="Blend-out frames on the right edge of the mask",
         default=5,
         min=0,
-    )
+     translation_context='AnimAssist')
 
 
 class AA_SceneProperties(bpy.types.PropertyGroup):
     """Scene-level data persisted in the .blend file."""
 
-    migration_version: IntProperty(name="Migration Version", default=0)  # type: ignore[valid-type]
-    bone_metadata: CollectionProperty(type=AA_BoneMetadataItem)  # type: ignore[valid-type]
+    migration_version: IntProperty(name="Migration Version", default=0, translation_context='AnimAssist')  # type: ignore[valid-type]
+    bone_metadata: CollectionProperty(type=AA_BoneMetadataItem, translation_context='AnimAssist', name="bone_metadata")  # type: ignore[valid-type]
 
     # Anim Offset tool state
     anim_offset_active: BoolProperty(  # type: ignore[valid-type]
         name="Anim Offset Active",
         description="Whether the Anim Offset modal operator is currently running",
         default=False,
-    )
-    mask: PointerProperty(type=AA_MaskSettings)  # type: ignore[valid-type]
+     translation_context='AnimAssist')
+    mask: PointerProperty(type=AA_MaskSettings, translation_context='AnimAssist', name="mask")  # type: ignore[valid-type]
 
     # Curve tool / blend frame state
     reference_frame: IntProperty(  # type: ignore[valid-type]
         name="Reference Frame",
         description="Frame used as blend target by Blend Frame and Push/Pull operators",
         default=0,
-    )
-    bookmarks: CollectionProperty(type=AA_BookmarkItem)  # type: ignore[valid-type]
+     translation_context='AnimAssist')
+    bookmarks: CollectionProperty(type=AA_BookmarkItem, translation_context='AnimAssist', name="bookmarks")  # type: ignore[valid-type]
     active_bookmark_index: IntProperty(  # type: ignore[valid-type]
         name="Active Bookmark",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     # Per-keyframe metadata store for diagnostics and key management.
-    key_metadata: CollectionProperty(type=AA_KeyMetaItem)  # type: ignore[valid-type]
+    key_metadata: CollectionProperty(type=AA_KeyMetaItem, translation_context='AnimAssist', name="key_metadata")  # type: ignore[valid-type]
 
     # UI state
     panel_compact: BoolProperty(  # type: ignore[valid-type]
         name="Compact Panel",
         description="Show Curve Tools as a single compact column instead of sub-panels",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # Header toolbar category visibility toggles.
     # Each controls whether a toolbar group is drawn in the editor header.
@@ -143,32 +143,32 @@ class AA_SceneProperties(bpy.types.PropertyGroup):
         name="Breakdown",
         description="Show breakdown percentage and drag buttons in the header toolbar",
         default=True,
-    )
+     translation_context='AnimAssist')
     header_show_pushpull: BoolProperty(  # type: ignore[valid-type]
         name="Push/Pull",
         description="Show push/pull directional buttons in the header toolbar",
         default=True,
-    )
+     translation_context='AnimAssist')
     header_show_retime: BoolProperty(  # type: ignore[valid-type]
         name="Retime",
         description="Show retime speed-scaling presets in the header toolbar",
         default=True,
-    )
+     translation_context='AnimAssist')
     header_show_selection: BoolProperty(  # type: ignore[valid-type]
         name="Selection",
         description="Show key selection shortcuts in the Dope Sheet header toolbar",
         default=True,
-    )
+     translation_context='AnimAssist')
     header_show_trajectory: BoolProperty(  # type: ignore[valid-type]
         name="Trajectory",
         description="Show trajectory overlay toggles in the 3D Viewport header toolbar",
         default=True,
-    )
+     translation_context='AnimAssist')
     header_show_matching: BoolProperty(  # type: ignore[valid-type]
         name="Matching",
         description="Show quick-match buttons (W/P/V) in the 3D Viewport header toolbar",
         default=True,
-    )
+     translation_context='AnimAssist')
 
 
 class AA_WindowManagerProperties(bpy.types.PropertyGroup):
@@ -178,9 +178,9 @@ class AA_WindowManagerProperties(bpy.types.PropertyGroup):
     ``core.cache`` instead.
     """
 
-    is_tool_active: BoolProperty(name="Tool Active", default=False)  # type: ignore[valid-type]
-    active_tool_name: StringProperty(name="Active Tool", default="")  # type: ignore[valid-type]
-    last_operator_time: FloatProperty(name="Op Time", default=0.0)  # type: ignore[valid-type]
+    is_tool_active: BoolProperty(name="Tool Active", default=False, translation_context='AnimAssist')  # type: ignore[valid-type]
+    active_tool_name: StringProperty(name="Active Tool", default="", translation_context='AnimAssist')  # type: ignore[valid-type]
+    last_operator_time: FloatProperty(name="Op Time", default=0.0, translation_context='AnimAssist')  # type: ignore[valid-type]
 
 
 # ---------------------------------------------------------------------------
@@ -253,19 +253,19 @@ def register_properties() -> None:
         setattr(
             bpy.types.Scene,
             constants.SCENE_PROP_ATTR,
-            PointerProperty(type=AA_SceneProperties),
+            PointerProperty(type=AA_SceneProperties, translation_context='AnimAssist'),
         )
     if not hasattr(bpy.types.WindowManager, constants.WM_PROP_ATTR):
         setattr(
             bpy.types.WindowManager,
             constants.WM_PROP_ATTR,
-            PointerProperty(type=AA_WindowManagerProperties),
+            PointerProperty(type=AA_WindowManagerProperties, translation_context='AnimAssist'),
         )
     if not hasattr(bpy.types.Object, constants.OBJECT_META_ATTR):
         setattr(
             bpy.types.Object,
             constants.OBJECT_META_ATTR,
-            PointerProperty(type=AA_ObjectMetadata),
+            PointerProperty(type=AA_ObjectMetadata, translation_context='AnimAssist'),
         )
 
 

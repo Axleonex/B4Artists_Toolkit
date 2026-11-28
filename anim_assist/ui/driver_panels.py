@@ -1,6 +1,8 @@
 """Contextual Drivers sidebar and shared header-menu drawing."""
 from __future__ import annotations
 
+from ..i18n import T, F, native_text
+
 import bpy
 from bpy.types import Menu, Panel
 
@@ -11,33 +13,33 @@ from .ui_helpers import wrapped_label
 
 def draw_target(layout, context):
     fc = active_driver(context)
-    layout.label(text=f"Selected drivers: {len(driver_curves(context, selected=True))}")
+    layout.label(text=F('Selected drivers: {p0}', p0=f'{len(driver_curves(context, selected=True))}'), translate=False)
     if fc is None:
         wrapped_label(layout, context, "Select a driver channel to inspect its owner and driven property.")
     else:
-        wrapped_label(layout, context, f"Owner: {fc.id_data.name}")
-        wrapped_label(layout, context, f"Property: {fc.data_path}")
+        wrapped_label(layout, context, F('Owner: {p0}', p0=f'{fc.id_data.name}'))
+        wrapped_label(layout, context, F('Property: {p0}', p0=f'{fc.data_path}'))
         try:
             value = fc.id_data.path_resolve(fc.data_path)
             if hasattr(value, "__len__") and not isinstance(value, str):
-                layout.label(text=f"Array index: {fc.array_index}")
+                layout.label(text=F('Array index: {p0}', p0=f'{fc.array_index}'), translate=False)
                 value = value[fc.array_index]
-            wrapped_label(layout, context, f"Current value: {value:.4g}" if isinstance(value, (int, float)) else f"Current value: {value}")
+            wrapped_label(layout, context, (F('Current value: {p0}', p0=f'{value:.4g}') if isinstance(value, (int, float)) else F('Current value: {p0}', p0=f'{value}')))
         except (ValueError, AttributeError, KeyError, IndexError, TypeError):
             wrapped_label(layout, context, "Driven property cannot be resolved", icon="ERROR")
     layout.operator_context = "EXEC_REGION_WIN"
     row = layout.row(align=True)
-    row.operator("graph.view_selected", text="Frame Selected")
-    row.operator("graph.view_all", text="Frame All")
+    row.operator("graph.view_selected", text="Frame Selected", text_ctxt='AnimAssist')
+    row.operator("graph.view_all", text="Frame All", text_ctxt='AnimAssist')
     row = layout.row(align=True)
-    row.operator("anim.channels_select_all", text="All Channels").action = "SELECT"
-    row.operator("anim.channels_select_all", text="None").action = "DESELECT"
+    row.operator("anim.channels_select_all", text="All Channels", text_ctxt='AnimAssist').action = "SELECT"
+    row.operator("anim.channels_select_all", text="None", text_ctxt='AnimAssist').action = "DESELECT"
     layout.operator("animassist.driver_select_owner")
     if fc is not None:
         row = layout.row(align=True)
         row.enabled = fc.id_data.is_editable
-        row.prop(fc, "mute", text="Muted")
-        row.prop(fc, "lock", text="Locked")
+        row.prop(fc, "mute", text="Muted", text_ctxt='AnimAssist')
+        row.prop(fc, "lock", text="Locked", text_ctxt='AnimAssist')
 
 
 def draw_variables(layout, context):
@@ -48,12 +50,12 @@ def draw_variables(layout, context):
         wrapped_label(layout, context, "Select a driver to edit its variables and expression.")
         return
     driver = fc.driver
-    layout.label(text=f"Variables: {len(driver.variables)}")
+    layout.label(text=F('Variables: {p0}', p0=f'{len(driver.variables)}'), translate=False)
     if driver.type == "SCRIPTED":
-        wrapped_label(layout, context, f"Expression: {driver.expression}")
+        wrapped_label(layout, context, F('Expression: {p0}', p0=f'{driver.expression}'))
     else:
         item = driver.bl_rna.properties["type"].enum_items[driver.type]
-        layout.label(text=f"Type: {item.name}")
+        layout.label(text=F('Type: {p0}', p0=native_text(item.name, getattr(driver.bl_rna.properties["type"], "translation_context", "*"))), translate=False)
 
 
 def draw_response(layout, context):
@@ -65,16 +67,16 @@ def draw_response(layout, context):
     keys = layout.column(align=True)
     keys.enabled = any(k.select_control_point or k.select_left_handle or k.select_right_handle
                        for fc in editable for k in fc.keyframe_points)
-    keys.menu("ANIMASSIST_MT_driver_interpolation", text="Interpolation")
-    keys.menu("ANIMASSIST_MT_driver_handles", text="Handles")
+    keys.menu("ANIMASSIST_MT_driver_interpolation", text="Interpolation", text_ctxt='AnimAssist')
+    keys.menu("ANIMASSIST_MT_driver_handles", text="Handles", text_ctxt='AnimAssist')
     curves = layout.column(align=True)
     curves.enabled = bool(editable)
-    curves.menu("ANIMASSIST_MT_driver_extrapolation", text="Extrapolation")
+    curves.menu("ANIMASSIST_MT_driver_extrapolation", text="Extrapolation", text_ctxt='AnimAssist')
     modifiers = layout.column()
     fc = active_driver(context)
     modifiers.enabled = bool(fc and not fc.lock and fc.id_data.is_editable)
-    modifiers.menu("ANIMASSIST_MT_driver_modifier_add", text="Add Modifier (Active)")
-    modifiers.operator("animassist.driver_settings", text="Open Modifier Settings").panel = "MODIFIERS"
+    modifiers.menu("ANIMASSIST_MT_driver_modifier_add", text="Add Modifier (Active)", text_ctxt='AnimAssist')
+    modifiers.operator("animassist.driver_settings", text="Open Modifier Settings", text_ctxt='AnimAssist').panel = "MODIFIERS"
 
 
 def draw_diagnostics(layout, context):
@@ -113,8 +115,9 @@ def _curve_menu(operation, label, description):
     def draw(self, context):
         self.layout.operator_context = "EXEC_REGION_WIN"
         op = getattr(bpy.ops.animassist, operation)
-        for item in op.get_rna_type().properties["type"].enum_items:
-            self.layout.operator(f"animassist.{operation}", text=item.name).type = item.identifier
+        prop = op.get_rna_type().properties["type"]
+        for item in prop.enum_items:
+            self.layout.operator(f"animassist.{operation}", text=native_text(item.name, getattr(prop, "translation_context", "*")), translate=False).type = item.identifier
     name = f"ANIMASSIST_MT_{operation}"
     return type(name, (Menu,), {"bl_idname": name, "bl_label": label,
                               "bl_description": description, "draw": draw})

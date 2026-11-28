@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.types import Panel
 
@@ -13,26 +15,26 @@ class _GraphEditorMixin:
 
 
 def _draw_interpolation(layout, *, handles=False):
-    layout.label(text="Selected keys · interpolation")
+    layout.label(text="Selected keys · interpolation", text_ctxt='AnimAssist')
     for itype, label in (("CONSTANT", "Constant"), ("LINEAR", "Linear"), ("BEZIER", "Bezier")):
-        layout.operator("animassist.batch_interpolation", text=label).interp_type = itype
+        layout.operator("animassist.batch_interpolation", text=T(label), translate=False).interp_type = itype
     if handles:
-        layout.label(text="Select handles")
+        layout.label(text="Select handles", text_ctxt='AnimAssist')
         row = layout.row(align=True)
         for side, label in (("LEFT", "Left"), ("RIGHT", "Right"), ("BOTH", "Both")):
-            row.operator("animassist.select_handles", text=label).side = side
+            row.operator("animassist.select_handles", text=T(label), translate=False).side = side
         _draw_handle_types(layout)
 
 
 def _draw_handle_types(layout):
-    layout.label(text="Selected keys · handle type")
+    layout.label(text="Selected keys · handle type", text_ctxt='AnimAssist')
     for ht, label in (("AUTO_CLAMPED", "Auto Clamped"), ("AUTO", "Auto"), ("VECTOR", "Vector"), ("ALIGNED", "Aligned"), ("FREE", "Free")):
-        layout.operator("animassist.set_handle_type", text=label).handle_type = ht
+        layout.operator("animassist.set_handle_type", text=T(label), translate=False).handle_type = ht
 
 
 def _draw_key_manager(layout, *, dope=False):
     box = layout.box()
-    box.label(text="Key Types", icon="KEYTYPE_KEYFRAME_VEC")
+    box.label(text="Key Types", icon="KEYTYPE_KEYFRAME_VEC", text_ctxt='AnimAssist')
     col = box.column(align=True)
     for kt_id, kt_name in (
         ("KEYFRAME", "Keyframe"),
@@ -42,7 +44,7 @@ def _draw_key_manager(layout, *, dope=False):
         ("JITTER", "Jitter"),
     ):
         row = col.row(align=True)
-        row.label(text=kt_name)
+        row.label(text=T(kt_name), translate=False)
         op = row.operator("animassist.set_key_type", text="", icon="KEYTYPE_KEYFRAME_VEC")
         op.key_type = kt_id
         op = row.operator("animassist.select_by_key_type", text="", icon="RESTRICT_SELECT_OFF")
@@ -54,12 +56,12 @@ def _draw_key_manager(layout, *, dope=False):
         op = row.operator("animassist.delete_by_key_type", text="", icon="TRASH")
         op.key_type = kt_id
 
-    layout.operator("animassist.insert_frames", text="Insert Frames…")
-    layout.operator("animassist.move_keys", text="Move Keys…")
+    layout.operator("animassist.insert_frames", text="Insert Frames…", text_ctxt='AnimAssist')
+    layout.operator("animassist.move_keys", text="Move Keys…", text_ctxt='AnimAssist')
     if dope:
         _draw_interpolation(layout)
         header, body = layout.panel("aa_dope_handles", default_closed=True)
-        header.label(text="Advanced Handle Type")
+        header.label(text="Advanced Handle Type", text_ctxt='AnimAssist')
         if body:
             _draw_handle_types(body)
 
@@ -85,12 +87,12 @@ class ANIMASSIST_PT_curve_tools(_GraphEditorMixin, Panel):
         for op, label in (("smooth_keys", "Smooth Keys"), ("push_pull", "Push / Pull"),
                           ("ease_to_ease", "Ease To Ease"), ("blend_neighbor", "Blend to Neighbor"),
                           ("blend_frame", "Blend Frame"), ("blend_offset", "Blend Offset")):
-            col.operator(f"animassist.{op}", text=label)
+            col.operator(f"animassist.{op}", text=T(label), translate=False)
         header, body = layout.panel("aa_curve_reference", default_closed=True)
-        header.label(text="Reference Options")
+        header.label(text="Reference Options", text_ctxt='AnimAssist')
         if body:
-            body.prop(settings, "reference_frame", text="Reference Frame")
-            body.operator("animassist.set_reference_frame", text="Use Current Frame")
+            body.prop(settings, "reference_frame", text="Reference Frame", text_ctxt='AnimAssist')
+            body.operator("animassist.set_reference_frame", text="Use Current Frame", text_ctxt='AnimAssist')
             ANIMASSIST_PT_bookmarks.draw(type("DrawBody", (), {"layout": body})(), context)
 
 
@@ -109,7 +111,7 @@ class ANIMASSIST_PT_blend_neighbor(_GraphEditorMixin, Panel):
             "animassist.blend_neighbor",
             text="Blend to Neighbor",
             icon="TRACKING_FORWARDS_SINGLE",
-        )
+         text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_blend_frame(_GraphEditorMixin, Panel):
@@ -127,9 +129,9 @@ class ANIMASSIST_PT_blend_frame(_GraphEditorMixin, Panel):
         s = context.scene.anim_assist
 
         row = layout.row(align=True)
-        row.prop(s, "reference_frame", text="Ref")
+        row.prop(s, "reference_frame", text="Ref", text_ctxt='AnimAssist')
         row.operator("animassist.set_reference_frame", text="", icon="EYEDROPPER")
-        layout.operator("animassist.blend_frame", text="Blend Frame", icon="IPO_BEZIER")
+        layout.operator("animassist.blend_frame", text="Blend Frame", icon="IPO_BEZIER", text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_bookmarks(_GraphEditorMixin, Panel):
@@ -145,12 +147,12 @@ class ANIMASSIST_PT_bookmarks(_GraphEditorMixin, Panel):
         for i, bm in enumerate(s.bookmarks):
             row = layout.row(align=True)
             icon = "BOOKMARKS" if i == s.active_bookmark_index else "DOT"
-            op = row.operator("animassist.recall_bookmark", text=f"{bm.name} (F{bm.frame})", icon=icon)
+            op = row.operator("animassist.recall_bookmark", text=F('{p0} (F{p1})', p0=f'{bm.name}', p1=f'{bm.frame}'), icon=icon, translate=False)
             op.index = i
 
         row = layout.row(align=True)
-        row.operator("animassist.add_bookmark", text="Add", icon="ADD")
-        row.operator("animassist.remove_bookmark", text="Remove", icon="REMOVE")
+        row.operator("animassist.add_bookmark", text="Add", icon="ADD", text_ctxt='AnimAssist')
+        row.operator("animassist.remove_bookmark", text="Remove", icon="REMOVE", text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_blend_offset(_GraphEditorMixin, Panel):
@@ -164,7 +166,7 @@ class ANIMASSIST_PT_blend_offset(_GraphEditorMixin, Panel):
         return False  # Primary actions and reference options are directly in Shape Curves.
 
     def draw(self, context: bpy.types.Context) -> None:
-        self.layout.operator("animassist.blend_offset", text="Blend Offset", icon="ARROW_LEFTRIGHT")
+        self.layout.operator("animassist.blend_offset", text="Blend Offset", icon="ARROW_LEFTRIGHT", text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_push_pull(_GraphEditorMixin, Panel):
@@ -182,9 +184,9 @@ class ANIMASSIST_PT_push_pull(_GraphEditorMixin, Panel):
         s = context.scene.anim_assist
 
         row = layout.row(align=True)
-        row.prop(s, "reference_frame", text="Ref")
+        row.prop(s, "reference_frame", text="Ref", text_ctxt='AnimAssist')
         row.operator("animassist.set_reference_frame", text="", icon="EYEDROPPER")
-        layout.operator("animassist.push_pull", text="Push / Pull", icon="FULLSCREEN_EXIT")
+        layout.operator("animassist.push_pull", text="Push / Pull", icon="FULLSCREEN_EXIT", text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_ease_to_ease(_GraphEditorMixin, Panel):
@@ -198,7 +200,7 @@ class ANIMASSIST_PT_ease_to_ease(_GraphEditorMixin, Panel):
         return False  # Primary actions and reference options are directly in Shape Curves.
 
     def draw(self, context: bpy.types.Context) -> None:
-        self.layout.operator("animassist.ease_to_ease", text="Ease To Ease", icon="IPO_EASE_IN_OUT")
+        self.layout.operator("animassist.ease_to_ease", text="Ease To Ease", icon="IPO_EASE_IN_OUT", text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_smooth_keys(_GraphEditorMixin, Panel):
@@ -212,7 +214,7 @@ class ANIMASSIST_PT_smooth_keys(_GraphEditorMixin, Panel):
         return False  # Primary actions and reference options are directly in Shape Curves.
 
     def draw(self, context: bpy.types.Context) -> None:
-        self.layout.operator("animassist.smooth_keys", text="Smooth Keys", icon="SMOOTHCURVE")
+        self.layout.operator("animassist.smooth_keys", text="Smooth Keys", icon="SMOOTHCURVE", text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_anim_offset(_GraphEditorMixin, Panel):
@@ -229,21 +231,21 @@ class ANIMASSIST_PT_anim_offset(_GraphEditorMixin, Panel):
 
         layout.operator(
             "animassist.anim_offset",
-            text="Deactivate" if active else "Activate",
+            text=(T('Deactivate') if active else T('Activate')),
             icon="PAUSE" if active else "PLAY",
             depress=active,
-        )
+        translate=False)
 
         box = layout.box()
-        box.label(text="Mask", icon="MOD_MASK")
-        box.prop(m, "enabled", text="Use Mask")
+        box.label(text="Mask", icon="MOD_MASK", text_ctxt='AnimAssist')
+        box.prop(m, "enabled", text="Use Mask", text_ctxt='AnimAssist')
         row = box.row(align=True)
-        row.prop(m, "start_frame", text="Start")
-        row.prop(m, "end_frame", text="End")
+        row.prop(m, "start_frame", text="Start", text_ctxt='AnimAssist')
+        row.prop(m, "end_frame", text="End", text_ctxt='AnimAssist')
         col = box.column(align=True)
-        col.prop(m, "blend_left", text="Blend In")
-        col.prop(m, "blend_right", text="Blend Out")
-        box.operator("animassist.anim_offset_range_from_scene", text="Range from Scene", icon="SCENE_DATA")
+        col.prop(m, "blend_left", text="Blend In", text_ctxt='AnimAssist')
+        col.prop(m, "blend_right", text="Blend Out", text_ctxt='AnimAssist')
+        box.operator("animassist.anim_offset_range_from_scene", text="Range from Scene", icon="SCENE_DATA", text_ctxt='AnimAssist')
 
 
 class ANIMASSIST_PT_key_manager(_GraphEditorMixin, Panel):

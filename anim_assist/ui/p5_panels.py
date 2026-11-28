@@ -16,6 +16,8 @@ Two panels, both in VIEW_3D:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.p5_properties import get_p5
@@ -35,11 +37,11 @@ def _p5_available(context: bpy.types.Context) -> bool:
 
 def _draw_context_warning(layout, context) -> None:
     if get_p5(context) is None:
-        layout.label(text="Trajectory property group unavailable.", icon="ERROR")
+        layout.label(text="Trajectory property group unavailable.", icon="ERROR", text_ctxt='AnimAssist')
         return
     obj = getattr(context, "active_object", None)
     if obj is None:
-        layout.label(text="No active object.", icon="INFO")
+        layout.label(text="No active object.", icon="INFO", text_ctxt='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -65,12 +67,12 @@ class ANIMASSIST_PT_p5_trajectory(PanelAnatomyMixin, View3DSidebarPanel):
         row = layout.row(align=True)
         if p5.overlay_enabled:
             row.operator("animassist.p5_disable_overlay",
-                         text="Disable Overlay", icon="HIDE_ON")
+                         text="Disable Overlay", icon="HIDE_ON", text_ctxt='AnimAssist')
             row.operator("animassist.p5_refresh_overlay",
                          text="", icon="FILE_REFRESH")
         else:
             row.operator("animassist.p5_enable_overlay",
-                         text="Enable Overlay", icon="HIDE_OFF")
+                         text="Enable Overlay", icon="HIDE_OFF", text_ctxt='AnimAssist')
 
         uh.separator(layout)
 
@@ -79,12 +81,12 @@ class ANIMASSIST_PT_p5_trajectory(PanelAnatomyMixin, View3DSidebarPanel):
         layout.prop(p5, "display_mode", text="")
 
         if p5.display_mode == "ISOLATE":
-            layout.prop(p5, "isolate_target", text="Target", icon="BONE_DATA")
+            layout.prop(p5, "isolate_target", text="Target", icon="BONE_DATA", text_ctxt='AnimAssist')
 
         uh.separator(layout)
 
         # --- Color preset ---
-        layout.prop(p5, "color_preset", text="Palette")
+        layout.prop(p5, "color_preset", text="Palette", text_ctxt='AnimAssist')
 
     def draw_scope(self, context):
         layout = self.layout
@@ -97,17 +99,17 @@ class ANIMASSIST_PT_p5_trajectory(PanelAnatomyMixin, View3DSidebarPanel):
 
         if p5.scope_mode == "AROUND_CURRENT":
             row = layout.row(align=True)
-            row.prop(p5, "window_before", text="Before")
-            row.prop(p5, "window_after", text="After")
+            row.prop(p5, "window_before", text="Before", text_ctxt='AnimAssist')
+            row.prop(p5, "window_after", text="After", text_ctxt='AnimAssist')
         elif p5.scope_mode == "CUSTOM":
             row = layout.row(align=True)
-            row.prop(p5, "custom_start", text="Start")
-            row.prop(p5, "custom_end", text="End")
+            row.prop(p5, "custom_start", text="Start", text_ctxt='AnimAssist')
+            row.prop(p5, "custom_end", text="End", text_ctxt='AnimAssist')
 
         uh.separator(layout)
 
-        layout.prop(p5, "sample_step", text="Step")
-        layout.prop(p5, "max_samples", text="Max Samples")
+        layout.prop(p5, "sample_step", text="Step", text_ctxt='AnimAssist')
+        layout.prop(p5, "max_samples", text="Max Samples", text_ctxt='AnimAssist')
 
     def draw_advanced(self, context):
         layout = self.layout
@@ -129,7 +131,7 @@ class ANIMASSIST_PT_p5_trajectory(PanelAnatomyMixin, View3DSidebarPanel):
 
         uh.separator(layout)
 
-        layout.prop(p5, "path_width", text="Path Width")
+        layout.prop(p5, "path_width", text="Path Width", text_ctxt='AnimAssist')
         # space_mode hidden — only WORLD is implemented.
         # Uncomment when Camera/Local modes are implemented:
         # layout.prop(p5, "space_mode", text="Space")
@@ -150,20 +152,20 @@ class ANIMASSIST_PT_p5_trajectory(PanelAnatomyMixin, View3DSidebarPanel):
 
         row = layout.row(align=True)
         row.operator("animassist.p5_mute_unselected",
-                     text="Mute Unselected", icon="RESTRICT_VIEW_ON")
+                     text="Mute Unselected", icon="RESTRICT_VIEW_ON", text_ctxt='AnimAssist')
 
         if p5.display_mode != "ISOLATE":
             obj = getattr(context, "active_object", None)
             bone = getattr(context, "active_pose_bone", None)
             if bone and obj:
                 op = layout.operator("animassist.p5_isolate_target",
-                                     text=f"Isolate: {bone.name}",
-                                     icon="BONE_DATA")
+                                     text=F('Isolate: {p0}', p0=f'{bone.name}'),
+                                     icon="BONE_DATA", translate=False)
                 op.target_key = f"{obj.name}::{bone.name}"
             elif obj:
                 op = layout.operator("animassist.p5_isolate_target",
-                                     text=f"Isolate: {obj.name}",
-                                     icon="OBJECT_DATA")
+                                     text=F('Isolate: {p0}', p0=f'{obj.name}'),
+                                     icon="OBJECT_DATA", translate=False)
                 op.target_key = f"{obj.name}::"
 
 
@@ -187,7 +189,7 @@ class ANIMASSIST_PT_p5_diagnostics(PanelAnatomyMixin, View3DSidebarPanel):
 
         # Run diagnostics button.
         layout.operator("animassist.p5_run_diagnostics",
-                        text="Run Diagnostics", icon="ZOOM_ALL")
+                        text="Run Diagnostics", icon="ZOOM_ALL", text_ctxt='AnimAssist')
 
         uh.separator(layout)
 
@@ -201,9 +203,9 @@ class ANIMASSIST_PT_p5_diagnostics(PanelAnatomyMixin, View3DSidebarPanel):
                      text="", icon="NEXT_KEYFRAME")
 
         layout.operator("animassist.p5_select_bad_arc_keys",
-                        text="Select Bad-Arc Keys", icon="KEYFRAME_HLT")
+                        text="Select Bad-Arc Keys", icon="KEYFRAME_HLT", text_ctxt='AnimAssist')
         layout.operator("animassist.p5_suggest_candidates",
-                        text="Suggest Candidates", icon="LIGHT")
+                        text="Suggest Candidates", icon="LIGHT", text_ctxt='AnimAssist')
 
     def draw_advanced(self, context):
         layout = self.layout
@@ -246,7 +248,7 @@ class ANIMASSIST_PT_p5_diagnostics(PanelAnatomyMixin, View3DSidebarPanel):
 
         layout.prop(p5, "comparison_enabled")
         if p5.comparison_enabled:
-            layout.prop(p5, "comparison_target", text="Compare To", icon="BONE_DATA")
+            layout.prop(p5, "comparison_target", text="Compare To", icon="BONE_DATA", text_ctxt='AnimAssist')
 
 
 CLASSES: tuple[type, ...] = (

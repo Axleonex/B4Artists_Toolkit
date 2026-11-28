@@ -18,6 +18,7 @@ import bpy
 from bpy.types import Menu
 
 from .. import constants
+from ..i18n import T
 
 #: Per editor: (menu class to append to, preference toggle, submenus).
 #: Submenus are (key, label, icon, operator idnames; None draws a separator).
@@ -136,7 +137,7 @@ def _submenu(space: str, key: str, label: str, ops: tuple[str | None, ...]) -> t
                 native(layout, "EDIT", "Edit Action")
                 native(layout, "FINISH", "Finish Editing")
                 for editor, label in (("DOPESHEET_EDITOR", "Open Dope Sheet"), ("GRAPH_EDITOR", "Open Graph Editor")):
-                    layout.operator("animassist.nla_open_editor", text=label).editor = editor
+                    layout.operator("animassist.nla_open_editor", text=T(label), translate=False).editor = editor
             elif key == "actions":
                 layout.operator("animassist.nla_add_clip")
                 native(layout, "DUPLICATE", "Duplicate Independent")
@@ -165,17 +166,17 @@ def _top_menu(space: str, submenus) -> type[Menu]:
         if space == "GRAPH_EDITOR" and getattr(_context.space_data, "mode", "") == "DRIVERS":
             from .driver_panels import DRIVER_SECTIONS
             for key, label, _draw_section in DRIVER_SECTIONS:
-                layout.menu(f"ANIMASSIST_MT_driver_{key}", text=label)
+                layout.menu(f"ANIMASSIST_MT_driver_{key}", text=T(label), translate=False)
             return
         if space != "NLA_EDITOR":
-            layout.operator("animassist.p10_search_tools", text="Search Anim Assist Tools...", icon="VIEWZOOM")
-            layout.operator("animassist.p10_repeat_last", text="Repeat Last Tool", icon="RECOVER_LAST")
+            layout.operator("animassist.p10_search_tools", text="Search Anim Assist Tools...", icon="VIEWZOOM", text_ctxt='AnimAssist')
+            layout.operator("animassist.p10_repeat_last", text="Repeat Last Tool", icon="RECOVER_LAST", text_ctxt='AnimAssist')
         layout.separator()
         for key, _label, icon, _ops in submenus:
             layout.menu(menu_idname(space, key), icon=icon)
         layout.separator()
         layout.operator("animassist.open_home", icon="PROPERTIES")
-        layout.operator("animassist.add_workspace", text="Anim Assist Workspace", icon="WORKSPACE")
+        layout.operator("animassist.add_workspace", text="Anim Assist Workspace", icon="WORKSPACE", text_ctxt='AnimAssist')
         layout.separator()
         layout.operator("animassist.open_home_window", icon="WINDOW")
 
@@ -192,7 +193,7 @@ class ANIMASSIST_MT_pie_home(Menu):
     def draw(self, _context: bpy.types.Context) -> None:
         pie = self.layout.menu_pie()
         for op, text, icon in PIE_SLOTS:
-            pie.operator(f"animassist.{op}", text=text, icon=icon)
+            pie.operator(f"animassist.{op}", text=T(text), icon=icon, translate=False)
 
 
 def _driver_submenu(key, label, draw_section) -> type[Menu]:

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from collections.abc import Iterator
 from contextlib import contextmanager
 
@@ -138,7 +140,7 @@ def report_failure(
     """
     if exc is not None:
         _log.error("%s [%s]", what, getattr(operator, "bl_idname", "?"), exc_info=exc)
-    msg = f"{what} ({detail}). {fix}" if detail else f"{what}. {fix}"
+    msg = F("{what} ({detail}). {fix}", what=T(what), detail=detail, fix=T(fix)) if detail else F("{what}. {fix}", what=T(what), fix=T(fix))
     operator.report({level}, msg)
     return {"CANCELLED"}
 
@@ -151,6 +153,6 @@ def confirm_dialog(operator: bpy.types.Operator, context: bpy.types.Context, eve
     """
     wm = context.window_manager
     try:
-        return wm.invoke_confirm(operator, event, message=message, confirm_text=operator.bl_label, icon="WARNING")
+        return wm.invoke_confirm(operator, event, message=T(message), confirm_text=T(operator.bl_label), icon="WARNING")
     except TypeError:  # pragma: no cover - Blender < 4.1
         return wm.invoke_confirm(operator, event)

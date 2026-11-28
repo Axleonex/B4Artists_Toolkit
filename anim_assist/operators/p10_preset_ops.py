@@ -7,6 +7,8 @@ Provides operators for:
 - Managing profiles (remove, tag)
 """
 
+from ..i18n import T, F
+
 import json
 from typing import Any
 
@@ -39,11 +41,11 @@ class AA_OT_p10_export_workspace(Operator):
         name="File Path",
         description="Filepath for the exported workspace profile",
         subtype='FILE_PATH',
-    )
+     translation_context='AnimAssist')
     filter_glob: StringProperty(
         default="*.json",
         options={'HIDDEN'},
-    )
+     translation_context='AnimAssist')
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event):
         """Open file browser to select output path."""
@@ -62,7 +64,7 @@ class AA_OT_p10_export_workspace(Operator):
                     success=True,
                     detail=f"Exported to {self.filepath}",
                 )
-                self.report({'INFO'}, f"Workspace profile exported: {self.filepath}")
+                self.report({'INFO'}, F('Workspace profile exported: {p0}', p0=f'{self.filepath}'))
                 return {'FINISHED'}
             else:
                 log_operation(
@@ -70,7 +72,7 @@ class AA_OT_p10_export_workspace(Operator):
                     success=False,
                     detail="export_workspace_profile returned False",
                 )
-                self.report({'ERROR'}, "Could not export the profile. Choose a writable location and try again")
+                self.report({'ERROR'}, T('Could not export the profile. Choose a writable location and try again'))
                 return {'CANCELLED'}
         except Exception as exc:
             _log.exception("Export workspace failed")
@@ -93,11 +95,11 @@ class AA_OT_p10_import_workspace(Operator):
         name="File Path",
         description="Filepath of the workspace profile to import",
         subtype='FILE_PATH',
-    )
+     translation_context='AnimAssist')
     filter_glob: StringProperty(
         default="*.json",
         options={'HIDDEN'},
-    )
+     translation_context='AnimAssist')
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event):
         """Open file browser to select input file."""
@@ -116,7 +118,7 @@ class AA_OT_p10_import_workspace(Operator):
                 )
                 self.report(
                     {'INFO'},
-                    f"Workspace profile imported: {count} properties applied",
+                    F('Workspace profile imported: {p0} properties applied', p0=f'{count}'),
                 )
                 return {'FINISHED'}
             else:
@@ -125,7 +127,7 @@ class AA_OT_p10_import_workspace(Operator):
                     success=False,
                     detail="import_workspace_profile returned -1",
                 )
-                self.report({'ERROR'}, "Could not import the profile. Choose a profile exported by Anim Assist")
+                self.report({'ERROR'}, T('Could not import the profile. Choose a profile exported by Anim Assist'))
                 return {'CANCELLED'}
         except Exception as exc:
             _log.exception("Import workspace failed")
@@ -148,14 +150,14 @@ class AA_OT_p10_save_profile(Operator):
         name="Profile Name",
         description="Name for the new profile",
         default="Default",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context: bpy.types.Context):
         """Save current scene settings to a new profile in the collection."""
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             # Collect current scene settings
@@ -179,7 +181,7 @@ class AA_OT_p10_save_profile(Operator):
                 success=True,
                 detail=f"Saved profile '{profile.name}'",
             )
-            self.report({'INFO'}, f"Profile saved: {profile.name}")
+            self.report({'INFO'}, F('Profile saved: {p0}', p0=f'{profile.name}'))
             return {'FINISHED'}
 
         except Exception as exc:
@@ -204,18 +206,18 @@ class AA_OT_p10_load_profile(Operator):
         description="Index of the profile to load",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context: bpy.types.Context):
         """Load profile settings from the collection and apply to scene."""
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             if self.index >= len(p10.profiles):
-                self.report({'ERROR'}, f"Select a profile in the list first")
+                self.report({'ERROR'}, F('Select a profile in the list first'))
                 return {'CANCELLED'}
 
             profile = p10.profiles[self.index]
@@ -237,7 +239,7 @@ class AA_OT_p10_load_profile(Operator):
                 success=True,
                 detail=f"Loaded profile '{profile.name}' ({count} properties)",
             )
-            self.report({'INFO'}, f"Profile loaded: {profile.name} ({count} properties)")
+            self.report({'INFO'}, F('Profile loaded: {p0} ({p1} properties)', p0=f'{profile.name}', p1=f'{count}'))
             return {'FINISHED'}
 
         except Exception as exc:
@@ -262,18 +264,18 @@ class AA_OT_p10_remove_profile(Operator):
         description="Index of the profile to remove",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context: bpy.types.Context):
         """Remove profile from the collection."""
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             if self.index >= len(p10.profiles):
-                self.report({'ERROR'}, f"Select a profile in the list first")
+                self.report({'ERROR'}, F('Select a profile in the list first'))
                 return {'CANCELLED'}
 
             profile_name = p10.profiles[self.index].name
@@ -284,7 +286,7 @@ class AA_OT_p10_remove_profile(Operator):
                 success=True,
                 detail=f"Removed profile '{profile_name}'",
             )
-            self.report({'INFO'}, f"Profile removed: {profile_name}")
+            self.report({'INFO'}, F('Profile removed: {p0}', p0=f'{profile_name}'))
             return {'FINISHED'}
 
         except Exception as exc:
@@ -309,27 +311,27 @@ class AA_OT_p10_tag_preset(Operator):
         description="Index of the profile to tag",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
     tag: StringProperty(
         name="Tag",
         description="Tag to add to the profile",
         default="",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context: bpy.types.Context):
         """Add a tag to the profile's metadata."""
         try:
             p10 = get_p10(context)
             if p10 is None:
-                self.report({'ERROR'}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+                self.report({'ERROR'}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
                 return {'CANCELLED'}
 
             if self.index >= len(p10.profiles):
-                self.report({'ERROR'}, f"Select a profile in the list first")
+                self.report({'ERROR'}, F('Select a profile in the list first'))
                 return {'CANCELLED'}
 
             if not self.tag:
-                self.report({'ERROR'}, "Enter a tag name first")
+                self.report({'ERROR'}, T('Enter a tag name first'))
                 return {'CANCELLED'}
 
             profile = p10.profiles[self.index]
@@ -362,7 +364,7 @@ class AA_OT_p10_tag_preset(Operator):
                 success=True,
                 detail=f"Tagged profile '{profile.name}' with '{self.tag}'",
             )
-            self.report({'INFO'}, f"Tag added: {self.tag}")
+            self.report({'INFO'}, F('Tag added: {p0}', p0=f'{self.tag}'))
             return {'FINISHED'}
 
         except Exception as exc:

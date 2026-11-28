@@ -52,17 +52,17 @@ class ANIMASSIST_PT_p10_shelf(PanelAnatomyMixin, DopeSheetSidebarPanel):
         layout = self.layout
         p10 = get_p10(context)
         if p10 is None:
-            layout.label(text="Orchestration tools not available", icon="INFO")
+            layout.label(text="Orchestration tools not available", icon="INFO", text_ctxt='AnimAssist')
             return
 
         if not p10.first_run_complete:
             start = layout.box()
-            start.label(text="New here? Start with sensible defaults.", icon="INFO")
+            start.label(text="New here? Start with sensible defaults.", icon="INFO", text_ctxt='AnimAssist')
             start.operator(
                 "animassist.p10_first_run_setup",
                 text="First Run Setup",
                 icon="SETTINGS",
-            )
+             text_ctxt='AnimAssist')
 
         # ── Shelf header and controls ──
         uh.section_header(layout, "Quick Shelf", icon="ASSET_MANAGER")
@@ -82,13 +82,13 @@ class ANIMASSIST_PT_p10_shelf(PanelAnatomyMixin, DopeSheetSidebarPanel):
             if p10.favorites:
                 for i, fav in enumerate(p10.favorites):
                     row = layout.row(align=True)
-                    row.label(text=fav.label, icon=fav.icon)
+                    row.label(text=fav.label, icon=fav.icon, translate=False)
                     row.operator(
                         "animassist.p10_remove_favorite",
                         text="", icon="X"
                     ).index = i
             else:
-                layout.label(text="No favorites yet", icon="BLANK1")
+                layout.label(text="No favorites yet", icon="BLANK1", text_ctxt='AnimAssist')
         else:
             # Show recent tools (up to 5 most recent)
             ordered_recents = recents_newest_first(p10)
@@ -104,7 +104,7 @@ class ANIMASSIST_PT_p10_shelf(PanelAnatomyMixin, DopeSheetSidebarPanel):
                         help_id=f"op.{recent.op_id}",
                     )
             else:
-                layout.label(text="No recent tools yet", icon="BLANK1")
+                layout.label(text="No recent tools yet", icon="BLANK1", text_ctxt='AnimAssist')
 
         uh.separator(layout)
 
@@ -243,7 +243,7 @@ class ANIMASSIST_PT_p10_macros(PanelAnatomyMixin, DopeSheetSidebarPanel):
         layout = self.layout
         p10 = get_p10(context)
         if p10 is None:
-            layout.label(text="Orchestration tools not available", icon="INFO")
+            layout.label(text="Orchestration tools not available", icon="INFO", text_ctxt='AnimAssist')
             return
 
         # ── Preset Macros ──
@@ -294,7 +294,7 @@ class ANIMASSIST_PT_p10_macros(PanelAnatomyMixin, DopeSheetSidebarPanel):
         if p10.macros:
             for i, macro in enumerate(p10.macros):
                 row = layout.row(align=True)
-                row.label(text=macro.name, icon=macro.icon)
+                row.label(text=macro.name, icon=macro.icon, translate=False)
                 uh.explained_op(
                     row, context,
                     "animassist.p10_run_custom_macro",
@@ -306,7 +306,7 @@ class ANIMASSIST_PT_p10_macros(PanelAnatomyMixin, DopeSheetSidebarPanel):
                     text="", icon="X"
                 ).index = i
         else:
-            layout.label(text="No custom macros yet", icon="BLANK1")
+            layout.label(text="No custom macros yet", icon="BLANK1", text_ctxt='AnimAssist')
 
         uh.separator(layout)
 
@@ -335,11 +335,11 @@ class ANIMASSIST_PT_p10_macros(PanelAnatomyMixin, DopeSheetSidebarPanel):
         # Show frame range controls if FRAME_STEPS mode
         if p10.batch_mode == "FRAME_STEPS":
             row = layout.row(align=True)
-            row.prop(p10, "batch_frame_start", text="Start")
-            row.prop(p10, "batch_frame_end", text="End")
+            row.prop(p10, "batch_frame_start", text="Start", text_ctxt='AnimAssist')
+            row.prop(p10, "batch_frame_end", text="End", text_ctxt='AnimAssist')
 
             row = layout.row(align=True)
-            row.prop(p10, "batch_frame_step", text="Step")
+            row.prop(p10, "batch_frame_step", text="Step", text_ctxt='AnimAssist')
 
         uh.separator(layout)
 
@@ -385,7 +385,7 @@ class ANIMASSIST_PT_p10_system(PanelAnatomyMixin, DopeSheetSidebarPanel):
         layout = self.layout
         p10 = get_p10(context)
         if p10 is None:
-            layout.label(text="Orchestration tools not available", icon="INFO")
+            layout.label(text="Orchestration tools not available", icon="INFO", text_ctxt='AnimAssist')
             return
 
         # ── Recovery ──
@@ -414,7 +414,7 @@ class ANIMASSIST_PT_p10_system(PanelAnatomyMixin, DopeSheetSidebarPanel):
         uh.separator(layout)
 
         row = layout.row(align=True)
-        row.prop(p10, "recovery_enabled", text="Enabled", toggle=True)
+        row.prop(p10, "recovery_enabled", text="Enabled", toggle=True, text_ctxt='AnimAssist')
 
         uh.explained_prop(
             layout, context, p10, "max_snapshots",
@@ -451,7 +451,7 @@ class ANIMASSIST_PT_p10_system(PanelAnatomyMixin, DopeSheetSidebarPanel):
         if p10.profiles:
             for i, profile in enumerate(p10.profiles):
                 row = layout.row(align=True)
-                row.label(text=profile.name, icon="WORKSPACE")
+                row.label(text=profile.name, icon="WORKSPACE", translate=False)
                 uh.explained_op(
                     row, context,
                     "animassist.p10_load_profile",
@@ -463,7 +463,7 @@ class ANIMASSIST_PT_p10_system(PanelAnatomyMixin, DopeSheetSidebarPanel):
                     text="", icon="X"
                 ).index = i
         else:
-            layout.label(text="No profiles saved", icon="BLANK1")
+            layout.label(text="No profiles saved", icon="BLANK1", text_ctxt='AnimAssist')
 
         uh.separator(layout)
 
@@ -530,7 +530,7 @@ class ANIMASSIST_PT_p10_system(PanelAnatomyMixin, DopeSheetSidebarPanel):
             uh.separator(body)
 
             row = body.row(align=True)
-            row.prop(p10, "audit_enabled", text="Enabled", toggle=True)
+            row.prop(p10, "audit_enabled", text="Enabled", toggle=True, text_ctxt='AnimAssist')
 
             uh.explained_prop(
                 body, context, p10, "max_audit_entries",
@@ -639,7 +639,7 @@ class ANIMASSIST_PT_p10_system(PanelAnatomyMixin, DopeSheetSidebarPanel):
             uh.separator(body)
 
             row = body.row(align=True)
-            row.prop(p10, "show_debug_panel", text="Debug", toggle=True)
+            row.prop(p10, "show_debug_panel", text="Debug", toggle=True, text_ctxt='AnimAssist')
 
             uh.explained_op(
                 body, context,
@@ -665,7 +665,7 @@ class ANIMASSIST_PT_p10_shelf_v3d(PanelAnatomyMixin, View3DSidebarPanel):
         layout = self.layout
         p10 = get_p10(context)
         if p10 is None:
-            layout.label(text="Orchestration tools not available", icon="INFO")
+            layout.label(text="Orchestration tools not available", icon="INFO", text_ctxt='AnimAssist')
             return
 
         uh.section_header(layout, "Quick Shelf", icon="ASSET_MANAGER")
@@ -683,7 +683,7 @@ class ANIMASSIST_PT_p10_shelf_v3d(PanelAnatomyMixin, View3DSidebarPanel):
                     help_id=f"op.{recent.op_id}",
                 )
         else:
-            layout.label(text="No recent tools yet", icon="BLANK1")
+            layout.label(text="No recent tools yet", icon="BLANK1", text_ctxt='AnimAssist')
 
         uh.separator(layout)
 

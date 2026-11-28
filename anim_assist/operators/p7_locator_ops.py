@@ -16,6 +16,8 @@ Features:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from mathutils import Vector
 
@@ -130,7 +132,7 @@ class AA_OT_p7_create_locator(bpy.types.Operator):
     def execute(self, context):
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
+            self.report({"ERROR"}, T('Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again'))
             return {"CANCELLED"}
 
         obj = context.active_object
@@ -145,7 +147,7 @@ class AA_OT_p7_create_locator(bpy.types.Operator):
             owner = obj.name
 
         empty = _create_locator_at(context, session, name, pos, owner)
-        self.report({"INFO"}, f"Created locator '{empty.name}'")
+        self.report({"INFO"}, F("Created locator '{p0}'", p0=f'{empty.name}'))
         return {"FINISHED"}
 
 
@@ -170,14 +172,14 @@ class AA_OT_p7_create_locator_average(bpy.types.Operator):
     def execute(self, context):
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
+            self.report({"ERROR"}, T('Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again'))
             return {"CANCELLED"}
 
         positions = [obj.matrix_world.translation for obj in context.selected_objects]
         avg = sum(positions, Vector()) / len(positions)
         name = locator_object_name("Average", session.short_id)
         empty = _create_locator_at(context, session, name, avg)
-        self.report({"INFO"}, f"Created average locator '{empty.name}'")
+        self.report({"INFO"}, F("Created average locator '{p0}'", p0=f'{empty.name}'))
         return {"FINISHED"}
 
 
@@ -199,13 +201,13 @@ class AA_OT_p7_create_locator_cursor(bpy.types.Operator):
     def execute(self, context):
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
+            self.report({"ERROR"}, T('Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again'))
             return {"CANCELLED"}
 
         pos = context.scene.cursor.location.copy()
         name = locator_object_name("Cursor", session.short_id)
         empty = _create_locator_at(context, session, name, pos)
-        self.report({"INFO"}, f"Created cursor locator '{empty.name}'")
+        self.report({"INFO"}, F("Created cursor locator '{p0}'", p0=f'{empty.name}'))
         return {"FINISHED"}
 
 
@@ -238,14 +240,14 @@ class AA_OT_p7_parent_locator(bpy.types.Operator):
         session = p7s.get_session(p7.active_session_id)
         locator = _find_last_locator(session)
         if locator is None:
-            self.report({"WARNING"}, "No session locator found")
+            self.report({"WARNING"}, T('No session locator found'))
             return {"CANCELLED"}
 
         target = context.active_object
         mw = locator.matrix_world.copy()
         locator.parent = target
         locator.matrix_world = mw
-        self.report({"INFO"}, f"Parented '{locator.name}' to '{target.name}'")
+        self.report({"INFO"}, F("Parented '{p0}' to '{p1}'", p0=f'{locator.name}', p1=f'{target.name}'))
         return {"FINISHED"}
 
 
@@ -278,7 +280,7 @@ class AA_OT_p7_constrain_target_to_locator(bpy.types.Operator):
         session = p7s.get_session(p7.active_session_id)
         locator = _find_last_locator(session)
         if locator is None:
-            self.report({"WARNING"}, "No session locator found")
+            self.report({"WARNING"}, T('No session locator found'))
             return {"CANCELLED"}
 
         obj = context.active_object
@@ -296,7 +298,7 @@ class AA_OT_p7_constrain_target_to_locator(bpy.types.Operator):
             session.register_constraint(obj.name, "", con_name)
 
         p7s.save_session_to_scene(session.session_id)
-        self.report({"INFO"}, f"Constrained '{obj.name}' → '{locator.name}'")
+        self.report({"INFO"}, F("Constrained '{p0}' → '{p1}'", p0=f'{obj.name}', p1=f'{locator.name}'))
         return {"FINISHED"}
 
 
@@ -329,7 +331,7 @@ class AA_OT_p7_constrain_locator_to_target(bpy.types.Operator):
         session = p7s.get_session(p7.active_session_id)
         locator = _find_last_locator(session)
         if locator is None:
-            self.report({"WARNING"}, "No session locator found")
+            self.report({"WARNING"}, T('No session locator found'))
             return {"CANCELLED"}
 
         target = context.active_object
@@ -340,7 +342,7 @@ class AA_OT_p7_constrain_locator_to_target(bpy.types.Operator):
         session.register_constraint(locator.name, "", con_name)
 
         p7s.save_session_to_scene(session.session_id)
-        self.report({"INFO"}, f"Constrained '{locator.name}' → '{target.name}'")
+        self.report({"INFO"}, F("Constrained '{p0}' → '{p1}'", p0=f'{locator.name}', p1=f'{target.name}'))
         return {"FINISHED"}
 
 
@@ -371,7 +373,7 @@ class AA_OT_p7_bake_locator_from_target(bpy.types.Operator):
         session = p7s.get_session(p7.active_session_id)
         locator = _find_last_locator(session)
         if locator is None:
-            self.report({"WARNING"}, "No session locator found")
+            self.report({"WARNING"}, T('No session locator found'))
             return {"CANCELLED"}
 
         source = context.active_object
@@ -394,7 +396,7 @@ class AA_OT_p7_bake_locator_from_target(bpy.types.Operator):
             for fc in get_fcurves(locator.animation_data.action, anim_data=locator.animation_data):
                 fc.update()
 
-        self.report({"INFO"}, f"Baked target→locator over [{frame_start}–{frame_end}]")
+        self.report({"INFO"}, F('Baked target→locator over [{p0}–{p1}]', p0=f'{frame_start}', p1=f'{frame_end}'))
         return {"FINISHED"}
 
 
@@ -425,7 +427,7 @@ class AA_OT_p7_bake_target_from_locator(bpy.types.Operator):
         session = p7s.get_session(p7.active_session_id)
         locator = _find_last_locator(session)
         if locator is None:
-            self.report({"WARNING"}, "No session locator found")
+            self.report({"WARNING"}, T('No session locator found'))
             return {"CANCELLED"}
 
         target = context.active_object
@@ -448,7 +450,7 @@ class AA_OT_p7_bake_target_from_locator(bpy.types.Operator):
             for fc in get_fcurves(target.animation_data.action, anim_data=target.animation_data):
                 fc.update()
 
-        self.report({"INFO"}, f"Baked locator→target over [{frame_start}–{frame_end}]")
+        self.report({"INFO"}, F('Baked locator→target over [{p0}–{p1}]', p0=f'{frame_start}', p1=f'{frame_end}'))
         return {"FINISHED"}
 
 
@@ -479,12 +481,12 @@ class AA_OT_p7_match_target_to_locator(bpy.types.Operator):
         session = p7s.get_session(p7.active_session_id)
         locator = _find_last_locator(session)
         if locator is None:
-            self.report({"WARNING"}, "No session locator found")
+            self.report({"WARNING"}, T('No session locator found'))
             return {"CANCELLED"}
 
         target = context.active_object
         target.location = locator.matrix_world.translation.copy()
-        self.report({"INFO"}, f"Matched '{target.name}' → '{locator.name}'")
+        self.report({"INFO"}, F("Matched '{p0}' → '{p1}'", p0=f'{target.name}', p1=f'{locator.name}'))
         return {"FINISHED"}
 
 
@@ -515,12 +517,12 @@ class AA_OT_p7_match_locator_to_target(bpy.types.Operator):
         session = p7s.get_session(p7.active_session_id)
         locator = _find_last_locator(session)
         if locator is None:
-            self.report({"WARNING"}, "No session locator found")
+            self.report({"WARNING"}, T('No session locator found'))
             return {"CANCELLED"}
 
         target = context.active_object
         locator.location = target.matrix_world.translation.copy()
-        self.report({"INFO"}, f"Matched '{locator.name}' → '{target.name}'")
+        self.report({"INFO"}, F("Matched '{p0}' → '{p1}'", p0=f'{locator.name}', p1=f'{target.name}'))
         return {"FINISHED"}
 
 

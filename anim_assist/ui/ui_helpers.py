@@ -29,16 +29,16 @@ Public API:
 """
 
 from __future__ import annotations
+from ..i18n import T, F, wrap_text
 
 
 def wrapped_label(layout, context, text, *, icon="NONE"):
     """Fit explanatory text and target names to a native sidebar's width."""
-    import textwrap
     width = getattr(getattr(context, "region", None), "width", 280)
     scale = context.preferences.system.ui_scale
     chars = max(18, int((width - 40) / (7 * max(scale, .5))))
-    for index, line in enumerate(textwrap.wrap(text, width=chars) or [""]):
-        layout.label(text=line, icon=icon if index == 0 else "NONE")
+    for index, line in enumerate(wrap_text(T(text), width=chars) or [""]):
+        layout.label(text=line, icon=icon if index == 0 else "NONE", translate=False)
 
 from typing import Iterable, Optional
 
@@ -96,9 +96,9 @@ def section_header(
     """Draw a flat section header row and return its layout for chaining."""
     row = layout.row(align=True)
     if icon:
-        row.label(text=label, icon=icon)
+        row.label(text=T(label), icon=icon, translate=False)
     else:
-        row.label(text=label)
+        row.label(text=T(label), translate=False)
     return row
 
 
@@ -132,9 +132,9 @@ def subsection(
     if state_row is None:
         # Fallback: no state available, behave as a plain always-open box.
         if icon:
-            header.label(text=label, icon=icon)
+            header.label(text=T(label), icon=icon, translate=False)
         else:
-            header.label(text=label)
+            header.label(text=T(label), translate=False)
         return box.column(align=True), True
 
     expanded = bool(state_row.expanded)
@@ -147,9 +147,9 @@ def subsection(
         emboss=False,
     )
     if icon:
-        header.label(text=label, icon=icon)
+        header.label(text=T(label), icon=icon, translate=False)
     else:
-        header.label(text=label)
+        header.label(text=T(label), translate=False)
 
     if not expanded:
         return box.column(align=True), False
@@ -185,7 +185,8 @@ def explained_op(
     row = layout.row(align=True)
     kwargs: dict = {}
     if text is not None:
-        kwargs["text"] = text
+        kwargs["text"] = T(text)
+        kwargs["translate"] = False
     if icon is not None:
         kwargs["icon"] = icon
     op_props = row.operator(op_id, **kwargs)
@@ -215,12 +216,12 @@ def explained_prop(
         # A dropdown in a row shares width with its label and the explainer
         # icon; without a fixed split, even "Preset" clips at sidebar width.
         split = row.split(factor=0.4, align=True)
-        split.label(text=(text if text is not None else rna.name) + ":")
+        split.label(text=T(text if text is not None else rna.name) + ":", translate=False)
         split.prop(data, prop, text="")
     elif text is None:
         row.prop(data, prop)
     else:
-        row.prop(data, prop, text=text)
+        row.prop(data, prop, text=T(text), translate=False)
     if help_id:
         draw_explainer_icon(row, context, help_id)
 
@@ -249,7 +250,7 @@ def danger_box(
     if is_compact_mode(context):
         header.label(text="", icon="ERROR")
     else:
-        header.label(text=label, icon="ERROR")
+        header.label(text=T(label), icon="ERROR", translate=False)
     body = box.column(align=True)
     return body
 
@@ -273,11 +274,12 @@ def analysis_box(
     operators that select-and-frame the affected items). Detail lines are
     only drawn if the WindowManager UI state's ``show_analysis_details``
     toggle is on, so animators can collapse noise during playback.
+    Detail lines are completed display text from the producer.
     """
     box = layout.box()
     header = box.row(align=True)
-    title_text = title if count is None else f"{title}  ({count})"
-    header.label(text=title_text, icon="VIEWZOOM")
+    title_text = T(title) if count is None else F("{title}  ({count})", title=T(title), count=count)
+    header.label(text=title_text, icon="VIEWZOOM", translate=False)
 
     state = ui_state_mod.get_ui_state(context)
     show_details = bool(
@@ -295,7 +297,7 @@ def analysis_box(
     body = box.column(align=True)
     if details and show_details:
         for line in details:
-            body.label(text=line)
+            body.label(text=line, translate=False)
 
     return body
 
@@ -339,7 +341,7 @@ def scope_block(
 
 def draw_context_warning(layout: bpy.types.UILayout, message: str) -> None:
     """Draw missing-selection guidance without hiding the matching panel."""
-    layout.label(text=message, icon="INFO")
+    layout.label(text=T(message), icon="INFO", translate=False)
 
 
 def separator(layout: bpy.types.UILayout, *, factor: float = 1.0) -> None:

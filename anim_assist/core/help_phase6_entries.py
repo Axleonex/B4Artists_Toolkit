@@ -400,7 +400,7 @@ PHASE6_ENTRIES: tuple[HelpEntry, ...] = (
        "Analyse the active action for gaps, clusters, and spacing regularity",
        "Scans all FCurves in the active action and reports: "
        "(1) Timing gaps wider than the Gap Threshold. "
-       "(2) Key clusters tighter than the Cluster Radius. "
+       "(2) Clusters of two or more unique keyframe times whose adjacent gaps are no larger than the Cluster Radius. "
        "(3) A Timing Score (0–100) based on spacing variance — 100 is perfectly "
        "even spacing, 0 is maximally erratic. "
        "Results are cached on the scene for Jump operators and the report panel.",
@@ -424,8 +424,8 @@ PHASE6_ENTRIES: tuple[HelpEntry, ...] = (
     _H("op.animassist.p6_jump_next_cluster",
        "Jump to Next Cluster",
        "Advance the playhead to the centre of the next detected key cluster",
-       "Requires Run Diagnostics to have been run first. A cluster is a group "
-       "of two or more keys within the Cluster Radius of each other. Jumps to "
+       "Requires Run Diagnostics to have been run first. A cluster contains "
+       "two or more consecutive unique keyframe times with adjacent gaps no larger than the Cluster Radius. Jumps to "
        "the arithmetic centre of the cluster's frame range.",
        "Timing Diagnostics"),
 
@@ -447,10 +447,10 @@ PHASE6_ENTRIES: tuple[HelpEntry, ...] = (
 
     _H("prop.p6_cluster_radius",
        "Cluster Radius",
-       "Keys within this many frames of each other form a cluster",
-       "A cluster of two or more keys within this radius is flagged as potential "
-       "over-keying. Adjust to match the key density of your animation style — "
-       "a lower value catches very tight clusters; a higher value is more lenient.",
+       "Group consecutive keyframe times with gaps no larger than this many frames",
+       "Consecutive unique keyframe times form a cluster when each gap is no larger than this radius. "
+       "The detector flags groups of two or more times as potential over-keying. "
+       "Increase the radius to include wider gaps.",
        "Timing Diagnostics"),
 )
 

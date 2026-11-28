@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import BoolProperty, EnumProperty, IntProperty
 from bpy.types import Operator
@@ -60,7 +62,7 @@ class ANIMASSIST_OT_batch_interpolation(Operator):
     bl_description = "Set all selected keyframes to the chosen interpolation type (Constant, Linear, or Bezier)"
     bl_options = {"REGISTER", "UNDO"}
 
-    interp_type: EnumProperty(name="Interpolation", description="Interpolation to assign to selected editable keys", items=_INTERPOLATION_ITEMS, default="BEZIER")  # type: ignore[assignment]
+    interp_type: EnumProperty(name="Interpolation", description="Interpolation to assign to selected editable keys", items=_INTERPOLATION_ITEMS, default="BEZIER", translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -70,7 +72,7 @@ class ANIMASSIST_OT_batch_interpolation(Operator):
         # ACCESS_GATE_HERE
         fcs = _visible_fcurves(context)
         if not fcs:
-            self.report({"WARNING"}, "Show editable Action channels in this editor")
+            self.report({"WARNING"}, T('Show editable Action channels in this editor'))
             return {"CANCELLED"}
 
         count = 0
@@ -83,9 +85,9 @@ class ANIMASSIST_OT_batch_interpolation(Operator):
             fc.update()
 
         if not count:
-            self.report({"WARNING"}, "Select editable keys in this editor")
+            self.report({"WARNING"}, T('Select editable keys in this editor'))
             return {"CANCELLED"}
-        self.report({"INFO"}, f"{count} keys → {self.interp_type}")
+        self.report({"INFO"}, F('{p0} keys → {p1}', p0=f'{count}', p1=f'{self.interp_type}'))
         return {"FINISHED"}
 
 
@@ -104,7 +106,7 @@ class ANIMASSIST_OT_select_handles(Operator):
             ("BOTH", "Both", "Select both handles"),
         ],
         default="LEFT",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -115,7 +117,7 @@ class ANIMASSIST_OT_select_handles(Operator):
         # ACCESS_GATE_HERE
         fcs = _visible_fcurves(context)
         if not fcs:
-            self.report({"WARNING"}, "No FCurves available")
+            self.report({"WARNING"}, T('No FCurves available'))
             return {"CANCELLED"}
 
         count = 0
@@ -132,7 +134,7 @@ class ANIMASSIST_OT_select_handles(Operator):
 
         if context.area:
             context.area.tag_redraw()
-        self.report({"INFO"}, f"Selected {count} handles")
+        self.report({"INFO"}, F('Selected {p0} handles', p0=f'{count}'))
         return {"FINISHED"}
 
 
@@ -142,7 +144,7 @@ class ANIMASSIST_OT_set_key_type(Operator):
     bl_description = "Assign the chosen semantic key type to selected keyframes"
     bl_options = {"REGISTER", "UNDO"}
 
-    key_type: EnumProperty(name="Key Type", description="Semantic type to assign to selected keys", items=_KEY_TYPE_ITEMS, default="KEYFRAME")  # type: ignore[assignment]
+    key_type: EnumProperty(name="Key Type", description="Semantic type to assign to selected keys", items=_KEY_TYPE_ITEMS, default="KEYFRAME", translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -156,7 +158,7 @@ class ANIMASSIST_OT_set_key_type(Operator):
                 if kp.select_control_point:
                     kp.type = self.key_type
                     count += 1
-        self.report({"INFO"}, f"{count} keys → {self.key_type}")
+        self.report({"INFO"}, F('{p0} keys → {p1}', p0=f'{count}', p1=f'{self.key_type}'))
         return {"FINISHED"}
 
 
@@ -166,7 +168,7 @@ class ANIMASSIST_OT_set_handle_type(Operator):
     bl_description = "Set both Bezier handle types on selected keyframes"
     bl_options = {"REGISTER", "UNDO"}
 
-    handle_type: EnumProperty(name="Handle Type", description="Bezier handle behavior to apply to selected keys", items=_HANDLE_TYPE_ITEMS, default="AUTO_CLAMPED")  # type: ignore[assignment]
+    handle_type: EnumProperty(name="Handle Type", description="Bezier handle behavior to apply to selected keys", items=_HANDLE_TYPE_ITEMS, default="AUTO_CLAMPED", translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -182,7 +184,7 @@ class ANIMASSIST_OT_set_handle_type(Operator):
                     kp.handle_right_type = self.handle_type
                     count += 1
             fc.update()
-        self.report({"INFO"}, f"{count} keys handles → {self.handle_type}")
+        self.report({"INFO"}, F('{p0} keys handles → {p1}', p0=f'{count}', p1=f'{self.handle_type}'))
         return {"FINISHED"}
 
 
@@ -192,8 +194,8 @@ class ANIMASSIST_OT_select_by_key_type(Operator):
     bl_description = "Select or deselect every keyframe of the chosen semantic type"
     bl_options = {"REGISTER", "UNDO"}
 
-    key_type: EnumProperty(name="Key Type", description="Semantic key type to find", items=_KEY_TYPE_ITEMS, default="BREAKDOWN")  # type: ignore[assignment]
-    deselect: BoolProperty(name="Deselect", description="Deselect matching keys instead of selecting them", default=False)  # type: ignore[assignment]
+    key_type: EnumProperty(name="Key Type", description="Semantic key type to find", items=_KEY_TYPE_ITEMS, default="BREAKDOWN", translation_context='AnimAssist')  # type: ignore[assignment]
+    deselect: BoolProperty(name="Deselect", description="Deselect matching keys instead of selecting them", default=False, translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -208,8 +210,8 @@ class ANIMASSIST_OT_select_by_key_type(Operator):
                     kp.select_control_point = not self.deselect
                     count += 1
 
-        verb = "Deselected" if self.deselect else "Selected"
-        self.report({"INFO"}, f"{verb} {count} {self.key_type} keys")
+        verb = T("Deselected") if self.deselect else T("Selected")
+        self.report({"INFO"}, F('{p0} {p1} {p2} keys', p0=f'{verb}', p1=f'{count}', p2=f'{self.key_type}'))
         if context.area:
             context.area.tag_redraw()
         return {"FINISHED"}
@@ -221,7 +223,7 @@ class ANIMASSIST_OT_delete_by_key_type(Operator):
     bl_description = "Delete every keyframe of the chosen semantic type"
     bl_options = {"REGISTER", "UNDO"}
 
-    key_type: EnumProperty(name="Key Type", description="Semantic key type to delete", items=_KEY_TYPE_ITEMS, default="JITTER")  # type: ignore[assignment]
+    key_type: EnumProperty(name="Key Type", description="Semantic key type to delete", items=_KEY_TYPE_ITEMS, default="JITTER", translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -238,7 +240,7 @@ class ANIMASSIST_OT_delete_by_key_type(Operator):
             if indices:
                 fc.update()
 
-        self.report({"INFO"}, f"Deleted {total} {self.key_type} keys")
+        self.report({"INFO"}, F('Deleted {p0} {p1} keys', p0=f'{total}', p1=f'{self.key_type}'))
         return {"FINISHED"}
 
 
@@ -248,7 +250,7 @@ class ANIMASSIST_OT_insert_frames(Operator):
     bl_description = "Make room in the animation by shifting later keyframes forward"
     bl_options = {"REGISTER", "UNDO"}
 
-    count: IntProperty(name="Frame Count", description="Number of frames to insert", default=1, min=1, soft_max=100)  # type: ignore[assignment]
+    count: IntProperty(name="Frame Count", description="Number of frames to insert", default=1, min=1, soft_max=100, translation_context='AnimAssist')  # type: ignore[assignment]
     mode: EnumProperty(  # type: ignore[assignment]
         name="Insert Mode",
         description="Where the inserted time begins",
@@ -257,7 +259,7 @@ class ANIMASSIST_OT_insert_frames(Operator):
             ("BETWEEN_SELECTED", "Between Selected", "Insert after first selected key"),
         ],
         default="AT_CURSOR",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -271,7 +273,7 @@ class ANIMASSIST_OT_insert_frames(Operator):
         # ACCESS_GATE_HERE
         fcs = _visible_fcurves(context)
         if not fcs:
-            self.report({"WARNING"}, "No animation data")
+            self.report({"WARNING"}, T('No animation data'))
             return {"CANCELLED"}
 
         if self.mode == "AT_CURSOR":
@@ -283,7 +285,7 @@ class ANIMASSIST_OT_insert_frames(Operator):
                     if kp.select_control_point:
                         sel_frames.append(kp.co[0])
             if len(sel_frames) < 2:
-                self.report({"WARNING"}, "Need ≥ 2 selected keys for 'Between Selected'")
+                self.report({"WARNING"}, T("Need ≥ 2 selected keys for 'Between Selected'"))
                 return {"CANCELLED"}
             threshold = min(sel_frames)
 
@@ -298,7 +300,7 @@ class ANIMASSIST_OT_insert_frames(Operator):
                     moved += 1
             fc.update()
 
-        self.report({"INFO"}, f"Inserted {self.count} frames — shifted {moved} keys")
+        self.report({"INFO"}, F('Inserted {p0} frames — shifted {p1} keys', p0=f'{self.count}', p1=f'{moved}'))
         return {"FINISHED"}
 
 
@@ -313,7 +315,7 @@ class ANIMASSIST_OT_move_keys(Operator):
     bl_description = "Shift selected keyframes by a frame offset"
     bl_options = {"REGISTER", "UNDO"}
 
-    offset: IntProperty(name="Frame Offset", default=1, soft_min=-100, soft_max=100)  # type: ignore[assignment]
+    offset: IntProperty(name="Frame Offset", default=1, soft_min=-100, soft_max=100, translation_context='AnimAssist')  # type: ignore[assignment]
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -327,7 +329,7 @@ class ANIMASSIST_OT_move_keys(Operator):
         # ACCESS_GATE_HERE
         fcs = _visible_fcurves(context)
         if not fcs:
-            self.report({"WARNING"}, "No animation data")
+            self.report({"WARNING"}, T('No animation data'))
             return {"CANCELLED"}
 
         frame_offset = float(self.offset)
@@ -341,7 +343,7 @@ class ANIMASSIST_OT_move_keys(Operator):
                     moved += 1
             fc.update()
 
-        self.report({"INFO"}, f"Moved {moved} keys by {self.offset} frames")
+        self.report({"INFO"}, F('Moved {p0} keys by {p1} frames', p0=f'{moved}', p1=f'{self.offset}'))
         return {"FINISHED"}
 
 

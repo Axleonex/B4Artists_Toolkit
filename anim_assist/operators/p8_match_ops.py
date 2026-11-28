@@ -1,5 +1,7 @@
 """Transform matching operators."""
 
+from ..i18n import T, F
+
 import bpy
 from mathutils import Matrix
 
@@ -14,11 +16,11 @@ def _match_poll(context, cls=None):
     """At least one selected object with an active object."""
     if context.active_object is None:
         if cls is not None:
-            cls.poll_message_set("Select an object or pose bone to use matching tools")
+            cls.poll_message_set(T('Select an object or pose bone to use matching tools'))
         return False
     if context.mode not in {'OBJECT', 'POSE'}:
         if cls is not None:
-            cls.poll_message_set("Switch to Object Mode or Pose Mode to match transforms")
+            cls.poll_message_set(T('Switch to Object Mode or Pose Mode to match transforms'))
         return False
     return True
 
@@ -90,7 +92,7 @@ class AA_OT_p8_match_to_world(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(obj, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched '{obj.name}' to world ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched '{p0}' to world ({p1} channels)", p0=f'{obj.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -107,7 +109,7 @@ class AA_OT_p8_match_to_parent(bpy.types.Operator):
         if not _match_poll(context, cls):
             return False
         if obj.parent is None:
-            cls.poll_message_set("Select an object with a parent to match its parent's transform")
+            cls.poll_message_set(T("Select an object with a parent to match its parent's transform"))
             return False
         return True
 
@@ -132,7 +134,7 @@ class AA_OT_p8_match_to_parent(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(obj, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched '{obj.name}' to parent ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched '{p0}' to parent ({p1} channels)", p0=f'{obj.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -149,7 +151,7 @@ class AA_OT_p8_match_to_target(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -160,7 +162,7 @@ class AA_OT_p8_match_to_target(bpy.types.Operator):
         # Get source from non-active selected objects
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         source = sources[0]
@@ -181,7 +183,7 @@ class AA_OT_p8_match_to_target(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched '{active.name}' to '{source.name}' ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched '{p0}' to '{p1}' ({p2} channels)", p0=f'{active.name}', p1=f'{source.name}', p2=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -198,7 +200,7 @@ class AA_OT_p8_match_selected_to_active(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -229,7 +231,7 @@ class AA_OT_p8_match_selected_to_active(bpy.types.Operator):
 
             count += 1
 
-        self.report({"INFO"}, f"Matched {count} object(s) to '{active.name}'")
+        self.report({"INFO"}, F("Matched {p0} object(s) to '{p1}'", p0=f'{count}', p1=f'{active.name}'))
         return {"FINISHED"}
 
 
@@ -264,7 +266,7 @@ class AA_OT_p8_visual_match(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(obj, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Visual matched '{obj.name}' ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Visual matched '{p0}' ({p1} channels)", p0=f'{obj.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -281,7 +283,7 @@ class AA_OT_p8_match_location(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -291,7 +293,7 @@ class AA_OT_p8_match_location(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         source = sources[0]
@@ -312,7 +314,7 @@ class AA_OT_p8_match_location(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched location of '{active.name}' ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched location of '{p0}' ({p1} channels)", p0=f'{active.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -329,7 +331,7 @@ class AA_OT_p8_match_rotation(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -339,7 +341,7 @@ class AA_OT_p8_match_rotation(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         source = sources[0]
@@ -360,7 +362,7 @@ class AA_OT_p8_match_rotation(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched rotation of '{active.name}' ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched rotation of '{p0}' ({p1} channels)", p0=f'{active.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -377,7 +379,7 @@ class AA_OT_p8_match_scale(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -387,7 +389,7 @@ class AA_OT_p8_match_scale(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         source = sources[0]
@@ -408,7 +410,7 @@ class AA_OT_p8_match_scale(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched scale of '{active.name}' ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched scale of '{p0}' ({p1} channels)", p0=f'{active.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -425,7 +427,7 @@ class AA_OT_p8_match_trs(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -435,7 +437,7 @@ class AA_OT_p8_match_trs(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         source = sources[0]
@@ -456,7 +458,7 @@ class AA_OT_p8_match_trs(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched TRS of '{active.name}' ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched TRS of '{p0}' ({p1} channels)", p0=f'{active.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -473,7 +475,7 @@ class AA_OT_p8_match_axis_filtered(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -483,7 +485,7 @@ class AA_OT_p8_match_axis_filtered(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         source = sources[0]
@@ -504,7 +506,7 @@ class AA_OT_p8_match_axis_filtered(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched '{active.name}' with axis filtering ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched '{p0}' with axis filtering ({p1} channels)", p0=f'{active.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -521,7 +523,7 @@ class AA_OT_p8_match_with_offset(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -531,7 +533,7 @@ class AA_OT_p8_match_with_offset(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         source = sources[0]
@@ -552,7 +554,7 @@ class AA_OT_p8_match_with_offset(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched '{active.name}' with offset ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched '{p0}' with offset ({p1} channels)", p0=f'{active.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -569,7 +571,7 @@ class AA_OT_p8_match_without_offset(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -579,7 +581,7 @@ class AA_OT_p8_match_without_offset(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         source = sources[0]
@@ -600,7 +602,7 @@ class AA_OT_p8_match_without_offset(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched '{active.name}' without offset ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched '{p0}' without offset ({p1} channels)", p0=f'{active.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -617,7 +619,7 @@ class AA_OT_p8_match_visual_matrix(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -627,7 +629,7 @@ class AA_OT_p8_match_visual_matrix(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         source = sources[0]
@@ -648,7 +650,7 @@ class AA_OT_p8_match_visual_matrix(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched visual matrix of '{active.name}' ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched visual matrix of '{p0}' ({p1} channels)", p0=f'{active.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -665,7 +667,7 @@ class AA_OT_p8_match_local_matrix(bpy.types.Operator):
             return False
         selected = context.selected_objects
         if len(selected) < 2:
-            cls.poll_message_set("Select a target, then the object to match")
+            cls.poll_message_set(T('Select a target, then the object to match'))
             return False
         return True
 
@@ -675,7 +677,7 @@ class AA_OT_p8_match_local_matrix(bpy.types.Operator):
 
         sources = [o for o in context.selected_objects if o != active]
         if not sources:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         source = sources[0]
@@ -697,7 +699,7 @@ class AA_OT_p8_match_local_matrix(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched local matrix of '{active.name}' ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched local matrix of '{p0}' ({p1} channels)", p0=f'{active.name}', p1=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 
@@ -719,19 +721,19 @@ class AA_OT_p8_match_opposite(bpy.types.Operator):
         bone = context.active_pose_bone
 
         if not bone:
-            self.report({"ERROR"}, "No active bone. Select a bone in Pose mode")
+            self.report({"ERROR"}, T('No active bone. Select a bone in Pose mode'))
             return {"CANCELLED"}
 
         # Find the mirror bone
         mirror_name = mm.mirror_name(bone.name)
         if not mirror_name:
-            self.report({"ERROR"}, f"No mirror bone found for '{bone.name}'. Use .L/.R naming or add a pair override under Mirror & Symmetry")
+            self.report({"ERROR"}, F("No mirror bone found for '{p0}'. Use .L/.R naming or add a pair override under Mirror & Symmetry", p0=f'{bone.name}'))
             return {"CANCELLED"}
 
         obj = context.active_object
         arm = obj.data
         if mirror_name not in arm.bones:
-            self.report({"ERROR"}, f"Mirror bone '{mirror_name}' is not in this armature. Add a pair override under Mirror & Symmetry")
+            self.report({"ERROR"}, F("Mirror bone '{p0}' is not in this armature. Add a pair override under Mirror & Symmetry", p0=f'{mirror_name}'))
             return {"CANCELLED"}
 
         cf = _build_channel_filter(p8)
@@ -753,7 +755,7 @@ class AA_OT_p8_match_opposite(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(bone, result, context.scene.frame_current)
 
-        self.report({"INFO"}, f"Matched '{bone.name}' to opposite '{mirror_name}' ({len(result.channels_written)} channels)")
+        self.report({"INFO"}, F("Matched '{p0}' to opposite '{p1}' ({p2} channels)", p0=f'{bone.name}', p1=f'{mirror_name}', p2=f'{len(result.channels_written)}'))
         return {"FINISHED"}
 
 

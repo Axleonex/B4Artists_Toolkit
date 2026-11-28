@@ -78,19 +78,19 @@ class AA_P10_FavoriteItem(PropertyGroup):  # type: ignore[valid-type]
         name="Operator ID",
         description="Operator bl_idname",
         default="",
-    )
+     translation_context='AnimAssist')
 
     label: StringProperty(  # type: ignore[valid-type]
         name="Label",
         description="Display name for the favorite",
         default="",
-    )
+     translation_context='AnimAssist')
 
     icon: StringProperty(  # type: ignore[valid-type]
         name="Icon",
         description="Blender icon identifier",
         default="NONE",
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P10_RecentItem(PropertyGroup):  # type: ignore[valid-type]
@@ -100,19 +100,19 @@ class AA_P10_RecentItem(PropertyGroup):  # type: ignore[valid-type]
         name="Operator ID",
         description="Operator bl_idname",
         default="",
-    )
+     translation_context='AnimAssist')
 
     label: StringProperty(  # type: ignore[valid-type]
         name="Label",
         description="Display name for the recent item",
         default="",
-    )
+     translation_context='AnimAssist')
 
     timestamp: FloatProperty(  # type: ignore[valid-type]
         name="Timestamp",
         description="Time when this item was last used (time.time())",
         default=0.0,
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P10_MacroStep(PropertyGroup):  # type: ignore[valid-type]
@@ -122,19 +122,19 @@ class AA_P10_MacroStep(PropertyGroup):  # type: ignore[valid-type]
         name="Operator ID",
         description="Operator bl_idname",
         default="",
-    )
+     translation_context='AnimAssist')
 
     label: StringProperty(  # type: ignore[valid-type]
         name="Label",
         description="Display name for the step",
         default="",
-    )
+     translation_context='AnimAssist')
 
     enabled: BoolProperty(  # type: ignore[valid-type]
         name="Enabled",
         description="Whether this step is executed",
         default=True,
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P10_MacroEntry(PropertyGroup):  # type: ignore[valid-type]
@@ -144,25 +144,25 @@ class AA_P10_MacroEntry(PropertyGroup):  # type: ignore[valid-type]
         name="Name",
         description="Macro name",
         default="Untitled Macro",
-    )
+     translation_context='AnimAssist')
 
     steps: CollectionProperty(  # type: ignore[valid-type]
         type=AA_P10_MacroStep,
         name="Steps",
         description="Macro steps",
-    )
+     translation_context='AnimAssist')
 
     description: StringProperty(  # type: ignore[valid-type]
         name="Description",
         description="Macro description",
         default="",
-    )
+     translation_context='AnimAssist')
 
     icon: StringProperty(  # type: ignore[valid-type]
         name="Icon",
         description="Blender icon identifier",
         default="SEQUENCE",
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P10_WorkspaceProfile(PropertyGroup):  # type: ignore[valid-type]
@@ -172,13 +172,13 @@ class AA_P10_WorkspaceProfile(PropertyGroup):  # type: ignore[valid-type]
         name="Name",
         description="Profile name",
         default="Untitled Profile",
-    )
+     translation_context='AnimAssist')
 
     data_json: StringProperty(  # type: ignore[valid-type]
         name="Data JSON",
         description="Serialized profile settings as JSON",
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
@@ -193,13 +193,13 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         description="Whether the initial Anim Assist setup has completed",
         default=False,
         options={'HIDDEN'},
-    )
+     translation_context='AnimAssist')
 
     shelf_mode: EnumProperty(  # type: ignore[valid-type]
         name="Shelf Mode",
         description="Display mode for the tool shelf",
         items=_get_shelf_mode_items,
-    )
+     translation_context='AnimAssist')
 
     shelf_filter_phase: IntProperty(  # type: ignore[valid-type]
         name="Tool Group",
@@ -207,13 +207,13 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         default=0,
         min=0,
         max=10,
-    )
+     translation_context='AnimAssist')
 
     shelf_search_query: StringProperty(  # type: ignore[valid-type]
         name="Shelf Search Query",
         description="Current search query for shelf filtering",
         default="",
-    )
+     translation_context='AnimAssist')
 
     # ========================================================================
     # Favorites
@@ -223,14 +223,14 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         type=AA_P10_FavoriteItem,
         name="Favorites",
         description="Favorite tool entries",
-    )
+     translation_context='AnimAssist')
 
     active_favorite_index: IntProperty(  # type: ignore[valid-type]
         name="Active Favorite Index",
         description="Index of the active favorite",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     # ========================================================================
     # Recents
@@ -240,7 +240,7 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         type=AA_P10_RecentItem,
         name="Recents",
         description="Recently used tool entries",
-    )
+     translation_context='AnimAssist')
 
     max_recents: IntProperty(  # type: ignore[valid-type]
         name="Max Recents",
@@ -248,7 +248,7 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         default=20,
         min=5,
         max=50,
-    )
+     translation_context='AnimAssist')
 
     # ========================================================================
     # Macros
@@ -258,14 +258,14 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         type=AA_P10_MacroEntry,
         name="Macros",
         description="Saved macro entries",
-    )
+     translation_context='AnimAssist')
 
     active_macro_index: IntProperty(  # type: ignore[valid-type]
         name="Active Macro Index",
         description="Index of the active macro",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     # ========================================================================
     # Profiles
@@ -275,14 +275,14 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         type=AA_P10_WorkspaceProfile,
         name="Profiles",
         description="Workspace configuration profiles",
-    )
+     translation_context='AnimAssist')
 
     active_profile_index: IntProperty(  # type: ignore[valid-type]
         name="Active Profile Index",
         description="Index of the active profile",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
     # ========================================================================
     # Recovery Settings
@@ -292,7 +292,7 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         name="Recovery Enabled",
         description="Enable automatic state recovery",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     max_snapshots: IntProperty(  # type: ignore[valid-type]
         name="Max Snapshots",
@@ -300,7 +300,7 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         default=10,
         min=1,
         max=50,
-    )
+     translation_context='AnimAssist')
 
     # ========================================================================
     # Audit Settings
@@ -310,7 +310,7 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         name="Audit Enabled",
         description="Enable operation audit logging",
         default=True,
-    )
+     translation_context='AnimAssist')
 
     max_audit_entries: IntProperty(  # type: ignore[valid-type]
         name="Max Audit Entries",
@@ -318,7 +318,7 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         default=100,
         min=10,
         max=500,
-    )
+     translation_context='AnimAssist')
 
     # ========================================================================
     # Debug Settings
@@ -328,7 +328,7 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         name="Show Debug Panel",
         description="Show debug information panel",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # ========================================================================
     # Batch Processing Settings
@@ -338,7 +338,7 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         name="Batch Mode",
         description="Batch processing mode",
         items=_get_batch_mode_items,
-    )
+     translation_context='AnimAssist')
 
     batch_frame_step: IntProperty(  # type: ignore[valid-type]
         name="Batch Frame Step",
@@ -346,19 +346,19 @@ class AA_P10_Properties(PropertyGroup):  # type: ignore[valid-type]
         default=1,
         min=1,
         max=100,
-    )
+     translation_context='AnimAssist')
 
     batch_frame_start: IntProperty(  # type: ignore[valid-type]
         name="Batch Frame Start",
         description="Starting frame for batch processing",
         default=1,
-    )
+     translation_context='AnimAssist')
 
     batch_frame_end: IntProperty(  # type: ignore[valid-type]
         name="Batch Frame End",
         description="Ending frame for batch processing",
         default=250,
-    )
+     translation_context='AnimAssist')
 
 
 # ============================================================================
@@ -385,7 +385,7 @@ def register_properties() -> None:
     bpy.types.Scene.anim_assist_p10 = PointerProperty(  # type: ignore[attr-defined]
         type=AA_P10_Properties,
         name="Anim Assist Orchestration",
-    )
+     translation_context='AnimAssist')
 
 
 def unregister_properties() -> None:

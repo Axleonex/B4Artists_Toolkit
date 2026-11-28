@@ -93,7 +93,7 @@ class MacroResult:
 # =============================================================================
 
 
-def execute_macro(steps: list[MacroStep], context: Context) -> MacroResult:
+def execute_macro(steps: list[MacroStep], context: Context, *, format_text=str.format) -> MacroResult:
     """Execute a sequence of macro steps with fault tolerance and undo grouping.
 
     Sets is_batch_processing flag before execution and wraps all steps in a
@@ -115,7 +115,7 @@ def execute_macro(steps: list[MacroStep], context: Context) -> MacroResult:
 
     try:
         # Create an undo group for the entire macro
-        macro_name = f"Macro ({len([s for s in steps if s.enabled])} steps)"
+        macro_name = format_text("Macro ({count} steps)", count=len([s for s in steps if s.enabled]))
         bpy.ops.ed.undo_push(message=macro_name)
 
         for i, step in enumerate(steps):
@@ -131,8 +131,8 @@ def execute_macro(steps: list[MacroStep], context: Context) -> MacroResult:
                 parts = step.op_id.split(".")
                 if len(parts) != 2:
                     error_msg = (
-                        f"Step {i}: Invalid op_id format '{step.op_id}' "
-                        "(expected 'category.operator')"
+                        format_text("Step {index}: Invalid op_id format '{operator}' (expected 'category.operator')",
+                                    index=i, operator=step.op_id)
                     )
                     _log.error(error_msg)
                     result.errors.append(error_msg)
@@ -144,7 +144,7 @@ def execute_macro(steps: list[MacroStep], context: Context) -> MacroResult:
                 # Retrieve the operator from bpy.ops
                 category = getattr(bpy.ops, category_name, None)
                 if category is None:
-                    error_msg = f"Step {i}: Category '{category_name}' not found in bpy.ops"
+                    error_msg = format_text("Step {index}: Category '{category}' not found in bpy.ops", index=i, category=category_name)
                     _log.error(error_msg)
                     result.errors.append(error_msg)
                     result.success = False
@@ -153,8 +153,8 @@ def execute_macro(steps: list[MacroStep], context: Context) -> MacroResult:
                 op_func = getattr(category, op_name, None)
                 if op_func is None:
                     error_msg = (
-                        f"Step {i}: Operator '{op_name}' not found in "
-                        f"bpy.ops.{category_name}"
+                        format_text("Step {index}: Operator '{operator}' not found in bpy.ops.{category}",
+                                    index=i, operator=op_name, category=category_name)
                     )
                     _log.error(error_msg)
                     result.errors.append(error_msg)
@@ -167,7 +167,7 @@ def execute_macro(steps: list[MacroStep], context: Context) -> MacroResult:
                 result.steps_run += 1
 
             except Exception as exc:
-                error_msg = f"Step {i} ({step.op_id}): {exc!s}"
+                error_msg = format_text("Step {index} ({operator}): {error}", index=i, operator=step.op_id, error=str(exc))
                 _log.exception("Step %d failed with exception", i)
                 result.errors.append(error_msg)
                 result.success = False
@@ -188,7 +188,7 @@ def execute_macro(steps: list[MacroStep], context: Context) -> MacroResult:
     return result
 
 
-def validate_macro(steps: list[MacroStep]) -> list[str]:
+def validate_macro(steps: list[MacroStep], *, format_text=str.format) -> list[str]:
     """Validate that all operator IDs in a macro exist in Blender.
 
     Args:
@@ -205,19 +205,19 @@ def validate_macro(steps: list[MacroStep]) -> list[str]:
 
         parts = step.op_id.split(".")
         if len(parts) != 2:
-            errors.append(f"Step {i}: Invalid op_id format '{step.op_id}'")
+            errors.append(format_text("Step {index}: Invalid op_id format '{operator}'", index=i, operator=step.op_id))
             continue
 
         category_name, op_name = parts
 
         category = getattr(bpy.ops, category_name, None)
         if category is None:
-            errors.append(f"Step {i}: Category '{category_name}' not found")
+            errors.append(format_text("Step {index}: Category '{category}' not found", index=i, category=category_name))
             continue
 
         op_func = getattr(category, op_name, None)
         if op_func is None:
-            errors.append(f"Step {i}: Operator 'bpy.ops.{category_name}.{op_name}' not found")
+            errors.append(format_text("Step {index}: Operator 'bpy.ops.{category}.{operator}' not found", index=i, category=category_name, operator=op_name))
             continue
 
         _log.debug("Validated step %d: %s", i, step.op_id)

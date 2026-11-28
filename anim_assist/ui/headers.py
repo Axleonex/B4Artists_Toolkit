@@ -31,7 +31,7 @@ def _draw_graph_header(self, context: bpy.types.Context) -> None:
 
     if not is_bforartists():
         for interp_type, label in (("CONSTANT", "C"), ("LINEAR", "L"), ("BEZIER", "B")):
-            op = row.operator("animassist.batch_interpolation", text=label)
+            op = row.operator("animassist.batch_interpolation", text=label, text_ctxt='AnimAssist')
             op.interp_type = interp_type
         row.separator()
         row.menu("ANIMASSIST_MT_handle_type", text="", icon="HANDLE_AUTO")

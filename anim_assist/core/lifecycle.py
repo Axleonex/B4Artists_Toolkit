@@ -126,6 +126,7 @@ def check_saved_versions() -> list[str]:
     Returns a list of human-readable warning strings (empty if all OK). The
     caller logs these and may surface them in the UI.
     """
+    from ..i18n import F
     warnings: list[str] = []
     installed = constants.MIGRATION_CURRENT_VERSION
     for scene in bpy.data.scenes:
@@ -134,12 +135,9 @@ def check_saved_versions() -> list[str]:
             continue
         saved = getattr(props, "migration_version", 0)
         if saved > installed:
-            msg = (
-                "Scene '" + scene.name + "' was saved with Anim Assist "
-                "schema v" + str(saved) + " but installed addon supports up "
-                "to v" + str(installed) + ". Downgrade is unsupported - "
-                "back up the .blend before saving over it."
-            )
+            msg = F("Scene '{scene}' was saved with Anim Assist schema v{saved} but installed addon supports up to v{installed}. "
+                    "Downgrade is unsupported - back up the .blend before saving over it.",
+                    scene=scene.name, saved=saved, installed=installed)
             warnings.append(msg)
             _log.warning(msg)
     return warnings

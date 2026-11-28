@@ -91,19 +91,19 @@ class AA_P5_Properties(bpy.types.PropertyGroup):
             "draw handlers are active and no sampling occurs."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
     display_mode: EnumProperty(  # type: ignore[valid-type]
         name="Display Mode",
         description="Which targets have visible trajectories.",
         items=_display_mode_items,
-    )
+     translation_context='AnimAssist')
 
     # --- Sampling ---
     scope_mode: EnumProperty(  # type: ignore[valid-type]
         name="Scope",
         description="How the sample window is determined.",
         items=_scope_mode_items,
-    )
+     translation_context='AnimAssist')
     window_before: IntProperty(  # type: ignore[valid-type]
         name="Frames Before",
         description=(
@@ -111,7 +111,7 @@ class AA_P5_Properties(bpy.types.PropertyGroup):
             "when using Around Current Frame."
         ),
         default=25, min=1, soft_max=200,
-    )
+     translation_context='AnimAssist')
     window_after: IntProperty(  # type: ignore[valid-type]
         name="Frames After",
         description=(
@@ -119,17 +119,17 @@ class AA_P5_Properties(bpy.types.PropertyGroup):
             "when using Around Current Frame."
         ),
         default=25, min=1, soft_max=200,
-    )
+     translation_context='AnimAssist')
     custom_start: FloatProperty(  # type: ignore[valid-type]
         name="Start Frame",
         description="First frame for Custom Range scope.",
         default=1.0,
-    )
+     translation_context='AnimAssist')
     custom_end: FloatProperty(  # type: ignore[valid-type]
         name="End Frame",
         description="Last frame for Custom Range scope.",
         default=250.0,
-    )
+     translation_context='AnimAssist')
     sample_step: FloatProperty(  # type: ignore[valid-type]
         name="Step",
         description=(
@@ -138,12 +138,12 @@ class AA_P5_Properties(bpy.types.PropertyGroup):
             "more expensive)."
         ),
         default=1.0, min=0.1, soft_max=5.0,
-    )
+     translation_context='AnimAssist')
     max_samples: IntProperty(  # type: ignore[valid-type]
         name="Max Samples",
         description="Cap on the total number of samples per target to prevent viewport stalls.",
         default=160, min=10, soft_max=2000,
-    )
+     translation_context='AnimAssist')
     use_subframe: BoolProperty(  # type: ignore[valid-type]
         name="Subframe Sampling",
         description=(
@@ -151,7 +151,7 @@ class AA_P5_Properties(bpy.types.PropertyGroup):
             "trajectories.  Increases computation cost proportionally."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
     use_constraints: BoolProperty(  # type: ignore[valid-type]
         name="Constraint Evaluation (Slow)",
         description=(
@@ -160,145 +160,145 @@ class AA_P5_Properties(bpy.types.PropertyGroup):
             "ignored during playback to keep animation interaction smooth."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # --- Visual options ---
     space_mode: EnumProperty(  # type: ignore[valid-type]
         name="Space",
         description="Coordinate space for trajectory drawing.",
         items=_space_mode_items,
-    )
+     translation_context='AnimAssist')
     show_frame_ticks: BoolProperty(  # type: ignore[valid-type]
         name="Frame Ticks",
         description="Draw small dots at every sampled frame position.",
         default=False,
-    )
+     translation_context='AnimAssist')
     show_keyframe_ticks: BoolProperty(  # type: ignore[valid-type]
         name="Keyframe Ticks",
         description="Draw highlighted dots at keyframe positions on the path.",
         default=True,
-    )
+     translation_context='AnimAssist')
     show_frame_numbers: BoolProperty(  # type: ignore[valid-type]
         name="Frame Numbers",
         description="Draw frame-number labels next to keyframe ticks.",
         default=False,
-    )
+     translation_context='AnimAssist')
     show_velocity: BoolProperty(  # type: ignore[valid-type]
         name="Velocity Vectors",
         description="Draw velocity direction arrows at each sample point.",
         default=False,
-    )
+     translation_context='AnimAssist')
     show_tangent: BoolProperty(  # type: ignore[valid-type]
         name="Tangent Lines",
         description="Draw path tangent lines at keyframe positions.",
         default=False,
-    )
+     translation_context='AnimAssist')
     show_ghost_points: BoolProperty(  # type: ignore[valid-type]
         name="Ghost Points",
         description="Draw faded points for the 2 frames before and after the current frame.",
         default=True,
-    )
+     translation_context='AnimAssist')
     show_spacing_color: BoolProperty(  # type: ignore[valid-type]
         name="Spacing Colorization",
         description="Colour path segments by their spacing relative to the median.",
         default=False,
-    )
+     translation_context='AnimAssist')
     show_deviation_heatmap: BoolProperty(  # type: ignore[valid-type]
         name="Arc Deviation Heatmap",
         description="Colour the path by deviation from a locally-fit arc (blue=good, red=bad).",
         default=False,
-    )
+     translation_context='AnimAssist')
     color_preset: EnumProperty(  # type: ignore[valid-type]
         name="Color Preset",
         description="Colour palette for the trajectory overlay.",
         items=palette_enum_items_callback,
-    )
+     translation_context='AnimAssist')
     path_width: FloatProperty(  # type: ignore[valid-type]
         name="Path Width",
         description="Line width for the trajectory path in pixels.",
         default=2.0, min=0.5, soft_max=6.0,
-    )
+     translation_context='AnimAssist')
     max_display_targets: IntProperty(  # type: ignore[valid-type]
         name="Max Display Targets",
         description="Maximum number of simultaneous trajectory targets to avoid viewport stalls.",
         default=3, min=1, soft_max=32,
-    )
+     translation_context='AnimAssist')
 
     # --- Diagnostics ---
     enable_drift_detect: BoolProperty(  # type: ignore[valid-type]
         name="Arc Drift",
         description="Detect points that deviate from a locally-fit arc.",
         default=True,
-    )
+     translation_context='AnimAssist')
     enable_flat_detect: BoolProperty(  # type: ignore[valid-type]
         name="Flat Arc",
         description="Detect stretches where the path has near-zero curvature.",
         default=True,
-    )
+     translation_context='AnimAssist')
     enable_zigzag_detect: BoolProperty(  # type: ignore[valid-type]
         name="Zig-Zag",
         description="Detect rapid direction reversals in a short window.",
         default=True,
-    )
+     translation_context='AnimAssist')
     enable_pop_detect: BoolProperty(  # type: ignore[valid-type]
         name="Pop",
         description="Detect sudden speed jumps between consecutive samples.",
         default=True,
-    )
+     translation_context='AnimAssist')
     enable_spacing_detect: BoolProperty(  # type: ignore[valid-type]
         name="Spacing",
         description="Detect over-spaced and under-spaced segments.",
         default=True,
-    )
+     translation_context='AnimAssist')
     enable_reversal_detect: BoolProperty(  # type: ignore[valid-type]
         name="Reversal",
         description="Detect velocity direction reversals.",
         default=False,
-    )
+     translation_context='AnimAssist')
     enable_stop_detect: BoolProperty(  # type: ignore[valid-type]
         name="Stops",
         description="Detect near-zero-speed holds.",
         default=False,
-    )
+     translation_context='AnimAssist')
     enable_apex_contact_detect: BoolProperty(  # type: ignore[valid-type]
         name="Apex/Contact",
         description="Detect local maxima (apex) and minima (contact) on the gravity axis.",
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # Thresholds
     drift_tolerance: FloatProperty(  # type: ignore[valid-type]
         name="Drift Tolerance",
         description="Normalised arc deviation above which a point is flagged as drift.",
         default=0.05, min=0.001, soft_max=0.5,
-    )
+     translation_context='AnimAssist')
     pop_ratio: FloatProperty(  # type: ignore[valid-type]
         name="Pop Ratio",
         description="Speed must exceed this multiple of median speed to be flagged as a pop.",
         default=4.0, min=1.5, soft_max=10.0,
-    )
+     translation_context='AnimAssist')
     spacing_hi: FloatProperty(  # type: ignore[valid-type]
         name="Overspaced Ratio",
         description="Segments longer than this multiple of median spacing are flagged.",
         default=1.8, min=1.1, soft_max=5.0,
-    )
+     translation_context='AnimAssist')
     spacing_lo: FloatProperty(  # type: ignore[valid-type]
         name="Underspaced Ratio",
         description="Segments shorter than this multiple of median spacing are flagged.",
         default=0.4, min=0.01, soft_max=0.9,
-    )
+     translation_context='AnimAssist')
 
     # --- Comparison mode ---
     comparison_enabled: BoolProperty(  # type: ignore[valid-type]
         name="Comparison Mode",
         description="Show trajectories for two targets side-by-side with delta overlay.",
         default=False,
-    )
+     translation_context='AnimAssist')
     comparison_target: bpy.props.StringProperty(  # type: ignore[valid-type]
         name="Compare Target",
         description="Name of the second bone or object to compare against the active target.",
         default="",
-    )
+     translation_context='AnimAssist')
 
     # --- Isolate ---
     isolate_target: bpy.props.StringProperty(  # type: ignore[valid-type]
@@ -308,7 +308,7 @@ class AA_P5_Properties(bpy.types.PropertyGroup):
             "shown in Isolate mode."
         ),
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 CLASSES: tuple[type, ...] = (
@@ -322,7 +322,7 @@ def register_properties() -> None:
         type=AA_P5_Properties,
         name="Anim Assist trajectory",
         description="Scene-scoped defaults for trajectory trajectory overlays.",
-    )
+     translation_context='AnimAssist')
 
 
 def unregister_properties() -> None:

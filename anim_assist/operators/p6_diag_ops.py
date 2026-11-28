@@ -11,6 +11,8 @@ diagnostics run.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.logging import get_logger
@@ -90,12 +92,12 @@ class AA_OT_p6_run_diagnostics(bpy.types.Operator):
 
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         result = diag.run_diagnostics(
@@ -115,13 +117,13 @@ class AA_OT_p6_run_diagnostics(bpy.types.Operator):
 
         parts = []
         if result.gaps:
-            parts.append(f"{len(result.gaps)} gap(s)")
+            parts.append(F('{p0} gap(s)', p0=f'{len(result.gaps)}'))
         if result.clusters:
-            parts.append(f"{len(result.clusters)} cluster(s)")
-        summary = ", ".join(parts) if parts else "clean"
+            parts.append(F('{p0} cluster(s)', p0=f'{len(result.clusters)}'))
+        summary = ", ".join(parts) if parts else T('clean')
         self.report(
             {"INFO"},
-            f"Diagnostics: {summary}  |  Score {result.score:.0f}/100",
+            F('Diagnostics: {p0}  |  Score {p1}/100', p0=f'{summary}', p1=f'{result.score:.0f}'),
         )
 
         _tag_redraw(context)
@@ -149,7 +151,7 @@ class AA_OT_p6_jump_next_gap(bpy.types.Operator):
     def execute(self, context):
         gaps = get_cached_gaps()
         if not gaps:
-            self.report({"INFO"}, "No gaps cached — run Detect Gaps first")
+            self.report({"INFO"}, T('No gaps cached — run Detect Gaps first'))
             return {"CANCELLED"}
 
         current = float(context.scene.frame_current)
@@ -163,7 +165,7 @@ class AA_OT_p6_jump_next_gap(bpy.types.Operator):
         context.scene.frame_set(int(round(target.start_frame)))
         self.report(
             {"INFO"},
-            f"Gap {target.start_frame:.0f}→{target.end_frame:.0f} ({target.size:.0f}f)",
+            F('Gap {p0}→{p1} ({p2}f)', p0=f'{target.start_frame:.0f}', p1=f'{target.end_frame:.0f}', p2=f'{target.size:.0f}'),
         )
         _tag_redraw(context)
         return {"FINISHED"}
@@ -190,7 +192,7 @@ class AA_OT_p6_jump_prev_gap(bpy.types.Operator):
     def execute(self, context):
         gaps = get_cached_gaps()
         if not gaps:
-            self.report({"INFO"}, "No gaps cached — run Detect Gaps first")
+            self.report({"INFO"}, T('No gaps cached — run Detect Gaps first'))
             return {"CANCELLED"}
 
         current = float(context.scene.frame_current)
@@ -204,7 +206,7 @@ class AA_OT_p6_jump_prev_gap(bpy.types.Operator):
         context.scene.frame_set(int(round(target.start_frame)))
         self.report(
             {"INFO"},
-            f"Gap {target.start_frame:.0f}→{target.end_frame:.0f} ({target.size:.0f}f)",
+            F('Gap {p0}→{p1} ({p2}f)', p0=f'{target.start_frame:.0f}', p1=f'{target.end_frame:.0f}', p2=f'{target.size:.0f}'),
         )
         _tag_redraw(context)
         return {"FINISHED"}
@@ -232,7 +234,7 @@ class AA_OT_p6_jump_next_cluster(bpy.types.Operator):
     def execute(self, context):
         d = get_cached_diag()
         if d is None or not d.clusters:
-            self.report({"INFO"}, "No clusters — run Diagnostics first")
+            self.report({"INFO"}, T('No clusters — run Diagnostics first'))
             return {"CANCELLED"}
 
         current = float(context.scene.frame_current)
@@ -245,8 +247,7 @@ class AA_OT_p6_jump_next_cluster(bpy.types.Operator):
         context.scene.frame_set(int(round(target.center)))
         self.report(
             {"INFO"},
-            f"Cluster at ~{target.center:.0f} ({len(target.frames)} keys, "
-            f"spread {target.spread:.1f}f)",
+            F('Cluster at ~{p0} ({p1} keys, spread {p2}f)', p0=f'{target.center:.0f}', p1=f'{len(target.frames)}', p2=f'{target.spread:.1f}'),
         )
         _tag_redraw(context)
         return {"FINISHED"}
@@ -271,12 +272,12 @@ class AA_OT_p6_copy_diag_report(bpy.types.Operator):
     def execute(self, context):
         d = get_cached_diag()
         if d is None:
-            self.report({"WARNING"}, "No diagnostics to copy — run first")
+            self.report({"WARNING"}, T('No diagnostics to copy — run first'))
             return {"CANCELLED"}
 
-        report = diag.format_diagnostics_report(d, label=_cached_diag_obj)
+        report = diag.format_diagnostics_report(d, label=_cached_diag_obj, format_text=F)
         context.window_manager.clipboard = report
-        self.report({"INFO"}, "Diagnostics report copied to clipboard")
+        self.report({"INFO"}, T('Diagnostics report copied to clipboard'))
         return {"FINISHED"}
 
 
@@ -310,7 +311,7 @@ class AA_OT_p6_clear_diagnostics(bpy.types.Operator):
             p6.last_diag_score         = -1.0
 
         _tag_redraw(context)
-        self.report({"INFO"}, "Diagnostic results cleared")
+        self.report({"INFO"}, T('Diagnostic results cleared'))
         return {"FINISHED"}
 
 

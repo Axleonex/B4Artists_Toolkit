@@ -163,7 +163,7 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
         size=3,
         default=(0.0, 0.0, 0.0),
         subtype="TRANSLATION",
-    )
+     translation_context='AnimAssist')
     rotate_amount: FloatVectorProperty(  # type: ignore[valid-type]
         name="Rotate Δ",
         description=(
@@ -173,25 +173,25 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
         size=3,
         default=(0.0, 0.0, 0.0),
         subtype="EULER",
-    )
+     translation_context='AnimAssist')
     scale_amount: FloatVectorProperty(  # type: ignore[valid-type]
         name="Scale Δ",
         description="Scale delta applied additively on top of the current scale channels.",
         size=3,
         default=(0.0, 0.0, 0.0),
-    )
+     translation_context='AnimAssist')
     push_amount: FloatProperty(  # type: ignore[valid-type]
         name="Push/Pull Amount",
         description="Magnitude used by the Push X/Y/Z and Pull X/Y/Z one-click buttons.",
         default=0.1, min=0.0, soft_max=10.0,
-    )
+     translation_context='AnimAssist')
 
     # --- Channel & scope filters -----------------------------------------
     channel_mask: EnumProperty(  # type: ignore[valid-type]
         name="Channels",
         description="Which transform channels receive the offset.",
         items=_channel_mask_items,
-    )
+     translation_context='AnimAssist')
     scope: EnumProperty(  # type: ignore[valid-type]
         name="Scope",
         description=(
@@ -199,7 +199,7 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
             "selected keys, or over an explicit frame range."
         ),
         items=_scope_items,
-    )
+     translation_context='AnimAssist')
     selected_channels_only: BoolProperty(  # type: ignore[valid-type]
         name="Selected Channels Only",
         description=(
@@ -207,7 +207,7 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
             "in the Dope Sheet or Graph Editor."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
     keyed_channels_only: BoolProperty(  # type: ignore[valid-type]
         name="Keyed Channels Only",
         description=(
@@ -215,7 +215,7 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
             "Prevents creating keys on untouched channels."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     skip_locked: BoolProperty(  # type: ignore[valid-type]
         name="Skip Locked",
         description=(
@@ -223,12 +223,12 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
             "Graph Editor."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     skip_muted: BoolProperty(  # type: ignore[valid-type]
         name="Skip Muted",
         description="Do not modify fcurves marked as muted.",
         default=True,
-    )
+     translation_context='AnimAssist')
     auto_key_missing: BoolProperty(  # type: ignore[valid-type]
         name="Auto-Key Missing",
         description=(
@@ -237,19 +237,19 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
             "existing pose."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
 
     # --- Range & falloff --------------------------------------------------
     range_start: FloatProperty(  # type: ignore[valid-type]
         name="Range Start",
         description="First frame of the explicit frame-range scope.",
         default=1.0,
-    )
+     translation_context='AnimAssist')
     range_end: FloatProperty(  # type: ignore[valid-type]
         name="Range End",
         description="Last frame of the explicit frame-range scope.",
         default=24.0,
-    )
+     translation_context='AnimAssist')
     falloff_shape: EnumProperty(  # type: ignore[valid-type]
         name="Falloff",
         description=(
@@ -257,7 +257,7 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
             "window. Does not modify fcurve tangents."
         ),
         items=_falloff_items,
-    )
+     translation_context='AnimAssist')
 
     # --- Space & pivot ----------------------------------------------------
     space: EnumProperty(  # type: ignore[valid-type]
@@ -267,19 +267,19 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
             "before being converted to the target's basis."
         ),
         items=space_enum_items,
-    )
+     translation_context='AnimAssist')
     pivot_mode: EnumProperty(  # type: ignore[valid-type]
         name="Pivot",
         description="Pivot point used for rotation and scale offsets.",
         items=_pivot_items,
-    )
+     translation_context='AnimAssist')
     custom_pivot: FloatVectorProperty(  # type: ignore[valid-type]
         name="Custom Pivot",
         description="World-space custom pivot point. Only used when pivot mode is Custom Point.",
         size=3,
         default=(0.0, 0.0, 0.0),
         subtype="TRANSLATION",
-    )
+     translation_context='AnimAssist')
 
     # --- Contact / mirror -------------------------------------------------
     preserve_contact_axis: EnumProperty(  # type: ignore[valid-type]
@@ -289,7 +289,7 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
             "Keeps foot contacts planted when nudging elsewhere."
         ),
         items=_preserve_contact_items,
-    )
+     translation_context='AnimAssist')
     mirror_sign_enabled: BoolProperty(  # type: ignore[valid-type]
         name="Mirror Sign",
         description=(
@@ -297,12 +297,12 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
             "indicates the mirrored side (.L / .R / Left / Right)."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
     mirror_axis: EnumProperty(  # type: ignore[valid-type]
         name="Mirror Axis",
         description="Which axis of the delta is negated on mirrored targets.",
         items=_mirror_axis_items,
-    )
+     translation_context='AnimAssist')
 
     # --- Stepping & presets -----------------------------------------------
     fine_step: BoolProperty(  # type: ignore[valid-type]
@@ -312,19 +312,19 @@ class AA_P4_Properties(bpy.types.PropertyGroup):
             "Modal drag also uses this when Shift is held."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
     active_preset: EnumProperty(  # type: ignore[valid-type]
         name="Preset",
         description="Transform multiplier preset applied on top of the entered offset amounts.",
         items=preset_enum_items_callback,
-    )
+     translation_context='AnimAssist')
 
     # --- Modal preview state ----------------------------------------------
     modal_preview_active: BoolProperty(  # type: ignore[valid-type]
         name="Modal Preview Active",
         description="Internal: true while a modal offset drag is in progress.",
         default=False,
-    )
+     translation_context='AnimAssist')
 
 
 CLASSES: tuple[type, ...] = (
@@ -338,7 +338,7 @@ def register_properties() -> None:
         type=AA_P4_Properties,
         name="Anim Assist Offset Tools",
         description="Scene-scoped defaults for the Anim Assist offset toolkit.",
-    )
+     translation_context='AnimAssist')
 
 
 def unregister_properties() -> None:

@@ -7,6 +7,8 @@ inspection, batch operations, and proxy helper utilities.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.logging import get_logger
@@ -99,7 +101,7 @@ class AA_OT_p7_toggle_display(bpy.types.Operator):
                 if obj.type == "EMPTY":
                     obj.empty_display_size = p7.proxy_size
 
-        self.report({"INFO"}, f"Proxy display: {new_mode}")
+        self.report({"INFO"}, F('Proxy display: {p0}', p0=f'{new_mode}'))
         return {"FINISHED"}
 
 
@@ -125,7 +127,7 @@ class AA_OT_p7_set_proxy_color(bpy.types.Operator):
         obj = context.active_object
         if p7 is not None:
             obj.color = (*p7.proxy_color, 1.0)
-        self.report({"INFO"}, f"Color applied to '{obj.name}'")
+        self.report({"INFO"}, F("Color applied to '{p0}'", p0=f'{obj.name}'))
         return {"FINISHED"}
 
 
@@ -151,18 +153,18 @@ class AA_OT_p7_rename_proxy(bpy.types.Operator):
         p7 = get_p7(context)
 
         if p7 is None:
-            self.report({"ERROR"}, "Proxy settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({"ERROR"}, T('Proxy settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {"CANCELLED"}
 
         # Get the session ID from the object tag
         session_id = obj.get(p7s.TAG_SESSION_ID)
         if not session_id:
-            self.report({"ERROR"}, "This object is not part of a proxy session. Select a proxy created by Anim Assist")
+            self.report({"ERROR"}, T('This object is not part of a proxy session. Select a proxy created by Anim Assist'))
             return {"CANCELLED"}
 
         session = p7s.get_session(session_id)
         if session is None:
-            self.report({"ERROR"}, "Proxy session not found. Run Recover Proxy Session, or create a new proxy")
+            self.report({"ERROR"}, T('Proxy session not found. Run Recover Proxy Session, or create a new proxy'))
             return {"CANCELLED"}
 
         # Get the owner object name
@@ -183,7 +185,7 @@ class AA_OT_p7_rename_proxy(bpy.types.Operator):
             session.created_objects[idx] = actual_name
 
         p7s.save_session_to_scene(session.session_id)
-        self.report({"INFO"}, f"Renamed '{old_name}' → '{actual_name}'")
+        self.report({"INFO"}, F("Renamed '{p0}' → '{p1}'", p0=f'{old_name}', p1=f'{actual_name}'))
         return {"FINISHED"}
 
 
@@ -217,8 +219,8 @@ class AA_OT_p7_toggle_collection(bpy.types.Operator):
         # Toggle visibility in the viewport
         coll.hide_viewport = not coll.hide_viewport
 
-        state = "hidden" if coll.hide_viewport else "visible"
-        self.report({"INFO"}, f"Collection '{coll.name}' is now {state}")
+        state = T('hidden') if coll.hide_viewport else T('visible')
+        self.report({"INFO"}, F("Collection '{p0}' is now {p1}", p0=f'{coll.name}', p1=f'{state}'))
         return {"FINISHED"}
 
 
@@ -252,7 +254,7 @@ class AA_OT_p7_reconnect_session(bpy.types.Operator):
                     tagged_objects[session_id].append(obj.name)
 
         if not tagged_objects:
-            self.report({"WARNING"}, "No P7-tagged objects found in scene")
+            self.report({"WARNING"}, T('No P7-tagged objects found in scene'))
             return {"CANCELLED"}
 
         # Use the first (or most recent) session found
@@ -284,7 +286,7 @@ class AA_OT_p7_reconnect_session(bpy.types.Operator):
         # Set as active session
         p7.active_session_id = session_id
         obj_count = len(tagged_objects[session_id])
-        self.report({"INFO"}, f"Reconnected session {existing_session.short_id} with {obj_count} object(s)")
+        self.report({"INFO"}, F('Reconnected session {p0} with {p1} object(s)', p0=f'{existing_session.short_id}', p1=f'{obj_count}'))
         return {"FINISHED"}
 
 
@@ -303,16 +305,13 @@ class AA_OT_p7_list_sessions(bpy.types.Operator):
     def execute(self, context):
         sessions = p7s.get_all_sessions()
         if not sessions:
-            self.report({"INFO"}, "No active P7 sessions")
+            self.report({"INFO"}, T('No active P7 sessions'))
             return {"FINISHED"}
 
         for sid, s in sessions.items():
             self.report(
                 {"INFO"},
-                f"Session {s.short_id}: stage={s.stage}, "
-                f"objects={len(s.created_objects)}, "
-                f"constraints={len(s.created_constraints)}, "
-                f"scene='{s.scene_name}'",
+                F("Session {p0}: stage={p1}, objects={p2}, constraints={p3}, scene='{p4}'", p0=f'{s.short_id}', p1=f'{s.stage}', p2=f'{len(s.created_objects)}', p3=f'{len(s.created_constraints)}', p4=f'{s.scene_name}'),
             )
         return {"FINISHED"}
 
@@ -340,7 +339,7 @@ class AA_OT_p7_show_session_info(bpy.types.Operator):
         p7 = get_p7(context)
         session = p7s.get_session(p7.active_session_id)
         if session is None:
-            self.report({"WARNING"}, "No active session")
+            self.report({"WARNING"}, T('No active session'))
             return {"CANCELLED"}
 
         scene = bpy.data.scenes.get(session.scene_name)
@@ -349,12 +348,7 @@ class AA_OT_p7_show_session_info(bpy.types.Operator):
         )
 
         self.report({"INFO"},
-                    f"Session: {session.short_id} | Stage: {session.stage} | "
-                    f"Scene: {session.scene_name} | "
-                    f"Objects: {len(session.created_objects)} | "
-                    f"Constraints: {len(session.created_constraints)} | "
-                    f"Collections: {len(session.created_collections)} | "
-                    f"Scene record: {'yes' if has_scene_record else 'no'}")
+                    F('Session: {p0} | Stage: {p1} | Scene: {p2} | Objects: {p3} | Constraints: {p4} | Collections: {p5} | Scene record: {p6}', p0=f'{session.short_id}', p1=f'{session.stage}', p2=f'{session.scene_name}', p3=f'{len(session.created_objects)}', p4=f'{len(session.created_constraints)}', p5=f'{len(session.created_collections)}', p6=f"{(T('yes') if has_scene_record else T('no'))}"))
         return {"FINISHED"}
 
 
@@ -416,7 +410,7 @@ class AA_OT_p7_mute_constraints(bpy.types.Operator):
                     unmuted_count += 1
 
         total = muted_count + unmuted_count
-        self.report({"INFO"}, f"Toggled {total} constraint(s): {muted_count} muted, {unmuted_count} unmuted")
+        self.report({"INFO"}, F('Toggled {p0} constraint(s): {p1} muted, {p2} unmuted', p0=f'{total}', p1=f'{muted_count}', p2=f'{unmuted_count}'))
         return {"FINISHED"}
 
 
@@ -443,12 +437,12 @@ class AA_OT_p7_lock_target(bpy.types.Operator):
         # Get the owner object (the target being proxied)
         owner_name = obj.get(p7s.TAG_OWNER_OBJ)
         if not owner_name:
-            self.report({"ERROR"}, "This proxy is not linked to an object. Recreate it from its target")
+            self.report({"ERROR"}, T('This proxy is not linked to an object. Recreate it from its target'))
             return {"CANCELLED"}
 
         target = bpy.data.objects.get(owner_name)
         if target is None:
-            self.report({"ERROR"}, f"Target object '{owner_name}' was renamed or deleted. Recreate the proxy from its target")
+            self.report({"ERROR"}, F("Target object '{p0}' was renamed or deleted. Recreate the proxy from its target", p0=f'{owner_name}'))
             return {"CANCELLED"}
 
         # Lock all transform channels on the target
@@ -456,7 +450,7 @@ class AA_OT_p7_lock_target(bpy.types.Operator):
         target.lock_rotation = (True, True, True)
         target.lock_scale = (True, True, True)
 
-        self.report({"INFO"}, f"Locked target '{target.name}'")
+        self.report({"INFO"}, F("Locked target '{p0}'", p0=f'{target.name}'))
         return {"FINISHED"}
 
 
@@ -486,7 +480,7 @@ class AA_OT_p7_switch_proxy_mode(bpy.types.Operator):
         new_mode = "OFFSET" if current == "CONSTRAIN" else "CONSTRAIN"
 
         p7.proxy_mode = new_mode
-        self.report({"INFO"}, f"Proxy mode switched to: {new_mode}")
+        self.report({"INFO"}, F('Proxy mode switched to: {p0}', p0=f'{new_mode}'))
         return {"FINISHED"}
 
 
@@ -513,12 +507,12 @@ class AA_OT_p7_apply_offset(bpy.types.Operator):
         # Get the target object
         owner_name = proxy.get(p7s.TAG_OWNER_OBJ)
         if not owner_name:
-            self.report({"ERROR"}, "This proxy is not linked to an object. Recreate it from its target")
+            self.report({"ERROR"}, T('This proxy is not linked to an object. Recreate it from its target'))
             return {"CANCELLED"}
 
         target = bpy.data.objects.get(owner_name)
         if target is None:
-            self.report({"ERROR"}, f"Target object '{owner_name}' was renamed or deleted. Recreate the proxy from its target")
+            self.report({"ERROR"}, F("Target object '{p0}' was renamed or deleted. Recreate the proxy from its target", p0=f'{owner_name}'))
             return {"CANCELLED"}
 
         # Compute additive delta between proxy and target world transforms,
@@ -555,7 +549,7 @@ class AA_OT_p7_apply_offset(bpy.types.Operator):
         target.keyframe_insert(data_path="location", frame=frame)
         target.keyframe_insert(data_path="rotation_euler", frame=frame)
 
-        self.report({"INFO"}, f"Applied offset delta to '{target.name}' at frame {frame}")
+        self.report({"INFO"}, F("Applied offset delta to '{p0}' at frame {p1}", p0=f'{target.name}', p1=f'{frame}'))
         return {"FINISHED"}
 
 
@@ -584,7 +578,7 @@ class AA_OT_p7_zero_proxy(bpy.types.Operator):
         proxy.rotation_euler = (0, 0, 0)
         proxy.scale = (1, 1, 1)
 
-        self.report({"INFO"}, f"Reset '{proxy.name}' to identity")
+        self.report({"INFO"}, F("Reset '{p0}' to identity", p0=f'{proxy.name}'))
         return {"FINISHED"}
 
 
@@ -611,19 +605,19 @@ class AA_OT_p7_recenter_proxy(bpy.types.Operator):
         # Get the target object
         owner_name = proxy.get(p7s.TAG_OWNER_OBJ)
         if not owner_name:
-            self.report({"ERROR"}, "This proxy is not linked to an object. Recreate it from its target")
+            self.report({"ERROR"}, T('This proxy is not linked to an object. Recreate it from its target'))
             return {"CANCELLED"}
 
         target = bpy.data.objects.get(owner_name)
         if target is None:
-            self.report({"ERROR"}, f"Target object '{owner_name}' was renamed or deleted. Recreate the proxy from its target")
+            self.report({"ERROR"}, F("Target object '{p0}' was renamed or deleted. Recreate the proxy from its target", p0=f'{owner_name}'))
             return {"CANCELLED"}
 
         # Snap proxy to target's world position
         proxy.location = target.matrix_world.translation.copy()
         proxy.rotation_euler = target.rotation_euler.copy()
 
-        self.report({"INFO"}, f"Recentered '{proxy.name}' to '{target.name}'")
+        self.report({"INFO"}, F("Recentered '{p0}' to '{p1}'", p0=f'{proxy.name}', p1=f'{target.name}'))
         return {"FINISHED"}
 
 
@@ -647,13 +641,13 @@ class AA_OT_p7_temp_pivot(bpy.types.Operator):
         p7 = get_p7(context)
         session = _ensure_session(context)
         if session is None:
-            self.report({"ERROR"}, "Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again")
+            self.report({"ERROR"}, T('Cannot start a proxy session. Make sure the scene is editable (not a linked library) and try again'))
             return {"CANCELLED"}
 
         # Create a POLE proxy at the 3D cursor position
         cfg = PROXY_CONFIGS.get("POLE")
         if cfg is None:
-            self.report({"ERROR"}, "No pole setup found. Create a pole proxy first")
+            self.report({"ERROR"}, T('No pole setup found. Create a pole proxy first'))
             return {"CANCELLED"}
 
         # Use cursor location
@@ -676,7 +670,7 @@ class AA_OT_p7_temp_pivot(bpy.types.Operator):
         session.register_object(name, "pivot_proxy")
         p7s.save_session_to_scene(session.session_id)
 
-        self.report({"INFO"}, f"Created pivot proxy '{name}' at cursor")
+        self.report({"INFO"}, F("Created pivot proxy '{p0}' at cursor", p0=f'{name}'))
         return {"FINISHED"}
 
 

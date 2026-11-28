@@ -11,6 +11,7 @@ from __future__ import annotations
 import bpy
 
 from .. import constants
+from ..i18n import T
 from ..core import help_registry
 from ..core.logging import get_logger
 
@@ -41,28 +42,28 @@ def draw_help_browser(
     """
     box = layout.box()
     title = box.row()
-    title.label(text="Help Browser", icon=constants.HELP_ICON)
+    title.label(text="Help Browser", icon=constants.HELP_ICON, text_ctxt='AnimAssist')
 
     prefs = _get_prefs(context)
     if prefs is None:
-        box.label(text="Preferences unavailable", icon="ERROR")
+        box.label(text="Preferences unavailable", icon="ERROR", text_ctxt='AnimAssist')
         return
 
-    title.prop(prefs, "show_explainer_help", text="Extended Help")
-    title.prop(prefs, "compact_ui_mode", text="Compact")
+    title.prop(prefs, "show_explainer_help", text="Extended Help", text_ctxt='AnimAssist')
+    title.prop(prefs, "compact_ui_mode", text="Compact", text_ctxt='AnimAssist')
 
     groups = help_registry.get_help_by_category()
     if not groups:
-        box.label(text="No help entries registered yet", icon="INFO")
+        box.label(text="No help entries registered yet", icon="INFO", text_ctxt='AnimAssist')
         return
 
     for category, entries in groups.items():
         cat_box = box.box()
-        cat_box.label(text=category, icon="DOT")
+        cat_box.label(text=T(category), icon="DOT", translate=False)
         col = cat_box.column(align=True)
         for entry in entries:
             row = col.row(align=True)
-            row.label(text=entry.label)
+            row.label(text=entry.label, translate=False)
             op = row.operator(
                 "anim_assist.show_help_popup",
                 text="",

@@ -19,6 +19,8 @@ Operators:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.logging import get_logger
@@ -63,9 +65,9 @@ class AA_OT_p7_purge_artifacts(bpy.types.Operator):
         p7s.clear_all_sessions()
 
         if removed:
-            self.report({"INFO"}, f"Purged {removed} P7 artifact(s)")
+            self.report({"INFO"}, F('Purged {p0} P7 artifact(s)', p0=f'{removed}'))
         else:
-            self.report({"INFO"}, "No P7 artifacts found to purge")
+            self.report({"INFO"}, T('No P7 artifacts found to purge'))
         return {"FINISHED"}
 
 
@@ -94,7 +96,7 @@ class AA_OT_p7_recover_session(bpy.types.Operator):
         scene = context.scene
         session = p7s.load_session_from_scene(scene)
         if session is None:
-            self.report({"WARNING"}, "No recoverable session data on this scene")
+            self.report({"WARNING"}, T('No recoverable session data on this scene'))
             # Clear the stale key anyway.
             p7s.clear_scene_session(scene)
             return {"CANCELLED"}
@@ -102,7 +104,7 @@ class AA_OT_p7_recover_session(bpy.types.Operator):
         if session.stage == "COMMITTED":
             # Session was already committed; just remove the stale record.
             p7s.clear_scene_session(scene)
-            self.report({"INFO"}, "Stale committed-session record cleaned up")
+            self.report({"INFO"}, T('Stale committed-session record cleaned up'))
             return {"FINISHED"}
 
         # Reconstruct the session into the Python registry so rollback
@@ -116,15 +118,12 @@ class AA_OT_p7_recover_session(bpy.types.Operator):
         if ok:
             self.report(
                 {"INFO"},
-                f"Session {session.short_id} recovered — "
-                f"{len(session.created_objects)} object(s), "
-                f"{len(session.created_constraints)} constraint(s) removed",
+                F('Session {p0} recovered — {p1} object(s), {p2} constraint(s) removed', p0=f'{session.short_id}', p1=f'{len(session.created_objects)}', p2=f'{len(session.created_constraints)}'),
             )
         else:
             self.report(
                 {"WARNING"},
-                f"Session {session.short_id} recovery completed with errors — "
-                "some artifacts may remain",
+                F('Session {p0} recovery completed with errors — some artifacts may remain', p0=f'{session.short_id}'),
             )
         return {"FINISHED"}
 

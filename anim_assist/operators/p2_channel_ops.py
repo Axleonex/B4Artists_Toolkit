@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from bpy.props import EnumProperty, StringProperty
 from bpy.types import Operator
 
@@ -28,7 +30,7 @@ class ANIMASSIST_OT_isolate_selected_channels(_AnimEditorOp):
 
     def execute(self, context):
         shown = ch.isolate_where(context, lambda _o, _a, fc: fc.select)
-        self.report({"INFO"}, f"Isolated {shown} channels")
+        self.report({"INFO"}, F('Isolated {p0} channels', p0=f'{shown}'))
         return {"FINISHED"}
 
 
@@ -49,12 +51,12 @@ class ANIMASSIST_OT_isolate_transform(_AnimEditorOp):
             ("all_transform", "All Transforms", "Isolate every transform FCurve"),
         ],
         default="loc",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         pred = ch.match_transform_channel(self.channel)
         shown = ch.isolate_where(context, pred)
-        self.report({"INFO"}, f"Isolated {shown} {self.channel} channels")
+        self.report({"INFO"}, F('Isolated {p0} {p1} channels', p0=f'{shown}', p1=f'{self.channel}'))
         return {"FINISHED"}
 
 
@@ -72,7 +74,7 @@ class ANIMASSIST_OT_isolate_selected_bones(_AnimEditorOp):
     def execute(self, context):
         pred = ch.match_selected_bones(context)
         shown = ch.isolate_where(context, pred)
-        self.report({"INFO"}, f"Isolated {shown} bone channels")
+        self.report({"INFO"}, F('Isolated {p0} bone channels', p0=f'{shown}'))
         return {"FINISHED"}
 
 
@@ -85,7 +87,7 @@ class ANIMASSIST_OT_isolate_custom_props(_AnimEditorOp):
 
     def execute(self, context):
         shown = ch.isolate_where(context, ch.match_custom_property())
-        self.report({"INFO"}, f"Isolated {shown} custom props")
+        self.report({"INFO"}, F('Isolated {p0} custom props', p0=f'{shown}'))
         return {"FINISHED"}
 
 
@@ -100,11 +102,11 @@ class ANIMASSIST_OT_isolate_by_regex(_AnimEditorOp):
         name="Regex",
         description="Python regular expression matched against fc.data_path",
         default="",
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         if not self.pattern:
-            self.report({"WARNING"}, "Empty regex")
+            self.report({"WARNING"}, T('Empty regex'))
             return {"CANCELLED"}
         try:
             pred = ch.match_data_path_regex(self.pattern)
@@ -112,7 +114,7 @@ class ANIMASSIST_OT_isolate_by_regex(_AnimEditorOp):
             report_failure(self, "The pattern is not a valid regular expression", "Fix the pattern and try again", exc, detail=str(exc))
             return {"CANCELLED"}
         shown = ch.isolate_where(context, pred)
-        self.report({"INFO"}, f"Isolated {shown} channels")
+        self.report({"INFO"}, F('Isolated {p0} channels', p0=f'{shown}'))
         return {"FINISHED"}
 
 
@@ -128,7 +130,7 @@ class ANIMASSIST_OT_show_all_channels(_AnimEditorOp):
         for _o, _a, fc in ch.iter_action_fcurves(context):
             fc.hide = False
             n += 1
-        self.report({"INFO"}, f"Showed {n} channels")
+        self.report({"INFO"}, F('Showed {p0} channels', p0=f'{n}'))
         return {"FINISHED"}
 
 
@@ -154,7 +156,7 @@ class ANIMASSIST_OT_push_isolation(_AnimEditorOp):
 
     def execute(self, context):
         ch.push_isolation(context)
-        self.report({"INFO"}, "Isolation state saved")
+        self.report({"INFO"}, T('Isolation state saved'))
         return {"FINISHED"}
 
 
@@ -167,7 +169,7 @@ class ANIMASSIST_OT_pop_isolation(_AnimEditorOp):
 
     def execute(self, context):
         if not ch.pop_isolation(context):
-            self.report({"WARNING"}, "No saved isolation state")
+            self.report({"WARNING"}, T('No saved isolation state'))
             return {"CANCELLED"}
         return {"FINISHED"}
 
@@ -185,7 +187,7 @@ class ANIMASSIST_OT_mute_unselected_channels(_AnimEditorOp):
             fc.mute = not fc.select
             if fc.mute:
                 n += 1
-        self.report({"INFO"}, f"Muted {n} channels")
+        self.report({"INFO"}, F('Muted {p0} channels', p0=f'{n}'))
         return {"FINISHED"}
 
 

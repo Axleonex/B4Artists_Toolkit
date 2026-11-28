@@ -5,6 +5,8 @@ Provides batch mirroring capabilities, pair detection warnings, and
 reporting utilities.
 """
 
+from ..i18n import T, F
+
 import bpy
 from ..core.p9_properties import get_p9
 from ..core import p9_pair_detect as det
@@ -94,7 +96,7 @@ class AA_OT_p9_batch_mirror(bpy.types.Operator):
         obj = context.active_object
         p9 = get_p9(context)
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({'ERROR'}, T('Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -102,7 +104,7 @@ class AA_OT_p9_batch_mirror(bpy.types.Operator):
 
         selected_bones = [b for b in obj.pose.bones if pose_bone_selected(b)]
         if not selected_bones:
-            self.report({'WARNING'}, "No bones selected")
+            self.report({'WARNING'}, T('No bones selected'))
             return {'CANCELLED'}
 
         results = []
@@ -168,7 +170,7 @@ class AA_OT_p9_batch_mirror(bpy.types.Operator):
         _last_mirror_op = "batch_mirror"
         _last_results = results
 
-        self.report({'INFO'}, f"Mirrored {mirrored_count} bones, {skipped_count} skipped (no pair)")
+        self.report({'INFO'}, F('Mirrored {p0} bones, {p1} skipped (no pair)', p0=f'{mirrored_count}', p1=f'{skipped_count}'))
         return {'FINISHED'}
 
 
@@ -193,7 +195,7 @@ class AA_OT_p9_batch_mirror_active_side(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9 or active_bone is None:
-            self.report({'ERROR'}, "No active bone. Select a bone in Pose mode")
+            self.report({'ERROR'}, T('No active bone. Select a bone in Pose mode'))
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -202,7 +204,7 @@ class AA_OT_p9_batch_mirror_active_side(bpy.types.Operator):
         # Detect active bone's side
         active_side = det.detect_side(active_bone.name)
         if active_side not in ('L', 'R'):
-            self.report({'ERROR'}, "Cannot tell which side the active bone is on. Use .L/.R naming or add a naming exception under Mirror & Symmetry")
+            self.report({'ERROR'}, T('Cannot tell which side the active bone is on. Use .L/.R naming or add a naming exception under Mirror & Symmetry'))
             return {'CANCELLED'}
 
         # Collect all bones on that side
@@ -210,7 +212,7 @@ class AA_OT_p9_batch_mirror_active_side(bpy.types.Operator):
                        if det.detect_side(b.name) == active_side]
 
         if not source_bones:
-            self.report({'WARNING'}, "No bones found on active side")
+            self.report({'WARNING'}, T('No bones found on active side'))
             return {'CANCELLED'}
 
         results = []
@@ -277,7 +279,7 @@ class AA_OT_p9_batch_mirror_active_side(bpy.types.Operator):
         _last_mirror_side = active_side
         _last_results = results
 
-        self.report({'INFO'}, f"Mirrored {mirrored_count} bones from side {active_side}")
+        self.report({'INFO'}, F('Mirrored {p0} bones from side {p1}', p0=f'{mirrored_count}', p1=f'{active_side}'))
         return {'FINISHED'}
 
 
@@ -294,7 +296,7 @@ class AA_OT_p9_mirror_report(bpy.types.Operator):
 
     def execute(self, context):
         if not _last_results:
-            self.report({'WARNING'}, "No mirror results to report")
+            self.report({'WARNING'}, T('No mirror results to report'))
             return {'CANCELLED'}
 
         success_count = sum(1 for r in _last_results if r.get('success', False))
@@ -318,7 +320,7 @@ class AA_OT_p9_mirror_report(bpy.types.Operator):
         report_text = "\n".join(report_lines)
         _log.info(report_text)
 
-        self.report({'INFO'}, f"Report: {success_count} mirrored, {failed_count} failed")
+        self.report({'INFO'}, F('Report: {p0} mirrored, {p1} failed', p0=f'{success_count}', p1=f'{failed_count}'))
         return {'FINISHED'}
 
 
@@ -338,7 +340,7 @@ class AA_OT_p9_missing_warning(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({'ERROR'}, T('Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -357,14 +359,14 @@ class AA_OT_p9_missing_warning(bpy.types.Operator):
                 missing_pairs.append(bone.name)
 
         if not missing_pairs:
-            self.report({'INFO'}, "All bones have detected opposite-side pairs")
+            self.report({'INFO'}, T('All bones have detected opposite-side pairs'))
             return {'FINISHED'}
 
         report_text = f"Bones with no detected opposite ({len(missing_pairs)}):\n"
         report_text += "\n".join(f"  - {name}" for name in missing_pairs)
         _log.warning(report_text)
 
-        self.report({'WARNING'}, f"{len(missing_pairs)} bones have no opposite pair")
+        self.report({'WARNING'}, F('{p0} bones have no opposite pair', p0=f'{len(missing_pairs)}'))
         return {'FINISHED'}
 
 
@@ -384,7 +386,7 @@ class AA_OT_p9_ambiguous_warning(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({'ERROR'}, T('Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -401,7 +403,7 @@ class AA_OT_p9_ambiguous_warning(bpy.types.Operator):
             return {'CANCELLED'}
 
         if not ambiguous:
-            self.report({'INFO'}, "No ambiguous bone pairs detected")
+            self.report({'INFO'}, T('No ambiguous bone pairs detected'))
             return {'FINISHED'}
 
         report_text = f"Ambiguous bone pairs ({len(ambiguous)}):\n"
@@ -410,7 +412,7 @@ class AA_OT_p9_ambiguous_warning(bpy.types.Operator):
             report_text += f"  {bone_name}: [{candidates_str}]\n"
 
         _log.warning(report_text)
-        self.report({'WARNING'}, f"{len(ambiguous)} ambiguous pairs found")
+        self.report({'WARNING'}, F('{p0} ambiguous pairs found', p0=f'{len(ambiguous)}'))
         return {'FINISHED'}
 
 
@@ -432,7 +434,7 @@ class AA_OT_p9_channel_resolver(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({'ERROR'}, T('Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -469,7 +471,7 @@ class AA_OT_p9_channel_resolver(bpy.types.Operator):
         report_text = "\n".join(report_lines)
         _log.info(report_text)
 
-        self.report({'INFO'}, f"Mapped {len(selected_bones)} bones")
+        self.report({'INFO'}, F('Mapped {p0} bones', p0=f'{len(selected_bones)}'))
         return {'FINISHED'}
 
 
@@ -491,7 +493,7 @@ class AA_OT_p9_mirror_metadata(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({'ERROR'}, T('Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -527,7 +529,7 @@ class AA_OT_p9_mirror_metadata(bpy.types.Operator):
             except Exception as e:
                 _log.error(f"Failed to mirror metadata for {source_bone.name}: {e}")
 
-        self.report({'INFO'}, f"Mirrored metadata for {mirrored_count} bones")
+        self.report({'INFO'}, F('Mirrored metadata for {p0} bones', p0=f'{mirrored_count}'))
         return {'FINISHED'}
 
 
@@ -547,7 +549,7 @@ class AA_OT_p9_mirror_preset_values(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({'ERROR'}, T('Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {'CANCELLED'}
 
         overrides = _get_overrides(p9)
@@ -565,7 +567,7 @@ class AA_OT_p9_mirror_preset_values(bpy.types.Operator):
                 _log.warning(f"Could not retrieve presets: {e}")
 
         if not presets:
-            self.report({'INFO'}, "No stored presets found to mirror")
+            self.report({'INFO'}, T('No stored presets found to mirror'))
             return {'FINISHED'}
 
         mirrored_count = 0
@@ -600,7 +602,7 @@ class AA_OT_p9_mirror_preset_values(bpy.types.Operator):
                 except Exception as e:
                     _log.error(f"Failed to mirror preset for {bone_name}: {e}")
 
-        self.report({'INFO'}, f"Mirrored {mirrored_count} preset values")
+        self.report({'INFO'}, F('Mirrored {p0} preset values', p0=f'{mirrored_count}'))
         return {'FINISHED'}
 
 
@@ -621,7 +623,7 @@ class AA_OT_p9_repeat_mirror(bpy.types.Operator):
         elif _last_mirror_op == "batch_mirror_active_side":
             return bpy.ops.animassist.p9_batch_mirror_active_side('INVOKE_DEFAULT')
         else:
-            self.report({'WARNING'}, "Cannot repeat unknown mirror operation")
+            self.report({'WARNING'}, T('Cannot repeat unknown mirror operation'))
             return {'CANCELLED'}
 
 
@@ -641,14 +643,14 @@ class AA_OT_p9_custom_pattern(bpy.types.Operator):
         p9 = get_p9(context)
 
         if not p9:
-            self.report({'ERROR'}, "Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({'ERROR'}, T('Mirroring settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {'CANCELLED'}
 
         left_pattern = p9.custom_left_pattern
         right_pattern = p9.custom_right_pattern
 
         if not left_pattern or not right_pattern:
-            self.report({'ERROR'}, "No custom patterns set. Add them in the mirroring settings first")
+            self.report({'ERROR'}, T('No custom patterns set. Add them in the mirroring settings first'))
             return {'CANCELLED'}
 
         try:
@@ -659,7 +661,7 @@ class AA_OT_p9_custom_pattern(bpy.types.Operator):
             cache.build_pair_map(obj.data.name, [b.name for b in obj.data.bones])
             cache.invalidate()
 
-            self.report({'INFO'}, "Custom pattern applied and cache rebuilt")
+            self.report({'INFO'}, T('Custom pattern applied and cache rebuilt'))
             return {'FINISHED'}
         except Exception as e:
             report_failure(self, "The pattern is not a valid regular expression", "Fix the pattern and try again", e, detail=str(e))

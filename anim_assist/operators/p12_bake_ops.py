@@ -12,6 +12,8 @@ v12 changes
 
 from __future__ import annotations
 
+from ..i18n import T, F, error_text
+
 import bpy
 from bpy.props import StringProperty
 from bpy.types import Operator
@@ -110,12 +112,12 @@ class AA_OT_p12_bake_lipsync(Operator):
     bl_label = "Bake Lipsync"
     bl_options = {"REGISTER", "UNDO"}
 
-    layer_name: StringProperty(default="")  # type: ignore[valid-type]
+    layer_name: StringProperty(default="", translation_context='AnimAssist', name="layer_name")  # type: ignore[valid-type]
 
     @classmethod
     def poll(cls, context):
         if p12_props.get_p12(context) is None or get_p11(context) is None:
-            cls.poll_message_set("Enable Anim Assist's lipsync and animation-layer settings for this scene")
+            cls.poll_message_set(T("Enable Anim Assist's lipsync and animation-layer settings for this scene"))
             return False
         return True
 
@@ -124,11 +126,11 @@ class AA_OT_p12_bake_lipsync(Operator):
         p11 = get_p11(context)
         link = _resolve_link(p12, self.layer_name)
         if link is None:
-            self.report({"ERROR"}, "No lipsync layer link to bake. Add one in the Lipsync panel first")
+            self.report({"ERROR"}, T('No lipsync layer link to bake. Add one in the Lipsync panel first'))
             return {"CANCELLED"}
 
         if not au.is_supported_audio(link.audio_path):
-            self.report({"ERROR"}, "The bound audio is not a .wav file. Bind a .wav file in the Lipsync panel")
+            self.report({"ERROR"}, T('The bound audio is not a .wav file. Bind a .wav file in the Lipsync panel'))
             return {"CANCELLED"}
 
         # Refresh hash + run analysis through the cache.
@@ -140,7 +142,7 @@ class AA_OT_p12_bake_lipsync(Operator):
             rhubarb_path=p12.rhubarb_path,
         )
         if analyze_result.fallback_used:
-            self.report({"WARNING"}, "Backend fallback: " + analyze_result.fallback_reason)
+            self.report({"WARNING"}, F('Backend fallback: {p0}', p0=error_text(analyze_result.fallback_reason)))
 
         # ALWAYS write the cue table - both PREVIEW and SHIPPED read from it.
         cues = [ct.Cue(time_seconds=c.time_seconds, viseme_name=c.viseme_name)
@@ -156,15 +158,15 @@ class AA_OT_p12_bake_lipsync(Operator):
         if link.target_kind in ("BONES", "BOTH"):
             layer = _resolve_layer(p11, link.layer_name)
             if layer is None:
-                notes.append("layer not found - bone bake skipped")
+                notes.append(T('layer not found - bone bake skipped'))
             else:
                 action = _resolve_action(context.scene, link.armature_name, layer)
                 arm = bpy.data.objects.get(link.armature_name)
                 rig_wiring = _bone_wiring(p12)
                 if action is None or arm is None:
-                    notes.append("armature/action missing - bone bake skipped")
+                    notes.append(T('armature/action missing - bone bake skipped'))
                 elif not rig_wiring:
-                    notes.append("rig_wiring empty - bone bake skipped")
+                    notes.append(T('rig_wiring empty - bone bake skipped'))
                 else:
                     request = engine.BakeRequest(
                         armature=arm, action=action, cues=analyze_result.cues,
@@ -177,16 +179,16 @@ class AA_OT_p12_bake_lipsync(Operator):
                     report = engine.bake_lipsync(request)
                     total_written += report.keys_written
                     total_skipped += report.keys_skipped_manual
-                    notes.append("bones: " + str(report.keys_written) + "k/" + str(report.bones_touched) + "b")
+                    notes.append(F('bones: {p0}k/{p1}b', p0=str(report.keys_written), p1=str(report.bones_touched)))
 
         # Shape keys path
         if link.target_kind in ("SHAPE_KEYS", "BOTH"):
             sk_wiring = _shape_key_wiring(p12)
             sk_action = _resolve_shape_key_action(link.mesh_name, link)
             if sk_action is None:
-                notes.append("mesh/shape-keys missing - shape key bake skipped")
+                notes.append(T('mesh/shape-keys missing - shape key bake skipped'))
             elif not sk_wiring:
-                notes.append("shape_key_wiring empty - shape key bake skipped")
+                notes.append(T('shape_key_wiring empty - shape key bake skipped'))
             elif link.mode == "SHIPPED":
                 # SHIPPED: write fcurves
                 report = engine.bake_shape_keys(
@@ -200,13 +202,13 @@ class AA_OT_p12_bake_lipsync(Operator):
                 )
                 total_written += report.keys_written
                 total_skipped += report.keys_skipped_manual
-                notes.append("shape keys: " + str(report.keys_written) + "k/" + str(report.bones_touched) + "sk")
+                notes.append(F('shape keys: {p0}k/{p1}sk', p0=str(report.keys_written), p1=str(report.bones_touched)))
             else:
                 # PREVIEW: ensure drivers are installed & read from the new cue table.
                 mesh = bpy.data.objects.get(link.mesh_name)
                 if mesh is not None:
                     de.install_drivers_for_link(link, mesh, sk_wiring)
-                    notes.append("shape keys: drivers refreshed (PREVIEW)")
+                    notes.append(T('shape keys: drivers refreshed (PREVIEW)'))
 
         link.last_baked_start = link.frame_offset
         link.last_baked_end = link.frame_offset + int(round(
@@ -226,10 +228,11 @@ class AA_OT_p12_bake_lipsync(Operator):
             ),
         )
 
-        msg = "Bake [" + link.mode + "/" + link.target_kind + "]: " + str(total_written) + " keys, "
-        msg += str(total_skipped) + " preserved manual (" + analyze_result.backend + ")"
+        msg = F('Bake [{p0}/{p1}]: {p2} keys, {p3} preserved manual ({p4})',
+                p0=link.mode, p1=link.target_kind, p2=str(total_written),
+                p3=str(total_skipped), p4=analyze_result.backend)
         if notes:
-            msg += " - " + "; ".join(notes)
+            msg = F('{p0} - {p1}', p0=msg, p1='; '.join(notes))
         self.report({"INFO"}, msg)
         return {"FINISHED"}
 
@@ -245,7 +248,7 @@ class AA_OT_p12_clear_auto_keys(Operator):
     bl_label = "Clear Auto Keys"
     bl_options = {"REGISTER", "UNDO"}
 
-    layer_name: StringProperty(default="")  # type: ignore[valid-type]
+    layer_name: StringProperty(default="", translation_context='AnimAssist', name="layer_name")  # type: ignore[valid-type]
 
     @classmethod
     def poll(cls, context):
@@ -256,7 +259,7 @@ class AA_OT_p12_clear_auto_keys(Operator):
         p11 = get_p11(context)
         link = _resolve_link(p12, self.layer_name)
         if link is None:
-            self.report({"ERROR"}, "No lipsync layer link selected. Select one in the Lipsync panel list first")
+            self.report({"ERROR"}, T('No lipsync layer link selected. Select one in the Lipsync panel list first'))
             return {"CANCELLED"}
 
         total_deleted = 0
@@ -278,7 +281,7 @@ class AA_OT_p12_clear_auto_keys(Operator):
                 total_deleted += engine.clear_auto_shape_key_keys(sk_action, sk_names,
                     anim_data=bpy.data.objects[link.mesh_name].data.shape_keys.animation_data)
 
-        self.report({"INFO"}, "Cleared " + str(total_deleted) + " auto-baked keys (manual preserved)")
+        self.report({"INFO"}, F('Cleared {p0} auto-baked keys (manual preserved)', p0=str(total_deleted)))
         return {"FINISHED"}
 
 
@@ -293,7 +296,7 @@ class AA_OT_p12_rebake(Operator):
     bl_label = "Rebake Lipsync"
     bl_options = {"REGISTER", "UNDO"}
 
-    layer_name: StringProperty(default="")  # type: ignore[valid-type]
+    layer_name: StringProperty(default="", translation_context='AnimAssist', name="layer_name")  # type: ignore[valid-type]
 
     @classmethod
     def poll(cls, context):
@@ -319,7 +322,7 @@ class AA_OT_p12_mark_manual(Operator):
     bl_label = "Mark as Manual Override"
     bl_options = {"REGISTER", "UNDO"}
 
-    layer_name: StringProperty(default="")  # type: ignore[valid-type]
+    layer_name: StringProperty(default="", translation_context='AnimAssist', name="layer_name")  # type: ignore[valid-type]
 
     @classmethod
     def poll(cls, context):
@@ -330,7 +333,7 @@ class AA_OT_p12_mark_manual(Operator):
         p11 = get_p11(context)
         link = _resolve_link(p12, self.layer_name)
         if link is None:
-            self.report({"ERROR"}, "No lipsync layer link selected. Select one in the Lipsync panel list first")
+            self.report({"ERROR"}, T('No lipsync layer link selected. Select one in the Lipsync panel list first'))
             return {"CANCELLED"}
         marked = 0
 
@@ -368,7 +371,7 @@ class AA_OT_p12_mark_manual(Operator):
                         engine.mark_manual_override(sk_action, data_path, 0, i, anim_data=anim_data)
                         marked += 1
 
-        self.report({"INFO"}, "Marked " + str(marked) + " keyframe(s) as manual override")
+        self.report({"INFO"}, F('Marked {p0} keyframe(s) as manual override', p0=str(marked)))
         return {"FINISHED"}
 
 

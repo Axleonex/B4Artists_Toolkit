@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.types import Operator
 
@@ -71,7 +73,7 @@ class ANIMASSIST_OT_open_home(Operator):
         if props is not None:
             props.spaces.active.context = "SCENE"
             props.tag_redraw()
-            self.report({"INFO"}, "Anim Assist is in the Properties editor, Scene tab")
+            self.report({"INFO"}, T('Anim Assist is in the Properties editor, Scene tab'))
             return {"FINISHED"}
         return bpy.ops.animassist.open_home_window("INVOKE_DEFAULT")
 

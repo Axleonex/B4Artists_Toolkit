@@ -52,17 +52,17 @@ class AA_P3_UserPreset(bpy.types.PropertyGroup):
         name="Preset Name",
         description="Name shown in the breakdown preset picker.",
         default="Custom Preset",
-    )
+     translation_context='AnimAssist')
     factor: FloatProperty(  # type: ignore[valid-type]
         name="Factor",
         description="Breakdown blend factor, where 0 is the previous pose and 1 is the next pose.",
         default=0.5, min=-1.0, max=2.0,
-    )
+     translation_context='AnimAssist')
     mode: StringProperty(  # type: ignore[valid-type]
         name="Mode",
         description="Blend mode identifier used by the breakdown engine.",
         default="REPLACE",
-    )
+     translation_context='AnimAssist')
     mask_kind: StringProperty(  # type: ignore[valid-type]
         name="Mask",
         description=(
@@ -70,7 +70,7 @@ class AA_P3_UserPreset(bpy.types.PropertyGroup):
             "(ALL, LOCATION, ROTATION, SCALE, or TRANSFORM)."
         ),
         default="ALL",
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P3_ExclusionPattern(bpy.types.PropertyGroup):
@@ -87,7 +87,7 @@ class AA_P3_ExclusionPattern(bpy.types.PropertyGroup):
             "from breakdown breakdown operations."
         ),
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -129,35 +129,35 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "numeric breakdown seed from this value."
         ),
         default=0.5, min=-1.0, max=2.0, subtype="FACTOR",
-    )
+     translation_context='AnimAssist')
     mode: EnumProperty(  # type: ignore[valid-type]
         name="Mode",
         description="Blend mode applied by the breakdown engine.",
         items=_BREAKDOWN_MODE_ITEMS,
         default="REPLACE",
-    )
+     translation_context='AnimAssist')
     push_strength: FloatProperty(  # type: ignore[valid-type]
         name="Push Strength",
         description="Multiplier applied when extrapolating past a neighbour pose (Push modes).",
         default=1.25, min=1.0, max=3.0,
-    )
+     translation_context='AnimAssist')
     pull_strength: FloatProperty(  # type: ignore[valid-type]
         name="Pull Strength",
         description="Blend factor used by the Pull modes, clamped between 0 and 1.",
         default=0.75, min=0.0, max=1.0,
-    )
+     translation_context='AnimAssist')
     offset_amount: FloatProperty(  # type: ignore[valid-type]
         name="Offset Amount",
         description="Relative offset added to the current evaluated value when using Offset mode.",
         default=0.0,
-    )
+     translation_context='AnimAssist')
 
     # --- Masks ------------------------------------------------------------
     mask_location: BoolProperty(  # type: ignore[valid-type]
         name="Location",
         description="When enabled, breakdown operators may write location channels.",
         default=True,
-    )
+     translation_context='AnimAssist')
     mask_rotation: BoolProperty(  # type: ignore[valid-type]
         name="Rotation",
         description=(
@@ -165,17 +165,17 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "(Euler and quaternion)."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     mask_scale: BoolProperty(  # type: ignore[valid-type]
         name="Scale",
         description="When enabled, breakdown operators may write scale channels.",
         default=True,
-    )
+     translation_context='AnimAssist')
     mask_custom: BoolProperty(  # type: ignore[valid-type]
         name="Custom",
         description="When enabled, breakdown operators may write custom (non-transform) channels.",
         default=False,
-    )
+     translation_context='AnimAssist')
     mask_axis_x: BoolProperty(  # type: ignore[valid-type]
         name="X",
         description=(
@@ -183,7 +183,7 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "(X axis, or W component for quaternions)."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     mask_axis_y: BoolProperty(  # type: ignore[valid-type]
         name="Y",
         description=(
@@ -191,7 +191,7 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "(Y axis, or X component for quaternions)."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     mask_axis_z: BoolProperty(  # type: ignore[valid-type]
         name="Z",
         description=(
@@ -199,12 +199,12 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "(Z axis, or Y component for quaternions)."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     mask_axis_w: BoolProperty(  # type: ignore[valid-type]
         name="W",
         description="Allow breakdown writes to array index 3 (Z component for quaternions).",
         default=True,
-    )
+     translation_context='AnimAssist')
     skip_locked: BoolProperty(  # type: ignore[valid-type]
         name="Ignore Locked Axes",
         description=(
@@ -212,7 +212,7 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "stay untouched."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     respect_exclusions: BoolProperty(  # type: ignore[valid-type]
         name="Respect Exclusion Set",
         description=(
@@ -220,7 +220,7 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "ignored by all breakdown operators."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     # --- Interpolation options -------------------------------------------
     quaternion_aware: BoolProperty(  # type: ignore[valid-type]
@@ -231,12 +231,12 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "mid-arc."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     euler_wrap_aware: BoolProperty(  # type: ignore[valid-type]
         name="Euler Continuity",
         description="Pick the shortest arc when blending Euler rotations that cross a ±π boundary.",
         default=True,
-    )
+     translation_context='AnimAssist')
     visual_transform: BoolProperty(  # type: ignore[valid-type]
         name="Visual Transform",
         description=(
@@ -244,7 +244,7 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "instead of a pure neighbour blend. Useful for constrained rigs."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
     preserve_world_contact: BoolProperty(  # type: ignore[valid-type]
         name="Preserve World Contact",
         description=(
@@ -252,7 +252,7 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "(feet, hands) stable during the breakdown. Depends on rig setup."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
     preserve_child_contact: BoolProperty(  # type: ignore[valid-type]
         name="Preserve Child Contact",
         description=(
@@ -260,7 +260,7 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "during the breakdown."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
     match_tangents: BoolProperty(  # type: ignore[valid-type]
         name="Match Tangents",
         description=(
@@ -268,7 +268,7 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "breakdown flows cleanly."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     auto_key_missing: BoolProperty(  # type: ignore[valid-type]
         name="Auto-Key Missing Channels",
         description=(
@@ -277,20 +277,20 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "something to blend next time."
         ),
         default=False,
-    )
+     translation_context='AnimAssist')
     space: EnumProperty(  # type: ignore[valid-type]
         name="Space",
         description="Transform space used for visual-transform sampling.",
         items=_SPACE_ITEMS,
         default="LOCAL",
-    )
+     translation_context='AnimAssist')
 
     # --- Inbetween --------------------------------------------------------
     inbetween_count: IntProperty(  # type: ignore[valid-type]
         name="Inbetween Count",
         description="Number of inbetween keys to distribute inside the current selection gap.",
         default=1, min=1, max=32,
-    )
+     translation_context='AnimAssist')
 
     # --- Batch ------------------------------------------------------------
     batch_use_selection: BoolProperty(  # type: ignore[valid-type]
@@ -300,7 +300,7 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "instead of a single target frame."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     # --- Preset / exclusion collections ----------------------------------
     active_preset: EnumProperty(  # type: ignore[valid-type]
@@ -311,19 +311,19 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
         # value captured at class-body time. Avoids the classic Blender
         # EnumProperty "random unicode" garbage-collection bug.
         items=preset_enum_items_callback,
-    )
-    user_presets: CollectionProperty(type=AA_P3_UserPreset)  # type: ignore[valid-type]
+     translation_context='AnimAssist')
+    user_presets: CollectionProperty(type=AA_P3_UserPreset, translation_context='AnimAssist', name="user_presets")  # type: ignore[valid-type]
     user_preset_index: IntProperty(  # type: ignore[valid-type]
         name="User Preset Index",
         description="Active row in the user preset list.",
         default=0,
-    )
-    exclusion_patterns: CollectionProperty(type=AA_P3_ExclusionPattern)  # type: ignore[valid-type]
+     translation_context='AnimAssist')
+    exclusion_patterns: CollectionProperty(type=AA_P3_ExclusionPattern, translation_context='AnimAssist', name="exclusion_patterns")  # type: ignore[valid-type]
     exclusion_index: IntProperty(  # type: ignore[valid-type]
         name="Exclusion Index",
         description="Active row in the exclusion-pattern list.",
         default=0,
-    )
+     translation_context='AnimAssist')
 
     # --- Modal ------------------------------------------------------------
     modal_sensitivity: IntProperty(  # type: ignore[valid-type]
@@ -333,17 +333,17 @@ class AA_P3_Properties(bpy.types.PropertyGroup):
             "during modal drag breakdown."
         ),
         default=220, min=40, max=2000,
-    )
+     translation_context='AnimAssist')
     preview_active: BoolProperty(  # type: ignore[valid-type]
         name="Preview Active",
         description="Internal flag set while a preview-before-commit breakdown is pending.",
         default=False,
-    )
+     translation_context='AnimAssist')
     preview_frame: FloatProperty(  # type: ignore[valid-type]
         name="Preview Frame",
         description="Frame at which the current preview breakdown was staged.",
         default=0.0,
-    )
+     translation_context='AnimAssist')
 
 
 CLASSES: tuple[type, ...] = (
@@ -359,7 +359,7 @@ def register_properties() -> None:
         type=AA_P3_Properties,
         name="Anim Assist breakdown",
         description="Scene-scoped defaults for the Anim Assist breakdown breakdown tools.",
-    )
+     translation_context='AnimAssist')
 
 
 def unregister_properties() -> None:

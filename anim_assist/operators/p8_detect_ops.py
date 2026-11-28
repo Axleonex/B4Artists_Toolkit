@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 import json
 from ..core.p8_properties import get_p8
@@ -71,7 +73,7 @@ class AA_OT_p8_detect_space_enums(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         try:
@@ -79,7 +81,7 @@ class AA_OT_p8_detect_space_enums(bpy.types.Operator):
             _cached_patterns.clear()
             _cached_patterns.extend(patterns)
             count = len(patterns)
-            self.report({"INFO"}, f"Found {count} space enum pattern(s)")
+            self.report({"INFO"}, F('Found {p0} space enum pattern(s)', p0=f'{count}'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("detect_space_enums failed")
@@ -101,7 +103,7 @@ class AA_OT_p8_detect_parent_patterns(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         try:
@@ -115,7 +117,7 @@ class AA_OT_p8_detect_parent_patterns(bpy.types.Operator):
                     _cached_patterns.append(pat)
                     seen.add(key)
             added = len(_cached_patterns) - before_count
-            self.report({"INFO"}, f"Added {added} parent pattern(s) (total: {len(_cached_patterns)})")
+            self.report({"INFO"}, F('Added {p0} parent pattern(s) (total: {p1})', p0=f'{added}', p1=f'{len(_cached_patterns)}'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("detect_parent_patterns failed")
@@ -137,7 +139,7 @@ class AA_OT_p8_detect_influence_patterns(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         try:
@@ -151,7 +153,7 @@ class AA_OT_p8_detect_influence_patterns(bpy.types.Operator):
                     _cached_patterns.append(pat)
                     seen.add(key)
             added = len(_cached_patterns) - before_count
-            self.report({"INFO"}, f"Added {added} influence pattern(s) (total: {len(_cached_patterns)})")
+            self.report({"INFO"}, F('Added {p0} influence pattern(s) (total: {p1})', p0=f'{added}', p1=f'{len(_cached_patterns)}'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("detect_influence_patterns failed")
@@ -173,7 +175,7 @@ class AA_OT_p8_detect_custom_props(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         try:
@@ -187,7 +189,7 @@ class AA_OT_p8_detect_custom_props(bpy.types.Operator):
                     _cached_patterns.append(pat)
                     seen.add(key)
             added = len(_cached_patterns) - before_count
-            self.report({"INFO"}, f"Added {added} custom property pattern(s) (total: {len(_cached_patterns)})")
+            self.report({"INFO"}, F('Added {p0} custom property pattern(s) (total: {p1})', p0=f'{added}', p1=f'{len(_cached_patterns)}'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("detect_custom_props failed")
@@ -209,7 +211,7 @@ class AA_OT_p8_detect_all(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         try:
@@ -217,7 +219,7 @@ class AA_OT_p8_detect_all(bpy.types.Operator):
             _cached_patterns.clear()
             _cached_patterns.extend(patterns)
             count = len(patterns)
-            self.report({"INFO"}, f"Found {count} pattern(s) across all detectors")
+            self.report({"INFO"}, F('Found {p0} pattern(s) across all detectors', p0=f'{count}'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("detect_all_patterns failed")
@@ -244,16 +246,16 @@ class AA_OT_p8_apply_detected_pattern(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         p8 = get_p8(context)
         if p8 is None:
-            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({"ERROR"}, T('Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {"CANCELLED"}
 
         if not _cached_patterns:
-            self.report({"ERROR"}, "No patterns detected yet. Run Detect first")
+            self.report({"ERROR"}, T('No patterns detected yet. Run Detect first'))
             return {"CANCELLED"}
 
         idx = min(p8.detected_pattern_index, len(_cached_patterns) - 1)
         if idx < 0:
-            self.report({"ERROR"}, "Select a detected pattern in the list first")
+            self.report({"ERROR"}, T('Select a detected pattern in the list first'))
             return {"CANCELLED"}
 
         pattern = _cached_patterns[idx]
@@ -269,7 +271,7 @@ class AA_OT_p8_apply_detected_pattern(bpy.types.Operator):
                 "CUSTOM_PROP": "CUSTOM",
             }
             p8.switch_kind = kind_map.get(pattern.kind, "CUSTOM")
-            self.report({"INFO"}, f"Applied pattern: {pattern.display_label()}")
+            self.report({"INFO"}, F('Applied pattern: {p0}', p0=f'{pattern.display_label()}'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("apply_detected_pattern failed")
@@ -295,12 +297,12 @@ class AA_OT_p8_save_switch_preset(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         p8 = get_p8(context)
         if p8 is None:
-            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({"ERROR"}, T('Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {"CANCELLED"}
 
         name = p8.switch_preset_name.strip()
         if not name:
-            self.report({"ERROR"}, "Enter a preset name first")
+            self.report({"ERROR"}, T('Enter a preset name first'))
             return {"CANCELLED"}
 
         try:
@@ -314,7 +316,7 @@ class AA_OT_p8_save_switch_preset(bpy.types.Operator):
             presets = _get_presets(context)
             presets[name] = preset
             _save_presets(context, presets)
-            self.report({"INFO"}, f"Saved switch preset '{name}'")
+            self.report({"INFO"}, F("Saved switch preset '{p0}'", p0=f'{name}'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("save_switch_preset failed")
@@ -333,7 +335,7 @@ class AA_OT_p8_load_switch_preset(bpy.types.Operator):
         name="Preset Name",
         description="Name of the preset to load",
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -342,18 +344,18 @@ class AA_OT_p8_load_switch_preset(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         p8 = get_p8(context)
         if p8 is None:
-            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({"ERROR"}, T('Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {"CANCELLED"}
 
         preset_name = self.preset_name.strip()
         if not preset_name:
-            self.report({"ERROR"}, "Enter a preset name first")
+            self.report({"ERROR"}, T('Enter a preset name first'))
             return {"CANCELLED"}
 
         try:
             presets = _get_presets(context)
             if preset_name not in presets:
-                self.report({"ERROR"}, f"Preset '{preset_name}' not found. Pick one from the list or save it first")
+                self.report({"ERROR"}, F("Preset '{p0}' not found. Pick one from the list or save it first", p0=f'{preset_name}'))
                 return {"CANCELLED"}
 
             preset = presets[preset_name]
@@ -361,7 +363,7 @@ class AA_OT_p8_load_switch_preset(bpy.types.Operator):
             p8.switch_bone_name = preset.get("bone_name", "")
             p8.switch_kind = preset.get("kind", "ENUM")
             p8.switch_new_value = float(preset.get("new_value", 0.0))
-            self.report({"INFO"}, f"Loaded switch preset '{preset_name}'")
+            self.report({"INFO"}, F("Loaded switch preset '{p0}'", p0=f'{preset_name}'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("load_switch_preset failed")
@@ -380,7 +382,7 @@ class AA_OT_p8_delete_switch_preset(bpy.types.Operator):
         name="Preset Name",
         description="Name of the preset to delete",
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -389,18 +391,18 @@ class AA_OT_p8_delete_switch_preset(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         preset_name = self.preset_name.strip()
         if not preset_name:
-            self.report({"ERROR"}, "Enter a preset name first")
+            self.report({"ERROR"}, T('Enter a preset name first'))
             return {"CANCELLED"}
 
         try:
             presets = _get_presets(context)
             if preset_name not in presets:
-                self.report({"ERROR"}, f"Preset '{preset_name}' not found. Pick one from the list or save it first")
+                self.report({"ERROR"}, F("Preset '{p0}' not found. Pick one from the list or save it first", p0=f'{preset_name}'))
                 return {"CANCELLED"}
 
             del presets[preset_name]
             _save_presets(context, presets)
-            self.report({"INFO"}, f"Deleted switch preset '{preset_name}'")
+            self.report({"INFO"}, F("Deleted switch preset '{p0}'", p0=f'{preset_name}'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("delete_switch_preset failed")
@@ -426,37 +428,37 @@ class AA_OT_p8_compensation_report(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         wm = getattr(context, "window_manager", None)
         if wm is None:
-            self.report({"ERROR"}, "Window manager not available. Run this from the Bforartists interface, not a background script")
+            self.report({"ERROR"}, T('Window manager not available. Run this from the Bforartists interface, not a background script'))
             return {"CANCELLED"}
 
         try:
             # Get the last switch event from history
             last_event = hist.get_last_event()
             if last_event is None:
-                self.report({"WARNING"}, "No compensation history available")
+                self.report({"WARNING"}, T('No compensation history available'))
                 return {"CANCELLED"}
 
             lines: list[str] = []
-            lines.append("=== COMPENSATION REPORT ===")
+            lines.append(T('=== COMPENSATION REPORT ==='))
             lines.append("")
-            lines.append(f"Frame: {last_event.frame}")
+            lines.append(F('Frame: {p0}', p0=f'{last_event.frame}'))
             target = last_event.bone_name or last_event.obj_name
-            lines.append(f"Target: {target}")
-            lines.append(f"Property: {last_event.prop_path}")
-            lines.append(f"Old Value: {last_event.old_value}")
-            lines.append(f"New Value: {last_event.new_value}")
+            lines.append(F('Target: {p0}', p0=f'{target}'))
+            lines.append(F('Property: {p0}', p0=f'{last_event.prop_path}'))
+            lines.append(F('Old Value: {p0}', p0=f'{last_event.old_value}'))
+            lines.append(F('New Value: {p0}', p0=f'{last_event.new_value}'))
             lines.append("")
 
             # Add history context
             all_events = hist.get_history()
             if all_events:
-                lines.append(f"Total switch events in history: {len(all_events)}")
-                lines.append(f"Unique frames with switches: {len(hist.get_unique_frames())}")
+                lines.append(F('Total switch events in history: {p0}', p0=f'{len(all_events)}'))
+                lines.append(F('Unique frames with switches: {p0}', p0=f'{len(hist.get_unique_frames())}'))
             lines.append("")
 
             text = "\n".join(lines)
             wm.clipboard = text
-            self.report({"INFO"}, "Compensation report copied to clipboard")
+            self.report({"INFO"}, T('Compensation report copied to clipboard'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("compensation_report failed")
@@ -478,7 +480,7 @@ class AA_OT_p8_unsupported_warning(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         try:
@@ -486,7 +488,7 @@ class AA_OT_p8_unsupported_warning(bpy.types.Operator):
 
             # Check for animation data
             if obj.animation_data is None or obj.animation_data.action is None:
-                warnings.append("• No animation data or action assigned")
+                warnings.append(T('• No animation data or action assigned'))
 
             # Check for complex constraint stacks
             def _count_constraints(obj_or_bone):
@@ -494,14 +496,14 @@ class AA_OT_p8_unsupported_warning(bpy.types.Operator):
 
             obj_con_count = _count_constraints(obj)
             if obj_con_count > 5:
-                warnings.append(f"• Object has {obj_con_count} constraints (complex stack)")
+                warnings.append(F('• Object has {p0} constraints (complex stack)', p0=f'{obj_con_count}'))
 
             bone_con_count = 0
             if hasattr(obj, "pose") and obj.pose:
                 for bone in obj.pose.bones:
                     bone_con_count += _count_constraints(bone)
                 if bone_con_count > 20:
-                    warnings.append(f"• Armature bones have {bone_con_count} total constraints (very complex)")
+                    warnings.append(F('• Armature bones have {p0} total constraints (very complex)', p0=f'{bone_con_count}'))
 
             # Check for drivers on transform channels
             def _check_drivers(obj_or_bone, name):
@@ -518,31 +520,31 @@ class AA_OT_p8_unsupported_warning(bpy.types.Operator):
 
             obj_drivers = _check_drivers(obj, obj.name)
             if obj_drivers:
-                warnings.append(f"• Object has {len(obj_drivers)} driver(s) on transform channels")
+                warnings.append(F('• Object has {p0} driver(s) on transform channels', p0=f'{len(obj_drivers)}'))
 
             if hasattr(obj, "pose") and obj.pose:
                 for bone in obj.pose.bones:
                     bone_drivers = _check_drivers(bone, bone.name)
                     if bone_drivers:
-                        warnings.append(f"• Bone '{bone.name}' has driver(s) on transform channels")
+                        warnings.append(F("• Bone '{p0}' has driver(s) on transform channels", p0=f'{bone.name}'))
 
             # Check for locked transforms
             def _check_locks(obj_or_bone, name):
                 locks = []
                 if hasattr(obj_or_bone, "lock_location"):
                     if any(obj_or_bone.lock_location):
-                        locks.append("location")
+                        locks.append(T('location'))
                 if hasattr(obj_or_bone, "lock_rotation"):
                     if any(obj_or_bone.lock_rotation):
-                        locks.append("rotation")
+                        locks.append(T('rotation'))
                 if hasattr(obj_or_bone, "lock_scale"):
                     if any(obj_or_bone.lock_scale):
-                        locks.append("scale")
+                        locks.append(T('scale'))
                 return locks
 
             obj_locks = _check_locks(obj, obj.name)
             if obj_locks:
-                warnings.append(f"• Object has locked channels: {', '.join(obj_locks)}")
+                warnings.append(F('• Object has locked channels: {p0}', p0=f"{', '.join(obj_locks)}"))
 
             if hasattr(obj, "pose") and obj.pose:
                 lock_count = 0
@@ -551,13 +553,13 @@ class AA_OT_p8_unsupported_warning(bpy.types.Operator):
                     if bone_locks:
                         lock_count += 1
                 if lock_count > 0:
-                    warnings.append(f"• {lock_count} bone(s) have locked channels")
+                    warnings.append(F('• {p0} bone(s) have locked channels', p0=f'{lock_count}'))
 
             if warnings:
-                msg = "Potential issues found:\n" + "\n".join(warnings)
+                msg = F('Potential issues found:\n{p0}', p0="\n".join(warnings))
                 self.report({"WARNING"}, msg)
             else:
-                self.report({"INFO"}, "No obvious setup issues detected")
+                self.report({"INFO"}, T('No obvious setup issues detected'))
 
             return {"FINISHED"}
         except Exception as e:
@@ -581,27 +583,27 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
     def execute(self, context: bpy.types.Context):
         wm = getattr(context, "window_manager", None)
         if wm is None:
-            self.report({"ERROR"}, "Window manager not available. Run this from the Bforartists interface, not a background script")
+            self.report({"ERROR"}, T('Window manager not available. Run this from the Bforartists interface, not a background script'))
             return {"CANCELLED"}
 
         obj = context.active_object
         if obj is None:
-            self.report({"ERROR"}, "No active object. Select an object and try again")
+            self.report({"ERROR"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         try:
             lines: list[str] = []
-            lines.append("=== SWITCH DETECTION DEBUG DIAGNOSTICS ===")
+            lines.append(T('=== SWITCH DETECTION DEBUG DIAGNOSTICS ==='))
             lines.append("")
-            lines.append(f"Object: {obj.name}")
-            lines.append(f"Type: {obj.type}")
+            lines.append(F('Object: {p0}', p0=f'{obj.name}'))
+            lines.append(F('Type: {p0}', p0=f'{obj.type}'))
             lines.append("")
 
             # Run all detectors
             patterns = det.detect_all_patterns(obj)
-            lines.append(f"Detected Patterns: {len(patterns)}")
+            lines.append(F('Detected Patterns: {p0}', p0=f'{len(patterns)}'))
             for i, pat in enumerate(patterns):
-                lines.append(f"  [{i}] {pat.display_label()} (confidence={pat.confidence:.2f})")
+                lines.append(F('  [{p0}] {p1} (confidence={p2})', p0=f'{i}', p1=f'{pat.display_label()}', p2=f'{pat.confidence:.2f}'))
             lines.append("")
 
             # Constraint types
@@ -613,11 +615,11 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
 
             obj_con_types = _count_constraint_types(obj.constraints)
             if obj_con_types:
-                lines.append("Object Constraint Types:")
+                lines.append(T('Object Constraint Types:'))
                 for ctype, count in sorted(obj_con_types.items()):
-                    lines.append(f"  {ctype}: {count}")
+                    lines.append(F('  {p0}: {p1}', p0=f'{ctype}', p1=f'{count}'))
             else:
-                lines.append("Object Constraint Types: None")
+                lines.append(T('Object Constraint Types: None'))
 
             bone_con_types_total = {}
             if hasattr(obj, "pose") and obj.pose:
@@ -625,11 +627,11 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
                     for ctype, count in _count_constraint_types(bone.constraints).items():
                         bone_con_types_total[ctype] = bone_con_types_total.get(ctype, 0) + count
             if bone_con_types_total:
-                lines.append("Bone Constraint Types (total):")
+                lines.append(T('Bone Constraint Types (total):'))
                 for ctype, count in sorted(bone_con_types_total.items()):
-                    lines.append(f"  {ctype}: {count}")
+                    lines.append(F('  {p0}: {p1}', p0=f'{ctype}', p1=f'{count}'))
             else:
-                lines.append("Bone Constraint Types: None")
+                lines.append(T('Bone Constraint Types: None'))
             lines.append("")
 
             # Driver count
@@ -640,7 +642,7 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
                 for bone in obj.pose.bones:
                     if bone.animation_data and bone.animation_data.drivers:
                         driver_count += len(bone.animation_data.drivers)
-            lines.append(f"Total Drivers: {driver_count}")
+            lines.append(F('Total Drivers: {p0}', p0=f'{driver_count}'))
             lines.append("")
 
             # Custom property count
@@ -649,16 +651,16 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
             if hasattr(obj, "pose") and obj.pose:
                 for bone in obj.pose.bones:
                     bone_props += len([k for k in bone.keys() if not k.startswith("_")])
-            lines.append("Custom Properties:")
-            lines.append(f"  Object-level: {obj_props}")
-            lines.append(f"  Bone-level: {bone_props}")
-            lines.append(f"  Total: {obj_props + bone_props}")
+            lines.append(T('Custom Properties:'))
+            lines.append(F('  Object-level: {p0}', p0=f'{obj_props}'))
+            lines.append(F('  Bone-level: {p0}', p0=f'{bone_props}'))
+            lines.append(F('  Total: {p0}', p0=f'{obj_props + bone_props}'))
             lines.append("")
 
             # Bone hierarchy info (if armature)
             if hasattr(obj, "pose") and obj.pose:
-                lines.append(f"Armature Bones: {len(obj.pose.bones)}")
-                lines.append("Bone Hierarchy:")
+                lines.append(F('Armature Bones: {p0}', p0=f'{len(obj.pose.bones)}'))
+                lines.append(T('Bone Hierarchy:'))
                 for bone in obj.pose.bones:
                     depth = 0
                     b = bone
@@ -666,17 +668,17 @@ class AA_OT_p8_debug_diagnostics(bpy.types.Operator):
                         depth += 1
                         b = b.parent
                     indent = "  " * (depth + 1)
-                    con_str = f" ({len(bone.constraints)} constraints)" if bone.constraints else ""
-                    lines.append(f"{indent}{bone.name}{con_str}")
+                    con_str = (F(' ({p0} constraints)', p0=f'{len(bone.constraints)}') if bone.constraints else "")
+                    lines.append(F('{p0}{p1}{p2}', p0=f'{indent}', p1=f'{bone.name}', p2=f'{con_str}'))
             else:
-                lines.append("Armature: No")
+                lines.append(T('Armature: No'))
 
             lines.append("")
-            lines.append("=== END DIAGNOSTICS ===")
+            lines.append(T('=== END DIAGNOSTICS ==='))
 
             text = "\n".join(lines)
             wm.clipboard = text
-            self.report({"INFO"}, "Debug diagnostics copied to clipboard")
+            self.report({"INFO"}, T('Debug diagnostics copied to clipboard'))
             return {"FINISHED"}
         except Exception as e:
             _log.exception("debug_diagnostics failed")

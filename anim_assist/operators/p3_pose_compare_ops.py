@@ -16,6 +16,8 @@ and :mod:`anim_assist.core.breakdown_core`.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from typing import Optional
 
 import bpy
@@ -53,13 +55,12 @@ class AA_OT_pose_snapshot_prev(bpy.types.Operator):
     def execute(self, context):
         obj, _ = _resolve_target(context)
         if obj is None:
-            self.report({"WARNING"}, "No active object.")
+            self.report({"WARNING"}, T('No active object.'))
             return {"CANCELLED"}
         snap = pc.set_prev(obj, _active_frame(context))
         self.report(
             {"INFO"},
-            f"Previous pose captured at frame {snap.frame:.1f} "
-            f"({len(snap.values)} channels).",
+            F('Previous pose captured at frame {p0} ({p1} channels).', p0=f'{snap.frame:.1f}', p1=f'{len(snap.values)}'),
         )
         return {"FINISHED"}
 
@@ -82,13 +83,12 @@ class AA_OT_pose_snapshot_next(bpy.types.Operator):
     def execute(self, context):
         obj, _ = _resolve_target(context)
         if obj is None:
-            self.report({"WARNING"}, "No active object.")
+            self.report({"WARNING"}, T('No active object.'))
             return {"CANCELLED"}
         snap = pc.set_next(obj, _active_frame(context))
         self.report(
             {"INFO"},
-            f"Next pose captured at frame {snap.frame:.1f} "
-            f"({len(snap.values)} channels).",
+            F('Next pose captured at frame {p0} ({p1} channels).', p0=f'{snap.frame:.1f}', p1=f'{len(snap.values)}'),
         )
         return {"FINISHED"}
 
@@ -110,13 +110,12 @@ class AA_OT_pose_snapshot_reference(bpy.types.Operator):
     def execute(self, context):
         obj, _ = _resolve_target(context)
         if obj is None:
-            self.report({"WARNING"}, "No active object.")
+            self.report({"WARNING"}, T('No active object.'))
             return {"CANCELLED"}
         snap = pc.set_reference(obj, _active_frame(context))
         self.report(
             {"INFO"},
-            f"Reference pose captured at frame {snap.frame:.1f} "
-            f"({len(snap.values)} channels).",
+            F('Reference pose captured at frame {p0} ({p1} channels).', p0=f'{snap.frame:.1f}', p1=f'{len(snap.values)}'),
         )
         return {"FINISHED"}
 
@@ -140,7 +139,7 @@ class AA_OT_pose_compare_report(bpy.types.Operator):
         name="Tolerance",
         description="Channels whose absolute difference is below this value are treated as equal.",
         default=1.0e-5, min=0.0, max=1.0,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -155,7 +154,7 @@ class AA_OT_pose_compare_report(bpy.types.Operator):
         if state.prev_snapshot is None or state.next_snapshot is None:
             self.report(
                 {"WARNING"},
-                "Both previous and next pose snapshots must be set before comparing.",
+                T('Both previous and next pose snapshots must be set before comparing.'),
             )
             return {"CANCELLED"}
 
@@ -163,18 +162,18 @@ class AA_OT_pose_compare_report(bpy.types.Operator):
             state.prev_snapshot,
             state.next_snapshot,
             tolerance=float(self.tolerance),
-        )
+        format_text=F)
         state.last_report = diffs
 
         if not diffs:
-            self.report({"INFO"}, "Pose compare: poses are identical.")
+            self.report({"INFO"}, T('Pose compare: poses are identical.'))
             return {"FINISHED"}
 
-        self.report({"INFO"}, f"Pose compare: {len(diffs)} differing channel(s).")
+        self.report({"INFO"}, F('Pose compare: {p0} differing channel(s).', p0=f'{len(diffs)}'))
         for line in diffs[:25]:
             self.report({"INFO"}, line)
         if len(diffs) > 25:
-            self.report({"INFO"}, f"…and {len(diffs) - 25} more.")
+            self.report({"INFO"}, F('…and {p0} more.', p0=f'{len(diffs) - 25}'))
         return {"FINISHED"}
 
 
@@ -196,16 +195,16 @@ def _apply_breakdown_from_snapshot(
     fcurve selection through :func:`breakdown_core.iter_target_fcurves`.
     """
     if snapshot is None:
-        self.report({"WARNING"}, f"{label} snapshot is empty — capture it first.")
+        self.report({"WARNING"}, F('{p0} snapshot is empty — capture it first.', p0=f'{label}'))
         return {"CANCELLED"}
 
     obj, bones = _resolve_target(context)
     if obj is None:
-        self.report({"WARNING"}, "No active object.")
+        self.report({"WARNING"}, T('No active object.'))
         return {"CANCELLED"}
     adata = getattr(obj, "animation_data", None)
     if adata is None or adata.action is None:
-        self.report({"WARNING"}, f"{obj.name}: no action.")
+        self.report({"WARNING"}, F('{p0}: no action.', p0=f'{obj.name}'))
         return {"CANCELLED"}
 
     p3 = get_p3(context)
@@ -219,7 +218,7 @@ def _apply_breakdown_from_snapshot(
         obj, bones, options.mask, options.exclusion
     )
     if not target_fcurves:
-        self.report({"WARNING"}, "No fcurves matched the current mask.")
+        self.report({"WARNING"}, T('No fcurves matched the current mask.'))
         return {"CANCELLED"}
 
     written = 0
@@ -242,7 +241,7 @@ def _apply_breakdown_from_snapshot(
         written += 1
 
     bc.remember_last(options)
-    self.report({"INFO"}, f"Blended {written} channels toward {label}.")
+    self.report({"INFO"}, F('Blended {p0} channels toward {p1}.', p0=f'{written}', p1=f'{label}'))
     return {"FINISHED"}
 
 
@@ -265,7 +264,7 @@ class AA_OT_breakdown_from_clipboard(bpy.types.Operator):
             ("NEXT", "Next Pose", "Use the 'next pose' compare slot."),
         ),
         default="PREV",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -274,7 +273,7 @@ class AA_OT_breakdown_from_clipboard(bpy.types.Operator):
     def execute(self, context):
         state = pc.get_state()
         target = state.prev_snapshot if self.slot == "PREV" else state.next_snapshot
-        label = "Previous Pose" if self.slot == "PREV" else "Next Pose"
+        label = T("Previous Pose") if self.slot == "PREV" else T("Next Pose")
         return _apply_breakdown_from_snapshot(self, context, target, label=label)
 
 
@@ -296,7 +295,7 @@ class AA_OT_blend_toward_reference(bpy.types.Operator):
     def execute(self, context):
         state = pc.get_state()
         return _apply_breakdown_from_snapshot(
-            self, context, state.reference_snapshot, label="Reference Pose"
+            self, context, state.reference_snapshot, label=T("Reference Pose")
         )
 
 

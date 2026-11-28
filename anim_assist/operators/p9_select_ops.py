@@ -1,3 +1,5 @@
+
+from ..i18n import T, F
 import bpy
 from ..core.p9_properties import get_p9
 from ..core import p9_pair_detect as det
@@ -53,18 +55,18 @@ class AA_OT_p9_select_opposite(bpy.types.Operator):
         active_bone = obj.data.bones.active
 
         if not active_bone:
-            self.report({"ERROR"}, "No active bone. Select a bone in Pose mode")
+            self.report({"ERROR"}, T('No active bone. Select a bone in Pose mode'))
             return {"CANCELLED"}
 
         opposite_name = _get_opposite_name(context, active_bone.name)
 
         if not opposite_name:
-            self.report({"ERROR"}, f"No opposite bone found for '{active_bone.name}'. Use .L/.R naming or add a pair override under Mirror & Symmetry")
+            self.report({"ERROR"}, F("No opposite bone found for '{p0}'. Use .L/.R naming or add a pair override under Mirror & Symmetry", p0=f'{active_bone.name}'))
             return {"CANCELLED"}
 
         # Check opposite bone exists
         if opposite_name not in obj.data.bones:
-            self.report({"ERROR"}, f"Opposite bone '{opposite_name}' is not in this armature. Add a pair override under Mirror & Symmetry")
+            self.report({"ERROR"}, F("Opposite bone '{p0}' is not in this armature. Add a pair override under Mirror & Symmetry", p0=f'{opposite_name}'))
             return {"CANCELLED"}
 
         # Deselect all
@@ -74,7 +76,7 @@ class AA_OT_p9_select_opposite(bpy.types.Operator):
         set_pose_bone_selected(obj.pose.bones[opposite_name], True)
         obj.data.bones.active = obj.data.bones[opposite_name]
 
-        self.report({"INFO"}, f"Selected opposite: {opposite_name}")
+        self.report({"INFO"}, F('Selected opposite: {p0}', p0=f'{opposite_name}'))
         return {"FINISHED"}
 
 
@@ -96,7 +98,7 @@ class AA_OT_p9_add_opposite(bpy.types.Operator):
         selected_bones = [pb.bone.name for pb in context.selected_pose_bones]
 
         if not selected_bones:
-            self.report({"WARNING"}, "No bones selected")
+            self.report({"WARNING"}, T('No bones selected'))
             return {"FINISHED"}
 
         added_count = 0
@@ -108,7 +110,7 @@ class AA_OT_p9_add_opposite(bpy.types.Operator):
                 set_pose_bone_selected(obj.pose.bones[opposite_name], True)
                 added_count += 1
 
-        self.report({"INFO"}, f"Added {added_count} opposite bones to selection")
+        self.report({"INFO"}, F('Added {p0} opposite bones to selection', p0=f'{added_count}'))
         return {"FINISHED"}
 
 
@@ -131,7 +133,7 @@ class AA_OT_p9_swap_selection(bpy.types.Operator):
         active_bone_name = obj.data.bones.active.name if obj.data.bones.active else None
 
         if not selected_bones:
-            self.report({"WARNING"}, "No bones selected")
+            self.report({"WARNING"}, T('No bones selected'))
             return {"FINISHED"}
 
         # Find opposites
@@ -156,7 +158,7 @@ class AA_OT_p9_swap_selection(bpy.types.Operator):
             opposite_active = opposite_mapping[active_bone_name]
             obj.data.bones.active = obj.data.bones[opposite_active]
 
-        self.report({"INFO"}, f"Swapped {swapped_count} bones")
+        self.report({"INFO"}, F('Swapped {p0} bones', p0=f'{swapped_count}'))
         return {"FINISHED"}
 
 

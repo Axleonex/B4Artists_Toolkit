@@ -12,6 +12,8 @@ Operators for stepping through detected trajectory issues:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.fcurve_compat import get_fcurves
@@ -71,7 +73,7 @@ class AA_OT_p5_jump_next_issue(bpy.types.Operator):
     def execute(self, context):
         issues = _get_issues()
         if not issues:
-            self.report({"INFO"}, "No issues detected")
+            self.report({"INFO"}, T('No issues detected'))
             return {"CANCELLED"}
 
         current = float(context.scene.frame_current)
@@ -84,11 +86,11 @@ class AA_OT_p5_jump_next_issue(bpy.types.Operator):
         if candidates:
             target = candidates[0]
             context.scene.frame_set(int(round(target.frame)))
-            self.report({"INFO"}, f"{target.issue_type} at frame {int(round(target.frame))}")
+            self.report({"INFO"}, F('{p0} at frame {p1}', p0=f'{target.issue_type}', p1=f'{int(round(target.frame))}'))
             _tag_redraw(context)
             return {"FINISHED"}
 
-        self.report({"INFO"}, "No more issues")
+        self.report({"INFO"}, T('No more issues'))
         return {"CANCELLED"}
 
 
@@ -111,7 +113,7 @@ class AA_OT_p5_jump_prev_issue(bpy.types.Operator):
     def execute(self, context):
         issues = _get_issues()
         if not issues:
-            self.report({"INFO"}, "No issues detected")
+            self.report({"INFO"}, T('No issues detected'))
             return {"CANCELLED"}
 
         current = float(context.scene.frame_current)
@@ -132,11 +134,11 @@ class AA_OT_p5_jump_prev_issue(bpy.types.Operator):
                     key=lambda m: m.frame,
                 )
             context.scene.frame_set(int(round(target.frame)))
-            self.report({"INFO"}, f"{target.issue_type} at frame {int(round(target.frame))}")
+            self.report({"INFO"}, F('{p0} at frame {p1}', p0=f'{target.issue_type}', p1=f'{int(round(target.frame))}'))
             _tag_redraw(context)
             return {"FINISHED"}
 
-        self.report({"INFO"}, "No more issues")
+        self.report({"INFO"}, T('No more issues'))
         return {"CANCELLED"}
 
 
@@ -163,23 +165,23 @@ class AA_OT_p5_select_bad_arc_keys(bpy.types.Operator):
         name="Proximity",
         description="Frame distance within which a keyframe is considered 'near' an issue",
         default=2.0, min=0.5, soft_max=10.0,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         issues = _get_issues()
         if not issues:
-            self.report({"INFO"}, "No issues detected — run diagnostics first")
+            self.report({"INFO"}, T('No issues detected — run diagnostics first'))
             return {"CANCELLED"}
 
         obj = getattr(context, "active_object", None)
         if obj is None:
-            self.report({"WARNING"}, "No active object. Select an object and try again")
+            self.report({"WARNING"}, T('No active object. Select an object and try again'))
             return {"CANCELLED"}
 
         adata = getattr(obj, "animation_data", None)
         action = getattr(adata, "action", None) if adata else None
         if action is None:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         # Collect issue frames.
@@ -201,7 +203,7 @@ class AA_OT_p5_select_bad_arc_keys(bpy.types.Operator):
                 else:
                     kp.select_control_point = False
 
-        self.report({"INFO"}, f"Selected {selected_count} keyframe(s) near issues")
+        self.report({"INFO"}, F('Selected {p0} keyframe(s) near issues', p0=f'{selected_count}'))
         _tag_redraw(context)
         return {"FINISHED"}
 
@@ -229,12 +231,12 @@ class AA_OT_p5_suggest_candidates(bpy.types.Operator):
         name="Max Suggestions",
         description="Maximum number of candidate frames to report",
         default=5, min=1, soft_max=20,
-    )
+     translation_context='AnimAssist')
 
     def execute(self, context):
         issues = _get_issues()
         if not issues:
-            self.report({"INFO"}, "No issues — arc looks clean")
+            self.report({"INFO"}, T('No issues — arc looks clean'))
             return {"CANCELLED"}
 
         # Focus on high-severity drift and spacing issues.
@@ -244,7 +246,7 @@ class AA_OT_p5_suggest_candidates(bpy.types.Operator):
         )
 
         if not high_sev:
-            self.report({"INFO"}, "No high-severity issues found")
+            self.report({"INFO"}, T('No high-severity issues found'))
             return {"CANCELLED"}
 
         # Deduplicate by frame (within 2-frame radius).
@@ -260,9 +262,9 @@ class AA_OT_p5_suggest_candidates(bpy.types.Operator):
             if len(suggestions) >= self.max_suggestions:
                 break
 
-        lines = [f"  Frame {int(round(m.frame))}: {m.issue_type} (severity {m.severity:.2f})"
+        lines = [F('  Frame {p0}: {p1} (severity {p2})', p0=f'{int(round(m.frame))}', p1=f'{m.issue_type}', p2=f'{m.severity:.2f}')
                  for m in suggestions]
-        msg = "Candidate frames for new keys:\n" + "\n".join(lines)
+        msg = F('Candidate frames for new keys:\n{p0}', p0="\n".join(lines))
         self.report({"INFO"}, msg)
         _log.info(msg)
 

@@ -20,6 +20,8 @@ Operators:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import math
 
 import bpy
@@ -270,7 +272,7 @@ class AA_OT_p7_bake_range(bpy.types.Operator):
             step=p7.bake_step, channel_mode=p7.bake_channels,
         )
         self.report({"INFO"},
-                    f"Baked range [{frame_start}–{frame_end}]: {inserted} keys")
+                    F('Baked range [{p0}–{p1}]: {p2} keys', p0=f'{frame_start}', p1=f'{frame_end}', p2=f'{inserted}'))
         return {"FINISHED"}
 
 
@@ -302,7 +304,7 @@ class AA_OT_p7_bake_preview(bpy.types.Operator):
         scene = context.scene
 
         if not scene.use_preview_range:
-            self.report({"WARNING"}, "Preview range is not enabled")
+            self.report({"WARNING"}, T('Preview range is not enabled'))
             return {"CANCELLED"}
 
         frame_start = scene.frame_preview_start
@@ -313,7 +315,7 @@ class AA_OT_p7_bake_preview(bpy.types.Operator):
             step=p7.bake_step, channel_mode=p7.bake_channels,
         )
         self.report({"INFO"},
-                    f"Baked preview range [{frame_start}–{frame_end}]: {inserted} keys")
+                    F('Baked preview range [{p0}–{p1}]: {p2} keys', p0=f'{frame_start}', p1=f'{frame_end}', p2=f'{inserted}'))
         return {"FINISHED"}
 
 
@@ -361,7 +363,7 @@ class AA_OT_p7_bake_selected_channels(bpy.types.Operator):
                     selected_channels.add("scale")
 
         if not selected_channels:
-            self.report({"WARNING"}, "No existing animation channels found")
+            self.report({"WARNING"}, T('No existing animation channels found'))
             return {"CANCELLED"}
 
         # Manually bake only the selected channels
@@ -400,7 +402,7 @@ class AA_OT_p7_bake_selected_channels(bpy.types.Operator):
                 fc.update()
 
         self.report({"INFO"},
-                    f"Baked {len(selected_channels)} channel(s): {inserted} keys")
+                    F('Baked {p0} channel(s): {p1} keys', p0=f'{len(selected_channels)}', p1=f'{inserted}'))
         return {"FINISHED"}
 
 
@@ -435,8 +437,7 @@ class AA_OT_p7_smart_bake(bpy.types.Operator):
         removed = _reduce_fcurves(obj, p7.smart_bake_tolerance)
 
         self.report({"INFO"},
-                    f"Smart bake: {inserted} keys baked, "
-                    f"{removed} redundant key(s) removed")
+                    F('Smart bake: {p0} keys baked, {p1} redundant key(s) removed', p0=f'{inserted}', p1=f'{removed}'))
         return {"FINISHED"}
 
 
@@ -467,7 +468,7 @@ class AA_OT_p7_reduce_keys(bpy.types.Operator):
         p7 = get_p7(context)
         tolerance = p7.smart_bake_tolerance if p7 else 0.01
         removed = _reduce_fcurves(context.active_object, tolerance)
-        self.report({"INFO"}, f"Removed {removed} redundant key(s)")
+        self.report({"INFO"}, F('Removed {p0} redundant key(s)', p0=f'{removed}'))
         return {"FINISHED"}
 
 
@@ -503,7 +504,7 @@ class AA_OT_p7_bake_preserve_timing(bpy.types.Operator):
             context, obj, channel_mode=p7.bake_channels
         )
 
-        self.report({"INFO"}, f"Preserved timing: {updated} keys updated")
+        self.report({"INFO"}, F('Preserved timing: {p0} keys updated', p0=f'{updated}'))
         return {"FINISHED"}
 
 
@@ -537,7 +538,7 @@ class AA_OT_p7_bake_selected(bpy.types.Operator):
             )
             total += n
         self.report({"INFO"},
-                    f"Baked {len(context.selected_objects)} object(s), {total} keys")
+                    F('Baked {p0} object(s), {p1} keys', p0=f'{len(context.selected_objects)}', p1=f'{total}'))
         return {"FINISHED"}
 
 
@@ -570,7 +571,7 @@ class AA_OT_p7_bake_step(bpy.types.Operator):
             step=max(1, p7.bake_step), channel_mode=p7.bake_channels,
         )
         self.report({"INFO"},
-                    f"Baked every {p7.bake_step} frame(s): {inserted} keys")
+                    F('Baked every {p0} frame(s): {p1} keys', p0=f'{p7.bake_step}', p1=f'{inserted}'))
         return {"FINISHED"}
 
 

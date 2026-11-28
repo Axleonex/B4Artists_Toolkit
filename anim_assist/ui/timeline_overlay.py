@@ -15,6 +15,7 @@ from bpy.props import EnumProperty, IntProperty, StringProperty
 from .timeline_catalog import ACTIONS, GROUPS, FAMILY, QUICK_LABELS, command_metadata
 from . import timeline_config as model
 from ..core import explainers
+from ..i18n import T, F
 
 # Short row labels; tooltips keep the full catalogue names. Distinct from the
 # All tab, the Breakdown slider and the Reference popout they sit beside.
@@ -62,9 +63,9 @@ def draw_stage_controls(layout, context, family=None):
         return
     if screen is None or not any(tools.is_timeline(area) for area in screen.areas):
         # Opened from Preferences or another window: no row to stage here.
-        layout.label(text="Open from a Timeline to change its row stage", icon="INFO")
+        layout.label(text="Open from a Timeline to change its row stage", icon="INFO", text_ctxt='AnimAssist')
         return
-    layout.prop(workspace, STAGE_PROPERTY, text="Row Stage")
+    layout.prop(workspace, STAGE_PROPERTY, text="Row Stage", text_ctxt='AnimAssist')
     if family:
         labels = {key: label for key, label, _actions in GROUPS}
         from ..prefs import get_prefs, timeline_record
@@ -73,9 +74,9 @@ def draw_stage_controls(layout, context, family=None):
             shown = model.row_families(timeline_record(get_prefs(context))['active'], stage)
         except (ValueError, TypeError, AttributeError):
             shown = None
-        note = model.hidden_family_note(stage, family, labels.get(family, family), shown)
+        note = model.hidden_family_note(stage, family, labels.get(family, family), shown, translate=T)
         if note:
-            layout.label(text=note, icon="INFO")
+            layout.label(text=note, icon="INFO", translate=False)
 
 
 def _tool_action(kind, key):
@@ -92,18 +93,18 @@ def _tool_action(kind, key):
 
 def _family_labels(stage):
     labels = {key: label for key, label, _actions in GROUPS}
-    return ", ".join(labels[family] for family in model.stage_families(stage))
+    return ", ".join(T(labels[family]) for family in model.stage_families(stage))
 
 
 def _stage_description(kind, stage):
-    label = model.stage_label(stage)
+    label = T(model.stage_label(stage))
     if kind == "STAGE_CYCLE":
-        return (f"Stage: {label}. Click to choose a stage; Ctrl+Wheel cycles. "
-                "Each stage has its own toolset, edited in Settings")
+        return F("Stage: {stage}. Click to choose a stage; Ctrl+Wheel cycles. "
+                 "Each stage has its own toolset, edited in Settings", stage=label)
     if stage == "ALL":
-        return "Show the All overview of every tool family. Ctrl+Wheel over the stage button cycles stages"
-    return (f"{label} stage: its own {_family_labels(stage)} toolset, edited in Settings. "
-            "Ctrl+Wheel over the stage button cycles stages")
+        return T("Show the All overview of every tool family. Ctrl+Wheel over the stage button cycles stages")
+    return F("{stage} stage: its own {families} toolset, edited in Settings. "
+             "Ctrl+Wheel over the stage button cycles stages", stage=label, families=_family_labels(stage))
 
 
 def _tooltip_paragraphs(context, item, row, unavailable):
@@ -114,7 +115,7 @@ def _tooltip_paragraphs(context, item, row, unavailable):
     action = key.split(':', 1)[0]
     if kind == 'ACTION' and action in ACTIONS:
         operator = tools._operator(action)
-        operation = explainers.operator_text('animassist.' + ACTIONS[action][0]) if operator else 'Tool module unavailable'
+        operation = explainers.operator_text('animassist.' + ACTIONS[action][0]) if operator else T('Tool module unavailable')
         reason = unavailable(action)
         status = ''
         if action in {'OFFSET', 'OFFSET_MASK', 'OFFSET_SCENE_RANGE'}:
@@ -123,11 +124,11 @@ def _tooltip_paragraphs(context, item, row, unavailable):
         return command_tooltip(action, operation, reason or '', status)
     if kind in {'SLIDER', 'POPOUT', 'PRESET'} and action in ACTIONS:
         operator = tools._operator(action)
-        text = (explainers.operator_text('animassist.' + ACTIONS[action][0]) if operator else '') or ACTIONS[action][2]
+        text = (explainers.operator_text('animassist.' + ACTIONS[action][0]) if operator else '') or T(ACTIONS[action][2])
         from ..constants import BREAKDOWN_ANCHOR_HINT
-        lines = [(ACTIONS[action][2], 'TITLE'), (text.rstrip('.') + '.', 'BODY'),
-                 (f'Works on: {command_metadata(action)[0]}.', 'DETAIL'),
-                 ('Drag to preview; release to apply; Esc cancels. Right-click for tool settings.', 'DETAIL')]
+        lines = [(T(ACTIONS[action][2]), 'TITLE'), (text.rstrip('.') + '.', 'BODY'),
+                 (F('Works on: {scope}.', scope=command_metadata(action)[0]), 'DETAIL'),
+                 (T('Drag to preview; release to apply; Esc cancels. Right-click for tool settings.'), 'DETAIL')]
         try:
             shown = row.view[1][action]
             ticks = model.tick_values(shown)
@@ -135,9 +136,10 @@ def _tooltip_paragraphs(context, item, row, unavailable):
             ticks = []
         if ticks and kind == 'SLIDER':
             unit = model.SLIDERS[action][1]
-            lines.insert(2, ('Ticks: ' + ', '.join(f'{t:g}{unit}' for t in ticks) + '. Click a tick to apply it.', 'BODY'))
+            lines.insert(2, (F('Ticks: {ticks}. Click a tick to apply it.',
+                               ticks=', '.join(f'{t:g}{unit}' for t in ticks)), 'BODY'))
         if action == 'DRAG':
-            lines.append((BREAKDOWN_ANCHOR_HINT, 'DETAIL'))
+            lines.append((T(BREAKDOWN_ANCHOR_HINT), 'DETAIL'))
         return lines
     text = explainers.raw_description(ANIMASSIST_OT_overlay_control, context, SimpleNamespace(kind=kind, key=key))
     return [(text.rstrip('.') + '.', 'BODY')]
@@ -191,31 +193,31 @@ class ANIMASSIST_OT_overlay_control(bpy.types.Operator):
     bl_idname = "animassist.overlay_control"
     bl_label = "Anim Assist Timeline Tools"
     bl_options = {"INTERNAL"}
-    kind: StringProperty(options={"HIDDEN", "SKIP_SAVE"})
-    key: StringProperty(options={"HIDDEN", "SKIP_SAVE"})
+    kind: StringProperty(options={"HIDDEN", "SKIP_SAVE"}, translation_context='AnimAssist')
+    key: StringProperty(options={"HIDDEN", "SKIP_SAVE"}, translation_context='AnimAssist')
 
     @classmethod
     def description(cls, context, properties):
         from . import timeline_strip as tools
         if properties.kind in {'STAGE','STAGE_CYCLE','STAGE_ITEM'}:
             shown = current_stage(context) if properties.kind == 'STAGE_CYCLE' else properties.key
-            return _stage_description('STAGE' if properties.kind == 'STAGE_ITEM' else properties.kind, shown)
+            return T(_stage_description('STAGE' if properties.kind == 'STAGE_ITEM' else properties.kind, shown))
         action=properties.key.split(':',1)[0]
         if properties.kind in {'SLIDER','POPOUT','PRESET'} and action in ACTIONS:
             operator=tools._operator(action)
-            text=(explainers.operator_text('animassist.'+ACTIONS[action][0]) if operator else '') or ACTIONS[action][2]
+            text=(explainers.operator_text('animassist.'+ACTIONS[action][0]) if operator else '') or T(ACTIONS[action][2])
             scope=command_metadata(action)[0]
             from ..constants import BREAKDOWN_ANCHOR_HINT
-            return text+'. '+scope+'. Drag to preview; release to apply; Esc cancels. Right-click for tool settings.'+((' '+BREAKDOWN_ANCHOR_HINT) if action=='DRAG' else '')
+            return F('{p0}. {p1}. {p2}{p3}', p0=text, p1=scope, p2=T('Drag to preview; release to apply; Esc cancels. Right-click for tool settings.'), p3=(' '+T(BREAKDOWN_ANCHOR_HINT)) if action=='DRAG' else '')
         if properties.kind == "ACTION" and properties.key in ACTIONS:
-            return explainers.raw_description(tools.ANIMASSIST_OT_timeline_tool,
-                context, SimpleNamespace(action=properties.key))
-        return {"SEARCH": ("Find any Anim Assist tool by name, family or idea; run it, or pin it to this row. "
+            return T(explainers.raw_description(tools.ANIMASSIST_OT_timeline_tool,
+                context, SimpleNamespace(action=properties.key)))
+        return T({"SEARCH": ("Find any Anim Assist tool by name, family or idea; run it, or pin it to this row. "
                            "With nothing typed, browse every tool by family"),
                 "SETTINGS": "Choose visible tools, slider modes, order and named layouts",
                 "MORE": "Tools on this row that did not fit at this width; click to use them",
                 "MENU": "Open this animation family's tools",
-                "BAND": "Anim Assist tools; the remaining Timeline keeps its normal controls"}.get(properties.kind, "Anim Assist")
+                "BAND": "Anim Assist tools; the remaining Timeline keeps its normal controls"}.get(properties.kind, "Anim Assist"))
 
     def invoke(self, context, _event):
         from . import timeline_strip as tools
@@ -256,8 +258,8 @@ class ANIMASSIST_OT_timeline_stage(bpy.types.Operator):
     bl_label = "Anim Assist Stage"
     bl_description = "Show one animation stage's tool families in the Timeline band"
     bl_options = {"INTERNAL"}
-    stage: StringProperty(options={"HIDDEN", "SKIP_SAVE"})
-    step: IntProperty(options={"HIDDEN", "SKIP_SAVE"})
+    stage: StringProperty(options={"HIDDEN", "SKIP_SAVE"}, translation_context='AnimAssist')
+    step: IntProperty(options={"HIDDEN", "SKIP_SAVE"}, translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context):
@@ -267,7 +269,7 @@ class ANIMASSIST_OT_timeline_stage(bpy.types.Operator):
     def execute(self, context):
         stage = model.next_stage(current_stage(context), self.step) if self.step else self.stage
         if stage not in model.STAGE_IDS:
-            self.report({"WARNING"}, "Choose a known stage")
+            self.report({"WARNING"}, T('Choose a known stage'))
             return {"CANCELLED"}
         setattr(context.workspace, STAGE_PROPERTY, stage)  # update redraws Timelines
         return {"FINISHED"}
@@ -325,7 +327,7 @@ def _toolbar_row(context):
     # Vertical space never changes the horizontal packing or button order.
     items = model.toolbar_layout(max(1, region.width - left - right), base, base, False,
                        record,GROUPS,labels,lambda text: blf.dimensions(0, text)[0],
-                       stage, view=view)
+                       stage, view=view, translate=T)
     items = [
         (kind, key, label, (x + left, y + iy, w, ih + height - base))
         for kind, key, label, (x, iy, w, ih) in items
@@ -380,17 +382,17 @@ def _list_entries(row, state):
     view, key = state['view']
     if view == 'FAMILY':
         label, actions = next((l, a) for k, l, a in GROUPS if k == key)
-        rows = [('BACK', '', '\u2039 Back')] if state.get('back') else []
-        rows.append(('HEAD', key, label))
+        rows = [('BACK', '', T('\u2039 Back'))] if state.get('back') else []
+        rows.append(('HEAD', key, T(label)))
         for action in actions:
-            rows.append(('GAP', '', '') if action is None else ('RUN', action, ACTIONS[action][2]))
-        return rows + [('GAP', '', ''), ('OPTIONS', key, f'{label} Options'), ('HOME', '', 'Open Anim Assist Panel')]
+            rows.append(('GAP', '', '') if action is None else ('RUN', action, T(ACTIONS[action][2])))
+        return rows + [('GAP', '', ''), ('OPTIONS', key, F('{family} Options', family=T(label))), ('HOME', '', T('Open Anim Assist Panel'))]
     # More has one job: the row's tools that did not fit (owner pick "C", 2026-10-18).
     # Every other tool is in Find.
     hidden = _row_hidden_tools(row)
     if not hidden:
-        return [('HEAD', '', 'Every tool on this row fits')]
-    return [('HEAD', '', 'Did Not Fit')] + [('RUN', a, ACTIONS[a][2]) for a in hidden]
+        return [('HEAD', '', T('Every tool on this row fits'))]
+    return [('HEAD', '', T('Did Not Fit'))] + [('RUN', a, T(ACTIONS[a][2])) for a in hidden]
 
 
 def _list_layout(context, row):
@@ -435,12 +437,15 @@ def popout_geometry(region_w, region_h, band, track_x, scale, extra=0.):
     *extra* adds a bottom line (the hint of a clicked popout)."""
     y = band[1] + band[3] + 4 * scale
     available = max(0, region_h - y)
-    # In a short Timeline, omit the hint line. It is also in the status bar.
-    extra = extra if available >= 44 * scale + extra else 0.
-    width = min(280 * scale, region_w)
+    # Leave the hint in the status bar when the Timeline is too small.
+    hint_width = 440 * scale
+    extra = extra if region_w >= hint_width and available >= 44 * scale + extra else 0.
+    slider_width = min(280 * scale, region_w)
+    width = hint_width if extra else slider_width
     height = min(44 * scale + extra, available)
     x = max(0, min(track_x, region_w - width))
-    return (x, y, width, height), (x + 10 * scale, y + 5 * scale + extra, max(1, width - 70 * scale), 16 * scale)
+    track = (x + 10 * scale, y + 5 * scale + extra, max(1, slider_width - 70 * scale), 16 * scale)
+    return (x, y, width, height), track
 
 
 def _menu_open(context):
@@ -464,7 +469,7 @@ def _menu_items(context, items, band):
     bx, _by, bw, bh = button[3]
     gap, pad = 2 * scale, 8 * scale
     blf.size(0, round(11 * scale))
-    stages = [(key, label) for key, label, _families in model.STAGES]
+    stages = [(key, T(label)) for key, label, _families in model.STAGES]
     top = band[1] + band[3] + gap
     region_w = context.region.width
     region_h = context.region.height - 23 * scale
@@ -521,6 +526,7 @@ _COLORS={'tween':(.25,.8,.8,1),'timing':(1,.72,.25,1),'curves':(.4,.75,1,1),
 
 
 def _text(rect,text,color,scale,font=11,left=False):
+    text=T(text)
     x,y,w,h=rect
     blf.size(0,round(font*scale)); blf.color(0,*color)
     tw,th=blf.dimensions(0,text)
@@ -886,8 +892,8 @@ def _draw():
                 if arrow:
                     # Dropdown arrow: three stacked bars narrowing downward.
                     ax=rect[0]+rect[2]-arrow*.6; ay=rect[1]+rect[3]/2
-                    for row,half in enumerate((3,2,1)):
-                        _quad((ax-half*scale,ay+(1-row)*scale,2*half*scale,scale),ink_text)
+                    for arrow_row,half in enumerate((3,2,1)):
+                        _quad((ax-half*scale,ay+(1-arrow_row)*scale,2*half*scale,scale),ink_text)
                 continue
             if kind=='SLIDER':
                 tool=model.effective_tool(action,stage_tools[action])
@@ -953,10 +959,12 @@ def _draw():
             _quad((x,y,width,1),accent)
             _text((x+5*scale,y+23*scale+extra,width-10*scale,18*scale),model.SLIDERS[active.action][0],(*widgets.text[:3],1),scale,left=True)
             _track(track,active.value,active._tool,accent)
+            value_x = x + width - 60 * scale
             if extra > 0:
+                value_x = track[0] + track[2]
                 _text((x+5*scale,y+2*scale,width-10*scale,12*scale),'Drag to adjust \u00b7 double-click or click away to apply \u00b7 Esc cancels',
                       (*widgets.text[:3],.6),scale,font=9,left=True)
-            _text((x+width-60*scale,y+3*scale+extra,55*scale,20*scale),f'{active.value:.{active._tool["precision"]}f}'+model.SLIDERS[active.action][1],(*widgets.text[:3],1),scale,font=10)
+            _text((value_x,y+3*scale+extra,55*scale,20*scale),f'{active.value:.{active._tool["precision"]}f}'+model.SLIDERS[active.action][1],(*widgets.text[:3],1),scale,font=10)
         if not active and hover and not _menu_open(context) and not _list_open(context) and time.monotonic() - _hover_started.get(pointer, float("inf")) > .6:
             item = next((item for item in items if (item[0], item[1]) == hover[1:]), None)
             if item:
@@ -1071,7 +1079,7 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
                     from . import timeline_strip as tools
                     reason = tools._unavailable(context, context.area, key)
                     if reason:
-                        self.report({'WARNING'}, reason)  # stays open so another tool can be chosen
+                        self.report({'WARNING'}, T(reason))  # stays open so another tool can be chosen
                     else:
                         _close_row_menu(context)
                         bpy.ops.animassist.timeline_tool('INVOKE_DEFAULT', action=key, canvas_undo=True)
@@ -1121,7 +1129,7 @@ class ANIMASSIST_OT_timeline_overlay_events(bpy.types.Operator):
             from . import timeline_strip as tools
             reason=tools._unavailable(context,context.area,action) if action else ''
             if reason:
-                self.report({'WARNING'},reason)
+                self.report({'WARNING'},T(reason))
             elif found[0] in {'SLIDER','POPOUT'}:
                 _slider_controls(context,point,found,context.preferences.system.ui_scale,row.view[1])
             elif found[0]=='PRESET':
@@ -1323,13 +1331,13 @@ def _view_menu(self, context):
         prefs = get_prefs(context)
         if prefs:
             self.layout.separator()
-            self.layout.prop(prefs, "timeline_toolbar_row", text="Show Anim Assist Tool Row")
+            self.layout.prop(prefs, "timeline_toolbar_row", text="Show Anim Assist Tool Row", text_ctxt='AnimAssist')
             row = self.layout.row()
             row.operator_context = "INVOKE_DEFAULT"
-            row.operator("animassist.toolbar_settings", text="Anim Assist Toolbar Settings")
+            row.operator("animassist.toolbar_settings", text="Anim Assist Toolbar Settings", text_ctxt='AnimAssist')
             if hasattr(context.workspace, STAGE_PROPERTY):
-                self.layout.prop_menu_enum(context.workspace, STAGE_PROPERTY, text="Anim Assist Stage")
-            self.layout.menu("ANIMASSIST_MT_timeline_tools", text="Anim Assist Tools")
+                self.layout.prop_menu_enum(context.workspace, STAGE_PROPERTY, text="Anim Assist Stage", text_ctxt='AnimAssist')
+            self.layout.menu("ANIMASSIST_MT_timeline_tools", text="Anim Assist Tools", text_ctxt='AnimAssist')
 
 
 @bpy.app.handlers.persistent
@@ -1365,8 +1373,7 @@ def _stage_update(workspace, _context):
 def _stage_items():
     # Explicit, permanent numbers: the .blend stores the number, so reordering
     # STAGES later must not change saved stages.
-    return [(key, label, "The All overview of every tool family" if families is None
-             else f"The {label} toolset: {_family_labels(key)}", model.STAGE_NUMBERS[key])
+    return [(key, label, "Tool families the Timeline band shows in this workspace", model.STAGE_NUMBERS[key])
             for key, label, families in model.STAGES]
 
 
@@ -1378,7 +1385,7 @@ def register():
         explainers.register_class(cls)
     setattr(bpy.types.WorkSpace, STAGE_PROPERTY, EnumProperty(
         name="Anim Assist Stage", description="Tool families the Timeline band shows in this workspace",
-        items=_stage_items(), default="ALL", update=_stage_update))
+        items=_stage_items(), default="ALL", update=_stage_update, translation_context='AnimAssist'))
     if not bpy.app.background:
         _handle = bpy.types.SpaceDopeSheetEditor.draw_handler_add(_draw, (), "WINDOW", "POST_PIXEL")
         bpy.types.DOPESHEET_MT_view.append(_view_menu)

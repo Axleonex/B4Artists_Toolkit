@@ -19,6 +19,8 @@ through a thin wrapper so the logic lives in exactly one place.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from dataclasses import dataclass
 from typing import Optional
 
@@ -275,7 +277,7 @@ def _run_offset(
     touched_frames = 0
 
     if not frames:
-        return (0, 0, ["No frames matched the current scope."])
+        return (0, 0, [T('No frames matched the current scope.')])
 
     # Build the master delta once (independent of frame / target).
     master = om.build_delta(
@@ -289,7 +291,7 @@ def _run_offset(
     master = master.masked_for_axis(opts.preserve_contact_axis)
 
     if master.is_zero():
-        return (0, 0, ["Offset delta is zero — nothing to do."])
+        return (0, 0, [T('Offset delta is zero — nothing to do.')])
 
     # Resolve per-frame weights once per frame.
     window_start, window_end = fo.window_bounds(
@@ -361,7 +363,7 @@ def _run_offset(
             effective_space = "LOCAL"
             if not gimbal_fallback_warned:
                 warnings.append(
-                    "Gimbal space fell back to Local on quaternion targets."
+                    T('Gimbal space fell back to Local on quaternion targets.')
                 )
                 gimbal_fallback_warned = True
 
@@ -553,18 +555,18 @@ class _OffsetBase:
             push_sign=push_sign,
         )
         if opts is None:
-            self.report({"WARNING"}, "Offset properties unavailable.")
+            self.report({"WARNING"}, T('Offset properties unavailable.'))
             return {"CANCELLED"}
 
         targets = tg.resolve_targets(context, pivot_mode=opts.pivot_mode)
         if not targets:
-            self.report({"INFO"}, "No targets selected.")
+            self.report({"INFO"}, T('No targets selected.'))
             return {"CANCELLED"}
 
         action = context.active_object.animation_data.action
         frames = _frames_from_scope(context, opts, targets, action)
         if not frames:
-            self.report({"INFO"}, "No frames matched the current scope.")
+            self.report({"INFO"}, T('No frames matched the current scope.'))
             return {"CANCELLED"}
 
         written_frames, written_channels, warnings = _run_offset(
@@ -575,7 +577,7 @@ class _OffsetBase:
             self.report({"WARNING"}, w)
 
         if written_channels == 0:
-            self.report({"INFO"}, "Offset matched no writable channels.")
+            self.report({"INFO"}, T('Offset matched no writable channels.'))
             return {"CANCELLED"}
 
         # Record for Reapply / Invert Last.
@@ -599,7 +601,7 @@ class _OffsetBase:
 
         self.report(
             {"INFO"},
-            f"Offset: {written_channels} channel writes across {written_frames} frames.",
+            F('Offset: {p0} channel writes across {p1} frames.', p0=f'{written_channels}', p1=f'{written_frames}'),
         )
         return {"FINISHED"}
 
@@ -684,7 +686,7 @@ def _run_from_record(
 ) -> tuple[int, int, list[str]]:
     opts = _resolve_options(context)
     if opts is None:
-        return (0, 0, ["Offset properties unavailable."])
+        return (0, 0, [T('Offset properties unavailable.')])
 
     # Replace the scene-derived amounts with the recorded delta — the
     # rest of the options (skip locked, channel filter, etc.) come from
@@ -703,12 +705,12 @@ def _run_from_record(
 
     targets = tg.resolve_targets(context, pivot_mode=opts.pivot_mode)
     if not targets:
-        return (0, 0, ["No targets selected."])
+        return (0, 0, [T('No targets selected.')])
 
     action = context.active_object.animation_data.action
     frames = _frames_from_scope(context, opts, targets, action)
     if not frames:
-        return (0, 0, ["No frames matched the current scope."])
+        return (0, 0, [T('No frames matched the current scope.')])
 
     return _run_offset(context, opts, targets, action, frames)
 
@@ -729,14 +731,14 @@ class AA_OT_p4_reapply_last(bpy.types.Operator):
     def execute(self, context):
         record = om.get_last()
         if record is None:
-            self.report({"INFO"}, "No previous offset to reapply.")
+            self.report({"INFO"}, T('No previous offset to reapply.'))
             return {"CANCELLED"}
         frames, channels, warnings = _run_from_record(context, record)
         for w in warnings:
             self.report({"WARNING"}, w)
         if channels == 0:
             return {"CANCELLED"}
-        self.report({"INFO"}, f"Reapplied last offset: {channels} channels, {frames} frames.")
+        self.report({"INFO"}, F('Reapplied last offset: {p0} channels, {p1} frames.', p0=f'{channels}', p1=f'{frames}'))
         return {"FINISHED"}
 
 
@@ -755,7 +757,7 @@ class AA_OT_p4_invert_last(bpy.types.Operator):
     def execute(self, context):
         record = om.get_last()
         if record is None:
-            self.report({"INFO"}, "No previous offset to invert.")
+            self.report({"INFO"}, T('No previous offset to invert.'))
             return {"CANCELLED"}
         inverted = record.as_inverted()
         frames, channels, warnings = _run_from_record(context, inverted)
@@ -765,7 +767,7 @@ class AA_OT_p4_invert_last(bpy.types.Operator):
             return {"CANCELLED"}
         # Remember the inverted record so a double-invert undoes itself.
         om.remember_last(inverted)
-        self.report({"INFO"}, f"Inverted last offset: {channels} channels, {frames} frames.")
+        self.report({"INFO"}, F('Inverted last offset: {p0} channels, {p1} frames.', p0=f'{channels}', p1=f'{frames}'))
         return {"FINISHED"}
 
 

@@ -9,6 +9,8 @@ no RNA changes at all for pure-query ops).
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 
 from ..core.logging import get_logger
@@ -74,14 +76,14 @@ class AA_OT_p6_set_range_start(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
         p6.range_start = float(context.scene.frame_current)
         # Clamp end to be >= start.
         if p6.range_end < p6.range_start:
             p6.range_end = p6.range_start
         p6.range_mode = "CUSTOM"
-        self.report({"INFO"}, f"Range start = {p6.range_start:.1f}")
+        self.report({"INFO"}, F('Range start = {p0}', p0=f'{p6.range_start:.1f}'))
         return {"FINISHED"}
 
 
@@ -104,14 +106,14 @@ class AA_OT_p6_set_range_end(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
         p6.range_end = float(context.scene.frame_current)
         # Clamp start to be <= end.
         if p6.range_start > p6.range_end:
             p6.range_start = p6.range_end
         p6.range_mode = "CUSTOM"
-        self.report({"INFO"}, f"Range end = {p6.range_end:.1f}")
+        self.report({"INFO"}, F('Range end = {p0}', p0=f'{p6.range_end:.1f}'))
         return {"FINISHED"}
 
 
@@ -134,12 +136,12 @@ class AA_OT_p6_select_keys_in_range(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         lo, hi = rm.resolve_active_range(p6, context)
@@ -152,7 +154,7 @@ class AA_OT_p6_select_keys_in_range(bpy.types.Operator):
                     selected += 1
 
         _tag_redraw(context)
-        self.report({"INFO"}, f"Selected {selected} key(s) in [{lo:.0f}, {hi:.0f}]")
+        self.report({"INFO"}, F('Selected {p0} key(s) in [{p1}, {p2}]', p0=f'{selected}', p1=f'{lo:.0f}', p2=f'{hi:.0f}'))
         return {"FINISHED"}
 
 
@@ -175,12 +177,12 @@ class AA_OT_p6_scale_range(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, obj_name = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         lo, hi = rm.resolve_active_range(p6, context)
@@ -198,7 +200,7 @@ class AA_OT_p6_scale_range(bpy.types.Operator):
         _tag_redraw(context)
         self.report(
             {"INFO"},
-            f"Scale ×{p6.scale_factor:.3f} in range [{lo:.0f}, {hi:.0f}]",
+            F('Scale ×{p0} in range [{p1}, {p2}]', p0=f'{p6.scale_factor:.3f}', p1=f'{lo:.0f}', p2=f'{hi:.0f}'),
         )
         return {"FINISHED"}
 
@@ -222,12 +224,12 @@ class AA_OT_p6_offset_range(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         fcurves, _ = _get_fcurves(context)
         if not fcurves:
-            self.report({"WARNING"}, "No action on active object")
+            self.report({"WARNING"}, T('No action on active object'))
             return {"CANCELLED"}
 
         lo, hi = rm.resolve_active_range(p6, context)
@@ -237,7 +239,7 @@ class AA_OT_p6_offset_range(bpy.types.Operator):
         sign = "+" if p6.offset_frames >= 0 else ""
         self.report(
             {"INFO"},
-            f"Offset {sign}{p6.offset_frames:.1f}f in range [{lo:.0f}, {hi:.0f}]",
+            F('Offset {p0}{p1}f in range [{p2}, {p3}]', p0=f'{sign}', p1=f'{p6.offset_frames:.1f}', p2=f'{lo:.0f}', p3=f'{hi:.0f}'),
         )
         return {"FINISHED"}
 
@@ -261,7 +263,7 @@ class AA_OT_p6_store_range(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         lo, hi = rm.resolve_active_range(p6, context)
@@ -269,7 +271,7 @@ class AA_OT_p6_store_range(bpy.types.Operator):
         p6.stored_range_end   = hi
         p6.has_stored_range   = True
 
-        self.report({"INFO"}, f"Range stored: [{lo:.1f}, {hi:.1f}]")
+        self.report({"INFO"}, F('Range stored: [{p0}, {p1}]', p0=f'{lo:.1f}', p1=f'{hi:.1f}'))
         return {"FINISHED"}
 
 
@@ -293,7 +295,7 @@ class AA_OT_p6_restore_range(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None or not p6.has_stored_range:
-            self.report({"WARNING"}, "No stored range available")
+            self.report({"WARNING"}, T('No stored range available'))
             return {"CANCELLED"}
 
         p6.range_start = p6.stored_range_start
@@ -302,7 +304,7 @@ class AA_OT_p6_restore_range(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Range restored: [{p6.range_start:.1f}, {p6.range_end:.1f}]",
+            F('Range restored: [{p0}, {p1}]', p0=f'{p6.range_start:.1f}', p1=f'{p6.range_end:.1f}'),
         )
         return {"FINISHED"}
 
@@ -326,7 +328,7 @@ class AA_OT_p6_clear_range(bpy.types.Operator):
     def execute(self, context):
         p6 = get_p6(context)
         if p6 is None:
-            self.report({"WARNING"}, "Retiming properties not available")
+            self.report({"WARNING"}, T('Retiming properties not available'))
             return {"CANCELLED"}
 
         scene = context.scene
@@ -337,7 +339,7 @@ class AA_OT_p6_clear_range(bpy.types.Operator):
 
         self.report(
             {"INFO"},
-            f"Range cleared → [{p6.range_start:.0f}, {p6.range_end:.0f}]",
+            F('Range cleared → [{p0}, {p1}]', p0=f'{p6.range_start:.0f}', p1=f'{p6.range_end:.0f}'),
         )
         return {"FINISHED"}
 

@@ -13,7 +13,7 @@ class ANIMASSIST_MT_interpolation(Menu):
     def draw(self, _context: bpy.types.Context) -> None:
         layout = self.layout
         for itype, label in (("CONSTANT", "Constant"), ("LINEAR", "Linear"), ("BEZIER", "Bezier")):
-            op = layout.operator("animassist.batch_interpolation", text=label)
+            op = layout.operator("animassist.batch_interpolation", text=label, text_ctxt='AnimAssist')
             op.interp_type = itype
 
 
@@ -30,7 +30,7 @@ class ANIMASSIST_MT_key_type(Menu):
             ("EXTREME", "Extreme"),
             ("JITTER", "Jitter"),
         ):
-            op = layout.operator("animassist.set_key_type", text=label)
+            op = layout.operator("animassist.set_key_type", text=label, text_ctxt='AnimAssist')
             op.key_type = kt
 
 
@@ -47,7 +47,7 @@ class ANIMASSIST_MT_select_key_type(Menu):
             ("EXTREME", "Extreme"),
             ("JITTER", "Jitter"),
         ):
-            op = layout.operator("animassist.select_by_key_type", text=label)
+            op = layout.operator("animassist.select_by_key_type", text=label, text_ctxt='AnimAssist')
             op.key_type = kt
             op.deselect = False
 
@@ -65,7 +65,7 @@ class ANIMASSIST_MT_handle_type(Menu):
             ("ALIGNED", "Aligned"),
             ("FREE", "Free"),
         ):
-            op = layout.operator("animassist.set_handle_type", text=label)
+            op = layout.operator("animassist.set_handle_type", text=label, text_ctxt='AnimAssist')
             op.handle_type = ht
 
 

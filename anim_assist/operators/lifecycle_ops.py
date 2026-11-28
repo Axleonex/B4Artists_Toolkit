@@ -18,6 +18,8 @@ Provides:
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from bpy.props import BoolProperty
 from bpy.types import Operator
 
@@ -52,7 +54,7 @@ class AA_OT_deep_uninstall(Operator):
             "every Action. Your keyframes themselves are not deleted."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     purge_scene_data: BoolProperty(  # type: ignore[valid-type]
         name="Scene PropertyGroups",
         description=(
@@ -61,17 +63,17 @@ class AA_OT_deep_uninstall(Operator):
             "addon to a fresh state on this .blend."
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
     purge_sequencer: BoolProperty(  # type: ignore[valid-type]
         name="Lipsync Sequencer Strips",
         description="Remove sound strips named AA_P12_* from every scene's sequencer",
         default=True,
-    )
+     translation_context='AnimAssist')
     purge_speakers: BoolProperty(  # type: ignore[valid-type]
         name="Lipsync Speakers",
         description="Remove Speaker datablocks named AA_P12_*",
         default=True,
-    )
+     translation_context='AnimAssist')
     purge_handlers: BoolProperty(  # type: ignore[valid-type]
         name="App Handlers",
         description=(
@@ -80,14 +82,14 @@ class AA_OT_deep_uninstall(Operator):
             "register() left handlers behind"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
     def invoke(self, context, event):  # noqa: ARG002
         return context.window_manager.invoke_props_dialog(self, width=420)
 
     def draw(self, context):  # noqa: ARG002
         layout = self.layout
-        layout.label(text="Wipe Anim Assist data from this .blend?", icon="ERROR")
+        layout.label(text="Wipe Anim Assist data from this .blend?", icon="ERROR", text_ctxt='AnimAssist')
         col = layout.column(align=True)
         col.prop(self, "purge_action_props")
         col.prop(self, "purge_scene_data")
@@ -98,7 +100,7 @@ class AA_OT_deep_uninstall(Operator):
         layout.label(
             text="Run this before uninstalling for a clean reinstall.",
             icon="INFO",
-        )
+         text_ctxt='AnimAssist')
 
     def execute(self, context):  # noqa: ARG002
         try:
@@ -114,11 +116,7 @@ class AA_OT_deep_uninstall(Operator):
             return report_failure(self, "Deep uninstall did not finish", "Save your file, restart Bforartists, and run it again", exc)
 
         msg = (
-            "Purged: " + str(counts["action_idprops"]) + " action flags, "
-            + str(counts["scenes_reset"]) + " scenes, "
-            + str(counts["seq_strips_removed"]) + " strips, "
-            + str(counts["speakers_removed"]) + " speakers, "
-            + str(counts["handlers_removed"]) + " handlers"
+            F('Purged: {p0} action flags, {p1} scenes, {p2} strips, {p3} speakers, {p4} handlers', p0=str(counts["action_idprops"]), p1=str(counts["scenes_reset"]), p2=str(counts["seq_strips_removed"]), p3=str(counts["speakers_removed"]), p4=str(counts["handlers_removed"]))
         )
         self.report({"INFO"}, msg)
         return {"FINISHED"}
@@ -141,9 +139,9 @@ class AA_OT_purge_zombie_classes(Operator):
     def execute(self, context):  # noqa: ARG002
         removed = lifecycle.purge_zombie_classes()
         if removed:
-            self.report({"WARNING"}, "Removed " + str(removed) + " zombie class(es)")
+            self.report({"WARNING"}, F('Removed {p0} zombie class(es)', p0=str(removed)))
         else:
-            self.report({"INFO"}, "No zombie classes found")
+            self.report({"INFO"}, T('No zombie classes found'))
         return {"FINISHED"}
 
 
@@ -157,10 +155,10 @@ class AA_OT_report_saved_versions(Operator):
     def execute(self, context):  # noqa: ARG002
         warnings = lifecycle.check_saved_versions()
         if not warnings:
-            self.report({"INFO"}, "All open scenes are within installed schema range")
+            self.report({"INFO"}, T('All open scenes are within installed schema range'))
             return {"FINISHED"}
         for w in warnings:
-            self.report({"WARNING"}, w)
+            self.report({"WARNING"}, T(w))
         return {"FINISHED"}
 
 

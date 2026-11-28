@@ -1,3 +1,9 @@
+# 12.11.2 Lipsync setup compatibility
+
+- Set up the speaker sound strip with current or older Sequence Editor collections.
+- Create the first strip in an empty editor and keep occupied channels clear.
+- Local candidate; publication is pending.
+
 # 12.11.1 Timeline Undo history
 
 - Find and native menu actions use the underlying tool's native Undo entry, avoiding a second entry for the same edit.

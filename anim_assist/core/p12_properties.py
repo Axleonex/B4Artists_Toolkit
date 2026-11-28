@@ -94,12 +94,12 @@ class AA_P12_CueRow(bpy.types.PropertyGroup):
         description="Cue timestamp in seconds from start of audio",
         default=0.0,
         min=0.0,
-    )
+     translation_context='AnimAssist')
     viseme_name: StringProperty(  # type: ignore[valid-type]
         name="Viseme",
         description="Logical viseme name from the active library",
         default="rest",
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -113,12 +113,12 @@ class AA_P12_ShapeKeyWiringEntry(bpy.types.PropertyGroup):
         name="Viseme",
         description="Logical viseme name (matches a viseme in the active library)",
         default="A",
-    )
+     translation_context='AnimAssist')
     shape_key_name: StringProperty(  # type: ignore[valid-type]
         name="Shape Key",
         description="Shape key (key block) on the mesh that holds this viseme pose",
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -131,15 +131,15 @@ class AA_P12_VisemePoseEntry(bpy.types.PropertyGroup):
     viseme_name: StringProperty(  # type: ignore[valid-type]
         name="Viseme",
         default="rest",
-    )
+     translation_context='AnimAssist')
     pose_json: StringProperty(  # type: ignore[valid-type]
         name="Pose JSON",
         default="{}",
-    )
+     translation_context='AnimAssist')
     is_builtin: BoolProperty(  # type: ignore[valid-type]
         name="Built-in",
         default=False,
-    )
+     translation_context='AnimAssist')
 
 
 class AA_P12_RigWiringEntry(bpy.types.PropertyGroup):
@@ -148,12 +148,12 @@ class AA_P12_RigWiringEntry(bpy.types.PropertyGroup):
     role: StringProperty(  # type: ignore[valid-type]
         name="Role",
         default="jaw",
-    )
+     translation_context='AnimAssist')
     bone_name: StringProperty(  # type: ignore[valid-type]
         name="Bone",
         description="Bone assigned to this logical facial role",
         default="",
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -166,96 +166,96 @@ class AA_P12_LipsyncLayerLink(bpy.types.PropertyGroup):
     layer_name: StringProperty(  # type: ignore[valid-type]
         name="Layer Name",
         default="",
-    )
+     translation_context='AnimAssist')
     armature_name: StringProperty(  # type: ignore[valid-type]
         name="Armature",
         default="",
-    )
+     translation_context='AnimAssist')
     audio_path: StringProperty(  # type: ignore[valid-type]
         name="Audio File",
         description="WAV audio file used to generate this lipsync layer",
         subtype="FILE_PATH",
         default="",
-    )
+     translation_context='AnimAssist')
     audio_sha256: StringProperty(  # type: ignore[valid-type]
         name="Audio Hash",
         default="",
-    )
+     translation_context='AnimAssist')
     speaker_strip_name: StringProperty(  # type: ignore[valid-type]
         name="Sequencer Strip",
         default="",
-    )
+     translation_context='AnimAssist')
     viseme_library: EnumProperty(  # type: ignore[valid-type]
         name="Viseme Library",
         description="Viseme naming and pose library used for speech shapes",
         items=_viseme_library_items,
         default=0,
-    )
+     translation_context='AnimAssist')
     backend: EnumProperty(  # type: ignore[valid-type]
         name="Backend",
         description="Speech-analysis backend used to generate viseme cues",
         items=_backend_items,
         default=0,
-    )
+     translation_context='AnimAssist')
     setup_mode: EnumProperty(  # type: ignore[valid-type]
         name="Setup Mode",
         description="Whether setup creates markers only or also performs the initial bake",
         items=_setup_mode_items,
         default=0,
-    )
+     translation_context='AnimAssist')
     frame_offset: IntProperty(  # type: ignore[valid-type]
         name="Frame Offset",
         description="Shift generated lipsync cues by this many frames",
         default=1,
         min=0,
-    )
+     translation_context='AnimAssist')
     anticipation_frames: IntProperty(  # type: ignore[valid-type]
         name="Anticipation",
         description="Move mouth-shape cues earlier by this many frames",
         default=2,
         min=0,
         max=12,
-    )
+     translation_context='AnimAssist')
     last_baked_start: IntProperty(  # type: ignore[valid-type]
         name="Bake Range Start",
         default=0,
-    )
+     translation_context='AnimAssist')
     last_baked_end: IntProperty(  # type: ignore[valid-type]
         name="Bake Range End",
         default=0,
-    )
+     translation_context='AnimAssist')
     is_stale: BoolProperty(  # type: ignore[valid-type]
         name="Audio Changed",
         default=False,
-    )
+     translation_context='AnimAssist')
     # ----- v12 additions -----
     mode: EnumProperty(  # type: ignore[valid-type]
         name="Mode",
         description="PREVIEW = live drivers; SHIPPED = baked fcurves",
         items=_layer_mode_items,
         default=0,
-    )
+     translation_context='AnimAssist')
     target_kind: EnumProperty(  # type: ignore[valid-type]
         name="Target",
         description="What surface the lipsync drives",
         items=_target_kind_items,
         default=0,
-    )
+     translation_context='AnimAssist')
     mesh_name: StringProperty(  # type: ignore[valid-type]
         name="Mesh",
         description="Object whose shape keys are driven (usually the head mesh)",
         default="",
-    )
+     translation_context='AnimAssist')
     cue_table: CollectionProperty(  # type: ignore[valid-type]
         type=AA_P12_CueRow,
         name="Cue Table",
         description="Phoneme/viseme schedule shared by PREVIEW drivers and SHIPPED bake",
-    )
+     translation_context='AnimAssist')
     active_cue_index: IntProperty(  # type: ignore[valid-type]
         name="Active Cue",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -269,58 +269,58 @@ class AA_P12_Properties(bpy.types.PropertyGroup):
         name="Enable Lipsync",
         description="Enable Anim Assist lipsync evaluation for this scene",
         default=True,
-    )
+     translation_context='AnimAssist')
     viseme_poses: CollectionProperty(  # type: ignore[valid-type]
         type=AA_P12_VisemePoseEntry,
         name="Viseme Poses",
-    )
+     translation_context='AnimAssist')
     active_viseme_index: IntProperty(  # type: ignore[valid-type]
         name="Active Viseme",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
     rig_wiring: CollectionProperty(  # type: ignore[valid-type]
         type=AA_P12_RigWiringEntry,
         name="Rig Wiring",
-    )
+     translation_context='AnimAssist')
     layer_links: CollectionProperty(  # type: ignore[valid-type]
         type=AA_P12_LipsyncLayerLink,
         name="Lipsync Layer Links",
-    )
+     translation_context='AnimAssist')
     active_link_index: IntProperty(  # type: ignore[valid-type]
         name="Active Link",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
     show_manual_overrides: BoolProperty(  # type: ignore[valid-type]
         name="Highlight Manual Overrides",
         description="Highlight keys protected from automatic lipsync rebaking",
         default=True,
-    )
+     translation_context='AnimAssist')
     rhubarb_path: StringProperty(  # type: ignore[valid-type]
         name="Rhubarb Path",
         description="Path to the optional Rhubarb Lip Sync executable",
         subtype="FILE_PATH",
         default="",
-    )
+     translation_context='AnimAssist')
     amplitude_jaw_scale: FloatProperty(  # type: ignore[valid-type]
         name="Jaw Amplitude Scale",
         description="Multiplier applied to generated jaw movement",
         default=1.0,
         min=0.0,
         max=10.0,
-    )
+     translation_context='AnimAssist')
     # ----- v12 additions -----
     shape_key_wiring: CollectionProperty(  # type: ignore[valid-type]
         type=AA_P12_ShapeKeyWiringEntry,
         name="Shape Key Wiring",
         description="Logical viseme -> shape_key mapping for the active mesh",
-    )
+     translation_context='AnimAssist')
     active_shape_key_index: IntProperty(  # type: ignore[valid-type]
         name="Active Shape Key Wiring Row",
         default=0,
         min=0,
-    )
+     translation_context='AnimAssist')
     warn_on_render_in_preview: BoolProperty(  # type: ignore[valid-type]
         name="Warn If Rendering in PREVIEW",
         description=(
@@ -329,7 +329,7 @@ class AA_P12_Properties(bpy.types.PropertyGroup):
             "way you expect across all render engines"
         ),
         default=True,
-    )
+     translation_context='AnimAssist')
 
 
 # ---------------------------------------------------------------------------
@@ -366,7 +366,7 @@ def register_properties() -> None:
     setattr(
         bpy.types.Scene,
         constants.P12_SCENE_ATTR,
-        PointerProperty(type=AA_P12_Properties, name="Anim Assist P12"),
+        PointerProperty(type=AA_P12_Properties, name="Anim Assist P12", translation_context='AnimAssist'),
     )
     _log.debug("p12 properties attached to Scene.%s", constants.P12_SCENE_ATTR)
 

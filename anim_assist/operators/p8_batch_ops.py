@@ -3,6 +3,8 @@ Batch operations, switch history navigation, markers, contact preservation, oppo
 Features 31-33, 35-37, 40-41, 43-44
 """
 
+from ..i18n import T, F
+
 import bpy
 from ..core.p8_properties import get_p8
 from ..core import p8_match_math as mm
@@ -100,7 +102,7 @@ class AA_OT_p8_switch_marker(bpy.types.Operator):
         marker = context.scene.timeline_markers.new(marker_name)
         marker.frame = frame
 
-        self.report({"INFO"}, f"Marker '{marker_name}' placed at frame {frame}")
+        self.report({"INFO"}, F("Marker '{p0}' placed at frame {p1}", p0=f'{marker_name}', p1=f'{frame}'))
         return {"FINISHED"}
 
 
@@ -125,7 +127,7 @@ class AA_OT_p8_batch_switch(bpy.types.Operator):
         new_value = p8.switch_new_value if p8 else 0.0
 
         if not prop_path:
-            self.report({"ERROR"}, "No switch property set. Pick the IK/FK switch property in the Match & Switch panel first")
+            self.report({"ERROR"}, T('No switch property set. Pick the IK/FK switch property in the Match & Switch panel first'))
             return {"CANCELLED"}
 
         frame = context.scene.frame_current
@@ -169,11 +171,10 @@ class AA_OT_p8_batch_switch(bpy.types.Operator):
         if key_failures:
             self.report(
                 {"WARNING"},
-                f"Batch switched {switched} object(s); switch property could not "
-                f"be keyed on {key_failures} of them",
+                F('Batch switched {p0} object(s); switch property could not be keyed on {p1} of them', p0=f'{switched}', p1=f'{key_failures}'),
             )
         else:
-            self.report({"INFO"}, f"Batch switched {switched} object(s)")
+            self.report({"INFO"}, F('Batch switched {p0} object(s)', p0=f'{switched}'))
         return {"FINISHED"}
 
 
@@ -193,14 +194,13 @@ class AA_OT_p8_nav_next_switch(bpy.types.Operator):
         event = hist.find_next_event(current_frame)
 
         if event is None:
-            self.report({"INFO"}, "No next switch event found")
+            self.report({"INFO"}, T('No next switch event found'))
             return {"CANCELLED"}
 
         context.scene.frame_set(event.frame)
         self.report(
             {"INFO"},
-            f"Navigated to frame {event.frame}: {event.obj_name} "
-            f"({event.prop_path} = {event.new_value})"
+            F('Navigated to frame {p0}: {p1} ({p2} = {p3})', p0=f'{event.frame}', p1=f'{event.obj_name}', p2=f'{event.prop_path}', p3=f'{event.new_value}')
         )
         return {"FINISHED"}
 
@@ -221,14 +221,13 @@ class AA_OT_p8_nav_prev_switch(bpy.types.Operator):
         event = hist.find_prev_event(current_frame)
 
         if event is None:
-            self.report({"INFO"}, "No previous switch event found")
+            self.report({"INFO"}, T('No previous switch event found'))
             return {"CANCELLED"}
 
         context.scene.frame_set(event.frame)
         self.report(
             {"INFO"},
-            f"Navigated to frame {event.frame}: {event.obj_name} "
-            f"({event.prop_path} = {event.new_value})"
+            F('Navigated to frame {p0}: {p1} ({p2} = {p3})', p0=f'{event.frame}', p1=f'{event.obj_name}', p2=f'{event.prop_path}', p3=f'{event.new_value}')
         )
         return {"FINISHED"}
 
@@ -246,7 +245,7 @@ class AA_OT_p8_clear_history(bpy.types.Operator):
 
     def execute(self, context):
         hist.clear_history()
-        self.report({"INFO"}, "Switch history cleared")
+        self.report({"INFO"}, T('Switch history cleared'))
         return {"FINISHED"}
 
 
@@ -274,7 +273,7 @@ class AA_OT_p8_contact_preserve_match(bpy.types.Operator):
         frame = context.scene.frame_current
 
         if not active.pose:
-            self.report({"ERROR"}, "Active object is not an armature. Select an armature in Pose mode")
+            self.report({"ERROR"}, T('Active object is not an armature. Select an armature in Pose mode'))
             return {"CANCELLED"}
 
         # Parse contact mask
@@ -295,7 +294,7 @@ class AA_OT_p8_contact_preserve_match(bpy.types.Operator):
         # Perform match
         targets = [obj for obj in context.selected_objects if obj != active]
         if not targets:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         # Match active to first target's visual world matrix.
@@ -327,7 +326,7 @@ class AA_OT_p8_contact_preserve_match(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, match_result, frame)
 
-        self.report({"INFO"}, "Contact-preserved match applied")
+        self.report({"INFO"}, T('Contact-preserved match applied'))
         return {"FINISHED"}
 
 
@@ -352,7 +351,7 @@ class AA_OT_p8_contact_mask_from_selection(bpy.types.Operator):
     def execute(self, context):
         p8 = get_p8(context)
         if not p8:
-            self.report({"ERROR"}, "Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({"ERROR"}, T('Matching settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {"CANCELLED"}
 
         active = context.active_object
@@ -361,11 +360,11 @@ class AA_OT_p8_contact_mask_from_selection(bpy.types.Operator):
         ]
 
         if not selected_bones:
-            self.report({"WARNING"}, "No bones selected")
+            self.report({"WARNING"}, T('No bones selected'))
             return {"CANCELLED"}
 
         p8.contact_mask = ", ".join(selected_bones)
-        self.report({"INFO"}, f"Contact mask set: {p8.contact_mask}")
+        self.report({"INFO"}, F('Contact mask set: {p0}', p0=f'{p8.contact_mask}'))
         return {"FINISHED"}
 
 
@@ -393,12 +392,12 @@ class AA_OT_p8_quick_match(bpy.types.Operator):
         frame = context.scene.frame_current
 
         if not active.pose:
-            self.report({"ERROR"}, "Active object is not an armature. Select an armature in Pose mode")
+            self.report({"ERROR"}, T('Active object is not an armature. Select an armature in Pose mode'))
             return {"CANCELLED"}
 
         targets = [obj for obj in context.selected_objects if obj != active]
         if not targets:
-            self.report({"ERROR"}, "Select the target object as well as the active object")
+            self.report({"ERROR"}, T('Select the target object as well as the active object'))
             return {"CANCELLED"}
 
         # Match active to first target's visual world matrix.
@@ -417,7 +416,7 @@ class AA_OT_p8_quick_match(bpy.types.Operator):
         if p8 and p8.auto_key_switch:
             mm.key_match_result(active, match_result, frame)
 
-        self.report({"INFO"}, "Quick match applied at current frame")
+        self.report({"INFO"}, T('Quick match applied at current frame'))
         return {"FINISHED"}
 
 
@@ -440,13 +439,13 @@ class AA_OT_p8_repeat_last_switch(bpy.types.Operator):
         event = hist.get_last_event()
 
         if event is None:
-            self.report({"INFO"}, "No previous switch event in history")
+            self.report({"INFO"}, T('No previous switch event in history'))
             return {"CANCELLED"}
 
         # Find the object
         obj = bpy.data.objects.get(event.obj_name)
         if obj is None:
-            self.report({"ERROR"}, f"Object '{event.obj_name}' was renamed or deleted. Clear the switch history and switch again")
+            self.report({"ERROR"}, F("Object '{p0}' was renamed or deleted. Clear the switch history and switch again", p0=f'{event.obj_name}'))
             return {"CANCELLED"}
 
         frame = context.scene.frame_current
@@ -454,7 +453,7 @@ class AA_OT_p8_repeat_last_switch(bpy.types.Operator):
         # Resolve property owner
         owner = _resolve_prop_owner(obj, event.bone_name)
         if owner is None:
-            self.report({"ERROR"}, "Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel")
+            self.report({"ERROR"}, T('Cannot find the object or bone that owns the switch property. Check the bone name in the Match & Switch panel'))
             return {"CANCELLED"}
 
         # Read current property value before switching (for accurate history).
@@ -487,7 +486,7 @@ class AA_OT_p8_repeat_last_switch(bpy.types.Operator):
             new_value=event.new_value,
         ))
 
-        self.report({"INFO"}, f"Repeated switch on {event.obj_name} at frame {frame}")
+        self.report({"INFO"}, F('Repeated switch on {p0} at frame {p1}', p0=f'{event.obj_name}', p1=f'{frame}'))
         return {"FINISHED"}
 
 

@@ -1,4 +1,6 @@
 """Native NLA workflows with explicit clip scope and preserved source data."""
+
+from ..i18n import T, F
 import math
 
 import bpy
@@ -14,7 +16,7 @@ def _run(operator, fn):
     try:
         fn()
     except (ValueError, RuntimeError) as exc:
-        operator.report({"WARNING"}, str(exc))
+        operator.report({"WARNING"}, T(str(exc)))
         return {"CANCELLED"}
     return {"FINISHED"}
 
@@ -25,7 +27,7 @@ class _NlaOperator:
     @classmethod
     def poll(cls, context):
         if not in_nla(context):
-            cls.poll_message_set("Use the NLA Editor")
+            cls.poll_message_set(T('Use the NLA Editor'))
             return False
         return True
 
@@ -83,9 +85,9 @@ class ANIMASSIST_OT_nla_time(_NlaOperator, Operator):
         ("START", "Align Starts", "Align to the active selected clip's start"),
         ("END", "Align Ends", "Align to the active selected clip's end"),
         ("SEQUENCE", "Sequence Clips", "Place clips by scene start, then track order, from the active clip's start"),
-    ])
-    frames: FloatProperty(name="Frame Step", description="Scene frames to move the selected clips", default=1)
-    gap: FloatProperty(name="Gap", description="Scene frames between sequenced clips", default=0, min=0)
+    ], translation_context='AnimAssist')
+    frames: FloatProperty(name="Frame Step", description="Scene frames to move the selected clips", default=1, translation_context='AnimAssist')
+    gap: FloatProperty(name="Gap", description="Scene frames between sequenced clips", default=0, min=0, translation_context='AnimAssist')
 
     def execute(self, context):
         def perform():
@@ -108,7 +110,7 @@ class ANIMASSIST_OT_nla_time(_NlaOperator, Operator):
                     cursor += i.strip.frame_end - i.strip.frame_start + self.gap
             apply_positions(items, starts)
             context.area.tag_redraw()
-            self.report({"INFO"}, f"Arranged {len(items)} selected clips")
+            self.report({"INFO"}, F('Arranged {p0} selected clips', p0=f'{len(items)}'))
         return _run(self, perform)
 
 
@@ -137,7 +139,7 @@ class ANIMASSIST_OT_nla_unique(_NlaOperator, Operator):
                 for action in copies:
                     bpy.data.actions.remove(action)
                 raise
-            self.report({"INFO"}, f"Made {len(items)} source Actions independent")
+            self.report({"INFO"}, F('Made {p0} source Actions independent', p0=f'{len(items)}'))
         return _run(self, perform)
 
 
@@ -157,7 +159,7 @@ class ANIMASSIST_OT_nla_native(_NlaOperator, Operator):
         ("CORRECTION", "Edit Correction", "Edit a recognized Combine transform correction"),
         ("PUSHDOWN", "Push Down Action", "Push the owner's active Action into the NLA stack"),
         ("STASH", "Stash Action", "Stash the owner's active Action in a muted track"),
-    ], default="EDIT")
+    ], default="EDIT", translation_context='AnimAssist')
 
     def execute(self, context):
         return self.invoke(context, None)
@@ -197,7 +199,7 @@ class ANIMASSIST_OT_nla_native(_NlaOperator, Operator):
                     track.name = f"Stash: {action.name}" if self.command == "STASH" else action.name
                     track.mute = self.command == "STASH"
                     ad.action = None
-                    self.report({"INFO"}, f"{obj.name}: Action moved to {track.name}; select its clip to edit")
+                    self.report({"INFO"}, F('{p0}: Action moved to {p1}; select its clip to edit', p0=f'{obj.name}', p1=f'{track.name}'))
                 except Exception:
                     ad.nla_tracks.remove(track)
                     ad.action = action
@@ -251,7 +253,7 @@ class ANIMASSIST_OT_nla_open_editor(_NlaOperator, Operator):
     editor: EnumProperty(name="Editor", description="Editor for inspecting source keys", items=[
         ("DOPESHEET_EDITOR", "Dope Sheet", "Inspect source key timing"),
         ("GRAPH_EDITOR", "Graph Editor", "Inspect source curves"),
-    ])
+    ], translation_context='AnimAssist')
 
     def execute(self, context):
         def perform():
@@ -277,7 +279,7 @@ class ANIMASSIST_OT_nla_open_editor(_NlaOperator, Operator):
                              and getattr(space, "action", None) == item.strip.action)
                 if suitable:
                     area.tag_redraw()
-                    self.report({"INFO"}, "Source is open in the existing animation editor")
+                    self.report({"INFO"}, T('Source is open in the existing animation editor'))
                     return
             context.area.type = self.editor
             if self.editor == "DOPESHEET_EDITOR":
@@ -286,7 +288,7 @@ class ANIMASSIST_OT_nla_open_editor(_NlaOperator, Operator):
             else:
                 context.area.spaces.active.mode = "FCURVES"
                 context.area.spaces.active.dopesheet.show_only_selected = True
-            self.report({"INFO"}, "Source editing: use the editor selector to return to NLA, then Finish Editing")
+            self.report({"INFO"}, T('Source editing: use the editor selector to return to NLA, then Finish Editing'))
         return _run(self, perform)
 
 
@@ -343,7 +345,7 @@ class ANIMASSIST_OT_nla_correction(_NlaOperator, Operator):
                     raise ValueError("This rig's evaluated pose changed; neutral correction was rolled back")
                 # Source selection remains intact. Select the new correction using
                 # the native editor before Edit Correction (no hidden mode entry).
-                self.report({"INFO"}, f"Created {action.name}; select its clip to edit the correction")
+                self.report({"INFO"}, F('Created {p0}; select its clip to edit the correction', p0=f'{action.name}'))
             except Exception:
                 if track is not None:
                     item.owner.animation_data.nla_tracks.remove(track)
@@ -357,9 +359,9 @@ class ANIMASSIST_OT_nla_bake(_NlaOperator, Operator):
     bl_idname = "animassist.nla_bake"
     bl_label = "Bake to New Action"
     bl_description = "Bake the active clip owner's evaluated transform stack to a retained, unassigned Action; preserve source Actions and tracks"
-    start: IntProperty(name="Scene Start", description="First scene frame to sample", default=1)
-    end: IntProperty(name="Scene End", description="Last scene frame to sample", default=250)
-    step: IntProperty(name="Step", description="Scene frame sampling interval", default=1, min=1)
+    start: IntProperty(name="Scene Start", description="First scene frame to sample", default=1, translation_context='AnimAssist')
+    end: IntProperty(name="Scene End", description="Last scene frame to sample", default=250, translation_context='AnimAssist')
+    step: IntProperty(name="Step", description="Scene frame sampling interval", default=1, min=1, translation_context='AnimAssist')
 
     def invoke(self, context, event):
         self.start, self.end = context.scene.frame_start, context.scene.frame_end
@@ -410,7 +412,7 @@ class ANIMASSIST_OT_nla_bake(_NlaOperator, Operator):
                     for action in list(bpy.data.actions):
                         if action.as_pointer() not in existing:
                             bpy.data.actions.remove(action)
-            self.report({"INFO"}, f"Saved {output.name}, scene {self.start}–{self.end}; source stack unchanged")
+            self.report({"INFO"}, F('Saved {p0}, scene {p1}–{p2}; source stack unchanged', p0=f'{output.name}', p1=f'{self.start}', p2=f'{self.end}'))
         return _run(self, perform)
 
 
@@ -447,7 +449,7 @@ class ANIMASSIST_OT_nla_activate_bake(_NlaOperator, Operator):
                     ad.action_slot = previous[1]
                 ad.use_nla = previous[2]
                 raise
-            self.report({"INFO"}, "Bake assigned; NLA evaluation is off. Enable NLA in the native Animation Data settings to return")
+            self.report({"INFO"}, T('Bake assigned; NLA evaluation is off. Enable NLA in the native Animation Data settings to return'))
         return _run(self, perform)
 
 
@@ -470,7 +472,7 @@ class ANIMASSIST_OT_nla_influence(_NlaOperator, Operator):
     bl_idname = "animassist.nla_influence"
     bl_label = "Key Clip Influence"
     bl_description = "Key the active clip's influence at the current scene frame using native NLA control curves"
-    value: FloatProperty(name="Influence", description="Clip weight to key at the current scene frame", default=1, min=0, max=1)
+    value: FloatProperty(name="Influence", description="Clip weight to key at the current scene frame", default=1, min=0, max=1, translation_context='AnimAssist')
 
     def execute(self, context):
         def perform():
@@ -487,13 +489,13 @@ class ANIMASSIST_OT_nla_add_clip(_NlaOperator, Operator):
     bl_idname = "animassist.nla_add_clip"
     bl_label = "Add Existing Action Clip"
     bl_description = "Add an existing object Action to a new track on the active owner at the playhead"
-    action_name: StringProperty(name="Action", description="Existing Action to reference in the new clip")
+    action_name: StringProperty(name="Action", description="Existing Action to reference in the new clip", translation_context='AnimAssist')
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
     def draw(self, context):
-        self.layout.prop_search(self, "action_name", bpy.data, "actions", text="Source Action")
+        self.layout.prop_search(self, "action_name", bpy.data, "actions", text="Source Action", text_ctxt='AnimAssist')
 
     def execute(self, context):
         def perform():

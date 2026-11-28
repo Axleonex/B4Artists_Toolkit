@@ -1,0 +1,425 @@
+{
+  "schema": "toolkit.i18n.native-dependencies.v1",
+  "entries": [
+    {
+      "msgid": "Generator",
+      "contexts": [
+        "Action"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.GENERATOR.name",
+          "context": "Action",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Generate a curve using a factorized or expanded polynomial",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.GENERATOR.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Built-In Function",
+      "contexts": [
+        "Action"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.FNGENERATOR.name",
+          "context": "Action",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Generate a curve using standard math functions such as sin and cos",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.FNGENERATOR.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Envelope",
+      "contexts": [
+        "Action"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.ENVELOPE.name",
+          "context": "Action",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Reshape F-Curve values, e.g. change amplitude of movements",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.ENVELOPE.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Cycles",
+      "contexts": [
+        "Action"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.CYCLES.name",
+          "context": "Action",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Cyclic extend/repeat keyframe sequence",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.CYCLES.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Noise",
+      "contexts": [
+        "Action"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.NOISE.name",
+          "context": "Action",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Add pseudo-random noise on top of F-Curves",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.NOISE.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Limits",
+      "contexts": [
+        "Action"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.LIMITS.name",
+          "context": "Action",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Restrict maximum and minimum values of F-Curve",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.LIMITS.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Stepped Interpolation",
+      "contexts": [
+        "Action"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.STEPPED.name",
+          "context": "Action",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Snap values to nearest grid step, e.g. for a stop-motion look",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.STEPPED.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Smooth (Gaussian)",
+      "contexts": [
+        "Action"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.SMOOTH.name",
+          "context": "Action",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Smooth curve using Gaussian smoothing",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.fmodifier_add.type.enum.SMOOTH.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Free",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.handle_type.type.enum.FREE.name",
+          "context": "*",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Completely independent manually set handle",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.handle_type.type.enum.FREE.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Aligned",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.handle_type.type.enum.ALIGNED.name",
+          "context": "*",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Manually set handle with rotation locked together with its pair",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.handle_type.type.enum.ALIGNED.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Vector",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.handle_type.type.enum.VECTOR.name",
+          "context": "*",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Automatic handles that create straight lines",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.handle_type.type.enum.VECTOR.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Automatic",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.handle_type.type.enum.AUTO.name",
+          "context": "*",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Automatic handles that create smooth curves",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.handle_type.type.enum.AUTO.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Auto Clamped",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.handle_type.type.enum.AUTO_CLAMPED.name",
+          "context": "*",
+          "kind": "enum.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Automatic handles that create smooth curves which only change direction at keyframes",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy.ops.graph.handle_type.type.enum.AUTO_CLAMPED.description",
+          "context": "*",
+          "kind": "enum.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "File Path",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy_extras.io_utils.ExportHelper.filepath.name",
+          "context": "*",
+          "kind": "property.name",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    },
+    {
+      "msgid": "Filepath used for exporting the file",
+      "contexts": [
+        "*"
+      ],
+      "native_sources": [
+        {
+          "rna": "bpy_extras.io_utils.ExportHelper.filepath.description",
+          "context": "*",
+          "kind": "property.description",
+          "host": "5.3.0 Alpha",
+          "evidence": "HOST-PROVIDER-ENUM-SURVEY.json"
+        }
+      ]
+    }
+  ]
+}

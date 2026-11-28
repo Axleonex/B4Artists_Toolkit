@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 from bpy.props import FloatProperty
 from bpy.types import Operator
 
@@ -63,7 +65,7 @@ class ANIMASSIST_OT_scan_dense_keys(_DiagOpBase):
     bl_description = "Select keys closer than *min_gap* frames to their neighbour"
     bl_options = {"REGISTER", "UNDO"}
 
-    min_gap: FloatProperty(default=1.0, min=0.0)  # type: ignore[valid-type]
+    min_gap: FloatProperty(default=1.0, min=0.0, translation_context='AnimAssist', name="min_gap")  # type: ignore[valid-type]
 
     def execute(self, context):
         global _last_results, _last_summary
@@ -71,7 +73,7 @@ class ANIMASSIST_OT_scan_dense_keys(_DiagOpBase):
         _last_results = results
         _last_summary = diag.summarise(results)
         count = _select_hits(context, results)
-        self.report({"INFO"}, f"{count} dense keys")
+        self.report({"INFO"}, F('{p0} dense keys', p0=f'{count}'))
         return {"FINISHED"}
 
 
@@ -81,7 +83,7 @@ class ANIMASSIST_OT_scan_redundant_keys(_DiagOpBase):
     bl_description = "Select keys that lie on a straight line between neighbours"
     bl_options = {"REGISTER", "UNDO"}
 
-    tol: FloatProperty(default=1e-4, min=0.0)  # type: ignore[valid-type]
+    tol: FloatProperty(default=1e-4, min=0.0, translation_context='AnimAssist', name="tol")  # type: ignore[valid-type]
 
     def execute(self, context):
         global _last_results, _last_summary
@@ -89,7 +91,7 @@ class ANIMASSIST_OT_scan_redundant_keys(_DiagOpBase):
         _last_results = results
         _last_summary = diag.summarise(results)
         count = _select_hits(context, results)
-        self.report({"INFO"}, f"{count} redundant keys")
+        self.report({"INFO"}, F('{p0} redundant keys', p0=f'{count}'))
         return {"FINISHED"}
 
 
@@ -99,7 +101,7 @@ class ANIMASSIST_OT_scan_spike_keys(_DiagOpBase):
     bl_description = "Select keys whose value deviates sharply from their neighbours"
     bl_options = {"REGISTER", "UNDO"}
 
-    ratio: FloatProperty(default=4.0, min=1.0)  # type: ignore[valid-type]
+    ratio: FloatProperty(default=4.0, min=1.0, translation_context='AnimAssist', name="ratio")  # type: ignore[valid-type]
 
     def execute(self, context):
         global _last_results, _last_summary
@@ -107,7 +109,7 @@ class ANIMASSIST_OT_scan_spike_keys(_DiagOpBase):
         _last_results = results
         _last_summary = diag.summarise(results)
         count = _select_hits(context, results)
-        self.report({"INFO"}, f"{count} spike keys")
+        self.report({"INFO"}, F('{p0} spike keys', p0=f'{count}'))
         return {"FINISHED"}
 
 

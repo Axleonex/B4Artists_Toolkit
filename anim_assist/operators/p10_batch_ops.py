@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import time
 
 import bpy
@@ -76,7 +78,7 @@ class AA_OT_p10_batch_selected(Operator):
         name="Operator ID",
         description="Operator bl_idname to run on each selected bone",
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: Context) -> bool:
@@ -93,7 +95,7 @@ class AA_OT_p10_batch_selected(Operator):
     def execute(self, context: Context):
         """Run operator on each selected pose bone."""
         if not self.op_id:
-            self.report({"ERROR"}, "No tool selected. Pick a tool for this shelf slot first")
+            self.report({"ERROR"}, T('No tool selected. Pick a tool for this shelf slot first'))
             return {"CANCELLED"}
 
         state = rts_mod.get_state()
@@ -130,7 +132,7 @@ class AA_OT_p10_batch_selected(Operator):
             log_operation(self.op_id, success=True, detail=detail, elapsed_ms=elapsed_ms)
 
             # Report summary
-            msg = f"Batch applied to {len(selected_bones)} bones: {success_count} success, {failure_count} failure"
+            msg = F('Batch applied to {p0} bones: {p1} success, {p2} failure', p0=f'{len(selected_bones)}', p1=f'{success_count}', p2=f'{failure_count}')
             self.report({"INFO"}, msg)
             return {"FINISHED"}
 
@@ -154,7 +156,7 @@ class AA_OT_p10_batch_bookmarked(Operator):
         name="Operator ID",
         description="Operator bl_idname to run at each bookmark",
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: Context) -> bool:
@@ -168,7 +170,7 @@ class AA_OT_p10_batch_bookmarked(Operator):
     def execute(self, context: Context):
         """Run operator at each bookmarked frame."""
         if not self.op_id:
-            self.report({"ERROR"}, "No tool selected. Pick a tool for this shelf slot first")
+            self.report({"ERROR"}, T('No tool selected. Pick a tool for this shelf slot first'))
             return {"CANCELLED"}
 
         state = rts_mod.get_state()
@@ -179,7 +181,7 @@ class AA_OT_p10_batch_bookmarked(Operator):
             bookmarks = getattr(scene.anim_assist, "bookmarks", [])
 
             if not bookmarks:
-                self.report({"WARNING"}, "No bookmarks found")
+                self.report({"WARNING"}, T('No bookmarks found'))
                 return {"CANCELLED"}
 
             original_frame = scene.frame_current
@@ -209,7 +211,7 @@ class AA_OT_p10_batch_bookmarked(Operator):
             log_operation(self.op_id, success=True, detail=detail, elapsed_ms=elapsed_ms)
 
             # Report summary
-            msg = f"Batch applied at {len(bookmarks)} bookmarks: {success_count} success, {failure_count} failure"
+            msg = F('Batch applied at {p0} bookmarks: {p1} success, {p2} failure', p0=f'{len(bookmarks)}', p1=f'{success_count}', p2=f'{failure_count}')
             self.report({"INFO"}, msg)
             return {"FINISHED"}
 
@@ -233,7 +235,7 @@ class AA_OT_p10_batch_frame_steps(Operator):
         name="Operator ID",
         description="Operator bl_idname to run at each frame step",
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: Context) -> bool:
@@ -246,12 +248,12 @@ class AA_OT_p10_batch_frame_steps(Operator):
     def execute(self, context: Context):
         """Run operator at frame intervals."""
         if not self.op_id:
-            self.report({"ERROR"}, "No tool selected. Pick a tool for this shelf slot first")
+            self.report({"ERROR"}, T('No tool selected. Pick a tool for this shelf slot first'))
             return {"CANCELLED"}
 
         p10 = get_p10(context)
         if p10 is None:
-            self.report({"ERROR"}, "Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({"ERROR"}, T('Workspace settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {"CANCELLED"}
 
         state = rts_mod.get_state()
@@ -265,7 +267,7 @@ class AA_OT_p10_batch_frame_steps(Operator):
 
             # Validate step
             if frame_step <= 0:
-                self.report({"ERROR"}, "Frame step must be greater than 0")
+                self.report({"ERROR"}, T('Frame step must be greater than 0'))
                 return {"CANCELLED"}
 
             # Ensure start <= end
@@ -304,7 +306,7 @@ class AA_OT_p10_batch_frame_steps(Operator):
             log_operation(self.op_id, success=True, detail=detail, elapsed_ms=elapsed_ms)
 
             # Report summary
-            msg = f"Batch applied at {frame_count} frames: {success_count} success, {failure_count} failure"
+            msg = F('Batch applied at {p0} frames: {p1} success, {p2} failure', p0=f'{frame_count}', p1=f'{success_count}', p2=f'{failure_count}')
             self.report({"INFO"}, msg)
             return {"FINISHED"}
 

@@ -13,6 +13,8 @@ viseme + audio operators live in their own files.
 
 from __future__ import annotations
 
+from ..i18n import T, F
+
 import bpy
 from bpy.props import EnumProperty, StringProperty
 from bpy.types import Operator
@@ -88,14 +90,20 @@ def _ensure_speaker_strip(
     if seq is None:
         return ""
     # Find a free channel — search 1..32, take the first with no overlapping strip.
-    used_channels = {s.channel for s in seq.sequences_all if s.frame_final_start <= frame_offset <= s.frame_final_end}
+    all_strips = getattr(seq, "strips_all", None)
+    if all_strips is None:
+        all_strips = getattr(seq, "sequences_all", ())
+    used_channels = {s.channel for s in all_strips if s.frame_final_start <= frame_offset <= s.frame_final_end}
     channel = next((c for c in range(1, 33) if c not in used_channels), 1)
     name = f"AA_P12_{constants.P12_DEFAULT_FACE_GROUP}_{frame_offset}"
     try:
-        # bpy 4.x uses sequences.new_sound; bforartists/older sequence_editor
-        # may expose the same on .sequences.
-        sequences = getattr(seq, "sequences", None) or seq
-        strip = sequences.new_sound(
+        # Prefer the current API; keep legacy and bare-editor access available.
+        strips = getattr(seq, "strips", None)
+        if strips is None:
+            strips = getattr(seq, "sequences", None)
+        if strips is None:
+            strips = seq
+        strip = strips.new_sound(
             name=name,
             filepath=audio_path,
             channel=channel,
@@ -151,17 +159,17 @@ class AA_OT_p12_setup_lipsync(Operator):
         description="Path to the .wav file used for analysis",
         subtype="FILE_PATH",
         default="",
-    )
+     translation_context='AnimAssist')
     viseme_library: EnumProperty(  # type: ignore[valid-type]
         name="Viseme Library",
         description="Which viseme set drives the bake",
         items=p12_props._viseme_library_items,
-    )
+     translation_context='AnimAssist')
     setup_mode: EnumProperty(  # type: ignore[valid-type]
         name="Setup Mode",
         description="How the layer is populated when audio arrives",
         items=p12_props._setup_mode_items,
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -184,17 +192,17 @@ class AA_OT_p12_setup_lipsync(Operator):
             layout.label(
                 text="Only .wav is supported in v11.0.0 — convert and re-pick.",
                 icon="ERROR",
-            )
+             text_ctxt='AnimAssist')
 
     def execute(self, context):
         if not au.is_supported_audio(self.audio_path):
-            self.report({"ERROR"}, "Lipsync v11.0.0 supports .wav only — convert the file first.")
+            self.report({"ERROR"}, T('Lipsync v11.0.0 supports .wav only — convert the file first.'))
             return {"CANCELLED"}
 
         p11 = get_p11(context)
         p12 = p12_props.get_p12(context)
         if p11 is None or p12 is None:
-            self.report({"ERROR"}, "Layer and lipsync settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup")
+            self.report({"ERROR"}, T('Layer and lipsync settings are not initialised. Run First Run Setup from Properties > Scene > Anim Assist > Setup'))
             return {"CANCELLED"}
 
         arm_obj = context.active_object
@@ -203,15 +211,14 @@ class AA_OT_p12_setup_lipsync(Operator):
         scope_filter = constants.P12_DEFAULT_FACE_GROUP
         layer = _ensure_layer(p11, layer_name, scope_filter)
         if layer is None:
-            self.report({"ERROR"}, "Could not create the Phase 11 lipsync layer.")
+            self.report({"ERROR"}, T('Could not create the Phase 11 lipsync layer.'))
             return {"CANCELLED"}
 
         face_bones = _ensure_face_bone_group(arm_obj)
         if not face_bones:
             self.report(
                 {"WARNING"},
-                f"No bones in the '{constants.P12_DEFAULT_FACE_GROUP}' collection — "
-                "add the face bones to that collection before baking.",
+                F("No bones in the '{p0}' collection — add the face bones to that collection before baking.", p0=f'{constants.P12_DEFAULT_FACE_GROUP}'),
             )
 
         # Sequencer strip.
@@ -237,11 +244,11 @@ class AA_OT_p12_setup_lipsync(Operator):
         link.is_stale = False
         p12.active_link_index = len(p12.layer_links) - 1
 
-        msg = f"Lipsync layer ready: {layer_name}"
+        msg = F('Lipsync layer ready: {p0}', p0=f'{layer_name}')
         if seeded:
-            msg += f" — seeded {seeded} rig roles"
+            msg = F('{p0} — seeded {p1} rig roles', p0=f'{msg}', p1=f'{seeded}')
         if not strip_name:
-            msg += " (sequencer strip unavailable — bind manually)"
+            msg = F('{p0} (sequencer strip unavailable — bind manually)', p0=f'{msg}')
         self.report({"INFO"}, msg)
         return {"FINISHED"}
 
@@ -264,7 +271,7 @@ class AA_OT_p12_refresh_audio_hash(Operator):
     layer_name: StringProperty(  # type: ignore[valid-type]
         name="Layer Name",
         default="",
-    )
+     translation_context='AnimAssist')
 
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
@@ -276,15 +283,15 @@ class AA_OT_p12_refresh_audio_hash(Operator):
             return {"CANCELLED"}
         link = p12_props.find_layer_link(p12, self.layer_name)
         if link is None:
-            self.report({"WARNING"}, f"No lipsync link for layer '{self.layer_name}'")
+            self.report({"WARNING"}, F("No lipsync link for layer '{p0}'", p0=f'{self.layer_name}'))
             return {"CANCELLED"}
         current = au.sha256_of_file(link.audio_path)
         if current and link.audio_sha256 and current != link.audio_sha256:
             link.is_stale = True
-            self.report({"INFO"}, "Audio changed — rebake recommended")
+            self.report({"INFO"}, T('Audio changed — rebake recommended'))
         else:
             link.is_stale = False
-            self.report({"INFO"}, "Audio is up to date")
+            self.report({"INFO"}, T('Audio is up to date'))
         return {"FINISHED"}
 
 
